@@ -1,11 +1,6 @@
 import { BigNumber } from "ethers";
-import {
-  WildcatVaultToken,
-  WildcatVaultToken__factory,
-} from "./typechain";
-import {
-  VaultDataStructOutput,
-} from "./typechain";
+import { WildcatVaultToken, WildcatVaultToken__factory } from "./typechain";
+import { VaultDataStructOutput } from "./typechain";
 import { getLensContract } from "./constants";
 import { TokenAmount, Token } from "./token";
 import { SignerOrProvider, ContractWrapper } from "./types";
@@ -66,7 +61,7 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
 
   readonly contractFactory = WildcatVaultToken__factory;
 
-  static readonly UpdatableKeys: (keyof Vault)[] = [
+  static readonly UpdatableKeys: Array<keyof Vault> = [
     "vaultToken",
     "underlyingToken",
     "borrower",
@@ -90,7 +85,7 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
     "lastAccruedProtocolFees",
     "isDelinquent",
     "timeDelinquent",
-    "lastInterestAccruedTimestamp",
+    "lastInterestAccruedTimestamp"
   ];
 
   /** @returns Address of the vault token */
@@ -118,9 +113,7 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
 
   /** @returns Maximum amount of underlying token that can be deposited */
   get maximumDeposit(): TokenAmount {
-    return this.underlyingToken.getAmount(
-      this.maxTotalSupply.raw.sub(this.totalSupply.raw)
-    );
+    return this.underlyingToken.getAmount(this.maxTotalSupply.raw.sub(this.totalSupply.raw));
   }
 
   /** @returns Amount of assets borrower must deposit to not be delinquent */
@@ -154,7 +147,7 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
         currentRatio,
         isTemporary: true,
         originalRatio: this.originalLiquidityCoverageBips / 100,
-        temporaryExpiry: this.temporaryLiquidityCoverageExpiry,
+        temporaryExpiry: this.temporaryLiquidityCoverageExpiry
       };
     }
     return { currentRatio };
@@ -169,7 +162,7 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
     return this.annualInterestBips == 0;
   }
 
-  async update() {
+  async update(): Promise<void> {
     const vault = await Vault.getVault(this.address, this.provider);
     updateObject(this, vault, Vault.UpdatableKeys);
   }
@@ -187,15 +180,9 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
     return VaultAccount.fromAccountVaultInfoStruct(account, info, this);
   }
 
-  static fromVaultMetadataStruct(
-    data: VaultDataStructOutput,
-    provider: SignerOrProvider
-  ): Vault {
+  static fromVaultMetadataStruct(data: VaultDataStructOutput, provider: SignerOrProvider): Vault {
     const vaultToken = Token.fromTokenMetadataStruct(data.vaultToken, provider);
-    const underlyingToken = Token.fromTokenMetadataStruct(
-      data.underlyingToken,
-      provider
-    );
+    const underlyingToken = Token.fromTokenMetadataStruct(data.underlyingToken, provider);
     return new Vault(
       vaultToken,
       underlyingToken,
@@ -225,10 +212,7 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
     );
   }
 
-  static async getVault(
-    vault: string,
-    provider: SignerOrProvider
-  ): Promise<Vault> {
+  static async getVault(vault: string, provider: SignerOrProvider): Promise<Vault> {
     const lens = getLensContract(provider);
     const data = await lens.getVaultData(vault);
     return Vault.fromVaultMetadataStruct(data, provider);

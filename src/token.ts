@@ -1,7 +1,7 @@
-import { BigNumber, BigNumberish, Signer } from "ethers";
+import { BigNumber, BigNumberish } from "ethers";
 import { formatUnits, parseUnits } from "ethers/lib/utils";
 import { TokenMetadataStructOutput } from "./typechain";
-import { ContractWrapper, Provider, SignerOrProvider } from "./types";
+import { ContractWrapper, SignerOrProvider } from "./types";
 import { getLensContract } from "./constants";
 import { IERC20, IERC20__factory } from "./typechain";
 
@@ -124,7 +124,7 @@ export class Token extends ContractWrapper<IERC20> {
     );
   }
 
-  static async getTokenInfo(token: string, provider: SignerOrProvider) {
+  static async getTokenInfo(token: string, provider: SignerOrProvider): Promise<Token> {
     const lens = getLensContract(provider);
     const metadata = await lens.getTokenInfo(token);
     return Token.fromTokenMetadataStruct(metadata, provider);

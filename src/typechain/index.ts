@@ -5,17 +5,17 @@ export type {
   AccountVaultInfoStructOutput,
   ControlStatusStructOutput,
   TokenMetadataStructOutput,
-  VaultDataStructOutput,
+  VaultDataStructOutput
 } from "./VaultLens";
 export type {
   WildcatVaultController,
   VaultParametersStructOutput,
-  VaultParametersStruct,
+  VaultParametersStruct
 } from "./WildcatVaultController";
 export type { WildcatVaultFactory } from "./WildcatVaultFactory";
 export type {
   WildcatVaultToken,
   VaultStateStruct,
-  VaultStateStructOutput,
+  VaultStateStructOutput
 } from "./WildcatVaultToken";
 export { IERC20 } from "./IERC20";

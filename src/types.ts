@@ -11,7 +11,7 @@ export abstract class ContractWrapper<Contract extends BaseContract> {
 
   abstract readonly contractFactory: {
     connect(address: string, signerOrProvider: Signer | Provider): Contract;
-  }
+  };
 
   abstract get address(): string;
 
@@ -29,10 +29,7 @@ export abstract class ContractWrapper<Contract extends BaseContract> {
   set provider(provider: SignerOrProvider) {
     this._provider = provider;
     if (this._contract) {
-      this._contract = this.contractFactory.connect(
-        this.address,
-        this.provider
-      );
+      this._contract = this.contractFactory.connect(this.address, this.provider);
     }
     for (const property of Object.values(this)) {
       if (property instanceof ContractWrapper) {
@@ -43,10 +40,7 @@ export abstract class ContractWrapper<Contract extends BaseContract> {
 
   get contract(): Contract {
     if (!this._contract) {
-      this._contract = this.contractFactory.connect(
-        this.address,
-        this.provider
-      );
+      this._contract = this.contractFactory.connect(this.address, this.provider);
     }
     return this._contract;
   }

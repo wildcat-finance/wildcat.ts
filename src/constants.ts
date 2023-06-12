@@ -5,7 +5,7 @@ import {
   WildcatVaultController,
   WildcatVaultController__factory,
   WildcatVaultFactory,
-  WildcatVaultFactory__factory,
+  WildcatVaultFactory__factory
 } from "./typechain";
 import { SignerOrProvider } from "./types";
 
@@ -13,9 +13,7 @@ export const LensAddress = "0xDdcBBC4510156441F88D23A6ab4c64eed1775C16";
 export const FactoryAddress = "0x2050084919527BDE33Ff2dc9ef3768B2E335AC71";
 export const ControllerAddress = "0x41176b30395e1eea87dd6deb6d796c56097f6fa0";
 
-export const getControllerContract = (
-  provider: SignerOrProvider
-): WildcatVaultController => {
+export const getControllerContract = (provider: SignerOrProvider): WildcatVaultController => {
   return WildcatVaultController__factory.connect(ControllerAddress, provider);
 };
 

@@ -1,5 +1,5 @@
 import { BigNumber, ContractTransaction } from "ethers";
-import { TokenAmount, maxTokenAmount, minTokenAmount } from "./token";
+import { TokenAmount, minTokenAmount } from "./token";
 import { Vault } from "./vault";
 import { AccountVaultInfoStructOutput } from "./typechain";
 import { updateObject } from "./misc";
@@ -37,10 +37,10 @@ export class VaultAccount {
     public vault: Vault
   ) {}
 
-  static readonly UpdatableKeys: (keyof VaultAccount)[] = [
+  static readonly UpdatableKeys: Array<keyof VaultAccount> = [
     "vaultBalance",
     "underlyingBalance",
-    "underlyingApproval",
+    "underlyingApproval"
   ];
 
   isBorrower(): boolean {
@@ -101,7 +101,7 @@ export class VaultAccount {
     return minTokenAmount(amount, this.vault.borrowableAssets);
   }
 
-  async update() {
+  async update(): Promise<void> {
     const acccountVaultInfo = await this.vault.getAccountInfo();
     updateObject(this, acccountVaultInfo, VaultAccount.UpdatableKeys);
   }
@@ -152,7 +152,7 @@ export class VaultAccount {
 
   /**
    * @returns Status for deposit
-  */
+   */
   checkDepositStep(amount: TokenAmount): DepositStatus {
     if (amount.gt(this.vault.maximumDeposit)) {
       return { status: "ExceedsMaximumDeposit" };
@@ -163,7 +163,7 @@ export class VaultAccount {
     if (!this.isApprovedFor(amount)) {
       return {
         status: "InsufficientAllowance",
-        remainder: this.getAllowanceRemainder(amount),
+        remainder: this.getAllowanceRemainder(amount)
       };
     }
     return { status: "Ready" };
@@ -173,7 +173,7 @@ export class VaultAccount {
     account: string,
     info: AccountVaultInfoStructOutput,
     vault: Vault
-  ) {
+  ): VaultAccount {
     return new VaultAccount(
       account,
       vault.vaultToken.getAmount(info.normalizedBalance),

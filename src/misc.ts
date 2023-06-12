@@ -12,11 +12,11 @@ export type ValueFields<C, K extends keyof C> = K extends string
 
 // type Keys<C> = keyof OnlyValueFields<C> & string;
 
-export function updateValue<O, K extends keyof O>(obj: O, otherObj: O, key: K) {
+export function updateValue<O, K extends keyof O>(obj: O, otherObj: O, key: K): void {
   obj[key] = otherObj[key];
 }
 
-export function updateObject<O>(obj: O, otherObj: O, keys: (keyof O)[]) {
+export function updateObject<O>(obj: O, otherObj: O, keys: Array<keyof O>): void {
   for (const key of keys) {
     updateValue(obj, otherObj, key);
   }
