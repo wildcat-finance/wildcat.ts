@@ -43,6 +43,14 @@ export class VaultAccount {
     "underlyingApproval"
   ];
 
+  get userHasBalance(): boolean {
+    return this.vaultBalance.gt(0);
+  }
+
+  get userHasUnderlyingBalance(): boolean {
+    return this.underlyingBalance.gt(0);
+  }
+
   isBorrower(): boolean {
     return this.vault.borrower.toLowerCase() === this.account.toLowerCase();
   }
@@ -104,6 +112,11 @@ export class VaultAccount {
   async update(): Promise<void> {
     const acccountVaultInfo = await this.vault.getAccountInfo();
     updateObject(this, acccountVaultInfo, VaultAccount.UpdatableKeys);
+  }
+
+  applyUpdate(info: AccountVaultInfoStructOutput): void {
+    const account = VaultAccount.fromAccountVaultInfoStruct(this.account, info, this.vault);
+    updateObject(this, account, VaultAccount.UpdatableKeys);
   }
 
   /**

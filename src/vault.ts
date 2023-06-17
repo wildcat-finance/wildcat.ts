@@ -7,14 +7,17 @@ import { SignerOrProvider, ContractWrapper } from "./types";
 import { formatUnits } from "ethers/lib/utils";
 import { updateObject } from "./misc";
 import { VaultAccount } from "./account";
+import { RAY } from "./constants";
 
-export type CollateralizationRatio = {
+export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
-  currentRatio: number;
+  targetRatio: number;
+  // Percentage of total assets actually held in reserve
+  actualRatio: number;
   // Indicates whether the ratio is temporarily increased due to reduction in APR
   isTemporary?: boolean;
-  // Original ratio before any temporary changes
-  originalRatio?: number;
+  // Original target collateralization ratio (percentage) before any temporary changes
+  originalTargetRatio?: number;
   // Expiry of temporary ratio
   temporaryExpiry?: number;
 };
@@ -53,7 +56,6 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
     public timeDelinquent: number,
     // Timestamp of last interest accrual
     public lastInterestAccruedTimestamp: number,
-
     _provider: SignerOrProvider
   ) {
     super(_provider);
@@ -140,17 +142,19 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
   }
 
   /** @returns Percentage of total assets that must be held in reserve */
-  get collateralizationRatio(): CollateralizationRatio {
-    const currentRatio = this.liquidityCoverageBips / 100;
+  get collateralization(): CollateralizationInfo {
+    const targetRatio = this.liquidityCoverageBips / 100;
+    const actualRatio = +formatUnits(this.totalAssets.raw.mul(RAY).div(this.totalSupply.raw), 25);
     if (this.temporaryLiquidityCoverage) {
       return {
-        currentRatio,
+        targetRatio,
+        actualRatio,
         isTemporary: true,
-        originalRatio: this.originalLiquidityCoverageBips / 100,
+        originalTargetRatio: this.originalLiquidityCoverageBips / 100,
         temporaryExpiry: this.temporaryLiquidityCoverageExpiry
       };
     }
-    return { currentRatio };
+    return { targetRatio, actualRatio };
   }
 
   /** @returns Whether the borrower can change the APR */

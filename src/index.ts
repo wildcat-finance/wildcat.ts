@@ -1,5 +1,6 @@
+import { VaultAccount } from "./account";
 import { getFactoryContract, getLensContract } from "./constants";
-import { Provider, SignerOrProvider } from "./types";
+import { Provider, Signer, SignerOrProvider } from "./types";
 import { Vault } from "./vault";
 export * from "./vault";
 export { Signer, Provider, SignerOrProvider } from "./types";
@@ -26,4 +27,15 @@ export async function getAllVaults(provider: SignerOrProvider): Promise<Vault[]>
   }
   const metadatas = await getLensContract(provider).getVaultsMetadata(vaults);
   return metadatas.map((x) => Vault.fromVaultMetadataStruct(x, provider));
+}
+
+export async function getAllVaultAccountsForUser(provider: Signer): Promise<VaultAccount[]> {
+  const account = await provider.getAddress();
+  const vaults = await getAllVaults(provider);
+  const accounts = (await Promise.all(vaults.map((vault) => vault.getAccountInfo(account)))).filter(
+    (acct) => {
+      return acct.userHasBalance || acct.userHasUnderlyingBalance || acct.isBorrower;
+    }
+  );
+  return accounts;
 }
