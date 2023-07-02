@@ -7,9 +7,9 @@ export { Signer, Provider, SignerOrProvider } from "./types";
 export * from "./account";
 export * from "./controller";
 export * from "./token";
+export * from "./factory";
 
 export async function getAllVaults(provider: SignerOrProvider): Promise<Vault[]> {
-  // const controller = getControllerContract(provider);
   const factory = getFactoryContract(provider);
   const currentBlock = await (provider instanceof Provider
     ? provider
