@@ -1,5 +1,6 @@
 import { VaultAccount } from "./account";
 import { getFactoryContract, getLensContract } from "./constants";
+import { VaultFactory } from "./factory";
 import { Provider, Signer, SignerOrProvider } from "./types";
 import { Vault } from "./vault";
 export * from "./vault";
@@ -8,6 +9,8 @@ export * from "./account";
 export * from "./controller";
 export * from "./token";
 export * from "./factory";
+
+export const getFactory = VaultFactory.getFactory;
 
 export async function getAllVaults(provider: SignerOrProvider): Promise<Vault[]> {
   const factory = getFactoryContract(provider);
