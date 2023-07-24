@@ -1,6 +1,6 @@
 {
   "name": "@wildcatfi/wildcat-sdk",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "license": "MIT",
   "files": [
     "dist"
@@ -36,6 +36,7 @@
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc -p ./tsconfig.prod.json",
     "lint": "eslint src/ test/ --ext=ts",
-    "lint:fix": "eslint src/ test/ --ext=ts --fix"
+    "lint:fix": "eslint src/ test/ --ext=ts --fix",
+    "prepublishOnly": "yarn build"
   }
 }
