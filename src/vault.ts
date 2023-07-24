@@ -144,7 +144,10 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
   /** @returns Percentage of total assets that must be held in reserve */
   get collateralization(): CollateralizationInfo {
     const targetRatio = this.liquidityCoverageBips / 100;
-    const actualRatio = +formatUnits(this.totalAssets.raw.mul(RAY).div(this.totalSupply.raw), 25);
+
+    const actualRatio = this.totalSupply.eq(0)
+      ? 100
+      : +formatUnits(this.totalAssets.raw.mul(RAY).div(this.totalSupply.raw), 25);
     if (this.temporaryLiquidityCoverage) {
       return {
         targetRatio,

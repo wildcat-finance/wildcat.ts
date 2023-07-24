@@ -1,6 +1,6 @@
-import { BigNumber, BigNumberish } from "ethers";
+import { BigNumber, BigNumberish, ContractTransaction } from "ethers";
 import { formatUnits, parseUnits } from "ethers/lib/utils";
-import { TokenMetadataStructOutput } from "./typechain";
+import { MockERC20__factory, TokenMetadataStructOutput } from "./typechain";
 import { ContractWrapper, SignerOrProvider } from "./types";
 import { getLensContract } from "./constants";
 import { IERC20, IERC20__factory } from "./typechain";
@@ -97,9 +97,17 @@ export class Token extends ContractWrapper<IERC20> {
     public name: string,
     public symbol: string,
     public decimals: number,
+    public isMock: boolean,
     provider: SignerOrProvider
   ) {
     super(provider);
+  }
+
+  async faucet(): Promise<ContractTransaction> {
+    if (!this.isMock) {
+      throw Error("Can not use faucet on non-mock token");
+    }
+    return MockERC20__factory.connect(this.address, this.signer).faucet();
   }
 
   getAmount(amount: RhsAmount): TokenAmount {
@@ -120,6 +128,7 @@ export class Token extends ContractWrapper<IERC20> {
       metadata.name,
       metadata.symbol,
       metadata.decimals.toNumber(),
+      metadata.isMock,
       provider
     );
   }
