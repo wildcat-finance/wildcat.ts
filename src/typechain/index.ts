@@ -19,3 +19,5 @@ export type {
   VaultStateStructOutput
 } from "./WildcatVaultToken";
 export { IERC20 } from "./IERC20";
+export type { MockERC20 } from "./mock/MockERC20";
+export type { MockERC20Factory } from "./mock/MockERC20Factory";

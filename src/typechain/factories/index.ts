@@ -4,3 +4,5 @@ export { WildcatVaultController__factory } from "./WildcatVaultController__facto
 export { WildcatVaultFactory__factory } from "./WildcatVaultFactory__factory";
 export { WildcatVaultToken__factory } from "./WildcatVaultToken__factory";
 export { IERC20__factory } from "./IERC20__factory";
+
+export * from "./mock";

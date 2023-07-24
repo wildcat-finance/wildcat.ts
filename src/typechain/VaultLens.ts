@@ -57,13 +57,21 @@ export type TokenMetadataStruct = {
   name: PromiseOrValue<string>;
   symbol: PromiseOrValue<string>;
   decimals: PromiseOrValue<BigNumberish>;
+  isMock: PromiseOrValue<boolean>;
 };
 
-export type TokenMetadataStructOutput = [string, string, string, BigNumber] & {
+export type TokenMetadataStructOutput = [
+  string,
+  string,
+  string,
+  BigNumber,
+  boolean
+] & {
   token: string;
   name: string;
   symbol: string;
   decimals: BigNumber;
+  isMock: boolean;
 };
 
 export type VaultDataStruct = {
