@@ -21,3 +21,5 @@ export function updateObject<O>(obj: O, otherObj: O, keys: Array<keyof O>): void
     updateValue(obj, otherObj, key);
   }
 }
+
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
