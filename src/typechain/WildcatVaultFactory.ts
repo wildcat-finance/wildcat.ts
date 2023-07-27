@@ -76,6 +76,9 @@ export interface WildcatVaultFactoryInterface extends utils.Interface {
     "computeVaultAddress(address,address,address)": FunctionFragment;
     "deployVault((address,string,string,address,address,uint256,uint256,uint256,uint256,uint256,uint256,address))": FunctionFragment;
     "getVaultParameters()": FunctionFragment;
+    "getVaults(uint256,uint256)": FunctionFragment;
+    "getVaultsCount()": FunctionFragment;
+    "vaults(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -84,6 +87,9 @@ export interface WildcatVaultFactoryInterface extends utils.Interface {
       | "computeVaultAddress"
       | "deployVault"
       | "getVaultParameters"
+      | "getVaults"
+      | "getVaultsCount"
+      | "vaults"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -106,6 +112,18 @@ export interface WildcatVaultFactoryInterface extends utils.Interface {
     functionFragment: "getVaultParameters",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "getVaults",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getVaultsCount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "vaults",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "VaultInitCodeHash",
@@ -123,6 +141,12 @@ export interface WildcatVaultFactoryInterface extends utils.Interface {
     functionFragment: "getVaultParameters",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVaults", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getVaultsCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "vaults", data: BytesLike): Result;
 
   events: {
     "VaultDeployed(address,address,address)": EventFragment;
@@ -132,9 +156,9 @@ export interface WildcatVaultFactoryInterface extends utils.Interface {
 }
 
 export interface VaultDeployedEventObject {
-  controller: string;
-  underlying: string;
-  vault: string;
+  arg0: string;
+  arg1: string;
+  arg2: string;
 }
 export type VaultDeployedEvent = TypedEvent<
   [string, string, string],
@@ -187,6 +211,19 @@ export interface WildcatVaultFactory extends BaseContract {
     getVaultParameters(
       overrides?: CallOverrides
     ): Promise<[VaultParametersStructOutput]>;
+
+    getVaults(
+      start: PromiseOrValue<BigNumberish>,
+      length: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
+    getVaultsCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    vaults(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
   };
 
   VaultInitCodeHash(overrides?: CallOverrides): Promise<string>;
@@ -207,6 +244,19 @@ export interface WildcatVaultFactory extends BaseContract {
     overrides?: CallOverrides
   ): Promise<VaultParametersStructOutput>;
 
+  getVaults(
+    start: PromiseOrValue<BigNumberish>,
+    length: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
+  getVaultsCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+  vaults(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   callStatic: {
     VaultInitCodeHash(overrides?: CallOverrides): Promise<string>;
 
@@ -225,18 +275,31 @@ export interface WildcatVaultFactory extends BaseContract {
     getVaultParameters(
       overrides?: CallOverrides
     ): Promise<VaultParametersStructOutput>;
+
+    getVaults(
+      start: PromiseOrValue<BigNumberish>,
+      length: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
+    getVaultsCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    vaults(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
   };
 
   filters: {
     "VaultDeployed(address,address,address)"(
-      controller?: PromiseOrValue<string> | null,
-      underlying?: PromiseOrValue<string> | null,
-      vault?: null
+      arg0?: null,
+      arg1?: null,
+      arg2?: null
     ): VaultDeployedEventFilter;
     VaultDeployed(
-      controller?: PromiseOrValue<string> | null,
-      underlying?: PromiseOrValue<string> | null,
-      vault?: null
+      arg0?: null,
+      arg1?: null,
+      arg2?: null
     ): VaultDeployedEventFilter;
   };
 
@@ -256,6 +319,19 @@ export interface WildcatVaultFactory extends BaseContract {
     ): Promise<BigNumber>;
 
     getVaultParameters(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVaults(
+      start: PromiseOrValue<BigNumberish>,
+      length: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getVaultsCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    vaults(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -274,6 +350,19 @@ export interface WildcatVaultFactory extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getVaultParameters(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getVaults(
+      start: PromiseOrValue<BigNumberish>,
+      length: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getVaultsCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    vaults(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

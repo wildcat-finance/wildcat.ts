@@ -4,31 +4,28 @@
 
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type {
-  IERC20,
-  IERC20Interface,
-} from "../IERC20";
+import type { IERC20, IERC20Interface } from "../IERC20";
 
 const _abi = [
   {
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
-        name: "owner",
+        name: "",
         type: "address",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
-        name: "spender",
+        name: "",
         type: "address",
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "value",
+        name: "",
         type: "uint256",
       },
     ],
@@ -39,21 +36,21 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
-        name: "from",
+        name: "",
         type: "address",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
-        name: "to",
+        name: "",
         type: "address",
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "value",
+        name: "",
         type: "uint256",
       },
     ],
@@ -148,6 +145,13 @@ const _abi = [
         type: "bool",
       },
     ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "faucet",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

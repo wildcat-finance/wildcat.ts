@@ -40,18 +40,6 @@ export type AccountVaultInfoStructOutput = [
   underlyingApproval: BigNumber;
 };
 
-export type ControlStatusStruct = {
-  temporaryLiquidityCoverage: PromiseOrValue<boolean>;
-  originalLiquidityCoverageRatio: PromiseOrValue<BigNumberish>;
-  temporaryLiquidityCoverageExpiry: PromiseOrValue<BigNumberish>;
-};
-
-export type ControlStatusStructOutput = [boolean, BigNumber, BigNumber] & {
-  temporaryLiquidityCoverage: boolean;
-  originalLiquidityCoverageRatio: BigNumber;
-  temporaryLiquidityCoverageExpiry: BigNumber;
-};
-
 export type TokenMetadataStruct = {
   token: PromiseOrValue<string>;
   name: PromiseOrValue<string>;
@@ -83,15 +71,15 @@ export type VaultDataStruct = {
   interestFeeBips: PromiseOrValue<BigNumberish>;
   penaltyFeeBips: PromiseOrValue<BigNumberish>;
   gracePeriod: PromiseOrValue<BigNumberish>;
-  annualInterestBips: PromiseOrValue<BigNumberish>;
   liquidityCoverageRatio: PromiseOrValue<BigNumberish>;
   temporaryLiquidityCoverage: PromiseOrValue<boolean>;
   originalLiquidityCoverageRatio: PromiseOrValue<BigNumberish>;
   temporaryLiquidityCoverageExpiry: PromiseOrValue<BigNumberish>;
+  annualInterestBips: PromiseOrValue<BigNumberish>;
   borrowableAssets: PromiseOrValue<BigNumberish>;
+  totalSupply: PromiseOrValue<BigNumberish>;
   maxTotalSupply: PromiseOrValue<BigNumberish>;
   scaledTotalSupply: PromiseOrValue<BigNumberish>;
-  totalSupply: PromiseOrValue<BigNumberish>;
   totalAssets: PromiseOrValue<BigNumberish>;
   coverageLiquidity: PromiseOrValue<BigNumberish>;
   scaleFactor: PromiseOrValue<BigNumberish>;
@@ -111,8 +99,8 @@ export type VaultDataStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   boolean,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -135,15 +123,15 @@ export type VaultDataStructOutput = [
   interestFeeBips: BigNumber;
   penaltyFeeBips: BigNumber;
   gracePeriod: BigNumber;
-  annualInterestBips: BigNumber;
   liquidityCoverageRatio: BigNumber;
   temporaryLiquidityCoverage: boolean;
   originalLiquidityCoverageRatio: BigNumber;
   temporaryLiquidityCoverageExpiry: BigNumber;
+  annualInterestBips: BigNumber;
   borrowableAssets: BigNumber;
+  totalSupply: BigNumber;
   maxTotalSupply: BigNumber;
   scaledTotalSupply: BigNumber;
-  totalSupply: BigNumber;
   totalAssets: BigNumber;
   coverageLiquidity: BigNumber;
   scaleFactor: BigNumber;
@@ -153,51 +141,155 @@ export type VaultDataStructOutput = [
   lastInterestAccruedTimestamp: BigNumber;
 };
 
+export type VaultDataWithAccountStruct = {
+  vault: VaultDataStruct;
+  account: AccountVaultInfoStruct;
+};
+
+export type VaultDataWithAccountStructOutput = [
+  VaultDataStructOutput,
+  AccountVaultInfoStructOutput
+] & { vault: VaultDataStructOutput; account: AccountVaultInfoStructOutput };
+
+export type ControlStatusStruct = {
+  temporaryLiquidityCoverage: PromiseOrValue<boolean>;
+  originalLiquidityCoverageRatio: PromiseOrValue<BigNumberish>;
+  temporaryLiquidityCoverageExpiry: PromiseOrValue<BigNumberish>;
+};
+
+export type ControlStatusStructOutput = [boolean, BigNumber, BigNumber] & {
+  temporaryLiquidityCoverage: boolean;
+  originalLiquidityCoverageRatio: BigNumber;
+  temporaryLiquidityCoverageExpiry: BigNumber;
+};
+
 export interface VaultLensInterface extends utils.Interface {
   functions: {
+    "factory()": FunctionFragment;
     "getAccountVaultInfo(address,address)": FunctionFragment;
+    "getAccountVaultsInfo(address,address[])": FunctionFragment;
+    "getAllVaultsData()": FunctionFragment;
+    "getAllVaultsDataWithAccount(address)": FunctionFragment;
     "getControlStatus(address)": FunctionFragment;
+    "getPaginatedVaultsData(uint256,uint256)": FunctionFragment;
+    "getPaginatedVaultsDataWithAccount(address,uint256,uint256)": FunctionFragment;
     "getTokenInfo(address)": FunctionFragment;
+    "getTokensInfo(address[])": FunctionFragment;
     "getVaultData(address)": FunctionFragment;
-    "getVaultsMetadata(address[])": FunctionFragment;
+    "getVaultDataWithAccount(address,address)": FunctionFragment;
+    "getVaultsCount()": FunctionFragment;
+    "getVaultsData(address[])": FunctionFragment;
+    "getVaultsDataWithAccount(address,address[])": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "factory"
       | "getAccountVaultInfo"
+      | "getAccountVaultsInfo"
+      | "getAllVaultsData"
+      | "getAllVaultsDataWithAccount"
       | "getControlStatus"
+      | "getPaginatedVaultsData"
+      | "getPaginatedVaultsDataWithAccount"
       | "getTokenInfo"
+      | "getTokensInfo"
       | "getVaultData"
-      | "getVaultsMetadata"
+      | "getVaultDataWithAccount"
+      | "getVaultsCount"
+      | "getVaultsData"
+      | "getVaultsDataWithAccount"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "factory", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getAccountVaultInfo",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getAccountVaultsInfo",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAllVaultsData",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAllVaultsDataWithAccount",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getControlStatus",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPaginatedVaultsData",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPaginatedVaultsDataWithAccount",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getTokenInfo",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getTokensInfo",
+    values: [PromiseOrValue<string>[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getVaultData",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getVaultsMetadata",
+    functionFragment: "getVaultDataWithAccount",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getVaultsCount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getVaultsData",
     values: [PromiseOrValue<string>[]]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getVaultsDataWithAccount",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>[]]
+  ): string;
 
+  decodeFunctionResult(functionFragment: "factory", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getAccountVaultInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getAccountVaultsInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAllVaultsData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAllVaultsDataWithAccount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getControlStatus",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPaginatedVaultsData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPaginatedVaultsDataWithAccount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -205,11 +297,27 @@ export interface VaultLensInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getTokensInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getVaultData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getVaultsMetadata",
+    functionFragment: "getVaultDataWithAccount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getVaultsCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getVaultsData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getVaultsDataWithAccount",
     data: BytesLike
   ): Result;
 
@@ -243,12 +351,37 @@ export interface VaultLens extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    factory(overrides?: CallOverrides): Promise<[string]>;
+
     getAccountVaultInfo(
       vault: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
       [AccountVaultInfoStructOutput] & { info: AccountVaultInfoStructOutput }
+    >;
+
+    getAccountVaultsInfo(
+      account: PromiseOrValue<string>,
+      vaults: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<
+      [AccountVaultInfoStructOutput[]] & {
+        info: AccountVaultInfoStructOutput[];
+      }
+    >;
+
+    getAllVaultsData(
+      overrides?: CallOverrides
+    ): Promise<[VaultDataStructOutput[]] & { data: VaultDataStructOutput[] }>;
+
+    getAllVaultsDataWithAccount(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [VaultDataWithAccountStructOutput[]] & {
+        data: VaultDataWithAccountStructOutput[];
+      }
     >;
 
     getControlStatus(
@@ -258,6 +391,23 @@ export interface VaultLens extends BaseContract {
       [ControlStatusStructOutput] & { status: ControlStatusStructOutput }
     >;
 
+    getPaginatedVaultsData(
+      start: PromiseOrValue<BigNumberish>,
+      length: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[VaultDataStructOutput[]] & { data: VaultDataStructOutput[] }>;
+
+    getPaginatedVaultsDataWithAccount(
+      account: PromiseOrValue<string>,
+      start: PromiseOrValue<BigNumberish>,
+      length: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [VaultDataWithAccountStructOutput[]] & {
+        data: VaultDataWithAccountStructOutput[];
+      }
+    >;
+
     getTokenInfo(
       token: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -265,16 +415,47 @@ export interface VaultLens extends BaseContract {
       [TokenMetadataStructOutput] & { info: TokenMetadataStructOutput }
     >;
 
+    getTokensInfo(
+      tokens: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<
+      [TokenMetadataStructOutput[]] & { info: TokenMetadataStructOutput[] }
+    >;
+
     getVaultData(
       vault: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[VaultDataStructOutput] & { data: VaultDataStructOutput }>;
 
-    getVaultsMetadata(
+    getVaultDataWithAccount(
+      account: PromiseOrValue<string>,
+      vault: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [VaultDataWithAccountStructOutput] & {
+        data: VaultDataWithAccountStructOutput;
+      }
+    >;
+
+    getVaultsCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getVaultsData(
       vaults: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<[VaultDataStructOutput[]] & { data: VaultDataStructOutput[] }>;
+
+    getVaultsDataWithAccount(
+      account: PromiseOrValue<string>,
+      vaults: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<
+      [VaultDataWithAccountStructOutput[]] & {
+        data: VaultDataWithAccountStructOutput[];
+      }
+    >;
   };
+
+  factory(overrides?: CallOverrides): Promise<string>;
 
   getAccountVaultInfo(
     vault: PromiseOrValue<string>,
@@ -282,59 +463,168 @@ export interface VaultLens extends BaseContract {
     overrides?: CallOverrides
   ): Promise<AccountVaultInfoStructOutput>;
 
+  getAccountVaultsInfo(
+    account: PromiseOrValue<string>,
+    vaults: PromiseOrValue<string>[],
+    overrides?: CallOverrides
+  ): Promise<AccountVaultInfoStructOutput[]>;
+
+  getAllVaultsData(overrides?: CallOverrides): Promise<VaultDataStructOutput[]>;
+
+  getAllVaultsDataWithAccount(
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<VaultDataWithAccountStructOutput[]>;
+
   getControlStatus(
     vault: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<ControlStatusStructOutput>;
+
+  getPaginatedVaultsData(
+    start: PromiseOrValue<BigNumberish>,
+    length: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<VaultDataStructOutput[]>;
+
+  getPaginatedVaultsDataWithAccount(
+    account: PromiseOrValue<string>,
+    start: PromiseOrValue<BigNumberish>,
+    length: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<VaultDataWithAccountStructOutput[]>;
 
   getTokenInfo(
     token: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<TokenMetadataStructOutput>;
 
+  getTokensInfo(
+    tokens: PromiseOrValue<string>[],
+    overrides?: CallOverrides
+  ): Promise<TokenMetadataStructOutput[]>;
+
   getVaultData(
     vault: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<VaultDataStructOutput>;
 
-  getVaultsMetadata(
+  getVaultDataWithAccount(
+    account: PromiseOrValue<string>,
+    vault: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<VaultDataWithAccountStructOutput>;
+
+  getVaultsCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getVaultsData(
     vaults: PromiseOrValue<string>[],
     overrides?: CallOverrides
   ): Promise<VaultDataStructOutput[]>;
 
+  getVaultsDataWithAccount(
+    account: PromiseOrValue<string>,
+    vaults: PromiseOrValue<string>[],
+    overrides?: CallOverrides
+  ): Promise<VaultDataWithAccountStructOutput[]>;
+
   callStatic: {
+    factory(overrides?: CallOverrides): Promise<string>;
+
     getAccountVaultInfo(
       vault: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<AccountVaultInfoStructOutput>;
 
+    getAccountVaultsInfo(
+      account: PromiseOrValue<string>,
+      vaults: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<AccountVaultInfoStructOutput[]>;
+
+    getAllVaultsData(
+      overrides?: CallOverrides
+    ): Promise<VaultDataStructOutput[]>;
+
+    getAllVaultsDataWithAccount(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<VaultDataWithAccountStructOutput[]>;
+
     getControlStatus(
       vault: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<ControlStatusStructOutput>;
+
+    getPaginatedVaultsData(
+      start: PromiseOrValue<BigNumberish>,
+      length: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<VaultDataStructOutput[]>;
+
+    getPaginatedVaultsDataWithAccount(
+      account: PromiseOrValue<string>,
+      start: PromiseOrValue<BigNumberish>,
+      length: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<VaultDataWithAccountStructOutput[]>;
 
     getTokenInfo(
       token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<TokenMetadataStructOutput>;
 
+    getTokensInfo(
+      tokens: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<TokenMetadataStructOutput[]>;
+
     getVaultData(
       vault: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<VaultDataStructOutput>;
 
-    getVaultsMetadata(
+    getVaultDataWithAccount(
+      account: PromiseOrValue<string>,
+      vault: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<VaultDataWithAccountStructOutput>;
+
+    getVaultsCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVaultsData(
       vaults: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<VaultDataStructOutput[]>;
+
+    getVaultsDataWithAccount(
+      account: PromiseOrValue<string>,
+      vaults: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<VaultDataWithAccountStructOutput[]>;
   };
 
   filters: {};
 
   estimateGas: {
+    factory(overrides?: CallOverrides): Promise<BigNumber>;
+
     getAccountVaultInfo(
       vault: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAccountVaultsInfo(
+      account: PromiseOrValue<string>,
+      vaults: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAllVaultsData(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getAllVaultsDataWithAccount(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -344,8 +634,26 @@ export interface VaultLens extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getPaginatedVaultsData(
+      start: PromiseOrValue<BigNumberish>,
+      length: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPaginatedVaultsDataWithAccount(
+      account: PromiseOrValue<string>,
+      start: PromiseOrValue<BigNumberish>,
+      length: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getTokenInfo(
       token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTokensInfo(
+      tokens: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -354,15 +662,44 @@ export interface VaultLens extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getVaultsMetadata(
+    getVaultDataWithAccount(
+      account: PromiseOrValue<string>,
+      vault: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getVaultsCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getVaultsData(
+      vaults: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getVaultsDataWithAccount(
+      account: PromiseOrValue<string>,
       vaults: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getAccountVaultInfo(
       vault: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAccountVaultsInfo(
+      account: PromiseOrValue<string>,
+      vaults: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAllVaultsData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getAllVaultsDataWithAccount(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -372,8 +709,26 @@ export interface VaultLens extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getPaginatedVaultsData(
+      start: PromiseOrValue<BigNumberish>,
+      length: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPaginatedVaultsDataWithAccount(
+      account: PromiseOrValue<string>,
+      start: PromiseOrValue<BigNumberish>,
+      length: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getTokenInfo(
       token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTokensInfo(
+      tokens: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -382,7 +737,21 @@ export interface VaultLens extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getVaultsMetadata(
+    getVaultDataWithAccount(
+      account: PromiseOrValue<string>,
+      vault: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getVaultsCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getVaultsData(
+      vaults: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getVaultsDataWithAccount(
+      account: PromiseOrValue<string>,
       vaults: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

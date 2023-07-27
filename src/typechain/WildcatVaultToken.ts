@@ -75,6 +75,7 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
     "coverageLiquidity()": FunctionFragment;
     "currentState()": FunctionFragment;
     "decimals()": FunctionFragment;
+    "delinquentDebt()": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "depositUpTo(uint256,address)": FunctionFragment;
     "feeRecipient()": FunctionFragment;
@@ -85,8 +86,12 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
     "maxTotalSupply()": FunctionFragment;
     "maximumDeposit()": FunctionFragment;
     "name()": FunctionFragment;
+    "outstandingDebt()": FunctionFragment;
     "penaltyFeeBips()": FunctionFragment;
     "previousState()": FunctionFragment;
+    "repay(uint256)": FunctionFragment;
+    "repayDelinquentDebt()": FunctionFragment;
+    "repayOutstandingDebt()": FunctionFragment;
     "scaleFactor()": FunctionFragment;
     "scaledBalanceOf(address)": FunctionFragment;
     "setAnnualInterestBips(uint256)": FunctionFragment;
@@ -94,7 +99,9 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
     "setMaxTotalSupply(uint256)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalAssets()": FunctionFragment;
+    "totalDebt()": FunctionFragment;
     "totalSupply()": FunctionFragment;
+    "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "withdraw(uint256,address)": FunctionFragment;
   };
@@ -116,6 +123,7 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
       | "coverageLiquidity"
       | "currentState"
       | "decimals"
+      | "delinquentDebt"
       | "deposit"
       | "depositUpTo"
       | "feeRecipient"
@@ -126,8 +134,12 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
       | "maxTotalSupply"
       | "maximumDeposit"
       | "name"
+      | "outstandingDebt"
       | "penaltyFeeBips"
       | "previousState"
+      | "repay"
+      | "repayDelinquentDebt"
+      | "repayOutstandingDebt"
       | "scaleFactor"
       | "scaledBalanceOf"
       | "setAnnualInterestBips"
@@ -135,7 +147,9 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
       | "setMaxTotalSupply"
       | "symbol"
       | "totalAssets"
+      | "totalDebt"
       | "totalSupply"
+      | "transfer"
       | "transferFrom"
       | "withdraw"
   ): FunctionFragment;
@@ -192,6 +206,10 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "delinquentDebt",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "deposit",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
@@ -229,11 +247,27 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "outstandingDebt",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "penaltyFeeBips",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "previousState",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "repay",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "repayDelinquentDebt",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "repayOutstandingDebt",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -261,9 +295,14 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
     functionFragment: "totalAssets",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "totalDebt", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transfer",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferFrom",
@@ -311,6 +350,10 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "delinquentDebt",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "depositUpTo",
@@ -346,11 +389,24 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "outstandingDebt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "penaltyFeeBips",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "previousState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "repay", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "repayDelinquentDebt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "repayOutstandingDebt",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -378,10 +434,12 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
     functionFragment: "totalAssets",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "totalDebt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
     data: BytesLike
@@ -391,6 +449,7 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "Borrow(uint256)": EventFragment;
+    "DebtRepaid(uint256)": EventFragment;
     "Deposit(address,uint256,uint256)": EventFragment;
     "FeesCollected(uint256)": EventFragment;
     "MaxSupplyUpdated(uint256)": EventFragment;
@@ -401,6 +460,7 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Borrow"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DebtRepaid"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesCollected"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MaxSupplyUpdated"): EventFragment;
@@ -410,9 +470,9 @@ export interface WildcatVaultTokenInterface extends utils.Interface {
 }
 
 export interface ApprovalEventObject {
-  owner: string;
-  spender: string;
-  value: BigNumber;
+  arg0: string;
+  arg1: string;
+  arg2: BigNumber;
 }
 export type ApprovalEvent = TypedEvent<
   [string, string, BigNumber],
@@ -422,16 +482,23 @@ export type ApprovalEvent = TypedEvent<
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 
 export interface BorrowEventObject {
-  assetAmount: BigNumber;
+  arg0: BigNumber;
 }
 export type BorrowEvent = TypedEvent<[BigNumber], BorrowEventObject>;
 
 export type BorrowEventFilter = TypedEventFilter<BorrowEvent>;
 
+export interface DebtRepaidEventObject {
+  arg0: BigNumber;
+}
+export type DebtRepaidEvent = TypedEvent<[BigNumber], DebtRepaidEventObject>;
+
+export type DebtRepaidEventFilter = TypedEventFilter<DebtRepaidEvent>;
+
 export interface DepositEventObject {
-  account: string;
-  assetAmount: BigNumber;
-  scaledAmount: BigNumber;
+  arg0: string;
+  arg1: BigNumber;
+  arg2: BigNumber;
 }
 export type DepositEvent = TypedEvent<
   [string, BigNumber, BigNumber],
@@ -441,7 +508,7 @@ export type DepositEvent = TypedEvent<
 export type DepositEventFilter = TypedEventFilter<DepositEvent>;
 
 export interface FeesCollectedEventObject {
-  assets: BigNumber;
+  arg0: BigNumber;
 }
 export type FeesCollectedEvent = TypedEvent<
   [BigNumber],
@@ -451,7 +518,7 @@ export type FeesCollectedEvent = TypedEvent<
 export type FeesCollectedEventFilter = TypedEventFilter<FeesCollectedEvent>;
 
 export interface MaxSupplyUpdatedEventObject {
-  assets: BigNumber;
+  arg0: BigNumber;
 }
 export type MaxSupplyUpdatedEvent = TypedEvent<
   [BigNumber],
@@ -462,9 +529,9 @@ export type MaxSupplyUpdatedEventFilter =
   TypedEventFilter<MaxSupplyUpdatedEvent>;
 
 export interface TransferEventObject {
-  from: string;
-  to: string;
-  value: BigNumber;
+  arg0: string;
+  arg1: string;
+  arg2: BigNumber;
 }
 export type TransferEvent = TypedEvent<
   [string, string, BigNumber],
@@ -474,16 +541,16 @@ export type TransferEvent = TypedEvent<
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
 export interface VaultClosedEventObject {
-  timestamp: BigNumber;
+  arg0: BigNumber;
 }
 export type VaultClosedEvent = TypedEvent<[BigNumber], VaultClosedEventObject>;
 
 export type VaultClosedEventFilter = TypedEventFilter<VaultClosedEvent>;
 
 export interface WithdrawalEventObject {
-  account: string;
-  assetAmount: BigNumber;
-  scaledAmount: BigNumber;
+  arg0: string;
+  arg1: BigNumber;
+  arg2: BigNumber;
 }
 export type WithdrawalEvent = TypedEvent<
   [string, BigNumber, BigNumber],
@@ -569,6 +636,8 @@ export interface WildcatVaultToken extends BaseContract {
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
+    delinquentDebt(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     deposit(
       amount: PromiseOrValue<BigNumberish>,
       to: PromiseOrValue<string>,
@@ -597,9 +666,24 @@ export interface WildcatVaultToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
+    outstandingDebt(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     penaltyFeeBips(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     previousState(overrides?: CallOverrides): Promise<[VaultStateStructOutput]>;
+
+    repay(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    repayDelinquentDebt(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    repayOutstandingDebt(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     scaleFactor(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -627,7 +711,15 @@ export interface WildcatVaultToken extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    totalDebt(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    transfer(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     transferFrom(
       from: PromiseOrValue<string>,
@@ -691,6 +783,8 @@ export interface WildcatVaultToken extends BaseContract {
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
+  delinquentDebt(overrides?: CallOverrides): Promise<BigNumber>;
+
   deposit(
     amount: PromiseOrValue<BigNumberish>,
     to: PromiseOrValue<string>,
@@ -719,9 +813,24 @@ export interface WildcatVaultToken extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
+  outstandingDebt(overrides?: CallOverrides): Promise<BigNumber>;
+
   penaltyFeeBips(overrides?: CallOverrides): Promise<BigNumber>;
 
   previousState(overrides?: CallOverrides): Promise<VaultStateStructOutput>;
+
+  repay(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  repayDelinquentDebt(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  repayOutstandingDebt(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   scaleFactor(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -749,7 +858,15 @@ export interface WildcatVaultToken extends BaseContract {
 
   totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
+  totalDebt(overrides?: CallOverrides): Promise<BigNumber>;
+
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+  transfer(
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   transferFrom(
     from: PromiseOrValue<string>,
@@ -809,6 +926,8 @@ export interface WildcatVaultToken extends BaseContract {
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
+    delinquentDebt(overrides?: CallOverrides): Promise<BigNumber>;
+
     deposit(
       amount: PromiseOrValue<BigNumberish>,
       to: PromiseOrValue<string>,
@@ -837,9 +956,20 @@ export interface WildcatVaultToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
+    outstandingDebt(overrides?: CallOverrides): Promise<BigNumber>;
+
     penaltyFeeBips(overrides?: CallOverrides): Promise<BigNumber>;
 
     previousState(overrides?: CallOverrides): Promise<VaultStateStructOutput>;
+
+    repay(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    repayDelinquentDebt(overrides?: CallOverrides): Promise<void>;
+
+    repayOutstandingDebt(overrides?: CallOverrides): Promise<void>;
 
     scaleFactor(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -867,7 +997,15 @@ export interface WildcatVaultToken extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
+    totalDebt(overrides?: CallOverrides): Promise<BigNumber>;
+
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transfer(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     transferFrom(
       from: PromiseOrValue<string>,
@@ -885,60 +1023,47 @@ export interface WildcatVaultToken extends BaseContract {
 
   filters: {
     "Approval(address,address,uint256)"(
-      owner?: PromiseOrValue<string> | null,
-      spender?: PromiseOrValue<string> | null,
-      value?: null
+      arg0?: null,
+      arg1?: null,
+      arg2?: null
     ): ApprovalEventFilter;
-    Approval(
-      owner?: PromiseOrValue<string> | null,
-      spender?: PromiseOrValue<string> | null,
-      value?: null
-    ): ApprovalEventFilter;
+    Approval(arg0?: null, arg1?: null, arg2?: null): ApprovalEventFilter;
 
-    "Borrow(uint256)"(assetAmount?: null): BorrowEventFilter;
-    Borrow(assetAmount?: null): BorrowEventFilter;
+    "Borrow(uint256)"(arg0?: null): BorrowEventFilter;
+    Borrow(arg0?: null): BorrowEventFilter;
+
+    "DebtRepaid(uint256)"(arg0?: null): DebtRepaidEventFilter;
+    DebtRepaid(arg0?: null): DebtRepaidEventFilter;
 
     "Deposit(address,uint256,uint256)"(
-      account?: PromiseOrValue<string> | null,
-      assetAmount?: null,
-      scaledAmount?: null
+      arg0?: null,
+      arg1?: null,
+      arg2?: null
     ): DepositEventFilter;
-    Deposit(
-      account?: PromiseOrValue<string> | null,
-      assetAmount?: null,
-      scaledAmount?: null
-    ): DepositEventFilter;
+    Deposit(arg0?: null, arg1?: null, arg2?: null): DepositEventFilter;
 
-    "FeesCollected(uint256)"(assets?: null): FeesCollectedEventFilter;
-    FeesCollected(assets?: null): FeesCollectedEventFilter;
+    "FeesCollected(uint256)"(arg0?: null): FeesCollectedEventFilter;
+    FeesCollected(arg0?: null): FeesCollectedEventFilter;
 
-    "MaxSupplyUpdated(uint256)"(assets?: null): MaxSupplyUpdatedEventFilter;
-    MaxSupplyUpdated(assets?: null): MaxSupplyUpdatedEventFilter;
+    "MaxSupplyUpdated(uint256)"(arg0?: null): MaxSupplyUpdatedEventFilter;
+    MaxSupplyUpdated(arg0?: null): MaxSupplyUpdatedEventFilter;
 
     "Transfer(address,address,uint256)"(
-      from?: PromiseOrValue<string> | null,
-      to?: PromiseOrValue<string> | null,
-      value?: null
+      arg0?: null,
+      arg1?: null,
+      arg2?: null
     ): TransferEventFilter;
-    Transfer(
-      from?: PromiseOrValue<string> | null,
-      to?: PromiseOrValue<string> | null,
-      value?: null
-    ): TransferEventFilter;
+    Transfer(arg0?: null, arg1?: null, arg2?: null): TransferEventFilter;
 
-    "VaultClosed(uint256)"(timestamp?: null): VaultClosedEventFilter;
-    VaultClosed(timestamp?: null): VaultClosedEventFilter;
+    "VaultClosed(uint256)"(arg0?: null): VaultClosedEventFilter;
+    VaultClosed(arg0?: null): VaultClosedEventFilter;
 
     "Withdrawal(address,uint256,uint256)"(
-      account?: PromiseOrValue<string> | null,
-      assetAmount?: null,
-      scaledAmount?: null
+      arg0?: null,
+      arg1?: null,
+      arg2?: null
     ): WithdrawalEventFilter;
-    Withdrawal(
-      account?: PromiseOrValue<string> | null,
-      assetAmount?: null,
-      scaledAmount?: null
-    ): WithdrawalEventFilter;
+    Withdrawal(arg0?: null, arg1?: null, arg2?: null): WithdrawalEventFilter;
   };
 
   estimateGas: {
@@ -990,6 +1115,8 @@ export interface WildcatVaultToken extends BaseContract {
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
+    delinquentDebt(overrides?: CallOverrides): Promise<BigNumber>;
+
     deposit(
       amount: PromiseOrValue<BigNumberish>,
       to: PromiseOrValue<string>,
@@ -1018,9 +1145,24 @@ export interface WildcatVaultToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
+    outstandingDebt(overrides?: CallOverrides): Promise<BigNumber>;
+
     penaltyFeeBips(overrides?: CallOverrides): Promise<BigNumber>;
 
     previousState(overrides?: CallOverrides): Promise<BigNumber>;
+
+    repay(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    repayDelinquentDebt(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    repayOutstandingDebt(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     scaleFactor(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1048,7 +1190,15 @@ export interface WildcatVaultToken extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
+    totalDebt(overrides?: CallOverrides): Promise<BigNumber>;
+
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transfer(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     transferFrom(
       from: PromiseOrValue<string>,
@@ -1117,6 +1267,8 @@ export interface WildcatVaultToken extends BaseContract {
 
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    delinquentDebt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     deposit(
       amount: PromiseOrValue<BigNumberish>,
       to: PromiseOrValue<string>,
@@ -1149,9 +1301,24 @@ export interface WildcatVaultToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    outstandingDebt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     penaltyFeeBips(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     previousState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    repay(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    repayDelinquentDebt(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    repayOutstandingDebt(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     scaleFactor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1179,7 +1346,15 @@ export interface WildcatVaultToken extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    totalDebt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    transfer(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     transferFrom(
       from: PromiseOrValue<string>,

@@ -82,10 +82,10 @@ export interface WildcatVaultControllerInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "ownershipHandoverExpiresAt(address)": FunctionFragment;
     "ownershipHandoverValidFor()": FunctionFragment;
-    "reduceInterestRate(address,uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
     "resetLiquidityCoverage(address)": FunctionFragment;
+    "setAnnualInterestBips(address,uint256)": FunctionFragment;
     "temporaryExcessLiquidityCoverage(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "vaults(address)": FunctionFragment;
@@ -102,10 +102,10 @@ export interface WildcatVaultControllerInterface extends utils.Interface {
       | "owner"
       | "ownershipHandoverExpiresAt"
       | "ownershipHandoverValidFor"
-      | "reduceInterestRate"
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "resetLiquidityCoverage"
+      | "setAnnualInterestBips"
       | "temporaryExcessLiquidityCoverage"
       | "transferOwnership"
       | "vaults"
@@ -146,10 +146,6 @@ export interface WildcatVaultControllerInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "reduceInterestRate",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
@@ -160,6 +156,10 @@ export interface WildcatVaultControllerInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "resetLiquidityCoverage",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAnnualInterestBips",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "temporaryExcessLiquidityCoverage",
@@ -205,10 +205,6 @@ export interface WildcatVaultControllerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "reduceInterestRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
@@ -218,6 +214,10 @@ export interface WildcatVaultControllerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "resetLiquidityCoverage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAnnualInterestBips",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -242,7 +242,7 @@ export interface WildcatVaultControllerInterface extends utils.Interface {
 }
 
 export interface OwnershipHandoverCanceledEventObject {
-  pendingOwner: string;
+  arg0: string;
 }
 export type OwnershipHandoverCanceledEvent = TypedEvent<
   [string],
@@ -253,7 +253,7 @@ export type OwnershipHandoverCanceledEventFilter =
   TypedEventFilter<OwnershipHandoverCanceledEvent>;
 
 export interface OwnershipHandoverRequestedEventObject {
-  pendingOwner: string;
+  arg0: string;
 }
 export type OwnershipHandoverRequestedEvent = TypedEvent<
   [string],
@@ -264,8 +264,8 @@ export type OwnershipHandoverRequestedEventFilter =
   TypedEventFilter<OwnershipHandoverRequestedEvent>;
 
 export interface OwnershipTransferredEventObject {
-  oldOwner: string;
-  newOwner: string;
+  arg0: string;
+  arg1: string;
 }
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string],
@@ -337,12 +337,6 @@ export interface WildcatVaultController extends BaseContract {
 
     ownershipHandoverValidFor(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    reduceInterestRate(
-      vault: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -353,6 +347,12 @@ export interface WildcatVaultController extends BaseContract {
 
     resetLiquidityCoverage(
       vault: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setAnnualInterestBips(
+      vault: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -412,12 +412,6 @@ export interface WildcatVaultController extends BaseContract {
 
   ownershipHandoverValidFor(overrides?: CallOverrides): Promise<BigNumber>;
 
-  reduceInterestRate(
-    vault: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   renounceOwnership(
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -428,6 +422,12 @@ export interface WildcatVaultController extends BaseContract {
 
   resetLiquidityCoverage(
     vault: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setAnnualInterestBips(
+    vault: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -485,18 +485,18 @@ export interface WildcatVaultController extends BaseContract {
 
     ownershipHandoverValidFor(overrides?: CallOverrides): Promise<BigNumber>;
 
-    reduceInterestRate(
-      vault: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
 
     resetLiquidityCoverage(
       vault: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setAnnualInterestBips(
+      vault: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -523,26 +523,26 @@ export interface WildcatVaultController extends BaseContract {
 
   filters: {
     "OwnershipHandoverCanceled(address)"(
-      pendingOwner?: PromiseOrValue<string> | null
+      arg0?: null
     ): OwnershipHandoverCanceledEventFilter;
     OwnershipHandoverCanceled(
-      pendingOwner?: PromiseOrValue<string> | null
+      arg0?: null
     ): OwnershipHandoverCanceledEventFilter;
 
     "OwnershipHandoverRequested(address)"(
-      pendingOwner?: PromiseOrValue<string> | null
+      arg0?: null
     ): OwnershipHandoverRequestedEventFilter;
     OwnershipHandoverRequested(
-      pendingOwner?: PromiseOrValue<string> | null
+      arg0?: null
     ): OwnershipHandoverRequestedEventFilter;
 
     "OwnershipTransferred(address,address)"(
-      oldOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
+      arg0?: null,
+      arg1?: null
     ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
-      oldOwner?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
+      arg0?: null,
+      arg1?: null
     ): OwnershipTransferredEventFilter;
   };
 
@@ -582,12 +582,6 @@ export interface WildcatVaultController extends BaseContract {
 
     ownershipHandoverValidFor(overrides?: CallOverrides): Promise<BigNumber>;
 
-    reduceInterestRate(
-      vault: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -598,6 +592,12 @@ export interface WildcatVaultController extends BaseContract {
 
     resetLiquidityCoverage(
       vault: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setAnnualInterestBips(
+      vault: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -655,12 +655,6 @@ export interface WildcatVaultController extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    reduceInterestRate(
-      vault: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     renounceOwnership(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -671,6 +665,12 @@ export interface WildcatVaultController extends BaseContract {
 
     resetLiquidityCoverage(
       vault: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setAnnualInterestBips(
+      vault: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

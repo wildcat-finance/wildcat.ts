@@ -5,7 +5,8 @@ export type {
   AccountVaultInfoStructOutput,
   ControlStatusStructOutput,
   TokenMetadataStructOutput,
-  VaultDataStructOutput
+  VaultDataStructOutput,
+  VaultDataWithAccountStructOutput
 } from "./VaultLens";
 export type {
   WildcatVaultController,
