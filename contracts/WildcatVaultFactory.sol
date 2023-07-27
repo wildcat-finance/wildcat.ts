@@ -26,4 +26,10 @@ interface WildcatVaultFactory {
   function deployVault (VaultParameters calldata vaultParameters) external returns (address vault);
 
   function getVaultParameters () external view returns (VaultParameters memory);
+
+  function getVaults (uint256 start, uint256 length) external view returns (address[] memory);
+
+  function getVaultsCount () external view returns (uint256);
+
+  function vaults (uint256) external view returns (address);
 }

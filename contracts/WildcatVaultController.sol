@@ -47,13 +47,13 @@ interface WildcatVaultController {
 
   function ownershipHandoverValidFor () external view returns (uint64);
 
-  function reduceInterestRate (address vault, uint256 amount) external;
-
   function renounceOwnership () external payable;
 
   function requestOwnershipHandover () external payable;
 
   function resetLiquidityCoverage (address vault) external;
+
+  function setAnnualInterestBips (address vault, uint256 amount) external;
 
   function temporaryExcessLiquidityCoverage (address) external view returns (uint128 liquidityCoverageRatio, uint128 expiry);
 

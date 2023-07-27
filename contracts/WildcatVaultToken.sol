@@ -13,121 +13,141 @@ struct VaultState {
 }
 
 interface WildcatVaultToken {
-  error BorrowAmountTooHigh ();
+  error BorrowAmountTooHigh();
 
-  error FeeSetWithoutRecipient ();
+  error FeeSetWithoutRecipient();
 
-  error InsufficientCoverageForFeeWithdrawal ();
+  error InsufficientCoverageForFeeWithdrawal();
 
-  error InterestFeeTooHigh ();
+  error InsufficientCoverageForNewLiquidityRatio();
 
-  error InterestRateTooHigh ();
+  error InterestFeeTooHigh();
 
-  error LiquidityCoverageRatioTooHigh ();
+  error InterestRateTooHigh();
 
-  error MaxSupplyExceeded ();
+  error LiquidityCoverageRatioTooHigh();
 
-  error NewMaxSupplyTooLow ();
+  error MaxSupplyExceeded();
 
-  error NoReentrantCalls ();
+  error NewMaxSupplyTooLow();
 
-  error NotBorrower ();
+  error NoReentrantCalls();
 
-  error NotController ();
+  error NotBorrower();
 
-  error PenaltyFeeTooHigh ();
+  error NotController();
 
-  error UnknownNameQueryError ();
+  error NullRepayAmount();
 
-  error UnknownSymbolQueryError ();
+  error PenaltyFeeTooHigh();
 
-  event Approval (address,address,uint256);
+  error UnknownNameQueryError();
 
-  event Borrow (uint256);
+  error UnknownSymbolQueryError();
 
-  event Deposit (address,uint256,uint256);
+  event Approval(address, address, uint256);
 
-  event FeesCollected (uint256);
+  event Borrow(uint256);
 
-  event MaxSupplyUpdated (uint256);
+  event DebtRepaid(uint256);
 
-  event Transfer (address,address,uint256);
+  event Deposit(address, uint256, uint256);
 
-  event VaultClosed (uint256);
+  event FeesCollected(uint256);
 
-  event Withdrawal (address,uint256,uint256);
+  event MaxSupplyUpdated(uint256);
 
-  function accruedProtocolFees () external view returns (uint256 _accruedProtocolFees);
+  event Transfer(address, address, uint256);
 
-  function allowance (address, address) external view returns (uint256);
+  event VaultClosed(uint256);
 
-  function annualInterestBips () external view returns (uint256);
+  event Withdrawal(address, uint256, uint256);
 
-  function approve (address spender, uint256 amount) external returns (bool);
+  function accruedProtocolFees() external view returns (uint256 _accruedProtocolFees);
 
-  function asset () external view returns (address);
+  function allowance(address, address) external view returns (uint256);
 
-  function balanceOf (address account) external view returns (uint256);
+  function annualInterestBips() external view returns (uint256);
 
-  function borrow (uint256 amount) external;
+  function approve(address spender, uint256 amount) external returns (bool);
 
-  function borrowableAssets () external view returns (uint256);
+  function asset() external view returns (address);
 
-  function borrower () external view returns (address);
+  function balanceOf(address account) external view returns (uint256);
 
-  function closeVault () external;
+  function borrow(uint256 amount) external;
 
-  function collectFees () external;
+  function borrowableAssets() external view returns (uint256);
 
-  function controller () external view returns (address);
+  function borrower() external view returns (address);
 
-  function coverageLiquidity () external view returns (uint256);
+  function closeVault() external;
 
-  function currentState () external view returns (VaultState memory);
+  function collectFees() external;
 
-  function decimals () external view returns (uint8);
+  function controller() external view returns (address);
 
-  function deposit (uint256 amount, address to) external;
+  function coverageLiquidity() external view returns (uint256);
 
-  function depositUpTo (uint256 amount, address to) external returns (uint256);
+  function currentState() external view returns (VaultState memory);
 
-  function feeRecipient () external view returns (address);
+  function decimals() external view returns (uint8);
 
-  function gracePeriod () external view returns (uint256);
+  function delinquentDebt() external view returns (uint256);
 
-  function interestFeeBips () external view returns (uint256);
+  function deposit(uint256 amount, address to) external;
 
-  function lastAccruedProtocolFees () external view returns (uint256);
+  function depositUpTo(uint256 amount, address to) external returns (uint256);
 
-  function liquidityCoverageRatio () external view returns (uint256);
+  function feeRecipient() external view returns (address);
 
-  function maxTotalSupply () external view returns (uint256);
+  function gracePeriod() external view returns (uint256);
 
-  function maximumDeposit () external view returns (uint256);
+  function interestFeeBips() external view returns (uint256);
 
-  function name () external view returns (string memory);
+  function lastAccruedProtocolFees() external view returns (uint256);
 
-  function penaltyFeeBips () external view returns (uint256);
+  function liquidityCoverageRatio() external view returns (uint256);
 
-  function previousState () external view returns (VaultState memory);
+  function maxTotalSupply() external view returns (uint256);
 
-  function scaleFactor () external view returns (uint256);
+  function maximumDeposit() external view returns (uint256);
 
-  function scaledBalanceOf (address) external view returns (uint256);
+  function name() external view returns (string memory);
 
-  function setAnnualInterestBips (uint256 _annualInterestBips) external;
+  function outstandingDebt() external view returns (uint256);
 
-  function setLiquidityCoverageRatio (uint256 _liquidityCoverageRatio) external;
+  function penaltyFeeBips() external view returns (uint256);
 
-  function setMaxTotalSupply (uint256 _maxTotalSupply) external;
+  function previousState() external view returns (VaultState memory);
 
-  function symbol () external view returns (string memory);
+  function repayDelinquentDebt() external;
 
-  function totalAssets () external view returns (uint256);
+  function repayOutstandingDebt() external;
 
-  function totalSupply () external view returns (uint256);
+  function repay(uint256) external;
 
-  function transferFrom (address from, address to, uint256 amount) external returns (bool);
+  function scaleFactor() external view returns (uint256);
 
-  function withdraw (uint256 amount, address to) external;
+  function scaledBalanceOf(address) external view returns (uint256);
+
+  function setAnnualInterestBips(uint256 _annualInterestBips) external;
+
+  function setLiquidityCoverageRatio(uint256 _liquidityCoverageRatio) external;
+
+  function setMaxTotalSupply(uint256 _maxTotalSupply) external;
+
+  function symbol() external view returns (string memory);
+
+  function totalAssets() external view returns (uint256);
+
+  function totalDebt() external view returns (uint256);
+
+  function totalSupply() external view returns (uint256);
+
+  function transfer(address to, uint256 amount) external returns (bool);
+
+  function transferFrom(address from, address to, uint256 amount) external returns (bool);
+
+  function withdraw(uint256 amount, address to) external;
 }
