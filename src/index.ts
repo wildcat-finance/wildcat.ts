@@ -1,44 +1,28 @@
 import { VaultAccount } from "./account";
-import { getFactoryContract, getLensContract } from "./constants";
 import { VaultFactory } from "./factory";
-import { Provider, Signer, SignerOrProvider } from "./types";
+import { Token } from "./token";
 import { Vault } from "./vault";
-export * from "./vault";
-export { Signer, Provider, SignerOrProvider } from "./types";
+
 export * from "./account";
+export * from "./constants";
 export * from "./controller";
-export * from "./token";
 export * from "./factory";
+export * from "./mockerc20factory";
+export * from "./token";
+export * from "./types";
+export * from "./vault";
 
-export const getFactory = VaultFactory.getFactory;
+export const {
+  getVaultData,
+  getVaultsData,
+  getAllVaultsData,
+  getVaultsCount,
+  getPaginatedVaultsData
+} = Vault;
 
-export async function getAllVaults(provider: SignerOrProvider): Promise<Vault[]> {
-  const factory = getFactoryContract(provider);
-  const currentBlock = await (provider instanceof Provider
-    ? provider
-    : provider.provider!
-  ).getBlockNumber();
-  const vaults: string[] = [];
-  for (let block = 3399789; block < currentBlock; block += 5000) {
-    const from = block;
-    const to = Math.min(block + 5000, currentBlock);
-    const newVaults = (await factory.queryFilter(factory.filters.VaultDeployed(), from, to)).map(
-      ({ args: { vault } }) => vault
-    );
+export const { getFactory, deployVault } = VaultFactory;
 
-    vaults.push(...newVaults);
-  }
-  const metadatas = await getLensContract(provider).getVaultsMetadata(vaults);
-  return metadatas.map((x) => Vault.fromVaultMetadataStruct(x, provider));
-}
+export const { getVaultAccount, getVaultAccounts, getAllVaultAccounts, getPaginatedVaultAccounts } =
+  VaultAccount;
 
-export async function getAllVaultAccountsForUser(provider: Signer): Promise<VaultAccount[]> {
-  const account = await provider.getAddress();
-  const vaults = await getAllVaults(provider);
-  const accounts = (await Promise.all(vaults.map((vault) => vault.getAccountInfo(account)))).filter(
-    (acct) => {
-      return acct.userHasBalance || acct.userHasUnderlyingBalance || acct.isBorrower;
-    }
-  );
-  return accounts;
-}
+export const { getTokenData, getTokensData } = Token;

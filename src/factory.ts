@@ -1,8 +1,11 @@
-import { FactoryAddress } from "./constants";
+/* eslint-disable prettier/prettier */
+import { getAddress } from "ethers/lib/utils";
+import { ControllerAddress, FactoryAddress } from "./constants";
 import { Token, TokenAmount } from "./token";
 import { WildcatVaultFactory, WildcatVaultFactory__factory } from "./typechain";
-import { ContractWrapper, SignerOrProvider } from "./types";
+import { ContractWrapper, Signer, SignerOrProvider } from "./types";
 import { Vault } from "./vault";
+import { MakeOptional } from "./misc";
 
 export type VaultParameters = {
   asset: Token;
@@ -18,6 +21,9 @@ export type VaultParameters = {
   interestFeeBips: number;
   feeRecipient: string;
 };
+
+
+const DefaultFeeRecipient = getAddress(`0xf335`.padEnd(42, "0"));
 
 export class VaultFactory extends ContractWrapper<WildcatVaultFactory> {
   readonly contractFactory = WildcatVaultFactory__factory;
@@ -52,11 +58,16 @@ export class VaultFactory extends ContractWrapper<WildcatVaultFactory> {
       await this.signer.getAddress(),
       params.asset.address
     );
-    return Vault.getVault(address, this.provider);
+    return Vault.getVaultData(address, this.provider);
   }
 
-  static async deployVault(params: VaultParameters, provider: SignerOrProvider): Promise<Vault> {
-    const factory = VaultFactory.getFactory(provider);
-    return factory.deployVault(params);
+  static async deployVault(params: MakeOptional<VaultParameters, "feeRecipient" | "borrower" | "controller">, signer: Signer): Promise<Vault> {
+    const factory = VaultFactory.getFactory(signer);
+    return factory.deployVault({
+      feeRecipient: DefaultFeeRecipient,
+      controller: ControllerAddress,
+      borrower: await signer.getAddress(),
+      ...params
+    });
   }
 }

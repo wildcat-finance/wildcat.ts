@@ -133,9 +133,16 @@ export class Token extends ContractWrapper<IERC20> {
     );
   }
 
-  static async getTokenInfo(token: string, provider: SignerOrProvider): Promise<Token> {
+  static async getTokenData(token: string, provider: SignerOrProvider): Promise<Token> {
     const lens = getLensContract(provider);
     const metadata = await lens.getTokenInfo(token);
     return Token.fromTokenMetadataStruct(metadata, provider);
+  }
+
+  static async getTokensData(tokens: string[], provider: SignerOrProvider): Promise<Token[]> {
+    const lens = getLensContract(provider);
+    return lens
+      .getTokensInfo(tokens)
+      .then((metadata) => metadata.map((m) => Token.fromTokenMetadataStruct(m, provider)));
   }
 }

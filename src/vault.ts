@@ -23,6 +23,33 @@ export type CollateralizationInfo = {
 };
 
 export class Vault extends ContractWrapper<WildcatVaultToken> {
+  static readonly UpdatableKeys: Array<keyof Vault> = [
+    "vaultToken",
+    "underlyingToken",
+    "borrower",
+    "controller",
+    "feeRecipient",
+    "interestFeeBips",
+    "penaltyFeeBips",
+    "gracePeriod",
+    "annualInterestBips",
+    "liquidityCoverageBips",
+    "temporaryLiquidityCoverage",
+    "originalLiquidityCoverageBips",
+    "temporaryLiquidityCoverageExpiry",
+    "borrowableAssets",
+    "maxTotalSupply",
+    "scaledTotalSupply",
+    "totalSupply",
+    "totalAssets",
+    "coverageLiquidity",
+    "scaleFactor",
+    "lastAccruedProtocolFees",
+    "isDelinquent",
+    "timeDelinquent",
+    "lastInterestAccruedTimestamp"
+  ];
+
   constructor(
     public vaultToken: Token,
     public underlyingToken: Token,
@@ -63,33 +90,6 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
 
   readonly contractFactory = WildcatVaultToken__factory;
 
-  static readonly UpdatableKeys: Array<keyof Vault> = [
-    "vaultToken",
-    "underlyingToken",
-    "borrower",
-    "controller",
-    "feeRecipient",
-    "interestFeeBips",
-    "penaltyFeeBips",
-    "gracePeriod",
-    "annualInterestBips",
-    "liquidityCoverageBips",
-    "temporaryLiquidityCoverage",
-    "originalLiquidityCoverageBips",
-    "temporaryLiquidityCoverageExpiry",
-    "borrowableAssets",
-    "maxTotalSupply",
-    "scaledTotalSupply",
-    "totalSupply",
-    "totalAssets",
-    "coverageLiquidity",
-    "scaleFactor",
-    "lastAccruedProtocolFees",
-    "isDelinquent",
-    "timeDelinquent",
-    "lastInterestAccruedTimestamp"
-  ];
-
   /** @returns Address of the vault token */
   get address(): string {
     return this.vaultToken.address;
@@ -124,6 +124,20 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
     const coverage = this.coverageLiquidity;
 
     return coverage.satsub(collateral);
+  }
+
+  get delinquentDebt(): TokenAmount {
+    const collateral = this.totalAssets;
+    const coverage = this.coverageLiquidity;
+
+    return collateral.satsub(coverage);
+  }
+
+  get outstandingDebt(): TokenAmount {
+    const totalSupply = this.totalSupply;
+    const collateral = this.totalAssets;
+
+    return totalSupply.satsub(collateral);
   }
 
   /** @returns Address of underlying token */
@@ -162,7 +176,7 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
 
   /** @returns Whether the borrower can change the APR */
   get canChangeAPR(): boolean {
-    return this.temporaryLiquidityCoverageExpiry == 0;
+    return this.temporaryLiquidityCoverageExpiry === 0 && this.collateralization.actualRatio >= 90;
   }
 
   get isClosed(): boolean {
@@ -170,7 +184,7 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
   }
 
   async update(): Promise<void> {
-    const vault = await Vault.getVault(this.address, this.provider);
+    const vault = await Vault.getVaultData(this.address, this.provider);
     updateObject(this, vault, Vault.UpdatableKeys);
   }
 
@@ -219,9 +233,47 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
     );
   }
 
-  static async getVault(vault: string, provider: SignerOrProvider): Promise<Vault> {
+  static async getVaultData(vault: string, provider: SignerOrProvider): Promise<Vault> {
     const lens = getLensContract(provider);
     const data = await lens.getVaultData(vault);
     return Vault.fromVaultMetadataStruct(data, provider);
+  }
+
+  static async getVaultsData(vaults: string[], provider: SignerOrProvider): Promise<Vault[]> {
+    const lens = getLensContract(provider);
+    const data = await lens.getVaultsData(vaults);
+    return data.map((vault) => Vault.fromVaultMetadataStruct(vault, provider));
+  }
+
+  /**
+   * Get all deployed vaults.
+   */
+  static async getAllVaultsData(provider: SignerOrProvider): Promise<Vault[]> {
+    const lens = getLensContract(provider);
+    return lens
+      .getAllVaultsData()
+      .then((data) => data.map((vault) => Vault.fromVaultMetadataStruct(vault, provider)));
+  }
+
+  /**
+   * Get the total number of deployed vaults.
+   */
+  static async getVaultsCount(provider: SignerOrProvider): Promise<number> {
+    const lens = getLensContract(provider);
+    return lens.getVaultsCount().then((count) => count.toNumber());
+  }
+
+  /**
+   * Get a paginated list of deployed vaults.
+   */
+  static async getPaginatedVaultsData(
+    provider: SignerOrProvider,
+    start = 0,
+    count: number
+  ): Promise<Vault[]> {
+    const lens = getLensContract(provider);
+    return lens
+      .getPaginatedVaultsData(start, count)
+      .then((data) => data.map((vault) => Vault.fromVaultMetadataStruct(vault, provider)));
   }
 }
