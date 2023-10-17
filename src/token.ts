@@ -1,9 +1,10 @@
 import { BigNumber, BigNumberish, ContractTransaction } from "ethers";
-import { formatUnits, parseUnits } from "ethers/lib/utils";
+import { parseUnits } from "ethers/lib/utils";
 import { MockERC20__factory, TokenMetadataStructOutput } from "./typechain";
 import { ContractWrapper, SignerOrProvider } from "./types";
 import { getLensContract } from "./constants";
 import { IERC20, IERC20__factory } from "./typechain";
+import { formatBnFixed } from "./misc";
 
 type RhsAmount = BigNumberish | TokenAmount;
 const toBn = (amount: RhsAmount): BigNumber => {
@@ -13,11 +14,21 @@ const toBn = (amount: RhsAmount): BigNumber => {
   return BigNumber.from(amount);
 };
 
-export const maxTokenAmount = (...amounts: TokenAmount[]): TokenAmount =>
-  amounts.sort((a, b) => +a.lt(b))[0];
+export const maxTokenAmount = (...amounts: TokenAmount[]): TokenAmount => {
+  let max = amounts[0];
+  for (let i = 1; i < amounts.length; i++) {
+    if (amounts[i].gt(max)) max = amounts[i];
+  }
+  return max;
+};
 
-export const minTokenAmount = (...amounts: TokenAmount[]): TokenAmount =>
-  amounts.sort((a, b) => +a.gt(b))[0];
+export const minTokenAmount = (...amounts: TokenAmount[]): TokenAmount => {
+  let min = amounts[0];
+  for (let i = 1; i < amounts.length; i++) {
+    if (amounts[i].lt(min)) min = amounts[i];
+  }
+  return min;
+};
 
 export class TokenAmount {
   constructor(public raw: BigNumber, public token: Token) {}
@@ -34,9 +45,8 @@ export class TokenAmount {
     return this.token.decimals;
   }
 
-  toFixed(digits = this.decimals): number {
-    const str = formatUnits(this.raw, this.decimals);
-    return +parseFloat(str).toFixed(digits);
+  toFixed(digits = this.decimals): string {
+    return formatBnFixed(this.raw, this.decimals, digits);
   }
 
   format(digits = this.decimals, withSymbol?: boolean): string {

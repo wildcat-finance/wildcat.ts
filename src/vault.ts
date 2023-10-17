@@ -126,11 +126,15 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
     return coverage.satsub(collateral);
   }
 
+  get isIncurringPenalties(): boolean {
+    return this.isDelinquent && this.timeDelinquent > this.gracePeriod;
+  }
+
   get delinquentDebt(): TokenAmount {
     const collateral = this.totalAssets;
     const coverage = this.coverageLiquidity;
 
-    return collateral.satsub(coverage);
+    return coverage.satsub(collateral);
   }
 
   get outstandingDebt(): TokenAmount {
@@ -175,8 +179,8 @@ export class Vault extends ContractWrapper<WildcatVaultToken> {
   }
 
   /** @returns Whether the borrower can change the APR */
-  get canChangeAPR(): boolean {
-    return this.temporaryLiquidityCoverageExpiry === 0 && this.collateralization.actualRatio >= 90;
+  get canReduceAPR(): boolean {
+    return this.collateralization.actualRatio >= 90;
   }
 
   get isClosed(): boolean {

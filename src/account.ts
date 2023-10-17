@@ -21,6 +21,21 @@ export type DepositStatus =
       status: "Ready";
     };
 
+export type RepayStatus =
+  | {
+      status: "InsufficientBalance";
+    }
+  | {
+      status: "ExceedsOutstandingDebt";
+    }
+  | {
+      status: "InsufficientAllowance";
+      remainder: TokenAmount;
+    }
+  | {
+      status: "Ready";
+    };
+
 const isVaultInstanceArray = (vaults: Vault[] | string[]): vaults is Vault[] => {
   return typeof vaults[0] !== "string";
 };
@@ -56,7 +71,7 @@ export class VaultAccount {
     return this.underlyingBalance.gt(0);
   }
 
-  isBorrower(): boolean {
+  get isBorrower(): boolean {
     return this.vault.borrower.toLowerCase() === this.account.toLowerCase();
   }
 
@@ -67,14 +82,25 @@ export class VaultAccount {
     if (newAprBips > 10000) {
       throw Error("APR must be less than 100% (10000 BIPS)");
     }
-    if (!this.vault.canChangeAPR) {
-      throw Error("APR cannot be changed - change in progress");
-    }
     const controller = getControllerContract(this.vault.provider);
     if (this.vault.controller !== controller.address) {
       throw Error(`Unexpected controller address: ${this.vault.controller}`);
     }
     return controller.setAnnualInterestBips(this.vault.address, newAprBips);
+  }
+
+  /* ------ Approval ------ */
+
+  isApprovedFor(amount: TokenAmount): boolean {
+    return this.underlyingApproval.gte(amount.raw);
+  }
+
+  /**
+   * @returns Remaining amount of underlying token user must approve
+   *          vault to spend to make a deposit.
+   */
+  getAllowanceRemainder(amount: TokenAmount): TokenAmount {
+    return amount.satsub(this.underlyingApproval);
   }
 
   async approveAllowanceRemainder(amount: TokenAmount): Promise<ContractTransaction> {
@@ -85,6 +111,43 @@ export class VaultAccount {
     }
     amount = this.getAllowanceRemainder(amount);
     return token.contract.approve(this.vault.address, amount.raw);
+  }
+
+  /* ------ Deposits ------ */
+
+  /**
+   * @returns Maximum amount of underlying token user can deposit
+   *          given their underlying balance and the vault's max supply
+   */
+  get maximumDeposit(): TokenAmount {
+    return minTokenAmount(this.vault.maximumDeposit, this.underlyingBalance);
+  }
+
+  /**
+   * @returns Amount of underlying token user can actually deposit
+   *          given a target amount.
+   */
+  getDepositAmount(amount: TokenAmount): TokenAmount {
+    return minTokenAmount(amount, this.maximumDeposit);
+  }
+
+  /**
+   * @returns Status for deposit
+   */
+  checkDepositStep(amount: TokenAmount): DepositStatus {
+    if (amount.gt(this.vault.maximumDeposit)) {
+      return { status: "ExceedsMaximumDeposit" };
+    }
+    if (amount.gt(this.underlyingBalance)) {
+      return { status: "InsufficientBalance" };
+    }
+    if (!this.isApprovedFor(amount)) {
+      return {
+        status: "InsufficientAllowance",
+        remainder: this.getAllowanceRemainder(amount)
+      };
+    }
+    return { status: "Ready" };
   }
 
   // TODO: Add support for depositUpTo
@@ -99,12 +162,68 @@ export class VaultAccount {
     return this.vault.contract.deposit(amount.raw, this.account);
   }
 
+  /* ------ Withdrawals ------ */
+
+  /**
+   * @returns Amount of underlying token user can withdraw
+   *          given their vault balance and the vault's assets.
+   */
+  get maximumWithdrawal(): TokenAmount {
+    return minTokenAmount(this.vault.totalAssets, this.vaultBalance);
+  }
+
+  /**
+   * @returns Amount of underlying token user can actually withdraw
+   *          given a target amount.
+   */
+  getWithdrawalAmount(amount: TokenAmount): TokenAmount {
+    return minTokenAmount(amount, this.maximumWithdrawal);
+  }
+
   async withdraw(amount: TokenAmount): Promise<ContractTransaction> {
     const signer = await this.vault.signer.getAddress();
     if (signer !== this.account) {
       throw Error(`VaultAccount signer ${signer} does not match ${this.account}`);
     }
     return this.vault.contract.withdraw(amount.raw, this.account);
+  }
+
+  /* ------ Repaying ------ */
+
+  get maximumRepay(): TokenAmount {
+    return minTokenAmount(this.vault.outstandingDebt, this.underlyingBalance);
+  }
+
+  get canRepayDelinquent(): boolean {
+    return this.vault.delinquentDebt.lt(this.maximumRepay) && this.isBorrower;
+  }
+
+  get canRepayOutstanding(): boolean {
+    return this.vault.outstandingDebt.lt(this.maximumRepay) && this.isBorrower;
+  }
+
+  /**
+   * @returns Amount of underlying token user can actually repay
+   *          given a target amount.
+   */
+  getRepayAmount(amount: TokenAmount): TokenAmount {
+    return minTokenAmount(amount, this.maximumRepay);
+  }
+
+  /**
+   * @returns Status for deposit
+   */
+  checkRepayStep(amount: TokenAmount): RepayStatus {
+    if (amount.gt(this.underlyingBalance)) {
+      return { status: "InsufficientBalance" };
+    }
+    if (!this.isApprovedFor(amount)) {
+      return {
+        status: "InsufficientAllowance",
+        remainder: this.getAllowanceRemainder(amount)
+      };
+    }
+    return { status: "Ready" };
   }
 
   async repay(amount: BigNumber): Promise<ContractTransaction> {
@@ -143,12 +262,30 @@ export class VaultAccount {
     return this.vault.contract.repayDelinquentDebt();
   }
 
+  /* ------ Borrowing ------ */
+
   /**
    * @returns Amount of underlying token borrower can borrow
    */
   getBorrowableAmount(amount: TokenAmount): TokenAmount {
     return minTokenAmount(amount, this.vault.borrowableAssets);
   }
+
+  async borrow(amount: TokenAmount): Promise<ContractTransaction> {
+    const signer = await this.vault.signer.getAddress();
+    if (signer !== this.account) {
+      throw Error(`VaultAccount signer ${signer} does not match ${this.account}`);
+    }
+    if (!this.isBorrower) {
+      throw Error("Only borrower can borrow");
+    }
+    if (amount.gt(this.vault.borrowableAssets)) {
+      throw Error("Insufficient borrowable assets");
+    }
+    return this.vault.contract.borrow(amount.raw);
+  }
+
+  /* ------ Updates ------ */
 
   async update(): Promise<void> {
     const acccountVaultInfo = await this.vault.getAccountInfo();
@@ -160,68 +297,7 @@ export class VaultAccount {
     updateObject(this, account, VaultAccount.UpdatableKeys);
   }
 
-  /**
-   * @returns Maximum amount of underlying token user can deposit
-   *          given their underlying balance and the vault's max supply
-   */
-  get maximumDeposit(): TokenAmount {
-    return minTokenAmount(this.vault.maximumDeposit, this.underlyingBalance);
-  }
-
-  /**
-   * @returns Amount of underlying token user can withdraw
-   *          given their vault balance and the vault's assets.
-   */
-  get maximumWithdrawal(): TokenAmount {
-    return minTokenAmount(this.vault.totalAssets, this.vaultBalance);
-  }
-
-  /**
-   * @returns Amount of underlying token user can actually deposit
-   *          given a target amount.
-   */
-  getDepositAmount(amount: TokenAmount): TokenAmount {
-    return minTokenAmount(amount, this.maximumDeposit);
-  }
-
-  /**
-   * @returns Amount of underlying token user can actually withdraw
-   *          given a target amount.
-   */
-  getWithdrawalAmount(amount: TokenAmount): TokenAmount {
-    return minTokenAmount(amount, this.maximumWithdrawal);
-  }
-
-  isApprovedFor(amount: TokenAmount): boolean {
-    return this.underlyingApproval.gte(amount.raw);
-  }
-
-  /**
-   * @returns Remaining amount of underlying token user must approve
-   *          vault to spend to make a deposit.
-   */
-  getAllowanceRemainder(amount: TokenAmount): TokenAmount {
-    return amount.satsub(this.underlyingApproval);
-  }
-
-  /**
-   * @returns Status for deposit
-   */
-  checkDepositStep(amount: TokenAmount): DepositStatus {
-    if (amount.gt(this.vault.maximumDeposit)) {
-      return { status: "ExceedsMaximumDeposit" };
-    }
-    if (amount.gt(this.underlyingBalance)) {
-      return { status: "InsufficientBalance" };
-    }
-    if (!this.isApprovedFor(amount)) {
-      return {
-        status: "InsufficientAllowance",
-        remainder: this.getAllowanceRemainder(amount)
-      };
-    }
-    return { status: "Ready" };
-  }
+  /* ------ Builders / Getters ------ */
 
   static fromAccountVaultInfoStruct(
     account: string,

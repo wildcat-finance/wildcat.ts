@@ -11,11 +11,11 @@ import {
 } from "./typechain";
 import { SignerOrProvider } from "./types";
 
-export const LensAddress = "0x078BE578bFB8f359399d3FAecb7e8a5583Af9fa2";
+export const LensAddress = "0xB63CC0C9837E4Da8E2111B3e6383aA9a6fDEf342";
 export const MockERC20FactoryAddress = "0x7d1d45890c937b260b7345B91d6B457e470B13e4";
 
-export const FactoryAddress = "0xA7F3b0D71E0e526c9fb352725D7121583f18B2FE";
-export const ControllerAddress = "0xE05EF4571Dd4b5B94a7104E33283A42FD238Ef6a";
+export const FactoryAddress = "0x851150d7Ad0E846F1B511F1df86Ff8803EF81298";
+export const ControllerAddress = "0xeAbeC7da18bB4Acc65deA76Ef6f2CE898854A6Cf";
 
 export const getControllerContract = (provider: SignerOrProvider): WildcatVaultController => {
   return WildcatVaultController__factory.connect(ControllerAddress, provider);
