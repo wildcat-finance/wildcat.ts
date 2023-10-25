@@ -1,70 +1,73 @@
 import { BigNumber, ContractTransaction } from "ethers";
 import { TokenAmount, minTokenAmount } from "./token";
-import { Vault } from "./vault";
-import { AccountVaultInfoStructOutput, VaultDataWithAccountStructOutput } from "./typechain";
-import { updateObject } from "./misc";
+import { Market } from "./market";
+import {
+  MarketLenderStatusStructOutput,
+  MarketDataWithLenderStatusStructOutput
+} from "./typechain";
+import { updateObject } from "./utils";
 import { getControllerContract, getLensContract } from "./constants";
 import { SignerOrProvider } from "./types";
+import { LenderWithdrawalStatus, toQueueWithdrawalTransaction } from "./withdrawal-status";
+import { WithdrawalQueuedEvent } from "./typechain/WildcatMarket";
 
 export type DepositStatus =
   | {
-      status: "InsufficientBalance";
-    }
-  | {
-      status: "ExceedsMaximumDeposit";
+      status: "InsufficientBalance" | "ExceedsMaximumDeposit" | "Ready" | "InsufficientRole";
     }
   | {
       status: "InsufficientAllowance";
       remainder: TokenAmount;
-    }
-  | {
-      status: "Ready";
     };
 
 export type RepayStatus =
   | {
-      status: "InsufficientBalance";
-    }
-  | {
-      status: "ExceedsOutstandingDebt";
+      status: "InsufficientBalance" | "ExceedsOutstandingDebt" | "Ready";
     }
   | {
       status: "InsufficientAllowance";
       remainder: TokenAmount;
-    }
-  | {
-      status: "Ready";
     };
 
-const isVaultInstanceArray = (vaults: Vault[] | string[]): vaults is Vault[] => {
-  return typeof vaults[0] !== "string";
+export enum LenderRole {
+  Null = 0,
+  Blocked = 1,
+  WithdrawOnly = 2,
+  DepositAndWithdraw = 3
+}
+
+const isMarketInstanceArray = (markets: Market[] | string[]): markets is Market[] => {
+  return typeof markets[0] !== "string";
 };
 
 /**
- * Class to provide information about a vault user's account
+ * Class to provide information about a market user's account
  * and to wrap interactions.
  *
  * Use `update()` to update the account's state.
  *
  *
  */
-export class VaultAccount {
+export class MarketAccount {
   constructor(
     public account: string,
-    public vaultBalance: TokenAmount,
+    public isAuthorizedOnController: boolean,
+    public role: LenderRole,
+    public scaledMarketBalance: BigNumber,
+    public marketBalance: TokenAmount,
     public underlyingBalance: TokenAmount,
     public underlyingApproval: BigNumber,
-    public vault: Vault
+    public market: Market
   ) {}
 
-  static readonly UpdatableKeys: Array<keyof VaultAccount> = [
-    "vaultBalance",
+  static readonly UpdatableKeys: Array<keyof MarketAccount> = [
+    "marketBalance",
     "underlyingBalance",
     "underlyingApproval"
   ];
 
   get userHasBalance(): boolean {
-    return this.vaultBalance.gt(0);
+    return this.marketBalance.gt(0);
   }
 
   get userHasUnderlyingBalance(): boolean {
@@ -72,7 +75,22 @@ export class VaultAccount {
   }
 
   get isBorrower(): boolean {
-    return this.vault.borrower.toLowerCase() === this.account.toLowerCase();
+    return this.market.borrower.toLowerCase() === this.account.toLowerCase();
+  }
+
+  get canDeposit(): boolean {
+    return (
+      this.role === LenderRole.DepositAndWithdraw ||
+      (this.role === LenderRole.Null && this.isAuthorizedOnController)
+    );
+  }
+
+  get canWithdraw(): boolean {
+    return (
+      this.role === LenderRole.WithdrawOnly ||
+      this.role === LenderRole.DepositAndWithdraw ||
+      (this.role === LenderRole.Null && this.isAuthorizedOnController)
+    );
   }
 
   async setAPR(newAprBips: number): Promise<ContractTransaction> {
@@ -82,11 +100,11 @@ export class VaultAccount {
     if (newAprBips > 10000) {
       throw Error("APR must be less than 100% (10000 BIPS)");
     }
-    const controller = getControllerContract(this.vault.provider);
-    if (this.vault.controller !== controller.address) {
-      throw Error(`Unexpected controller address: ${this.vault.controller}`);
+    const controller = getControllerContract(this.market.provider, this.market.controller);
+    if (this.market.controller !== controller.address) {
+      throw Error(`Unexpected controller address: ${this.market.controller}`);
     }
-    return controller.setAnnualInterestBips(this.vault.address, newAprBips);
+    return controller.setAnnualInterestBips(this.market.address, newAprBips);
   }
 
   /* ------ Approval ------ */
@@ -97,30 +115,30 @@ export class VaultAccount {
 
   /**
    * @returns Remaining amount of underlying token user must approve
-   *          vault to spend to make a deposit.
+   *          market to spend to make a deposit.
    */
   getAllowanceRemainder(amount: TokenAmount): TokenAmount {
     return amount.satsub(this.underlyingApproval);
   }
 
   async approveAllowanceRemainder(amount: TokenAmount): Promise<ContractTransaction> {
-    const token = this.vault.underlyingToken;
+    const token = this.market.underlyingToken;
     const signer = await token.signer.getAddress();
     if (signer !== this.account) {
-      throw Error(`VaultAccount signer ${signer} does not match ${this.account}`);
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     amount = this.getAllowanceRemainder(amount);
-    return token.contract.approve(this.vault.address, amount.raw);
+    return token.contract.approve(this.market.address, amount.raw);
   }
 
   /* ------ Deposits ------ */
 
   /**
    * @returns Maximum amount of underlying token user can deposit
-   *          given their underlying balance and the vault's max supply
+   *          given their underlying balance and the market's max supply
    */
   get maximumDeposit(): TokenAmount {
-    return minTokenAmount(this.vault.maximumDeposit, this.underlyingBalance);
+    return minTokenAmount(this.market.maximumDeposit, this.underlyingBalance);
   }
 
   /**
@@ -135,7 +153,10 @@ export class VaultAccount {
    * @returns Status for deposit
    */
   checkDepositStep(amount: TokenAmount): DepositStatus {
-    if (amount.gt(this.vault.maximumDeposit)) {
+    if (!this.canDeposit) {
+      return { status: "InsufficientRole" };
+    }
+    if (amount.gt(this.market.maximumDeposit)) {
       return { status: "ExceedsMaximumDeposit" };
     }
     if (amount.gt(this.underlyingBalance)) {
@@ -152,54 +173,62 @@ export class VaultAccount {
 
   // TODO: Add support for depositUpTo
   async deposit(amount: TokenAmount): Promise<ContractTransaction> {
-    const signer = await this.vault.signer.getAddress();
+    const signer = await this.market.signer.getAddress();
     if (signer !== this.account) {
-      throw Error(`VaultAccount signer ${signer} does not match ${this.account}`);
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     if (amount.gt(this.underlyingBalance)) {
       throw Error("Insufficient balance");
     }
-    return this.vault.contract.deposit(amount.raw, this.account);
+    return this.market.contract.deposit(amount.raw);
   }
 
   /* ------ Withdrawals ------ */
 
   /**
    * @returns Amount of underlying token user can withdraw
-   *          given their vault balance and the vault's assets.
+   *          given their market balance and the market's assets.
    */
   get maximumWithdrawal(): TokenAmount {
-    return minTokenAmount(this.vault.totalAssets, this.vaultBalance);
+    return minTokenAmount(this.market.totalAssets, this.marketBalance);
   }
 
-  /**
-   * @returns Amount of underlying token user can actually withdraw
-   *          given a target amount.
-   */
-  getWithdrawalAmount(amount: TokenAmount): TokenAmount {
-    return minTokenAmount(amount, this.maximumWithdrawal);
-  }
-
-  async withdraw(amount: TokenAmount): Promise<ContractTransaction> {
-    const signer = await this.vault.signer.getAddress();
-    if (signer !== this.account) {
-      throw Error(`VaultAccount signer ${signer} does not match ${this.account}`);
+  async queueWithdrawal(amount: TokenAmount): Promise<LenderWithdrawalStatus> {
+    if (!this.canWithdraw) {
+      throw Error(`Lender role insufficient to withdraw`);
     }
-    return this.vault.contract.withdraw(amount.raw, this.account);
+    const signer = await this.market.signer.getAddress();
+    if (signer !== this.account) {
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
+    }
+    const tx = await this.market.contract.queueWithdrawal(amount.raw).then((tx) => tx.wait());
+    const queuedWithdrawalTopic = this.market.contract.interface.getEventTopic("QueuedWithdrawal");
+    const queuedWithdrawalTransaction = toQueueWithdrawalTransaction(
+      this.market.underlyingToken,
+      tx.events!.find((e) => e.topics[0] === queuedWithdrawalTopic) as WithdrawalQueuedEvent
+    );
+    if (!queuedWithdrawalTransaction) {
+      throw Error("No queued withdrawal event found");
+    }
+    return LenderWithdrawalStatus.getWithdrawalForLender(
+      this.market,
+      queuedWithdrawalTransaction.expiry,
+      this.account
+    );
   }
 
   /* ------ Repaying ------ */
 
   get maximumRepay(): TokenAmount {
-    return minTokenAmount(this.vault.outstandingDebt, this.underlyingBalance);
+    return minTokenAmount(this.market.outstandingDebt, this.underlyingBalance);
   }
 
   get canRepayDelinquent(): boolean {
-    return this.vault.delinquentDebt.lt(this.maximumRepay) && this.isBorrower;
+    return this.market.delinquentDebt.lt(this.maximumRepay) && this.isBorrower;
   }
 
   get canRepayOutstanding(): boolean {
-    return this.vault.outstandingDebt.lt(this.maximumRepay) && this.isBorrower;
+    return this.market.outstandingDebt.lt(this.maximumRepay) && this.isBorrower;
   }
 
   /**
@@ -227,39 +256,39 @@ export class VaultAccount {
   }
 
   async repay(amount: BigNumber): Promise<ContractTransaction> {
-    const signer = await this.vault.signer.getAddress();
+    const signer = await this.market.signer.getAddress();
     if (signer !== this.account) {
-      throw Error(`VaultAccount signer ${signer} does not match ${this.account}`);
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     if (!this.isBorrower) {
       throw Error("Only borrower can repay");
     }
 
-    return this.vault.contract.repay(amount);
+    return this.market.contract.repay(amount);
   }
 
   async repayOutstandingDebt(): Promise<ContractTransaction> {
-    const signer = await this.vault.signer.getAddress();
+    const signer = await this.market.signer.getAddress();
     if (signer !== this.account) {
-      throw Error(`VaultAccount signer ${signer} does not match ${this.account}`);
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     if (!this.isBorrower) {
       throw Error("Only borrower can repay");
     }
 
-    return this.vault.contract.repayOutstandingDebt();
+    return this.market.contract.repayOutstandingDebt();
   }
 
   async repayDelinquentDebt(): Promise<ContractTransaction> {
-    const signer = await this.vault.signer.getAddress();
+    const signer = await this.market.signer.getAddress();
     if (signer !== this.account) {
-      throw Error(`VaultAccount signer ${signer} does not match ${this.account}`);
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     if (!this.isBorrower) {
       throw Error("Only borrower can repay");
     }
 
-    return this.vault.contract.repayDelinquentDebt();
+    return this.market.contract.repayDelinquentDebt();
   }
 
   /* ------ Borrowing ------ */
@@ -268,145 +297,151 @@ export class VaultAccount {
    * @returns Amount of underlying token borrower can borrow
    */
   getBorrowableAmount(amount: TokenAmount): TokenAmount {
-    return minTokenAmount(amount, this.vault.borrowableAssets);
+    return minTokenAmount(amount, this.market.borrowableAssets);
   }
 
   async borrow(amount: TokenAmount): Promise<ContractTransaction> {
-    const signer = await this.vault.signer.getAddress();
+    const signer = await this.market.signer.getAddress();
     if (signer !== this.account) {
-      throw Error(`VaultAccount signer ${signer} does not match ${this.account}`);
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     if (!this.isBorrower) {
       throw Error("Only borrower can borrow");
     }
-    if (amount.gt(this.vault.borrowableAssets)) {
+    if (amount.gt(this.market.borrowableAssets)) {
       throw Error("Insufficient borrowable assets");
     }
-    return this.vault.contract.borrow(amount.raw);
+    return this.market.contract.borrow(amount.raw);
   }
 
   /* ------ Updates ------ */
 
   async update(): Promise<void> {
-    const acccountVaultInfo = await this.vault.getAccountInfo();
-    updateObject(this, acccountVaultInfo, VaultAccount.UpdatableKeys);
+    const acccountMarketInfo = await this.market.getAccount(this.account);
+    updateObject(this, acccountMarketInfo, MarketAccount.UpdatableKeys);
   }
 
-  applyUpdate(info: AccountVaultInfoStructOutput): void {
-    const account = VaultAccount.fromAccountVaultInfoStruct(this.account, info, this.vault);
-    updateObject(this, account, VaultAccount.UpdatableKeys);
+  applyUpdate(info: MarketLenderStatusStructOutput): void {
+    const account = MarketAccount.fromMarketLenderStatus(this.account, info, this.market);
+    updateObject(this, account, MarketAccount.UpdatableKeys);
   }
 
   /* ------ Builders / Getters ------ */
 
-  static fromAccountVaultInfoStruct(
+  static fromMarketLenderStatus(
     account: string,
-    info: AccountVaultInfoStructOutput,
-    vault: Vault
-  ): VaultAccount {
-    return new VaultAccount(
+    info: MarketLenderStatusStructOutput,
+    market: Market
+  ): MarketAccount {
+    return new MarketAccount(
       account,
-      vault.vaultToken.getAmount(info.normalizedBalance),
-      vault.underlyingToken.getAmount(info.underlyingBalance),
+      info.isAuthorizedOnController,
+      info.role as LenderRole,
+      info.scaledBalance,
+      market.marketToken.getAmount(info.normalizedBalance),
+      market.underlyingToken.getAmount(info.underlyingBalance),
       info.underlyingApproval,
-      vault
+      market
     );
   }
 
-  static fromVaultDataWithAccountStruct(
+  static fromMarketDataWithLenderStatus(
     provider: SignerOrProvider,
     account: string,
-    info: VaultDataWithAccountStructOutput
-  ): VaultAccount {
-    return VaultAccount.fromAccountVaultInfoStruct(
+    info: MarketDataWithLenderStatusStructOutput
+  ): MarketAccount {
+    return MarketAccount.fromMarketLenderStatus(
       account,
-      info.account,
-      Vault.fromVaultMetadataStruct(info.vault, provider)
+      info.lenderStatus,
+      Market.fromMarketData(info.market, provider)
     );
   }
 
   /**
-   * Get a `VaultAccount` for a given account and existing `Vault` instance.
-   * If `vault` is a string, the vault data will be fetched in the same call as the account data.
+   * Get a `MarketAccount` for a given account and existing `Market` instance.
+   * If `market` is a string, the market data will be fetched in the same call as the account data.
    */
-  static async getVaultAccount(
+  static async getMarketAccount(
     provider: SignerOrProvider,
     account: string,
-    vault: Vault | string
-  ): Promise<VaultAccount> {
+    market: Market | string
+  ): Promise<MarketAccount> {
     const lens = getLensContract(provider);
-    if (vault instanceof Vault) {
+    if (market instanceof Market) {
       return lens
-        .getAccountVaultInfo(account, vault.address)
-        .then((info) => VaultAccount.fromAccountVaultInfoStruct(account, info, vault));
+        .getMarketLenderStatus(account, market.address)
+        .then((info) => MarketAccount.fromMarketLenderStatus(account, info, market));
     } else {
       return lens
-        .getVaultDataWithAccount(account, vault)
-        .then((info) => VaultAccount.fromVaultDataWithAccountStruct(provider, account, info));
+        .getMarketDataWithLenderStatus(account, market)
+        .then((info) => MarketAccount.fromMarketDataWithLenderStatus(provider, account, info));
     }
   }
 
   /**
-   * Get multiple `VaultAccount`s given an account and existing list of `Vault`
-   * instances or vault addresses. If `vaults` is an array of strings, the vault
+   * Get multiple `MarketAccount`s given an account and existing list of `Market`
+   * instances or market addresses. If `markets` is an array of strings, the market
    * data will be fetched in the same call as the account data.
    */
-  static async getVaultAccounts(
+  static async getMarketAccountsForLender(
     provider: SignerOrProvider,
     account: string,
-    vaults: Vault[] | string[]
-  ): Promise<VaultAccount[]> {
+    markets: Market[] | string[]
+  ): Promise<MarketAccount[]> {
     const lens = getLensContract(provider);
-    if (vaults.length === 0) {
+    if (markets.length === 0) {
       return [];
     }
-    if (isVaultInstanceArray(vaults)) {
+    if (isMarketInstanceArray(markets)) {
       return lens
-        .getAccountVaultsInfo(
+        .getMarketsLenderStatus(
           account,
-          vaults.map((v) => v.address)
+          markets.map((v) => v.address)
         )
         .then((infos) =>
-          infos.map((info, i) => VaultAccount.fromAccountVaultInfoStruct(account, info, vaults[i]))
+          infos.map((info, i) => MarketAccount.fromMarketLenderStatus(account, info, markets[i]))
         );
     } else {
       return lens
-        .getVaultsDataWithAccount(account, vaults)
+        .getMarketsDataWithLenderStatus(account, markets)
         .then((infos) =>
-          infos.map((info) => VaultAccount.fromVaultDataWithAccountStruct(provider, account, info))
+          infos.map((info) => MarketAccount.fromMarketDataWithLenderStatus(provider, account, info))
         );
     }
   }
 
   /**
-   * Get all `VaultAccount`s for a given account.
-   * Fetches the vault data in the same call as the account data.
+   * Get all `MarketAccount`s for a given account.
+   * Fetches the market data in the same call as the account data.
    */
-  static getAllVaultAccounts(provider: SignerOrProvider, account: string): Promise<VaultAccount[]> {
+  static getAllMarketAccountsForLender(
+    provider: SignerOrProvider,
+    account: string
+  ): Promise<MarketAccount[]> {
     const lens = getLensContract(provider);
     return lens
-      .getAllVaultsDataWithAccount(account)
+      .getAllMarketsDataWithLenderStatus(account)
       .then((infos) =>
-        infos.map((info) => VaultAccount.fromVaultDataWithAccountStruct(provider, account, info))
+        infos.map((info) => MarketAccount.fromMarketDataWithLenderStatus(provider, account, info))
       );
   }
 
   /**
-   * Get paginated `VaultAccount`s for a given account.
-   * Fetches the vault data in the same call as the account data.
-   * @note Throws an error if `start + count` exceeds the number of vaults.
+   * Get paginated `MarketAccount`s for a given account.
+   * Fetches the market data in the same call as the account data.
+   * @note Throws an error if `start + count` exceeds the number of markets.
    */
-  static getPaginatedVaultAccounts(
+  static getPaginatedMarketAccounts(
     provider: SignerOrProvider,
     account: string,
     start = 0,
     count: number
-  ): Promise<VaultAccount[]> {
+  ): Promise<MarketAccount[]> {
     const lens = getLensContract(provider);
     return lens
-      .getPaginatedVaultsDataWithAccount(account, start, count)
+      .getPaginatedMarketsDataWithLenderStatus(account, start, count)
       .then((infos) =>
-        infos.map((info) => VaultAccount.fromVaultDataWithAccountStruct(provider, account, info))
+        infos.map((info) => MarketAccount.fromMarketDataWithLenderStatus(provider, account, info))
       );
   }
 }

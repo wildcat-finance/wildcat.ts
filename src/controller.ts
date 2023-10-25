@@ -1,40 +1,238 @@
-import { WildcatVaultController, WildcatVaultController__factory } from "./typechain";
-import { ControllerAddress, getLensContract } from "./constants";
+import {
+  ControllerDataStructOutput,
+  WildcatMarketController,
+  WildcatMarketController__factory
+} from "./typechain";
+import {
+  getControllerFactoryContract,
+  getLensContract,
+  getMockArchControllerOwnerContract
+} from "./constants";
 import { ContractWrapper, SignerOrProvider } from "./types";
-import { Vault } from "./vault";
-import { VaultFactory, VaultParameters } from "./factory";
-import { MakeOptional } from "./misc";
+import { Market } from "./market";
+import { ContractReceipt, ContractTransaction } from "ethers";
+import { Token, TokenAmount } from "./token";
+import {
+  FeeConfiguration,
+  MarketParameterConstraints,
+  assert,
+  parseFeeConfiguration,
+  parseMarketParameterConstraints
+} from "./utils";
+import { MarketDeployedEvent } from "./typechain/WildcatMarketController";
 
-export class VaultController extends ContractWrapper<WildcatVaultController> {
-  readonly contractFactory = WildcatVaultController__factory;
+export class MarketController extends ContractWrapper<WildcatMarketController> {
+  readonly contractFactory = WildcatMarketController__factory;
 
-  constructor(public address: string, provider: SignerOrProvider) {
+  public authorizedLenders: string[] = [];
+
+  constructor(
+    public address: string,
+    public borrower: string,
+    public controllerFactory: string,
+    public isRegisteredBorrower: boolean,
+    public isDeployed: boolean,
+    public fees: FeeConfiguration,
+    public constraints: MarketParameterConstraints,
+    public markets: Market[],
+    provider: SignerOrProvider,
+    public borrowerOriginationFeeBalance?: TokenAmount,
+    public borrowerOriginationFeeApproval?: TokenAmount
+  ) {
     super(provider);
   }
 
-  async isKnownVault(vault: string): Promise<boolean> {
-    return await this.contract.vaults(vault);
+  get hasOriginationFees(): boolean {
+    return this.fees.originationFeeAmount !== undefined;
   }
 
-  async getAllVaults(provider: SignerOrProvider): Promise<Vault[]> {
-    /* const factory = getFactoryContract(provider);
-    const vaults = (
-      await this.contract.queryFilter(factory.filters.VaultDeployed(ControllerAddress), 3399789)
-    ).map(({ args: { vault } }) => vault);
-    console.log("vaults", vaults); */
-    const metadatas = (await getLensContract(provider).getAllVaultsData()).filter(
-      (x) => x.controller === this.address
+  static fromControllerData(
+    provider: SignerOrProvider,
+    data: ControllerDataStructOutput
+  ): MarketController {
+    const fees = parseFeeConfiguration(provider, data.fees);
+    const constraints = parseMarketParameterConstraints(data.constraints);
+    const borrowerOriginationFeeBalance = fees.originationFeeToken?.getAmount(
+      data.borrowerOriginationFeeBalance
     );
-    return metadatas.map((x) => Vault.fromVaultMetadataStruct(x, provider));
+    const borrowerOriginationFeeApproval = fees.originationFeeToken?.getAmount(
+      data.borrowerOriginationFeeApproval
+    );
+    const markets = data.markets.map((x) => Market.fromMarketData(x, provider));
+    return new MarketController(
+      data.controller,
+      data.borrower,
+      data.controllerFactory,
+      data.isRegisteredBorrower,
+      data.hasDeployedController,
+      fees,
+      constraints,
+      markets,
+      provider,
+      borrowerOriginationFeeBalance,
+      borrowerOriginationFeeApproval
+    );
   }
 
-  static async getController(provider: SignerOrProvider): Promise<VaultController> {
-    return new VaultController(ControllerAddress, provider);
+  static async getController(
+    provider: SignerOrProvider,
+    borrower: string
+  ): Promise<MarketController> {
+    const lens = getLensContract(provider);
+    const data = await lens.getControllerDataForBorrower(borrower);
+
+    return MarketController.fromControllerData(provider, data);
   }
 
-  async deployVault(
-    params: Omit<MakeOptional<VaultParameters, "feeRecipient" | "borrower">, "controller">
-  ): Promise<Vault> {
-    return VaultFactory.deployVault({ ...params, controller: this.address }, this.signer);
+  async update(): Promise<void> {
+    const [lenders, data] = await Promise.all([
+      this.contract["getAuthorizedLenders()"](),
+      getLensContract(this.provider).getControllerDataForBorrower(this.address)
+    ]);
+    this.authorizedLenders = lenders;
+    this.updateWith(data);
+  }
+
+  updateWith(data: ControllerDataStructOutput): void {
+    this.fees = parseFeeConfiguration(this.provider, data.fees);
+    this.constraints = parseMarketParameterConstraints(data.constraints);
+    this.borrowerOriginationFeeBalance = this.fees.originationFeeToken?.getAmount(
+      data.borrowerOriginationFeeBalance
+    );
+    this.borrowerOriginationFeeApproval = this.fees.originationFeeToken?.getAmount(
+      data.borrowerOriginationFeeApproval
+    );
+    for (const market of data.markets) {
+      const existing = this.markets.find((x) => x.address === market.marketToken.token);
+      if (existing) {
+        existing.updateWith(market);
+      } else {
+        this.markets.push(Market.fromMarketData(market, this.provider));
+      }
+    }
+    this.isRegisteredBorrower = data.isRegisteredBorrower;
+    this.isDeployed = data.hasDeployedController;
+  }
+
+  async authorizeLenders(lenders: string[]): Promise<ContractTransaction> {
+    return this.contract.authorizeLenders(lenders);
+  }
+
+  async registerBorrower(): Promise<ContractTransaction> {
+    assert(!this.isRegisteredBorrower, "Borrower is already registered");
+
+    const archControllerOwner = await getMockArchControllerOwnerContract(this.signer);
+    return archControllerOwner.registerBorrower(this.address);
+  }
+
+  async deployController(): Promise<ContractTransaction> {
+    assert(!this.isDeployed, "Controller is already deployed");
+
+    const controllerFactory = await getControllerFactoryContract(this.signer);
+    assert(controllerFactory.address === this.controllerFactory, "Controller factory mismatch");
+    return controllerFactory.deployController();
+  }
+
+  /**
+   * @return array of parameters with out of bounds values
+   */
+  checkParameters(params: MarketParameters): string[] {
+    const badParams: string[] = [];
+    for (const [value, min, max] of constraintKeys) {
+      if (params[value] <= this.constraints[max] || params[value] >= this.constraints[min]) {
+        badParams.push(value);
+      }
+      /* if (
+        params[value] <= this.constraints[max],
+        `Invalid ${value}: ${params[value]} is greater than the maximum ${this.constraints[max]}`
+      );
+      assert(
+        params[value] >= this.constraints[min],
+        `Invalid ${value}: ${params[value]} is less than the minimum ${this.constraints[min]}`
+      ); */
+    }
+    return badParams;
+  }
+
+  getExistingMarketForParameters(params: MarketParameters): Market | undefined {
+    const getPrefix = (marketString: string, underlyingString: string) =>
+      marketString.replace(underlyingString, "");
+    return this.markets.find(
+      (m) =>
+        m.underlyingToken.address === params.asset.address &&
+        params.namePrefix == getPrefix(m.name, m.underlyingToken.name) &&
+        params.symbolPrefix == getPrefix(m.symbol, m.underlyingToken.symbol)
+    );
+  }
+
+  async deployMarket(params: MarketParameters): Promise<Market> {
+    if (this.checkParameters(params).length) {
+      throw Error("Invalid parameters: " + this.checkParameters(params).join(", "));
+    }
+    let receipt: ContractReceipt;
+    const factory = await getControllerFactoryContract(this.signer);
+    if (!this.isDeployed) {
+      assert(this.isRegisteredBorrower, "Borrower is not registered");
+      receipt = await factory
+        .deployControllerAndMarket(
+          params.namePrefix,
+          params.symbolPrefix,
+          params.asset.address,
+          params.maxTotalSupply.raw,
+          params.annualInterestBips,
+          params.delinquencyFeeBips,
+          params.withdrawalBatchDuration,
+          params.reserveRatioBips,
+          params.delinquencyGracePeriod
+        )
+        .then((r) => r.wait());
+    } else {
+      receipt = await factory
+        .deployControllerAndMarket(
+          params.namePrefix,
+          params.symbolPrefix,
+          params.asset.address,
+          params.maxTotalSupply.raw,
+          params.annualInterestBips,
+          params.delinquencyFeeBips,
+          params.withdrawalBatchDuration,
+          params.reserveRatioBips,
+          params.delinquencyGracePeriod
+        )
+        .then((r) => r.wait());
+    }
+
+    const marketDeployedTopic = this.contract.interface.getEventTopic("MarketDeployed");
+    const log = receipt.logs.find((l) => l.topics[0] === marketDeployedTopic)!;
+    const event: MarketDeployedEvent = this.contract.interface.decodeEventLog(
+      "MarketDeployed",
+      log.data,
+      log.topics
+    ) as any;
+    const market = await Market.getMarket(event.args.market, this.provider);
+    this.markets.push(market);
+    this.isDeployed = true;
+    this.isRegisteredBorrower = true;
+    return market;
   }
 }
+
+const constraintKeys = [
+  ["annualInterestBips", "minimumAnnualInterestBips", "maximumAnnualInterestBips"],
+  ["delinquencyFeeBips", "minimumDelinquencyFeeBips", "maximumDelinquencyFeeBips"],
+  ["delinquencyGracePeriod", "minimumDelinquencyGracePeriod", "maximumDelinquencyGracePeriod"],
+  ["reserveRatioBips", "minimumReserveRatioBips", "maximumReserveRatioBips"],
+  ["withdrawalBatchDuration", "minimumWithdrawalBatchDuration", "maximumWithdrawalBatchDuration"]
+] as const;
+
+export type MarketParameters = {
+  asset: Token;
+  namePrefix: string;
+  symbolPrefix: string;
+  maxTotalSupply: TokenAmount;
+  annualInterestBips: number;
+  delinquencyFeeBips: number;
+  delinquencyGracePeriod: number;
+  withdrawalBatchDuration: number;
+  reserveRatioBips: number;
+};

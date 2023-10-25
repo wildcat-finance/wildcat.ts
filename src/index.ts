@@ -1,28 +1,41 @@
-import { VaultAccount } from "./account";
-import { VaultFactory } from "./factory";
+import { MarketAccount } from "./account";
+// import { MarketFactory } from "./factory";
 import { Token } from "./token";
-import { Vault } from "./vault";
+import { Market } from "./market";
+import { TokenFactory } from "./mockerc20factory";
+import { WithdrawalBatch } from "./withdrawal-batch";
+import { LenderWithdrawalStatus } from "./withdrawal-status";
+import { MarketController } from "./controller";
 
 export * from "./account";
 export * from "./constants";
 export * from "./controller";
-export * from "./factory";
+export * from "./market";
 export * from "./mockerc20factory";
 export * from "./token";
 export * from "./types";
-export * from "./vault";
+export * from "./withdrawal-batch";
+export * from "./withdrawal-status";
+export * from "./utils";
+export * as typechain from "./typechain";
+
+export const { getMarket, getMarkets, getAllMarkets, getMarketsCount, getPaginatedMarkets } =
+  Market;
+
+export const { getWithdrawalBatch } = WithdrawalBatch;
+
+export const { getAllWithdrawalsForLender, getAllWithdrawalsInBatch, getWithdrawalForLender } =
+  LenderWithdrawalStatus;
 
 export const {
-  getVaultData,
-  getVaultsData,
-  getAllVaultsData,
-  getVaultsCount,
-  getPaginatedVaultsData
-} = Vault;
-
-export const { getFactory, deployVault } = VaultFactory;
-
-export const { getVaultAccount, getVaultAccounts, getAllVaultAccounts, getPaginatedVaultAccounts } =
-  VaultAccount;
+  getMarketAccount,
+  getMarketAccountsForLender,
+  getAllMarketAccountsForLender,
+  getPaginatedMarketAccounts
+} = MarketAccount;
 
 export const { getTokenData, getTokensData } = Token;
+
+export const { deployToken } = TokenFactory;
+
+export const { getController } = MarketController;

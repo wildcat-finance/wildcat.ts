@@ -1,8 +1,8 @@
 import { ContractWrapper, Signer, SignerOrProvider } from "./types";
 import { MockERC20Factory, MockERC20Factory__factory } from "./typechain";
-import { NewTokenDeployedEvent } from "./typechain/mock/MockERC20Factory";
+import { NewTokenDeployedEvent } from "./typechain/MockERC20Factory";
 import { Token } from "./token";
-import { MockERC20FactoryAddress } from "./constants";
+import { Deployments } from "./constants";
 
 export class TokenFactory extends ContractWrapper<MockERC20Factory> {
   readonly contractFactory = MockERC20Factory__factory;
@@ -12,7 +12,7 @@ export class TokenFactory extends ContractWrapper<MockERC20Factory> {
   }
 
   static getFactory(provider: SignerOrProvider): TokenFactory {
-    return new TokenFactory(MockERC20FactoryAddress, provider);
+    return new TokenFactory(Deployments.MockERC20Factory, provider);
   }
 
   static async deployToken(signer: Signer, name: string, symbol: string): Promise<Token> {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.20;
 
 interface IERC20 {
   event Approval(address, address, uint256);
@@ -23,4 +23,12 @@ interface IERC20 {
   function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
 
   function faucet() external;
+
+  function mint(address to, uint256 value) external;
+
+  function name() external view returns (string memory);
+
+  function symbol() external view returns (string memory);
+
+  function decimals() external view returns (uint8);
 }

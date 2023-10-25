@@ -1,9 +1,8 @@
 import { BigNumber, BigNumberish, ContractTransaction } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
-import { MockERC20__factory, TokenMetadataStructOutput } from "./typechain";
+import { IERC20, IERC20__factory, TokenMetadataStructOutput } from "./typechain";
 import { ContractWrapper, SignerOrProvider } from "./types";
 import { getLensContract } from "./constants";
-import { IERC20, IERC20__factory } from "./typechain";
 import { formatBnFixed } from "./misc";
 
 type RhsAmount = BigNumberish | TokenAmount;
@@ -117,7 +116,7 @@ export class Token extends ContractWrapper<IERC20> {
     if (!this.isMock) {
       throw Error("Can not use faucet on non-mock token");
     }
-    return MockERC20__factory.connect(this.address, this.signer).faucet();
+    return IERC20__factory.connect(this.address, this.signer).faucet();
   }
 
   getAmount(amount: RhsAmount): TokenAmount {
@@ -129,10 +128,7 @@ export class Token extends ContractWrapper<IERC20> {
     return this.getAmount(bnAmount);
   }
 
-  static fromTokenMetadataStruct(
-    metadata: TokenMetadataStructOutput,
-    provider: SignerOrProvider
-  ): Token {
+  static fromTokenMetadata(metadata: TokenMetadataStructOutput, provider: SignerOrProvider): Token {
     return new Token(
       metadata.token,
       metadata.name,
@@ -146,13 +142,13 @@ export class Token extends ContractWrapper<IERC20> {
   static async getTokenData(token: string, provider: SignerOrProvider): Promise<Token> {
     const lens = getLensContract(provider);
     const metadata = await lens.getTokenInfo(token);
-    return Token.fromTokenMetadataStruct(metadata, provider);
+    return Token.fromTokenMetadata(metadata, provider);
   }
 
   static async getTokensData(tokens: string[], provider: SignerOrProvider): Promise<Token[]> {
     const lens = getLensContract(provider);
     return lens
       .getTokensInfo(tokens)
-      .then((metadata) => metadata.map((m) => Token.fromTokenMetadataStruct(m, provider)));
+      .then((metadata) => metadata.map((m) => Token.fromTokenMetadata(m, provider)));
   }
 }

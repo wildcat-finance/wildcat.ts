@@ -1,5 +1,16 @@
 import { BigNumber } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
+import { defaultAbiCoder } from "ethers/lib/utils";
+
+export const encodeAddress = (address: string): string => {
+  return defaultAbiCoder.encode(["address"], [address]);
+};
+
+export const encodeUint = (expiry: number): string => {
+  return defaultAbiCoder.encode(["uint256"], [expiry]);
+};
+
+export const unique = <T>(arr: T[]): T[] => Array.from(new Set(arr));
 
 export type OnlyValueFields<C> = {
   [K in ValueFields<C, keyof C>]: C[K];
