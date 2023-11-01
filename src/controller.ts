@@ -139,17 +139,9 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   checkParameters(params: MarketParameters): string[] {
     const badParams: string[] = [];
     for (const [value, min, max] of constraintKeys) {
-      if (params[value] <= this.constraints[max] || params[value] >= this.constraints[min]) {
+      if (params[value] > this.constraints[max] || params[value] < this.constraints[min]) {
         badParams.push(value);
       }
-      /* if (
-        params[value] <= this.constraints[max],
-        `Invalid ${value}: ${params[value]} is greater than the maximum ${this.constraints[max]}`
-      );
-      assert(
-        params[value] >= this.constraints[min],
-        `Invalid ${value}: ${params[value]} is less than the minimum ${this.constraints[min]}`
-      ); */
     }
     return badParams;
   }
