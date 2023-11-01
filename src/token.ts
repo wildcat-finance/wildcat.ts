@@ -3,10 +3,10 @@ import { parseUnits } from "ethers/lib/utils";
 import { IERC20, IERC20__factory, TokenMetadataStructOutput } from "./typechain";
 import { ContractWrapper, SignerOrProvider } from "./types";
 import { getLensContract } from "./constants";
-import { formatBnFixed } from "./misc";
+import { formatBnFixed } from "./utils";
 
 type RhsAmount = BigNumberish | TokenAmount;
-const toBn = (amount: RhsAmount): BigNumber => {
+export const toBn = (amount: RhsAmount): BigNumber => {
   if (amount instanceof TokenAmount) {
     return amount.raw;
   }
