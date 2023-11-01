@@ -7,8 +7,9 @@ import { LenderWithdrawalStatus } from "./withdrawal-status";
 
 export enum BatchStatus {
   Pending = 0,
-  Unpaid = 1,
-  Complete = 2
+  Expired = 1,
+  Unpaid = 2,
+  Complete = 3
 }
 
 export class WithdrawalBatch {
@@ -21,6 +22,14 @@ export class WithdrawalBatch {
     public normalizedAmountPaid: TokenAmount,
     public normalizedTotalAmount: TokenAmount
   ) {}
+
+  get isClosed(): boolean {
+    return this.scaledAmountBurned.eq(this.scaledTotalAmount);
+  }
+
+  get isExpired(): boolean {
+    return this.status === BatchStatus.Pending && this.expiry < Math.floor(Date.now() / 1000);
+  }
 
   get normalizedAmountOwed(): TokenAmount {
     return this.normalizedTotalAmount.sub(this.normalizedAmountPaid);

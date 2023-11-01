@@ -131,19 +131,20 @@ export class Market extends ContractWrapper<WildcatMarket> {
     return this.isDelinquent && this.timeDelinquent > this.delinquencyGracePeriod;
   }
 
-  /** @returns Amount of assets borrower must deposit to not be delinquent */
-  get delinquentDebt(): TokenAmount {
-    const collateral = this.totalAssets;
-    const coverage = this.coverageLiquidity;
-
-    return coverage.satsub(collateral);
+  /** @returns Total debts of the market without subtracting assets */
+  get totalDebts(): TokenAmount {
+    return this.normalizedUnclaimedWithdrawals
+      .add(this.totalSupply.raw)
+      .add(this.lastAccruedProtocolFees);
   }
 
   get outstandingDebt(): TokenAmount {
-    const totalSupply = this.totalSupply;
-    const collateral = this.totalAssets;
+    return this.totalDebts.satsub(this.totalAssets);
+  }
 
-    return totalSupply.satsub(collateral);
+  /** @returns Amount of assets borrower must deposit to not be delinquent */
+  get delinquentDebt(): TokenAmount {
+    return this.coverageLiquidity.satsub(this.totalAssets);
   }
 
   get outstandingTotalSupply(): TokenAmount {
@@ -203,7 +204,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
    * @returns Balance of an account in both market and underlying tokens,
    *          as well as the amount of underlying tokens approved for the market.
    */
-  async getAccountInfo(account?: string): Promise<MarketAccount> {
+  async getAccount(account?: string): Promise<MarketAccount> {
     if (!account) {
       account = await this.signer.getAddress();
     }
