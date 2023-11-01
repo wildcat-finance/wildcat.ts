@@ -14,13 +14,13 @@ import {
 import { SignerOrProvider } from "./types";
 
 export const Deployments = {
-  MarketLens: "0x20B06D164D7815405fbeDfF2372CD15F418685F8",
-  MockArchControllerOwner: "0x6873916D94D1E85b8301d7CAbee17ACe6Ac42993",
+  MarketLens: "0x5d14d290EEA69584106A381910eaa93c2b21c6b2",
+  MockArchControllerOwner: "0x4e55E20cC4Ff6b69E6b28Ac29DcC55c0f8937cCb",
   MockChainalysis: "0x1EeBC079aE1e7dCDe31C74A7EF48fA8737673A6a",
-  MockERC20Factory: "0xaD28a117e272800AbEC3CE8F02584927E4dA5d3B",
-  WildcatArchController: "0x337E38b3b90ca0B208Cda586C843B33d43fad5c4",
-  WildcatMarketControllerFactory: "0x7f7799aC66d19fe2FEa5137cD32d7088E07F5cFB",
-  WildcatSanctionsSentinel: "0xEF0601C4dF089F3020F373589FfCD8Dea0B4FD76"
+  MockERC20Factory: "0xAE18c1988b7b947140b5FD2582ac63B8756bfd7E",
+  WildcatArchController: "0x61C3F23157B6657847cBDdA7eD08F30BB247E943",
+  WildcatMarketControllerFactory: "0x0d54Eb7eB8AB39E8A26535dAA970BaC6B61e741A",
+  WildcatSanctionsSentinel: "0x4385E0888DAEa92E13A42BB74fC1D179C5E67fF3"
 };
 
 // export const LensAddress = "0xB63CC0C9837E4Da8E2111B3e6383aA9a6fDEf342";
