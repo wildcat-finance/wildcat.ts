@@ -113,13 +113,13 @@ export interface MockERC20Factory extends BaseContract {
 
   filters: {
     "NewTokenDeployed(address,string,string,uint8)"(
-      token?: null,
+      token?: PromiseOrValue<string> | null,
       name?: null,
       symbol?: null,
       decimals?: null
     ): NewTokenDeployedEventFilter;
     NewTokenDeployed(
-      token?: null,
+      token?: PromiseOrValue<string> | null,
       name?: null,
       symbol?: null,
       decimals?: null
