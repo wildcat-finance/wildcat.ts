@@ -33,51 +33,83 @@ struct MarketParameterConstraints {
 }
 
 interface WildcatMarketControllerFactory {
-  error CallerNotArchControllerOwner ();
+  event NewController(address borrower, address controller);
+  event UpdateProtocolFeeConfiguration(
+    address feeRecipient,
+    uint16 protocolFeeBips,
+    address originationFeeAsset,
+    uint256 originationFeeAmount
+  );
 
-  error ControllerAlreadyDeployed ();
+  error NotRegisteredBorrower();
+  error InvalidProtocolFeeConfiguration();
+  error CallerNotArchControllerOwner();
+  error InvalidConstraints();
+  error ControllerAlreadyDeployed();
 
-  error InvalidConstraints ();
+  function archController() external view returns (address);
 
-  error InvalidProtocolFeeConfiguration ();
+  function computeControllerAddress(address borrower) external view returns (address);
 
-  error NotRegisteredBorrower ();
+  function controllerInitCodeHash() external view returns (uint256);
 
-  event NewController (address,address,string,string);
+  function controllerInitCodeStorage() external view returns (address);
 
-  event UpdateProtocolFeeConfiguration (address,uint16,address,uint256);
+  function deployController() external returns (address controller);
 
-  function archController () external view returns (address);
+  function deployControllerAndMarket(
+    string calldata namePrefix,
+    string calldata symbolPrefix,
+    address asset,
+    uint128 maxTotalSupply,
+    uint16 annualInterestBips,
+    uint16 delinquencyFeeBips,
+    uint32 withdrawalBatchDuration,
+    uint16 reserveRatioBips,
+    uint32 delinquencyGracePeriod
+  ) external returns (address controller, address market);
 
-  function computeControllerAddress (address borrower) external view returns (address);
+  function getDeployedControllers(
+    uint256 start,
+    uint256 end
+  ) external view returns (address[] memory arr);
 
-  function controllerInitCodeHash () external view returns (uint256);
+  function getDeployedControllers() external view returns (address[] memory);
 
-  function controllerInitCodeStorage () external view returns (address);
+  function getDeployedControllersCount() external view returns (uint256);
 
-  function deployController () external returns (address controller);
+  function getMarketControllerParameters()
+    external
+    view
+    returns (MarketControllerParameters memory parameters);
 
-  function deployControllerAndMarket (string calldata namePrefix, string calldata symbolPrefix, address asset, uint128 maxTotalSupply, uint16 annualInterestBips, uint16 delinquencyFeeBips, uint32 withdrawalBatchDuration, uint16 reserveRatioBips, uint32 delinquencyGracePeriod) external returns (address controller, address market);
+  function getParameterConstraints()
+    external
+    view
+    returns (MarketParameterConstraints memory constraints);
 
-  function getDeployedControllers (uint256 start, uint256 end) external view returns (address[] memory arr);
+  function getProtocolFeeConfiguration()
+    external
+    view
+    returns (
+      address feeRecipient,
+      address originationFeeAsset,
+      uint80 originationFeeAmount,
+      uint16 protocolFeeBips
+    );
 
-  function getDeployedControllers () external view returns (address[] memory);
+  function isDeployedController(address controller) external view returns (bool);
 
-  function getDeployedControllersCount () external view returns (uint256);
+  function marketInitCodeHash() external view returns (uint256);
 
-  function getMarketControllerParameters () external view returns (MarketControllerParameters memory parameters);
+  function marketInitCodeStorage() external view returns (address);
 
-  function getParameterConstraints () external view returns (MarketParameterConstraints memory constraints);
+  function sentinel() external view returns (address);
 
-  function getProtocolFeeConfiguration () external view returns (address feeRecipient, address originationFeeAsset, uint80 originationFeeAmount, uint16 protocolFeeBips);
-
-  function isDeployedController (address controller) external view returns (bool);
-
-  function marketInitCodeHash () external view returns (uint256);
-
-  function marketInitCodeStorage () external view returns (address);
-
-  function sentinel () external view returns (address);
-
-  function setProtocolFeeConfiguration (address feeRecipient, address originationFeeAsset, uint80 originationFeeAmount, uint16 protocolFeeBips) external;
+  function setProtocolFeeConfiguration(
+    address feeRecipient,
+    address originationFeeAsset,
+    uint80 originationFeeAmount,
+    uint16 protocolFeeBips
+  ) external;
 }
