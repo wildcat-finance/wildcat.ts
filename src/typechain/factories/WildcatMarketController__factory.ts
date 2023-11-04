@@ -81,7 +81,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
-        name: "lender",
+        name: "",
         type: "address",
       },
     ],
@@ -94,7 +94,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
-        name: "lender",
+        name: "",
         type: "address",
       },
     ],
@@ -105,13 +105,111 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: "address",
+        name: "market",
+        type: "address",
+      },
+      {
         indexed: false,
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "symbol",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "asset",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "maxTotalSupply",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "annualInterestBips",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "delinquencyFeeBips",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "withdrawalBatchDuration",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "reserveRatioBips",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "delinquencyGracePeriod",
+        type: "uint256",
+      },
+    ],
+    name: "MarketDeployed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "market",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "originalReserveRatioBips",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "temporaryReserveRatioBips",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "temporaryReserveRatioExpiry",
+        type: "uint256",
+      },
+    ],
+    name: "TemporaryExcessReserveRatioActivated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: "address",
         name: "market",
         type: "address",
       },
     ],
-    name: "MarketDeployed",
+    name: "TemporaryExcessReserveRatioExpired",
     type: "event",
   },
   {
@@ -260,7 +358,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "market",
+        name: "",
         type: "address",
       },
     ],
@@ -297,7 +395,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address[]",
-        name: "arr",
+        name: "",
         type: "address[]",
       },
     ],
@@ -445,7 +543,7 @@ const _abi = [
           },
         ],
         internalType: "struct MarketParameters",
-        name: "parameters",
+        name: "",
         type: "tuple",
       },
     ],
@@ -512,6 +610,34 @@ const _abi = [
         internalType: "struct MarketParameterConstraints",
         name: "constraints",
         type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getProtocolFeeConfiguration",
+    outputs: [
+      {
+        internalType: "address",
+        name: "feeRecipient",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "originationFeeAsset",
+        type: "address",
+      },
+      {
+        internalType: "uint80",
+        name: "originationFeeAmount",
+        type: "uint80",
+      },
+      {
+        internalType: "uint16",
+        name: "protocolFeeBips",
+        type: "uint16",
       },
     ],
     stateMutability: "view",

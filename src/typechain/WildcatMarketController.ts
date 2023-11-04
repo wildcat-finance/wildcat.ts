@@ -130,6 +130,7 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
     "getControlledMarketsCount()": FunctionFragment;
     "getMarketParameters()": FunctionFragment;
     "getParameterConstraints()": FunctionFragment;
+    "getProtocolFeeConfiguration()": FunctionFragment;
     "isAuthorizedLender(address)": FunctionFragment;
     "isControlledMarket(address)": FunctionFragment;
     "marketInitCodeHash()": FunctionFragment;
@@ -158,6 +159,7 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
       | "getControlledMarketsCount"
       | "getMarketParameters"
       | "getParameterConstraints"
+      | "getProtocolFeeConfiguration"
       | "isAuthorizedLender"
       | "isControlledMarket"
       | "marketInitCodeHash"
@@ -238,6 +240,10 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getParameterConstraints",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getProtocolFeeConfiguration",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -332,6 +338,10 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getProtocolFeeConfiguration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isAuthorizedLender",
     data: BytesLike
   ): Result;
@@ -368,16 +378,24 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
   events: {
     "LenderAuthorized(address)": EventFragment;
     "LenderDeauthorized(address)": EventFragment;
-    "MarketDeployed(address)": EventFragment;
+    "MarketDeployed(address,string,string,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+    "TemporaryExcessReserveRatioActivated(address,uint256,uint256,uint256)": EventFragment;
+    "TemporaryExcessReserveRatioExpired(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "LenderAuthorized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LenderDeauthorized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketDeployed"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "TemporaryExcessReserveRatioActivated"
+  ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "TemporaryExcessReserveRatioExpired"
+  ): EventFragment;
 }
 
 export interface LenderAuthorizedEventObject {
-  lender: string;
+  arg0: string;
 }
 export type LenderAuthorizedEvent = TypedEvent<
   [string],
@@ -388,7 +406,7 @@ export type LenderAuthorizedEventFilter =
   TypedEventFilter<LenderAuthorizedEvent>;
 
 export interface LenderDeauthorizedEventObject {
-  lender: string;
+  arg0: string;
 }
 export type LenderDeauthorizedEvent = TypedEvent<
   [string],
@@ -400,13 +418,58 @@ export type LenderDeauthorizedEventFilter =
 
 export interface MarketDeployedEventObject {
   market: string;
+  name: string;
+  symbol: string;
+  asset: string;
+  maxTotalSupply: BigNumber;
+  annualInterestBips: BigNumber;
+  delinquencyFeeBips: BigNumber;
+  withdrawalBatchDuration: BigNumber;
+  reserveRatioBips: BigNumber;
+  delinquencyGracePeriod: BigNumber;
 }
 export type MarketDeployedEvent = TypedEvent<
-  [string],
+  [
+    string,
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ],
   MarketDeployedEventObject
 >;
 
 export type MarketDeployedEventFilter = TypedEventFilter<MarketDeployedEvent>;
+
+export interface TemporaryExcessReserveRatioActivatedEventObject {
+  market: string;
+  originalReserveRatioBips: BigNumber;
+  temporaryReserveRatioBips: BigNumber;
+  temporaryReserveRatioExpiry: BigNumber;
+}
+export type TemporaryExcessReserveRatioActivatedEvent = TypedEvent<
+  [string, BigNumber, BigNumber, BigNumber],
+  TemporaryExcessReserveRatioActivatedEventObject
+>;
+
+export type TemporaryExcessReserveRatioActivatedEventFilter =
+  TypedEventFilter<TemporaryExcessReserveRatioActivatedEvent>;
+
+export interface TemporaryExcessReserveRatioExpiredEventObject {
+  market: string;
+}
+export type TemporaryExcessReserveRatioExpiredEvent = TypedEvent<
+  [string],
+  TemporaryExcessReserveRatioExpiredEventObject
+>;
+
+export type TemporaryExcessReserveRatioExpiredEventFilter =
+  TypedEventFilter<TemporaryExcessReserveRatioExpiredEvent>;
 
 export interface WildcatMarketController extends BaseContract {
   contractName: "WildcatMarketController";
@@ -479,7 +542,7 @@ export interface WildcatMarketController extends BaseContract {
       start: PromiseOrValue<BigNumberish>,
       end: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[string[]] & { arr: string[] }>;
+    ): Promise<[string[]]>;
 
     getAuthorizedLendersCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -495,17 +558,24 @@ export interface WildcatMarketController extends BaseContract {
 
     getMarketParameters(
       overrides?: CallOverrides
-    ): Promise<
-      [MarketParametersStructOutput] & {
-        parameters: MarketParametersStructOutput;
-      }
-    >;
+    ): Promise<[MarketParametersStructOutput]>;
 
     getParameterConstraints(
       overrides?: CallOverrides
     ): Promise<
       [MarketParameterConstraintsStructOutput] & {
         constraints: MarketParameterConstraintsStructOutput;
+      }
+    >;
+
+    getProtocolFeeConfiguration(
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, BigNumber, number] & {
+        feeRecipient: string;
+        originationFeeAsset: string;
+        originationFeeAmount: BigNumber;
+        protocolFeeBips: number;
       }
     >;
 
@@ -617,6 +687,17 @@ export interface WildcatMarketController extends BaseContract {
     overrides?: CallOverrides
   ): Promise<MarketParameterConstraintsStructOutput>;
 
+  getProtocolFeeConfiguration(
+    overrides?: CallOverrides
+  ): Promise<
+    [string, string, BigNumber, number] & {
+      feeRecipient: string;
+      originationFeeAsset: string;
+      originationFeeAmount: BigNumber;
+      protocolFeeBips: number;
+    }
+  >;
+
   isAuthorizedLender(
     lender: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -722,6 +803,17 @@ export interface WildcatMarketController extends BaseContract {
       overrides?: CallOverrides
     ): Promise<MarketParameterConstraintsStructOutput>;
 
+    getProtocolFeeConfiguration(
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, BigNumber, number] & {
+        feeRecipient: string;
+        originationFeeAsset: string;
+        originationFeeAmount: BigNumber;
+        protocolFeeBips: number;
+      }
+    >;
+
     isAuthorizedLender(
       lender: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -767,14 +859,56 @@ export interface WildcatMarketController extends BaseContract {
   };
 
   filters: {
-    "LenderAuthorized(address)"(lender?: null): LenderAuthorizedEventFilter;
-    LenderAuthorized(lender?: null): LenderAuthorizedEventFilter;
+    "LenderAuthorized(address)"(arg0?: null): LenderAuthorizedEventFilter;
+    LenderAuthorized(arg0?: null): LenderAuthorizedEventFilter;
 
-    "LenderDeauthorized(address)"(lender?: null): LenderDeauthorizedEventFilter;
-    LenderDeauthorized(lender?: null): LenderDeauthorizedEventFilter;
+    "LenderDeauthorized(address)"(arg0?: null): LenderDeauthorizedEventFilter;
+    LenderDeauthorized(arg0?: null): LenderDeauthorizedEventFilter;
 
-    "MarketDeployed(address)"(market?: null): MarketDeployedEventFilter;
-    MarketDeployed(market?: null): MarketDeployedEventFilter;
+    "MarketDeployed(address,string,string,address,uint256,uint256,uint256,uint256,uint256,uint256)"(
+      market?: PromiseOrValue<string> | null,
+      name?: null,
+      symbol?: null,
+      asset?: null,
+      maxTotalSupply?: null,
+      annualInterestBips?: null,
+      delinquencyFeeBips?: null,
+      withdrawalBatchDuration?: null,
+      reserveRatioBips?: null,
+      delinquencyGracePeriod?: null
+    ): MarketDeployedEventFilter;
+    MarketDeployed(
+      market?: PromiseOrValue<string> | null,
+      name?: null,
+      symbol?: null,
+      asset?: null,
+      maxTotalSupply?: null,
+      annualInterestBips?: null,
+      delinquencyFeeBips?: null,
+      withdrawalBatchDuration?: null,
+      reserveRatioBips?: null,
+      delinquencyGracePeriod?: null
+    ): MarketDeployedEventFilter;
+
+    "TemporaryExcessReserveRatioActivated(address,uint256,uint256,uint256)"(
+      market?: PromiseOrValue<string> | null,
+      originalReserveRatioBips?: null,
+      temporaryReserveRatioBips?: null,
+      temporaryReserveRatioExpiry?: null
+    ): TemporaryExcessReserveRatioActivatedEventFilter;
+    TemporaryExcessReserveRatioActivated(
+      market?: PromiseOrValue<string> | null,
+      originalReserveRatioBips?: null,
+      temporaryReserveRatioBips?: null,
+      temporaryReserveRatioExpiry?: null
+    ): TemporaryExcessReserveRatioActivatedEventFilter;
+
+    "TemporaryExcessReserveRatioExpired(address)"(
+      market?: PromiseOrValue<string> | null
+    ): TemporaryExcessReserveRatioExpiredEventFilter;
+    TemporaryExcessReserveRatioExpired(
+      market?: PromiseOrValue<string> | null
+    ): TemporaryExcessReserveRatioExpiredEventFilter;
   };
 
   estimateGas: {
@@ -837,6 +971,8 @@ export interface WildcatMarketController extends BaseContract {
     getMarketParameters(overrides?: CallOverrides): Promise<BigNumber>;
 
     getParameterConstraints(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getProtocolFeeConfiguration(overrides?: CallOverrides): Promise<BigNumber>;
 
     isAuthorizedLender(
       lender: PromiseOrValue<string>,
@@ -947,6 +1083,10 @@ export interface WildcatMarketController extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getParameterConstraints(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getProtocolFeeConfiguration(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

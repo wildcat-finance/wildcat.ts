@@ -307,7 +307,7 @@ export interface WildcatMarketControllerFactoryInterface
   ): Result;
 
   events: {
-    "NewController(address,address,string,string)": EventFragment;
+    "NewController(address,address)": EventFragment;
     "UpdateProtocolFeeConfiguration(address,uint16,address,uint256)": EventFragment;
   };
 
@@ -318,23 +318,21 @@ export interface WildcatMarketControllerFactoryInterface
 }
 
 export interface NewControllerEventObject {
-  arg0: string;
-  arg1: string;
-  arg2: string;
-  arg3: string;
+  borrower: string;
+  controller: string;
 }
 export type NewControllerEvent = TypedEvent<
-  [string, string, string, string],
+  [string, string],
   NewControllerEventObject
 >;
 
 export type NewControllerEventFilter = TypedEventFilter<NewControllerEvent>;
 
 export interface UpdateProtocolFeeConfigurationEventObject {
-  arg0: string;
-  arg1: number;
-  arg2: string;
-  arg3: BigNumber;
+  feeRecipient: string;
+  protocolFeeBips: number;
+  originationFeeAsset: string;
+  originationFeeAmount: BigNumber;
 }
 export type UpdateProtocolFeeConfigurationEvent = TypedEvent<
   [string, number, string, BigNumber],
@@ -613,30 +611,23 @@ export interface WildcatMarketControllerFactory extends BaseContract {
   };
 
   filters: {
-    "NewController(address,address,string,string)"(
-      arg0?: null,
-      arg1?: null,
-      arg2?: null,
-      arg3?: null
+    "NewController(address,address)"(
+      borrower?: null,
+      controller?: null
     ): NewControllerEventFilter;
-    NewController(
-      arg0?: null,
-      arg1?: null,
-      arg2?: null,
-      arg3?: null
-    ): NewControllerEventFilter;
+    NewController(borrower?: null, controller?: null): NewControllerEventFilter;
 
     "UpdateProtocolFeeConfiguration(address,uint16,address,uint256)"(
-      arg0?: null,
-      arg1?: null,
-      arg2?: null,
-      arg3?: null
+      feeRecipient?: null,
+      protocolFeeBips?: null,
+      originationFeeAsset?: null,
+      originationFeeAmount?: null
     ): UpdateProtocolFeeConfigurationEventFilter;
     UpdateProtocolFeeConfiguration(
-      arg0?: null,
-      arg1?: null,
-      arg2?: null,
-      arg3?: null
+      feeRecipient?: null,
+      protocolFeeBips?: null,
+      originationFeeAsset?: null,
+      originationFeeAmount?: null
     ): UpdateProtocolFeeConfigurationEventFilter;
   };
 
