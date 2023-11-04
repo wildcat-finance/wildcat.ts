@@ -162,8 +162,9 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
       throw Error("Invalid parameters: " + this.checkParameters(params).join(", "));
     }
     let receipt: ContractReceipt;
-    const factory = await getControllerFactoryContract(this.signer);
+
     if (!this.isDeployed) {
+      const factory = await getControllerFactoryContract(this.signer);
       assert(this.isRegisteredBorrower, "Borrower is not registered");
       receipt = await factory
         .deployControllerAndMarket(
@@ -179,11 +180,11 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
         )
         .then((r) => r.wait());
     } else {
-      receipt = await factory
-        .deployControllerAndMarket(
+      receipt = await this.contract
+        .deployMarket(
+          params.asset.address,
           params.namePrefix,
           params.symbolPrefix,
-          params.asset.address,
           params.maxTotalSupply.raw,
           params.annualInterestBips,
           params.delinquencyFeeBips,
@@ -196,12 +197,12 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
 
     const marketDeployedTopic = this.contract.interface.getEventTopic("MarketDeployed");
     const log = receipt.logs.find((l) => l.topics[0] === marketDeployedTopic)!;
-    const event: MarketDeployedEvent = this.contract.interface.decodeEventLog(
+    const event: MarketDeployedEvent["args"] = this.contract.interface.decodeEventLog(
       "MarketDeployed",
       log.data,
       log.topics
     ) as any;
-    const market = await Market.getMarket(event.args.market, this.provider);
+    const market = await Market.getMarket(event.market, this.provider);
     this.markets.push(market);
     this.isDeployed = true;
     this.isRegisteredBorrower = true;
