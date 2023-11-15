@@ -9,7 +9,15 @@ import { MarketAccount } from "./account";
 import { RAY } from "./constants";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
 import { bipMul, rayMul } from "./utils/math";
-import { SubgraphMarketDataFragment } from "./gql/graphql";
+import {
+  SubgraphBorrowDataFragment,
+  SubgraphDepositDataFragment,
+  SubgraphFeesCollectedDataFragment,
+  SubgraphMarketDataFragment,
+  SubgraphMarketDataWithEventsFragment,
+  SubgraphRepaymentDataFragment
+} from "./gql/graphql";
+import { MakeOptional } from "./utils";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -98,7 +106,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
     public totalBaseInterestAccrued?: TokenAmount,
     public totalDelinquencyFeesAccrued?: TokenAmount,
     public totalProtocolFeesAccrued?: TokenAmount,
-    public totalDeposited?: TokenAmount
+    public totalDeposited?: TokenAmount,
+    public depositRecords: SubgraphDepositDataFragment[] = [],
+    public repaymentRecords: SubgraphRepaymentDataFragment[] = [],
+    public borrowRecords: SubgraphBorrowDataFragment[] = [],
+    public feeCollectionRecords: SubgraphFeesCollectedDataFragment[] = []
   ) {
     super(_provider);
   }
@@ -228,7 +240,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   static fromSubgraphMarketData(
     provider: SignerOrProvider,
-    data: SubgraphMarketDataFragment
+    data: MakeOptional<
+      SubgraphMarketDataWithEventsFragment,
+      "depositRecords" | "repaymentRecords" | "borrowRecords" | "feeCollectionRecords"
+    >
   ): Market {
     const underlyingToken = Token.fromSubgraphToken(data._asset, provider);
     const marketToken = Token.fromSubgraphMarketData(data, provider);
@@ -272,7 +287,17 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.lastInterestAccruedTimestamp,
       [] /* data.unpaidWithdrawalBatchExpiries */,
       underlyingToken.getAmount(coverageLiquidity),
-      underlyingToken.getAmount(0) /* borrowable assets */
+      underlyingToken.getAmount(0) /* borrowable assets */,
+      underlyingToken.getAmount(data.totalBorrowed),
+      underlyingToken.getAmount(data.totalRepaid),
+      underlyingToken.getAmount(data.totalBaseInterestAccrued),
+      underlyingToken.getAmount(data.totalDelinquencyFeesAccrued),
+      underlyingToken.getAmount(data.totalProtocolFeesAccrued),
+      underlyingToken.getAmount(data.totalDeposited),
+      data.depositRecords,
+      data.repaymentRecords,
+      data.borrowRecords,
+      data.feeCollectionRecords
     );
   }
 
