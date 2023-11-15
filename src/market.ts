@@ -8,7 +8,8 @@ import { formatUnits } from "ethers/lib/utils";
 import { MarketAccount } from "./account";
 import { RAY } from "./constants";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
-import { rayMul } from "./utils/math";
+import { bipMul, rayMul } from "./utils/math";
+import { SubgraphMarketDataFragment } from "./gql/graphql";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -52,6 +53,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   ];
 
   constructor(
+    _provider: SignerOrProvider,
     public marketToken: Token,
     public underlyingToken: Token,
     public borrower: string,
@@ -91,7 +93,12 @@ export class Market extends ContractWrapper<WildcatMarket> {
     // Amount of underlying assets that should be held in reserve for current supply
     public coverageLiquidity: TokenAmount,
     public borrowableAssets: TokenAmount,
-    _provider: SignerOrProvider
+    public totalBorrowed?: TokenAmount,
+    public totalRepaid?: TokenAmount,
+    public totalBaseInterestAccrued?: TokenAmount,
+    public totalDelinquencyFeesAccrued?: TokenAmount,
+    public totalProtocolFeesAccrued?: TokenAmount,
+    public totalDeposited?: TokenAmount
   ) {
     super(_provider);
   }
@@ -211,18 +218,69 @@ export class Market extends ContractWrapper<WildcatMarket> {
     return MarketAccount.getMarketAccount(this.provider, account, this);
   }
 
-  async getWithdrawalsByLender(lender: string): Promise<LenderWithdrawalStatus[]> {
-    return LenderWithdrawalStatus.getAllWithdrawalsForLender(this, lender);
-  }
+  // async getWithdrawalsByLender(lender: string): Promise<LenderWithdrawalStatus[]> {
+  //   return LenderWithdrawalStatus.getAllWithdrawalsForLender(this, lender);
+  // }
 
-  async getWithdrawalsByExpiry(expiry: number): Promise<LenderWithdrawalStatus[]> {
-    return LenderWithdrawalStatus.getAllWithdrawalsInBatch(this, expiry);
+  // async getWithdrawalsByExpiry(expiry: number): Promise<LenderWithdrawalStatus[]> {
+  //   return LenderWithdrawalStatus.getAllWithdrawalsInBatch(this, expiry);
+  // }
+
+  static fromSubgraphMarketData(
+    provider: SignerOrProvider,
+    data: SubgraphMarketDataFragment
+  ): Market {
+    const underlyingToken = Token.fromSubgraphToken(data._asset, provider);
+    const marketToken = Token.fromSubgraphMarketData(data, provider);
+    const scaledTotalSupply = BigNumber.from(data.scaledTotalSupply);
+    const scaleFactor = BigNumber.from(data.scaleFactor);
+    const scaledWithdrawals = BigNumber.from(data.scaledPendingWithdrawals);
+    const scaledRequiredReserves = bipMul(
+      scaledTotalSupply.sub(scaledWithdrawals),
+      BigNumber.from(data.reserveRatioBips)
+    ).add(scaledWithdrawals);
+    const coverageLiquidity = rayMul(scaledRequiredReserves, scaleFactor)
+      .add(data.pendingProtocolFees)
+      .add(data.normalizedUnclaimedWithdrawals);
+    return new Market(
+      provider,
+      marketToken,
+      underlyingToken,
+      data.borrower,
+      data.controller.id,
+      data.feeRecipient,
+      data.protocolFeeBips,
+      data.delinquencyFeeBips,
+      data.delinquencyGracePeriod,
+      data.reserveRatioBips,
+      data.annualInterestBips,
+      data.temporaryReserveRatioActive,
+      data.originalReserveRatioBips,
+      data.temporaryReserveRatioExpiry,
+      data.isClosed,
+      BigNumber.from(data.scaleFactor),
+      marketToken.getAmount(rayMul(scaledTotalSupply, scaleFactor)),
+      marketToken.getAmount(data.maxTotalSupply),
+      scaledTotalSupply,
+      underlyingToken.getAmount(0), // @todo maybe update subgraph to query this per update?
+      underlyingToken.getAmount(data.pendingProtocolFees),
+      underlyingToken.getAmount(data.normalizedUnclaimedWithdrawals),
+      BigNumber.from(data.scaledPendingWithdrawals),
+      +data.pendingWithdrawalExpiry,
+      data.isDelinquent,
+      data.timeDelinquent,
+      data.lastInterestAccruedTimestamp,
+      [] /* data.unpaidWithdrawalBatchExpiries */,
+      underlyingToken.getAmount(coverageLiquidity),
+      underlyingToken.getAmount(0) /* borrowable assets */
+    );
   }
 
   static fromMarketData(data: MarketDataStructOutput, provider: SignerOrProvider): Market {
     const marketToken = Token.fromTokenMetadata(data.marketToken, provider);
     const underlyingToken = Token.fromTokenMetadata(data.underlyingToken, provider);
     return new Market(
+      provider,
       marketToken,
       underlyingToken,
       data.borrower,
@@ -251,8 +309,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.lastInterestAccruedTimestamp.toNumber(),
       data.unpaidWithdrawalBatchExpiries,
       underlyingToken.getAmount(data.coverageLiquidity),
-      underlyingToken.getAmount(data.borrowableAssets),
-      provider
+      underlyingToken.getAmount(data.borrowableAssets)
     );
   }
 

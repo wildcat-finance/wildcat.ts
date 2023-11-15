@@ -4,6 +4,7 @@ import { IERC20, IERC20__factory, TokenMetadataStructOutput } from "./typechain"
 import { ContractWrapper, SignerOrProvider } from "./types";
 import { getLensContract } from "./constants";
 import { formatBnFixed } from "./utils";
+import { SubgraphMarketDataFragment, SubgraphToken } from "./gql/graphql";
 
 type RhsAmount = BigNumberish | TokenAmount;
 export const toBn = (amount: RhsAmount): BigNumber => {
@@ -137,6 +138,17 @@ export class Token extends ContractWrapper<IERC20> {
       metadata.isMock,
       provider
     );
+  }
+
+  static fromSubgraphToken(data: SubgraphToken, provider: SignerOrProvider): Token {
+    return new Token(data.address, data.name, data.symbol, data.decimals, data.isMock, provider);
+  }
+
+  static fromSubgraphMarketData(
+    data: SubgraphMarketDataFragment,
+    provider: SignerOrProvider
+  ): Token {
+    return new Token(data.id, data.name, data.symbol, data.decimals, false, provider);
   }
 
   static async getTokenData(token: string, provider: SignerOrProvider): Promise<Token> {

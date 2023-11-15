@@ -1,15 +1,19 @@
 import { BigNumber, ContractTransaction } from "ethers";
-import { TokenAmount, minTokenAmount } from "./token";
+import { Token, TokenAmount, minTokenAmount } from "./token";
 import { Market } from "./market";
 import {
   MarketLenderStatusStructOutput,
   MarketDataWithLenderStatusStructOutput
 } from "./typechain";
-import { updateObject } from "./utils";
+import { rayMul, updateObject } from "./utils";
 import { getControllerContract, getLensContract } from "./constants";
 import { SignerOrProvider } from "./types";
-import { LenderWithdrawalStatus, toQueueWithdrawalTransaction } from "./withdrawal-status";
+import { LenderWithdrawalStatus } from "./withdrawal-status";
 import { WithdrawalQueuedEvent } from "./typechain/WildcatMarket";
+import {
+  SubgraphAccountDataForLenderViewFragment,
+  SubgraphDepositDataFragment
+} from "./gql/graphql";
 
 export type DepositStatus =
   | {
@@ -57,7 +61,13 @@ export class MarketAccount {
     public marketBalance: TokenAmount,
     public underlyingBalance: TokenAmount,
     public underlyingApproval: BigNumber,
-    public market: Market
+    public market: Market,
+    public deposits: SubgraphDepositDataFragment[] = [],
+    public totalDeposited?: TokenAmount,
+    public lastScaleFactor?: BigNumber,
+    public lastUpdatedTimestamp?: number,
+    public totalInterestEarned?: TokenAmount,
+    public numPendingWithdrawalBatches?: number
   ) {}
 
   static readonly UpdatableKeys: Array<keyof MarketAccount> = [
@@ -321,12 +331,66 @@ export class MarketAccount {
     updateObject(this, acccountMarketInfo, MarketAccount.UpdatableKeys);
   }
 
-  applyUpdate(info: MarketLenderStatusStructOutput): void {
+  updateWith(info: MarketLenderStatusStructOutput): void {
     const account = MarketAccount.fromMarketLenderStatus(this.account, info, this.market);
     updateObject(this, account, MarketAccount.UpdatableKeys);
+    this.processInterestAccrued();
+  }
+
+  private calculateInterestEarned(): BigNumber {
+    if (!this.lastScaleFactor) return BigNumber.from(0);
+    if (this.scaledMarketBalance.eq(0) || this.lastScaleFactor?.eq(this.market.scaleFactor)) {
+      return BigNumber.from(0);
+    }
+    const lastBalance = rayMul(this.scaledMarketBalance, this.lastScaleFactor);
+    const currentBalance = rayMul(this.scaledMarketBalance, this.market.scaleFactor);
+    return currentBalance.sub(lastBalance);
+  }
+
+  processInterestAccrued(): void {
+    if (!this.lastScaleFactor || !this.totalInterestEarned) return;
+    if (!this.lastScaleFactor.eq(this.market.scaleFactor)) {
+      const interestEarned = this.calculateInterestEarned();
+      this.lastScaleFactor = this.market.scaleFactor;
+      this.totalInterestEarned = this.totalInterestEarned.add(interestEarned);
+    }
+    if (this.lastUpdatedTimestamp != this.market.lastInterestAccruedTimestamp) {
+      this.lastUpdatedTimestamp = this.market.lastInterestAccruedTimestamp;
+    }
   }
 
   /* ------ Builders / Getters ------ */
+
+  static fromSubgraphAccountData(
+    market: Market,
+    data: SubgraphAccountDataForLenderViewFragment
+  ): MarketAccount {
+    const RolesMap = {
+      Null: LenderRole.Null,
+      Blocked: LenderRole.Blocked,
+      WithdrawOnly: LenderRole.WithdrawOnly,
+      DepositAndWithdraw: LenderRole.DepositAndWithdraw
+    };
+    const scaledBalance = BigNumber.from(data.scaledBalance);
+    const account = new MarketAccount(
+      data.address,
+      data.controllerAuthorization.authorized,
+      RolesMap[data.role],
+      scaledBalance,
+      market.marketToken.getAmount(rayMul(scaledBalance, market.scaleFactor)),
+      market.underlyingToken.getAmount(0),
+      BigNumber.from(0),
+      market,
+      data.deposits,
+      market.underlyingToken.getAmount(data.totalDeposited),
+      BigNumber.from(data.lastScaleFactor),
+      data.lastUpdatedTimestamp,
+      market.underlyingToken.getAmount(data.totalInterestEarned),
+      data.numPendingWithdrawalBatches
+    );
+    account.processInterestAccrued();
+    return account;
+  }
 
   static fromMarketLenderStatus(
     account: string,
@@ -445,3 +509,25 @@ export class MarketAccount {
       );
   }
 }
+type QueueWithdrawalTransaction = {
+  expiry: number;
+  lender: string;
+  market: string;
+  scaledAmount: BigNumber;
+  originalAmount: TokenAmount;
+  transactionHash: string;
+  blockNumber: number;
+};
+
+const toQueueWithdrawalTransaction = (
+  underlyingToken: Token,
+  log: WithdrawalQueuedEvent
+): QueueWithdrawalTransaction => ({
+  transactionHash: log.transactionHash,
+  blockNumber: log.blockNumber,
+  expiry: log.args.expiry.toNumber(),
+  lender: log.args.account,
+  market: log.address,
+  scaledAmount: log.args.scaledAmount,
+  originalAmount: underlyingToken.getAmount(log.args.normalizedAmount)
+});
