@@ -53,7 +53,7 @@
   "scripts": {
     "build": "npm run clean && tsc -p ./tsconfig.prod.json",
     "clean": "rm -rf dist",
-    "codegen": "graphql-codegen && node ./scripts/type-cleanup.js",
+    "codegen": "graphql-codegen && node ./scripts/type-cleanup.js && eslint src/gql/ --ext=ts --fix",
     "lint": "eslint src/ test/ --ext=ts",
     "lint:fix": "eslint src/ test/ --ext=ts --fix",
     "prepublishOnly": "yarn build",
