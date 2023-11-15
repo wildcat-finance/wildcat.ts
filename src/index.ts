@@ -10,6 +10,7 @@ import { MarketController } from "./controller";
 export * from "./account";
 export * from "./constants";
 export * from "./controller";
+export * from "./hooks";
 export * from "./market";
 export * from "./mockerc20factory";
 export * from "./token";
@@ -24,8 +25,7 @@ export const { getMarket, getMarkets, getAllMarkets, getMarketsCount, getPaginat
 
 export const { getWithdrawalBatch } = WithdrawalBatch;
 
-export const { getAllWithdrawalsForLender, getAllWithdrawalsInBatch, getWithdrawalForLender } =
-  LenderWithdrawalStatus;
+export const { getWithdrawalForLender } = LenderWithdrawalStatus;
 
 export const {
   getMarketAccount,
