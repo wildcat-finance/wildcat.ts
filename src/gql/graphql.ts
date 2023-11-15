@@ -7489,11 +7489,30 @@ export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery = {
 
 export type SubgraphGetMarketsForBorrowerQueryVariables = Exact<{
   borrower: Scalars["Bytes"]["input"];
+  numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
+  skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
+  orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
+  directionDeposits?: InputMaybe<SubgraphOrderDirection>;
+  numBorrows?: InputMaybe<Scalars["Int"]["input"]>;
+  skipBorrows?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBorrows?: InputMaybe<SubgraphBorrow_OrderBy>;
+  directionBorrows?: InputMaybe<SubgraphOrderDirection>;
+  numFeeCollections?: InputMaybe<Scalars["Int"]["input"]>;
+  skipFeeCollections?: InputMaybe<Scalars["Int"]["input"]>;
+  orderFeeCollections?: InputMaybe<SubgraphFeesCollected_OrderBy>;
+  directionFeeCollections?: InputMaybe<SubgraphOrderDirection>;
+  numRepayments?: InputMaybe<Scalars["Int"]["input"]>;
+  skipRepayments?: InputMaybe<Scalars["Int"]["input"]>;
+  orderRepayments?: InputMaybe<SubgraphDebtRepaid_OrderBy>;
+  directionRepayments?: InputMaybe<SubgraphOrderDirection>;
 }>;
 
 export type SubgraphGetMarketsForBorrowerQuery = {
   __typename?: "Query";
-  controllers: Array<{ __typename?: "Controller"; markets: SubgraphMarketDataFragment[] }>;
+  controllers: Array<{
+    __typename?: "Controller";
+    markets: SubgraphMarketDataWithEventsFragment[];
+  }>;
 };
 
 export type SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables = Exact<{
@@ -7627,6 +7646,58 @@ export type SubgraphMarketDataFragment = {
     decimals: number;
     isMock: boolean;
   };
+};
+
+export type SubgraphMarketDataWithEventsFragment = {
+  __typename?: "Market";
+  id: string;
+  isRegistered: boolean;
+  isClosed: boolean;
+  borrower: string;
+  sentinel: string;
+  feeRecipient: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  protocolFeeBips: number;
+  delinquencyGracePeriod: number;
+  delinquencyFeeBips: number;
+  withdrawalBatchDuration: number;
+  maxTotalSupply: string;
+  pendingProtocolFees: string;
+  normalizedUnclaimedWithdrawals: string;
+  scaledTotalSupply: string;
+  scaledPendingWithdrawals: string;
+  pendingWithdrawalExpiry: string;
+  isDelinquent: boolean;
+  timeDelinquent: number;
+  annualInterestBips: number;
+  reserveRatioBips: number;
+  scaleFactor: string;
+  lastInterestAccruedTimestamp: number;
+  originalReserveRatioBips: number;
+  temporaryReserveRatioExpiry: number;
+  temporaryReserveRatioActive: boolean;
+  totalBorrowed: string;
+  totalRepaid: string;
+  totalBaseInterestAccrued: string;
+  totalDelinquencyFeesAccrued: string;
+  totalProtocolFeesAccrued: string;
+  totalDeposited: string;
+  controller: { __typename?: "Controller"; id: string };
+  _asset: {
+    __typename?: "Token";
+    id: string;
+    address: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    isMock: boolean;
+  };
+  depositRecords: SubgraphDepositDataFragment[];
+  borrowRecords: SubgraphBorrowDataFragment[];
+  feeCollectionRecords: SubgraphFeesCollectedDataFragment[];
+  repaymentRecords: SubgraphRepaymentDataFragment[];
 };
 
 export type SubgraphWithdrawalBatchPaymentPropertiesFragment = {
@@ -7885,6 +7956,73 @@ export const MarketDataFragmentDoc = gql`
     totalDeposited
   }
 `;
+export const BorrowDataFragmentDoc = gql`
+  fragment BorrowData on Borrow {
+    assetAmount
+    blockNumber
+    blockTimestamp
+    transactionHash
+  }
+`;
+export const FeesCollectedDataFragmentDoc = gql`
+  fragment FeesCollectedData on FeesCollected {
+    feesCollected
+    blockNumber
+    blockTimestamp
+    transactionHash
+  }
+`;
+export const RepaymentDataFragmentDoc = gql`
+  fragment RepaymentData on DebtRepaid {
+    from
+    assetAmount
+    blockNumber
+    blockTimestamp
+    transactionHash
+  }
+`;
+export const MarketRecordsFragmentDoc = gql`
+  fragment MarketRecords on Market {
+    depositRecords(
+      first: $numDeposits
+      skip: $skipDeposits
+      orderBy: $orderDeposits
+      orderDirection: $directionDeposits
+    ) {
+      ...DepositData
+    }
+    borrowRecords(
+      first: $numBorrows
+      skip: $skipBorrows
+      orderBy: $orderBorrows
+      orderDirection: $directionBorrows
+    ) {
+      ...BorrowData
+    }
+    feeCollectionRecords(
+      first: $numFeeCollections
+      skip: $skipFeeCollections
+      orderBy: $orderFeeCollections
+      orderDirection: $directionFeeCollections
+    ) {
+      ...FeesCollectedData
+    }
+    repaymentRecords(
+      first: $numRepayments
+      skip: $skipRepayments
+      orderBy: $orderRepayments
+      orderDirection: $directionRepayments
+    ) {
+      ...RepaymentData
+    }
+  }
+`;
+export const MarketDataWithEventsFragmentDoc = gql`
+  fragment MarketDataWithEvents on Market {
+    ...MarketData
+    ...MarketRecords
+  }
+`;
 export const LenderWithdrawalPropertiesFragmentDoc = gql`
   fragment LenderWithdrawalProperties on LenderWithdrawalStatus {
     id
@@ -7985,67 +8123,6 @@ export const LenderWithdrawalPropertiesWithEventsFragmentDoc = gql`
     }
     executions {
       ...WithdrawalExecutionProperties
-    }
-  }
-`;
-export const BorrowDataFragmentDoc = gql`
-  fragment BorrowData on Borrow {
-    assetAmount
-    blockNumber
-    blockTimestamp
-    transactionHash
-  }
-`;
-export const FeesCollectedDataFragmentDoc = gql`
-  fragment FeesCollectedData on FeesCollected {
-    feesCollected
-    blockNumber
-    blockTimestamp
-    transactionHash
-  }
-`;
-export const RepaymentDataFragmentDoc = gql`
-  fragment RepaymentData on DebtRepaid {
-    from
-    assetAmount
-    blockNumber
-    blockTimestamp
-    transactionHash
-  }
-`;
-export const MarketRecordsFragmentDoc = gql`
-  fragment MarketRecords on Market {
-    depositRecords(
-      first: $numDeposits
-      skip: $skipDeposits
-      orderBy: $orderDeposits
-      orderDirection: $directionDeposits
-    ) {
-      ...DepositData
-    }
-    borrowRecords(
-      first: $numBorrows
-      skip: $skipBorrows
-      orderBy: $orderBorrows
-      orderDirection: $directionBorrows
-    ) {
-      ...BorrowData
-    }
-    feeCollectionRecords(
-      first: $numFeeCollections
-      skip: $skipFeeCollections
-      orderBy: $orderFeeCollections
-      orderDirection: $directionFeeCollections
-    ) {
-      ...FeesCollectedData
-    }
-    repaymentRecords(
-      first: $numRepayments
-      skip: $skipRepayments
-      orderBy: $orderRepayments
-      orderDirection: $directionRepayments
-    ) {
-      ...RepaymentData
     }
   }
 `;
@@ -8587,14 +8664,38 @@ export type GetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryResult = Apollo.Q
   SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
 >;
 export const GetMarketsForBorrowerDocument = gql`
-  query getMarketsForBorrower($borrower: Bytes!) {
+  query getMarketsForBorrower(
+    $borrower: Bytes!
+    $numDeposits: Int = 10
+    $skipDeposits: Int = 0
+    $orderDeposits: Deposit_orderBy = blockTimestamp
+    $directionDeposits: OrderDirection = desc
+    $numBorrows: Int = 10
+    $skipBorrows: Int = 0
+    $orderBorrows: Borrow_orderBy = blockTimestamp
+    $directionBorrows: OrderDirection = desc
+    $numFeeCollections: Int = 10
+    $skipFeeCollections: Int = 0
+    $orderFeeCollections: FeesCollected_orderBy = blockTimestamp
+    $directionFeeCollections: OrderDirection = desc
+    $numRepayments: Int = 10
+    $skipRepayments: Int = 0
+    $orderRepayments: DebtRepaid_orderBy = blockTimestamp
+    $directionRepayments: OrderDirection = desc
+  ) {
     controllers(where: { borrower: $borrower }) {
       markets {
-        ...MarketData
+        ...MarketDataWithEvents
       }
     }
   }
+  ${MarketDataWithEventsFragmentDoc}
   ${MarketDataFragmentDoc}
+  ${MarketRecordsFragmentDoc}
+  ${DepositDataFragmentDoc}
+  ${BorrowDataFragmentDoc}
+  ${FeesCollectedDataFragmentDoc}
+  ${RepaymentDataFragmentDoc}
 `;
 
 /**
@@ -8610,6 +8711,22 @@ export const GetMarketsForBorrowerDocument = gql`
  * const { data, loading, error } = useGetMarketsForBorrowerQuery({
  *   variables: {
  *      borrower: // value for 'borrower'
+ *      numDeposits: // value for 'numDeposits'
+ *      skipDeposits: // value for 'skipDeposits'
+ *      orderDeposits: // value for 'orderDeposits'
+ *      directionDeposits: // value for 'directionDeposits'
+ *      numBorrows: // value for 'numBorrows'
+ *      skipBorrows: // value for 'skipBorrows'
+ *      orderBorrows: // value for 'orderBorrows'
+ *      directionBorrows: // value for 'directionBorrows'
+ *      numFeeCollections: // value for 'numFeeCollections'
+ *      skipFeeCollections: // value for 'skipFeeCollections'
+ *      orderFeeCollections: // value for 'orderFeeCollections'
+ *      directionFeeCollections: // value for 'directionFeeCollections'
+ *      numRepayments: // value for 'numRepayments'
+ *      skipRepayments: // value for 'skipRepayments'
+ *      orderRepayments: // value for 'orderRepayments'
+ *      directionRepayments: // value for 'directionRepayments'
  *   },
  * });
  */

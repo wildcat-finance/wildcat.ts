@@ -176,10 +176,32 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
 #                                Borrower Views                                #
 # ---------------------------------------------------------------------------- #
 
-query getMarketsForBorrower($borrower: Bytes!) {
+query getMarketsForBorrower(
+  $borrower: Bytes!
+  # deposits
+  $numDeposits: Int = 10
+  $skipDeposits: Int = 0
+  $orderDeposits: Deposit_orderBy = blockTimestamp
+  $directionDeposits: OrderDirection = desc
+  # borrowRecords
+  $numBorrows: Int = 10
+  $skipBorrows: Int = 0
+  $orderBorrows: Borrow_orderBy = blockTimestamp
+  $directionBorrows: OrderDirection = desc
+  # feeCollections
+  $numFeeCollections: Int = 10
+  $skipFeeCollections: Int = 0
+  $orderFeeCollections: FeesCollected_orderBy = blockTimestamp
+  $directionFeeCollections: OrderDirection = desc
+  # repaymentRecords
+  $numRepayments: Int = 10
+  $skipRepayments: Int = 0
+  $orderRepayments: DebtRepaid_orderBy = blockTimestamp
+  $directionRepayments: OrderDirection = desc
+) {
   controllers(where: { borrower: $borrower }) {
     markets {
-      ...MarketData
+      ...MarketDataWithEvents
     }
   }
 }
@@ -301,6 +323,11 @@ fragment MarketData on Market {
   totalDelinquencyFeesAccrued
   totalProtocolFeesAccrued
   totalDeposited
+}
+
+fragment MarketDataWithEvents on Market {
+  ...MarketData
+  ...MarketRecords
 }
 
 fragment WithdrawalBatchPaymentProperties on WithdrawalBatchPayment {
