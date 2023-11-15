@@ -8,13 +8,24 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "@graphql-codegen/typescript-operations": "^4.0.1",
+    "@graphql-codegen/typescript-react-apollo": "^4.1.0",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.5",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
     "@typechain/ethers-v5": "^10.2.1",
     "@typechain/hardhat": "^9.1.0",
     "@types/chai": "^4.3.5",
     "@types/dotenv": "^8.2.0",
+    "@types/jest": "^27.5.2",
     "@types/mocha": "^10.0.1",
+    "@types/node": "^16.18.59",
+    "@types/react": "^18.2.33",
+    "@types/react-dom": "^18.2.14",
     "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@typescript-eslint/parser": "^5.59.11",
     "chai": "^4.3.7",
@@ -25,19 +36,28 @@
     "hardhat": "^2.13.0",
     "mocha": "^10.2.0",
     "prettier": "^2.8.8",
+    "ts-morph": "^20.0.0",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.1",
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "ethers": "^5.5.3"
+    "@apollo/client": "^3.8.6",
+    "@tanstack/react-query": "^5.8.1",
+    "ethers": "^5.5.3",
+    "graphql": "^16.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1"
   },
   "scripts": {
-    "typechain": "rm -rf typechain cache src/typechain; hardhat compile; cp -r typechain src/typechain; node ./typechain-imports.js",
-    "clean": "rm -rf dist",
     "build": "npm run clean && tsc -p ./tsconfig.prod.json",
+    "clean": "rm -rf dist",
+    "codegen": "graphql-codegen && node ./scripts/type-cleanup.js",
     "lint": "eslint src/ test/ --ext=ts",
     "lint:fix": "eslint src/ test/ --ext=ts --fix",
-    "prepublishOnly": "yarn build"
+    "prepublishOnly": "yarn build",
+    "test": "react-scripts test",
+    "typechain": "rm -rf typechain cache src/typechain; hardhat compile; cp -r typechain src/typechain; node ./typechain-imports.js"
   }
 }

@@ -1,0 +1,24 @@
+schema: 'https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.16'
+overwrite: true
+documents: 'queries.graphql'
+generates:
+  ./src/gql/graphql.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      dedupeFragments: true
+      avoidOptionals: false
+      withResultType: true
+      typesPrefix: 'Subgraph'
+      scalars:
+        BigInt:
+          input: 'string | number | bigint'
+          output: 'string'
+        Bytes:
+          input: 'string'
+          output: 'string'
+        ID:
+          input: 'string'
+          output: 'string'

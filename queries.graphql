@@ -1,0 +1,487 @@
+# -------------------------------------------------------------------------- #
+#                                Lender Views                                #
+# -------------------------------------------------------------------------- #
+
+fragment AccountDataForLenderView on LenderAccount {
+  ...LenderProperties
+  controllerAuthorization {
+    authorized
+  }
+
+  deposits(
+    first: $numDeposits
+    skip: $skipDeposits
+    orderBy: $orderDeposits
+    orderDirection: $directionDeposits
+  ) {
+    ...DepositData
+  }
+
+  # market {
+  #   scaleFactor
+  # }
+}
+
+query getLenderAccountForMarket(
+  $market: ID!
+  $lender: Bytes!
+  $numDeposits: Int = 200
+  $skipDeposits: Int = 0
+  $orderDeposits: Deposit_orderBy = blockTimestamp
+  $directionDeposits: OrderDirection = desc
+  $numWithdrawals: Int = 200
+  $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry # $directionWithdrawals: OrderDirection = desc
+) {
+  market(id: $market) {
+    lenders(where: { address: $lender }) {
+      ...AccountDataForLenderView
+    }
+  }
+}
+
+query getAccountsWhereLenderAuthorizedOrActive(
+  $lender: Bytes!
+  # $minimumBalance: BigInt = 1
+  $numDeposits: Int = 200
+  $skipDeposits: Int = 0
+  $orderDeposits: Deposit_orderBy = blockTimestamp
+  $directionDeposits: OrderDirection = desc
+  $numWithdrawals: Int = 200
+  $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry # $directionWithdrawals: OrderDirection = desc
+) {
+  lenderAccounts(
+    where: {
+      and: [
+        { address: $lender }
+        {
+          or: [
+            { role_in: [DepositAndWithdraw, WithdrawOnly] }
+            { scaledBalance_gt: 0 }
+            { controllerAuthorization_: { authorized: true } }
+            { totalDeposited_gt: 0 }
+          ]
+        }
+      ]
+    }
+  ) {
+    ...AccountDataForLenderView
+    market {
+      ...MarketData
+    }
+  }
+}
+
+query getLenderWithdrawalsForMarket(
+  $market: ID!
+  $lender: Bytes!
+  $numWithdrawals: Int = 200
+  $skipWithdrawals: Int = 0
+) {
+  market(id: $market) {
+    lenders(where: { address: $lender }) {
+      incompleteWithdrawals: withdrawals(
+        first: $numWithdrawals
+        skip: $skipWithdrawals
+        where: { isCompleted: false }
+      ) {
+        ...LenderWithdrawalPropertiesWithEvents
+      }
+
+      completeWithdrawals: withdrawals(
+        first: $numWithdrawals
+        skip: $skipWithdrawals
+        where: { isCompleted: true }
+      ) {
+        ...LenderWithdrawalPropertiesWithEvents
+      }
+    }
+  }
+}
+
+query getLenderAuthorizationByMarket($market: ID!, $lender: Bytes!) {
+  market(id: $market) {
+    controller {
+      authorizedLenders(where: { lender: $lender }) {
+        lender
+        authorized
+      }
+    }
+  }
+}
+
+# Get market address and lender interaction logs for markets
+# where lender is authorized on controller, has a role or has
+# a balance.
+query getMarketsAndLogsWhereLenderAuthorizedOrActive(
+  $lender: Bytes!
+  $minimumBalance: BigInt = 1
+  $numDeposits: Int = 200
+  $skipDeposits: Int = 0
+  $orderDeposits: Deposit_orderBy = blockTimestamp
+  $directionDeposits: OrderDirection = desc
+  $numWithdrawals: Int = 200
+  $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry # $directionWithdrawals: OrderDirection = desc
+) {
+  lenderAccounts(
+    where: {
+      address: $lender
+      or: [
+        { role_in: [DepositAndWithdraw, WithdrawOnly] }
+        { scaledBalance_gt: $minimumBalance }
+        { controllerAuthorization_: { authorized: true } }
+      ]
+    }
+  ) {
+    market {
+      id
+    }
+    scaledBalance
+    role
+    totalDeposited
+    lastScaleFactor
+    totalInterestEarned
+    controllerAuthorization {
+      authorized
+    }
+    withdrawals(
+      first: $numWithdrawals
+      skip: $skipWithdrawals
+      where: { isCompleted: false } # orderBy: $orderWithdrawals # orderDirection: $directionWithdrawals
+    ) {
+      ...LenderWithdrawalProperties
+
+      batch {
+        ...WithdrawalBatchProperties
+      }
+      requests {
+        ...WithdrawalRequestProperties
+      }
+      executions {
+        ...WithdrawalExecutionProperties
+      }
+    }
+
+    deposits(
+      first: $numDeposits
+      skip: $skipDeposits
+      orderBy: $orderDeposits
+      orderDirection: $directionDeposits
+    ) {
+      ...DepositData
+    }
+  }
+}
+
+# ---------------------------------------------------------------------------- #
+#                                Borrower Views                                #
+# ---------------------------------------------------------------------------- #
+
+query getMarketsForBorrower($borrower: Bytes!) {
+  controllers(where: { borrower: $borrower }) {
+    markets {
+      ...MarketData
+    }
+  }
+}
+
+query getAllPendingWithdrawalBatchesForMarket($market: ID!) {
+  market(id: $market) {
+    withdrawalBatches(where: { isClosed: false }) {
+      ...WithdrawalBatchPropertiesWithEvents
+    }
+  }
+}
+
+query getAllMarkets {
+  markets {
+    ...MarketData
+  }
+}
+
+query getAuthorizedLendersByMarket($market: ID!) {
+  market(id: $market) {
+    controller {
+      authorizedLenders(where: { authorized: true }) {
+        lender
+      }
+    }
+  }
+}
+
+query getAuthorizedLendersByBorrower($filter: Controller_filter!) {
+  controllers(where: $filter) {
+    authorizedLenders(where: { authorized: true }) {
+      lender
+    }
+  }
+}
+
+query getSubgraphStatus {
+  _meta {
+    hasIndexingErrors
+    block {
+      hash
+      number
+      timestamp
+    }
+  }
+}
+
+fragment LenderProperties on LenderAccount {
+  id
+  address
+  scaledBalance
+  role
+  totalDeposited
+  lastScaleFactor
+  lastUpdatedTimestamp
+  totalInterestEarned
+  numPendingWithdrawalBatches
+}
+
+fragment DepositData on Deposit {
+  id
+  assetAmount
+  scaledAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment MarketData on Market {
+  id
+
+  # --------------------------------- Config --------------------------------- #
+  isRegistered
+  isClosed
+  controller {
+    id
+  }
+  borrower
+  sentinel
+  feeRecipient
+  name
+  symbol
+  decimals
+  protocolFeeBips
+  delinquencyGracePeriod
+  delinquencyFeeBips
+  withdrawalBatchDuration
+
+  _asset: asset {
+    id
+    address
+    name
+    symbol
+    decimals
+    isMock
+  }
+
+  # ---------------------------------- State --------------------------------- #
+  maxTotalSupply
+  pendingProtocolFees
+  normalizedUnclaimedWithdrawals
+  scaledTotalSupply
+  scaledPendingWithdrawals
+  pendingWithdrawalExpiry
+  isDelinquent
+  timeDelinquent
+  annualInterestBips
+  reserveRatioBips
+  scaleFactor
+  lastInterestAccruedTimestamp
+  originalReserveRatioBips
+  temporaryReserveRatioExpiry
+  temporaryReserveRatioActive
+
+  # -------------------------------- Metadata -------------------------------- #
+  totalBorrowed
+  totalRepaid
+  totalBaseInterestAccrued
+  totalDelinquencyFeesAccrued
+  totalProtocolFeesAccrued
+  totalDeposited
+}
+
+fragment WithdrawalBatchPaymentProperties on WithdrawalBatchPayment {
+  id
+  scaledAmountBurned
+  normalizedAmountPaid
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+fragment WithdrawalRequestProperties on WithdrawalRequest {
+  id
+  requestIndex
+  account {
+    address
+  }
+  scaledAmount
+  normalizedAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+fragment WithdrawalExecutionProperties on WithdrawalExecution {
+  id
+  account {
+    address
+  }
+  normalizedAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment LenderWithdrawalProperties on LenderWithdrawalStatus {
+  id
+  account {
+    address
+  }
+  requestsCount
+  executionsCount
+  scaledAmount
+  normalizedAmountWithdrawn
+  totalNormalizedRequests
+  isCompleted
+}
+
+fragment LenderWithdrawalPropertiesWithEvents on LenderWithdrawalStatus {
+  ...LenderWithdrawalProperties
+
+  batch {
+    ...WithdrawalBatchPropertiesWithEvents
+  }
+  requests {
+    ...WithdrawalRequestProperties
+  }
+  executions {
+    ...WithdrawalExecutionProperties
+  }
+}
+
+fragment WithdrawalBatchProperties on WithdrawalBatch {
+  id
+  expiry
+  scaledTotalAmount
+  scaledAmountBurned
+  normalizedAmountPaid
+  normalizedAmountClaimed
+  totalNormalizedRequests
+  isExpired
+  isClosed
+  paymentsCount
+  lastScaleFactor
+  lastUpdatedTimestamp
+  totalInterestEarned
+
+  creation {
+    blockNumber
+    blockTimestamp
+    transactionHash
+  }
+
+  payments {
+    ...WithdrawalBatchPaymentProperties
+  }
+}
+
+fragment WithdrawalBatchPropertiesWithEvents on WithdrawalBatch {
+  ...WithdrawalBatchProperties
+
+  withdrawals {
+    ...LenderWithdrawalProperties
+  }
+  requests {
+    ...WithdrawalRequestProperties
+  }
+  executions {
+    ...WithdrawalExecutionProperties
+  }
+}
+
+query getMarketRecords(
+  $market: ID!
+  # deposits
+  $numDeposits: Int = 10
+  $skipDeposits: Int = 0
+  $orderDeposits: Deposit_orderBy = blockTimestamp
+  $directionDeposits: OrderDirection = desc
+  # borrowRecords
+  $numBorrows: Int = 10
+  $skipBorrows: Int = 0
+  $orderBorrows: Borrow_orderBy = blockTimestamp
+  $directionBorrows: OrderDirection = desc
+  # feeCollections
+  $numFeeCollections: Int = 10
+  $skipFeeCollections: Int = 0
+  $orderFeeCollections: FeesCollected_orderBy = blockTimestamp
+  $directionFeeCollections: OrderDirection = desc
+  # repaymentRecords
+  $numRepayments: Int = 10
+  $skipRepayments: Int = 0
+  $orderRepayments: DebtRepaid_orderBy = blockTimestamp
+  $directionRepayments: OrderDirection = desc
+) {
+  market(id: $market) {
+    ...MarketRecords
+  }
+}
+
+fragment MarketRecords on Market {
+  depositRecords(
+    first: $numDeposits
+    skip: $skipDeposits
+    orderBy: $orderDeposits
+    orderDirection: $directionDeposits
+  ) {
+    ...DepositData
+  }
+  borrowRecords(
+    first: $numBorrows
+    skip: $skipBorrows
+    orderBy: $orderBorrows
+    orderDirection: $directionBorrows
+  ) {
+    ...BorrowData
+  }
+  feeCollectionRecords(
+    first: $numFeeCollections
+    skip: $skipFeeCollections
+    orderBy: $orderFeeCollections
+    orderDirection: $directionFeeCollections
+  ) {
+    ...FeesCollectedData
+  }
+  repaymentRecords(
+    first: $numRepayments
+    skip: $skipRepayments
+    orderBy: $orderRepayments
+    orderDirection: $directionRepayments
+  ) {
+    ...RepaymentData
+  }
+}
+
+fragment BorrowData on Borrow {
+  assetAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment RepaymentData on DebtRepaid {
+  from
+  assetAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment FeesCollectedData on FeesCollected {
+  feesCollected
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
