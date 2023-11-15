@@ -12,6 +12,7 @@ import {
   WildcatArchController__factory
 } from "./typechain";
 import { SignerOrProvider } from "./types";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 export const Deployments = {
   MarketLens: "0x5d14d290EEA69584106A381910eaa93c2b21c6b2",
@@ -68,3 +69,10 @@ export const RAY = BigNumber.from(10).pow(27);
 export const WAD = BigNumber.from(10).pow(18);
 
 export const DeploymentBlockNumber = 4518288;
+
+export const SubgraphUrl = "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.16";
+
+export const SubgraphClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  uri: SubgraphUrl
+});
