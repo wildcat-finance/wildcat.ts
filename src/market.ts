@@ -32,6 +32,36 @@ export type CollateralizationInfo = {
   temporaryExpiry?: number;
 };
 
+export type DepositRecord = {
+  amount: TokenAmount;
+} & Omit<SubgraphDepositDataFragment, "assetAmount">;
+
+export type RepaymentRecord = {
+  amount: TokenAmount;
+} & Omit<SubgraphRepaymentDataFragment, "assetAmount">;
+
+export type BorrowRecord = {
+  amount: TokenAmount;
+} & Omit<SubgraphBorrowDataFragment, "assetAmount">;
+
+export type FeeCollectionRecord = {
+  amount: TokenAmount;
+} & Omit<SubgraphFeesCollectedDataFragment, "feesCollected">;
+
+function parseRecord(token: Token, log: SubgraphDepositDataFragment): DepositRecord;
+function parseRecord(token: Token, log: SubgraphRepaymentDataFragment): RepaymentRecord;
+function parseRecord(token: Token, log: SubgraphBorrowDataFragment): BorrowRecord;
+function parseRecord(
+  token: Token,
+  log: SubgraphDepositDataFragment | SubgraphRepaymentDataFragment | SubgraphBorrowDataFragment
+): DepositRecord | RepaymentRecord | BorrowRecord {
+  const { assetAmount, ...rest } = log;
+  return {
+    ...rest,
+    amount: token.getAmount(assetAmount)
+  };
+}
+
 export class Market extends ContractWrapper<WildcatMarket> {
   static readonly UpdatableKeys: Array<keyof Market> = [
     "marketToken",
@@ -59,6 +89,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
     "timeDelinquent",
     "lastInterestAccruedTimestamp"
   ];
+  public depositRecords: DepositRecord[];
+  public repaymentRecords: RepaymentRecord[];
+  public borrowRecords: BorrowRecord[];
+  public feeCollectionRecords: FeeCollectionRecord[];
 
   constructor(
     _provider: SignerOrProvider,
@@ -107,12 +141,19 @@ export class Market extends ContractWrapper<WildcatMarket> {
     public totalDelinquencyFeesAccrued?: TokenAmount,
     public totalProtocolFeesAccrued?: TokenAmount,
     public totalDeposited?: TokenAmount,
-    public depositRecords: SubgraphDepositDataFragment[] = [],
-    public repaymentRecords: SubgraphRepaymentDataFragment[] = [],
-    public borrowRecords: SubgraphBorrowDataFragment[] = [],
-    public feeCollectionRecords: SubgraphFeesCollectedDataFragment[] = []
+    depositRecords: SubgraphDepositDataFragment[] = [],
+    repaymentRecords: SubgraphRepaymentDataFragment[] = [],
+    borrowRecords: SubgraphBorrowDataFragment[] = [],
+    feeCollectionRecords: SubgraphFeesCollectedDataFragment[] = []
   ) {
     super(_provider);
+    this.depositRecords = depositRecords.map((log) => parseRecord(this.underlyingToken, log));
+    this.repaymentRecords = repaymentRecords.map((log) => parseRecord(this.underlyingToken, log));
+    this.borrowRecords = borrowRecords.map((log) => parseRecord(this.underlyingToken, log));
+    this.feeCollectionRecords = feeCollectionRecords.map(({ feesCollected, ...rest }) => ({
+      ...rest,
+      amount: this.underlyingToken.getAmount(feesCollected)
+    }));
   }
 
   readonly contractFactory = WildcatMarket__factory;
