@@ -7387,6 +7387,14 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables = Exa
   directionDeposits?: InputMaybe<SubgraphOrderDirection>;
   numWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
   skipWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
+  numBorrows?: InputMaybe<Scalars["Int"]["input"]>;
+  skipBorrows?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBorrows?: InputMaybe<SubgraphBorrow_OrderBy>;
+  directionBorrows?: InputMaybe<SubgraphOrderDirection>;
+  numRepayments?: InputMaybe<Scalars["Int"]["input"]>;
+  skipRepayments?: InputMaybe<Scalars["Int"]["input"]>;
+  orderRepayments?: InputMaybe<SubgraphDebtRepaid_OrderBy>;
+  directionRepayments?: InputMaybe<SubgraphOrderDirection>;
 }>;
 
 export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
@@ -7402,7 +7410,55 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
     lastUpdatedTimestamp: number;
     totalInterestEarned: string;
     numPendingWithdrawalBatches: number;
-    market: SubgraphMarketDataFragment;
+    market: {
+      __typename?: "Market";
+      id: string;
+      isRegistered: boolean;
+      isClosed: boolean;
+      borrower: string;
+      sentinel: string;
+      feeRecipient: string;
+      name: string;
+      symbol: string;
+      decimals: number;
+      protocolFeeBips: number;
+      delinquencyGracePeriod: number;
+      delinquencyFeeBips: number;
+      withdrawalBatchDuration: number;
+      maxTotalSupply: string;
+      pendingProtocolFees: string;
+      normalizedUnclaimedWithdrawals: string;
+      scaledTotalSupply: string;
+      scaledPendingWithdrawals: string;
+      pendingWithdrawalExpiry: string;
+      isDelinquent: boolean;
+      timeDelinquent: number;
+      annualInterestBips: number;
+      reserveRatioBips: number;
+      scaleFactor: string;
+      lastInterestAccruedTimestamp: number;
+      originalReserveRatioBips: number;
+      temporaryReserveRatioExpiry: number;
+      temporaryReserveRatioActive: boolean;
+      totalBorrowed: string;
+      totalRepaid: string;
+      totalBaseInterestAccrued: string;
+      totalDelinquencyFeesAccrued: string;
+      totalProtocolFeesAccrued: string;
+      totalDeposited: string;
+      borrowRecords: SubgraphBorrowDataFragment[];
+      repaymentRecords: SubgraphRepaymentDataFragment[];
+      controller: { __typename?: "Controller"; id: string };
+      _asset: {
+        __typename?: "Token";
+        id: string;
+        address: string;
+        name: string;
+        symbol: string;
+        decimals: number;
+        isMock: boolean;
+      };
+    };
     controllerAuthorization: { __typename?: "LenderAuthorization"; authorized: boolean };
     deposits: SubgraphDepositDataFragment[];
   }>;
@@ -8232,6 +8288,14 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
     $directionDeposits: OrderDirection = desc
     $numWithdrawals: Int = 200
     $skipWithdrawals: Int = 0
+    $numBorrows: Int = 10
+    $skipBorrows: Int = 0
+    $orderBorrows: Borrow_orderBy = blockTimestamp
+    $directionBorrows: OrderDirection = desc
+    $numRepayments: Int = 10
+    $skipRepayments: Int = 0
+    $orderRepayments: DebtRepaid_orderBy = blockTimestamp
+    $directionRepayments: OrderDirection = desc
   ) {
     lenderAccounts(
       where: {
@@ -8251,6 +8315,22 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
       ...AccountDataForLenderView
       market {
         ...MarketData
+        borrowRecords(
+          first: $numBorrows
+          skip: $skipBorrows
+          orderBy: $orderBorrows
+          orderDirection: $directionBorrows
+        ) {
+          ...BorrowData
+        }
+        repaymentRecords(
+          first: $numRepayments
+          skip: $skipRepayments
+          orderBy: $orderRepayments
+          orderDirection: $directionRepayments
+        ) {
+          ...RepaymentData
+        }
       }
     }
   }
@@ -8258,6 +8338,8 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
   ${LenderPropertiesFragmentDoc}
   ${DepositDataFragmentDoc}
   ${MarketDataFragmentDoc}
+  ${BorrowDataFragmentDoc}
+  ${RepaymentDataFragmentDoc}
 `;
 
 /**
@@ -8279,6 +8361,14 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
  *      directionDeposits: // value for 'directionDeposits'
  *      numWithdrawals: // value for 'numWithdrawals'
  *      skipWithdrawals: // value for 'skipWithdrawals'
+ *      numBorrows: // value for 'numBorrows'
+ *      skipBorrows: // value for 'skipBorrows'
+ *      orderBorrows: // value for 'orderBorrows'
+ *      directionBorrows: // value for 'directionBorrows'
+ *      numRepayments: // value for 'numRepayments'
+ *      skipRepayments: // value for 'skipRepayments'
+ *      orderRepayments: // value for 'orderRepayments'
+ *      directionRepayments: // value for 'directionRepayments'
  *   },
  * });
  */

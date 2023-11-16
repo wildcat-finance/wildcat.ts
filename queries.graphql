@@ -41,13 +41,28 @@ query getLenderAccountForMarket(
 
 query getAccountsWhereLenderAuthorizedOrActive(
   $lender: Bytes!
-  # $minimumBalance: BigInt = 1
+
+  # deposits
   $numDeposits: Int = 200
   $skipDeposits: Int = 0
   $orderDeposits: Deposit_orderBy = blockTimestamp
   $directionDeposits: OrderDirection = desc
+
+  # withdrawals
   $numWithdrawals: Int = 200
   $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry # $directionWithdrawals: OrderDirection = desc
+  
+  # borrowRecords
+  $numBorrows: Int = 10
+  $skipBorrows: Int = 0
+  $orderBorrows: Borrow_orderBy = blockTimestamp
+  $directionBorrows: OrderDirection = desc
+
+  # repaymentRecords
+  $numRepayments: Int = 10
+  $skipRepayments: Int = 0
+  $orderRepayments: DebtRepaid_orderBy = blockTimestamp
+  $directionRepayments: OrderDirection = desc
 ) {
   lenderAccounts(
     where: {
@@ -67,6 +82,22 @@ query getAccountsWhereLenderAuthorizedOrActive(
     ...AccountDataForLenderView
     market {
       ...MarketData
+      borrowRecords(
+        first: $numBorrows
+        skip: $skipBorrows
+        orderBy: $orderBorrows
+        orderDirection: $directionBorrows
+      ) {
+        ...BorrowData
+      }
+      repaymentRecords(
+        first: $numRepayments
+        skip: $skipRepayments
+        orderBy: $orderRepayments
+        orderDirection: $directionRepayments
+      ) {
+        ...RepaymentData
+      }
     }
   }
 }
