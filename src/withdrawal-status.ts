@@ -13,7 +13,9 @@ import {
   SubgraphLenderWithdrawalPropertiesFragment,
   SubgraphLenderWithdrawalStatus,
   SubgraphWithdrawalExecution,
-  SubgraphWithdrawalRequest
+  SubgraphWithdrawalExecutionPropertiesFragment,
+  SubgraphWithdrawalRequest,
+  SubgraphWithdrawalRequestPropertiesFragment
 } from "./gql/graphql";
 
 export class LenderWithdrawalStatus {
@@ -24,8 +26,8 @@ export class LenderWithdrawalStatus {
     public normalizedAmountWithdrawn: TokenAmount,
     public normalizedAmountOwed: TokenAmount,
     public availableWithdrawalAmount: TokenAmount,
-    public requests: SubgraphWithdrawalRequest[] = [],
-    public executions: SubgraphWithdrawalExecution[] = []
+    public requests: SubgraphWithdrawalRequestPropertiesFragment[] = [],
+    public executions: SubgraphWithdrawalExecutionPropertiesFragment[] = []
   ) {}
 
   async execute(): Promise<ContractTransaction> {

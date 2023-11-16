@@ -113,7 +113,10 @@ export class WithdrawalBatch {
 
   static fromSubgraphWithdrawalBatch(
     market: Market,
-    batch: SubgraphWithdrawalBatchPropertiesWithEventsFragment
+    batch: MakeOptional<
+      SubgraphWithdrawalBatchPropertiesWithEventsFragment,
+      "requests" | "executions" | "withdrawals"
+    >
   ): WithdrawalBatch {
     const scaledTotalAmount = BigNumber.from(batch.scaledTotalAmount);
     const scaledAmountBurned = BigNumber.from(batch.scaledAmountBurned);
