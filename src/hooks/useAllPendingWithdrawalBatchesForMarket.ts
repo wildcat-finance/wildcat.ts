@@ -12,12 +12,15 @@ import { useMemo } from "react";
 import { TwoStepQueryHookResult } from "./types";
 
 export function useAllPendingWithdrawalBatchesForMarket({
-  market
+  market,
+  enabled
 }: {
-  market: Market;
+  market: Market | undefined;
+  enabled: boolean;
 }): TwoStepQueryHookResult<WithdrawalBatch[]> {
-  const address = market.address.toLowerCase();
+  const address = market?.address.toLowerCase();
   async function getAllPendingWithdrawalBatches() {
+    if (!address || !market) throw Error();
     logger.debug(`Getting withdrawal batches...`);
     const result = await SubgraphClient.query<
       SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
@@ -38,16 +41,17 @@ export function useAllPendingWithdrawalBatchesForMarket({
     isLoading: isLoadingInitial,
     refetch: refetchInitial,
     isError: isErrorInitial,
-    error: errorInitial
+    failureReason: errorInitial
   } = useQuery({
     queryKey: ["allPendingWithdrawalBatches/initial", address],
     queryFn: getAllPendingWithdrawalBatches,
-    enabled: !!address,
+    enabled: !!market && enabled,
     refetchOnMount: false
   });
 
   const batches = data ?? [];
   async function getUpdatedBatches() {
+    if (!address || !market) throw Error();
     logger.debug(`Getting batch updates...`);
     const lens = getLensContract(market.provider);
     const batchUpdates = await lens.getWithdrawalBatchesData(
@@ -77,10 +81,10 @@ export function useAllPendingWithdrawalBatchesForMarket({
   const {
     data: updatedBatches,
     isLoading: isLoadingUpdate,
-    isPending: isPendingUpdate,
+    isPaused: isPendingUpdate,
     refetch: refetchUpdate,
     isError: isErrorUpdate,
-    error: errorUpdate
+    failureReason: errorUpdate
   } = useQuery({
     queryKey: ["allPendingWithdrawalBatches/update", updateQueryKeys],
     queryFn: getUpdatedBatches,
@@ -92,12 +96,12 @@ export function useAllPendingWithdrawalBatchesForMarket({
     data: updatedBatches ?? batches,
     isLoadingInitial,
     isErrorInitial,
-    errorInitial,
+    errorInitial: errorInitial as Error | null,
     refetchInitial,
     isLoadingUpdate,
     isPendingUpdate,
     isErrorUpdate,
-    errorUpdate,
+    errorUpdate: errorUpdate as Error | null,
     refetchUpdate
   };
 }

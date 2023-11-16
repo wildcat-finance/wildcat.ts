@@ -7379,6 +7379,79 @@ export type SubgraphGetLenderAccountForMarketQuery = {
   } | null;
 };
 
+export type SubgraphGetLenderAccountWithMarketQueryVariables = Exact<{
+  market: Scalars["ID"]["input"];
+  lender: Scalars["Bytes"]["input"];
+  numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
+  skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
+  orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
+  directionDeposits?: InputMaybe<SubgraphOrderDirection>;
+  numWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
+  skipWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
+  numBorrows?: InputMaybe<Scalars["Int"]["input"]>;
+  skipBorrows?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBorrows?: InputMaybe<SubgraphBorrow_OrderBy>;
+  directionBorrows?: InputMaybe<SubgraphOrderDirection>;
+  numRepayments?: InputMaybe<Scalars["Int"]["input"]>;
+  skipRepayments?: InputMaybe<Scalars["Int"]["input"]>;
+  orderRepayments?: InputMaybe<SubgraphDebtRepaid_OrderBy>;
+  directionRepayments?: InputMaybe<SubgraphOrderDirection>;
+}>;
+
+export type SubgraphGetLenderAccountWithMarketQuery = {
+  __typename?: "Query";
+  market?: {
+    __typename?: "Market";
+    id: string;
+    isRegistered: boolean;
+    isClosed: boolean;
+    borrower: string;
+    sentinel: string;
+    feeRecipient: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    protocolFeeBips: number;
+    delinquencyGracePeriod: number;
+    delinquencyFeeBips: number;
+    withdrawalBatchDuration: number;
+    maxTotalSupply: string;
+    pendingProtocolFees: string;
+    normalizedUnclaimedWithdrawals: string;
+    scaledTotalSupply: string;
+    scaledPendingWithdrawals: string;
+    pendingWithdrawalExpiry: string;
+    isDelinquent: boolean;
+    timeDelinquent: number;
+    annualInterestBips: number;
+    reserveRatioBips: number;
+    scaleFactor: string;
+    lastInterestAccruedTimestamp: number;
+    originalReserveRatioBips: number;
+    temporaryReserveRatioExpiry: number;
+    temporaryReserveRatioActive: boolean;
+    totalBorrowed: string;
+    totalRepaid: string;
+    totalBaseInterestAccrued: string;
+    totalDelinquencyFeesAccrued: string;
+    totalProtocolFeesAccrued: string;
+    totalDeposited: string;
+    lenders: SubgraphAccountDataForLenderViewFragment[];
+    borrowRecords: SubgraphBorrowDataFragment[];
+    repaymentRecords: SubgraphRepaymentDataFragment[];
+    controller: { __typename?: "Controller"; id: string };
+    _asset: {
+      __typename?: "Token";
+      id: string;
+      address: string;
+      name: string;
+      symbol: string;
+      decimals: number;
+      isMock: boolean;
+    };
+  } | null;
+};
+
 export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables = Exact<{
   lender: Scalars["Bytes"]["input"];
   numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
@@ -7525,20 +7598,7 @@ export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery = {
     totalInterestEarned: string;
     market: { __typename?: "Market"; id: string };
     controllerAuthorization: { __typename?: "LenderAuthorization"; authorized: boolean };
-    withdrawals: Array<{
-      __typename?: "LenderWithdrawalStatus";
-      id: string;
-      requestsCount: number;
-      executionsCount: number;
-      scaledAmount: string;
-      normalizedAmountWithdrawn: string;
-      totalNormalizedRequests: string;
-      isCompleted: boolean;
-      batch: SubgraphWithdrawalBatchPropertiesFragment;
-      requests: SubgraphWithdrawalRequestPropertiesFragment[];
-      executions: SubgraphWithdrawalExecutionPropertiesFragment[];
-      account: { __typename?: "LenderAccount"; address: string };
-    }>;
+    withdrawals: SubgraphLenderWithdrawalPropertiesWithEventsFragment[];
     deposits: SubgraphDepositDataFragment[];
   }>;
 };
@@ -7569,6 +7629,31 @@ export type SubgraphGetMarketsForBorrowerQuery = {
     __typename?: "Controller";
     markets: SubgraphMarketDataWithEventsFragment[];
   }>;
+};
+
+export type SubgraphGetMarketQueryVariables = Exact<{
+  market: Scalars["ID"]["input"];
+  numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
+  skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
+  orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
+  directionDeposits?: InputMaybe<SubgraphOrderDirection>;
+  numBorrows?: InputMaybe<Scalars["Int"]["input"]>;
+  skipBorrows?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBorrows?: InputMaybe<SubgraphBorrow_OrderBy>;
+  directionBorrows?: InputMaybe<SubgraphOrderDirection>;
+  numFeeCollections?: InputMaybe<Scalars["Int"]["input"]>;
+  skipFeeCollections?: InputMaybe<Scalars["Int"]["input"]>;
+  orderFeeCollections?: InputMaybe<SubgraphFeesCollected_OrderBy>;
+  directionFeeCollections?: InputMaybe<SubgraphOrderDirection>;
+  numRepayments?: InputMaybe<Scalars["Int"]["input"]>;
+  skipRepayments?: InputMaybe<Scalars["Int"]["input"]>;
+  orderRepayments?: InputMaybe<SubgraphDebtRepaid_OrderBy>;
+  directionRepayments?: InputMaybe<SubgraphOrderDirection>;
+}>;
+
+export type SubgraphGetMarketQuery = {
+  __typename?: "Query";
+  market?: SubgraphMarketDataWithEventsFragment | null;
 };
 
 export type SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables = Exact<{
@@ -7809,7 +7894,7 @@ export type SubgraphLenderWithdrawalPropertiesWithEventsFragment = {
   normalizedAmountWithdrawn: string;
   totalNormalizedRequests: string;
   isCompleted: boolean;
-  batch: SubgraphWithdrawalBatchPropertiesWithEventsFragment;
+  batch: SubgraphWithdrawalBatchPropertiesFragment;
   requests: SubgraphWithdrawalRequestPropertiesFragment[];
   executions: SubgraphWithdrawalExecutionPropertiesFragment[];
   account: { __typename?: "LenderAccount"; address: string };
@@ -8154,11 +8239,11 @@ export const WithdrawalExecutionPropertiesFragmentDoc = gql`
     transactionHash
   }
 `;
-export const WithdrawalBatchPropertiesWithEventsFragmentDoc = gql`
-  fragment WithdrawalBatchPropertiesWithEvents on WithdrawalBatch {
-    ...WithdrawalBatchProperties
-    withdrawals {
-      ...LenderWithdrawalProperties
+export const LenderWithdrawalPropertiesWithEventsFragmentDoc = gql`
+  fragment LenderWithdrawalPropertiesWithEvents on LenderWithdrawalStatus {
+    ...LenderWithdrawalProperties
+    batch {
+      ...WithdrawalBatchProperties
     }
     requests {
       ...WithdrawalRequestProperties
@@ -8168,11 +8253,11 @@ export const WithdrawalBatchPropertiesWithEventsFragmentDoc = gql`
     }
   }
 `;
-export const LenderWithdrawalPropertiesWithEventsFragmentDoc = gql`
-  fragment LenderWithdrawalPropertiesWithEvents on LenderWithdrawalStatus {
-    ...LenderWithdrawalProperties
-    batch {
-      ...WithdrawalBatchPropertiesWithEvents
+export const WithdrawalBatchPropertiesWithEventsFragmentDoc = gql`
+  fragment WithdrawalBatchPropertiesWithEvents on WithdrawalBatch {
+    ...WithdrawalBatchProperties
+    withdrawals {
+      ...LenderWithdrawalProperties
     }
     requests {
       ...WithdrawalRequestProperties
@@ -8278,6 +8363,139 @@ export type GetLenderAccountForMarketSuspenseQueryHookResult = Apollo.UseSuspens
 export type GetLenderAccountForMarketQueryResult = Apollo.QueryResult<
   SubgraphGetLenderAccountForMarketQuery,
   SubgraphGetLenderAccountForMarketQueryVariables
+>;
+export const GetLenderAccountWithMarketDocument = gql`
+  query getLenderAccountWithMarket(
+    $market: ID!
+    $lender: Bytes!
+    $numDeposits: Int = 200
+    $skipDeposits: Int = 0
+    $orderDeposits: Deposit_orderBy = blockTimestamp
+    $directionDeposits: OrderDirection = desc
+    $numWithdrawals: Int = 200
+    $skipWithdrawals: Int = 0
+    $numBorrows: Int = 10
+    $skipBorrows: Int = 0
+    $orderBorrows: Borrow_orderBy = blockTimestamp
+    $directionBorrows: OrderDirection = desc
+    $numRepayments: Int = 10
+    $skipRepayments: Int = 0
+    $orderRepayments: DebtRepaid_orderBy = blockTimestamp
+    $directionRepayments: OrderDirection = desc
+  ) {
+    market(id: $market) {
+      lenders(where: { address: $lender }) {
+        ...AccountDataForLenderView
+      }
+      ...MarketData
+      borrowRecords(
+        first: $numBorrows
+        skip: $skipBorrows
+        orderBy: $orderBorrows
+        orderDirection: $directionBorrows
+      ) {
+        ...BorrowData
+      }
+      repaymentRecords(
+        first: $numRepayments
+        skip: $skipRepayments
+        orderBy: $orderRepayments
+        orderDirection: $directionRepayments
+      ) {
+        ...RepaymentData
+      }
+    }
+  }
+  ${AccountDataForLenderViewFragmentDoc}
+  ${LenderPropertiesFragmentDoc}
+  ${DepositDataFragmentDoc}
+  ${MarketDataFragmentDoc}
+  ${BorrowDataFragmentDoc}
+  ${RepaymentDataFragmentDoc}
+`;
+
+/**
+ * __useGetLenderAccountWithMarketQuery__
+ *
+ * To run a query within a React component, call `useGetLenderAccountWithMarketQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLenderAccountWithMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLenderAccountWithMarketQuery({
+ *   variables: {
+ *      market: // value for 'market'
+ *      lender: // value for 'lender'
+ *      numDeposits: // value for 'numDeposits'
+ *      skipDeposits: // value for 'skipDeposits'
+ *      orderDeposits: // value for 'orderDeposits'
+ *      directionDeposits: // value for 'directionDeposits'
+ *      numWithdrawals: // value for 'numWithdrawals'
+ *      skipWithdrawals: // value for 'skipWithdrawals'
+ *      numBorrows: // value for 'numBorrows'
+ *      skipBorrows: // value for 'skipBorrows'
+ *      orderBorrows: // value for 'orderBorrows'
+ *      directionBorrows: // value for 'directionBorrows'
+ *      numRepayments: // value for 'numRepayments'
+ *      skipRepayments: // value for 'skipRepayments'
+ *      orderRepayments: // value for 'orderRepayments'
+ *      directionRepayments: // value for 'directionRepayments'
+ *   },
+ * });
+ */
+export function useGetLenderAccountWithMarketQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    SubgraphGetLenderAccountWithMarketQuery,
+    SubgraphGetLenderAccountWithMarketQueryVariables
+  >
+): GetLenderAccountWithMarketQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    SubgraphGetLenderAccountWithMarketQuery,
+    SubgraphGetLenderAccountWithMarketQueryVariables
+  >(GetLenderAccountWithMarketDocument, options);
+}
+export function useGetLenderAccountWithMarketLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SubgraphGetLenderAccountWithMarketQuery,
+    SubgraphGetLenderAccountWithMarketQueryVariables
+  >
+): GetLenderAccountWithMarketLazyQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    SubgraphGetLenderAccountWithMarketQuery,
+    SubgraphGetLenderAccountWithMarketQueryVariables
+  >(GetLenderAccountWithMarketDocument, options);
+}
+export function useGetLenderAccountWithMarketSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    SubgraphGetLenderAccountWithMarketQuery,
+    SubgraphGetLenderAccountWithMarketQueryVariables
+  >
+): GetLenderAccountWithMarketSuspenseQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    SubgraphGetLenderAccountWithMarketQuery,
+    SubgraphGetLenderAccountWithMarketQueryVariables
+  >(GetLenderAccountWithMarketDocument, options);
+}
+export type GetLenderAccountWithMarketQueryHookResult = Apollo.QueryResult<
+  SubgraphGetLenderAccountWithMarketQuery,
+  SubgraphGetLenderAccountWithMarketQueryVariables
+>;
+export type GetLenderAccountWithMarketLazyQueryHookResult = Apollo.LazyQueryResultTuple<
+  SubgraphGetLenderAccountWithMarketQuery,
+  SubgraphGetLenderAccountWithMarketQueryVariables
+>;
+export type GetLenderAccountWithMarketSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
+  SubgraphGetLenderAccountWithMarketQuery,
+  SubgraphGetLenderAccountWithMarketQueryVariables
+>;
+export type GetLenderAccountWithMarketQueryResult = Apollo.QueryResult<
+  SubgraphGetLenderAccountWithMarketQuery,
+  SubgraphGetLenderAccountWithMarketQueryVariables
 >;
 export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
   query getAccountsWhereLenderAuthorizedOrActive(
@@ -8454,7 +8672,6 @@ export const GetLenderWithdrawalsForMarketDocument = gql`
   }
   ${LenderWithdrawalPropertiesWithEventsFragmentDoc}
   ${LenderWithdrawalPropertiesFragmentDoc}
-  ${WithdrawalBatchPropertiesWithEventsFragmentDoc}
   ${WithdrawalBatchPropertiesFragmentDoc}
   ${WithdrawalBatchPaymentPropertiesFragmentDoc}
   ${WithdrawalRequestPropertiesFragmentDoc}
@@ -8871,6 +9088,117 @@ export type GetMarketsForBorrowerSuspenseQueryHookResult = Apollo.UseSuspenseQue
 export type GetMarketsForBorrowerQueryResult = Apollo.QueryResult<
   SubgraphGetMarketsForBorrowerQuery,
   SubgraphGetMarketsForBorrowerQueryVariables
+>;
+export const GetMarketDocument = gql`
+  query getMarket(
+    $market: ID!
+    $numDeposits: Int = 10
+    $skipDeposits: Int = 0
+    $orderDeposits: Deposit_orderBy = blockTimestamp
+    $directionDeposits: OrderDirection = desc
+    $numBorrows: Int = 10
+    $skipBorrows: Int = 0
+    $orderBorrows: Borrow_orderBy = blockTimestamp
+    $directionBorrows: OrderDirection = desc
+    $numFeeCollections: Int = 10
+    $skipFeeCollections: Int = 0
+    $orderFeeCollections: FeesCollected_orderBy = blockTimestamp
+    $directionFeeCollections: OrderDirection = desc
+    $numRepayments: Int = 10
+    $skipRepayments: Int = 0
+    $orderRepayments: DebtRepaid_orderBy = blockTimestamp
+    $directionRepayments: OrderDirection = desc
+  ) {
+    market(id: $market) {
+      ...MarketDataWithEvents
+    }
+  }
+  ${MarketDataWithEventsFragmentDoc}
+  ${MarketDataFragmentDoc}
+  ${MarketRecordsFragmentDoc}
+  ${DepositDataFragmentDoc}
+  ${BorrowDataFragmentDoc}
+  ${FeesCollectedDataFragmentDoc}
+  ${RepaymentDataFragmentDoc}
+`;
+
+/**
+ * __useGetMarketQuery__
+ *
+ * To run a query within a React component, call `useGetMarketQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMarketQuery({
+ *   variables: {
+ *      market: // value for 'market'
+ *      numDeposits: // value for 'numDeposits'
+ *      skipDeposits: // value for 'skipDeposits'
+ *      orderDeposits: // value for 'orderDeposits'
+ *      directionDeposits: // value for 'directionDeposits'
+ *      numBorrows: // value for 'numBorrows'
+ *      skipBorrows: // value for 'skipBorrows'
+ *      orderBorrows: // value for 'orderBorrows'
+ *      directionBorrows: // value for 'directionBorrows'
+ *      numFeeCollections: // value for 'numFeeCollections'
+ *      skipFeeCollections: // value for 'skipFeeCollections'
+ *      orderFeeCollections: // value for 'orderFeeCollections'
+ *      directionFeeCollections: // value for 'directionFeeCollections'
+ *      numRepayments: // value for 'numRepayments'
+ *      skipRepayments: // value for 'skipRepayments'
+ *      orderRepayments: // value for 'orderRepayments'
+ *      directionRepayments: // value for 'directionRepayments'
+ *   },
+ * });
+ */
+export function useGetMarketQuery(
+  baseOptions: Apollo.QueryHookOptions<SubgraphGetMarketQuery, SubgraphGetMarketQueryVariables>
+): GetMarketQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SubgraphGetMarketQuery, SubgraphGetMarketQueryVariables>(
+    GetMarketDocument,
+    options
+  );
+}
+export function useGetMarketLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<SubgraphGetMarketQuery, SubgraphGetMarketQueryVariables>
+): GetMarketLazyQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<SubgraphGetMarketQuery, SubgraphGetMarketQueryVariables>(
+    GetMarketDocument,
+    options
+  );
+}
+export function useGetMarketSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    SubgraphGetMarketQuery,
+    SubgraphGetMarketQueryVariables
+  >
+): GetMarketSuspenseQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<SubgraphGetMarketQuery, SubgraphGetMarketQueryVariables>(
+    GetMarketDocument,
+    options
+  );
+}
+export type GetMarketQueryHookResult = Apollo.QueryResult<
+  SubgraphGetMarketQuery,
+  SubgraphGetMarketQueryVariables
+>;
+export type GetMarketLazyQueryHookResult = Apollo.LazyQueryResultTuple<
+  SubgraphGetMarketQuery,
+  SubgraphGetMarketQueryVariables
+>;
+export type GetMarketSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
+  SubgraphGetMarketQuery,
+  SubgraphGetMarketQueryVariables
+>;
+export type GetMarketQueryResult = Apollo.QueryResult<
+  SubgraphGetMarketQuery,
+  SubgraphGetMarketQueryVariables
 >;
 export const GetAllPendingWithdrawalBatchesForMarketDocument = gql`
   query getAllPendingWithdrawalBatchesForMarket($market: ID!) {

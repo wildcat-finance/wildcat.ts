@@ -5,11 +5,11 @@ export type TwoStepQueryHookResult<T> = {
   isLoadingInitial: boolean;
   isErrorInitial: boolean;
   errorInitial: Error | null;
-  refetchInitial: () => Promise<QueryObserverResult<T, Error>>;
+  refetchInitial: () => any;
 
   isLoadingUpdate: boolean;
   isPendingUpdate: boolean;
   isErrorUpdate: boolean;
   errorUpdate: Error | null;
-  refetchUpdate: () => Promise<QueryObserverResult<T, Error>>;
+  refetchUpdate: () => any;
 };

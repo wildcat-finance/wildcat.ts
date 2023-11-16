@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   GetAccountsWhereLenderAuthorizedOrActiveDocument,
+  SubgraphBorrow_OrderBy,
+  SubgraphDebtRepaid_OrderBy,
   SubgraphDeposit_OrderBy,
   SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery,
   SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables,
@@ -15,20 +17,32 @@ import { useMemo } from "react";
 import { TwoStepQueryHookResult } from "./types";
 
 export type AccountsWhereLenderAuthorizedOrActiveProps = {
-  lender: string;
-  provider: SignerOrProvider;
+  lender: string | undefined;
+  provider: SignerOrProvider | undefined;
+  enabled: boolean;
   numDeposits?: number;
   skipDeposits?: number;
   orderDeposits?: SubgraphDeposit_OrderBy;
   directionDeposits?: SubgraphOrderDirection;
+  numWithdrawals?: number;
+  skipWithdrawals?: number;
+  numBorrows?: number;
+  skipBorrows?: number;
+  orderBorrows?: SubgraphBorrow_OrderBy;
+  directionBorrows?: SubgraphOrderDirection;
+  numRepayments?: number;
+  skipRepayments?: number;
+  orderRepayments?: SubgraphDebtRepaid_OrderBy;
+  directionRepayments?: SubgraphOrderDirection;
 };
 
 export function useAccountsWhereLenderAuthorizedOrActive({
   lender: _lender,
   provider,
-  ...depositFilters
+  enabled,
+  ...filters
 }: AccountsWhereLenderAuthorizedOrActiveProps): TwoStepQueryHookResult<MarketAccount[]> {
-  const lender = _lender.toLowerCase();
+  const lender = _lender?.toLowerCase();
   async function queryLenders() {
     logger.debug(`Getting lenders...`);
     const result = await SubgraphClient.query<
@@ -37,14 +51,14 @@ export function useAccountsWhereLenderAuthorizedOrActive({
     >({
       query: GetAccountsWhereLenderAuthorizedOrActiveDocument,
       variables: {
-        lender,
-        ...depositFilters,
+        lender: lender as string,
+        ...filters,
         numWithdrawals: 1
       }
     });
     logger.debug(`Got ${result.data.lenderAccounts.length} lenders...`);
     return result.data.lenderAccounts.map((account) => {
-      const market = Market.fromSubgraphMarketData(provider, account.market);
+      const market = Market.fromSubgraphMarketData(provider as SignerOrProvider, account.market);
       return MarketAccount.fromSubgraphAccountData(market, account);
     });
   }
@@ -54,11 +68,11 @@ export function useAccountsWhereLenderAuthorizedOrActive({
     isLoading: isLoadingInitial,
     refetch: refetchInitial,
     isError: isErrorInitial,
-    error: errorInitial
+    failureReason: errorInitial
   } = useQuery({
     queryKey: ["accountsWhereLenderAuthorizedOrActive/initial", lender],
     queryFn: queryLenders,
-    enabled: !!lender,
+    enabled: !!lender && !!provider && enabled,
     refetchOnMount: false
   });
 
@@ -66,9 +80,9 @@ export function useAccountsWhereLenderAuthorizedOrActive({
 
   async function getLenderUpdates() {
     logger.debug(`Getting lender updates...`);
-    const lens = getLensContract(provider);
+    const lens = getLensContract(provider as SignerOrProvider);
     const accountUpdates = await lens.getMarketsDataWithLenderStatus(
-      lender,
+      lender as string,
       accounts.map((x) => x.market.address)
     );
     for (let i = 0; i < accounts.length; i++) {
@@ -88,10 +102,10 @@ export function useAccountsWhereLenderAuthorizedOrActive({
   const {
     data: updatedLenders,
     isLoading: isLoadingUpdate,
-    isPending: isPendingUpdate,
+    isPaused: isPendingUpdate,
     refetch: refetchUpdate,
     isError: isErrorUpdate,
-    error: errorUpdate
+    failureReason: errorUpdate
   } = useQuery({
     queryKey: ["accountsWhereLenderAuthorizedOrActive/update", updateQueryKeys],
     queryFn: getLenderUpdates,
@@ -103,12 +117,12 @@ export function useAccountsWhereLenderAuthorizedOrActive({
     data: updatedLenders ?? accounts,
     isLoadingInitial,
     isErrorInitial,
-    errorInitial,
+    errorInitial: errorInitial as Error | null,
     refetchInitial,
     isLoadingUpdate,
     isPendingUpdate,
     isErrorUpdate,
-    errorUpdate,
+    errorUpdate: errorUpdate as Error | null,
     refetchUpdate
   };
 }

@@ -39,25 +39,65 @@ query getLenderAccountForMarket(
   }
 }
 
-query getAccountsWhereLenderAuthorizedOrActive(
+query getLenderAccountWithMarket(
+  $market: ID!
   $lender: Bytes!
-
-  # deposits
   $numDeposits: Int = 200
   $skipDeposits: Int = 0
   $orderDeposits: Deposit_orderBy = blockTimestamp
   $directionDeposits: OrderDirection = desc
-
-  # withdrawals
   $numWithdrawals: Int = 200
-  $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry # $directionWithdrawals: OrderDirection = desc
-  
+  $skipWithdrawals: Int = 0
   # borrowRecords
   $numBorrows: Int = 10
   $skipBorrows: Int = 0
   $orderBorrows: Borrow_orderBy = blockTimestamp
   $directionBorrows: OrderDirection = desc
+  # repaymentRecords
+  $numRepayments: Int = 10
+  $skipRepayments: Int = 0
+  $orderRepayments: DebtRepaid_orderBy = blockTimestamp
+  $directionRepayments: OrderDirection = desc
+) {
+  market(id: $market) {
+    lenders(where: { address: $lender }) {
+      ...AccountDataForLenderView
+    }
+    ...MarketData
+    borrowRecords(
+      first: $numBorrows
+      skip: $skipBorrows
+      orderBy: $orderBorrows
+      orderDirection: $directionBorrows
+    ) {
+      ...BorrowData
+    }
+    repaymentRecords(
+      first: $numRepayments
+      skip: $skipRepayments
+      orderBy: $orderRepayments
+      orderDirection: $directionRepayments
+    ) {
+      ...RepaymentData
+    }
+  }
+}
 
+query getAccountsWhereLenderAuthorizedOrActive(
+  $lender: Bytes!
+  # deposits
+  $numDeposits: Int = 200
+  $skipDeposits: Int = 0
+  $orderDeposits: Deposit_orderBy = blockTimestamp
+  $directionDeposits: OrderDirection = desc
+  # withdrawals
+  $numWithdrawals: Int = 200
+  $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry # $directionWithdrawals: OrderDirection = desc
+  # borrowRecords
+  $numBorrows: Int = 10
+  $skipBorrows: Int = 0
+  $orderBorrows: Borrow_orderBy = blockTimestamp
+  $directionBorrows: OrderDirection = desc
   # repaymentRecords
   $numRepayments: Int = 10
   $skipRepayments: Int = 0
@@ -237,6 +277,34 @@ query getMarketsForBorrower(
   }
 }
 
+query getMarket(
+  $market: ID!
+  # deposits
+  $numDeposits: Int = 10
+  $skipDeposits: Int = 0
+  $orderDeposits: Deposit_orderBy = blockTimestamp
+  $directionDeposits: OrderDirection = desc
+  # borrowRecords
+  $numBorrows: Int = 10
+  $skipBorrows: Int = 0
+  $orderBorrows: Borrow_orderBy = blockTimestamp
+  $directionBorrows: OrderDirection = desc
+  # feeCollections
+  $numFeeCollections: Int = 10
+  $skipFeeCollections: Int = 0
+  $orderFeeCollections: FeesCollected_orderBy = blockTimestamp
+  $directionFeeCollections: OrderDirection = desc
+  # repaymentRecords
+  $numRepayments: Int = 10
+  $skipRepayments: Int = 0
+  $orderRepayments: DebtRepaid_orderBy = blockTimestamp
+  $directionRepayments: OrderDirection = desc
+) {
+  market(id: $market) {
+    ...MarketDataWithEvents
+  }
+}
+
 query getAllPendingWithdrawalBatchesForMarket($market: ID!) {
   market(id: $market) {
     withdrawalBatches(where: { isClosed: false }) {
@@ -409,7 +477,7 @@ fragment LenderWithdrawalPropertiesWithEvents on LenderWithdrawalStatus {
   ...LenderWithdrawalProperties
 
   batch {
-    ...WithdrawalBatchPropertiesWithEvents
+    ...WithdrawalBatchProperties
   }
   requests {
     ...WithdrawalRequestProperties

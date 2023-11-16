@@ -12,16 +12,18 @@ import { TwoStepQueryHookResult } from "./types";
 import { SignerOrProvider } from "../types";
 
 export type MarketsForBorrowerProps = {
-  borrower: string;
-  provider: SignerOrProvider;
+  borrower: string | undefined;
+  provider: SignerOrProvider | undefined;
+  enabled: boolean;
 } & Omit<SubgraphGetMarketsForBorrowerQueryVariables, "borrower">;
 
 export function useMarketsForBorrower({
   borrower: _borrower,
   provider,
+  enabled,
   ...filters
 }: MarketsForBorrowerProps): TwoStepQueryHookResult<Market[]> {
-  const borrower = _borrower.toLowerCase();
+  const borrower = _borrower?.toLowerCase();
 
   async function queryMarketsForBorrower() {
     const result = await SubgraphClient.query<
@@ -29,11 +31,11 @@ export function useMarketsForBorrower({
       SubgraphGetMarketsForBorrowerQueryVariables
     >({
       query: GetMarketsForBorrowerDocument,
-      variables: { borrower, ...filters }
+      variables: { borrower: borrower as string, ...filters }
     });
     return (
       result.data.controllers[0].markets.map((market) =>
-        Market.fromSubgraphMarketData(provider, market)
+        Market.fromSubgraphMarketData(provider as SignerOrProvider, market)
       ) ?? []
     );
   }
@@ -43,17 +45,17 @@ export function useMarketsForBorrower({
     isLoading: isLoadingInitial,
     refetch: refetchInitial,
     isError: isErrorInitial,
-    error: errorInitial
+    failureReason: errorInitial
   } = useQuery({
     queryKey: ["marketsForBorrower/initial", borrower],
     queryFn: queryMarketsForBorrower,
-    enabled: !!borrower,
+    enabled: !!borrower && !!provider && enabled,
     refetchOnMount: false
   });
 
   const markets = data ?? [];
   async function updateMarkets() {
-    const lens = getLensContract(provider);
+    const lens = getLensContract(provider as SignerOrProvider);
     const updatedMarkets = await lens.getMarketsData(markets.map((x) => x.address));
     for (let i = 0; i < markets.length; i++) {
       const market = markets[i];
@@ -71,10 +73,10 @@ export function useMarketsForBorrower({
   const {
     data: updatedMarkets,
     isLoading: isLoadingUpdate,
-    isPending: isPendingUpdate,
     refetch: refetchUpdate,
+    isPaused: isPendingUpdate,
     isError: isErrorUpdate,
-    error: errorUpdate
+    failureReason: errorUpdate
   } = useQuery({
     queryKey: ["marketsForBorrower/update", updateQueryKeys],
     queryFn: updateMarkets,
@@ -86,12 +88,12 @@ export function useMarketsForBorrower({
     data: updatedMarkets ?? markets,
     isLoadingInitial,
     isErrorInitial,
-    errorInitial,
+    errorInitial: errorInitial as Error | null,
     refetchInitial,
     isLoadingUpdate,
     isPendingUpdate,
     isErrorUpdate,
-    errorUpdate,
+    errorUpdate: errorUpdate as Error | null,
     refetchUpdate
   };
 }

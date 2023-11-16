@@ -13,8 +13,9 @@ import { TwoStepQueryHookResult } from "./types";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 
 export type LenderWithdrawalsForMarketProps = {
-  lender: string;
-  market: Market;
+  lender: string | undefined;
+  market: Market | undefined;
+  enabled: boolean;
 };
 
 export type LenderWithdrawalsForMarketResult = {
@@ -24,12 +25,14 @@ export type LenderWithdrawalsForMarketResult = {
 
 export function useLenderWithdrawalsForMarket({
   lender: _lender,
-  market: _market
+  market: _market,
+  enabled
 }: LenderWithdrawalsForMarketProps): TwoStepQueryHookResult<LenderWithdrawalsForMarketResult> {
-  const lender = _lender.toLowerCase();
-  const market = _market.address.toLowerCase();
+  const lender = _lender?.toLowerCase();
+  const market = _market?.address.toLowerCase();
   // getLenderWithdrawalsForMarket
   async function queryLenderWithdrawals() {
+    if (!lender || !market || !_market) throw Error();
     logger.debug(`Getting lender withdrawals...`);
     const result = await SubgraphClient.query<
       SubgraphGetLenderWithdrawalsForMarketQuery,
@@ -59,17 +62,18 @@ export function useLenderWithdrawalsForMarket({
     isLoading: isLoadingInitial,
     refetch: refetchInitial,
     isError: isErrorInitial,
-    error: errorInitial
+    failureReason: errorInitial
   } = useQuery({
     queryKey: ["lenderWithdrawalsForMarket/initial", lender, market],
     queryFn: queryLenderWithdrawals,
-    enabled: !!lender,
+    enabled: !!lender && !!market && enabled,
     refetchOnMount: false
   });
 
   const withdrawals = data ?? { completeWithdrawals: [], incompleteWithdrawals: [] };
 
   async function updateWithdrawals() {
+    if (!lender || !market || !_market) throw Error();
     const lens = getLensContract(_market.provider);
     const withdrawalUpdates = await lens.getWithdrawalBatchesDataWithLenderStatus(
       market,
@@ -104,10 +108,10 @@ export function useLenderWithdrawalsForMarket({
   const {
     data: updatedWithdrawals,
     isLoading: isLoadingUpdate,
-    isPending: isPendingUpdate,
+    isPaused: isPendingUpdate,
     refetch: refetchUpdate,
     isError: isErrorUpdate,
-    error: errorUpdate
+    failureReason: errorUpdate
   } = useQuery({
     queryKey: ["lenderWithdrawalsForMarket/update", updateQueryKeys],
     queryFn: updateWithdrawals,
@@ -119,12 +123,12 @@ export function useLenderWithdrawalsForMarket({
     data: updatedWithdrawals ?? withdrawals,
     isLoadingInitial,
     isErrorInitial,
-    errorInitial,
+    errorInitial: errorInitial as Error | null,
     refetchInitial,
     isLoadingUpdate,
     isPendingUpdate,
     isErrorUpdate,
-    errorUpdate,
+    errorUpdate: errorUpdate as Error | null,
     refetchUpdate
   };
 }
