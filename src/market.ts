@@ -105,6 +105,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     public delinquencyFeeBips: number,
     // Seconds delinquency is allowed before liquidation
     public delinquencyGracePeriod: number,
+    public withdrawalBatchDuration: number,
     public reserveRatioBips: number,
     public annualInterestBips: number,
     public temporaryReserveRatio: boolean,
@@ -308,6 +309,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.protocolFeeBips,
       data.delinquencyFeeBips,
       data.delinquencyGracePeriod,
+      data.withdrawalBatchDuration,
       data.reserveRatioBips,
       data.annualInterestBips,
       data.temporaryReserveRatioActive,
@@ -355,6 +357,8 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.protocolFeeBips.toNumber(),
       data.delinquencyFeeBips.toNumber(),
       data.delinquencyGracePeriod.toNumber(),
+      0,
+      // data.withdrawalBatchDuration.toNumber(), // @todo add withdrawalBatchDuration to lens output
       data.reserveRatioBips.toNumber(),
       data.annualInterestBips.toNumber(),
       data.temporaryReserveRatio,
