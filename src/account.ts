@@ -1,11 +1,11 @@
 import { BigNumber, ContractTransaction } from "ethers";
-import { Token, TokenAmount, minTokenAmount } from "./token";
+import { Token, TokenAmount, minTokenAmount, toBn } from "./token";
 import { Market } from "./market";
 import {
   MarketLenderStatusStructOutput,
   MarketDataWithLenderStatusStructOutput
 } from "./typechain";
-import { rayMul, updateObject } from "./utils";
+import { assert, bipMul, rayMul, updateObject } from "./utils";
 import { getControllerContract, getLensContract } from "./constants";
 import { SignerOrProvider } from "./types";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
@@ -27,6 +27,15 @@ export type DepositStatus =
 export type RepayStatus =
   | {
       status: "InsufficientBalance" | "ExceedsOutstandingDebt" | "Ready";
+    }
+  | {
+      status: "InsufficientAllowance";
+      remainder: TokenAmount;
+    };
+
+export type CloseMarketStatus =
+  | {
+      status: "InsufficientBalance" | "UnpaidWithdrawalBatches" | "Ready" | "NotBorrower";
     }
   | {
       status: "InsufficientAllowance";
@@ -103,21 +112,63 @@ export class MarketAccount {
     );
   }
 
-  async setAPR(newAprBips: number): Promise<ContractTransaction> {
-    if (!this.isBorrower) {
-      throw Error("Only borrower can set APR");
+  canChangeAPR(apr: number): boolean {
+    return this.isBorrower && apr > 0 && apr <= 10000 && this.market.canChangeAPR(apr);
+  }
+
+  checkCloseMarketStep(): CloseMarketStatus {
+    if (!this.isBorrower) return { status: "NotBorrower" };
+    if (this.market.unpaidWithdrawalBatchExpiries.length > 0) {
+      return { status: "UnpaidWithdrawalBatches" };
     }
-    if (newAprBips > 10000) {
-      throw Error("APR must be less than 100% (10000 BIPS)");
+    // add 0.5% to account for interest
+    const outstandingDebt = bipMul(this.market.outstandingDebt.raw, toBn(10050));
+    if (outstandingDebt.gt(this.underlyingBalance.raw)) {
+      return { status: "InsufficientBalance" };
     }
+    if (!this.isApprovedFor(this.underlyingBalance)) {
+      return {
+        status: "InsufficientAllowance",
+        remainder: this.getAllowanceRemainder(this.underlyingBalance)
+      };
+    }
+    return { status: "Ready" };
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                             Management Actions                             */
+  /* -------------------------------------------------------------------------- */
+
+  async closeMarket(): Promise<ContractTransaction> {
+    const { status } = this.checkCloseMarketStep();
+    if (status !== "Ready") {
+      throw Error(`Cannot close market: ${status}`);
+    }
+    const controller = getControllerContract(this.market.signer, this.market.controller);
+    return controller.closeMarket(this.market.address);
+  }
+
+  async setMaxTotalSupply(amount: TokenAmount): Promise<ContractTransaction> {
+    assert(this.isBorrower, "Only borrower can set maxTotalSupply");
+    if (amount.lt(this.market.totalSupply)) {
+      throw Error("New max total supply must be at least current total supply");
+    }
+    const controller = getControllerContract(this.market.signer, this.market.controller);
+    return controller.setMaxTotalSupply(this.market.address, amount.raw);
+  }
+
+  async setAnnualInterestBips(newAprBips: number): Promise<ContractTransaction> {
+    assert(this.isBorrower, "Only borrower can set APR");
+    assert(newAprBips > 0 && newAprBips <= 10000, "APR must be between 0-100% (10000 BIPS)");
+    assert(this.market.canChangeAPR(newAprBips), "New reserve ratio would make market delinquent");
     const controller = getControllerContract(this.market.provider, this.market.controller);
-    if (this.market.controller !== controller.address) {
-      throw Error(`Unexpected controller address: ${this.market.controller}`);
-    }
+    assert(this.market.controller === controller.address, "Unexpected controller address");
     return controller.setAnnualInterestBips(this.market.address, newAprBips);
   }
 
-  /* ------ Approval ------ */
+  /* -------------------------------------------------------------------------- */
+  /*                                  Approval                                  */
+  /* -------------------------------------------------------------------------- */
 
   isApprovedFor(amount: TokenAmount): boolean {
     return this.underlyingApproval.gte(amount.raw);
@@ -141,7 +192,9 @@ export class MarketAccount {
     return token.contract.approve(this.market.address, amount.raw);
   }
 
-  /* ------ Deposits ------ */
+  /* -------------------------------------------------------------------------- */
+  /*                                  Deposits                                  */
+  /* -------------------------------------------------------------------------- */
 
   /**
    * @returns Maximum amount of underlying token user can deposit
@@ -227,7 +280,9 @@ export class MarketAccount {
     );
   }
 
-  /* ------ Repaying ------ */
+  /* -------------------------------------------------------------------------- */
+  /*                                 Repayments                                 */
+  /* -------------------------------------------------------------------------- */
 
   get maximumRepay(): TokenAmount {
     return minTokenAmount(this.market.outstandingDebt, this.underlyingBalance);
@@ -301,7 +356,9 @@ export class MarketAccount {
     return this.market.contract.repayDelinquentDebt();
   }
 
-  /* ------ Borrowing ------ */
+  /* -------------------------------------------------------------------------- */
+  /*                                   Borrow                                   */
+  /* -------------------------------------------------------------------------- */
 
   /**
    * @returns Amount of underlying token borrower can borrow
@@ -324,7 +381,9 @@ export class MarketAccount {
     return this.market.contract.borrow(amount.raw);
   }
 
-  /* ------ Updates ------ */
+  /* -------------------------------------------------------------------------- */
+  /*                                   Updates                                  */
+  /* -------------------------------------------------------------------------- */
 
   async update(): Promise<void> {
     const acccountMarketInfo = await this.market.getAccount(this.account);
@@ -359,7 +418,9 @@ export class MarketAccount {
     }
   }
 
-  /* ------ Builders / Getters ------ */
+  /* -------------------------------------------------------------------------- */
+  /*                             Builders / Getters                             */
+  /* -------------------------------------------------------------------------- */
 
   static fromSubgraphAccountData(
     market: Market,

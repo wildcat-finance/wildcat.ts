@@ -1,14 +1,15 @@
-import { BigNumber } from "ethers";
+import { BigNumber, ContractTransaction } from "ethers";
+import { Signer } from "@ethersproject/abstract-signer";
 import { WildcatMarket, WildcatMarket__factory } from "./typechain";
 import { MarketDataStructOutput } from "./typechain";
-import { getLensContract } from "./constants";
-import { TokenAmount, Token } from "./token";
+import { getControllerContract, getLensContract } from "./constants";
+import { TokenAmount, Token, minTokenAmount, toBn } from "./token";
 import { SignerOrProvider, ContractWrapper } from "./types";
 import { formatUnits } from "ethers/lib/utils";
 import { MarketAccount } from "./account";
 import { RAY } from "./constants";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
-import { bipMul, rayMul } from "./utils/math";
+import { bipMul, mulDiv, rayMul } from "./utils/math";
 import {
   SubgraphBorrowDataFragment,
   SubgraphDepositDataFragment,
@@ -17,7 +18,7 @@ import {
   SubgraphMarketDataWithEventsFragment,
   SubgraphRepaymentDataFragment
 } from "./gql/graphql";
-import { MakeOptional } from "./utils";
+import { MakeOptional, assert } from "./utils";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -61,6 +62,8 @@ function parseRecord(
     amount: token.getAmount(assetAmount)
   };
 }
+
+// @todo pull min/max apr from contract and subgraph
 
 export class Market extends ContractWrapper<WildcatMarket> {
   static readonly UpdatableKeys: Array<keyof Market> = [
@@ -109,6 +112,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     public reserveRatioBips: number,
     public annualInterestBips: number,
     public temporaryReserveRatio: boolean,
+    public originalAnnualInterestBips: number,
     public originalReserveRatioBips: number,
     public temporaryReserveRatioExpiry: number,
     public isClosed: boolean,
@@ -145,7 +149,8 @@ export class Market extends ContractWrapper<WildcatMarket> {
     depositRecords: SubgraphDepositDataFragment[] = [],
     repaymentRecords: SubgraphRepaymentDataFragment[] = [],
     borrowRecords: SubgraphBorrowDataFragment[] = [],
-    feeCollectionRecords: SubgraphFeesCollectedDataFragment[] = []
+    feeCollectionRecords: SubgraphFeesCollectedDataFragment[] = [],
+    public signerAddress?: string
   ) {
     super(_provider);
     this.depositRecords = depositRecords.map((log) => parseRecord(this.underlyingToken, log));
@@ -158,6 +163,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   readonly contractFactory = WildcatMarket__factory;
+
+  /* -------------------------------------------------------------------------- */
+  /*                              Property Getters                              */
+  /* -------------------------------------------------------------------------- */
 
   /** @returns Address of the market token */
   get address(): string {
@@ -229,6 +238,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   /** @returns Percentage of total assets that must be held in reserve */
   get collateralization(): CollateralizationInfo {
+    // @todo use total debts not supply
     const targetRatio = this.reserveRatioBips / 100;
 
     const actualRatio = this.totalSupply.eq(0)
@@ -255,10 +265,53 @@ export class Market extends ContractWrapper<WildcatMarket> {
     return this.collateralization.actualRatio >= 90;
   }
 
-  async update(): Promise<void> {
-    const market = await getLensContract(this.provider).getMarketData(this.address);
-    this.updateWith(market);
+  /* -------------------------------------------------------------------------- */
+  /*                                   Set APR                                  */
+  /* -------------------------------------------------------------------------- */
+
+  getReserveRatioForNewAPR(annualInterestBips: number): number {
+    const originalAnnualInterestBips = this.originalAnnualInterestBips ?? this.annualInterestBips;
+    if (annualInterestBips < originalAnnualInterestBips) {
+      const doubleRelativeDiff = mulDiv(
+        toBn(20000),
+        toBn(originalAnnualInterestBips - annualInterestBips),
+        toBn(originalAnnualInterestBips)
+      ).toNumber();
+      const boundRelativeDiff = Math.min(10000, doubleRelativeDiff);
+      return Math.max(boundRelativeDiff, this.originalReserveRatioBips);
+    }
+    if (this.temporaryReserveRatio) {
+      return this.originalReserveRatioBips;
+    }
+    return this.reserveRatioBips;
   }
+
+  calculateLiquidityCoverageForReserveRatio(reserveRatio: number): TokenAmount {
+    const scaledRequiredReserves = bipMul(
+      this.scaledTotalSupply.sub(this.scaledPendingWithdrawals),
+      toBn(reserveRatio)
+    ).add(this.scaledPendingWithdrawals);
+    return this.underlyingToken.getAmount(
+      rayMul(scaledRequiredReserves, this.scaleFactor)
+        .add(this.lastAccruedProtocolFees.raw)
+        .add(this.normalizedUnclaimedWithdrawals.raw)
+    );
+  }
+
+  canChangeAPR(annualInterestBips: number): boolean {
+    const originalAnnualInterestBips = this.originalAnnualInterestBips ?? this.annualInterestBips;
+    if (annualInterestBips < originalAnnualInterestBips || this.temporaryReserveRatio) {
+      const newReserveRatioBips = this.getReserveRatioForNewAPR(annualInterestBips);
+      const newCoverageLiquidity =
+        this.calculateLiquidityCoverageForReserveRatio(newReserveRatioBips);
+      return this.totalAssets.gte(newCoverageLiquidity);
+    }
+    return true;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                              Instance Queries                              */
+  /* -------------------------------------------------------------------------- */
 
   /**
    * @returns Balance of an account in both market and underlying tokens,
@@ -271,20 +324,58 @@ export class Market extends ContractWrapper<WildcatMarket> {
     return MarketAccount.getMarketAccount(this.provider, account, this);
   }
 
-  // async getWithdrawalsByLender(lender: string): Promise<LenderWithdrawalStatus[]> {
-  //   return LenderWithdrawalStatus.getAllWithdrawalsForLender(this, lender);
-  // }
+  /* -------------------------------------------------------------------------- */
+  /*                                   Updates                                  */
+  /* -------------------------------------------------------------------------- */
 
-  // async getWithdrawalsByExpiry(expiry: number): Promise<LenderWithdrawalStatus[]> {
-  //   return LenderWithdrawalStatus.getAllWithdrawalsInBatch(this, expiry);
-  // }
+  async update(): Promise<void> {
+    const market = await getLensContract(this.provider).getMarketData(this.address);
+    this.updateWith(market);
+  }
+
+  updateWith(data: MarketDataStructOutput): void {
+    this.feeRecipient = data.feeRecipient;
+    this.protocolFeeBips = data.protocolFeeBips.toNumber();
+    this.delinquencyFeeBips = data.delinquencyFeeBips.toNumber();
+    this.delinquencyGracePeriod = data.delinquencyGracePeriod.toNumber();
+    this.withdrawalBatchDuration = data.withdrawalBatchDuration.toNumber();
+    this.reserveRatioBips = data.reserveRatioBips.toNumber();
+    this.annualInterestBips = data.annualInterestBips.toNumber();
+    this.temporaryReserveRatio = data.temporaryReserveRatio;
+    this.originalAnnualInterestBips = data.originalAnnualInterestBips.toNumber();
+    this.originalReserveRatioBips = data.originalReserveRatioBips.toNumber();
+    this.temporaryReserveRatioExpiry = data.temporaryReserveRatioExpiry.toNumber();
+    this.isClosed = data.isClosed;
+    this.scaleFactor = data.scaleFactor;
+    this.totalSupply = this.marketToken.getAmount(data.totalSupply);
+    this.maxTotalSupply = this.marketToken.getAmount(data.maxTotalSupply);
+    this.scaledTotalSupply = data.scaledTotalSupply;
+    this.totalAssets = this.underlyingToken.getAmount(data.totalAssets);
+    this.lastAccruedProtocolFees = this.underlyingToken.getAmount(data.lastAccruedProtocolFees);
+    this.normalizedUnclaimedWithdrawals = this.underlyingToken.getAmount(
+      data.normalizedUnclaimedWithdrawals
+    );
+    this.scaledPendingWithdrawals = data.scaledPendingWithdrawals;
+    this.pendingWithdrawalExpiry = data.pendingWithdrawalExpiry.toNumber();
+    this.isDelinquent = data.isDelinquent;
+    this.timeDelinquent = data.timeDelinquent.toNumber();
+    this.lastInterestAccruedTimestamp = data.lastInterestAccruedTimestamp.toNumber();
+    this.unpaidWithdrawalBatchExpiries = data.unpaidWithdrawalBatchExpiries;
+    this.coverageLiquidity = this.underlyingToken.getAmount(data.coverageLiquidity);
+    this.borrowableAssets = this.underlyingToken.getAmount(data.borrowableAssets);
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                            Class Builder Methods                           */
+  /* -------------------------------------------------------------------------- */
 
   static fromSubgraphMarketData(
     provider: SignerOrProvider,
     data: MakeOptional<
       SubgraphMarketDataWithEventsFragment,
       "depositRecords" | "repaymentRecords" | "borrowRecords" | "feeCollectionRecords"
-    >
+    >,
+    signerAddress?: string
   ): Market {
     const underlyingToken = Token.fromSubgraphToken(data._asset, provider);
     const marketToken = Token.fromSubgraphMarketData(data, provider);
@@ -312,6 +403,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.reserveRatioBips,
       data.annualInterestBips,
       data.temporaryReserveRatioActive,
+      data.originalAnnualInterestBips,
       data.originalReserveRatioBips,
       data.temporaryReserveRatioExpiry,
       data.isClosed,
@@ -339,11 +431,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.depositRecords,
       data.repaymentRecords,
       data.borrowRecords,
-      data.feeCollectionRecords
+      data.feeCollectionRecords,
+      signerAddress
     );
   }
 
-  static fromMarketData(data: MarketDataStructOutput, provider: SignerOrProvider): Market {
+  static fromMarketData(
+    data: MarketDataStructOutput,
+    provider: SignerOrProvider,
+    signerAddress?: string
+  ): Market {
     const marketToken = Token.fromTokenMetadata(data.marketToken, provider);
     const underlyingToken = Token.fromTokenMetadata(data.underlyingToken, provider);
     return new Market(
@@ -360,6 +457,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.reserveRatioBips.toNumber(),
       data.annualInterestBips.toNumber(),
       data.temporaryReserveRatio,
+      data.originalAnnualInterestBips.toNumber(),
       data.originalReserveRatioBips.toNumber(),
       data.temporaryReserveRatioExpiry.toNumber(),
       data.isClosed,
@@ -377,40 +475,24 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.lastInterestAccruedTimestamp.toNumber(),
       data.unpaidWithdrawalBatchExpiries,
       underlyingToken.getAmount(data.coverageLiquidity),
-      underlyingToken.getAmount(data.borrowableAssets)
+      underlyingToken.getAmount(data.borrowableAssets),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      signerAddress
     );
   }
 
-  updateWith(data: MarketDataStructOutput): void {
-    this.feeRecipient = data.feeRecipient;
-    this.protocolFeeBips = data.protocolFeeBips.toNumber();
-    this.delinquencyFeeBips = data.delinquencyFeeBips.toNumber();
-    this.delinquencyGracePeriod = data.delinquencyGracePeriod.toNumber();
-    this.withdrawalBatchDuration = data.withdrawalBatchDuration.toNumber();
-    this.reserveRatioBips = data.reserveRatioBips.toNumber();
-    this.annualInterestBips = data.annualInterestBips.toNumber();
-    this.temporaryReserveRatio = data.temporaryReserveRatio;
-    this.originalReserveRatioBips = data.originalReserveRatioBips.toNumber();
-    this.temporaryReserveRatioExpiry = data.temporaryReserveRatioExpiry.toNumber();
-    this.isClosed = data.isClosed;
-    this.scaleFactor = data.scaleFactor;
-    this.totalSupply = this.marketToken.getAmount(data.totalSupply);
-    this.maxTotalSupply = this.marketToken.getAmount(data.maxTotalSupply);
-    this.scaledTotalSupply = data.scaledTotalSupply;
-    this.totalAssets = this.underlyingToken.getAmount(data.totalAssets);
-    this.lastAccruedProtocolFees = this.underlyingToken.getAmount(data.lastAccruedProtocolFees);
-    this.normalizedUnclaimedWithdrawals = this.underlyingToken.getAmount(
-      data.normalizedUnclaimedWithdrawals
-    );
-    this.scaledPendingWithdrawals = data.scaledPendingWithdrawals;
-    this.pendingWithdrawalExpiry = data.pendingWithdrawalExpiry.toNumber();
-    this.isDelinquent = data.isDelinquent;
-    this.timeDelinquent = data.timeDelinquent.toNumber();
-    this.lastInterestAccruedTimestamp = data.lastInterestAccruedTimestamp.toNumber();
-    this.unpaidWithdrawalBatchExpiries = data.unpaidWithdrawalBatchExpiries;
-    this.coverageLiquidity = this.underlyingToken.getAmount(data.coverageLiquidity);
-    this.borrowableAssets = this.underlyingToken.getAmount(data.borrowableAssets);
-  }
+  /* -------------------------------------------------------------------------- */
+  /*                               Static Queries                               */
+  /* -------------------------------------------------------------------------- */
 
   /**
    * @returns `Market` instance for `market`
@@ -418,7 +500,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
   static async getMarket(market: string, provider: SignerOrProvider): Promise<Market> {
     const lens = getLensContract(provider);
     const data = await lens.getMarketData(market);
-    return Market.fromMarketData(data, provider);
+    return Market.fromMarketData(
+      data,
+      provider,
+      provider instanceof Signer ? await provider.getAddress() : undefined
+    );
   }
 
   /**
@@ -427,7 +513,8 @@ export class Market extends ContractWrapper<WildcatMarket> {
   static async getMarkets(markets: string[], provider: SignerOrProvider): Promise<Market[]> {
     const lens = getLensContract(provider);
     const data = await lens.getMarketsData(markets);
-    return data.map((market) => Market.fromMarketData(market, provider));
+    const signerAddress = provider instanceof Signer ? await provider.getAddress() : undefined;
+    return data.map((market) => Market.fromMarketData(market, provider, signerAddress));
   }
 
   /**
@@ -435,9 +522,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
    */
   static async getAllMarkets(provider: SignerOrProvider): Promise<Market[]> {
     const lens = getLensContract(provider);
+    const signerAddress = provider instanceof Signer ? await provider.getAddress() : undefined;
     return lens
       .getAllMarketsData()
-      .then((data) => data.map((market) => Market.fromMarketData(market, provider)));
+      .then((data) => data.map((market) => Market.fromMarketData(market, provider, signerAddress)));
   }
 
   /**
@@ -448,10 +536,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
     start = 0,
     count: number
   ): Promise<Market[]> {
+    const signerAddress = provider instanceof Signer ? await provider.getAddress() : undefined;
     const lens = getLensContract(provider);
     return lens
       .getPaginatedMarketsData(start, count)
-      .then((data) => data.map((market) => Market.fromMarketData(market, provider)));
+      .then((data) => data.map((market) => Market.fromMarketData(market, provider, signerAddress)));
   }
 
   /**
