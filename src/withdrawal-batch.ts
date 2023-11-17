@@ -96,6 +96,10 @@ export class WithdrawalBatch {
     this.processWithdrawalBatchInterestAccrued();
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                             Builders / Getters                             */
+  /* -------------------------------------------------------------------------- */
+
   static fromWithdrawalBatchData(
     market: Market,
     data: WithdrawalBatchDataStructOutput

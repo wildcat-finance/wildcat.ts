@@ -42,6 +42,17 @@ export type CloseMarketStatus =
       remainder: TokenAmount;
     };
 
+export type SetAprStatus =
+  | {
+      status: "Ready" | "NotBorrower" | "InvalidApr";
+    }
+  | {
+      // This status indicates the new reserve ratio required to set the new APR
+      // would make the market delinquent.
+      status: "InsufficientReserves";
+      newReservesRequired: TokenAmount;
+    };
+
 export enum LenderRole {
   Null = 0,
   Blocked = 1,
@@ -135,6 +146,20 @@ export class MarketAccount {
     return { status: "Ready" };
   }
 
+  checkSetAPRStep(apr: number): SetAprStatus {
+    if (!this.isBorrower) return { status: "NotBorrower" };
+    if (!(apr > 0 && apr <= 10000)) return { status: "InvalidApr" };
+    if (!this.market.canChangeAPR(apr)) {
+      return {
+        status: "InsufficientReserves",
+        newReservesRequired: this.market.calculateLiquidityCoverageForReserveRatio(
+          this.market.getReserveRatioForNewAPR(apr)
+        )
+      };
+    }
+    return { status: "Ready" };
+  }
+
   /* -------------------------------------------------------------------------- */
   /*                             Management Actions                             */
   /* -------------------------------------------------------------------------- */
@@ -158,12 +183,32 @@ export class MarketAccount {
   }
 
   async setAnnualInterestBips(newAprBips: number): Promise<ContractTransaction> {
-    assert(this.isBorrower, "Only borrower can set APR");
-    assert(newAprBips > 0 && newAprBips <= 10000, "APR must be between 0-100% (10000 BIPS)");
-    assert(this.market.canChangeAPR(newAprBips), "New reserve ratio would make market delinquent");
+    const { status } = this.checkSetAPRStep(newAprBips);
+    if (status !== "Ready") {
+      throw Error(`Cannot set new APR of ${newAprBips / 10_000}%: ${status}`);
+    }
     const controller = getControllerContract(this.market.provider, this.market.controller);
     assert(this.market.controller === controller.address, "Unexpected controller address");
     return controller.setAnnualInterestBips(this.market.address, newAprBips);
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                            Withdrawal Execution                            */
+  /* -------------------------------------------------------------------------- */
+
+  async executeWithdrawal({
+    lender,
+    expiry
+  }: Pick<LenderWithdrawalStatus, "lender" | "expiry">): Promise<ContractTransaction> {
+    return this.market.contract.executeWithdrawal(lender, expiry);
+  }
+
+  async executeWithdrawals(
+    withdrawals: Array<Pick<LenderWithdrawalStatus, "lender" | "expiry">>
+  ): Promise<ContractTransaction> {
+    const lenders = withdrawals.map((w) => w.lender);
+    const expiries = withdrawals.map((w) => w.expiry);
+    return this.market.contract.executeWithdrawals(lenders, expiries);
   }
 
   /* -------------------------------------------------------------------------- */

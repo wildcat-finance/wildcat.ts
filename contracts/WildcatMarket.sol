@@ -243,6 +243,11 @@ interface WildcatMarket {
 
   function executeWithdrawal(address accountAddress, uint32 expiry) external returns (uint256);
 
+  function executeWithdrawals(
+    address[] calldata accountAddresses,
+    uint32[] calldata expiries
+  ) external returns (uint256[] memory);
+
   function feeRecipient() external view returns (address);
 
   function getAccountRole(address account) external view returns (AuthRole);

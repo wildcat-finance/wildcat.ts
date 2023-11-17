@@ -1027,6 +1027,30 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "accountAddresses",
+        type: "address[]",
+      },
+      {
+        internalType: "uint32[]",
+        name: "expiries",
+        type: "uint32[]",
+      },
+    ],
+    name: "executeWithdrawals",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "feeRecipient",
     outputs: [

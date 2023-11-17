@@ -120,6 +120,7 @@ export interface WildcatMarketInterface extends utils.Interface {
     "effectiveBorrowerAPR()": FunctionFragment;
     "effectiveLenderAPR()": FunctionFragment;
     "executeWithdrawal(address,uint32)": FunctionFragment;
+    "executeWithdrawals(address[],uint32[])": FunctionFragment;
     "feeRecipient()": FunctionFragment;
     "getAccountRole(address)": FunctionFragment;
     "getAccountWithdrawalStatus(address,uint32)": FunctionFragment;
@@ -185,6 +186,7 @@ export interface WildcatMarketInterface extends utils.Interface {
       | "effectiveBorrowerAPR"
       | "effectiveLenderAPR"
       | "executeWithdrawal"
+      | "executeWithdrawals"
       | "feeRecipient"
       | "getAccountRole"
       | "getAccountWithdrawalStatus"
@@ -307,6 +309,10 @@ export interface WildcatMarketInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "executeWithdrawal",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "executeWithdrawals",
+    values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "feeRecipient",
@@ -516,6 +522,10 @@ export interface WildcatMarketInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "executeWithdrawal",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "executeWithdrawals",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1067,6 +1077,12 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    executeWithdrawals(
+      accountAddresses: PromiseOrValue<string>[],
+      expiries: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     feeRecipient(overrides?: CallOverrides): Promise<[string]>;
 
     getAccountRole(
@@ -1279,6 +1295,12 @@ export interface WildcatMarket extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  executeWithdrawals(
+    accountAddresses: PromiseOrValue<string>[],
+    expiries: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   feeRecipient(overrides?: CallOverrides): Promise<string>;
 
   getAccountRole(
@@ -1484,6 +1506,12 @@ export interface WildcatMarket extends BaseContract {
       expiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    executeWithdrawals(
+      accountAddresses: PromiseOrValue<string>[],
+      expiries: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     feeRecipient(overrides?: CallOverrides): Promise<string>;
 
@@ -1888,6 +1916,12 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    executeWithdrawals(
+      accountAddresses: PromiseOrValue<string>[],
+      expiries: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     feeRecipient(overrides?: CallOverrides): Promise<BigNumber>;
 
     getAccountRole(
@@ -2108,6 +2142,12 @@ export interface WildcatMarket extends BaseContract {
     executeWithdrawal(
       accountAddress: PromiseOrValue<string>,
       expiry: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    executeWithdrawals(
+      accountAddresses: PromiseOrValue<string>[],
+      expiries: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
