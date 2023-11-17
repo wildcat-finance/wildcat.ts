@@ -199,8 +199,22 @@ interface WildcatMarketController {
   ) external view returns (address);
 
   /* -------------------------------------------------------------------------- */
-  /*                               Market Controls                               */
+  /*                               Market Controls                              */
   /* -------------------------------------------------------------------------- */
+
+  /**
+   * @dev Close a market, setting interest rate to zero and returning all
+   * outstanding debt.
+   */
+  function closeMarket(address market) external;
+
+  /**
+   * @dev Sets the maximum total supply (capacity) of a market - this only limits
+   *      deposits and does not affect interest accrual.
+   *
+   *      Can not be set lower than the market's current total supply.
+   */
+  function setMaxTotalSupply(address market, uint256 maxTotalSupply) external;
 
   /**
    * @dev Modify the interest rate for a market.
