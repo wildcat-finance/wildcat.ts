@@ -15,7 +15,7 @@ import { SignerOrProvider } from "./types";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 export const Deployments = {
-  MarketLens: "0x338AE9DA1cabD577218C5cDf4B729b23c1F2bb93",
+  MarketLens: "0xF0c0ed88e596637b90ce4FBac838f4f57EDB7046",
   MockArchControllerOwner: "0x74275efE86068b8E25eeF58E66FB1FbbF814B78e",
   MockChainalysis: "0xBc3981a458b1ca607EF2A181a3b050fb0AE0D724",
   MockERC20Factory: "0x28eeB2Fe15518F3d51825fDdB30302901064a5BE",
@@ -70,7 +70,7 @@ export const WAD = BigNumber.from(10).pow(18);
 
 export const DeploymentBlockNumber = 4518288;
 
-export const SubgraphUrl = "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.18";
+export const SubgraphUrl = "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.19";
 
 export const SubgraphClient = new ApolloClient({
   cache: new InMemoryCache(),
