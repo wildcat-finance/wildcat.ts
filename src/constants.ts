@@ -70,7 +70,7 @@ export const WAD = BigNumber.from(10).pow(18);
 
 export const DeploymentBlockNumber = 4518288;
 
-export const SubgraphUrl = "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.16";
+export const SubgraphUrl = "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.18";
 
 export const SubgraphClient = new ApolloClient({
   cache: new InMemoryCache(),
