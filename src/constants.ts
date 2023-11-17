@@ -15,13 +15,13 @@ import { SignerOrProvider } from "./types";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 export const Deployments = {
-  MarketLens: "0x5d14d290EEA69584106A381910eaa93c2b21c6b2",
-  MockArchControllerOwner: "0x4e55E20cC4Ff6b69E6b28Ac29DcC55c0f8937cCb",
-  MockChainalysis: "0x1EeBC079aE1e7dCDe31C74A7EF48fA8737673A6a",
-  MockERC20Factory: "0xAE18c1988b7b947140b5FD2582ac63B8756bfd7E",
-  WildcatArchController: "0x61C3F23157B6657847cBDdA7eD08F30BB247E943",
-  WildcatMarketControllerFactory: "0x0d54Eb7eB8AB39E8A26535dAA970BaC6B61e741A",
-  WildcatSanctionsSentinel: "0x4385E0888DAEa92E13A42BB74fC1D179C5E67fF3"
+  MarketLens: "0x338AE9DA1cabD577218C5cDf4B729b23c1F2bb93",
+  MockArchControllerOwner: "0x74275efE86068b8E25eeF58E66FB1FbbF814B78e",
+  MockChainalysis: "0xBc3981a458b1ca607EF2A181a3b050fb0AE0D724",
+  MockERC20Factory: "0x28eeB2Fe15518F3d51825fDdB30302901064a5BE",
+  WildcatArchController: "0xe0b536e3b389b77B9Dc8d7e8E623cbeF69B4ED84",
+  WildcatMarketControllerFactory: "0x49C5002EdeA9A79b7A0678D49b1eC1203A024800",
+  WildcatSanctionsSentinel: "0xf98daD3014aDF635E070799966c2376e21658F56"
 };
 
 // export const LensAddress = "0xB63CC0C9837E4Da8E2111B3e6383aA9a6fDEf342";
