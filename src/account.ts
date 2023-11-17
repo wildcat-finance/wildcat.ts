@@ -193,25 +193,6 @@ export class MarketAccount {
   }
 
   /* -------------------------------------------------------------------------- */
-  /*                            Withdrawal Execution                            */
-  /* -------------------------------------------------------------------------- */
-
-  async executeWithdrawal({
-    lender,
-    expiry
-  }: Pick<LenderWithdrawalStatus, "lender" | "expiry">): Promise<ContractTransaction> {
-    return this.market.contract.executeWithdrawal(lender, expiry);
-  }
-
-  async executeWithdrawals(
-    withdrawals: Array<Pick<LenderWithdrawalStatus, "lender" | "expiry">>
-  ): Promise<ContractTransaction> {
-    const lenders = withdrawals.map((w) => w.lender);
-    const expiries = withdrawals.map((w) => w.expiry);
-    return this.market.contract.executeWithdrawals(lenders, expiries);
-  }
-
-  /* -------------------------------------------------------------------------- */
   /*                                  Approval                                  */
   /* -------------------------------------------------------------------------- */
 
