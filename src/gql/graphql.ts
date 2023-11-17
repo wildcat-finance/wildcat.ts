@@ -293,6 +293,7 @@ export enum SubgraphBorrow_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -1168,6 +1169,7 @@ export enum SubgraphDebtRepaid_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -1306,6 +1308,7 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -1471,6 +1474,7 @@ export enum SubgraphDeposit_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -1595,6 +1599,7 @@ export enum SubgraphFeesCollected_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -1808,6 +1813,7 @@ export enum SubgraphLenderAccount_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -2178,6 +2184,7 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -2404,6 +2411,7 @@ export type SubgraphMarket = {
   maxTotalSupply: Scalars["BigInt"]["output"];
   name: Scalars["String"]["output"];
   normalizedUnclaimedWithdrawals: Scalars["BigInt"]["output"];
+  originalAnnualInterestBips: Scalars["Int"]["output"];
   originalReserveRatioBips: Scalars["Int"]["output"];
   pendingProtocolFees: Scalars["BigInt"]["output"];
   pendingWithdrawalExpiry: Scalars["BigInt"]["output"];
@@ -2597,6 +2605,7 @@ export enum SubgraphMarketAdded_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -2719,6 +2728,7 @@ export enum SubgraphMarketClosed_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -2833,6 +2843,7 @@ export enum SubgraphMarketDeployed_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -3023,6 +3034,7 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -3139,6 +3151,7 @@ export enum SubgraphMarketRemoved_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -3353,6 +3366,14 @@ export type SubgraphMarket_Filter = {
   normalizedUnclaimedWithdrawals_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   normalizedUnclaimedWithdrawals_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   or?: InputMaybe<Array<InputMaybe<SubgraphMarket_Filter>>>;
+  originalAnnualInterestBips?: InputMaybe<Scalars["Int"]["input"]>;
+  originalAnnualInterestBips_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  originalAnnualInterestBips_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  originalAnnualInterestBips_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  originalAnnualInterestBips_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  originalAnnualInterestBips_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  originalAnnualInterestBips_not?: InputMaybe<Scalars["Int"]["input"]>;
+  originalAnnualInterestBips_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   originalReserveRatioBips?: InputMaybe<Scalars["Int"]["input"]>;
   originalReserveRatioBips_gt?: InputMaybe<Scalars["Int"]["input"]>;
   originalReserveRatioBips_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -3567,6 +3588,7 @@ export enum SubgraphMarket_OrderBy {
   MaxTotalSupply = "maxTotalSupply",
   Name = "name",
   NormalizedUnclaimedWithdrawals = "normalizedUnclaimedWithdrawals",
+  OriginalAnnualInterestBips = "originalAnnualInterestBips",
   OriginalReserveRatioBips = "originalReserveRatioBips",
   PendingProtocolFees = "pendingProtocolFees",
   PendingWithdrawalExpiry = "pendingWithdrawalExpiry",
@@ -3704,6 +3726,7 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -5159,6 +5182,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -6107,6 +6131,7 @@ export enum SubgraphTransfer_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -6637,6 +6662,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -6931,6 +6957,7 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
   MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
   MarketPendingProtocolFees = "market__pendingProtocolFees",
   MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
@@ -7427,6 +7454,7 @@ export type SubgraphGetLenderAccountWithMarketQuery = {
     reserveRatioBips: number;
     scaleFactor: string;
     lastInterestAccruedTimestamp: number;
+    originalAnnualInterestBips: number;
     originalReserveRatioBips: number;
     temporaryReserveRatioExpiry: number;
     temporaryReserveRatioActive: boolean;
@@ -7510,6 +7538,7 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
       reserveRatioBips: number;
       scaleFactor: string;
       lastInterestAccruedTimestamp: number;
+      originalAnnualInterestBips: number;
       originalReserveRatioBips: number;
       temporaryReserveRatioExpiry: number;
       temporaryReserveRatioActive: boolean;
@@ -7768,6 +7797,7 @@ export type SubgraphMarketDataFragment = {
   reserveRatioBips: number;
   scaleFactor: string;
   lastInterestAccruedTimestamp: number;
+  originalAnnualInterestBips: number;
   originalReserveRatioBips: number;
   temporaryReserveRatioExpiry: number;
   temporaryReserveRatioActive: boolean;
@@ -7816,6 +7846,7 @@ export type SubgraphMarketDataWithEventsFragment = {
   reserveRatioBips: number;
   scaleFactor: string;
   lastInterestAccruedTimestamp: number;
+  originalAnnualInterestBips: number;
   originalReserveRatioBips: number;
   temporaryReserveRatioExpiry: number;
   temporaryReserveRatioActive: boolean;
@@ -7839,6 +7870,12 @@ export type SubgraphMarketDataWithEventsFragment = {
   borrowRecords: SubgraphBorrowDataFragment[];
   feeCollectionRecords: SubgraphFeesCollectedDataFragment[];
   repaymentRecords: SubgraphRepaymentDataFragment[];
+};
+
+export type SubgraphAprConstraintsFragment = {
+  __typename?: "ParameterConstraints";
+  minimumAnnualInterestBips: number;
+  maximumAnnualInterestBips: number;
 };
 
 export type SubgraphWithdrawalBatchPaymentPropertiesFragment = {
@@ -8086,6 +8123,7 @@ export const MarketDataFragmentDoc = gql`
     reserveRatioBips
     scaleFactor
     lastInterestAccruedTimestamp
+    originalAnnualInterestBips
     originalReserveRatioBips
     temporaryReserveRatioExpiry
     temporaryReserveRatioActive
@@ -8162,6 +8200,12 @@ export const MarketDataWithEventsFragmentDoc = gql`
   fragment MarketDataWithEvents on Market {
     ...MarketData
     ...MarketRecords
+  }
+`;
+export const AprConstraintsFragmentDoc = gql`
+  fragment AprConstraints on ParameterConstraints {
+    minimumAnnualInterestBips
+    maximumAnnualInterestBips
   }
 `;
 export const LenderWithdrawalPropertiesFragmentDoc = gql`
