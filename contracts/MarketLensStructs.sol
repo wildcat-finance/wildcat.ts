@@ -68,6 +68,7 @@ struct MarketData {
   uint256 reserveRatioBips;
   uint256 annualInterestBips;
   bool temporaryReserveRatio;
+  uint256 originalAnnualInterestBips;
   uint256 originalReserveRatioBips;
   uint256 temporaryReserveRatioExpiry;
   bool isClosed;

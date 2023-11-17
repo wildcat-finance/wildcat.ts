@@ -411,6 +411,7 @@ fragment MarketData on Market {
   reserveRatioBips
   scaleFactor
   lastInterestAccruedTimestamp
+  originalAnnualInterestBips
   originalReserveRatioBips
   temporaryReserveRatioExpiry
   temporaryReserveRatioActive
@@ -427,6 +428,11 @@ fragment MarketData on Market {
 fragment MarketDataWithEvents on Market {
   ...MarketData
   ...MarketRecords
+}
+
+fragment AprConstraints on ParameterConstraints {
+  minimumAnnualInterestBips
+  maximumAnnualInterestBips
 }
 
 fragment WithdrawalBatchPaymentProperties on WithdrawalBatchPayment {
