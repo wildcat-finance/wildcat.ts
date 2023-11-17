@@ -28,5 +28,5 @@ export function rayDiv(a: BigNumber, b: BigNumber): BigNumber {
 }
 
 export function mulDiv(x: BigNumber, y: BigNumber, d: BigNumber): BigNumber {
-  return x.mul(y).add(d);
+  return x.mul(y).div(d);
 }
