@@ -46,44 +46,6 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     return this.fees.originationFeeAmount !== undefined;
   }
 
-  static fromControllerData(
-    provider: SignerOrProvider,
-    data: ControllerDataStructOutput
-  ): MarketController {
-    const fees = parseFeeConfiguration(provider, data.fees);
-    const constraints = parseMarketParameterConstraints(data.constraints);
-    const borrowerOriginationFeeBalance = fees.originationFeeToken?.getAmount(
-      data.borrowerOriginationFeeBalance
-    );
-    const borrowerOriginationFeeApproval = fees.originationFeeToken?.getAmount(
-      data.borrowerOriginationFeeApproval
-    );
-    const markets = data.markets.map((x) => Market.fromMarketData(x, provider));
-    return new MarketController(
-      data.controller,
-      data.borrower,
-      data.controllerFactory,
-      data.isRegisteredBorrower,
-      data.hasDeployedController,
-      fees,
-      constraints,
-      markets,
-      provider,
-      borrowerOriginationFeeBalance,
-      borrowerOriginationFeeApproval
-    );
-  }
-
-  static async getController(
-    provider: SignerOrProvider,
-    borrower: string
-  ): Promise<MarketController> {
-    const lens = getLensContract(provider);
-    const data = await lens.getControllerDataForBorrower(borrower);
-
-    return MarketController.fromControllerData(provider, data);
-  }
-
   async update(): Promise<void> {
     const [lenders, data] = await Promise.all([
       this.contract["getAuthorizedLenders()"](),
@@ -207,6 +169,48 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     this.isDeployed = true;
     this.isRegisteredBorrower = true;
     return market;
+  }
+
+  async closeMarket(market: Market): Promise<ContractTransaction> {
+    return this.contract.closeMarket(market.address);
+  }
+
+  static fromControllerData(
+    provider: SignerOrProvider,
+    data: ControllerDataStructOutput
+  ): MarketController {
+    const fees = parseFeeConfiguration(provider, data.fees);
+    const constraints = parseMarketParameterConstraints(data.constraints);
+    const borrowerOriginationFeeBalance = fees.originationFeeToken?.getAmount(
+      data.borrowerOriginationFeeBalance
+    );
+    const borrowerOriginationFeeApproval = fees.originationFeeToken?.getAmount(
+      data.borrowerOriginationFeeApproval
+    );
+    const markets = data.markets.map((x) => Market.fromMarketData(x, provider));
+    return new MarketController(
+      data.controller,
+      data.borrower,
+      data.controllerFactory,
+      data.isRegisteredBorrower,
+      data.hasDeployedController,
+      fees,
+      constraints,
+      markets,
+      provider,
+      borrowerOriginationFeeBalance,
+      borrowerOriginationFeeApproval
+    );
+  }
+
+  static async getController(
+    provider: SignerOrProvider,
+    borrower: string
+  ): Promise<MarketController> {
+    const lens = getLensContract(provider);
+    const data = await lens.getControllerDataForBorrower(borrower);
+
+    return MarketController.fromControllerData(provider, data);
   }
 }
 
