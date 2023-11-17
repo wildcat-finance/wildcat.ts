@@ -112,6 +112,7 @@ export type MarketDataStruct = {
   reserveRatioBips: PromiseOrValue<BigNumberish>;
   annualInterestBips: PromiseOrValue<BigNumberish>;
   temporaryReserveRatio: PromiseOrValue<boolean>;
+  originalAnnualInterestBips: PromiseOrValue<BigNumberish>;
   originalReserveRatioBips: PromiseOrValue<BigNumberish>;
   temporaryReserveRatioExpiry: PromiseOrValue<BigNumberish>;
   isClosed: PromiseOrValue<boolean>;
@@ -148,6 +149,7 @@ export type MarketDataStructOutput = [
   boolean,
   BigNumber,
   BigNumber,
+  BigNumber,
   boolean,
   BigNumber,
   BigNumber,
@@ -178,6 +180,7 @@ export type MarketDataStructOutput = [
   reserveRatioBips: BigNumber;
   annualInterestBips: BigNumber;
   temporaryReserveRatio: boolean;
+  originalAnnualInterestBips: BigNumber;
   originalReserveRatioBips: BigNumber;
   temporaryReserveRatioExpiry: BigNumber;
   isClosed: boolean;

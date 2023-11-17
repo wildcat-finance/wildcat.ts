@@ -118,6 +118,7 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
     "archController()": FunctionFragment;
     "authorizeLenders(address[])": FunctionFragment;
     "borrower()": FunctionFragment;
+    "closeMarket(address)": FunctionFragment;
     "computeMarketAddress(address,string,string)": FunctionFragment;
     "controllerFactory()": FunctionFragment;
     "deauthorizeLenders(address[])": FunctionFragment;
@@ -138,6 +139,7 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
     "resetReserveRatio(address)": FunctionFragment;
     "sentinel()": FunctionFragment;
     "setAnnualInterestBips(address,uint16)": FunctionFragment;
+    "setMaxTotalSupply(address,uint256)": FunctionFragment;
     "temporaryExcessReserveRatio(address)": FunctionFragment;
     "updateLenderAuthorization(address,address[])": FunctionFragment;
   };
@@ -147,6 +149,7 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
       | "archController"
       | "authorizeLenders"
       | "borrower"
+      | "closeMarket"
       | "computeMarketAddress"
       | "controllerFactory"
       | "deauthorizeLenders"
@@ -167,6 +170,7 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
       | "resetReserveRatio"
       | "sentinel"
       | "setAnnualInterestBips"
+      | "setMaxTotalSupply"
       | "temporaryExcessReserveRatio"
       | "updateLenderAuthorization"
   ): FunctionFragment;
@@ -180,6 +184,10 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
     values: [PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(functionFragment: "borrower", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "closeMarket",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "computeMarketAddress",
     values: [
@@ -272,6 +280,10 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setMaxTotalSupply",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "temporaryExcessReserveRatio",
     values: [PromiseOrValue<string>]
   ): string;
@@ -289,6 +301,10 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "borrower", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "closeMarket",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "computeMarketAddress",
     data: BytesLike
@@ -364,6 +380,10 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "sentinel", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setAnnualInterestBips",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxTotalSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -509,6 +529,11 @@ export interface WildcatMarketController extends BaseContract {
 
     borrower(overrides?: CallOverrides): Promise<[string]>;
 
+    closeMarket(
+      market: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     computeMarketAddress(
       asset: PromiseOrValue<string>,
       namePrefix: PromiseOrValue<string>,
@@ -606,6 +631,12 @@ export interface WildcatMarketController extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setMaxTotalSupply(
+      market: PromiseOrValue<string>,
+      maxTotalSupply: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     temporaryExcessReserveRatio(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -631,6 +662,11 @@ export interface WildcatMarketController extends BaseContract {
   ): Promise<ContractTransaction>;
 
   borrower(overrides?: CallOverrides): Promise<string>;
+
+  closeMarket(
+    market: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   computeMarketAddress(
     asset: PromiseOrValue<string>,
@@ -725,6 +761,12 @@ export interface WildcatMarketController extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setMaxTotalSupply(
+    market: PromiseOrValue<string>,
+    maxTotalSupply: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   temporaryExcessReserveRatio(
     arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -747,6 +789,11 @@ export interface WildcatMarketController extends BaseContract {
     ): Promise<void>;
 
     borrower(overrides?: CallOverrides): Promise<string>;
+
+    closeMarket(
+      market: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     computeMarketAddress(
       asset: PromiseOrValue<string>,
@@ -841,6 +888,12 @@ export interface WildcatMarketController extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setMaxTotalSupply(
+      market: PromiseOrValue<string>,
+      maxTotalSupply: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     temporaryExcessReserveRatio(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -920,6 +973,11 @@ export interface WildcatMarketController extends BaseContract {
     ): Promise<BigNumber>;
 
     borrower(overrides?: CallOverrides): Promise<BigNumber>;
+
+    closeMarket(
+      market: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     computeMarketAddress(
       asset: PromiseOrValue<string>,
@@ -1001,6 +1059,12 @@ export interface WildcatMarketController extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setMaxTotalSupply(
+      market: PromiseOrValue<string>,
+      maxTotalSupply: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     temporaryExcessReserveRatio(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1022,6 +1086,11 @@ export interface WildcatMarketController extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     borrower(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    closeMarket(
+      market: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     computeMarketAddress(
       asset: PromiseOrValue<string>,
@@ -1118,6 +1187,12 @@ export interface WildcatMarketController extends BaseContract {
     setAnnualInterestBips(
       market: PromiseOrValue<string>,
       annualInterestBips: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxTotalSupply(
+      market: PromiseOrValue<string>,
+      maxTotalSupply: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

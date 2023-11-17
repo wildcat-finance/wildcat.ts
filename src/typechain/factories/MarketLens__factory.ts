@@ -293,6 +293,11 @@ const _abi = [
               },
               {
                 internalType: "uint256",
+                name: "originalAnnualInterestBips",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
                 name: "originalReserveRatioBips",
                 type: "uint256",
               },
@@ -532,6 +537,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "originalAnnualInterestBips",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "originalReserveRatioBips",
             type: "uint256",
           },
@@ -761,6 +771,11 @@ const _abi = [
                 internalType: "bool",
                 name: "temporaryReserveRatio",
                 type: "bool",
+              },
+              {
+                internalType: "uint256",
+                name: "originalAnnualInterestBips",
+                type: "uint256",
               },
               {
                 internalType: "uint256",
@@ -1295,6 +1310,11 @@ const _abi = [
               },
               {
                 internalType: "uint256",
+                name: "originalAnnualInterestBips",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
                 name: "originalReserveRatioBips",
                 type: "uint256",
               },
@@ -1678,6 +1698,11 @@ const _abi = [
               },
               {
                 internalType: "uint256",
+                name: "originalAnnualInterestBips",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
                 name: "originalReserveRatioBips",
                 type: "uint256",
               },
@@ -1923,6 +1948,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "originalAnnualInterestBips",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "originalReserveRatioBips",
             type: "uint256",
           },
@@ -2157,6 +2187,11 @@ const _abi = [
                 internalType: "bool",
                 name: "temporaryReserveRatio",
                 type: "bool",
+              },
+              {
+                internalType: "uint256",
+                name: "originalAnnualInterestBips",
+                type: "uint256",
               },
               {
                 internalType: "uint256",
@@ -2511,6 +2546,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "originalAnnualInterestBips",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "originalReserveRatioBips",
             type: "uint256",
           },
@@ -2745,6 +2785,11 @@ const _abi = [
                 internalType: "bool",
                 name: "temporaryReserveRatio",
                 type: "bool",
+              },
+              {
+                internalType: "uint256",
+                name: "originalAnnualInterestBips",
+                type: "uint256",
               },
               {
                 internalType: "uint256",
@@ -3358,6 +3403,11 @@ const _abi = [
               },
               {
                 internalType: "uint256",
+                name: "originalAnnualInterestBips",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
                 name: "originalReserveRatioBips",
                 type: "uint256",
               },
@@ -3608,6 +3658,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "originalAnnualInterestBips",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "originalReserveRatioBips",
             type: "uint256",
           },
@@ -3847,6 +3902,11 @@ const _abi = [
                 internalType: "bool",
                 name: "temporaryReserveRatio",
                 type: "bool",
+              },
+              {
+                internalType: "uint256",
+                name: "originalAnnualInterestBips",
+                type: "uint256",
               },
               {
                 internalType: "uint256",

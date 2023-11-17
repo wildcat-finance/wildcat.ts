@@ -255,6 +255,19 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "market",
+        type: "address",
+      },
+    ],
+    name: "closeMarket",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "asset",
         type: "address",
       },
@@ -747,6 +760,24 @@ const _abi = [
       },
     ],
     name: "setAnnualInterestBips",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "market",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "maxTotalSupply",
+        type: "uint256",
+      },
+    ],
+    name: "setMaxTotalSupply",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
