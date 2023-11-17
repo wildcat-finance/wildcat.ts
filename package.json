@@ -51,12 +51,13 @@
   },
   "scripts": {
     "build": "npm run clean && tsc -p ./tsconfig.prod.json",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist cache typechain-types",
+    "clean:typechain": "yarn clean; rm -rf src/typechain",
     "codegen": "graphql-codegen && node ./scripts/type-cleanup.js && eslint src/gql/ --ext=ts --fix",
     "lint": "eslint src/ test/ --ext=ts",
     "lint:fix": "eslint src/ test/ --ext=ts --fix",
     "prepublishOnly": "yarn build",
     "test": "react-scripts test",
-    "typechain": "rm -rf typechain cache src/typechain; hardhat compile; cp -r typechain src/typechain; node ./typechain-imports.js"
+    "typechain": "yarn clean:typechain; hardhat compile; cp -r typechain-types src/typechain; node ./typechain-imports.js"
   }
 }

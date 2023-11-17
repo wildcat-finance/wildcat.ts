@@ -25,7 +25,7 @@ const config: HardhatUserConfig = {
   },
   typechain: {
     discriminateTypes: true,
-    outDir: "typechain",
+    outDir: "typechain-types",
     target: "ethers-v5"
   }
 };
