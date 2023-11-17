@@ -273,6 +273,11 @@ const _abi = [
               },
               {
                 internalType: "uint256",
+                name: "withdrawalBatchDuration",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
                 name: "reserveRatioBips",
                 type: "uint256",
               },
@@ -374,6 +379,11 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "borrowableAssets",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "delinquentDebt",
                 type: "uint256",
               },
             ],
@@ -502,6 +512,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "withdrawalBatchDuration",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "reserveRatioBips",
             type: "uint256",
           },
@@ -603,6 +618,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "borrowableAssets",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "delinquentDebt",
             type: "uint256",
           },
         ],
@@ -724,6 +744,11 @@ const _abi = [
               },
               {
                 internalType: "uint256",
+                name: "withdrawalBatchDuration",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
                 name: "reserveRatioBips",
                 type: "uint256",
               },
@@ -825,6 +850,11 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "borrowableAssets",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "delinquentDebt",
                 type: "uint256",
               },
             ],
@@ -1245,6 +1275,11 @@ const _abi = [
               },
               {
                 internalType: "uint256",
+                name: "withdrawalBatchDuration",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
                 name: "reserveRatioBips",
                 type: "uint256",
               },
@@ -1346,6 +1381,11 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "borrowableAssets",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "delinquentDebt",
                 type: "uint256",
               },
             ],
@@ -1618,6 +1658,11 @@ const _abi = [
               },
               {
                 internalType: "uint256",
+                name: "withdrawalBatchDuration",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
                 name: "reserveRatioBips",
                 type: "uint256",
               },
@@ -1719,6 +1764,11 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "borrowableAssets",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "delinquentDebt",
                 type: "uint256",
               },
             ],
@@ -1853,6 +1903,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "withdrawalBatchDuration",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "reserveRatioBips",
             type: "uint256",
           },
@@ -1954,6 +2009,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "borrowableAssets",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "delinquentDebt",
             type: "uint256",
           },
         ],
@@ -2080,6 +2140,11 @@ const _abi = [
               },
               {
                 internalType: "uint256",
+                name: "withdrawalBatchDuration",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
                 name: "reserveRatioBips",
                 type: "uint256",
               },
@@ -2181,6 +2246,11 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "borrowableAssets",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "delinquentDebt",
                 type: "uint256",
               },
             ],
@@ -2421,6 +2491,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "withdrawalBatchDuration",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "reserveRatioBips",
             type: "uint256",
           },
@@ -2522,6 +2597,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "borrowableAssets",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "delinquentDebt",
             type: "uint256",
           },
         ],
@@ -2648,6 +2728,11 @@ const _abi = [
               },
               {
                 internalType: "uint256",
+                name: "withdrawalBatchDuration",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
                 name: "reserveRatioBips",
                 type: "uint256",
               },
@@ -2749,6 +2834,11 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "borrowableAssets",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "delinquentDebt",
                 type: "uint256",
               },
             ],
@@ -3248,6 +3338,11 @@ const _abi = [
               },
               {
                 internalType: "uint256",
+                name: "withdrawalBatchDuration",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
                 name: "reserveRatioBips",
                 type: "uint256",
               },
@@ -3349,6 +3444,11 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "borrowableAssets",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "delinquentDebt",
                 type: "uint256",
               },
             ],
@@ -3488,6 +3588,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "withdrawalBatchDuration",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "reserveRatioBips",
             type: "uint256",
           },
@@ -3589,6 +3694,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "borrowableAssets",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "delinquentDebt",
             type: "uint256",
           },
         ],
@@ -3720,6 +3830,11 @@ const _abi = [
               },
               {
                 internalType: "uint256",
+                name: "withdrawalBatchDuration",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
                 name: "reserveRatioBips",
                 type: "uint256",
               },
@@ -3821,6 +3936,11 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "borrowableAssets",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "delinquentDebt",
                 type: "uint256",
               },
             ],

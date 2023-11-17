@@ -257,7 +257,6 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   async update(): Promise<void> {
     const market = await getLensContract(this.provider).getMarketData(this.address);
-    // updateObject(this, market, Market.UpdatableKeys);
     this.updateWith(market);
   }
 
@@ -357,8 +356,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.protocolFeeBips.toNumber(),
       data.delinquencyFeeBips.toNumber(),
       data.delinquencyGracePeriod.toNumber(),
-      0,
-      // data.withdrawalBatchDuration.toNumber(), // @todo add withdrawalBatchDuration to lens output
+      data.withdrawalBatchDuration.toNumber(), // @todo add withdrawalBatchDuration to lens output
       data.reserveRatioBips.toNumber(),
       data.annualInterestBips.toNumber(),
       data.temporaryReserveRatio,
@@ -388,6 +386,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     this.protocolFeeBips = data.protocolFeeBips.toNumber();
     this.delinquencyFeeBips = data.delinquencyFeeBips.toNumber();
     this.delinquencyGracePeriod = data.delinquencyGracePeriod.toNumber();
+    this.withdrawalBatchDuration = data.withdrawalBatchDuration.toNumber();
     this.reserveRatioBips = data.reserveRatioBips.toNumber();
     this.annualInterestBips = data.annualInterestBips.toNumber();
     this.temporaryReserveRatio = data.temporaryReserveRatio;

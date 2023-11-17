@@ -108,6 +108,7 @@ export type MarketDataStruct = {
   protocolFeeBips: PromiseOrValue<BigNumberish>;
   delinquencyFeeBips: PromiseOrValue<BigNumberish>;
   delinquencyGracePeriod: PromiseOrValue<BigNumberish>;
+  withdrawalBatchDuration: PromiseOrValue<BigNumberish>;
   reserveRatioBips: PromiseOrValue<BigNumberish>;
   annualInterestBips: PromiseOrValue<BigNumberish>;
   temporaryReserveRatio: PromiseOrValue<boolean>;
@@ -129,6 +130,7 @@ export type MarketDataStruct = {
   unpaidWithdrawalBatchExpiries: PromiseOrValue<BigNumberish>[];
   coverageLiquidity: PromiseOrValue<BigNumberish>;
   borrowableAssets: PromiseOrValue<BigNumberish>;
+  delinquentDebt: PromiseOrValue<BigNumberish>;
 };
 
 export type MarketDataStructOutput = [
@@ -137,6 +139,7 @@ export type MarketDataStructOutput = [
   string,
   string,
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -160,6 +163,7 @@ export type MarketDataStructOutput = [
   BigNumber,
   number[],
   BigNumber,
+  BigNumber,
   BigNumber
 ] & {
   marketToken: TokenMetadataStructOutput;
@@ -170,6 +174,7 @@ export type MarketDataStructOutput = [
   protocolFeeBips: BigNumber;
   delinquencyFeeBips: BigNumber;
   delinquencyGracePeriod: BigNumber;
+  withdrawalBatchDuration: BigNumber;
   reserveRatioBips: BigNumber;
   annualInterestBips: BigNumber;
   temporaryReserveRatio: boolean;
@@ -191,6 +196,7 @@ export type MarketDataStructOutput = [
   unpaidWithdrawalBatchExpiries: number[];
   coverageLiquidity: BigNumber;
   borrowableAssets: BigNumber;
+  delinquentDebt: BigNumber;
 };
 
 export type ControllerDataStruct = {

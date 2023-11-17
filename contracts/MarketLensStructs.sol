@@ -64,6 +64,7 @@ struct MarketData {
   uint256 protocolFeeBips;
   uint256 delinquencyFeeBips;
   uint256 delinquencyGracePeriod;
+  uint256 withdrawalBatchDuration;
   uint256 reserveRatioBips;
   uint256 annualInterestBips;
   bool temporaryReserveRatio;
@@ -85,6 +86,7 @@ struct MarketData {
   uint32[] unpaidWithdrawalBatchExpiries;
   uint256 coverageLiquidity;
   uint256 borrowableAssets;
+  uint256 delinquentDebt;
 }
 
 struct MarketDataWithLenderStatus {
