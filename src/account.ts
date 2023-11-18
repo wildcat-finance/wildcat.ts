@@ -211,7 +211,7 @@ export class MarketAccount {
   async approveAllowanceRemainder(amount: TokenAmount): Promise<ContractTransaction> {
     const token = this.market.underlyingToken;
     const signer = await token.signer.getAddress();
-    if (signer !== this.account) {
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     amount = this.getAllowanceRemainder(amount);
@@ -263,7 +263,7 @@ export class MarketAccount {
   // TODO: Add support for depositUpTo
   async deposit(amount: TokenAmount): Promise<ContractTransaction> {
     const signer = await this.market.signer.getAddress();
-    if (signer !== this.account) {
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     if (amount.gt(this.underlyingBalance)) {
@@ -287,7 +287,7 @@ export class MarketAccount {
       throw Error(`Lender role insufficient to withdraw`);
     }
     const signer = await this.market.signer.getAddress();
-    if (signer !== this.account) {
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     const tx = await this.market.contract.queueWithdrawal(amount.raw).then((tx) => tx.wait());
@@ -348,7 +348,7 @@ export class MarketAccount {
 
   async repay(amount: BigNumber): Promise<ContractTransaction> {
     const signer = await this.market.signer.getAddress();
-    if (signer !== this.account) {
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     if (!this.isBorrower) {
@@ -360,7 +360,7 @@ export class MarketAccount {
 
   async repayOutstandingDebt(): Promise<ContractTransaction> {
     const signer = await this.market.signer.getAddress();
-    if (signer !== this.account) {
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     if (!this.isBorrower) {
@@ -372,7 +372,7 @@ export class MarketAccount {
 
   async repayDelinquentDebt(): Promise<ContractTransaction> {
     const signer = await this.market.signer.getAddress();
-    if (signer !== this.account) {
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     if (!this.isBorrower) {
@@ -395,7 +395,7 @@ export class MarketAccount {
 
   async borrow(amount: TokenAmount): Promise<ContractTransaction> {
     const signer = await this.market.signer.getAddress();
-    if (signer !== this.account) {
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     if (!this.isBorrower) {

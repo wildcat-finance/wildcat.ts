@@ -4,3 +4,4 @@ node_modules/
 typechain-types
 .env
 dist/
+.idea
