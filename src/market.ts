@@ -265,6 +265,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
     return this.collateralization.actualRatio >= 90;
   }
 
+  get liquidReserves(): TokenAmount {
+    // Subtract normalized value of pending scaled withdrawals, processed
+    // withdrawals and protocol fees.
+    const normalizedPendingWithdrawals = this.normalizedPendingWithdrawals;
+    const unavailableAssets = normalizedPendingWithdrawals
+      .add(this.normalizedUnclaimedWithdrawals)
+      .add(this.lastAccruedProtocolFees);
+    return this.totalAssets.satsub(unavailableAssets);
+  }
+
   /* -------------------------------------------------------------------------- */
   /*                            Withdrawal Execution                            */
   /* -------------------------------------------------------------------------- */
