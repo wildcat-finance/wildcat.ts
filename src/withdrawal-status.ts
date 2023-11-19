@@ -1,17 +1,21 @@
 import { BigNumber, ContractTransaction } from "ethers";
 import { Market } from "./market";
-import { Token, TokenAmount } from "./token";
+import { TokenAmount } from "./token";
 import {
   WithdrawalBatchLenderStatusStructOutput,
   WithdrawalBatchDataWithLenderStatusStructOutput
 } from "./typechain";
 import { getLensContract } from "./constants";
-import { assert, mulDiv } from "./utils";
+import {
+  WithdrawalExecutionRecord,
+  WithdrawalRequestRecord,
+  assert,
+  mulDiv,
+  parseWithdrawalRecord
+} from "./utils";
 import { WithdrawalBatch, BatchStatus } from "./withdrawal-batch";
 import {
-  MakeOptional,
   SubgraphLenderWithdrawalPropertiesFragment,
-  SubgraphLenderWithdrawalStatus,
   SubgraphWithdrawalExecution,
   SubgraphWithdrawalExecutionPropertiesFragment,
   SubgraphWithdrawalRequest,
@@ -19,6 +23,8 @@ import {
 } from "./gql/graphql";
 
 export class LenderWithdrawalStatus {
+  public executions: WithdrawalExecutionRecord[] = [];
+  public requests: WithdrawalRequestRecord[] = [];
   constructor(
     public batch: WithdrawalBatch,
     public lender: string,
@@ -26,9 +32,12 @@ export class LenderWithdrawalStatus {
     public normalizedAmountWithdrawn: TokenAmount,
     public normalizedAmountOwed: TokenAmount,
     public availableWithdrawalAmount: TokenAmount,
-    public requests: SubgraphWithdrawalRequestPropertiesFragment[] = [],
-    public executions: SubgraphWithdrawalExecutionPropertiesFragment[] = []
-  ) {}
+    requests: SubgraphWithdrawalRequestPropertiesFragment[] = [],
+    executions: SubgraphWithdrawalExecutionPropertiesFragment[] = []
+  ) {
+    this.executions = executions.map((w) => parseWithdrawalRecord(this.market.underlyingToken, w));
+    this.requests = requests.map((w) => parseWithdrawalRecord(this.market.underlyingToken, w));
+  }
 
   async execute(): Promise<ContractTransaction> {
     assert(this.availableWithdrawalAmount.gt(0), "No funds available to withdraw");

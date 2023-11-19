@@ -14,7 +14,13 @@ import {
   SubgraphWithdrawalExecutionPropertiesFragment,
   SubgraphWithdrawalRequestPropertiesFragment
 } from "./gql/graphql";
-import { rayMul } from "./utils";
+import {
+  WithdrawalExecutionRecord,
+  WithdrawalPaymentRecord,
+  WithdrawalRequestRecord,
+  parseWithdrawalRecord,
+  rayMul
+} from "./utils";
 
 export enum BatchStatus {
   Pending = 0,
@@ -25,6 +31,10 @@ export enum BatchStatus {
 
 export class WithdrawalBatch {
   public withdrawals: LenderWithdrawalStatus[] = [];
+  public payments: WithdrawalPaymentRecord[] = [];
+  public executions: WithdrawalExecutionRecord[] = [];
+  public requests: WithdrawalRequestRecord[] = [];
+
   constructor(
     public market: Market,
     public expiry: number,
@@ -37,14 +47,17 @@ export class WithdrawalBatch {
     public paymentsCount?: number,
     public lastUpdatedTimestamp?: number,
     public totalInterestEarned?: TokenAmount,
-    public payments: SubgraphWithdrawalBatchPaymentPropertiesFragment[] = [],
+    payments: SubgraphWithdrawalBatchPaymentPropertiesFragment[] = [],
     withdrawals: SubgraphLenderWithdrawalPropertiesFragment[] = [],
-    public executions: SubgraphWithdrawalExecutionPropertiesFragment[] = [],
-    public requests: SubgraphWithdrawalRequestPropertiesFragment[] = []
+    executions: SubgraphWithdrawalExecutionPropertiesFragment[] = [],
+    requests: SubgraphWithdrawalRequestPropertiesFragment[] = []
   ) {
     this.withdrawals = withdrawals.map((w) =>
       LenderWithdrawalStatus.fromSubgraphLenderWithdrawalStatus(market, this, w, w.account.address)
     );
+    this.payments = payments.map((w) => parseWithdrawalRecord(this.market.underlyingToken, w));
+    this.executions = executions.map((w) => parseWithdrawalRecord(this.market.underlyingToken, w));
+    this.requests = requests.map((w) => parseWithdrawalRecord(this.market.underlyingToken, w));
   }
 
   private calculateBatchInterestEarned(): BigNumber {

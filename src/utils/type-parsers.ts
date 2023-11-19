@@ -1,11 +1,12 @@
-import {
-  FeeConfigurationStructOutput,
-  MarketParameterConstraintsStruct,
-  MarketParameterConstraintsStructOutput
-} from "../typechain";
+import { FeeConfigurationStructOutput, MarketParameterConstraintsStructOutput } from "../typechain";
 import { SignerOrProvider } from "../types";
 import { BigNumber, constants } from "ethers";
 import { Token, TokenAmount } from "../token";
+import {
+  SubgraphWithdrawalBatchPaymentPropertiesFragment,
+  SubgraphWithdrawalExecutionPropertiesFragment,
+  SubgraphWithdrawalRequestPropertiesFragment
+} from "../gql/graphql";
 
 export type MarketParameterConstraints = {
   minimumDelinquencyGracePeriod: number;
@@ -49,3 +50,59 @@ export const parseFeeConfiguration = (
     originationFeeAmount
   };
 };
+
+export type WithdrawalRequestRecord = {
+  normalizedAmount: TokenAmount;
+} & Omit<SubgraphWithdrawalRequestPropertiesFragment, "normalizedAmount">;
+
+export type WithdrawalPaymentRecord = {
+  normalizedAmountPaid: TokenAmount;
+} & Omit<SubgraphWithdrawalBatchPaymentPropertiesFragment, "normalizedAmountPaid">;
+
+export type WithdrawalExecutionRecord = {
+  normalizedAmount: TokenAmount;
+} & Omit<SubgraphWithdrawalExecutionPropertiesFragment, "normalizedAmount">;
+
+const isPayment = (
+  record:
+    | SubgraphWithdrawalRequestPropertiesFragment
+    | SubgraphWithdrawalBatchPaymentPropertiesFragment
+    | SubgraphWithdrawalExecutionPropertiesFragment
+): record is SubgraphWithdrawalBatchPaymentPropertiesFragment => {
+  return (
+    (record as SubgraphWithdrawalBatchPaymentPropertiesFragment).normalizedAmountPaid !== undefined
+  );
+};
+
+export function parseWithdrawalRecord(
+  token: Token,
+  log: SubgraphWithdrawalRequestPropertiesFragment
+): WithdrawalRequestRecord;
+export function parseWithdrawalRecord(
+  token: Token,
+  log: SubgraphWithdrawalBatchPaymentPropertiesFragment
+): WithdrawalPaymentRecord;
+export function parseWithdrawalRecord(
+  token: Token,
+  log: SubgraphWithdrawalExecutionPropertiesFragment
+): WithdrawalExecutionRecord;
+export function parseWithdrawalRecord(
+  token: Token,
+  log:
+    | SubgraphWithdrawalRequestPropertiesFragment
+    | SubgraphWithdrawalBatchPaymentPropertiesFragment
+    | SubgraphWithdrawalExecutionPropertiesFragment
+): WithdrawalRequestRecord | WithdrawalPaymentRecord | WithdrawalExecutionRecord {
+  if (isPayment(log)) {
+    const { normalizedAmountPaid, ...rest } = log;
+    return {
+      ...rest,
+      normalizedAmountPaid: token.getAmount(normalizedAmountPaid)
+    };
+  }
+  const { normalizedAmount, ...rest } = log;
+  return {
+    ...rest,
+    normalizedAmount: token.getAmount(normalizedAmount)
+  };
+}
