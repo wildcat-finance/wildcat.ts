@@ -274,14 +274,6 @@ export class MarketAccount {
 
   /* ------ Withdrawals ------ */
 
-  /**
-   * @returns Amount of underlying token user can withdraw
-   *          given their market balance and the market's assets.
-   */
-  get maximumWithdrawal(): TokenAmount {
-    return minTokenAmount(this.market.totalAssets, this.marketBalance);
-  }
-
   async queueWithdrawal(amount: TokenAmount): Promise<LenderWithdrawalStatus> {
     if (!this.canWithdraw) {
       throw Error(`Lender role insufficient to withdraw`);
