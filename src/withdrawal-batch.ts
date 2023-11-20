@@ -1,14 +1,12 @@
 import { BigNumber } from "ethers";
 import { Market } from "./market";
-import { TokenAmount } from "./token";
+import { TokenAmount, minTokenAmount } from "./token";
 import { WithdrawalBatchDataStructOutput } from "./typechain";
 import { getLensContract } from "./constants";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
 import {
   MakeOptional,
-  SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
   SubgraphLenderWithdrawalPropertiesFragment,
-  SubgraphWithdrawalBatch,
   SubgraphWithdrawalBatchPaymentPropertiesFragment,
   SubgraphWithdrawalBatchPropertiesWithEventsFragment,
   SubgraphWithdrawalExecutionPropertiesFragment,
@@ -93,6 +91,36 @@ export class WithdrawalBatch {
 
   get normalizedAmountOwed(): TokenAmount {
     return this.normalizedTotalAmount.sub(this.normalizedAmountPaid);
+  }
+
+  get scaledAmountOwed(): BigNumber {
+    return this.scaledTotalAmount.sub(this.scaledAmountBurned);
+  }
+
+  get availableLiquidityToProcess(): TokenAmount {
+    if (this.isClosed) return this.market.underlyingToken.getAmount(0);
+    if (this.expiry === this.market.pendingWithdrawalExpiry) {
+      const priorScaledAmountPending = this.market.scaledPendingWithdrawals.sub(
+        this.scaledAmountOwed
+      );
+      const unavailableAssets = this.market.normalizedUnclaimedWithdrawals
+        .add(this.market.normalizeAmount(priorScaledAmountPending))
+        .add(this.market.lastAccruedProtocolFees);
+      return minTokenAmount(
+        this.market.totalAssets.sub(unavailableAssets),
+        this.normalizedAmountOwed
+      );
+    } else if (this.expiry === this.market.unpaidWithdrawalBatchExpiries[0]) {
+      const unavailableAssets = this.market.normalizedUnclaimedWithdrawals.add(
+        this.market.lastAccruedProtocolFees
+      );
+      return minTokenAmount(
+        this.market.totalAssets.sub(unavailableAssets),
+        this.normalizedAmountOwed
+      );
+    } else {
+      return this.market.underlyingToken.getAmount(0);
+    }
   }
 
   applyLensUpdate(data: WithdrawalBatchDataStructOutput): void {
