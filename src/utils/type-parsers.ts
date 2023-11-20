@@ -7,6 +7,9 @@ import {
   SubgraphWithdrawalExecutionPropertiesFragment,
   SubgraphWithdrawalRequestPropertiesFragment
 } from "../gql/graphql";
+import { WithdrawalBatch } from "../withdrawal-batch";
+import { mulDiv } from "./math";
+import { LenderWithdrawalStatus } from "../withdrawal-status";
 
 export type MarketParameterConstraints = {
   minimumDelinquencyGracePeriod: number;
@@ -51,9 +54,54 @@ export const parseFeeConfiguration = (
   };
 };
 
-export type WithdrawalRequestRecord = {
-  normalizedAmount: TokenAmount;
-} & Omit<SubgraphWithdrawalRequestPropertiesFragment, "normalizedAmount">;
+// export type WithdrawalRequestRecord = {
+//   normalizedAmount: TokenAmount;
+// } & Omit<SubgraphWithdrawalRequestPropertiesFragment, "normalizedAmount">;
+
+export class WithdrawalRequestRecord {
+  constructor(
+    public id: string,
+    public requestIndex: number,
+    public scaledAmount: BigNumber,
+    public normalizedAmount: TokenAmount,
+    public blockNumber: number,
+    public blockTimestamp: number,
+    public transactionHash: string
+  ) {}
+
+  /**
+   * Calculate the normalized amount owed for this request.
+   * Note: Given a `WithdrawalBatch`, will return the amount owed by the borrower for
+   * this request without taking into account the amount the lender has already withdrawn.
+   * Given a `LenderWithdrawalStatus`, will return the amount owed to the lender after
+   * subtracting the amount the lender has already withdrawn.
+   */
+  getNormalizedAmountOwed(data: WithdrawalBatch | LenderWithdrawalStatus): TokenAmount {
+    return data.normalizedAmountOwed.mulDiv(
+      this.scaledAmount,
+      data instanceof WithdrawalBatch ? data.scaledTotalAmount : data.scaledAmount
+    );
+  }
+
+  getNormalizedAmountPaid(batch: WithdrawalBatch): TokenAmount {
+    return batch.normalizedAmountPaid.mulDiv(this.scaledAmount, batch.scaledTotalAmount);
+  }
+
+  static fromSubgraphWithdrawalRequest(
+    batch: WithdrawalBatch,
+    data: SubgraphWithdrawalRequestPropertiesFragment
+  ): WithdrawalRequestRecord {
+    return new WithdrawalRequestRecord(
+      data.id,
+      data.requestIndex,
+      BigNumber.from(data.scaledAmount),
+      batch.market.underlyingToken.getAmount(data.normalizedAmount),
+      data.blockNumber,
+      data.blockTimestamp,
+      data.transactionHash
+    );
+  }
+}
 
 export type WithdrawalPaymentRecord = {
   normalizedAmountPaid: TokenAmount;
@@ -63,42 +111,35 @@ export type WithdrawalExecutionRecord = {
   normalizedAmount: TokenAmount;
 } & Omit<SubgraphWithdrawalExecutionPropertiesFragment, "normalizedAmount">;
 
-const isPayment = (
-  record:
-    | SubgraphWithdrawalRequestPropertiesFragment
-    | SubgraphWithdrawalBatchPaymentPropertiesFragment
-    | SubgraphWithdrawalExecutionPropertiesFragment
-): record is SubgraphWithdrawalBatchPaymentPropertiesFragment => {
-  return (
-    (record as SubgraphWithdrawalBatchPaymentPropertiesFragment).normalizedAmountPaid !== undefined
-  );
-};
-
 export function parseWithdrawalRecord(
-  token: Token,
+  batch: WithdrawalBatch,
   log: SubgraphWithdrawalRequestPropertiesFragment
 ): WithdrawalRequestRecord;
 export function parseWithdrawalRecord(
-  token: Token,
+  batch: WithdrawalBatch,
   log: SubgraphWithdrawalBatchPaymentPropertiesFragment
 ): WithdrawalPaymentRecord;
 export function parseWithdrawalRecord(
-  token: Token,
+  batch: WithdrawalBatch,
   log: SubgraphWithdrawalExecutionPropertiesFragment
 ): WithdrawalExecutionRecord;
 export function parseWithdrawalRecord(
-  token: Token,
+  batch: WithdrawalBatch,
   log:
     | SubgraphWithdrawalRequestPropertiesFragment
     | SubgraphWithdrawalBatchPaymentPropertiesFragment
     | SubgraphWithdrawalExecutionPropertiesFragment
 ): WithdrawalRequestRecord | WithdrawalPaymentRecord | WithdrawalExecutionRecord {
-  if (isPayment(log)) {
+  const token = batch.market.underlyingToken;
+  if ("normalizedAmountPaid" in log) {
     const { normalizedAmountPaid, ...rest } = log;
     return {
       ...rest,
       normalizedAmountPaid: token.getAmount(normalizedAmountPaid)
     };
+  }
+  if ("scaledAmount" in log) {
+    return WithdrawalRequestRecord.fromSubgraphWithdrawalRequest(batch, log);
   }
   const { normalizedAmount, ...rest } = log;
   return {
