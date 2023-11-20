@@ -35,8 +35,8 @@ export class LenderWithdrawalStatus {
     requests: SubgraphWithdrawalRequestPropertiesFragment[] = [],
     executions: SubgraphWithdrawalExecutionPropertiesFragment[] = []
   ) {
-    this.executions = executions.map((w) => parseWithdrawalRecord(this.market.underlyingToken, w));
-    this.requests = requests.map((w) => parseWithdrawalRecord(this.market.underlyingToken, w));
+    this.executions = executions.map((w) => parseWithdrawalRecord(this.batch, w));
+    this.requests = requests.map((w) => parseWithdrawalRecord(this.batch, w));
   }
 
   async execute(): Promise<ContractTransaction> {
@@ -54,6 +54,10 @@ export class LenderWithdrawalStatus {
 
   get status(): BatchStatus {
     return this.batch.status;
+  }
+
+  get normalizedTotalAmount(): TokenAmount {
+    return this.normalizedAmountOwed.add(this.normalizedAmountWithdrawn);
   }
 
   updateWith(data: WithdrawalBatchLenderStatusStructOutput): void {

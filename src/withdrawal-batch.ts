@@ -55,9 +55,9 @@ export class WithdrawalBatch {
     this.withdrawals = withdrawals.map((w) =>
       LenderWithdrawalStatus.fromSubgraphLenderWithdrawalStatus(market, this, w, w.account.address)
     );
-    this.payments = payments.map((w) => parseWithdrawalRecord(this.market.underlyingToken, w));
-    this.executions = executions.map((w) => parseWithdrawalRecord(this.market.underlyingToken, w));
-    this.requests = requests.map((w) => parseWithdrawalRecord(this.market.underlyingToken, w));
+    this.payments = payments.map((w) => parseWithdrawalRecord(this, w));
+    this.executions = executions.map((w) => parseWithdrawalRecord(this, w));
+    this.requests = requests.map((w) => parseWithdrawalRecord(this, w));
   }
 
   private calculateBatchInterestEarned(): BigNumber {
