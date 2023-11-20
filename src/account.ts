@@ -133,14 +133,16 @@ export class MarketAccount {
       return { status: "UnpaidWithdrawalBatches" };
     }
     // add 0.5% to account for interest
-    const outstandingDebt = bipMul(this.market.outstandingDebt.raw, toBn(10050));
-    if (outstandingDebt.gt(this.underlyingBalance.raw)) {
+    const outstandingDebt = this.market.underlyingToken.getAmount(
+      bipMul(this.market.outstandingDebt.raw, toBn(10050))
+    );
+    if (outstandingDebt.gt(this.underlyingBalance)) {
       return { status: "InsufficientBalance" };
     }
-    if (!this.isApprovedFor(this.underlyingBalance)) {
+    if (!this.isApprovedFor(outstandingDebt)) {
       return {
         status: "InsufficientAllowance",
-        remainder: this.getAllowanceRemainder(this.underlyingBalance)
+        remainder: this.getAllowanceRemainder(outstandingDebt)
       };
     }
     return { status: "Ready" };
