@@ -3,7 +3,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { IERC20, IERC20__factory, TokenMetadataStructOutput } from "./typechain";
 import { ContractWrapper, SignerOrProvider } from "./types";
 import { getLensContract } from "./constants";
-import { formatBnFixed } from "./utils";
+import { bipMul, formatBnFixed, mulDiv, rayDiv, rayMul } from "./utils";
 import { SubgraphMarketDataFragment, SubgraphToken } from "./gql/graphql";
 
 type RhsAmount = BigNumberish | TokenAmount;
@@ -86,6 +86,34 @@ export class TokenAmount {
   sub(amount: RhsAmount): TokenAmount {
     amount = toBn(amount);
     return this.token.getAmount(this.raw.sub(amount));
+  }
+
+  mul(amount: RhsAmount): TokenAmount {
+    amount = toBn(amount);
+    return this.token.getAmount(this.raw.mul(amount));
+  }
+
+  div(amount: RhsAmount): TokenAmount {
+    amount = toBn(amount);
+    return this.token.getAmount(this.raw.div(amount));
+  }
+
+  mulDiv(numer: RhsAmount, denom: RhsAmount): TokenAmount {
+    numer = toBn(numer);
+    denom = toBn(denom);
+    return this.token.getAmount(mulDiv(this.raw, numer, denom));
+  }
+
+  bipMul(amount: RhsAmount): TokenAmount {
+    return this.token.getAmount(bipMul(this.raw, toBn(amount)));
+  }
+
+  rayMul(amount: RhsAmount): TokenAmount {
+    return this.token.getAmount(rayMul(this.raw, toBn(amount)));
+  }
+
+  rayDiv(amount: RhsAmount): TokenAmount {
+    return this.token.getAmount(rayDiv(this.raw, toBn(amount)));
   }
 
   satsub(amount: RhsAmount): TokenAmount {
