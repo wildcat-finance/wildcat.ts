@@ -171,9 +171,9 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     return market;
   }
 
-  async closeMarket(market: Market): Promise<ContractTransaction> {
-    return this.contract.closeMarket(market.address);
-  }
+  /* -------------------------------------------------------------------------- */
+  /*                                Class Builder                               */
+  /* -------------------------------------------------------------------------- */
 
   static fromControllerData(
     provider: SignerOrProvider,
@@ -202,6 +202,10 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
       borrowerOriginationFeeApproval
     );
   }
+
+  /* -------------------------------------------------------------------------- */
+  /*                               Static Queries                               */
+  /* -------------------------------------------------------------------------- */
 
   static async getController(
     provider: SignerOrProvider,
