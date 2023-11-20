@@ -310,7 +310,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
   /* -------------------------------------------------------------------------- */
 
   getReserveRatioForNewAPR(annualInterestBips: number): number {
-    const originalAnnualInterestBips = this.originalAnnualInterestBips ?? this.annualInterestBips;
+    const originalAnnualInterestBips = this.temporaryReserveRatio
+      ? this.originalAnnualInterestBips
+      : this.annualInterestBips;
     if (annualInterestBips < originalAnnualInterestBips) {
       const doubleRelativeDiff = mulDiv(
         toBn(20000),
@@ -339,7 +341,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   canChangeAPR(annualInterestBips: number): boolean {
-    const originalAnnualInterestBips = this.originalAnnualInterestBips ?? this.annualInterestBips;
+    const originalAnnualInterestBips = this.temporaryReserveRatio
+      ? this.originalAnnualInterestBips
+      : this.annualInterestBips;
     if (annualInterestBips < originalAnnualInterestBips || this.temporaryReserveRatio) {
       const newReserveRatioBips = this.getReserveRatioForNewAPR(annualInterestBips);
       const newCoverageLiquidity =
