@@ -2,23 +2,22 @@ import { BigNumber, ContractTransaction } from "ethers";
 import { Signer } from "@ethersproject/abstract-signer";
 import { WildcatMarket, WildcatMarket__factory } from "./typechain";
 import { MarketDataStructOutput } from "./typechain";
-import { getControllerContract, getLensContract } from "./constants";
-import { TokenAmount, Token, minTokenAmount, toBn } from "./token";
+import { getLensContract } from "./constants";
+import { TokenAmount, Token, toBn } from "./token";
 import { SignerOrProvider, ContractWrapper } from "./types";
 import { formatUnits } from "ethers/lib/utils";
 import { MarketAccount } from "./account";
 import { RAY } from "./constants";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
-import { bipMul, mulDiv, rayMul } from "./utils/math";
+import { bipMul, mulDiv, rayDiv, rayMul } from "./utils/math";
 import {
   SubgraphBorrowDataFragment,
   SubgraphDepositDataFragment,
   SubgraphFeesCollectedDataFragment,
-  SubgraphMarketDataFragment,
   SubgraphMarketDataWithEventsFragment,
   SubgraphRepaymentDataFragment
 } from "./gql/graphql";
-import { MakeOptional, assert } from "./utils";
+import { MakeOptional } from "./utils";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -275,6 +274,14 @@ export class Market extends ContractWrapper<WildcatMarket> {
     return this.totalAssets.satsub(unavailableAssets);
   }
 
+  normalizeAmount(amount: BigNumber): BigNumber {
+    return rayMul(amount, this.scaleFactor);
+  }
+
+  scaleAmount(amount: BigNumber): BigNumber {
+    return rayDiv(amount, this.scaleFactor);
+  }
+
   /* -------------------------------------------------------------------------- */
   /*                            Withdrawal Execution                            */
   /* -------------------------------------------------------------------------- */
@@ -292,6 +299,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const lenders = withdrawals.map((w) => w.lender);
     const expiries = withdrawals.map((w) => w.expiry);
     return this.contract.executeWithdrawals(lenders, expiries);
+  }
+
+  async processUnpaidWithdrawalBatch(): Promise<ContractTransaction> {
+    return this.contract.processUnpaidWithdrawalBatch();
   }
 
   /* -------------------------------------------------------------------------- */
