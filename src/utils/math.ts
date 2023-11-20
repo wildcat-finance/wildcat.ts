@@ -30,3 +30,10 @@ export function rayDiv(a: BigNumber, b: BigNumber): BigNumber {
 export function mulDiv(x: BigNumber, y: BigNumber, d: BigNumber): BigNumber {
   return x.mul(y).div(d);
 }
+
+export function satSub(a: BigNumber, b: BigNumber): BigNumber {
+  if (a.lt(b)) {
+    return BigNumber.from(0);
+  }
+  return a.sub(b);
+}
