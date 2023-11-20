@@ -129,9 +129,6 @@ export class MarketAccount {
 
   checkCloseMarketStep(): CloseMarketStatus {
     if (!this.isBorrower) return { status: "NotBorrower" };
-    if (this.market.unpaidWithdrawalBatchExpiries.length > 0) {
-      return { status: "UnpaidWithdrawalBatches" };
-    }
     // add 0.5% to account for interest
     const outstandingDebt = this.market.underlyingToken.getAmount(
       bipMul(this.market.outstandingDebt.raw, toBn(10050))
@@ -142,8 +139,11 @@ export class MarketAccount {
     if (!this.isApprovedFor(outstandingDebt)) {
       return {
         status: "InsufficientAllowance",
-        remainder: this.getAllowanceRemainder(outstandingDebt)
+        remainder: outstandingDebt
       };
+    }
+    if (this.market.unpaidWithdrawalBatchExpiries.length > 0) {
+      return { status: "UnpaidWithdrawalBatches" };
     }
     return { status: "Ready" };
   }
