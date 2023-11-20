@@ -66,7 +66,8 @@ export class WithdrawalRequestRecord {
     public normalizedAmount: TokenAmount,
     public blockNumber: number,
     public blockTimestamp: number,
-    public transactionHash: string
+    public transactionHash: string,
+    public address: string
   ) {}
 
   /**
@@ -98,7 +99,8 @@ export class WithdrawalRequestRecord {
       batch.market.underlyingToken.getAmount(data.normalizedAmount),
       data.blockNumber,
       data.blockTimestamp,
-      data.transactionHash
+      data.transactionHash,
+      data.account.address
     );
   }
 }
