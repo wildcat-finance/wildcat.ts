@@ -1,7 +1,9 @@
 import { Provider } from "@ethersproject/abstract-provider";
 import { Signer } from "@ethersproject/abstract-signer";
 import { BaseContract } from "ethers";
+
 export type SignerOrProvider = Signer | Provider;
+
 export { Provider, Signer };
 
 export abstract class ContractWrapper<Contract extends BaseContract> {

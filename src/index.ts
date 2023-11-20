@@ -1,5 +1,4 @@
 import { MarketAccount } from "./account";
-// import { MarketFactory } from "./factory";
 import { Token } from "./token";
 import { Market } from "./market";
 import { TokenFactory } from "./mockerc20factory";
