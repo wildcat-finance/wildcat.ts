@@ -129,17 +129,17 @@ export class MarketAccount {
 
   checkCloseMarketStep(): CloseMarketStatus {
     if (!this.isBorrower) return { status: "NotBorrower" };
-    // add 0.5% to account for interest
-    const outstandingDebt = this.market.underlyingToken.getAmount(
-      bipMul(this.market.outstandingDebt.raw, toBn(10050))
-    );
+    const outstandingDebt = this.market.outstandingDebt;
     if (outstandingDebt.gt(this.underlyingBalance)) {
       return { status: "InsufficientBalance" };
     }
     if (!this.isApprovedFor(outstandingDebt)) {
+      // add 0.5% to account for interest
       return {
         status: "InsufficientAllowance",
-        remainder: outstandingDebt
+        remainder: this.market.underlyingToken.getAmount(
+          bipMul(this.market.outstandingDebt.raw, toBn(10050))
+        )
       };
     }
     if (this.market.unpaidWithdrawalBatchExpiries.length > 0) {
