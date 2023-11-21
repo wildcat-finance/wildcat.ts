@@ -8,7 +8,6 @@ import {
   SubgraphWithdrawalRequestPropertiesFragment
 } from "../gql/graphql";
 import { WithdrawalBatch } from "../withdrawal-batch";
-import { mulDiv } from "./math";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 
 export type MarketParameterConstraints = {
