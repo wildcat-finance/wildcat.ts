@@ -411,8 +411,12 @@ export class MarketAccount {
   }
 
   updateWith(info: MarketLenderStatusStructOutput): void {
-    const account = MarketAccount.fromMarketLenderStatus(this.account, info, this.market);
-    updateObject(this, account, MarketAccount.UpdatableKeys);
+    this.isAuthorizedOnController = info.isAuthorizedOnController;
+    this.role = info.role;
+    this.scaledMarketBalance = info.scaledBalance;
+    this.marketBalance = this.market.marketToken.getAmount(info.normalizedBalance);
+    this.underlyingBalance = this.market.underlyingToken.getAmount(info.underlyingBalance);
+    this.underlyingApproval = info.underlyingApproval;
     this.processInterestAccrued();
   }
 
