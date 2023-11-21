@@ -117,11 +117,13 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
   functions: {
     "archController()": FunctionFragment;
     "authorizeLenders(address[])": FunctionFragment;
+    "authorizeLendersAndUpdateMarkets(address[],address[])": FunctionFragment;
     "borrower()": FunctionFragment;
     "closeMarket(address)": FunctionFragment;
     "computeMarketAddress(address,string,string)": FunctionFragment;
     "controllerFactory()": FunctionFragment;
     "deauthorizeLenders(address[])": FunctionFragment;
+    "deauthorizeLendersAndUpdateMarkets(address[],address[])": FunctionFragment;
     "deployMarket(address,string,string,uint128,uint16,uint16,uint32,uint16,uint32)": FunctionFragment;
     "getAuthorizedLenders()": FunctionFragment;
     "getAuthorizedLenders(uint256,uint256)": FunctionFragment;
@@ -148,11 +150,13 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "archController"
       | "authorizeLenders"
+      | "authorizeLendersAndUpdateMarkets"
       | "borrower"
       | "closeMarket"
       | "computeMarketAddress"
       | "controllerFactory"
       | "deauthorizeLenders"
+      | "deauthorizeLendersAndUpdateMarkets"
       | "deployMarket"
       | "getAuthorizedLenders()"
       | "getAuthorizedLenders(uint256,uint256)"
@@ -183,6 +187,10 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
     functionFragment: "authorizeLenders",
     values: [PromiseOrValue<string>[]]
   ): string;
+  encodeFunctionData(
+    functionFragment: "authorizeLendersAndUpdateMarkets",
+    values: [PromiseOrValue<string>[], PromiseOrValue<string>[]]
+  ): string;
   encodeFunctionData(functionFragment: "borrower", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "closeMarket",
@@ -203,6 +211,10 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "deauthorizeLenders",
     values: [PromiseOrValue<string>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "deauthorizeLendersAndUpdateMarkets",
+    values: [PromiseOrValue<string>[], PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "deployMarket",
@@ -300,6 +312,10 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
     functionFragment: "authorizeLenders",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "authorizeLendersAndUpdateMarkets",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "borrower", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "closeMarket",
@@ -315,6 +331,10 @@ export interface WildcatMarketControllerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "deauthorizeLenders",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "deauthorizeLendersAndUpdateMarkets",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -527,6 +547,12 @@ export interface WildcatMarketController extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    authorizeLendersAndUpdateMarkets(
+      lenders: PromiseOrValue<string>[],
+      markets: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     borrower(overrides?: CallOverrides): Promise<[string]>;
 
     closeMarket(
@@ -545,6 +571,12 @@ export interface WildcatMarketController extends BaseContract {
 
     deauthorizeLenders(
       lenders: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    deauthorizeLendersAndUpdateMarkets(
+      lenders: PromiseOrValue<string>[],
+      markets: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -661,6 +693,12 @@ export interface WildcatMarketController extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  authorizeLendersAndUpdateMarkets(
+    lenders: PromiseOrValue<string>[],
+    markets: PromiseOrValue<string>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   borrower(overrides?: CallOverrides): Promise<string>;
 
   closeMarket(
@@ -679,6 +717,12 @@ export interface WildcatMarketController extends BaseContract {
 
   deauthorizeLenders(
     lenders: PromiseOrValue<string>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  deauthorizeLendersAndUpdateMarkets(
+    lenders: PromiseOrValue<string>[],
+    markets: PromiseOrValue<string>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -788,6 +832,12 @@ export interface WildcatMarketController extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    authorizeLendersAndUpdateMarkets(
+      lenders: PromiseOrValue<string>[],
+      markets: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     borrower(overrides?: CallOverrides): Promise<string>;
 
     closeMarket(
@@ -806,6 +856,12 @@ export interface WildcatMarketController extends BaseContract {
 
     deauthorizeLenders(
       lenders: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    deauthorizeLendersAndUpdateMarkets(
+      lenders: PromiseOrValue<string>[],
+      markets: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -972,6 +1028,12 @@ export interface WildcatMarketController extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    authorizeLendersAndUpdateMarkets(
+      lenders: PromiseOrValue<string>[],
+      markets: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     borrower(overrides?: CallOverrides): Promise<BigNumber>;
 
     closeMarket(
@@ -990,6 +1052,12 @@ export interface WildcatMarketController extends BaseContract {
 
     deauthorizeLenders(
       lenders: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    deauthorizeLendersAndUpdateMarkets(
+      lenders: PromiseOrValue<string>[],
+      markets: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1085,6 +1153,12 @@ export interface WildcatMarketController extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    authorizeLendersAndUpdateMarkets(
+      lenders: PromiseOrValue<string>[],
+      markets: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     borrower(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     closeMarket(
@@ -1103,6 +1177,12 @@ export interface WildcatMarketController extends BaseContract {
 
     deauthorizeLenders(
       lenders: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    deauthorizeLendersAndUpdateMarkets(
+      lenders: PromiseOrValue<string>[],
+      markets: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

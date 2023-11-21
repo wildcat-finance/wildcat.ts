@@ -133,10 +133,10 @@ export interface WildcatMarketInterface extends utils.Interface {
     "nukeFromOrbit(address)": FunctionFragment;
     "outstandingDebt()": FunctionFragment;
     "previousState()": FunctionFragment;
-    "processUnpaidWithdrawalBatch()": FunctionFragment;
     "protocolFeeBips()": FunctionFragment;
     "queueWithdrawal(uint256)": FunctionFragment;
     "repay(uint256)": FunctionFragment;
+    "repayAndProcessUnpaidWithdrawalBatches(uint256,uint256)": FunctionFragment;
     "repayDelinquentDebt()": FunctionFragment;
     "repayOutstandingDebt()": FunctionFragment;
     "reserveRatioBips()": FunctionFragment;
@@ -154,7 +154,7 @@ export interface WildcatMarketInterface extends utils.Interface {
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
-    "updateAccountAuthorization(address,bool)": FunctionFragment;
+    "updateAccountAuthorizations(address[],bool)": FunctionFragment;
     "updateState()": FunctionFragment;
     "version()": FunctionFragment;
     "withdrawableProtocolFees()": FunctionFragment;
@@ -199,10 +199,10 @@ export interface WildcatMarketInterface extends utils.Interface {
       | "nukeFromOrbit"
       | "outstandingDebt"
       | "previousState"
-      | "processUnpaidWithdrawalBatch"
       | "protocolFeeBips"
       | "queueWithdrawal"
       | "repay"
+      | "repayAndProcessUnpaidWithdrawalBatches"
       | "repayDelinquentDebt"
       | "repayOutstandingDebt"
       | "reserveRatioBips"
@@ -220,7 +220,7 @@ export interface WildcatMarketInterface extends utils.Interface {
       | "totalSupply"
       | "transfer"
       | "transferFrom"
-      | "updateAccountAuthorization"
+      | "updateAccountAuthorizations"
       | "updateState"
       | "version"
       | "withdrawableProtocolFees"
@@ -360,10 +360,6 @@ export interface WildcatMarketInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "processUnpaidWithdrawalBatch",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "protocolFeeBips",
     values?: undefined
   ): string;
@@ -374,6 +370,10 @@ export interface WildcatMarketInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "repay",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "repayAndProcessUnpaidWithdrawalBatches",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "repayDelinquentDebt",
@@ -442,8 +442,8 @@ export interface WildcatMarketInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateAccountAuthorization",
-    values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
+    functionFragment: "updateAccountAuthorizations",
+    values: [PromiseOrValue<string>[], PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
     functionFragment: "updateState",
@@ -574,10 +574,6 @@ export interface WildcatMarketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "processUnpaidWithdrawalBatch",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "protocolFeeBips",
     data: BytesLike
   ): Result;
@@ -586,6 +582,10 @@ export interface WildcatMarketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "repay", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "repayAndProcessUnpaidWithdrawalBatches",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "repayDelinquentDebt",
     data: BytesLike
@@ -643,7 +643,7 @@ export interface WildcatMarketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateAccountAuthorization",
+    functionFragment: "updateAccountAuthorizations",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1126,10 +1126,6 @@ export interface WildcatMarket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[MarketStateStructOutput]>;
 
-    processUnpaidWithdrawalBatch(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     protocolFeeBips(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     queueWithdrawal(
@@ -1139,6 +1135,12 @@ export interface WildcatMarket extends BaseContract {
 
     repay(
       amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    repayAndProcessUnpaidWithdrawalBatches(
+      repayAmount: PromiseOrValue<BigNumberish>,
+      maxBatches: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1204,9 +1206,9 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    updateAccountAuthorization(
-      _account: PromiseOrValue<string>,
-      _isAuthorized: PromiseOrValue<boolean>,
+    updateAccountAuthorizations(
+      accounts: PromiseOrValue<string>[],
+      authorize: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1342,10 +1344,6 @@ export interface WildcatMarket extends BaseContract {
 
   previousState(overrides?: CallOverrides): Promise<MarketStateStructOutput>;
 
-  processUnpaidWithdrawalBatch(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   protocolFeeBips(overrides?: CallOverrides): Promise<BigNumber>;
 
   queueWithdrawal(
@@ -1355,6 +1353,12 @@ export interface WildcatMarket extends BaseContract {
 
   repay(
     amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  repayAndProcessUnpaidWithdrawalBatches(
+    repayAmount: PromiseOrValue<BigNumberish>,
+    maxBatches: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1420,9 +1424,9 @@ export interface WildcatMarket extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  updateAccountAuthorization(
-    _account: PromiseOrValue<string>,
-    _isAuthorized: PromiseOrValue<boolean>,
+  updateAccountAuthorizations(
+    accounts: PromiseOrValue<string>[],
+    authorize: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1554,8 +1558,6 @@ export interface WildcatMarket extends BaseContract {
 
     previousState(overrides?: CallOverrides): Promise<MarketStateStructOutput>;
 
-    processUnpaidWithdrawalBatch(overrides?: CallOverrides): Promise<void>;
-
     protocolFeeBips(overrides?: CallOverrides): Promise<BigNumber>;
 
     queueWithdrawal(
@@ -1565,6 +1567,12 @@ export interface WildcatMarket extends BaseContract {
 
     repay(
       amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    repayAndProcessUnpaidWithdrawalBatches(
+      repayAmount: PromiseOrValue<BigNumberish>,
+      maxBatches: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1626,9 +1634,9 @@ export interface WildcatMarket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    updateAccountAuthorization(
-      _account: PromiseOrValue<string>,
-      _isAuthorized: PromiseOrValue<boolean>,
+    updateAccountAuthorizations(
+      accounts: PromiseOrValue<string>[],
+      authorize: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1963,10 +1971,6 @@ export interface WildcatMarket extends BaseContract {
 
     previousState(overrides?: CallOverrides): Promise<BigNumber>;
 
-    processUnpaidWithdrawalBatch(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     protocolFeeBips(overrides?: CallOverrides): Promise<BigNumber>;
 
     queueWithdrawal(
@@ -1976,6 +1980,12 @@ export interface WildcatMarket extends BaseContract {
 
     repay(
       amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    repayAndProcessUnpaidWithdrawalBatches(
+      repayAmount: PromiseOrValue<BigNumberish>,
+      maxBatches: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2041,9 +2051,9 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    updateAccountAuthorization(
-      _account: PromiseOrValue<string>,
-      _isAuthorized: PromiseOrValue<boolean>,
+    updateAccountAuthorizations(
+      accounts: PromiseOrValue<string>[],
+      authorize: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2194,10 +2204,6 @@ export interface WildcatMarket extends BaseContract {
 
     previousState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    processUnpaidWithdrawalBatch(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     protocolFeeBips(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     queueWithdrawal(
@@ -2207,6 +2213,12 @@ export interface WildcatMarket extends BaseContract {
 
     repay(
       amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    repayAndProcessUnpaidWithdrawalBatches(
+      repayAmount: PromiseOrValue<BigNumberish>,
+      maxBatches: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2272,9 +2284,9 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateAccountAuthorization(
-      _account: PromiseOrValue<string>,
-      _isAuthorized: PromiseOrValue<boolean>,
+    updateAccountAuthorizations(
+      accounts: PromiseOrValue<string>[],
+      authorize: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

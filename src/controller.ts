@@ -80,6 +80,24 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     return this.contract.authorizeLenders(lenders);
   }
 
+  async authorizeLendersAndUpdateMarkets(
+    lenders: string[],
+    markets: string[] = this.markets.map((m) => m.address)
+  ): Promise<ContractTransaction> {
+    return this.contract.authorizeLendersAndUpdateMarkets(lenders, markets);
+  }
+
+  async deauthorizeLenders(lenders: string[]): Promise<ContractTransaction> {
+    return this.contract.deauthorizeLenders(lenders);
+  }
+
+  async deauthorizeLendersAndUpdateMarkets(
+    lenders: string[],
+    markets: string[] = this.markets.map((m) => m.address)
+  ): Promise<ContractTransaction> {
+    return this.contract.deauthorizeLendersAndUpdateMarkets(lenders, markets);
+  }
+
   async registerBorrower(): Promise<ContractTransaction> {
     assert(!this.isRegisteredBorrower, "Borrower is already registered");
 

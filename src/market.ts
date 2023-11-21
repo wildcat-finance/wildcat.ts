@@ -301,8 +301,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
     return this.contract.executeWithdrawals(lenders, expiries);
   }
 
-  async processUnpaidWithdrawalBatch(): Promise<ContractTransaction> {
-    return this.contract.processUnpaidWithdrawalBatch();
+  async repayAndProcessUnpaidWithdrawalBatches(
+    amount: TokenAmount,
+    maxBatches = 10
+  ): Promise<ContractTransaction> {
+    return this.contract.repayAndProcessUnpaidWithdrawalBatches(amount.raw, maxBatches);
   }
 
   /* -------------------------------------------------------------------------- */

@@ -177,6 +177,16 @@ interface WildcatMarketController {
    */
   function updateLenderAuthorization(address lender, address[] memory markets) external;
 
+  function authorizeLendersAndUpdateMarkets(
+    address[] memory lenders,
+    address[] memory markets
+  ) external;
+
+  function deauthorizeLendersAndUpdateMarkets(
+    address[] memory lenders,
+    address[] memory markets
+  ) external;
+
   /* -------------------------------------------------------------------------- */
   /*                               Market Registry                              */
   /* -------------------------------------------------------------------------- */

@@ -15,13 +15,13 @@ import { SignerOrProvider } from "./types";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 export const Deployments = {
-  MarketLens: "0xF0c0ed88e596637b90ce4FBac838f4f57EDB7046",
-  MockArchControllerOwner: "0x74275efE86068b8E25eeF58E66FB1FbbF814B78e",
-  MockChainalysis: "0xBc3981a458b1ca607EF2A181a3b050fb0AE0D724",
-  MockERC20Factory: "0x28eeB2Fe15518F3d51825fDdB30302901064a5BE",
-  WildcatArchController: "0xe0b536e3b389b77B9Dc8d7e8E623cbeF69B4ED84",
-  WildcatMarketControllerFactory: "0x49C5002EdeA9A79b7A0678D49b1eC1203A024800",
-  WildcatSanctionsSentinel: "0xf98daD3014aDF635E070799966c2376e21658F56"
+  MarketLens: "0x1D2485f3763d316e114d0fBf641220E1B31Bd845",
+  MockArchControllerOwner: "0x43f1dB4e70CCb43ccD5D4A7BC033245254cC3909",
+  MockChainalysis: "0x8B64E9ae41718D3B030D012c273668b4341b7812",
+  MockERC20Factory: "0xFC1ef4095BD39C747CACe66BC9983cafD2134658",
+  WildcatArchController: "0x5EA44A0244F35951d0994E0D5ce63baF822C44eE",
+  WildcatMarketControllerFactory: "0x664780e218B0C4BDB81FbCD29D7Caf76cdD878de",
+  WildcatSanctionsSentinel: "0x377d91d15E0e0De955dFADaDeDf4E16c8E0E5a4D"
 };
 
 // export const LensAddress = "0xB63CC0C9837E4Da8E2111B3e6383aA9a6fDEf342";
@@ -70,7 +70,7 @@ export const WAD = BigNumber.from(10).pow(18);
 
 export const DeploymentBlockNumber = 4518288;
 
-export const SubgraphUrl = "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.19";
+export const SubgraphUrl = "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.20";
 
 export const SubgraphClient = new ApolloClient({
   cache: new InMemoryCache(),

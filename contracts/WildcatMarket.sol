@@ -276,7 +276,7 @@ interface WildcatMarket {
 
   function previousState() external view returns (MarketState memory);
 
-  function processUnpaidWithdrawalBatch() external;
+  function repayAndProcessUnpaidWithdrawalBatches(uint256 repayAmount, uint256 maxBatches) external;
 
   function protocolFeeBips() external view returns (uint256);
 
@@ -310,7 +310,7 @@ interface WildcatMarket {
 
   function transferFrom(address from, address to, uint256 amount) external returns (bool);
 
-  function updateAccountAuthorization(address _account, bool _isAuthorized) external;
+  function updateAccountAuthorizations(address[] memory accounts, bool authorize) external;
 
   function updateState() external;
 

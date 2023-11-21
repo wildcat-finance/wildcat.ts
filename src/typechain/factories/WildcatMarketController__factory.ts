@@ -239,6 +239,24 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "lenders",
+        type: "address[]",
+      },
+      {
+        internalType: "address[]",
+        name: "markets",
+        type: "address[]",
+      },
+    ],
+    name: "authorizeLendersAndUpdateMarkets",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "borrower",
     outputs: [
@@ -315,6 +333,24 @@ const _abi = [
       },
     ],
     name: "deauthorizeLenders",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "lenders",
+        type: "address[]",
+      },
+      {
+        internalType: "address[]",
+        name: "markets",
+        type: "address[]",
+      },
+    ],
+    name: "deauthorizeLendersAndUpdateMarkets",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

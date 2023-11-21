@@ -1338,13 +1338,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "processUnpaidWithdrawalBatch",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "protocolFeeBips",
     outputs: [
       {
@@ -1378,6 +1371,24 @@ const _abi = [
       },
     ],
     name: "repay",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "repayAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "maxBatches",
+        type: "uint256",
+      },
+    ],
+    name: "repayAndProcessUnpaidWithdrawalBatches",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1627,17 +1638,17 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_account",
-        type: "address",
+        internalType: "address[]",
+        name: "accounts",
+        type: "address[]",
       },
       {
         internalType: "bool",
-        name: "_isAuthorized",
+        name: "authorize",
         type: "bool",
       },
     ],
-    name: "updateAccountAuthorization",
+    name: "updateAccountAuthorizations",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
