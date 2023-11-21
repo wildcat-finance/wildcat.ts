@@ -502,6 +502,23 @@ export class MarketAccount {
     );
   }
 
+  static fromMarketDataOnly(
+    market: Market,
+    account: string,
+    isAuthorizedOnController: boolean
+  ): MarketAccount {
+    return new MarketAccount(
+      account,
+      isAuthorizedOnController,
+      LenderRole.Null,
+      BigNumber.from(0),
+      market.marketToken.getAmount(0),
+      market.underlyingToken.getAmount(0),
+      BigNumber.from(0),
+      market
+    );
+  }
+
   /**
    * Get a `MarketAccount` for a given account and existing `Market` instance.
    * If `market` is a string, the market data will be fetched in the same call as the account data.

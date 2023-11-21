@@ -7564,6 +7564,64 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
     controllerAuthorization: { __typename?: "LenderAuthorization"; authorized: boolean };
     deposits: SubgraphDepositDataFragment[];
   }>;
+  controllerAuthorizations: Array<{
+    __typename?: "LenderAuthorization";
+    lender: string;
+    authorized: boolean;
+    controller: {
+      __typename?: "Controller";
+      markets: Array<{
+        __typename?: "Market";
+        id: string;
+        isRegistered: boolean;
+        isClosed: boolean;
+        borrower: string;
+        sentinel: string;
+        feeRecipient: string;
+        name: string;
+        symbol: string;
+        decimals: number;
+        protocolFeeBips: number;
+        delinquencyGracePeriod: number;
+        delinquencyFeeBips: number;
+        withdrawalBatchDuration: number;
+        maxTotalSupply: string;
+        pendingProtocolFees: string;
+        normalizedUnclaimedWithdrawals: string;
+        scaledTotalSupply: string;
+        scaledPendingWithdrawals: string;
+        pendingWithdrawalExpiry: string;
+        isDelinquent: boolean;
+        timeDelinquent: number;
+        annualInterestBips: number;
+        reserveRatioBips: number;
+        scaleFactor: string;
+        lastInterestAccruedTimestamp: number;
+        originalAnnualInterestBips: number;
+        originalReserveRatioBips: number;
+        temporaryReserveRatioExpiry: number;
+        temporaryReserveRatioActive: boolean;
+        totalBorrowed: string;
+        totalRepaid: string;
+        totalBaseInterestAccrued: string;
+        totalDelinquencyFeesAccrued: string;
+        totalProtocolFeesAccrued: string;
+        totalDeposited: string;
+        borrowRecords: SubgraphBorrowDataFragment[];
+        repaymentRecords: SubgraphRepaymentDataFragment[];
+        controller: { __typename?: "Controller"; id: string };
+        _asset: {
+          __typename?: "Token";
+          id: string;
+          address: string;
+          name: string;
+          symbol: string;
+          decimals: number;
+          isMock: boolean;
+        };
+      }>;
+    };
+  }>;
 };
 
 export type SubgraphGetLenderWithdrawalsForMarketQueryVariables = Exact<{
@@ -8592,6 +8650,33 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
           orderDirection: $directionRepayments
         ) {
           ...RepaymentData
+        }
+      }
+    }
+    controllerAuthorizations: lenderAuthorizations(
+      where: { and: [{ lender: $lender }, { authorized: true }] }
+    ) {
+      lender
+      authorized
+      controller {
+        markets {
+          ...MarketData
+          borrowRecords(
+            first: $numBorrows
+            skip: $skipBorrows
+            orderBy: $orderBorrows
+            orderDirection: $directionBorrows
+          ) {
+            ...BorrowData
+          }
+          repaymentRecords(
+            first: $numRepayments
+            skip: $skipRepayments
+            orderBy: $orderRepayments
+            orderDirection: $directionRepayments
+          ) {
+            ...RepaymentData
+          }
         }
       }
     }

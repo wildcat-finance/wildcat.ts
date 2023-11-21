@@ -56,11 +56,28 @@ export function useAccountsWhereLenderAuthorizedOrActive({
         numWithdrawals: 1
       }
     });
-    logger.debug(`Got ${result.data.lenderAccounts.length} lenders...`);
-    return result.data.lenderAccounts.map((account) => {
+    logger.debug(`Got ${result.data.lenderAccounts.length} existing lender accounts...`);
+
+    const lenderAccounts = result.data.lenderAccounts.map((account) => {
       const market = Market.fromSubgraphMarketData(provider as SignerOrProvider, account.market);
       return MarketAccount.fromSubgraphAccountData(market, account);
     });
+    result.data.controllerAuthorizations.map((controller) => {
+      const markets = controller.controller.markets.filter((market) => {
+        const marketAccount = lenderAccounts.find(
+          (account) => account.market.address.toLowerCase() === market.id.toLowerCase()
+        );
+        return !marketAccount;
+      });
+      logger.debug(`Got markets without account: ${markets.length}!`);
+      for (const marketData of markets) {
+        const market = Market.fromSubgraphMarketData(provider as SignerOrProvider, marketData);
+        const account = MarketAccount.fromMarketDataOnly(market, lender as string, true);
+        lenderAccounts.push(account);
+      }
+    });
+    logger.debug(`Got ${lenderAccounts.length} lender accounts...`);
+    return lenderAccounts;
   }
 
   const {

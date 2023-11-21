@@ -140,6 +140,33 @@ query getAccountsWhereLenderAuthorizedOrActive(
       }
     }
   }
+  controllerAuthorizations: lenderAuthorizations(
+    where: { and: [{ lender: $lender }, { authorized: true }] }
+  ) {
+    lender
+    authorized
+    controller {
+      markets {
+        ...MarketData
+        borrowRecords(
+          first: $numBorrows
+          skip: $skipBorrows
+          orderBy: $orderBorrows
+          orderDirection: $directionBorrows
+        ) {
+          ...BorrowData
+        }
+        repaymentRecords(
+          first: $numRepayments
+          skip: $skipRepayments
+          orderBy: $orderRepayments
+          orderDirection: $directionRepayments
+        ) {
+          ...RepaymentData
+        }
+      }
+    }
+  }
 }
 
 query getLenderWithdrawalsForMarket(

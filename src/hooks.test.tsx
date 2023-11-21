@@ -74,7 +74,7 @@ describe("test", () => {
     const { result: batchResult } = renderHook(
       () =>
         useAccountsWhereLenderAuthorizedOrActive({
-          lender: "0x5F55005B15B9E00Ec52528fe672eb30f450151F5".toLowerCase(),
+          lender: "0x520c1ECf9a596c1B105C3e4c2D3628fd973A7269".toLowerCase(),
           provider,
           enabled: true
         }),
