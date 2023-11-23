@@ -287,9 +287,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
   /* -------------------------------------------------------------------------- */
 
   async executeWithdrawal({
-    lender,
-    expiry
-  }: Pick<LenderWithdrawalStatus, "lender" | "expiry">): Promise<ContractTransaction> {
+                            lender,
+                            expiry
+                          }: Pick<LenderWithdrawalStatus, "lender" | "expiry">): Promise<ContractTransaction> {
     return this.contract.executeWithdrawal(lender, expiry);
   }
 
@@ -305,7 +305,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     amount: TokenAmount,
     maxBatches = 10
   ): Promise<ContractTransaction> {
-    return this.contract.пrepayAndProcessUnpaidWithdrawalBatches(amount.raw, maxBatches);
+    return this.contract.repayAndProcessUnpaidWithdrawalBatches(amount.raw, maxBatches);
   }
 
   /* -------------------------------------------------------------------------- */
