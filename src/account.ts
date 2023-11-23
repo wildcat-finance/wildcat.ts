@@ -52,6 +52,9 @@ export type SetAprStatus =
       status: "InsufficientReserves";
       newReservesRequired: TokenAmount;
     };
+export type QueueWithdrawalStatus = {
+  status: "Ready" | "InsufficientBalance" | "InsufficientRole";
+};
 
 export enum LenderRole {
   Null = 0,
@@ -275,6 +278,16 @@ export class MarketAccount {
   }
 
   /* ------ Withdrawals ------ */
+
+  checkQueueWithdrawalStep(amount: TokenAmount): QueueWithdrawalStatus {
+    if (!this.canWithdraw) {
+      return { status: "InsufficientRole" };
+    }
+    if (amount.gt(this.marketBalance)) {
+      return { status: "InsufficientBalance" };
+    }
+    return { status: "Ready" };
+  }
 
   async queueWithdrawal(amount: TokenAmount): Promise<LenderWithdrawalStatus> {
     if (!this.canWithdraw) {
