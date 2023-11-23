@@ -305,7 +305,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     amount: TokenAmount,
     maxBatches = 10
   ): Promise<ContractTransaction> {
-    return this.contract.repayAndProcessUnpaidWithdrawalBatches(amount.raw, maxBatches);
+    return this.contract.пrepayAndProcessUnpaidWithdrawalBatches(amount.raw, maxBatches);
   }
 
   /* -------------------------------------------------------------------------- */

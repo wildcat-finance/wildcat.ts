@@ -10,6 +10,7 @@ import { getControllerContract, getLensContract } from "./constants";
 import { SignerOrProvider } from "./types";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
 import { WithdrawalQueuedEvent } from "./typechain/WildcatMarket";
+import { logger } from "./utils/logger";
 import {
   SubgraphAccountDataForLenderViewFragment,
   SubgraphDepositDataFragment
@@ -304,7 +305,7 @@ export class MarketAccount {
       tx.events!.find((e) => e.topics[0] === queuedWithdrawalTopic) as WithdrawalQueuedEvent
     );
     if (!queuedWithdrawalTransaction) {
-      throw Error("No queued withdrawal event found");
+      logger.debug("No queued withdrawal event found");
     }
     return LenderWithdrawalStatus.getWithdrawalForLender(
       this.market,
