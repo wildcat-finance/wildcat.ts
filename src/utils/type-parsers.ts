@@ -9,6 +9,7 @@ import {
 } from "../gql/graphql";
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
+import { SupportedChainId } from "../constants";
 
 export type MarketParameterConstraints = {
   minimumDelinquencyGracePeriod: number;
@@ -36,13 +37,14 @@ export type FeeConfiguration = {
   originationFeeAmount: TokenAmount | undefined;
 };
 export const parseFeeConfiguration = (
+  chainId: SupportedChainId,
   provider: SignerOrProvider,
   feeConfiguration: FeeConfigurationStructOutput
 ): FeeConfiguration => {
   const originationFeeToken =
     feeConfiguration.originationFeeToken.token === constants.AddressZero
       ? undefined
-      : Token.fromTokenMetadata(feeConfiguration.originationFeeToken, provider);
+      : Token.fromTokenMetadata(chainId, feeConfiguration.originationFeeToken, provider);
   const originationFeeAmount =
     originationFeeToken && originationFeeToken.getAmount(feeConfiguration.originationFeeAmount);
   return {

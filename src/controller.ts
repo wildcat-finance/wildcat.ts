@@ -59,7 +59,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   }
 
   updateWith(data: ControllerDataStructOutput): void {
-    this.fees = parseFeeConfiguration(this.provider, data.fees);
+    this.fees = parseFeeConfiguration(this.chainId, this.provider, data.fees);
     this.constraints = parseMarketParameterConstraints(data.constraints);
     this.borrowerOriginationFeeBalance = this.fees.originationFeeToken?.getAmount(
       data.borrowerOriginationFeeBalance
@@ -205,7 +205,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     provider: SignerOrProvider,
     data: ControllerDataStructOutput
   ): MarketController {
-    const fees = parseFeeConfiguration(provider, data.fees);
+    const fees = parseFeeConfiguration(chainId, provider, data.fees);
     const constraints = parseMarketParameterConstraints(data.constraints);
     const borrowerOriginationFeeBalance = fees.originationFeeToken?.getAmount(
       data.borrowerOriginationFeeBalance
