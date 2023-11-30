@@ -302,7 +302,7 @@ export class MarketAccount {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     const tx = await this.market.contract.queueWithdrawal(amount.raw).then((tx) => tx.wait());
-    const queuedWithdrawalTopic = this.market.contract.interface.getEventTopic("QueuedWithdrawal");
+    const queuedWithdrawalTopic = this.market.contract.interface.getEventTopic("WithdrawalQueued");
     const queuedWithdrawalTransaction = toQueueWithdrawalTransaction(
       this.market.underlyingToken,
       tx.events!.find((e) => e.topics[0] === queuedWithdrawalTopic) as WithdrawalQueuedEvent
