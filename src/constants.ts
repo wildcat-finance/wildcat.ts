@@ -46,9 +46,9 @@ export const hasDeploymentAddress = (
 
 export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
   [SupportedChainId.Mainnet]: {
-    MarketLens: "0x3556D0497180afB37E6eaebd5D17309159586862",
+    MarketLens: "0xf1D516954f96c1363f8b0aE48D79c8ddE6237847",
     WildcatArchController: "0xfEB516d9D946dD487A9346F6fee11f40C6945eE4",
-    WildcatMarketControllerFactory: "0xa1A18EeA2A9E81Bf84C131282a4B99867Dd6AA4F",
+    WildcatMarketControllerFactory: "0xFd31007613C9F671df6A8D4234901324986Bfd13",
     WildcatSanctionsSentinel: "0x437e0551892C2C9b06d3fFd248fe60572e08CD1A"
   },
   [SupportedChainId.Sepolia]: {
