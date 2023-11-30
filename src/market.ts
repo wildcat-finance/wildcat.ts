@@ -2,7 +2,7 @@ import { BigNumber, ContractTransaction } from "ethers";
 import { Signer } from "@ethersproject/abstract-signer";
 import { WildcatMarket, WildcatMarket__factory } from "./typechain";
 import { MarketDataStructOutput } from "./typechain";
-import { getLensContract } from "./constants";
+import { SupportedChainId, getLensContract } from "./constants";
 import { TokenAmount, Token, toBn } from "./token";
 import { SignerOrProvider, ContractWrapper } from "./types";
 import { formatUnits } from "ethers/lib/utils";
@@ -97,6 +97,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   public feeCollectionRecords: FeeCollectionRecord[];
 
   constructor(
+    public chainId: SupportedChainId,
     _provider: SignerOrProvider,
     public marketToken: Token,
     public underlyingToken: Token,
@@ -368,7 +369,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     if (!account) {
       account = await this.signer.getAddress();
     }
-    return MarketAccount.getMarketAccount(this.provider, account, this);
+    return MarketAccount.getMarketAccount(this.chainId, this.provider, account, this);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -376,7 +377,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   /* -------------------------------------------------------------------------- */
 
   async update(): Promise<void> {
-    const market = await getLensContract(this.provider).getMarketData(this.address);
+    const market = await getLensContract(this.chainId, this.provider).getMarketData(this.address);
     this.updateWith(market);
   }
 
@@ -417,6 +418,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   /* -------------------------------------------------------------------------- */
 
   static fromSubgraphMarketData(
+    chainId: SupportedChainId,
     provider: SignerOrProvider,
     data: MakeOptional<
       SubgraphMarketDataWithEventsFragment,
@@ -424,8 +426,8 @@ export class Market extends ContractWrapper<WildcatMarket> {
     >,
     signerAddress?: string
   ): Market {
-    const underlyingToken = Token.fromSubgraphToken(data._asset, provider);
-    const marketToken = Token.fromSubgraphMarketData(data, provider);
+    const underlyingToken = Token.fromSubgraphToken(chainId, data._asset, provider);
+    const marketToken = Token.fromSubgraphMarketData(chainId, data, provider);
     const scaledTotalSupply = BigNumber.from(data.scaledTotalSupply);
     const scaleFactor = BigNumber.from(data.scaleFactor);
     const scaledWithdrawals = BigNumber.from(data.scaledPendingWithdrawals);
@@ -437,6 +439,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       .add(data.pendingProtocolFees)
       .add(data.normalizedUnclaimedWithdrawals);
     return new Market(
+      chainId,
       provider,
       marketToken,
       underlyingToken,
@@ -484,13 +487,15 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   static fromMarketData(
+    chainId: SupportedChainId,
     data: MarketDataStructOutput,
     provider: SignerOrProvider,
     signerAddress?: string
   ): Market {
-    const marketToken = Token.fromTokenMetadata(data.marketToken, provider);
-    const underlyingToken = Token.fromTokenMetadata(data.underlyingToken, provider);
+    const marketToken = Token.fromTokenMetadata(chainId, data.marketToken, provider);
+    const underlyingToken = Token.fromTokenMetadata(chainId, data.underlyingToken, provider);
     return new Market(
+      chainId,
       provider,
       marketToken,
       underlyingToken,
@@ -544,10 +549,15 @@ export class Market extends ContractWrapper<WildcatMarket> {
   /**
    * @returns `Market` instance for `market`
    */
-  static async getMarket(market: string, provider: SignerOrProvider): Promise<Market> {
-    const lens = getLensContract(provider);
+  static async getMarket(
+    chainId: SupportedChainId,
+    market: string,
+    provider: SignerOrProvider
+  ): Promise<Market> {
+    const lens = getLensContract(chainId, provider);
     const data = await lens.getMarketData(market);
     return Market.fromMarketData(
+      chainId,
       data,
       provider,
       provider instanceof Signer ? await provider.getAddress() : undefined
@@ -557,44 +567,59 @@ export class Market extends ContractWrapper<WildcatMarket> {
   /**
    * @returns `Market` instances for `markets`
    */
-  static async getMarkets(markets: string[], provider: SignerOrProvider): Promise<Market[]> {
-    const lens = getLensContract(provider);
+  static async getMarkets(
+    chainId: SupportedChainId,
+    markets: string[],
+    provider: SignerOrProvider
+  ): Promise<Market[]> {
+    const lens = getLensContract(chainId, provider);
     const data = await lens.getMarketsData(markets);
     const signerAddress = provider instanceof Signer ? await provider.getAddress() : undefined;
-    return data.map((market) => Market.fromMarketData(market, provider, signerAddress));
+    return data.map((market) => Market.fromMarketData(chainId, market, provider, signerAddress));
   }
 
   /**
    * @return All deployed markets
    */
-  static async getAllMarkets(provider: SignerOrProvider): Promise<Market[]> {
-    const lens = getLensContract(provider);
+  static async getAllMarkets(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider
+  ): Promise<Market[]> {
+    const lens = getLensContract(chainId, provider);
     const signerAddress = provider instanceof Signer ? await provider.getAddress() : undefined;
     return lens
       .getAllMarketsData()
-      .then((data) => data.map((market) => Market.fromMarketData(market, provider, signerAddress)));
+      .then((data) =>
+        data.map((market) => Market.fromMarketData(chainId, market, provider, signerAddress))
+      );
   }
 
   /**
    * @dev Get a paginated list of deployed markets.
    */
   static async getPaginatedMarkets(
+    chainId: SupportedChainId,
     provider: SignerOrProvider,
     start = 0,
     count: number
   ): Promise<Market[]> {
     const signerAddress = provider instanceof Signer ? await provider.getAddress() : undefined;
-    const lens = getLensContract(provider);
+    const lens = getLensContract(chainId, provider);
     return lens
       .getPaginatedMarketsData(start, count)
-      .then((data) => data.map((market) => Market.fromMarketData(market, provider, signerAddress)));
+      .then((data) =>
+        data.map((market) => Market.fromMarketData(chainId, market, provider, signerAddress))
+      );
   }
 
   /**
    * @return Total number of deployed markets.
    */
-  static async getMarketsCount(provider: SignerOrProvider): Promise<number> {
-    const lens = getLensContract(provider);
+  static async getMarketsCount(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider
+  ): Promise<number> {
+    const lens = getLensContract(chainId, provider);
     return lens.getMarketsCount().then((count) => count.toNumber());
   }
 }

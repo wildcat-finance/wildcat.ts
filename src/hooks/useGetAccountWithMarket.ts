@@ -7,11 +7,12 @@ import {
   SubgraphGetLenderAccountWithMarketQueryVariables,
   SubgraphGetMarketQueryVariables
 } from "../gql/graphql";
-import { SubgraphClient, getLensContract } from "../constants";
+import { getSubgraphClient, SupportedChainId, getLensContract } from "../constants";
 import { TwoStepQueryHookResult } from "./types";
 import { MarketAccount } from "../account";
 
 export type UseLenderWithMarketProps = {
+  chainId: SupportedChainId;
   market: string | undefined;
   lender: string | undefined;
   provider: SignerOrProvider | undefined;
@@ -19,6 +20,7 @@ export type UseLenderWithMarketProps = {
 } & Omit<SubgraphGetMarketQueryVariables, "market">;
 
 export function useGetAccountWithMarket({
+  chainId,
   market,
   lender,
   provider,
@@ -28,7 +30,7 @@ export function useGetAccountWithMarket({
   const marketAddress = market?.toLowerCase();
   const lenderAddress = lender?.toLowerCase();
   async function queryMarketAccount() {
-    const result = await SubgraphClient.query<
+    const result = await getSubgraphClient(chainId).query<
       SubgraphGetLenderAccountWithMarketQuery,
       SubgraphGetLenderAccountWithMarketQueryVariables
     >({
@@ -39,7 +41,11 @@ export function useGetAccountWithMarket({
         ...filters
       }
     });
-    const market = Market.fromSubgraphMarketData(provider as SignerOrProvider, result.data.market!);
+    const market = Market.fromSubgraphMarketData(
+      chainId,
+      provider as SignerOrProvider,
+      result.data.market!
+    );
     return MarketAccount.fromSubgraphAccountData(market as Market, result.data.market!.lenders[0]!);
   }
 
@@ -57,7 +63,7 @@ export function useGetAccountWithMarket({
   });
   async function updateMarketAccount() {
     if (!data || !provider) throw Error();
-    const lens = getLensContract(provider);
+    const lens = getLensContract(chainId, provider);
     const update = await lens.getMarketDataWithLenderStatus(
       lenderAddress as string,
       marketAddress as string

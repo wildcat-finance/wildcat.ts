@@ -5,7 +5,7 @@ import {
   WithdrawalBatchLenderStatusStructOutput,
   WithdrawalBatchDataWithLenderStatusStructOutput
 } from "./typechain";
-import { getLensContract } from "./constants";
+import { SupportedChainId, getLensContract } from "./constants";
 import {
   WithdrawalExecutionRecord,
   WithdrawalRequestRecord,
@@ -37,6 +37,10 @@ export class LenderWithdrawalStatus {
   ) {
     this.executions = executions.map((w) => parseWithdrawalRecord(this.batch, w));
     this.requests = requests.map((w) => parseWithdrawalRecord(this.batch, w));
+  }
+
+  get chainId(): SupportedChainId {
+    return this.market.chainId;
   }
 
   async execute(): Promise<ContractTransaction> {
@@ -112,7 +116,7 @@ export class LenderWithdrawalStatus {
     expiry: number,
     lender: string
   ): Promise<LenderWithdrawalStatus> {
-    const lens = getLensContract(market.provider);
+    const lens = getLensContract(market.chainId, market.provider);
     const batchData = await lens.getWithdrawalBatchDataWithLenderStatus(
       market.address,
       expiry,

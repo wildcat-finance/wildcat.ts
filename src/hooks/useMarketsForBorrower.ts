@@ -5,13 +5,14 @@ import {
   SubgraphGetMarketsForBorrowerQueryVariables
 } from "../gql/graphql";
 import { Market } from "../market";
-import { SubgraphClient, getLensContract } from "../constants";
+import { getSubgraphClient, getLensContract, SupportedChainId } from "../constants";
 import { logger } from "../utils/logger";
 import { useMemo } from "react";
 import { TwoStepQueryHookResult } from "./types";
 import { SignerOrProvider } from "../types";
 
 export type MarketsForBorrowerProps = {
+  chainId: SupportedChainId;
   borrower: string | undefined;
   provider: SignerOrProvider | undefined;
   enabled: boolean;
@@ -19,6 +20,7 @@ export type MarketsForBorrowerProps = {
 
 export function useMarketsForBorrower({
   borrower: _borrower,
+  chainId,
   provider,
   enabled,
   ...filters
@@ -26,7 +28,7 @@ export function useMarketsForBorrower({
   const borrower = _borrower?.toLowerCase();
 
   async function queryMarketsForBorrower() {
-    const result = await SubgraphClient.query<
+    const result = await getSubgraphClient(chainId).query<
       SubgraphGetMarketsForBorrowerQuery,
       SubgraphGetMarketsForBorrowerQueryVariables
     >({
@@ -35,7 +37,7 @@ export function useMarketsForBorrower({
     });
     return (
       result.data.controllers[0].markets.map((market) =>
-        Market.fromSubgraphMarketData(provider as SignerOrProvider, market)
+        Market.fromSubgraphMarketData(chainId, provider as SignerOrProvider, market)
       ) ?? []
     );
   }
@@ -55,7 +57,7 @@ export function useMarketsForBorrower({
 
   const markets = data ?? [];
   async function updateMarkets() {
-    const lens = getLensContract(provider as SignerOrProvider);
+    const lens = getLensContract(chainId, provider as SignerOrProvider);
     const updatedMarkets = await lens.getMarketsData(markets.map((x) => x.address));
     for (let i = 0; i < markets.length; i++) {
       const market = markets[i];

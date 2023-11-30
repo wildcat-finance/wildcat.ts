@@ -12,23 +12,57 @@ import {
   WildcatArchController__factory
 } from "./typechain";
 import { SignerOrProvider } from "./types";
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloCache, ApolloClient, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
+import { assert } from "./utils";
 
-export const Deployments = {
-  MarketLens: "0x1D2485f3763d316e114d0fBf641220E1B31Bd845",
-  MockArchControllerOwner: "0x43f1dB4e70CCb43ccD5D4A7BC033245254cC3909",
-  MockChainalysis: "0x8B64E9ae41718D3B030D012c273668b4341b7812",
-  MockERC20Factory: "0xFC1ef4095BD39C747CACe66BC9983cafD2134658",
-  WildcatArchController: "0x5EA44A0244F35951d0994E0D5ce63baF822C44eE",
-  WildcatMarketControllerFactory: "0x664780e218B0C4BDB81FbCD29D7Caf76cdD878de",
-  WildcatSanctionsSentinel: "0x377d91d15E0e0De955dFADaDeDf4E16c8E0E5a4D"
+type NetworkDeployments = {
+  MarketLens: string;
+  MockArchControllerOwner?: string;
+  MockChainalysis?: string;
+  MockERC20Factory?: string;
+  WildcatArchController: string;
+  WildcatMarketControllerFactory: string;
+  WildcatSanctionsSentinel: string;
 };
 
-// export const LensAddress = "0xB63CC0C9837E4Da8E2111B3e6383aA9a6fDEf342";
-// export const MockERC20FactoryAddress = "0x7d1d45890c937b260b7345B91d6B457e470B13e4";
+export enum SupportedChainId {
+  Mainnet = 1,
+  Sepolia = 11155111
+}
 
-// export const FactoryAddress = "0x851150d7Ad0E846F1B511F1df86Ff8803EF81298";
-// export const ControllerAddress = "0xeAbeC7da18bB4Acc65deA76Ef6f2CE898854A6Cf";
+export const SupportedChainIds = [SupportedChainId.Mainnet, SupportedChainId.Sepolia];
+
+export const isSupportedChainId = (chainId: number): chainId is SupportedChainId => {
+  return SupportedChainIds.includes(chainId as SupportedChainId);
+};
+
+export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
+  [SupportedChainId.Mainnet]: {
+    MarketLens: "0x3556D0497180afB37E6eaebd5D17309159586862",
+    WildcatArchController: "0xfEB516d9D946dD487A9346F6fee11f40C6945eE4",
+    WildcatMarketControllerFactory: "0xa1A18EeA2A9E81Bf84C131282a4B99867Dd6AA4F",
+    WildcatSanctionsSentinel: "0x437e0551892C2C9b06d3fFd248fe60572e08CD1A"
+  },
+  [SupportedChainId.Sepolia]: {
+    MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
+    MockArchControllerOwner: "0xa476920af80B587f696734430227869795E2Ea78",
+    MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
+    MockERC20Factory: "0xa19681275008609015793cbfa7C9B7dea103d5F6",
+    WildcatArchController: "0xC003f20F2642c76B81e5e1620c6D8cdEE826408f",
+    WildcatMarketControllerFactory: "0xEb97C8E52d7Fdf978a64a538F28271Fd8499b864",
+    WildcatSanctionsSentinel: "0xFBCE262eC835be5e6A458cE1722EeCe0E453316B"
+  }
+};
+
+export const getDeploymentAddress = (
+  chainId: SupportedChainId,
+  name: keyof NetworkDeployments
+): string => {
+  const deployments = Deployments[chainId];
+  const address = deployments[name];
+  assert(address !== undefined, `Deployment ${name} not found for chain ${chainId}`);
+  return address;
+};
 
 export const getControllerContract = (
   provider: SignerOrProvider,
@@ -38,41 +72,64 @@ export const getControllerContract = (
 };
 
 export const getControllerFactoryContract = (
+  chainId: SupportedChainId,
   provider: SignerOrProvider
 ): WildcatMarketControllerFactory => {
   return WildcatMarketControllerFactory__factory.connect(
-    Deployments.WildcatMarketControllerFactory,
+    getDeploymentAddress(chainId, "WildcatMarketControllerFactory"),
     provider
   );
 };
 
-export const getArchControllerContract = (provider: SignerOrProvider): WildcatArchController => {
-  return WildcatArchController__factory.connect(Deployments.WildcatArchController, provider);
+export const getArchControllerContract = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider
+): WildcatArchController => {
+  return WildcatArchController__factory.connect(
+    getDeploymentAddress(chainId, "WildcatArchController"),
+    provider
+  );
 };
 
-export const getLensContract = (provider: SignerOrProvider): MarketLens => {
-  return MarketLens__factory.connect(Deployments.MarketLens, provider);
+export const getLensContract = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider
+): MarketLens => {
+  return MarketLens__factory.connect(getDeploymentAddress(chainId, "MarketLens"), provider);
 };
 
-export const getMockERC20Factory = (provider: SignerOrProvider): MockERC20Factory => {
-  return MockERC20Factory__factory.connect(Deployments.MockERC20Factory, provider);
+export const getMockERC20Factory = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider
+): MockERC20Factory => {
+  return MockERC20Factory__factory.connect(
+    getDeploymentAddress(chainId, "MockERC20Factory"),
+    provider
+  );
 };
 
 export const getMockArchControllerOwnerContract = (
+  chainId: SupportedChainId,
   provider: SignerOrProvider
 ): WildcatArchController => {
-  return WildcatArchController__factory.connect(Deployments.MockArchControllerOwner, provider);
+  return WildcatArchController__factory.connect(
+    getDeploymentAddress(chainId, "MockArchControllerOwner"),
+    provider
+  );
 };
 
 export const RAY = BigNumber.from(10).pow(27);
 
 export const WAD = BigNumber.from(10).pow(18);
 
-export const DeploymentBlockNumber = 4518288;
+export const SubgraphUrls = {
+  [SupportedChainId.Sepolia]: "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.21",
+  [SupportedChainId.Mainnet]:
+    "https://api.studio.thegraph.com/query/56451/wildcat-finance-mainnet/v0.0.1"
+};
 
-export const SubgraphUrl = "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.20";
-
-export const SubgraphClient = new ApolloClient({
-  cache: new InMemoryCache(),
-  uri: SubgraphUrl
-});
+export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
+  new ApolloClient({
+    cache: new InMemoryCache(),
+    uri: SubgraphUrls[chainId]
+  });

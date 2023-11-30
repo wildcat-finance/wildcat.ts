@@ -4,6 +4,7 @@ import {
   WildcatMarketController__factory
 } from "./typechain";
 import {
+  SupportedChainId,
   getControllerFactoryContract,
   getLensContract,
   getMockArchControllerOwnerContract
@@ -27,6 +28,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   public authorizedLenders: string[] = [];
 
   constructor(
+    public chainId: SupportedChainId,
     public address: string,
     public borrower: string,
     public controllerFactory: string,
@@ -49,7 +51,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   async update(): Promise<void> {
     const [lenders, data] = await Promise.all([
       this.contract["getAuthorizedLenders()"](),
-      getLensContract(this.provider).getControllerDataForBorrower(this.address)
+      getLensContract(this.chainId, this.provider).getControllerDataForBorrower(this.address)
     ]);
     this.authorizedLenders = lenders;
     this.updateWith(data);
@@ -69,7 +71,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
       if (existing) {
         existing.updateWith(market);
       } else {
-        this.markets.push(Market.fromMarketData(market, this.provider));
+        this.markets.push(Market.fromMarketData(this.chainId, market, this.provider));
       }
     }
     this.isRegisteredBorrower = data.isRegisteredBorrower;
@@ -101,14 +103,14 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   async registerBorrower(): Promise<ContractTransaction> {
     assert(!this.isRegisteredBorrower, "Borrower is already registered");
 
-    const archControllerOwner = await getMockArchControllerOwnerContract(this.signer);
+    const archControllerOwner = await getMockArchControllerOwnerContract(this.chainId, this.signer);
     return archControllerOwner.registerBorrower(this.address);
   }
 
   async deployController(): Promise<ContractTransaction> {
     assert(!this.isDeployed, "Controller is already deployed");
 
-    const controllerFactory = await getControllerFactoryContract(this.signer);
+    const controllerFactory = await getControllerFactoryContract(this.chainId, this.signer);
     assert(controllerFactory.address === this.controllerFactory, "Controller factory mismatch");
     return controllerFactory.deployController();
   }
@@ -144,7 +146,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     let receipt: ContractReceipt;
 
     if (!this.isDeployed) {
-      const factory = await getControllerFactoryContract(this.signer);
+      const factory = await getControllerFactoryContract(this.chainId, this.signer);
       assert(this.isRegisteredBorrower, "Borrower is not registered");
       receipt = await factory
         .deployControllerAndMarket(
@@ -182,7 +184,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
       log.data,
       log.topics
     ) as any;
-    const market = await Market.getMarket(event.market, this.provider);
+    const market = await Market.getMarket(this.chainId, event.market, this.provider);
     this.markets.push(market);
     this.isDeployed = true;
     this.isRegisteredBorrower = true;
@@ -194,6 +196,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   /* -------------------------------------------------------------------------- */
 
   static fromControllerData(
+    chainId: SupportedChainId,
     provider: SignerOrProvider,
     data: ControllerDataStructOutput
   ): MarketController {
@@ -205,8 +208,9 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     const borrowerOriginationFeeApproval = fees.originationFeeToken?.getAmount(
       data.borrowerOriginationFeeApproval
     );
-    const markets = data.markets.map((x) => Market.fromMarketData(x, provider));
+    const markets = data.markets.map((x) => Market.fromMarketData(chainId, x, provider));
     return new MarketController(
+      chainId,
       data.controller,
       data.borrower,
       data.controllerFactory,
@@ -226,13 +230,14 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   /* -------------------------------------------------------------------------- */
 
   static async getController(
+    chainId: SupportedChainId,
     provider: SignerOrProvider,
     borrower: string
   ): Promise<MarketController> {
-    const lens = getLensContract(provider);
+    const lens = getLensContract(chainId, provider);
     const data = await lens.getControllerDataForBorrower(borrower);
 
-    return MarketController.fromControllerData(provider, data);
+    return MarketController.fromControllerData(chainId, provider, data);
   }
 }
 

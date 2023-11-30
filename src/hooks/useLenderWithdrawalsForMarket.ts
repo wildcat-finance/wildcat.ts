@@ -5,7 +5,7 @@ import {
   SubgraphGetLenderWithdrawalsForMarketQueryVariables
 } from "../gql/graphql";
 import { Market } from "../market";
-import { SubgraphClient, getLensContract } from "../constants";
+import { getSubgraphClient, SupportedChainId, getLensContract } from "../constants";
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { logger } from "../utils/logger";
 import { useMemo } from "react";
@@ -13,6 +13,7 @@ import { TwoStepQueryHookResult } from "./types";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 
 export type LenderWithdrawalsForMarketProps = {
+  chainId: SupportedChainId;
   lender: string | undefined;
   market: Market | undefined;
   enabled: boolean;
@@ -24,6 +25,7 @@ export type LenderWithdrawalsForMarketResult = {
 };
 
 export function useLenderWithdrawalsForMarket({
+  chainId,
   lender: _lender,
   market: _market,
   enabled
@@ -34,7 +36,7 @@ export function useLenderWithdrawalsForMarket({
   async function queryLenderWithdrawals() {
     if (!lender || !market || !_market) throw Error();
     logger.debug(`Getting lender withdrawals...`);
-    const result = await SubgraphClient.query<
+    const result = await getSubgraphClient(chainId).query<
       SubgraphGetLenderWithdrawalsForMarketQuery,
       SubgraphGetLenderWithdrawalsForMarketQueryVariables
     >({
@@ -74,7 +76,7 @@ export function useLenderWithdrawalsForMarket({
 
   async function updateWithdrawals() {
     if (!lender || !market || !_market) throw Error();
-    const lens = getLensContract(_market.provider);
+    const lens = getLensContract(chainId, _market.provider);
     const withdrawalUpdates = await lens.getWithdrawalBatchesDataWithLenderStatus(
       market,
       [...withdrawals.completeWithdrawals, ...withdrawals.incompleteWithdrawals].map(

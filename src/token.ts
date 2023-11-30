@@ -2,7 +2,7 @@ import { BigNumber, BigNumberish, ContractTransaction } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { IERC20, IERC20__factory, TokenMetadataStructOutput } from "./typechain";
 import { ContractWrapper, SignerOrProvider } from "./types";
-import { getLensContract } from "./constants";
+import { SupportedChainId, getLensContract } from "./constants";
 import { bipMul, formatBnFixed, mulDiv, rayDiv, rayMul } from "./utils";
 import { SubgraphMarketDataFragment, SubgraphToken } from "./gql/graphql";
 
@@ -131,6 +131,7 @@ export class Token extends ContractWrapper<IERC20> {
   readonly contractFactory = IERC20__factory;
 
   constructor(
+    public chainId: SupportedChainId,
     public address: string,
     public name: string,
     public symbol: string,
@@ -157,8 +158,13 @@ export class Token extends ContractWrapper<IERC20> {
     return this.getAmount(bnAmount);
   }
 
-  static fromTokenMetadata(metadata: TokenMetadataStructOutput, provider: SignerOrProvider): Token {
+  static fromTokenMetadata(
+    chainId: SupportedChainId,
+    metadata: TokenMetadataStructOutput,
+    provider: SignerOrProvider
+  ): Token {
     return new Token(
+      chainId,
       metadata.token,
       metadata.name,
       metadata.symbol,
@@ -168,27 +174,48 @@ export class Token extends ContractWrapper<IERC20> {
     );
   }
 
-  static fromSubgraphToken(data: SubgraphToken, provider: SignerOrProvider): Token {
-    return new Token(data.address, data.name, data.symbol, data.decimals, data.isMock, provider);
+  static fromSubgraphToken(
+    chainId: SupportedChainId,
+    data: SubgraphToken,
+    provider: SignerOrProvider
+  ): Token {
+    return new Token(
+      chainId,
+      data.address,
+      data.name,
+      data.symbol,
+      data.decimals,
+      data.isMock,
+      provider
+    );
   }
 
   static fromSubgraphMarketData(
+    chainId: SupportedChainId,
     data: SubgraphMarketDataFragment,
     provider: SignerOrProvider
   ): Token {
-    return new Token(data.id, data.name, data.symbol, data.decimals, false, provider);
+    return new Token(chainId, data.id, data.name, data.symbol, data.decimals, false, provider);
   }
 
-  static async getTokenData(token: string, provider: SignerOrProvider): Promise<Token> {
-    const lens = getLensContract(provider);
+  static async getTokenData(
+    chainId: SupportedChainId,
+    token: string,
+    provider: SignerOrProvider
+  ): Promise<Token> {
+    const lens = getLensContract(chainId, provider);
     const metadata = await lens.getTokenInfo(token);
-    return Token.fromTokenMetadata(metadata, provider);
+    return Token.fromTokenMetadata(chainId, metadata, provider);
   }
 
-  static async getTokensData(tokens: string[], provider: SignerOrProvider): Promise<Token[]> {
-    const lens = getLensContract(provider);
+  static async getTokensData(
+    chainId: SupportedChainId,
+    tokens: string[],
+    provider: SignerOrProvider
+  ): Promise<Token[]> {
+    const lens = getLensContract(chainId, provider);
     return lens
       .getTokensInfo(tokens)
-      .then((metadata) => metadata.map((m) => Token.fromTokenMetadata(m, provider)));
+      .then((metadata) => metadata.map((m) => Token.fromTokenMetadata(chainId, m, provider)));
   }
 }

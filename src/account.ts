@@ -6,7 +6,7 @@ import {
   MarketDataWithLenderStatusStructOutput
 } from "./typechain";
 import { assert, bipMul, rayMul, updateObject } from "./utils";
-import { getControllerContract, getLensContract } from "./constants";
+import { SupportedChainId, getControllerContract, getLensContract } from "./constants";
 import { SignerOrProvider } from "./types";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
 import { WithdrawalQueuedEvent } from "./typechain/WildcatMarket";
@@ -92,6 +92,10 @@ export class MarketAccount {
     public totalInterestEarned?: TokenAmount,
     public numPendingWithdrawalBatches?: number
   ) {}
+
+  get chainId(): SupportedChainId {
+    return this.market.chainId;
+  }
 
   static readonly UpdatableKeys: Array<keyof MarketAccount> = [
     "marketBalance",
@@ -508,6 +512,7 @@ export class MarketAccount {
   }
 
   static fromMarketDataWithLenderStatus(
+    chainId: SupportedChainId,
     provider: SignerOrProvider,
     account: string,
     info: MarketDataWithLenderStatusStructOutput
@@ -515,7 +520,7 @@ export class MarketAccount {
     return MarketAccount.fromMarketLenderStatus(
       account,
       info.lenderStatus,
-      Market.fromMarketData(info.market, provider)
+      Market.fromMarketData(chainId, info.market, provider)
     );
   }
 
@@ -541,11 +546,12 @@ export class MarketAccount {
    * If `market` is a string, the market data will be fetched in the same call as the account data.
    */
   static async getMarketAccount(
+    chainId: SupportedChainId,
     provider: SignerOrProvider,
     account: string,
     market: Market | string
   ): Promise<MarketAccount> {
-    const lens = getLensContract(provider);
+    const lens = getLensContract(chainId, provider);
     if (market instanceof Market) {
       return lens
         .getMarketLenderStatus(account, market.address)
@@ -553,7 +559,9 @@ export class MarketAccount {
     } else {
       return lens
         .getMarketDataWithLenderStatus(account, market)
-        .then((info) => MarketAccount.fromMarketDataWithLenderStatus(provider, account, info));
+        .then((info) =>
+          MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
+        );
     }
   }
 
@@ -563,11 +571,12 @@ export class MarketAccount {
    * data will be fetched in the same call as the account data.
    */
   static async getMarketAccountsForLender(
+    chainId: SupportedChainId,
     provider: SignerOrProvider,
     account: string,
     markets: Market[] | string[]
   ): Promise<MarketAccount[]> {
-    const lens = getLensContract(provider);
+    const lens = getLensContract(chainId, provider);
     if (markets.length === 0) {
       return [];
     }
@@ -584,7 +593,9 @@ export class MarketAccount {
       return lens
         .getMarketsDataWithLenderStatus(account, markets)
         .then((infos) =>
-          infos.map((info) => MarketAccount.fromMarketDataWithLenderStatus(provider, account, info))
+          infos.map((info) =>
+            MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
+          )
         );
     }
   }
@@ -594,14 +605,17 @@ export class MarketAccount {
    * Fetches the market data in the same call as the account data.
    */
   static getAllMarketAccountsForLender(
+    chainId: SupportedChainId,
     provider: SignerOrProvider,
     account: string
   ): Promise<MarketAccount[]> {
-    const lens = getLensContract(provider);
+    const lens = getLensContract(chainId, provider);
     return lens
       .getAllMarketsDataWithLenderStatus(account)
       .then((infos) =>
-        infos.map((info) => MarketAccount.fromMarketDataWithLenderStatus(provider, account, info))
+        infos.map((info) =>
+          MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
+        )
       );
   }
 
@@ -611,16 +625,19 @@ export class MarketAccount {
    * @note Throws an error if `start + count` exceeds the number of markets.
    */
   static getPaginatedMarketAccounts(
+    chainId: SupportedChainId,
     provider: SignerOrProvider,
     account: string,
     start = 0,
     count: number
   ): Promise<MarketAccount[]> {
-    const lens = getLensContract(provider);
+    const lens = getLensContract(chainId, provider);
     return lens
       .getPaginatedMarketsDataWithLenderStatus(account, start, count)
       .then((infos) =>
-        infos.map((info) => MarketAccount.fromMarketDataWithLenderStatus(provider, account, info))
+        infos.map((info) =>
+          MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
+        )
       );
   }
 }

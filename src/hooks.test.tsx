@@ -4,7 +4,7 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { useGetSubgraphStatusQuery } from "./gql/graphql";
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { SubgraphUrl } from "./constants";
+import { SupportedChainId, getSubgraphClient } from "./constants";
 import {
   useAccountsWhereLenderAuthorizedOrActive,
   useAllPendingWithdrawalBatchesForMarket,
@@ -12,10 +12,7 @@ import {
   useMarketsForBorrower
 } from "./hooks";
 
-const apolloClient = new ApolloClient({
-  uri: SubgraphUrl,
-  cache: new InMemoryCache()
-});
+const apolloClient = getSubgraphClient(SupportedChainId.Sepolia);
 const provider = new JsonRpcProvider(
   `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
   "sepolia"
@@ -41,6 +38,7 @@ describe("test", () => {
   it.skip("useAllPendingWithdrawalBatchesForMarket", async () => {
     const { result: marketResult } = renderHook(useMarket, {
       initialProps: {
+        chainId: SupportedChainId.Sepolia,
         address: "0xe9336021b96150e12e200fce95caed6dd05b8484",
         provider,
         enabled: true
@@ -54,6 +52,7 @@ describe("test", () => {
     const market = marketResult.current.data!;
     const { result: batchResult } = renderHook(useAllPendingWithdrawalBatchesForMarket, {
       initialProps: {
+        chainId: SupportedChainId.Sepolia,
         market,
         enabled: true
       },
@@ -74,7 +73,8 @@ describe("test", () => {
     const { result: batchResult } = renderHook(
       () =>
         useAccountsWhereLenderAuthorizedOrActive({
-          lender: "0x520c1ECf9a596c1B105C3e4c2D3628fd973A7269".toLowerCase(),
+          chainId: SupportedChainId.Sepolia,
+          lender: "0x5F55005B15B9E00Ec52528fe672eb30f450151F5".toLowerCase(),
           provider,
           enabled: true
         }),
@@ -94,12 +94,14 @@ describe("test", () => {
 
     // await waitFor(() => expect(batchResult.current.isLoadingUpdate).toBe(false));
     expect(batchResult.current.isLoadingUpdate).toBe(false);
+    console.log(batchResult.current.data?.map((d) => d.market.address));
   });
 
   it.skip("useMarketsForBorrower", async () => {
     const { result: batchResult } = renderHook(
       () =>
         useMarketsForBorrower({
+          chainId: SupportedChainId.Sepolia,
           borrower: "0x1717503EE3f56e644cf8b1058e3F83F03a71b2E1".toLowerCase(),
           provider,
           enabled: true

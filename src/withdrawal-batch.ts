@@ -207,7 +207,7 @@ export class WithdrawalBatch {
   }
 
   static async getWithdrawalBatch(market: Market, expiry: number): Promise<WithdrawalBatch> {
-    const lens = getLensContract(market.provider);
+    const lens = getLensContract(market.chainId, market.provider);
     const data = await lens.getWithdrawalBatchData(market.address, expiry);
     return WithdrawalBatch.fromWithdrawalBatchData(market, data);
   }

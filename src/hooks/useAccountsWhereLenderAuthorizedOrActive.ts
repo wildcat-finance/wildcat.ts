@@ -9,7 +9,7 @@ import {
   SubgraphOrderDirection
 } from "../gql/graphql";
 import { Market } from "../market";
-import { SubgraphClient, getLensContract } from "../constants";
+import { getSubgraphClient, SupportedChainId, getLensContract } from "../constants";
 import { SignerOrProvider } from "../types";
 import { logger } from "../utils/logger";
 import { MarketAccount } from "../account";
@@ -17,6 +17,7 @@ import { useMemo } from "react";
 import { TwoStepQueryHookResult } from "./types";
 
 export type AccountsWhereLenderAuthorizedOrActiveProps = {
+  chainId: SupportedChainId;
   lender: string | undefined;
   provider: SignerOrProvider | undefined;
   enabled: boolean;
@@ -37,6 +38,7 @@ export type AccountsWhereLenderAuthorizedOrActiveProps = {
 };
 
 export function useAccountsWhereLenderAuthorizedOrActive({
+  chainId,
   lender: _lender,
   provider,
   enabled,
@@ -45,7 +47,7 @@ export function useAccountsWhereLenderAuthorizedOrActive({
   const lender = _lender?.toLowerCase();
   async function queryLenders() {
     logger.debug(`Getting lenders...`);
-    const result = await SubgraphClient.query<
+    const result = await getSubgraphClient(chainId).query<
       SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery,
       SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables
     >({
@@ -59,7 +61,11 @@ export function useAccountsWhereLenderAuthorizedOrActive({
     logger.debug(`Got ${result.data.lenderAccounts.length} existing lender accounts...`);
 
     const lenderAccounts = result.data.lenderAccounts.map((account) => {
-      const market = Market.fromSubgraphMarketData(provider as SignerOrProvider, account.market);
+      const market = Market.fromSubgraphMarketData(
+        chainId,
+        provider as SignerOrProvider,
+        account.market
+      );
       return MarketAccount.fromSubgraphAccountData(market, account);
     });
     result.data.controllerAuthorizations.map((controller) => {
@@ -71,7 +77,11 @@ export function useAccountsWhereLenderAuthorizedOrActive({
       });
       logger.debug(`Got markets without account: ${markets.length}!`);
       for (const marketData of markets) {
-        const market = Market.fromSubgraphMarketData(provider as SignerOrProvider, marketData);
+        const market = Market.fromSubgraphMarketData(
+          chainId,
+          provider as SignerOrProvider,
+          marketData
+        );
         const account = MarketAccount.fromMarketDataOnly(market, lender as string, true);
         lenderAccounts.push(account);
       }
@@ -97,7 +107,7 @@ export function useAccountsWhereLenderAuthorizedOrActive({
 
   async function getLenderUpdates() {
     logger.debug(`Getting lender updates...`);
-    const lens = getLensContract(provider as SignerOrProvider);
+    const lens = getLensContract(chainId, provider as SignerOrProvider);
     const accountUpdates = await lens.getMarketsDataWithLenderStatus(
       lender as string,
       accounts.map((x) => x.market.address)

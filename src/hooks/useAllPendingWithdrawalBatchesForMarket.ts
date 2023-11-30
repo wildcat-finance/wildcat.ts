@@ -5,24 +5,26 @@ import {
   SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
 } from "../gql/graphql";
 import { Market } from "../market";
-import { SubgraphClient, getLensContract } from "../constants";
+import { getSubgraphClient, getLensContract, SupportedChainId } from "../constants";
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { logger } from "../utils/logger";
 import { useMemo } from "react";
 import { TwoStepQueryHookResult } from "./types";
 
 export function useAllPendingWithdrawalBatchesForMarket({
+  chainId,
   market,
   enabled
 }: {
   market: Market | undefined;
   enabled: boolean;
+  chainId: SupportedChainId;
 }): TwoStepQueryHookResult<WithdrawalBatch[]> {
   const address = market?.address.toLowerCase();
   async function getAllPendingWithdrawalBatches() {
     if (!address || !market) throw Error();
     logger.debug(`Getting withdrawal batches...`);
-    const result = await SubgraphClient.query<
+    const result = await getSubgraphClient(chainId).query<
       SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
       SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
     >({
@@ -53,7 +55,7 @@ export function useAllPendingWithdrawalBatchesForMarket({
   async function getUpdatedBatches() {
     if (!address || !market) throw Error();
     logger.debug(`Getting batch updates...`);
-    const lens = getLensContract(market.provider);
+    const lens = getLensContract(chainId, market.provider);
     const batchUpdates = await lens.getWithdrawalBatchesData(
       address,
       batches.map((x) => x.expiry)
