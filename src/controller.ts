@@ -7,7 +7,8 @@ import {
   SupportedChainId,
   getControllerFactoryContract,
   getLensContract,
-  getMockArchControllerOwnerContract
+  getMockArchControllerOwnerContract,
+  hasDeploymentAddress
 } from "./constants";
 import { ContractWrapper, SignerOrProvider } from "./types";
 import { Market } from "./market";
@@ -102,6 +103,10 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
 
   async registerBorrower(): Promise<ContractTransaction> {
     assert(!this.isRegisteredBorrower, "Borrower is already registered");
+    assert(
+      hasDeploymentAddress(this.chainId, "MockArchControllerOwner"),
+      "Can only register borrower on testnet"
+    );
 
     const archControllerOwner = await getMockArchControllerOwnerContract(this.chainId, this.signer);
     return archControllerOwner.registerBorrower(this.address);

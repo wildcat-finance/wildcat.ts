@@ -36,6 +36,14 @@ export const isSupportedChainId = (chainId: number): chainId is SupportedChainId
   return SupportedChainIds.includes(chainId as SupportedChainId);
 };
 
+export const hasDeploymentAddress = (
+  chainId: SupportedChainId,
+  name: keyof NetworkDeployments
+): boolean => {
+  const deployments = Deployments[chainId];
+  return deployments[name] !== undefined;
+};
+
 export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
   [SupportedChainId.Mainnet]: {
     MarketLens: "0x3556D0497180afB37E6eaebd5D17309159586862",
