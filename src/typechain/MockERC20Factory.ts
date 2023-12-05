@@ -28,17 +28,73 @@ import type {
 
 export interface MockERC20FactoryInterface extends utils.Interface {
   functions: {
-    "deploy(string,string)": FunctionFragment;
+    "deployMockERC20(string,string)": FunctionFragment;
+    "deployerNonce(address)": FunctionFragment;
+    "getDeployParameters()": FunctionFragment;
+    "getNextTokenAddress(address)": FunctionFragment;
+    "mockERC20InitCodeHash()": FunctionFragment;
+    "mockERC20InitCodeStorage()": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "deploy"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "deployMockERC20"
+      | "deployerNonce"
+      | "getDeployParameters"
+      | "getNextTokenAddress"
+      | "mockERC20InitCodeHash"
+      | "mockERC20InitCodeStorage"
+  ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "deploy",
+    functionFragment: "deployMockERC20",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "deployerNonce",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getDeployParameters",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getNextTokenAddress",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mockERC20InitCodeHash",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mockERC20InitCodeStorage",
+    values?: undefined
+  ): string;
 
-  decodeFunctionResult(functionFragment: "deploy", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "deployMockERC20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "deployerNonce",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getDeployParameters",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getNextTokenAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "mockERC20InitCodeHash",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "mockERC20InitCodeStorage",
+    data: BytesLike
+  ): Result;
 
   events: {
     "NewTokenDeployed(address,string,string,uint8)": EventFragment;
@@ -90,25 +146,79 @@ export interface MockERC20Factory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    deploy(
+    deployMockERC20(
       name: PromiseOrValue<string>,
       symbol: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    deployerNonce(
+      deployer: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getDeployParameters(
+      overrides?: CallOverrides
+    ): Promise<[string, string] & { name: string; symbol: string }>;
+
+    getNextTokenAddress(
+      deployer: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { tokenAddress: string }>;
+
+    mockERC20InitCodeHash(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    mockERC20InitCodeStorage(overrides?: CallOverrides): Promise<[string]>;
   };
 
-  deploy(
+  deployMockERC20(
     name: PromiseOrValue<string>,
     symbol: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  deployerNonce(
+    deployer: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getDeployParameters(
+    overrides?: CallOverrides
+  ): Promise<[string, string] & { name: string; symbol: string }>;
+
+  getNextTokenAddress(
+    deployer: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  mockERC20InitCodeHash(overrides?: CallOverrides): Promise<BigNumber>;
+
+  mockERC20InitCodeStorage(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
-    deploy(
+    deployMockERC20(
       name: PromiseOrValue<string>,
       symbol: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    deployerNonce(
+      deployer: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getDeployParameters(
+      overrides?: CallOverrides
+    ): Promise<[string, string] & { name: string; symbol: string }>;
+
+    getNextTokenAddress(
+      deployer: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    mockERC20InitCodeHash(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mockERC20InitCodeStorage(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -127,18 +237,56 @@ export interface MockERC20Factory extends BaseContract {
   };
 
   estimateGas: {
-    deploy(
+    deployMockERC20(
       name: PromiseOrValue<string>,
       symbol: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    deployerNonce(
+      deployer: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getDeployParameters(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getNextTokenAddress(
+      deployer: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    mockERC20InitCodeHash(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mockERC20InitCodeStorage(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    deploy(
+    deployMockERC20(
       name: PromiseOrValue<string>,
       symbol: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    deployerNonce(
+      deployer: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getDeployParameters(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getNextTokenAddress(
+      deployer: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    mockERC20InitCodeHash(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    mockERC20InitCodeStorage(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }
