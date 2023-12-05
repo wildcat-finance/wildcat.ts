@@ -281,6 +281,7 @@ export enum SubgraphBorrow_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -1157,6 +1158,7 @@ export enum SubgraphDebtRepaid_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -1296,6 +1298,7 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -1462,6 +1465,7 @@ export enum SubgraphDeposit_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -1587,6 +1591,7 @@ export enum SubgraphFeesCollected_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -1801,6 +1806,7 @@ export enum SubgraphLenderAccount_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -2172,6 +2178,7 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -2393,6 +2400,7 @@ export type SubgraphMarket = {
   borrowRecords: SubgraphBorrow[];
   borrower: Scalars["Bytes"]["output"];
   controller: SubgraphController;
+  createdAt: Scalars["Int"]["output"];
   decimals: Scalars["Int"]["output"];
   delinquencyFeeBips: Scalars["Int"]["output"];
   delinquencyGracePeriod: Scalars["Int"]["output"];
@@ -2593,6 +2601,7 @@ export enum SubgraphMarketAdded_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -2716,6 +2725,7 @@ export enum SubgraphMarketClosed_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -2831,6 +2841,7 @@ export enum SubgraphMarketDeployed_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -3022,6 +3033,7 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -3139,6 +3151,7 @@ export enum SubgraphMarketRemoved_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -3261,6 +3274,14 @@ export type SubgraphMarket_Filter = {
   controller_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   controller_starts_with?: InputMaybe<Scalars["String"]["input"]>;
   controller_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  createdAt?: InputMaybe<Scalars["Int"]["input"]>;
+  createdAt_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  createdAt_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  createdAt_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  createdAt_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  createdAt_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  createdAt_not?: InputMaybe<Scalars["Int"]["input"]>;
+  createdAt_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   decimals?: InputMaybe<Scalars["Int"]["input"]>;
   decimals_gt?: InputMaybe<Scalars["Int"]["input"]>;
   decimals_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -3286,7 +3307,27 @@ export type SubgraphMarket_Filter = {
   delinquencyGracePeriod_not?: InputMaybe<Scalars["Int"]["input"]>;
   delinquencyGracePeriod_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   delinquencyRecords_?: InputMaybe<SubgraphDelinquencyStatusChanged_Filter>;
+  deployedEvent?: InputMaybe<Scalars["String"]["input"]>;
   deployedEvent_?: InputMaybe<SubgraphMarketDeployed_Filter>;
+  deployedEvent_contains?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_gt?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_gte?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  deployedEvent_lt?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_lte?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_not?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  deployedEvent_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvent_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   depositRecords_?: InputMaybe<SubgraphDeposit_Filter>;
   feeCollectionRecords_?: InputMaybe<SubgraphFeesCollected_Filter>;
   feeRecipient?: InputMaybe<Scalars["Bytes"]["input"]>;
@@ -3566,6 +3607,7 @@ export enum SubgraphMarket_OrderBy {
   ControllerBorrower = "controller__borrower",
   ControllerId = "controller__id",
   ControllerIsRegistered = "controller__isRegistered",
+  CreatedAt = "createdAt",
   Decimals = "decimals",
   DelinquencyFeeBips = "delinquencyFeeBips",
   DelinquencyGracePeriod = "delinquencyGracePeriod",
@@ -3714,6 +3756,7 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -5170,6 +5213,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -6119,6 +6163,7 @@ export enum SubgraphTransfer_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -6650,6 +6695,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -6945,6 +6991,7 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
@@ -7477,6 +7524,7 @@ export type SubgraphGetLenderAccountWithMarketQuery = {
       decimals: number;
       isMock: boolean;
     };
+    deployedEvent: SubgraphMarketDeployedEventFragment;
   } | null;
 };
 
@@ -7560,6 +7608,7 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
         decimals: number;
         isMock: boolean;
       };
+      deployedEvent: SubgraphMarketDeployedEventFragment;
     };
     controllerAuthorization: { __typename?: "LenderAuthorization"; authorized: boolean };
     deposits: SubgraphDepositDataFragment[];
@@ -7619,6 +7668,7 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
           decimals: number;
           isMock: boolean;
         };
+        deployedEvent: SubgraphMarketDeployedEventFragment;
       }>;
     };
   }>;
@@ -7692,6 +7742,10 @@ export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery = {
 
 export type SubgraphGetMarketsForBorrowerQueryVariables = Exact<{
   borrower: Scalars["Bytes"]["input"];
+  numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  skipMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  orderMarkets?: InputMaybe<SubgraphMarket_OrderBy>;
+  directionMarkets?: InputMaybe<SubgraphOrderDirection>;
   numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
@@ -7875,6 +7929,14 @@ export type SubgraphMarketDataFragment = {
     decimals: number;
     isMock: boolean;
   };
+  deployedEvent: SubgraphMarketDeployedEventFragment;
+};
+
+export type SubgraphMarketDeployedEventFragment = {
+  __typename?: "MarketDeployed";
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
 };
 
 export type SubgraphMarketDataWithEventsFragment = {
@@ -7924,6 +7986,7 @@ export type SubgraphMarketDataWithEventsFragment = {
     decimals: number;
     isMock: boolean;
   };
+  deployedEvent: SubgraphMarketDeployedEventFragment;
   depositRecords: SubgraphDepositDataFragment[];
   borrowRecords: SubgraphBorrowDataFragment[];
   feeCollectionRecords: SubgraphFeesCollectedDataFragment[];
@@ -8143,6 +8206,13 @@ export const AccountDataForLenderViewFragmentDoc = gql`
     }
   }
 `;
+export const MarketDeployedEventFragmentDoc = gql`
+  fragment MarketDeployedEvent on MarketDeployed {
+    blockNumber
+    blockTimestamp
+    transactionHash
+  }
+`;
 export const MarketDataFragmentDoc = gql`
   fragment MarketData on Market {
     id
@@ -8191,6 +8261,9 @@ export const MarketDataFragmentDoc = gql`
     totalDelinquencyFeesAccrued
     totalProtocolFeesAccrued
     totalDeposited
+    deployedEvent {
+      ...MarketDeployedEvent
+    }
   }
 `;
 export const BorrowDataFragmentDoc = gql`
@@ -8512,6 +8585,7 @@ export const GetLenderAccountWithMarketDocument = gql`
   ${LenderPropertiesFragmentDoc}
   ${DepositDataFragmentDoc}
   ${MarketDataFragmentDoc}
+  ${MarketDeployedEventFragmentDoc}
   ${BorrowDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
 `;
@@ -8685,6 +8759,7 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
   ${LenderPropertiesFragmentDoc}
   ${DepositDataFragmentDoc}
   ${MarketDataFragmentDoc}
+  ${MarketDeployedEventFragmentDoc}
   ${BorrowDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
 `;
@@ -9102,6 +9177,10 @@ export type GetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryResult = Apollo.Q
 export const GetMarketsForBorrowerDocument = gql`
   query getMarketsForBorrower(
     $borrower: Bytes!
+    $numMarkets: Int = 1000
+    $skipMarkets: Int = 0
+    $orderMarkets: Market_orderBy = createdAt
+    $directionMarkets: OrderDirection = desc
     $numDeposits: Int = 10
     $skipDeposits: Int = 0
     $orderDeposits: Deposit_orderBy = blockTimestamp
@@ -9120,13 +9199,19 @@ export const GetMarketsForBorrowerDocument = gql`
     $directionRepayments: OrderDirection = desc
   ) {
     controllers(where: { borrower: $borrower }) {
-      markets {
+      markets(
+        orderBy: $orderMarkets
+        orderDirection: $directionMarkets
+        first: $numMarkets
+        skip: $skipMarkets
+      ) {
         ...MarketDataWithEvents
       }
     }
   }
   ${MarketDataWithEventsFragmentDoc}
   ${MarketDataFragmentDoc}
+  ${MarketDeployedEventFragmentDoc}
   ${MarketRecordsFragmentDoc}
   ${DepositDataFragmentDoc}
   ${BorrowDataFragmentDoc}
@@ -9147,6 +9232,10 @@ export const GetMarketsForBorrowerDocument = gql`
  * const { data, loading, error } = useGetMarketsForBorrowerQuery({
  *   variables: {
  *      borrower: // value for 'borrower'
+ *      numMarkets: // value for 'numMarkets'
+ *      skipMarkets: // value for 'skipMarkets'
+ *      orderMarkets: // value for 'orderMarkets'
+ *      directionMarkets: // value for 'directionMarkets'
  *      numDeposits: // value for 'numDeposits'
  *      skipDeposits: // value for 'skipDeposits'
  *      orderDeposits: // value for 'orderDeposits'
@@ -9244,6 +9333,7 @@ export const GetMarketDocument = gql`
   }
   ${MarketDataWithEventsFragmentDoc}
   ${MarketDataFragmentDoc}
+  ${MarketDeployedEventFragmentDoc}
   ${MarketRecordsFragmentDoc}
   ${DepositDataFragmentDoc}
   ${BorrowDataFragmentDoc}
@@ -9422,6 +9512,7 @@ export const GetAllMarketsDocument = gql`
     }
   }
   ${MarketDataFragmentDoc}
+  ${MarketDeployedEventFragmentDoc}
 `;
 
 /**

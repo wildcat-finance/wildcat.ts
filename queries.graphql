@@ -213,10 +213,12 @@ query getLenderAuthorizationByMarket($market: ID!, $lender: Bytes!) {
 query getMarketsAndLogsWhereLenderAuthorizedOrActive(
   $lender: Bytes!
   $minimumBalance: BigInt = 1
+  # deposits
   $numDeposits: Int = 200
   $skipDeposits: Int = 0
   $orderDeposits: Deposit_orderBy = blockTimestamp
   $directionDeposits: OrderDirection = desc
+  # withdrawals
   $numWithdrawals: Int = 200
   $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry # $directionWithdrawals: OrderDirection = desc
 ) {
@@ -276,6 +278,11 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
 
 query getMarketsForBorrower(
   $borrower: Bytes!
+  # markets - default order is newest first
+  $numMarkets: Int = 1000
+  $skipMarkets: Int = 0
+  $orderMarkets: Market_orderBy = createdAt
+  $directionMarkets: OrderDirection = desc
   # deposits
   $numDeposits: Int = 10
   $skipDeposits: Int = 0
@@ -298,7 +305,12 @@ query getMarketsForBorrower(
   $directionRepayments: OrderDirection = desc
 ) {
   controllers(where: { borrower: $borrower }) {
-    markets {
+    markets(
+      orderBy: $orderMarkets
+      orderDirection: $directionMarkets
+      first: $numMarkets
+      skip: $skipMarkets
+    ) {
       ...MarketDataWithEvents
     }
   }
@@ -450,6 +462,16 @@ fragment MarketData on Market {
   totalDelinquencyFeesAccrued
   totalProtocolFeesAccrued
   totalDeposited
+
+  deployedEvent {
+    ...MarketDeployedEvent
+  }
+}
+
+fragment MarketDeployedEvent on MarketDeployed {
+  blockNumber
+  blockTimestamp
+  transactionHash
 }
 
 fragment MarketDataWithEvents on Market {

@@ -1,4 +1,4 @@
-schema: 'https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.20'
+schema: 'https://api.studio.thegraph.com/query/56451/wildcat-finance/version/latest'
 overwrite: true
 documents: 'queries.graphql'
 generates:
