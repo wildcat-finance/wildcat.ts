@@ -10,6 +10,7 @@ import {
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 import { SupportedChainId } from "../constants";
+import { assert } from "./assert";
 
 export type MarketParameterConstraints = {
   minimumDelinquencyGracePeriod: number;
@@ -153,10 +154,14 @@ export function parseWithdrawalRecord(
 
 export const removeUnusedTxFields = ({
   to,
-  from,
   data,
-  value,
-  chainId,
-  accessList
-}: PopulatedTransaction): PartialTransaction =>
-  new PartialTransaction(to, from, data, value, chainId, accessList);
+  value = BigNumber.from(0)
+}: PopulatedTransaction): PartialTransaction => {
+  assert(to !== undefined, "to is undefined");
+  assert(data !== undefined, "data is undefined");
+  return {
+    to,
+    data,
+    value: value.toHexString()
+  };
+};

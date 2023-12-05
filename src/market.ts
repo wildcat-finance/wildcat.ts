@@ -4,7 +4,7 @@ import { WildcatMarket, WildcatMarket__factory } from "./typechain";
 import { MarketDataStructOutput } from "./typechain";
 import { SupportedChainId, getLensContract } from "./constants";
 import { TokenAmount, Token, toBn } from "./token";
-import { SignerOrProvider, ContractWrapper } from "./types";
+import { SignerOrProvider, ContractWrapper, PartialTransaction } from "./types";
 import { formatUnits } from "ethers/lib/utils";
 import { MarketAccount } from "./account";
 import { RAY } from "./constants";
@@ -276,6 +276,20 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const lenders = withdrawals.map((w) => w.lender);
     const expiries = withdrawals.map((w) => w.expiry);
     return this.contract.executeWithdrawals(lenders, expiries);
+  }
+
+  async populateRepayAndProcessUnpaidWithdrawalBatches(
+    amount: TokenAmount,
+    maxBatches = 10
+  ): Promise<PartialTransaction> {
+    return {
+      to: this.address,
+      data: this.contract.interface.encodeFunctionData("repayAndProcessUnpaidWithdrawalBatches", [
+        amount.raw,
+        maxBatches
+      ]),
+      value: "0"
+    };
   }
 
   async repayAndProcessUnpaidWithdrawalBatches(

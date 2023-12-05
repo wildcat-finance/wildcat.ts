@@ -182,9 +182,12 @@ export class MarketAccount {
       throw Error(`Cannot close market: ${status}`);
     }
     const controller = getControllerContract(this.market.signer, this.market.controller);
-    return controller.populateTransaction
-      .closeMarket(this.market.address)
-      .then(removeUnusedTxFields);
+
+    return {
+      to: controller.address,
+      data: controller.interface.encodeFunctionData("closeMarket", [this.market.address]),
+      value: "0"
+    };
   }
 
   async setMaxTotalSupply(amount: TokenAmount): Promise<ContractTransaction> {
@@ -239,9 +242,14 @@ export class MarketAccount {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     amount = this.getAllowanceRemainder(amount);
-    return token.contract.populateTransaction
-      .approve(this.market.address, amount.raw)
-      .then(removeUnusedTxFields);
+    return {
+      to: token.address,
+      data: token.contract.interface.encodeFunctionData("approve", [
+        this.market.address,
+        amount.raw
+      ]),
+      value: "0"
+    };
   }
 
   /* -------------------------------------------------------------------------- */
@@ -284,6 +292,22 @@ export class MarketAccount {
       };
     }
     return { status: "Ready" };
+  }
+
+  async populateDeposit(amount: TokenAmount): Promise<PartialTransaction> {
+    const signer = await this.market.signer.getAddress();
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
+    }
+    if (amount.gt(this.underlyingBalance)) {
+      throw Error("Insufficient balance");
+    }
+
+    return {
+      to: this.market.address,
+      data: this.market.contract.interface.encodeFunctionData("deposit", [amount.raw]),
+      value: "0"
+    };
   }
 
   // TODO: Add support for depositUpTo
@@ -395,7 +419,11 @@ export class MarketAccount {
       throw Error("Only borrower can repay");
     }
 
-    return this.market.contract.populateTransaction.repay(amount).then(removeUnusedTxFields);
+    return {
+      to: this.market.address,
+      data: this.market.contract.interface.encodeFunctionData("repay", [amount]),
+      value: "0"
+    };
   }
 
   async repayOutstandingDebt(): Promise<ContractTransaction> {
@@ -419,9 +447,11 @@ export class MarketAccount {
       throw Error("Only borrower can repay");
     }
 
-    return this.market.contract.populateTransaction
-      .repayOutstandingDebt()
-      .then(removeUnusedTxFields);
+    return {
+      to: this.market.address,
+      data: this.market.contract.interface.encodeFunctionData("repayOutstandingDebt"),
+      value: "0"
+    };
   }
 
   async repayDelinquentDebt(): Promise<ContractTransaction> {
@@ -445,9 +475,11 @@ export class MarketAccount {
       throw Error("Only borrower can repay");
     }
 
-    return this.market.contract.populateTransaction
-      .repayDelinquentDebt()
-      .then(removeUnusedTxFields);
+    return {
+      to: this.market.address,
+      data: this.market.contract.interface.encodeFunctionData("repayDelinquentDebt"),
+      value: "0"
+    };
   }
 
   /* -------------------------------------------------------------------------- */

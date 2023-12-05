@@ -90,8 +90,12 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     return this.contract.authorizeLenders(lenders);
   }
 
-  async populateAuthorizeLenders(lenders: string[]): Promise<PartialTransaction> {
-    return this.contract.populateTransaction.authorizeLenders(lenders).then(removeUnusedTxFields);
+  populateAuthorizeLenders(lenders: string[]): PartialTransaction {
+    return {
+      to: this.address,
+      data: this.contract.interface.encodeFunctionData("authorizeLenders", [lenders]),
+      value: "0"
+    };
   }
 
   async authorizeLendersAndUpdateMarkets(
@@ -101,13 +105,18 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     return this.contract.authorizeLendersAndUpdateMarkets(lenders, markets);
   }
 
-  async populateAuthorizeLendersAndUpdateMarkets(
+  populateAuthorizeLendersAndUpdateMarkets(
     lenders: string[],
     markets: string[] = this.markets.map((m) => m.address)
-  ): Promise<PartialTransaction> {
-    return this.contract.populateTransaction
-      .authorizeLendersAndUpdateMarkets(lenders, markets)
-      .then(removeUnusedTxFields);
+  ): PartialTransaction {
+    return {
+      to: this.address,
+      data: this.contract.interface.encodeFunctionData("authorizeLendersAndUpdateMarkets", [
+        lenders,
+        markets
+      ]),
+      value: "0"
+    };
   }
 
   async deauthorizeLenders(lenders: string[]): Promise<ContractTransaction> {
@@ -115,7 +124,11 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   }
 
   async populateDeauthorizeLenders(lenders: string[]): Promise<PartialTransaction> {
-    return this.contract.populateTransaction.deauthorizeLenders(lenders).then(removeUnusedTxFields);
+    return {
+      to: this.address,
+      data: this.contract.interface.encodeFunctionData("deauthorizeLenders", [lenders]),
+      value: "0"
+    };
   }
 
   async deauthorizeLendersAndUpdateMarkets(
@@ -125,13 +138,18 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     return this.contract.deauthorizeLendersAndUpdateMarkets(lenders, markets);
   }
 
-  async populateDeauthorizeLendersAndUpdateMarkets(
+  populateDeauthorizeLendersAndUpdateMarkets(
     lenders: string[],
     markets: string[] = this.markets.map((m) => m.address)
-  ): Promise<PartialTransaction> {
-    return this.contract.populateTransaction
-      .deauthorizeLendersAndUpdateMarkets(lenders, markets)
-      .then(removeUnusedTxFields);
+  ): PartialTransaction {
+    return {
+      to: this.address,
+      data: this.contract.interface.encodeFunctionData("deauthorizeLendersAndUpdateMarkets", [
+        lenders,
+        markets
+      ]),
+      value: "0"
+    };
   }
 
   async registerBorrower(): Promise<ContractTransaction> {
@@ -145,7 +163,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     return archControllerOwner.registerBorrower(this.address);
   }
 
-  async populateRegisterBorrower(): Promise<PartialTransaction> {
+  populateRegisterBorrower(): PartialTransaction {
     assert(!this.isRegisteredBorrower, "Borrower is already registered");
     assert(
       hasDeploymentAddress(this.chainId, "MockArchControllerOwner"),
@@ -153,9 +171,11 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     );
 
     const archControllerOwner = getMockArchControllerOwnerContract(this.chainId, this.signer);
-    return archControllerOwner.populateTransaction
-      .registerBorrower(this.address)
-      .then(removeUnusedTxFields);
+    return {
+      to: archControllerOwner.address,
+      data: archControllerOwner.interface.encodeFunctionData("registerBorrower", [this.address]),
+      value: "0"
+    };
   }
 
   async deployController(): Promise<ContractTransaction> {
@@ -190,14 +210,15 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     );
   }
 
-  encodeDeployMarket(params: MarketParameters): Promise<PartialTransaction> {
+  encodeDeployMarket(params: MarketParameters): PartialTransaction {
     if (this.checkParameters(params).length) {
       throw Error("Invalid parameters: " + this.checkParameters(params).join(", "));
     }
     if (!this.isDeployed) {
       const factory = getControllerFactoryContract(this.chainId, this.signer);
-      return factory.populateTransaction
-        .deployControllerAndMarket(
+      return {
+        to: factory.address,
+        data: factory.interface.encodeFunctionData("deployControllerAndMarket", [
           params.namePrefix,
           params.symbolPrefix,
           params.asset.address,
@@ -207,11 +228,13 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
           params.withdrawalBatchDuration,
           params.reserveRatioBips,
           params.delinquencyGracePeriod
-        )
-        .then(removeUnusedTxFields);
+        ]),
+        value: "0"
+      };
     }
-    return this.contract.populateTransaction
-      .deployMarket(
+    return {
+      to: this.address,
+      data: this.contract.interface.encodeFunctionData("deployMarket", [
         params.asset.address,
         params.namePrefix,
         params.symbolPrefix,
@@ -221,8 +244,9 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
         params.withdrawalBatchDuration,
         params.reserveRatioBips,
         params.delinquencyGracePeriod
-      )
-      .then(removeUnusedTxFields);
+      ]),
+      value: "0"
+    };
   }
 
   async deployMarket(params: MarketParameters): Promise<Market> {

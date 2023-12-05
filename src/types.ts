@@ -2,6 +2,7 @@ import { Provider } from "@ethersproject/abstract-provider";
 import { Signer } from "@ethersproject/abstract-signer";
 import { AccessList } from "@ethersproject/transactions";
 import { BaseContract, BigNumber, PopulatedTransaction } from "ethers";
+import { assert } from "./utils";
 
 export type SignerOrProvider = Signer | Provider;
 
@@ -52,14 +53,8 @@ export abstract class ContractWrapper<Contract extends BaseContract> {
 // Use class to give build error if `removeUnusedTxFields` is not called,
 // so that we don't accidentally fill fields we want to be derived at the
 // time of execution.
-export class PartialTransaction {
-  protected isPartialTransaction = true;
-  constructor(
-    public to?: string | undefined,
-    public from?: string | undefined,
-    public data?: string | undefined,
-    public value?: BigNumber | undefined,
-    public chainId?: number | undefined,
-    public accessList?: AccessList | undefined
-  ) {}
-}
+export type PartialTransaction = {
+  to: string;
+  data: string;
+  value: string;
+};

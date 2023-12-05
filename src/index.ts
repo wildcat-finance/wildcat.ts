@@ -35,6 +35,6 @@ export const {
 
 export const { getTokenData, getTokensData } = Token;
 
-export const { deployToken } = TokenFactory;
+export const { deployToken, populateDeployToken, getNextTokenAddress } = TokenFactory;
 
 export const { getController } = MarketController;
