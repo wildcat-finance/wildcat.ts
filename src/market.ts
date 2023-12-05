@@ -15,6 +15,7 @@ import {
   SubgraphDepositDataFragment,
   SubgraphFeesCollectedDataFragment,
   SubgraphMarketDataWithEventsFragment,
+  SubgraphMarketDeployedEventFragment,
   SubgraphRepaymentDataFragment
 } from "./gql/graphql";
 import { MakeOptional } from "./utils";
@@ -65,32 +66,6 @@ function parseRecord(
 // @todo pull min/max apr from contract and subgraph
 
 export class Market extends ContractWrapper<WildcatMarket> {
-  static readonly UpdatableKeys: Array<keyof Market> = [
-    "marketToken",
-    "underlyingToken",
-    "borrower",
-    "controller",
-    "feeRecipient",
-    "protocolFeeBips",
-    "delinquencyFeeBips",
-    "delinquencyGracePeriod",
-    "annualInterestBips",
-    "reserveRatioBips",
-    "temporaryReserveRatio",
-    "originalReserveRatioBips",
-    "temporaryReserveRatioExpiry",
-    "borrowableAssets",
-    "maxTotalSupply",
-    "scaledTotalSupply",
-    "totalSupply",
-    "totalAssets",
-    "coverageLiquidity",
-    "scaleFactor",
-    "lastAccruedProtocolFees",
-    "isDelinquent",
-    "timeDelinquent",
-    "lastInterestAccruedTimestamp"
-  ];
   public depositRecords: DepositRecord[];
   public repaymentRecords: RepaymentRecord[];
   public borrowRecords: BorrowRecord[];
@@ -150,6 +125,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     repaymentRecords: SubgraphRepaymentDataFragment[] = [],
     borrowRecords: SubgraphBorrowDataFragment[] = [],
     feeCollectionRecords: SubgraphFeesCollectedDataFragment[] = [],
+    public deployedEvent?: SubgraphMarketDeployedEventFragment,
     public signerAddress?: string
   ) {
     super(_provider);
@@ -482,6 +458,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.repaymentRecords,
       data.borrowRecords,
       data.feeCollectionRecords,
+      data.deployedEvent,
       signerAddress
     );
   }
@@ -528,6 +505,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.unpaidWithdrawalBatchExpiries,
       underlyingToken.getAmount(data.coverageLiquidity),
       underlyingToken.getAmount(data.borrowableAssets),
+      undefined,
       undefined,
       undefined,
       undefined,
