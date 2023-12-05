@@ -17,10 +17,12 @@ export class TokenFactory extends ContractWrapper<MockERC20Factory> {
   }
 
   static getFactory(chainId: SupportedChainId, providerOrSigner: SignerOrProvider): TokenFactory {
-    const provider =
-      providerOrSigner instanceof Provider ? providerOrSigner : providerOrSigner.provider;
-    assert(provider !== undefined, `Signer does not have a provider`);
-    return new TokenFactory(chainId, getDeploymentAddress(chainId, "MockERC20Factory"), provider);
+    assert(providerOrSigner !== undefined, `Signer does not have a provider`);
+    return new TokenFactory(
+      chainId,
+      getDeploymentAddress(chainId, "MockERC20Factory"),
+      providerOrSigner
+    );
   }
 
   static async deployToken(
