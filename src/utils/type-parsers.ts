@@ -1,6 +1,6 @@
 import { FeeConfigurationStructOutput, MarketParameterConstraintsStructOutput } from "../typechain";
-import { SignerOrProvider } from "../types";
-import { BigNumber, constants } from "ethers";
+import { PartialTransaction, SignerOrProvider } from "../types";
+import { BigNumber, PopulatedTransaction, constants } from "ethers";
 import { Token, TokenAmount } from "../token";
 import {
   SubgraphWithdrawalBatchPaymentPropertiesFragment,
@@ -150,3 +150,13 @@ export function parseWithdrawalRecord(
     normalizedAmount: token.getAmount(normalizedAmount)
   };
 }
+
+export const removeUnusedTxFields = ({
+  to,
+  from,
+  data,
+  value,
+  chainId,
+  accessList
+}: PopulatedTransaction): PartialTransaction =>
+  new PartialTransaction(to, from, data, value, chainId, accessList);

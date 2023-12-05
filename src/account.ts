@@ -5,9 +5,9 @@ import {
   MarketLenderStatusStructOutput,
   MarketDataWithLenderStatusStructOutput
 } from "./typechain";
-import { assert, bipMul, rayMul } from "./utils";
+import { assert, bipMul, rayMul, removeUnusedTxFields } from "./utils";
 import { SupportedChainId, getControllerContract, getLensContract } from "./constants";
-import { SignerOrProvider } from "./types";
+import { PartialTransaction, SignerOrProvider } from "./types";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
 import { WithdrawalQueuedEvent } from "./typechain/WildcatMarket";
 import {
@@ -130,21 +130,21 @@ export class MarketAccount {
 
   checkCloseMarketStep(): CloseMarketStatus {
     if (!this.isBorrower) return { status: "NotBorrower" };
-    const outstandingDebt = this.market.outstandingDebt;
-    if (outstandingDebt.gt(this.underlyingBalance)) {
+    // add 0.1% to account for interest
+    const amount = this.market.underlyingToken.getAmount(
+      bipMul(this.market.outstandingDebt.raw, toBn(10010))
+    );
+    if (amount.gt(this.underlyingBalance)) {
       return { status: "InsufficientBalance" };
-    }
-    if (!this.isApprovedFor(outstandingDebt)) {
-      // add 0.5% to account for interest
-      return {
-        status: "InsufficientAllowance",
-        remainder: this.market.underlyingToken.getAmount(
-          bipMul(this.market.outstandingDebt.raw, toBn(10050))
-        )
-      };
     }
     if (this.market.unpaidWithdrawalBatchExpiries.length > 0) {
       return { status: "UnpaidWithdrawalBatches" };
+    }
+    if (!this.isApprovedFor(amount)) {
+      return {
+        status: "InsufficientAllowance",
+        remainder: amount
+      };
     }
     return { status: "Ready" };
   }
@@ -174,6 +174,17 @@ export class MarketAccount {
     }
     const controller = getControllerContract(this.market.signer, this.market.controller);
     return controller.closeMarket(this.market.address);
+  }
+
+  async populateCloseMarket(): Promise<PartialTransaction> {
+    const { status } = this.checkCloseMarketStep();
+    if (status !== "Ready") {
+      throw Error(`Cannot close market: ${status}`);
+    }
+    const controller = getControllerContract(this.market.signer, this.market.controller);
+    return controller.populateTransaction
+      .closeMarket(this.market.address)
+      .then(removeUnusedTxFields);
   }
 
   async setMaxTotalSupply(amount: TokenAmount): Promise<ContractTransaction> {
@@ -219,6 +230,18 @@ export class MarketAccount {
     }
     amount = this.getAllowanceRemainder(amount);
     return token.contract.approve(this.market.address, amount.raw);
+  }
+
+  async populateApproveMarket(amount: TokenAmount): Promise<PartialTransaction> {
+    const token = this.market.underlyingToken;
+    const signer = await token.signer.getAddress();
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
+    }
+    amount = this.getAllowanceRemainder(amount);
+    return token.contract.populateTransaction
+      .approve(this.market.address, amount.raw)
+      .then(removeUnusedTxFields);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -363,6 +386,18 @@ export class MarketAccount {
     return this.market.contract.repay(amount);
   }
 
+  async populateRepay(amount: BigNumber): Promise<PartialTransaction> {
+    const signer = await this.market.signer.getAddress();
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
+    }
+    if (!this.isBorrower) {
+      throw Error("Only borrower can repay");
+    }
+
+    return this.market.contract.populateTransaction.repay(amount).then(removeUnusedTxFields);
+  }
+
   async repayOutstandingDebt(): Promise<ContractTransaction> {
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
@@ -375,6 +410,20 @@ export class MarketAccount {
     return this.market.contract.repayOutstandingDebt();
   }
 
+  async populateRepayOutstandingDebt(): Promise<PartialTransaction> {
+    const signer = await this.market.signer.getAddress();
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
+    }
+    if (!this.isBorrower) {
+      throw Error("Only borrower can repay");
+    }
+
+    return this.market.contract.populateTransaction
+      .repayOutstandingDebt()
+      .then(removeUnusedTxFields);
+  }
+
   async repayDelinquentDebt(): Promise<ContractTransaction> {
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
@@ -385,6 +434,20 @@ export class MarketAccount {
     }
 
     return this.market.contract.repayDelinquentDebt();
+  }
+
+  async populateRepayDelinquentDebt(): Promise<PartialTransaction> {
+    const signer = await this.market.signer.getAddress();
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
+    }
+    if (!this.isBorrower) {
+      throw Error("Only borrower can repay");
+    }
+
+    return this.market.contract.populateTransaction
+      .repayDelinquentDebt()
+      .then(removeUnusedTxFields);
   }
 
   /* -------------------------------------------------------------------------- */
