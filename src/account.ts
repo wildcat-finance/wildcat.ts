@@ -5,7 +5,7 @@ import {
   MarketLenderStatusStructOutput,
   MarketDataWithLenderStatusStructOutput
 } from "./typechain";
-import { assert, bipMul, rayMul, updateObject } from "./utils";
+import { assert, bipMul, rayMul } from "./utils";
 import { SupportedChainId, getControllerContract, getLensContract } from "./constants";
 import { SignerOrProvider } from "./types";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
@@ -96,12 +96,6 @@ export class MarketAccount {
   get chainId(): SupportedChainId {
     return this.market.chainId;
   }
-
-  static readonly UpdatableKeys: Array<keyof MarketAccount> = [
-    "marketBalance",
-    "underlyingBalance",
-    "underlyingApproval"
-  ];
 
   get userHasBalance(): boolean {
     return this.marketBalance.gt(0);
@@ -423,8 +417,11 @@ export class MarketAccount {
   /* -------------------------------------------------------------------------- */
 
   async update(): Promise<void> {
-    const acccountMarketInfo = await this.market.getAccount(this.account);
-    updateObject(this, acccountMarketInfo, MarketAccount.UpdatableKeys);
+    const acccountMarketInfo = await getLensContract(
+      this.chainId,
+      this.market.provider
+    ).getMarketLenderStatus(this.account, this.market.address);
+    this.updateWith(acccountMarketInfo);
   }
 
   updateWith(info: MarketLenderStatusStructOutput): void {
