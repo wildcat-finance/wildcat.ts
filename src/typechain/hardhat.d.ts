@@ -13,9 +13,17 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "AccountQuery",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AccountQuery__factory>;
+    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
+    getContractFactory(
+      name: "ISafe",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISafe__factory>;
     getContractFactory(
       name: "MarketLens",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -46,10 +54,20 @@ declare module "hardhat/types/runtime" {
     ): Promise<Contracts.WildcatMarketControllerFactory__factory>;
 
     getContractAt(
+      name: "AccountQuery",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AccountQuery>;
+    getContractAt(
       name: "IERC20",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
+    getContractAt(
+      name: "ISafe",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISafe>;
     getContractAt(
       name: "MarketLens",
       address: string,
