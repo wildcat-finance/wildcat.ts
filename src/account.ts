@@ -140,7 +140,11 @@ export class MarketAccount {
     if (this.market.unpaidWithdrawalBatchExpiries.length > 0) {
       return { status: "UnpaidWithdrawalBatches" };
     }
-    if (!this.isApprovedFor(amount)) {
+    if (
+      !this.isApprovedFor(
+        this.market.underlyingToken.getAmount(bipMul(this.market.outstandingDebt.raw, toBn(10006)))
+      )
+    ) {
       return {
         status: "InsufficientAllowance",
         remainder: amount
