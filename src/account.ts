@@ -1,4 +1,4 @@
-import { BigNumber, ContractTransaction } from "ethers";
+import { BigNumber, ContractReceipt, ContractTransaction } from "ethers";
 import { Token, TokenAmount, minTokenAmount, toBn } from "./token";
 import { Market } from "./market";
 import {
@@ -338,7 +338,11 @@ export class MarketAccount {
     return { status: "Ready" };
   }
 
-  async queueWithdrawal(amount: TokenAmount): Promise<LenderWithdrawalStatus> {
+  async queueWithdrawal(amount: TokenAmount): Promise<{
+    withdrawal: LenderWithdrawalStatus;
+    transaction: ContractTransaction;
+    receipt: ContractReceipt;
+  }> {
     if (!this.canWithdraw) {
       throw Error(`Lender role insufficient to withdraw`);
     }
@@ -346,20 +350,26 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    const tx = await this.market.contract.queueWithdrawal(amount.raw).then((tx) => tx.wait());
+    const transaction = await this.market.contract.queueWithdrawal(amount.raw);
+    const receipt = await transaction.wait();
     const queuedWithdrawalTopic = this.market.contract.interface.getEventTopic("WithdrawalQueued");
     const queuedWithdrawalTransaction = toQueueWithdrawalTransaction(
       this.market.underlyingToken,
-      tx.events!.find((e) => e.topics[0] === queuedWithdrawalTopic) as WithdrawalQueuedEvent
+      receipt.events!.find((e) => e.topics[0] === queuedWithdrawalTopic) as WithdrawalQueuedEvent
     );
     if (!queuedWithdrawalTransaction) {
       throw Error("No queued withdrawal event found");
     }
-    return LenderWithdrawalStatus.getWithdrawalForLender(
+    const withdrawal = await LenderWithdrawalStatus.getWithdrawalForLender(
       this.market,
       queuedWithdrawalTransaction.expiry,
       this.account
     );
+    return {
+      withdrawal,
+      transaction,
+      receipt
+    };
   }
 
   /* -------------------------------------------------------------------------- */

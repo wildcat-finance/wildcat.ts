@@ -4,6 +4,7 @@ import { NewTokenDeployedEvent } from "./typechain/MockERC20Factory";
 import { Token } from "./token";
 import { SupportedChainId, getDeploymentAddress } from "./constants";
 import { assert, removeUnusedTxFields } from "./utils";
+import { ContractReceipt, ContractTransaction } from "ethers";
 
 export class TokenFactory extends ContractWrapper<MockERC20Factory> {
   readonly contractFactory = MockERC20Factory__factory;
@@ -39,7 +40,7 @@ export class TokenFactory extends ContractWrapper<MockERC20Factory> {
     signer: Signer,
     name: string,
     symbol: string
-  ): Promise<Token> {
+  ): Promise<{ token: Token; receipt: ContractReceipt }> {
     const factory = TokenFactory.getFactory(chainId, signer);
     return factory.deployToken(name, symbol);
   }
@@ -54,14 +55,31 @@ export class TokenFactory extends ContractWrapper<MockERC20Factory> {
     return factory.populateDeployToken(name, symbol);
   }
 
-  async deployToken(name: string, symbol: string): Promise<Token> {
-    const receipt = await this.contract.deployMockERC20(name, symbol).then((r) => r.wait());
+  async deployToken(
+    name: string,
+    symbol: string
+  ): Promise<{
+    token: Token;
+    receipt: ContractReceipt;
+    transaction: ContractTransaction;
+  }> {
+    const transaction = await this.contract.deployMockERC20(name, symbol);
+    const receipt = await transaction.wait();
 
     const {
-      args: { token, decimals }
+      args: { token: tokenAddress, decimals }
     } = receipt.events!.find((e) => e.event === "NewTokenDeployed")! as NewTokenDeployedEvent;
 
-    return new Token(this.chainId, token, name, symbol, decimals, true, this.provider);
+    const token = new Token(
+      this.chainId,
+      tokenAddress,
+      name,
+      symbol,
+      decimals,
+      true,
+      this.provider
+    );
+    return { token, transaction, receipt };
   }
 
   populateDeployToken(name: string, symbol: string): PartialTransaction {
