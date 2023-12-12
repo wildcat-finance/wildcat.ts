@@ -249,43 +249,44 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     };
   }
 
-  async deployMarket(params: MarketParameters): Promise<Market> {
+  async deployMarket(params: MarketParameters): Promise<{
+    market: Market;
+    transaction: ContractTransaction;
+    receipt: ContractReceipt;
+  }> {
     if (this.checkParameters(params).length) {
       throw Error("Invalid parameters: " + this.checkParameters(params).join(", "));
     }
-    let receipt: ContractReceipt;
+    let transaction: ContractTransaction;
 
     if (!this.isDeployed) {
       const factory = getControllerFactoryContract(this.chainId, this.signer);
       assert(this.isRegisteredBorrower, "Borrower is not registered");
-      receipt = await factory
-        .deployControllerAndMarket(
-          params.namePrefix,
-          params.symbolPrefix,
-          params.asset.address,
-          params.maxTotalSupply.raw,
-          params.annualInterestBips,
-          params.delinquencyFeeBips,
-          params.withdrawalBatchDuration,
-          params.reserveRatioBips,
-          params.delinquencyGracePeriod
-        )
-        .then((r) => r.wait());
+      transaction = await factory.deployControllerAndMarket(
+        params.namePrefix,
+        params.symbolPrefix,
+        params.asset.address,
+        params.maxTotalSupply.raw,
+        params.annualInterestBips,
+        params.delinquencyFeeBips,
+        params.withdrawalBatchDuration,
+        params.reserveRatioBips,
+        params.delinquencyGracePeriod
+      );
     } else {
-      receipt = await this.contract
-        .deployMarket(
-          params.asset.address,
-          params.namePrefix,
-          params.symbolPrefix,
-          params.maxTotalSupply.raw,
-          params.annualInterestBips,
-          params.delinquencyFeeBips,
-          params.withdrawalBatchDuration,
-          params.reserveRatioBips,
-          params.delinquencyGracePeriod
-        )
-        .then((r) => r.wait());
+      transaction = await this.contract.deployMarket(
+        params.asset.address,
+        params.namePrefix,
+        params.symbolPrefix,
+        params.maxTotalSupply.raw,
+        params.annualInterestBips,
+        params.delinquencyFeeBips,
+        params.withdrawalBatchDuration,
+        params.reserveRatioBips,
+        params.delinquencyGracePeriod
+      );
     }
+    const receipt = await transaction.wait();
 
     const marketDeployedTopic = this.contract.interface.getEventTopic("MarketDeployed");
     const log = receipt.logs.find((l) => l.topics[0] === marketDeployedTopic)!;
@@ -298,7 +299,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     this.markets.push(market);
     this.isDeployed = true;
     this.isRegisteredBorrower = true;
-    return market;
+    return { market, transaction, receipt };
   }
 
   /* -------------------------------------------------------------------------- */
