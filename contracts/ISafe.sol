@@ -29,6 +29,8 @@ interface ISafe {
    */
   function isValidSignature(bytes32 _hash, bytes memory _signature) external view returns (bytes4);
 
+  function isValidSignature(bytes memory _data, bytes memory _signature) external view returns (bytes4);
+
   /**
    * @dev Returns true if this contract implements the interface defined by `interfaceId`.
    * See the corresponding EIP section

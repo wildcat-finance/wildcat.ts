@@ -27,6 +27,7 @@ export interface ISafeInterface extends utils.Interface {
     "getThreshold()": FunctionFragment;
     "isOwner(address)": FunctionFragment;
     "isValidSignature(bytes32,bytes)": FunctionFragment;
+    "isValidSignature(bytes,bytes)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
 
@@ -36,7 +37,8 @@ export interface ISafeInterface extends utils.Interface {
       | "getOwners"
       | "getThreshold"
       | "isOwner"
-      | "isValidSignature"
+      | "isValidSignature(bytes32,bytes)"
+      | "isValidSignature(bytes,bytes)"
       | "supportsInterface"
   ): FunctionFragment;
 
@@ -51,7 +53,11 @@ export interface ISafeInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "isValidSignature",
+    functionFragment: "isValidSignature(bytes32,bytes)",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isValidSignature(bytes,bytes)",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -67,7 +73,11 @@ export interface ISafeInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "isOwner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "isValidSignature",
+    functionFragment: "isValidSignature(bytes32,bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isValidSignature(bytes,bytes)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -118,8 +128,14 @@ export interface ISafe extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    isValidSignature(
+    "isValidSignature(bytes32,bytes)"(
       _hash: PromiseOrValue<BytesLike>,
+      _signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    "isValidSignature(bytes,bytes)"(
+      _data: PromiseOrValue<BytesLike>,
       _signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
@@ -141,8 +157,14 @@ export interface ISafe extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isValidSignature(
+  "isValidSignature(bytes32,bytes)"(
     _hash: PromiseOrValue<BytesLike>,
+    _signature: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  "isValidSignature(bytes,bytes)"(
+    _data: PromiseOrValue<BytesLike>,
     _signature: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
@@ -164,8 +186,14 @@ export interface ISafe extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isValidSignature(
+    "isValidSignature(bytes32,bytes)"(
       _hash: PromiseOrValue<BytesLike>,
+      _signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "isValidSignature(bytes,bytes)"(
+      _data: PromiseOrValue<BytesLike>,
       _signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -190,8 +218,14 @@ export interface ISafe extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isValidSignature(
+    "isValidSignature(bytes32,bytes)"(
       _hash: PromiseOrValue<BytesLike>,
+      _signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "isValidSignature(bytes,bytes)"(
+      _data: PromiseOrValue<BytesLike>,
       _signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -214,8 +248,14 @@ export interface ISafe extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isValidSignature(
+    "isValidSignature(bytes32,bytes)"(
       _hash: PromiseOrValue<BytesLike>,
+      _signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "isValidSignature(bytes,bytes)"(
+      _data: PromiseOrValue<BytesLike>,
       _signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

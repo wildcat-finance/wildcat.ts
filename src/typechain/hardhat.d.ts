@@ -17,6 +17,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AccountQuery__factory>;
     getContractFactory(
+      name: "CheckBorrowersRegistered",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CheckBorrowersRegistered__factory>;
+    getContractFactory(
+      name: "CheckBorrowersRegistered",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CheckBorrowersRegistered__factory>;
+    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
@@ -58,6 +66,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.AccountQuery>;
+    getContractAt(
+      name: "CheckBorrowersRegistered",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CheckBorrowersRegistered>;
+    getContractAt(
+      name: "CheckBorrowersRegistered",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CheckBorrowersRegistered>;
     getContractAt(
       name: "IERC20",
       address: string,
