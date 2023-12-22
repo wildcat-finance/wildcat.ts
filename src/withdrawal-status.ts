@@ -75,6 +75,10 @@ export class LenderWithdrawalStatus {
     );
   }
 
+  get normalizedUnpaidAmount(): TokenAmount {
+    return this.batch.normalizedAmountOwed.mulDiv(this.scaledAmount, this.batch.scaledTotalAmount);
+  }
+
   static fromSubgraphLenderWithdrawalStatus(
     market: Market,
     batch: WithdrawalBatch,
