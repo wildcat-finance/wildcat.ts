@@ -5,7 +5,7 @@ import {
   MarketLenderStatusStructOutput,
   MarketDataWithLenderStatusStructOutput
 } from "./typechain";
-import { assert, bipMul, rayMul, removeUnusedTxFields } from "./utils";
+import { assert, bipMul, rayMul } from "./utils";
 import { SupportedChainId, getControllerContract, getLensContract } from "./constants";
 import { PartialTransaction, SignerOrProvider } from "./types";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
@@ -222,11 +222,13 @@ export class MarketAccount {
   }
 
   /**
-   * @returns Remaining amount of underlying token user must approve
+   * @returns Amount of underlying token user must approve
    *          market to spend to make a deposit.
    */
   getAllowanceRemainder(amount: TokenAmount): TokenAmount {
-    return amount.satsub(this.underlyingApproval);
+    return this.underlyingApproval.gte(amount.raw)
+      ? this.market.underlyingToken.getAmount(0)
+      : amount;
   }
 
   async approveAllowanceRemainder(amount: TokenAmount): Promise<ContractTransaction> {
