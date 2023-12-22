@@ -381,11 +381,11 @@ export class MarketAccount {
   }
 
   get canRepayDelinquent(): boolean {
-    return this.market.delinquentDebt.lt(this.maximumRepay) && this.isBorrower;
+    return this.market.delinquentDebt.lte(this.underlyingBalance) && this.isBorrower;
   }
 
   get canRepayOutstanding(): boolean {
-    return this.market.outstandingDebt.lt(this.maximumRepay) && this.isBorrower;
+    return this.market.outstandingDebt.lte(this.underlyingBalance) && this.isBorrower;
   }
 
   /**
