@@ -7772,6 +7772,34 @@ export type SubgraphGetMarketsForBorrowerQuery = {
   }>;
 };
 
+export type SubgraphGetMarketsForAllBorrowersQueryVariables = Exact<{
+  numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  skipMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  orderMarkets?: InputMaybe<SubgraphMarket_OrderBy>;
+  directionMarkets?: InputMaybe<SubgraphOrderDirection>;
+  numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
+  skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
+  orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
+  directionDeposits?: InputMaybe<SubgraphOrderDirection>;
+  numBorrows?: InputMaybe<Scalars["Int"]["input"]>;
+  skipBorrows?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBorrows?: InputMaybe<SubgraphBorrow_OrderBy>;
+  directionBorrows?: InputMaybe<SubgraphOrderDirection>;
+  numFeeCollections?: InputMaybe<Scalars["Int"]["input"]>;
+  skipFeeCollections?: InputMaybe<Scalars["Int"]["input"]>;
+  orderFeeCollections?: InputMaybe<SubgraphFeesCollected_OrderBy>;
+  directionFeeCollections?: InputMaybe<SubgraphOrderDirection>;
+  numRepayments?: InputMaybe<Scalars["Int"]["input"]>;
+  skipRepayments?: InputMaybe<Scalars["Int"]["input"]>;
+  orderRepayments?: InputMaybe<SubgraphDebtRepaid_OrderBy>;
+  directionRepayments?: InputMaybe<SubgraphOrderDirection>;
+}>;
+
+export type SubgraphGetMarketsForAllBorrowersQuery = {
+  __typename?: "Query";
+  markets: SubgraphMarketDataWithEventsFragment[];
+};
+
 export type SubgraphGetMarketQueryVariables = Exact<{
   market: Scalars["ID"]["input"];
   numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
@@ -9306,6 +9334,135 @@ export type GetMarketsForBorrowerSuspenseQueryHookResult = Apollo.UseSuspenseQue
 export type GetMarketsForBorrowerQueryResult = Apollo.QueryResult<
   SubgraphGetMarketsForBorrowerQuery,
   SubgraphGetMarketsForBorrowerQueryVariables
+>;
+export const GetMarketsForAllBorrowersDocument = gql`
+  query getMarketsForAllBorrowers(
+    $numMarkets: Int = 1000
+    $skipMarkets: Int = 0
+    $orderMarkets: Market_orderBy = createdAt
+    $directionMarkets: OrderDirection = desc
+    $numDeposits: Int = 10
+    $skipDeposits: Int = 0
+    $orderDeposits: Deposit_orderBy = blockTimestamp
+    $directionDeposits: OrderDirection = desc
+    $numBorrows: Int = 10
+    $skipBorrows: Int = 0
+    $orderBorrows: Borrow_orderBy = blockTimestamp
+    $directionBorrows: OrderDirection = desc
+    $numFeeCollections: Int = 10
+    $skipFeeCollections: Int = 0
+    $orderFeeCollections: FeesCollected_orderBy = blockTimestamp
+    $directionFeeCollections: OrderDirection = desc
+    $numRepayments: Int = 10
+    $skipRepayments: Int = 0
+    $orderRepayments: DebtRepaid_orderBy = blockTimestamp
+    $directionRepayments: OrderDirection = desc
+  ) {
+    markets(
+      orderBy: $orderMarkets
+      orderDirection: $directionMarkets
+      first: $numMarkets
+      skip: $skipMarkets
+    ) {
+      ...MarketDataWithEvents
+    }
+  }
+  ${MarketDataWithEventsFragmentDoc}
+  ${MarketDataFragmentDoc}
+  ${MarketDeployedEventFragmentDoc}
+  ${MarketRecordsFragmentDoc}
+  ${DepositDataFragmentDoc}
+  ${BorrowDataFragmentDoc}
+  ${FeesCollectedDataFragmentDoc}
+  ${RepaymentDataFragmentDoc}
+`;
+
+/**
+ * __useGetMarketsForAllBorrowersQuery__
+ *
+ * To run a query within a React component, call `useGetMarketsForAllBorrowersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMarketsForAllBorrowersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMarketsForAllBorrowersQuery({
+ *   variables: {
+ *      numMarkets: // value for 'numMarkets'
+ *      skipMarkets: // value for 'skipMarkets'
+ *      orderMarkets: // value for 'orderMarkets'
+ *      directionMarkets: // value for 'directionMarkets'
+ *      numDeposits: // value for 'numDeposits'
+ *      skipDeposits: // value for 'skipDeposits'
+ *      orderDeposits: // value for 'orderDeposits'
+ *      directionDeposits: // value for 'directionDeposits'
+ *      numBorrows: // value for 'numBorrows'
+ *      skipBorrows: // value for 'skipBorrows'
+ *      orderBorrows: // value for 'orderBorrows'
+ *      directionBorrows: // value for 'directionBorrows'
+ *      numFeeCollections: // value for 'numFeeCollections'
+ *      skipFeeCollections: // value for 'skipFeeCollections'
+ *      orderFeeCollections: // value for 'orderFeeCollections'
+ *      directionFeeCollections: // value for 'directionFeeCollections'
+ *      numRepayments: // value for 'numRepayments'
+ *      skipRepayments: // value for 'skipRepayments'
+ *      orderRepayments: // value for 'orderRepayments'
+ *      directionRepayments: // value for 'directionRepayments'
+ *   },
+ * });
+ */
+export function useGetMarketsForAllBorrowersQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    SubgraphGetMarketsForAllBorrowersQuery,
+    SubgraphGetMarketsForAllBorrowersQueryVariables
+  >
+): GetMarketsForAllBorrowersQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    SubgraphGetMarketsForAllBorrowersQuery,
+    SubgraphGetMarketsForAllBorrowersQueryVariables
+  >(GetMarketsForAllBorrowersDocument, options);
+}
+export function useGetMarketsForAllBorrowersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SubgraphGetMarketsForAllBorrowersQuery,
+    SubgraphGetMarketsForAllBorrowersQueryVariables
+  >
+): GetMarketsForAllBorrowersLazyQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    SubgraphGetMarketsForAllBorrowersQuery,
+    SubgraphGetMarketsForAllBorrowersQueryVariables
+  >(GetMarketsForAllBorrowersDocument, options);
+}
+export function useGetMarketsForAllBorrowersSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    SubgraphGetMarketsForAllBorrowersQuery,
+    SubgraphGetMarketsForAllBorrowersQueryVariables
+  >
+): GetMarketsForAllBorrowersSuspenseQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    SubgraphGetMarketsForAllBorrowersQuery,
+    SubgraphGetMarketsForAllBorrowersQueryVariables
+  >(GetMarketsForAllBorrowersDocument, options);
+}
+export type GetMarketsForAllBorrowersQueryHookResult = Apollo.QueryResult<
+  SubgraphGetMarketsForAllBorrowersQuery,
+  SubgraphGetMarketsForAllBorrowersQueryVariables
+>;
+export type GetMarketsForAllBorrowersLazyQueryHookResult = Apollo.LazyQueryResultTuple<
+  SubgraphGetMarketsForAllBorrowersQuery,
+  SubgraphGetMarketsForAllBorrowersQueryVariables
+>;
+export type GetMarketsForAllBorrowersSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
+  SubgraphGetMarketsForAllBorrowersQuery,
+  SubgraphGetMarketsForAllBorrowersQueryVariables
+>;
+export type GetMarketsForAllBorrowersQueryResult = Apollo.QueryResult<
+  SubgraphGetMarketsForAllBorrowersQuery,
+  SubgraphGetMarketsForAllBorrowersQueryVariables
 >;
 export const GetMarketDocument = gql`
   query getMarket(
