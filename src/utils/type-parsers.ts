@@ -90,6 +90,10 @@ export class WithdrawalRequestRecord {
     return batch.normalizedAmountPaid.mulDiv(this.scaledAmount, batch.scaledTotalAmount);
   }
 
+  getNormalizedTotalAmount(batch: WithdrawalBatch): TokenAmount {
+    return batch.normalizedTotalAmount.mulDiv(this.scaledAmount, batch.scaledTotalAmount);
+  }
+
   static fromSubgraphWithdrawalRequest(
     batch: WithdrawalBatch,
     data: SubgraphWithdrawalRequestPropertiesFragment
