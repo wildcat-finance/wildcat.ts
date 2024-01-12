@@ -83,6 +83,79 @@ query getLenderAccountWithMarket(
   }
 }
 
+query getAllMarketsForLenderView(
+  $lender: Bytes
+  # deposits
+  $numDeposits: Int = 200
+  $skipDeposits: Int = 0
+  $orderDeposits: Deposit_orderBy = blockTimestamp
+  $directionDeposits: OrderDirection = desc
+  # withdrawals
+  $numWithdrawals: Int = 200
+  $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry # $directionWithdrawals: OrderDirection = desc
+  # borrowRecords
+  $numBorrows: Int = 10
+  $skipBorrows: Int = 0
+  $orderBorrows: Borrow_orderBy = blockTimestamp
+  $directionBorrows: OrderDirection = desc
+  # repaymentRecords
+  $numRepayments: Int = 10
+  $skipRepayments: Int = 0
+  $orderRepayments: DebtRepaid_orderBy = blockTimestamp
+  $directionRepayments: OrderDirection = desc
+) {
+  markets {
+    ...MarketData
+    borrowRecords(
+      first: $numBorrows
+      skip: $skipBorrows
+      orderBy: $orderBorrows
+      orderDirection: $directionBorrows
+    ) {
+      ...BorrowData
+    }
+    repaymentRecords(
+      first: $numRepayments
+      skip: $skipRepayments
+      orderBy: $orderRepayments
+      orderDirection: $directionRepayments
+    ) {
+      ...RepaymentData
+    }
+  }
+  lenderAccounts(
+    where: {
+      and: [
+        { address: $lender }
+        {
+          or: [
+            { role_in: [DepositAndWithdraw, WithdrawOnly] }
+            { scaledBalance_gt: 0 }
+            { controllerAuthorization_: { authorized: true } }
+            { totalDeposited_gt: 0 }
+          ]
+        }
+      ]
+    }
+  ) {
+    ...AccountDataForLenderView
+    market {
+      id
+    }
+  }
+  controllerAuthorizations: lenderAuthorizations(
+    where: { and: [{ lender: $lender }, { authorized: true }] }
+  ) {
+    lender
+    authorized
+    controller {
+      markets {
+        id
+      }
+    }
+  }
+}
+
 query getAccountsWhereLenderAuthorizedOrActive(
   $lender: Bytes!
   # deposits
@@ -343,14 +416,14 @@ query getMarketsForAllBorrowers(
   $orderRepayments: DebtRepaid_orderBy = blockTimestamp
   $directionRepayments: OrderDirection = desc
 ) {
-    markets(
-      orderBy: $orderMarkets
-      orderDirection: $directionMarkets
-      first: $numMarkets
-      skip: $skipMarkets
-    ) {
-      ...MarketDataWithEvents
-    }
+  markets(
+    orderBy: $orderMarkets
+    orderDirection: $directionMarkets
+    first: $numMarkets
+    skip: $skipMarkets
+  ) {
+    ...MarketDataWithEvents
+  }
 }
 
 query getMarket(
