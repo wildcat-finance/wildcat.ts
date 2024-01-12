@@ -695,6 +695,29 @@ const _abi = [
     stateMutability: "payable",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "controllerFactories",
+        type: "address[]",
+      },
+      {
+        internalType: "address[]",
+        name: "controllers",
+        type: "address[]",
+      },
+      {
+        internalType: "address[]",
+        name: "markets",
+        type: "address[]",
+      },
+    ],
+    name: "updateSphereXEngineOnRegisteredContracts",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ] as const;
 
 export class WildcatArchController__factory {

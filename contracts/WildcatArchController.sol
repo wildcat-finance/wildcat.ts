@@ -111,4 +111,10 @@ interface WildcatArchController {
   function requestOwnershipHandover () external payable;
 
   function transferOwnership (address newOwner) external payable;
+
+  function updateSphereXEngineOnRegisteredContracts(
+    address[] calldata controllerFactories,
+    address[] calldata controllers,
+    address[] calldata markets
+  ) external;
 }

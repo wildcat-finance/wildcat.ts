@@ -61,6 +61,7 @@ export interface WildcatArchControllerInterface extends utils.Interface {
     "renounceOwnership()": FunctionFragment;
     "requestOwnershipHandover()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "updateSphereXEngineOnRegisteredContracts(address[],address[],address[])": FunctionFragment;
   };
 
   getFunction(
@@ -96,6 +97,7 @@ export interface WildcatArchControllerInterface extends utils.Interface {
       | "renounceOwnership"
       | "requestOwnershipHandover"
       | "transferOwnership"
+      | "updateSphereXEngineOnRegisteredContracts"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -219,6 +221,14 @@ export interface WildcatArchControllerInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "updateSphereXEngineOnRegisteredContracts",
+    values: [
+      PromiseOrValue<string>[],
+      PromiseOrValue<string>[],
+      PromiseOrValue<string>[]
+    ]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "cancelOwnershipHandover",
@@ -339,6 +349,10 @@ export interface WildcatArchControllerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateSphereXEngineOnRegisteredContracts",
     data: BytesLike
   ): Result;
 
@@ -649,6 +663,13 @@ export interface WildcatArchController extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    updateSphereXEngineOnRegisteredContracts(
+      controllerFactories: PromiseOrValue<string>[],
+      controllers: PromiseOrValue<string>[],
+      markets: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   cancelOwnershipHandover(
@@ -784,6 +805,13 @@ export interface WildcatArchController extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  updateSphereXEngineOnRegisteredContracts(
+    controllerFactories: PromiseOrValue<string>[],
+    controllers: PromiseOrValue<string>[],
+    markets: PromiseOrValue<string>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     cancelOwnershipHandover(overrides?: CallOverrides): Promise<void>;
 
@@ -911,6 +939,13 @@ export interface WildcatArchController extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateSphereXEngineOnRegisteredContracts(
+      controllerFactories: PromiseOrValue<string>[],
+      controllers: PromiseOrValue<string>[],
+      markets: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -1109,6 +1144,13 @@ export interface WildcatArchController extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    updateSphereXEngineOnRegisteredContracts(
+      controllerFactories: PromiseOrValue<string>[],
+      controllers: PromiseOrValue<string>[],
+      markets: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1255,6 +1297,13 @@ export interface WildcatArchController extends BaseContract {
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateSphereXEngineOnRegisteredContracts(
+      controllerFactories: PromiseOrValue<string>[],
+      controllers: PromiseOrValue<string>[],
+      markets: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }
