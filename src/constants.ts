@@ -12,7 +12,7 @@ import {
   WildcatArchController__factory
 } from "./typechain";
 import { SignerOrProvider } from "./types";
-import { ApolloCache, ApolloClient, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
+import { ApolloClient, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
 import { assert } from "./utils";
 
 type NetworkDeployments = {
@@ -131,7 +131,7 @@ export const RAY = BigNumber.from(10).pow(27);
 export const WAD = BigNumber.from(10).pow(18);
 
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.23",
+  [SupportedChainId.Sepolia]: "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.24",
   [SupportedChainId.Mainnet]:
     "https://api.studio.thegraph.com/query/56451/wildcat-finance-mainnet/v0.0.23"
 };
