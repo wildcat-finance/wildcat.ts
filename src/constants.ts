@@ -126,10 +126,6 @@ export const getMockArchControllerOwnerContract = (
   );
 };
 
-export const RAY = BigNumber.from(10).pow(27);
-
-export const WAD = BigNumber.from(10).pow(18);
-
 export const SubgraphUrls = {
   [SupportedChainId.Sepolia]: "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.24",
   [SupportedChainId.Mainnet]:

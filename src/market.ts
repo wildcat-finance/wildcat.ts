@@ -7,9 +7,8 @@ import { TokenAmount, Token, toBn } from "./token";
 import { SignerOrProvider, ContractWrapper, PartialTransaction } from "./types";
 import { formatUnits } from "ethers/lib/utils";
 import { MarketAccount } from "./account";
-import { RAY } from "./constants";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
-import { bipMul, mulDiv, rayDiv, rayMul } from "./utils/math";
+import { bipMul, mulDiv, rayDiv, rayMul, RAY } from "./utils/math";
 import {
   SubgraphBorrowDataFragment,
   SubgraphDepositDataFragment,
