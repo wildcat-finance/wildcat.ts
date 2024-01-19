@@ -372,6 +372,27 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   updateWith(data: MarketDataStructOutput): void {
+    // Note: this adds all the interest accrued to the base interest accrued, since the lens
+    // doesn't give us any way to distinguish between base interest and delinquency fees.
+    if (
+      this.scaledTotalSupply.eq(data.scaledTotalSupply) &&
+      data.scaleFactor.gt(this.scaleFactor) &&
+      this.totalBaseInterestAccrued
+    ) {
+      const lastTotalValue = rayMul(this.scaledTotalSupply, this.scaleFactor);
+      const currentTotalValue = rayMul(this.scaledTotalSupply, data.scaleFactor);
+      const baseInterestAccrued = currentTotalValue.sub(lastTotalValue);
+      this.totalBaseInterestAccrued = this.totalBaseInterestAccrued.add(baseInterestAccrued);
+    }
+
+    if (
+      data.lastAccruedProtocolFees.gt(this.lastAccruedProtocolFees.raw) &&
+      this.totalProtocolFeesAccrued
+    ) {
+      this.totalProtocolFeesAccrued = this.totalProtocolFeesAccrued.add(
+        data.lastAccruedProtocolFees.sub(this.lastAccruedProtocolFees.raw)
+      );
+    }
     this.feeRecipient = data.feeRecipient;
     this.protocolFeeBips = data.protocolFeeBips.toNumber();
     this.delinquencyFeeBips = data.delinquencyFeeBips.toNumber();
