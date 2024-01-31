@@ -64,6 +64,21 @@ function parseRecord(
 
 // @todo pull min/max apr from contract and subgraph
 
+export type TotalDebtBreakdown =
+  | {
+      status: "delinquent";
+      borrowed: TokenAmount;
+      delinquentDebt: TokenAmount;
+      reserves: TokenAmount;
+      collateralObligation: TokenAmount;
+    }
+  | {
+      status: "healthy";
+      borrowed: TokenAmount;
+      borrowable: TokenAmount;
+      collateralObligation: TokenAmount;
+    };
+
 export class Market extends ContractWrapper<WildcatMarket> {
   public depositRecords: DepositRecord[];
   public repaymentRecords: RepaymentRecord[];
@@ -248,6 +263,44 @@ export class Market extends ContractWrapper<WildcatMarket> {
       .add(this.normalizedUnclaimedWithdrawals)
       .add(this.lastAccruedProtocolFees);
     return this.totalAssets.satsub(unavailableAssets);
+  }
+
+  get minimumReserves(): TokenAmount {
+    return this.underlyingToken.getAmount(
+      bipMul(this.outstandingTotalSupply.raw, BigNumber.from(this.reserveRatioBips))
+    );
+  }
+
+  getTotalDebtBreakdown(): TotalDebtBreakdown {
+    const totalDebts = this.totalDebts;
+
+    const minimumReserves = this.minimumReserves;
+    const reserves = this.totalAssets;
+    const collateralObligation = this.normalizedPendingWithdrawals
+      .add(this.normalizedUnclaimedWithdrawals)
+      .add(minimumReserves)
+      .add(this.lastAccruedProtocolFees);
+    if (reserves.lt(collateralObligation)) {
+      const borrowablePortionOfSupply = totalDebts.sub(collateralObligation);
+      const delinquentDebt = collateralObligation.sub(reserves);
+      const borrowed = borrowablePortionOfSupply.sub(reserves).sub(delinquentDebt);
+      return {
+        status: "delinquent",
+        borrowed,
+        delinquentDebt,
+        reserves,
+        collateralObligation
+      };
+    }
+    const borrowed = totalDebts.sub(reserves);
+    const borrowable = reserves.sub(collateralObligation);
+
+    return {
+      status: "healthy",
+      borrowable,
+      borrowed,
+      collateralObligation
+    };
   }
 
   normalizeAmount(amount: BigNumber): BigNumber {
