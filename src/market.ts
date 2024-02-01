@@ -71,12 +71,14 @@ export type TotalDebtBreakdown =
       delinquentDebt: TokenAmount;
       reserves: TokenAmount;
       collateralObligation: TokenAmount;
+      totalDebt: TokenAmount;
     }
   | {
       status: "healthy";
       borrowed: TokenAmount;
       borrowable: TokenAmount;
       collateralObligation: TokenAmount;
+      totalDebt: TokenAmount;
     };
 
 export class Market extends ContractWrapper<WildcatMarket> {
@@ -272,34 +274,37 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   getTotalDebtBreakdown(): TotalDebtBreakdown {
-    const totalDebts = this.totalDebts;
-
     const minimumReserves = this.minimumReserves;
     const reserves = this.totalAssets;
-    const collateralObligation = this.normalizedPendingWithdrawals
+    const pendingWithdrawals = this.normalizedPendingWithdrawals;
+    const collateralObligation = pendingWithdrawals
       .add(this.normalizedUnclaimedWithdrawals)
       .add(minimumReserves)
       .add(this.lastAccruedProtocolFees);
+    const nonReservedSupply = this.outstandingTotalSupply.sub(minimumReserves);
+
     if (reserves.lt(collateralObligation)) {
-      const borrowablePortionOfSupply = totalDebts.sub(collateralObligation);
+      // const borrowablePortionOfSupply = totalDebts.sub(collateralObligation);
       const delinquentDebt = collateralObligation.sub(reserves);
-      const borrowed = borrowablePortionOfSupply.sub(reserves).sub(delinquentDebt);
+      // const borrowed = borrowablePortionOfSupply.sub(reserves).sub(delinquentDebt);
       return {
         status: "delinquent",
-        borrowed,
+        borrowed: nonReservedSupply,
         delinquentDebt,
         reserves,
-        collateralObligation
+        collateralObligation,
+        totalDebt: this.totalDebts
       };
     }
-    const borrowed = totalDebts.sub(reserves);
+    const borrowed = this.totalDebts.sub(reserves);
     const borrowable = reserves.sub(collateralObligation);
 
     return {
       status: "healthy",
       borrowable,
       borrowed,
-      collateralObligation
+      collateralObligation,
+      totalDebt: this.totalDebts
     };
   }
 
