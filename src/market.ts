@@ -8,7 +8,17 @@ import { SignerOrProvider, ContractWrapper, PartialTransaction } from "./types";
 import { formatUnits } from "ethers/lib/utils";
 import { MarketAccount } from "./account";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
-import { bipMul, mulDiv, rayDiv, rayMul, RAY } from "./utils/math";
+import {
+  bipMul,
+  mulDiv,
+  rayDiv,
+  rayMul,
+  RAY,
+  bipToRay,
+  BIP,
+  calculateLinearInterestFromBips,
+  SECONDS_IN_365_DAYS
+} from "./utils/math";
 import {
   SubgraphBorrowDataFragment,
   SubgraphDepositDataFragment,
@@ -314,6 +324,44 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   scaleAmount(amount: BigNumber): BigNumber {
     return rayDiv(amount, this.scaleFactor);
+  }
+
+  get secondsBeforeDelinquency(): number {
+    if (this.isDelinquent) return 0;
+    const interestPerSecond = this.totalSupply
+      .rayMul(this.effectiveBorrowerAPR)
+      .div(SECONDS_IN_365_DAYS);
+    return this.liquidReserves.sub(this.minimumReserves).div(interestPerSecond).raw.toNumber();
+  }
+
+  /**
+   * @dev Calculate effective interest rate currently paid by borrower.
+   *      Borrower pays base APR, protocol fee (on base APR) and delinquency
+   *      fee (if delinquent beyond grace period).
+   *
+   * @return apr paid by borrower in ray
+   */
+  get effectiveBorrowerAPR(): BigNumber {
+    // apr + (apr * protocolFee)
+    let apr = bipMul(bipToRay(this.annualInterestBips), BIP.add(this.protocolFeeBips));
+    if (this.timeDelinquent > this.delinquencyGracePeriod) {
+      apr = apr.add(bipToRay(this.delinquencyFeeBips));
+    }
+    return apr;
+  }
+
+  /**
+   * @dev Calculate effective interest rate currently earned by lenders.
+   *     Lenders earn base APR and delinquency fee (if delinquent beyond grace period)
+   *
+   * @return apr earned by lender in ray
+   */
+  get effectiveLenderAPR(): BigNumber {
+    let apr = this.annualInterestBips;
+    if (this.timeDelinquent > this.delinquencyGracePeriod) {
+      apr += this.delinquencyFeeBips;
+    }
+    return bipToRay(apr);
   }
 
   /* -------------------------------------------------------------------------- */
