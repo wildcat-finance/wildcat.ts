@@ -328,10 +328,14 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   get secondsBeforeDelinquency(): number {
     if (this.isDelinquent) return 0;
-    const interestPerSecond = this.totalSupply
+    const interestPerSecondAddedToRequirements = this.totalSupply
       .rayMul(this.effectiveBorrowerAPR)
-      .div(SECONDS_IN_365_DAYS);
-    return this.liquidReserves.sub(this.minimumReserves).div(interestPerSecond).raw.toNumber();
+      .div(SECONDS_IN_365_DAYS)
+      .bipMul(this.reserveRatioBips);
+    return this.liquidReserves
+      .sub(this.minimumReserves)
+      .div(interestPerSecondAddedToRequirements)
+      .raw.toNumber();
   }
 
   /**
