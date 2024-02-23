@@ -7934,6 +7934,19 @@ export type SubgraphGetMarketQuery = {
   market?: SubgraphMarketDataWithEventsFragment | null;
 };
 
+export type SubgraphGetWithdrawalRequestsByMarketQueryVariables = Exact<{
+  market: Scalars["String"]["input"];
+  numWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
+  skipWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
+  orderWithdrawals?: InputMaybe<SubgraphWithdrawalRequest_OrderBy>;
+  directionWithdrawals?: InputMaybe<SubgraphOrderDirection>;
+}>;
+
+export type SubgraphGetWithdrawalRequestsByMarketQuery = {
+  __typename?: "Query";
+  withdrawalRequests: SubgraphWithdrawalRequestPropertiesFragment[];
+};
+
 export type SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables = Exact<{
   market: Scalars["ID"]["input"];
 }>;
@@ -9848,6 +9861,99 @@ export type GetMarketSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
 export type GetMarketQueryResult = Apollo.QueryResult<
   SubgraphGetMarketQuery,
   SubgraphGetMarketQueryVariables
+>;
+export const GetWithdrawalRequestsByMarketDocument = gql`
+  query getWithdrawalRequestsByMarket(
+    $market: String!
+    $numWithdrawals: Int = 1000
+    $skipWithdrawals: Int = 0
+    $orderWithdrawals: WithdrawalRequest_orderBy = blockTimestamp
+    $directionWithdrawals: OrderDirection = desc
+  ) {
+    withdrawalRequests(
+      orderBy: $orderWithdrawals
+      orderDirection: $directionWithdrawals
+      first: $numWithdrawals
+      skip: $skipWithdrawals
+      where: { batch_contains_nocase: $market }
+    ) {
+      ...WithdrawalRequestProperties
+    }
+  }
+  ${WithdrawalRequestPropertiesFragmentDoc}
+`;
+
+/**
+ * __useGetWithdrawalRequestsByMarketQuery__
+ *
+ * To run a query within a React component, call `useGetWithdrawalRequestsByMarketQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWithdrawalRequestsByMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWithdrawalRequestsByMarketQuery({
+ *   variables: {
+ *      market: // value for 'market'
+ *      numWithdrawals: // value for 'numWithdrawals'
+ *      skipWithdrawals: // value for 'skipWithdrawals'
+ *      orderWithdrawals: // value for 'orderWithdrawals'
+ *      directionWithdrawals: // value for 'directionWithdrawals'
+ *   },
+ * });
+ */
+export function useGetWithdrawalRequestsByMarketQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    SubgraphGetWithdrawalRequestsByMarketQuery,
+    SubgraphGetWithdrawalRequestsByMarketQueryVariables
+  >
+): GetWithdrawalRequestsByMarketQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    SubgraphGetWithdrawalRequestsByMarketQuery,
+    SubgraphGetWithdrawalRequestsByMarketQueryVariables
+  >(GetWithdrawalRequestsByMarketDocument, options);
+}
+export function useGetWithdrawalRequestsByMarketLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SubgraphGetWithdrawalRequestsByMarketQuery,
+    SubgraphGetWithdrawalRequestsByMarketQueryVariables
+  >
+): GetWithdrawalRequestsByMarketLazyQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    SubgraphGetWithdrawalRequestsByMarketQuery,
+    SubgraphGetWithdrawalRequestsByMarketQueryVariables
+  >(GetWithdrawalRequestsByMarketDocument, options);
+}
+export function useGetWithdrawalRequestsByMarketSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    SubgraphGetWithdrawalRequestsByMarketQuery,
+    SubgraphGetWithdrawalRequestsByMarketQueryVariables
+  >
+): GetWithdrawalRequestsByMarketSuspenseQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    SubgraphGetWithdrawalRequestsByMarketQuery,
+    SubgraphGetWithdrawalRequestsByMarketQueryVariables
+  >(GetWithdrawalRequestsByMarketDocument, options);
+}
+export type GetWithdrawalRequestsByMarketQueryHookResult = Apollo.QueryResult<
+  SubgraphGetWithdrawalRequestsByMarketQuery,
+  SubgraphGetWithdrawalRequestsByMarketQueryVariables
+>;
+export type GetWithdrawalRequestsByMarketLazyQueryHookResult = Apollo.LazyQueryResultTuple<
+  SubgraphGetWithdrawalRequestsByMarketQuery,
+  SubgraphGetWithdrawalRequestsByMarketQueryVariables
+>;
+export type GetWithdrawalRequestsByMarketSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
+  SubgraphGetWithdrawalRequestsByMarketQuery,
+  SubgraphGetWithdrawalRequestsByMarketQueryVariables
+>;
+export type GetWithdrawalRequestsByMarketQueryResult = Apollo.QueryResult<
+  SubgraphGetWithdrawalRequestsByMarketQuery,
+  SubgraphGetWithdrawalRequestsByMarketQueryVariables
 >;
 export const GetAllPendingWithdrawalBatchesForMarketDocument = gql`
   query getAllPendingWithdrawalBatchesForMarket($market: ID!) {

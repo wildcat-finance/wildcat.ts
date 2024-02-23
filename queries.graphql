@@ -454,6 +454,24 @@ query getMarket(
   }
 }
 
+query getWithdrawalRequestsByMarket(
+  $market: String!
+  $numWithdrawals: Int = 1000
+  $skipWithdrawals: Int = 0
+  $orderWithdrawals: WithdrawalRequest_orderBy = blockTimestamp
+  $directionWithdrawals: OrderDirection = desc
+) {
+  withdrawalRequests(
+    orderBy: $orderWithdrawals
+    orderDirection: $directionWithdrawals
+    first: $numWithdrawals
+    skip: $skipWithdrawals
+    where: { batch_contains_nocase: $market }
+  ) {
+    ...WithdrawalRequestProperties
+  }
+}
+
 query getAllPendingWithdrawalBatchesForMarket($market: ID!) {
   market(id: $market) {
     withdrawalBatches(where: { isClosed: false }) {
