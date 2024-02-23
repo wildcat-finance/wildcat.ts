@@ -25,6 +25,11 @@ export type Scalars = {
   Int8: { input: any; output: any };
 };
 
+export enum SubgraphAggregation_Interval {
+  Day = "day",
+  Hour = "hour"
+}
+
 export type SubgraphApproval = {
   __typename?: "Approval";
   blockNumber: Scalars["Int"]["output"];
@@ -4423,7 +4428,8 @@ export type SubgraphQuery = {
   ownershipHandoverRequesteds: SubgraphOwnershipHandoverRequested[];
   ownershipTransferred?: Maybe<SubgraphOwnershipTransferred>;
   ownershipTransferreds: SubgraphOwnershipTransferred[];
-  parameterConstraints: SubgraphParameterConstraints[];
+  parameterConstraints?: Maybe<SubgraphParameterConstraints>;
+  parameterConstraints_collection: SubgraphParameterConstraints[];
   registeredBorrower?: Maybe<SubgraphRegisteredBorrower>;
   registeredBorrowers: SubgraphRegisteredBorrower[];
   reserveRatioBipsUpdated?: Maybe<SubgraphReserveRatioBipsUpdated>;
@@ -4838,7 +4844,9 @@ export type SubgraphQueryOwnershipTransferredsArgs = {
   where?: InputMaybe<SubgraphOwnershipTransferred_Filter>;
 };
 
-export type SubgraphQueryParameterConstraintsArgs = {
+export type SubgraphQueryParameterConstraintsArgs = SubgraphQueryApprovalArgs;
+
+export type SubgraphQueryParameterConstraints_CollectionArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   first?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<SubgraphParameterConstraints_OrderBy>;
@@ -5668,7 +5676,8 @@ export type SubgraphSubscription = {
   ownershipHandoverRequesteds: SubgraphOwnershipHandoverRequested[];
   ownershipTransferred?: Maybe<SubgraphOwnershipTransferred>;
   ownershipTransferreds: SubgraphOwnershipTransferred[];
-  parameterConstraints: SubgraphParameterConstraints[];
+  parameterConstraints?: Maybe<SubgraphParameterConstraints>;
+  parameterConstraints_collection: SubgraphParameterConstraints[];
   registeredBorrower?: Maybe<SubgraphRegisteredBorrower>;
   registeredBorrowers: SubgraphRegisteredBorrower[];
   reserveRatioBipsUpdated?: Maybe<SubgraphReserveRatioBipsUpdated>;
@@ -5840,7 +5849,10 @@ export type SubgraphSubscriptionOwnershipTransferredArgs = SubgraphQueryApproval
 
 export type SubgraphSubscriptionOwnershipTransferredsArgs = SubgraphQueryOwnershipTransferredsArgs;
 
-export type SubgraphSubscriptionParameterConstraintsArgs = SubgraphQueryParameterConstraintsArgs;
+export type SubgraphSubscriptionParameterConstraintsArgs = SubgraphQueryApprovalArgs;
+
+export type SubgraphSubscriptionParameterConstraints_CollectionArgs =
+  SubgraphQueryParameterConstraints_CollectionArgs;
 
 export type SubgraphSubscriptionRegisteredBorrowerArgs = SubgraphQueryApprovalArgs;
 
@@ -8005,6 +8017,7 @@ export type SubgraphDepositDataFragment = {
   blockNumber: number;
   blockTimestamp: number;
   transactionHash: string;
+  account: { __typename?: "LenderAccount"; address: string };
 };
 
 export type SubgraphMarketDataFragment = {
@@ -8308,6 +8321,9 @@ export const LenderPropertiesFragmentDoc = gql`
 export const DepositDataFragmentDoc = gql`
   fragment DepositData on Deposit {
     id
+    account {
+      address
+    }
     assetAmount
     scaledAmount
     blockNumber

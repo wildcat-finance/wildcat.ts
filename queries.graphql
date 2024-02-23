@@ -511,6 +511,9 @@ fragment LenderProperties on LenderAccount {
 
 fragment DepositData on Deposit {
   id
+  account {
+    address
+  }
   assetAmount
   scaledAmount
   blockNumber

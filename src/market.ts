@@ -44,7 +44,8 @@ export type CollateralizationInfo = {
 
 export type DepositRecord = {
   amount: TokenAmount;
-} & Omit<SubgraphDepositDataFragment, "assetAmount">;
+  address: string;
+} & Omit<SubgraphDepositDataFragment, "assetAmount" | "account">;
 
 export type RepaymentRecord = {
   amount: TokenAmount;
@@ -58,6 +59,12 @@ export type FeeCollectionRecord = {
   amount: TokenAmount;
 } & Omit<SubgraphFeesCollectedDataFragment, "feesCollected">;
 
+const isDeposit = (
+  log: SubgraphDepositDataFragment | SubgraphRepaymentDataFragment | SubgraphBorrowDataFragment
+): log is SubgraphDepositDataFragment => {
+  return log.__typename === "Deposit";
+};
+
 function parseRecord(token: Token, log: SubgraphDepositDataFragment): DepositRecord;
 function parseRecord(token: Token, log: SubgraphRepaymentDataFragment): RepaymentRecord;
 function parseRecord(token: Token, log: SubgraphBorrowDataFragment): BorrowRecord;
@@ -65,6 +72,14 @@ function parseRecord(
   token: Token,
   log: SubgraphDepositDataFragment | SubgraphRepaymentDataFragment | SubgraphBorrowDataFragment
 ): DepositRecord | RepaymentRecord | BorrowRecord {
+  if (isDeposit(log)) {
+    const { account, assetAmount, ...rest } = log;
+    return {
+      ...rest,
+      amount: token.getAmount(assetAmount),
+      address: account.address
+    };
+  }
   const { assetAmount, ...rest } = log;
   return {
     ...rest,
