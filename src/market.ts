@@ -195,7 +195,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   /** @returns Maximum amount of underlying token that can be deposited */
   get maximumDeposit(): TokenAmount {
-    return this.underlyingToken.getAmount(this.maxTotalSupply.raw.sub(this.totalSupply.raw));
+    return this.underlyingToken.getAmount(this.maxTotalSupply.satsub(this.totalSupply.raw));
   }
 
   /** @returns Whether the borrower is in penalized delinquency */
