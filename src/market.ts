@@ -27,7 +27,14 @@ import {
   SubgraphMarketDeployedEventFragment,
   SubgraphRepaymentDataFragment
 } from "./gql/graphql";
-import { MakeOptional } from "./utils";
+import {
+  BorrowRecord,
+  DepositRecord,
+  FeeCollectionRecord,
+  MakeOptional,
+  RepaymentRecord,
+  parseMarketRecord
+} from "./utils";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -41,51 +48,6 @@ export type CollateralizationInfo = {
   // Expiry of temporary ratio
   temporaryExpiry?: number;
 };
-
-export type DepositRecord = {
-  amount: TokenAmount;
-  address: string;
-} & Omit<SubgraphDepositDataFragment, "assetAmount" | "account">;
-
-export type RepaymentRecord = {
-  amount: TokenAmount;
-} & Omit<SubgraphRepaymentDataFragment, "assetAmount">;
-
-export type BorrowRecord = {
-  amount: TokenAmount;
-} & Omit<SubgraphBorrowDataFragment, "assetAmount">;
-
-export type FeeCollectionRecord = {
-  amount: TokenAmount;
-} & Omit<SubgraphFeesCollectedDataFragment, "feesCollected">;
-
-const isDeposit = (
-  log: SubgraphDepositDataFragment | SubgraphRepaymentDataFragment | SubgraphBorrowDataFragment
-): log is SubgraphDepositDataFragment => {
-  return log.__typename === "Deposit";
-};
-
-function parseRecord(token: Token, log: SubgraphDepositDataFragment): DepositRecord;
-function parseRecord(token: Token, log: SubgraphRepaymentDataFragment): RepaymentRecord;
-function parseRecord(token: Token, log: SubgraphBorrowDataFragment): BorrowRecord;
-function parseRecord(
-  token: Token,
-  log: SubgraphDepositDataFragment | SubgraphRepaymentDataFragment | SubgraphBorrowDataFragment
-): DepositRecord | RepaymentRecord | BorrowRecord {
-  if (isDeposit(log)) {
-    const { account, assetAmount, ...rest } = log;
-    return {
-      ...rest,
-      amount: token.getAmount(assetAmount),
-      address: account.address
-    };
-  }
-  const { assetAmount, ...rest } = log;
-  return {
-    ...rest,
-    amount: token.getAmount(assetAmount)
-  };
-}
 
 // @todo pull min/max apr from contract and subgraph
 
@@ -170,9 +132,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
     public signerAddress?: string
   ) {
     super(_provider);
-    this.depositRecords = depositRecords.map((log) => parseRecord(this.underlyingToken, log));
-    this.repaymentRecords = repaymentRecords.map((log) => parseRecord(this.underlyingToken, log));
-    this.borrowRecords = borrowRecords.map((log) => parseRecord(this.underlyingToken, log));
+    this.depositRecords = depositRecords.map((log) => parseMarketRecord(this.underlyingToken, log));
+    this.repaymentRecords = repaymentRecords.map((log) =>
+      parseMarketRecord(this.underlyingToken, log)
+    );
+    this.borrowRecords = borrowRecords.map((log) => parseMarketRecord(this.underlyingToken, log));
     this.feeCollectionRecords = feeCollectionRecords.map(({ feesCollected, ...rest }) => ({
       ...rest,
       amount: this.underlyingToken.getAmount(feesCollected)

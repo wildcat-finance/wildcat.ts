@@ -3,6 +3,10 @@ import { PartialTransaction, SignerOrProvider } from "../types";
 import { BigNumber, PopulatedTransaction, constants } from "ethers";
 import { Token, TokenAmount } from "../token";
 import {
+  SubgraphBorrowDataFragment,
+  SubgraphDepositDataFragment,
+  SubgraphFeesCollectedDataFragment,
+  SubgraphRepaymentDataFragment,
   SubgraphWithdrawalBatchPaymentPropertiesFragment,
   SubgraphWithdrawalExecutionPropertiesFragment,
   SubgraphWithdrawalRequestPropertiesFragment
@@ -169,3 +173,45 @@ export const removeUnusedTxFields = ({
     value: value.toHexString()
   };
 };
+
+export type DepositRecord = {
+  amount: TokenAmount;
+  address: string;
+} & Omit<SubgraphDepositDataFragment, "assetAmount" | "account">;
+
+export type RepaymentRecord = {
+  amount: TokenAmount;
+} & Omit<SubgraphRepaymentDataFragment, "assetAmount">;
+
+export type BorrowRecord = {
+  amount: TokenAmount;
+} & Omit<SubgraphBorrowDataFragment, "assetAmount">;
+
+export type FeeCollectionRecord = {
+  amount: TokenAmount;
+} & Omit<SubgraphFeesCollectedDataFragment, "feesCollected">;
+
+export function parseMarketRecord(token: Token, log: SubgraphDepositDataFragment): DepositRecord;
+export function parseMarketRecord(
+  token: Token,
+  log: SubgraphRepaymentDataFragment
+): RepaymentRecord;
+export function parseMarketRecord(token: Token, log: SubgraphBorrowDataFragment): BorrowRecord;
+export function parseMarketRecord(
+  token: Token,
+  log: SubgraphDepositDataFragment | SubgraphRepaymentDataFragment | SubgraphBorrowDataFragment
+): DepositRecord | RepaymentRecord | BorrowRecord {
+  if ("account" in log) {
+    const { account, assetAmount, ...rest } = log;
+    return {
+      ...rest,
+      amount: token.getAmount(assetAmount),
+      address: account.address
+    };
+  }
+  const { assetAmount, ...rest } = log;
+  return {
+    ...rest,
+    amount: token.getAmount(assetAmount)
+  };
+}
