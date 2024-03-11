@@ -127,9 +127,10 @@ export const getMockArchControllerOwnerContract = (
 };
 
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: "https://api.studio.thegraph.com/query/56451/wildcat-finance/v0.0.24",
+  [SupportedChainId.Sepolia]:
+    "https://api.studio.thegraph.com/query/56451/wildcat-finance/version/latest",
   [SupportedChainId.Mainnet]:
-    "https://api.studio.thegraph.com/query/56451/wildcat-finance-mainnet/v0.0.23"
+    "https://api.studio.thegraph.com/query/56451/wildcat-finance-mainnet/version/latest"
 };
 
 export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
