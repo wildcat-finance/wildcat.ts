@@ -7403,6 +7403,8 @@ export type Subgraph_Block_ = {
   hash?: Maybe<Scalars["Bytes"]["output"]>;
   /** The block number */
   number: Scalars["Int"]["output"];
+  /** The hash of the parent block */
+  parentHash?: Maybe<Scalars["Bytes"]["output"]>;
   /** Integer representation of the timestamp stored in blocks for the chain */
   timestamp?: Maybe<Scalars["Int"]["output"]>;
 };
@@ -7446,6 +7448,290 @@ export type SubgraphAccountDataForLenderViewFragment = {
   deposits: SubgraphDepositDataFragment[];
 };
 
+export type SubgraphLenderPropertiesFragment = {
+  __typename?: "LenderAccount";
+  id: string;
+  address: string;
+  scaledBalance: string;
+  role: SubgraphLenderStatus;
+  totalDeposited: string;
+  lastScaleFactor: string;
+  lastUpdatedTimestamp: number;
+  totalInterestEarned: string;
+  numPendingWithdrawalBatches: number;
+};
+
+export type SubgraphMarketDataFragment = {
+  __typename?: "Market";
+  id: string;
+  isRegistered: boolean;
+  isClosed: boolean;
+  borrower: string;
+  sentinel: string;
+  feeRecipient: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  protocolFeeBips: number;
+  delinquencyGracePeriod: number;
+  delinquencyFeeBips: number;
+  withdrawalBatchDuration: number;
+  maxTotalSupply: string;
+  pendingProtocolFees: string;
+  normalizedUnclaimedWithdrawals: string;
+  scaledTotalSupply: string;
+  scaledPendingWithdrawals: string;
+  pendingWithdrawalExpiry: string;
+  isDelinquent: boolean;
+  timeDelinquent: number;
+  annualInterestBips: number;
+  reserveRatioBips: number;
+  scaleFactor: string;
+  lastInterestAccruedTimestamp: number;
+  originalAnnualInterestBips: number;
+  originalReserveRatioBips: number;
+  temporaryReserveRatioExpiry: number;
+  temporaryReserveRatioActive: boolean;
+  totalBorrowed: string;
+  totalRepaid: string;
+  totalBaseInterestAccrued: string;
+  totalDelinquencyFeesAccrued: string;
+  totalProtocolFeesAccrued: string;
+  totalDeposited: string;
+  controller: { __typename?: "Controller"; id: string };
+  _asset: {
+    __typename?: "Token";
+    id: string;
+    address: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    isMock: boolean;
+  };
+  deployedEvent: SubgraphMarketDeployedEventFragment;
+};
+
+export type SubgraphAprConstraintsFragment = {
+  __typename?: "ParameterConstraints";
+  minimumAnnualInterestBips: number;
+  maximumAnnualInterestBips: number;
+};
+
+export type SubgraphDepositDataFragment = {
+  __typename?: "Deposit";
+  id: string;
+  assetAmount: string;
+  scaledAmount: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+  account: { __typename?: "LenderAccount"; address: string };
+};
+
+export type SubgraphMarketDeployedEventFragment = {
+  __typename?: "MarketDeployed";
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+};
+
+export type SubgraphMarketDataWithEventsFragment = {
+  __typename?: "Market";
+  id: string;
+  isRegistered: boolean;
+  isClosed: boolean;
+  borrower: string;
+  sentinel: string;
+  feeRecipient: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  protocolFeeBips: number;
+  delinquencyGracePeriod: number;
+  delinquencyFeeBips: number;
+  withdrawalBatchDuration: number;
+  maxTotalSupply: string;
+  pendingProtocolFees: string;
+  normalizedUnclaimedWithdrawals: string;
+  scaledTotalSupply: string;
+  scaledPendingWithdrawals: string;
+  pendingWithdrawalExpiry: string;
+  isDelinquent: boolean;
+  timeDelinquent: number;
+  annualInterestBips: number;
+  reserveRatioBips: number;
+  scaleFactor: string;
+  lastInterestAccruedTimestamp: number;
+  originalAnnualInterestBips: number;
+  originalReserveRatioBips: number;
+  temporaryReserveRatioExpiry: number;
+  temporaryReserveRatioActive: boolean;
+  totalBorrowed: string;
+  totalRepaid: string;
+  totalBaseInterestAccrued: string;
+  totalDelinquencyFeesAccrued: string;
+  totalProtocolFeesAccrued: string;
+  totalDeposited: string;
+  controller: { __typename?: "Controller"; id: string };
+  _asset: {
+    __typename?: "Token";
+    id: string;
+    address: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    isMock: boolean;
+  };
+  deployedEvent: SubgraphMarketDeployedEventFragment;
+  depositRecords: SubgraphDepositDataFragment[];
+  borrowRecords: SubgraphBorrowDataFragment[];
+  feeCollectionRecords: SubgraphFeesCollectedDataFragment[];
+  repaymentRecords: SubgraphRepaymentDataFragment[];
+};
+
+export type SubgraphWithdrawalBatchPaymentPropertiesFragment = {
+  __typename?: "WithdrawalBatchPayment";
+  id: string;
+  scaledAmountBurned: string;
+  normalizedAmountPaid: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+};
+
+export type SubgraphWithdrawalRequestPropertiesFragment = {
+  __typename?: "WithdrawalRequest";
+  id: string;
+  requestIndex: number;
+  scaledAmount: string;
+  normalizedAmount: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+  account: { __typename?: "LenderAccount"; address: string };
+};
+
+export type SubgraphWithdrawalExecutionPropertiesFragment = {
+  __typename?: "WithdrawalExecution";
+  id: string;
+  normalizedAmount: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+  account: { __typename?: "LenderAccount"; address: string };
+};
+
+export type SubgraphLenderWithdrawalPropertiesFragment = {
+  __typename?: "LenderWithdrawalStatus";
+  id: string;
+  requestsCount: number;
+  executionsCount: number;
+  scaledAmount: string;
+  normalizedAmountWithdrawn: string;
+  totalNormalizedRequests: string;
+  isCompleted: boolean;
+  account: { __typename?: "LenderAccount"; address: string };
+};
+
+export type SubgraphLenderWithdrawalPropertiesWithEventsFragment = {
+  __typename?: "LenderWithdrawalStatus";
+  id: string;
+  requestsCount: number;
+  executionsCount: number;
+  scaledAmount: string;
+  normalizedAmountWithdrawn: string;
+  totalNormalizedRequests: string;
+  isCompleted: boolean;
+  batch: SubgraphWithdrawalBatchPropertiesFragment;
+  requests: SubgraphWithdrawalRequestPropertiesFragment[];
+  executions: SubgraphWithdrawalExecutionPropertiesFragment[];
+  account: { __typename?: "LenderAccount"; address: string };
+};
+
+export type SubgraphWithdrawalBatchPropertiesFragment = {
+  __typename?: "WithdrawalBatch";
+  id: string;
+  expiry: string;
+  scaledTotalAmount: string;
+  scaledAmountBurned: string;
+  normalizedAmountPaid: string;
+  normalizedAmountClaimed: string;
+  totalNormalizedRequests: string;
+  isExpired: boolean;
+  isClosed: boolean;
+  paymentsCount: number;
+  lastScaleFactor: string;
+  lastUpdatedTimestamp: number;
+  totalInterestEarned: string;
+  creation: {
+    __typename?: "WithdrawalBatchCreated";
+    blockNumber: number;
+    blockTimestamp: number;
+    transactionHash: string;
+  };
+  payments: SubgraphWithdrawalBatchPaymentPropertiesFragment[];
+};
+
+export type SubgraphWithdrawalBatchPropertiesWithEventsFragment = {
+  __typename?: "WithdrawalBatch";
+  id: string;
+  expiry: string;
+  scaledTotalAmount: string;
+  scaledAmountBurned: string;
+  normalizedAmountPaid: string;
+  normalizedAmountClaimed: string;
+  totalNormalizedRequests: string;
+  isExpired: boolean;
+  isClosed: boolean;
+  paymentsCount: number;
+  lastScaleFactor: string;
+  lastUpdatedTimestamp: number;
+  totalInterestEarned: string;
+  withdrawals: SubgraphLenderWithdrawalPropertiesFragment[];
+  requests: SubgraphWithdrawalRequestPropertiesFragment[];
+  executions: SubgraphWithdrawalExecutionPropertiesFragment[];
+  creation: {
+    __typename?: "WithdrawalBatchCreated";
+    blockNumber: number;
+    blockTimestamp: number;
+    transactionHash: string;
+  };
+  payments: SubgraphWithdrawalBatchPaymentPropertiesFragment[];
+};
+
+export type SubgraphMarketRecordsFragment = {
+  __typename?: "Market";
+  depositRecords: SubgraphDepositDataFragment[];
+  borrowRecords: SubgraphBorrowDataFragment[];
+  feeCollectionRecords: SubgraphFeesCollectedDataFragment[];
+  repaymentRecords: SubgraphRepaymentDataFragment[];
+};
+
+export type SubgraphBorrowDataFragment = {
+  __typename?: "Borrow";
+  assetAmount: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+};
+
+export type SubgraphRepaymentDataFragment = {
+  __typename?: "DebtRepaid";
+  from: string;
+  assetAmount: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+};
+
+export type SubgraphFeesCollectedDataFragment = {
+  __typename?: "FeesCollected";
+  feesCollected: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+};
+
 export type SubgraphGetLenderAccountForMarketQueryVariables = Exact<{
   market: Scalars["ID"]["input"];
   lender: Scalars["Bytes"]["input"];
@@ -7453,8 +7739,6 @@ export type SubgraphGetLenderAccountForMarketQueryVariables = Exact<{
   skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
   directionDeposits?: InputMaybe<SubgraphOrderDirection>;
-  numWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
-  skipWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
 }>;
 
 export type SubgraphGetLenderAccountForMarketQuery = {
@@ -7472,8 +7756,6 @@ export type SubgraphGetLenderAccountWithMarketQueryVariables = Exact<{
   skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
   directionDeposits?: InputMaybe<SubgraphOrderDirection>;
-  numWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
-  skipWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
   numBorrows?: InputMaybe<Scalars["Int"]["input"]>;
   skipBorrows?: InputMaybe<Scalars["Int"]["input"]>;
   orderBorrows?: InputMaybe<SubgraphBorrow_OrderBy>;
@@ -7546,8 +7828,6 @@ export type SubgraphGetAllMarketsForLenderViewQueryVariables = Exact<{
   skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
   directionDeposits?: InputMaybe<SubgraphOrderDirection>;
-  numWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
-  skipWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
   numBorrows?: InputMaybe<Scalars["Int"]["input"]>;
   skipBorrows?: InputMaybe<Scalars["Int"]["input"]>;
   orderBorrows?: InputMaybe<SubgraphBorrow_OrderBy>;
@@ -7643,8 +7923,6 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables = Exa
   skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
   directionDeposits?: InputMaybe<SubgraphOrderDirection>;
-  numWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
-  skipWithdrawals?: InputMaybe<Scalars["Int"]["input"]>;
   numBorrows?: InputMaybe<Scalars["Int"]["input"]>;
   skipBorrows?: InputMaybe<Scalars["Int"]["input"]>;
   orderBorrows?: InputMaybe<SubgraphBorrow_OrderBy>;
@@ -8009,257 +8287,6 @@ export type SubgraphGetSubgraphStatusQuery = {
   } | null;
 };
 
-export type SubgraphLenderPropertiesFragment = {
-  __typename?: "LenderAccount";
-  id: string;
-  address: string;
-  scaledBalance: string;
-  role: SubgraphLenderStatus;
-  totalDeposited: string;
-  lastScaleFactor: string;
-  lastUpdatedTimestamp: number;
-  totalInterestEarned: string;
-  numPendingWithdrawalBatches: number;
-};
-
-export type SubgraphDepositDataFragment = {
-  __typename?: "Deposit";
-  id: string;
-  assetAmount: string;
-  scaledAmount: string;
-  blockNumber: number;
-  blockTimestamp: number;
-  transactionHash: string;
-  account: { __typename?: "LenderAccount"; address: string };
-};
-
-export type SubgraphMarketDataFragment = {
-  __typename?: "Market";
-  id: string;
-  isRegistered: boolean;
-  isClosed: boolean;
-  borrower: string;
-  sentinel: string;
-  feeRecipient: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  protocolFeeBips: number;
-  delinquencyGracePeriod: number;
-  delinquencyFeeBips: number;
-  withdrawalBatchDuration: number;
-  maxTotalSupply: string;
-  pendingProtocolFees: string;
-  normalizedUnclaimedWithdrawals: string;
-  scaledTotalSupply: string;
-  scaledPendingWithdrawals: string;
-  pendingWithdrawalExpiry: string;
-  isDelinquent: boolean;
-  timeDelinquent: number;
-  annualInterestBips: number;
-  reserveRatioBips: number;
-  scaleFactor: string;
-  lastInterestAccruedTimestamp: number;
-  originalAnnualInterestBips: number;
-  originalReserveRatioBips: number;
-  temporaryReserveRatioExpiry: number;
-  temporaryReserveRatioActive: boolean;
-  totalBorrowed: string;
-  totalRepaid: string;
-  totalBaseInterestAccrued: string;
-  totalDelinquencyFeesAccrued: string;
-  totalProtocolFeesAccrued: string;
-  totalDeposited: string;
-  controller: { __typename?: "Controller"; id: string };
-  _asset: {
-    __typename?: "Token";
-    id: string;
-    address: string;
-    name: string;
-    symbol: string;
-    decimals: number;
-    isMock: boolean;
-  };
-  deployedEvent: SubgraphMarketDeployedEventFragment;
-};
-
-export type SubgraphMarketDeployedEventFragment = {
-  __typename?: "MarketDeployed";
-  blockNumber: number;
-  blockTimestamp: number;
-  transactionHash: string;
-};
-
-export type SubgraphMarketDataWithEventsFragment = {
-  __typename?: "Market";
-  id: string;
-  isRegistered: boolean;
-  isClosed: boolean;
-  borrower: string;
-  sentinel: string;
-  feeRecipient: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  protocolFeeBips: number;
-  delinquencyGracePeriod: number;
-  delinquencyFeeBips: number;
-  withdrawalBatchDuration: number;
-  maxTotalSupply: string;
-  pendingProtocolFees: string;
-  normalizedUnclaimedWithdrawals: string;
-  scaledTotalSupply: string;
-  scaledPendingWithdrawals: string;
-  pendingWithdrawalExpiry: string;
-  isDelinquent: boolean;
-  timeDelinquent: number;
-  annualInterestBips: number;
-  reserveRatioBips: number;
-  scaleFactor: string;
-  lastInterestAccruedTimestamp: number;
-  originalAnnualInterestBips: number;
-  originalReserveRatioBips: number;
-  temporaryReserveRatioExpiry: number;
-  temporaryReserveRatioActive: boolean;
-  totalBorrowed: string;
-  totalRepaid: string;
-  totalBaseInterestAccrued: string;
-  totalDelinquencyFeesAccrued: string;
-  totalProtocolFeesAccrued: string;
-  totalDeposited: string;
-  controller: { __typename?: "Controller"; id: string };
-  _asset: {
-    __typename?: "Token";
-    id: string;
-    address: string;
-    name: string;
-    symbol: string;
-    decimals: number;
-    isMock: boolean;
-  };
-  deployedEvent: SubgraphMarketDeployedEventFragment;
-  depositRecords: SubgraphDepositDataFragment[];
-  borrowRecords: SubgraphBorrowDataFragment[];
-  feeCollectionRecords: SubgraphFeesCollectedDataFragment[];
-  repaymentRecords: SubgraphRepaymentDataFragment[];
-};
-
-export type SubgraphAprConstraintsFragment = {
-  __typename?: "ParameterConstraints";
-  minimumAnnualInterestBips: number;
-  maximumAnnualInterestBips: number;
-};
-
-export type SubgraphWithdrawalBatchPaymentPropertiesFragment = {
-  __typename?: "WithdrawalBatchPayment";
-  id: string;
-  scaledAmountBurned: string;
-  normalizedAmountPaid: string;
-  blockNumber: number;
-  blockTimestamp: number;
-  transactionHash: string;
-};
-
-export type SubgraphWithdrawalRequestPropertiesFragment = {
-  __typename?: "WithdrawalRequest";
-  id: string;
-  requestIndex: number;
-  scaledAmount: string;
-  normalizedAmount: string;
-  blockNumber: number;
-  blockTimestamp: number;
-  transactionHash: string;
-  account: { __typename?: "LenderAccount"; address: string };
-};
-
-export type SubgraphWithdrawalExecutionPropertiesFragment = {
-  __typename?: "WithdrawalExecution";
-  id: string;
-  normalizedAmount: string;
-  blockNumber: number;
-  blockTimestamp: number;
-  transactionHash: string;
-  account: { __typename?: "LenderAccount"; address: string };
-};
-
-export type SubgraphLenderWithdrawalPropertiesFragment = {
-  __typename?: "LenderWithdrawalStatus";
-  id: string;
-  requestsCount: number;
-  executionsCount: number;
-  scaledAmount: string;
-  normalizedAmountWithdrawn: string;
-  totalNormalizedRequests: string;
-  isCompleted: boolean;
-  account: { __typename?: "LenderAccount"; address: string };
-};
-
-export type SubgraphLenderWithdrawalPropertiesWithEventsFragment = {
-  __typename?: "LenderWithdrawalStatus";
-  id: string;
-  requestsCount: number;
-  executionsCount: number;
-  scaledAmount: string;
-  normalizedAmountWithdrawn: string;
-  totalNormalizedRequests: string;
-  isCompleted: boolean;
-  batch: SubgraphWithdrawalBatchPropertiesFragment;
-  requests: SubgraphWithdrawalRequestPropertiesFragment[];
-  executions: SubgraphWithdrawalExecutionPropertiesFragment[];
-  account: { __typename?: "LenderAccount"; address: string };
-};
-
-export type SubgraphWithdrawalBatchPropertiesFragment = {
-  __typename?: "WithdrawalBatch";
-  id: string;
-  expiry: string;
-  scaledTotalAmount: string;
-  scaledAmountBurned: string;
-  normalizedAmountPaid: string;
-  normalizedAmountClaimed: string;
-  totalNormalizedRequests: string;
-  isExpired: boolean;
-  isClosed: boolean;
-  paymentsCount: number;
-  lastScaleFactor: string;
-  lastUpdatedTimestamp: number;
-  totalInterestEarned: string;
-  creation: {
-    __typename?: "WithdrawalBatchCreated";
-    blockNumber: number;
-    blockTimestamp: number;
-    transactionHash: string;
-  };
-  payments: SubgraphWithdrawalBatchPaymentPropertiesFragment[];
-};
-
-export type SubgraphWithdrawalBatchPropertiesWithEventsFragment = {
-  __typename?: "WithdrawalBatch";
-  id: string;
-  expiry: string;
-  scaledTotalAmount: string;
-  scaledAmountBurned: string;
-  normalizedAmountPaid: string;
-  normalizedAmountClaimed: string;
-  totalNormalizedRequests: string;
-  isExpired: boolean;
-  isClosed: boolean;
-  paymentsCount: number;
-  lastScaleFactor: string;
-  lastUpdatedTimestamp: number;
-  totalInterestEarned: string;
-  withdrawals: SubgraphLenderWithdrawalPropertiesFragment[];
-  requests: SubgraphWithdrawalRequestPropertiesFragment[];
-  executions: SubgraphWithdrawalExecutionPropertiesFragment[];
-  creation: {
-    __typename?: "WithdrawalBatchCreated";
-    blockNumber: number;
-    blockTimestamp: number;
-    transactionHash: string;
-  };
-  payments: SubgraphWithdrawalBatchPaymentPropertiesFragment[];
-};
-
 export type SubgraphGetMarketRecordsQueryVariables = Exact<{
   market: Scalars["ID"]["input"];
   numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
@@ -8283,39 +8310,6 @@ export type SubgraphGetMarketRecordsQueryVariables = Exact<{
 export type SubgraphGetMarketRecordsQuery = {
   __typename?: "Query";
   market?: SubgraphMarketRecordsFragment | null;
-};
-
-export type SubgraphMarketRecordsFragment = {
-  __typename?: "Market";
-  depositRecords: SubgraphDepositDataFragment[];
-  borrowRecords: SubgraphBorrowDataFragment[];
-  feeCollectionRecords: SubgraphFeesCollectedDataFragment[];
-  repaymentRecords: SubgraphRepaymentDataFragment[];
-};
-
-export type SubgraphBorrowDataFragment = {
-  __typename?: "Borrow";
-  assetAmount: string;
-  blockNumber: number;
-  blockTimestamp: number;
-  transactionHash: string;
-};
-
-export type SubgraphRepaymentDataFragment = {
-  __typename?: "DebtRepaid";
-  from: string;
-  assetAmount: string;
-  blockNumber: number;
-  blockTimestamp: number;
-  transactionHash: string;
-};
-
-export type SubgraphFeesCollectedDataFragment = {
-  __typename?: "FeesCollected";
-  feesCollected: string;
-  blockNumber: number;
-  blockTimestamp: number;
-  transactionHash: string;
 };
 
 export const LenderPropertiesFragmentDoc = gql`
@@ -8358,6 +8352,12 @@ export const AccountDataForLenderViewFragmentDoc = gql`
     ) {
       ...DepositData
     }
+  }
+`;
+export const AprConstraintsFragmentDoc = gql`
+  fragment AprConstraints on ParameterConstraints {
+    minimumAnnualInterestBips
+    maximumAnnualInterestBips
   }
 `;
 export const MarketDeployedEventFragmentDoc = gql`
@@ -8487,12 +8487,6 @@ export const MarketDataWithEventsFragmentDoc = gql`
     ...MarketRecords
   }
 `;
-export const AprConstraintsFragmentDoc = gql`
-  fragment AprConstraints on ParameterConstraints {
-    minimumAnnualInterestBips
-    maximumAnnualInterestBips
-  }
-`;
 export const LenderWithdrawalPropertiesFragmentDoc = gql`
   fragment LenderWithdrawalProperties on LenderWithdrawalStatus {
     id
@@ -8604,8 +8598,6 @@ export const GetLenderAccountForMarketDocument = gql`
     $skipDeposits: Int = 0
     $orderDeposits: Deposit_orderBy = blockTimestamp
     $directionDeposits: OrderDirection = desc
-    $numWithdrawals: Int = 200
-    $skipWithdrawals: Int = 0
   ) {
     market(id: $market) {
       lenders(where: { address: $lender }) {
@@ -8636,8 +8628,6 @@ export const GetLenderAccountForMarketDocument = gql`
  *      skipDeposits: // value for 'skipDeposits'
  *      orderDeposits: // value for 'orderDeposits'
  *      directionDeposits: // value for 'directionDeposits'
- *      numWithdrawals: // value for 'numWithdrawals'
- *      skipWithdrawals: // value for 'skipWithdrawals'
  *   },
  * });
  */
@@ -8701,8 +8691,6 @@ export const GetLenderAccountWithMarketDocument = gql`
     $skipDeposits: Int = 0
     $orderDeposits: Deposit_orderBy = blockTimestamp
     $directionDeposits: OrderDirection = desc
-    $numWithdrawals: Int = 200
-    $skipWithdrawals: Int = 0
     $numBorrows: Int = 10
     $skipBorrows: Int = 0
     $orderBorrows: Borrow_orderBy = blockTimestamp
@@ -8762,8 +8750,6 @@ export const GetLenderAccountWithMarketDocument = gql`
  *      skipDeposits: // value for 'skipDeposits'
  *      orderDeposits: // value for 'orderDeposits'
  *      directionDeposits: // value for 'directionDeposits'
- *      numWithdrawals: // value for 'numWithdrawals'
- *      skipWithdrawals: // value for 'skipWithdrawals'
  *      numBorrows: // value for 'numBorrows'
  *      skipBorrows: // value for 'skipBorrows'
  *      orderBorrows: // value for 'orderBorrows'
@@ -8834,8 +8820,6 @@ export const GetAllMarketsForLenderViewDocument = gql`
     $skipDeposits: Int = 0
     $orderDeposits: Deposit_orderBy = blockTimestamp
     $directionDeposits: OrderDirection = desc
-    $numWithdrawals: Int = 200
-    $skipWithdrawals: Int = 0
     $numBorrows: Int = 10
     $skipBorrows: Int = 0
     $orderBorrows: Borrow_orderBy = blockTimestamp
@@ -8922,8 +8906,6 @@ export const GetAllMarketsForLenderViewDocument = gql`
  *      skipDeposits: // value for 'skipDeposits'
  *      orderDeposits: // value for 'orderDeposits'
  *      directionDeposits: // value for 'directionDeposits'
- *      numWithdrawals: // value for 'numWithdrawals'
- *      skipWithdrawals: // value for 'skipWithdrawals'
  *      numBorrows: // value for 'numBorrows'
  *      skipBorrows: // value for 'skipBorrows'
  *      orderBorrows: // value for 'orderBorrows'
@@ -8994,8 +8976,6 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
     $skipDeposits: Int = 0
     $orderDeposits: Deposit_orderBy = blockTimestamp
     $directionDeposits: OrderDirection = desc
-    $numWithdrawals: Int = 200
-    $skipWithdrawals: Int = 0
     $numBorrows: Int = 10
     $skipBorrows: Int = 0
     $orderBorrows: Borrow_orderBy = blockTimestamp
@@ -9095,8 +9075,6 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
  *      skipDeposits: // value for 'skipDeposits'
  *      orderDeposits: // value for 'orderDeposits'
  *      directionDeposits: // value for 'directionDeposits'
- *      numWithdrawals: // value for 'numWithdrawals'
- *      skipWithdrawals: // value for 'skipWithdrawals'
  *      numBorrows: // value for 'numBorrows'
  *      skipBorrows: // value for 'skipBorrows'
  *      orderBorrows: // value for 'orderBorrows'
