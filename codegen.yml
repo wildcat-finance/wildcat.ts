@@ -1,6 +1,8 @@
 schema: 'https://api.studio.thegraph.com/query/56451/wildcat-finance/version/latest'
 overwrite: true
-documents: 'queries.graphql'
+documents:
+  - './gql/queries.graphql'
+  - './gql/fragments.graphql'
 generates:
   ./src/gql/graphql.ts:
     plugins:

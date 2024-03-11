@@ -1,26 +1,8 @@
+# import './fragments.graphql'
+
 # -------------------------------------------------------------------------- #
 #                                Lender Views                                #
 # -------------------------------------------------------------------------- #
-
-fragment AccountDataForLenderView on LenderAccount {
-  ...LenderProperties
-  controllerAuthorization {
-    authorized
-  }
-
-  deposits(
-    first: $numDeposits
-    skip: $skipDeposits
-    orderBy: $orderDeposits
-    orderDirection: $directionDeposits
-  ) {
-    ...DepositData
-  }
-
-  # market {
-  #   scaleFactor
-  # }
-}
 
 query getLenderAccountForMarket(
   $market: ID!
@@ -29,8 +11,6 @@ query getLenderAccountForMarket(
   $skipDeposits: Int = 0
   $orderDeposits: Deposit_orderBy = blockTimestamp
   $directionDeposits: OrderDirection = desc
-  $numWithdrawals: Int = 200
-  $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry # $directionWithdrawals: OrderDirection = desc
 ) {
   market(id: $market) {
     lenders(where: { address: $lender }) {
@@ -46,8 +26,6 @@ query getLenderAccountWithMarket(
   $skipDeposits: Int = 0
   $orderDeposits: Deposit_orderBy = blockTimestamp
   $directionDeposits: OrderDirection = desc
-  $numWithdrawals: Int = 200
-  $skipWithdrawals: Int = 0
   # borrowRecords
   $numBorrows: Int = 10
   $skipBorrows: Int = 0
@@ -90,9 +68,6 @@ query getAllMarketsForLenderView(
   $skipDeposits: Int = 0
   $orderDeposits: Deposit_orderBy = blockTimestamp
   $directionDeposits: OrderDirection = desc
-  # withdrawals
-  $numWithdrawals: Int = 200
-  $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry # $directionWithdrawals: OrderDirection = desc
   # borrowRecords
   $numBorrows: Int = 10
   $skipBorrows: Int = 0
@@ -163,9 +138,6 @@ query getAccountsWhereLenderAuthorizedOrActive(
   $skipDeposits: Int = 0
   $orderDeposits: Deposit_orderBy = blockTimestamp
   $directionDeposits: OrderDirection = desc
-  # withdrawals
-  $numWithdrawals: Int = 200
-  $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry # $directionWithdrawals: OrderDirection = desc
   # borrowRecords
   $numBorrows: Int = 10
   $skipBorrows: Int = 0
@@ -515,204 +487,6 @@ query getSubgraphStatus {
   }
 }
 
-fragment LenderProperties on LenderAccount {
-  id
-  address
-  scaledBalance
-  role
-  totalDeposited
-  lastScaleFactor
-  lastUpdatedTimestamp
-  totalInterestEarned
-  numPendingWithdrawalBatches
-}
-
-fragment DepositData on Deposit {
-  id
-  account {
-    address
-  }
-  assetAmount
-  scaledAmount
-  blockNumber
-  blockTimestamp
-  transactionHash
-}
-
-fragment MarketData on Market {
-  id
-
-  # --------------------------------- Config --------------------------------- #
-  isRegistered
-  isClosed
-  controller {
-    id
-  }
-  borrower
-  sentinel
-  feeRecipient
-  name
-  symbol
-  decimals
-  protocolFeeBips
-  delinquencyGracePeriod
-  delinquencyFeeBips
-  withdrawalBatchDuration
-
-  _asset: asset {
-    id
-    address
-    name
-    symbol
-    decimals
-    isMock
-  }
-
-  # ---------------------------------- State --------------------------------- #
-  maxTotalSupply
-  pendingProtocolFees
-  normalizedUnclaimedWithdrawals
-  scaledTotalSupply
-  scaledPendingWithdrawals
-  pendingWithdrawalExpiry
-  isDelinquent
-  timeDelinquent
-  annualInterestBips
-  reserveRatioBips
-  scaleFactor
-  lastInterestAccruedTimestamp
-  originalAnnualInterestBips
-  originalReserveRatioBips
-  temporaryReserveRatioExpiry
-  temporaryReserveRatioActive
-
-  # -------------------------------- Metadata -------------------------------- #
-  totalBorrowed
-  totalRepaid
-  totalBaseInterestAccrued
-  totalDelinquencyFeesAccrued
-  totalProtocolFeesAccrued
-  totalDeposited
-
-  deployedEvent {
-    ...MarketDeployedEvent
-  }
-}
-
-fragment MarketDeployedEvent on MarketDeployed {
-  blockNumber
-  blockTimestamp
-  transactionHash
-}
-
-fragment MarketDataWithEvents on Market {
-  ...MarketData
-  ...MarketRecords
-}
-
-fragment AprConstraints on ParameterConstraints {
-  minimumAnnualInterestBips
-  maximumAnnualInterestBips
-}
-
-fragment WithdrawalBatchPaymentProperties on WithdrawalBatchPayment {
-  id
-  scaledAmountBurned
-  normalizedAmountPaid
-  blockNumber
-  blockTimestamp
-  transactionHash
-}
-fragment WithdrawalRequestProperties on WithdrawalRequest {
-  id
-  requestIndex
-  account {
-    address
-  }
-  scaledAmount
-  normalizedAmount
-  blockNumber
-  blockTimestamp
-  transactionHash
-}
-fragment WithdrawalExecutionProperties on WithdrawalExecution {
-  id
-  account {
-    address
-  }
-  normalizedAmount
-  blockNumber
-  blockTimestamp
-  transactionHash
-}
-
-fragment LenderWithdrawalProperties on LenderWithdrawalStatus {
-  id
-  account {
-    address
-  }
-  requestsCount
-  executionsCount
-  scaledAmount
-  normalizedAmountWithdrawn
-  totalNormalizedRequests
-  isCompleted
-}
-
-fragment LenderWithdrawalPropertiesWithEvents on LenderWithdrawalStatus {
-  ...LenderWithdrawalProperties
-
-  batch {
-    ...WithdrawalBatchProperties
-  }
-  requests {
-    ...WithdrawalRequestProperties
-  }
-  executions {
-    ...WithdrawalExecutionProperties
-  }
-}
-
-fragment WithdrawalBatchProperties on WithdrawalBatch {
-  id
-  expiry
-  scaledTotalAmount
-  scaledAmountBurned
-  normalizedAmountPaid
-  normalizedAmountClaimed
-  totalNormalizedRequests
-  isExpired
-  isClosed
-  paymentsCount
-  lastScaleFactor
-  lastUpdatedTimestamp
-  totalInterestEarned
-
-  creation {
-    blockNumber
-    blockTimestamp
-    transactionHash
-  }
-
-  payments {
-    ...WithdrawalBatchPaymentProperties
-  }
-}
-
-fragment WithdrawalBatchPropertiesWithEvents on WithdrawalBatch {
-  ...WithdrawalBatchProperties
-
-  withdrawals {
-    ...LenderWithdrawalProperties
-  }
-  requests {
-    ...WithdrawalRequestProperties
-  }
-  executions {
-    ...WithdrawalExecutionProperties
-  }
-}
-
 query getMarketRecords(
   $market: ID!
   # deposits
@@ -739,61 +513,4 @@ query getMarketRecords(
   market(id: $market) {
     ...MarketRecords
   }
-}
-
-fragment MarketRecords on Market {
-  depositRecords(
-    first: $numDeposits
-    skip: $skipDeposits
-    orderBy: $orderDeposits
-    orderDirection: $directionDeposits
-  ) {
-    ...DepositData
-  }
-  borrowRecords(
-    first: $numBorrows
-    skip: $skipBorrows
-    orderBy: $orderBorrows
-    orderDirection: $directionBorrows
-  ) {
-    ...BorrowData
-  }
-  feeCollectionRecords(
-    first: $numFeeCollections
-    skip: $skipFeeCollections
-    orderBy: $orderFeeCollections
-    orderDirection: $directionFeeCollections
-  ) {
-    ...FeesCollectedData
-  }
-  repaymentRecords(
-    first: $numRepayments
-    skip: $skipRepayments
-    orderBy: $orderRepayments
-    orderDirection: $directionRepayments
-  ) {
-    ...RepaymentData
-  }
-}
-
-fragment BorrowData on Borrow {
-  assetAmount
-  blockNumber
-  blockTimestamp
-  transactionHash
-}
-
-fragment RepaymentData on DebtRepaid {
-  from
-  assetAmount
-  blockNumber
-  blockTimestamp
-  transactionHash
-}
-
-fragment FeesCollectedData on FeesCollected {
-  feesCollected
-  blockNumber
-  blockTimestamp
-  transactionHash
 }
