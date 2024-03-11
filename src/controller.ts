@@ -12,23 +12,16 @@ import {
 } from "./constants";
 import { ContractWrapper, PartialTransaction, SignerOrProvider } from "./types";
 import { Market } from "./market";
-import {
-  ContractReceipt,
-  ContractTransaction,
-  PopulatedTransaction,
-  UnsignedTransaction
-} from "ethers";
+import { ContractReceipt, ContractTransaction } from "ethers";
 import { Token, TokenAmount } from "./token";
 import {
   FeeConfiguration,
   MarketParameterConstraints,
   assert,
   parseFeeConfiguration,
-  parseMarketParameterConstraints,
-  removeUnusedTxFields
+  parseMarketParameterConstraints
 } from "./utils";
 import { MarketDeployedEvent } from "./typechain/WildcatMarketController";
-import { TransactionRequest } from "@ethersproject/abstract-provider";
 
 export class MarketController extends ContractWrapper<WildcatMarketController> {
   readonly contractFactory = WildcatMarketController__factory;
