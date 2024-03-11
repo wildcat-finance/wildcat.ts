@@ -6,8 +6,7 @@ import {
   SubgraphGetMarketEventsQuery,
   SubgraphGetMarketEventsQueryVariables
 } from "./graphql";
-import { MarketRecord, parseMarketRecord } from "../utils";
-import assert from "assert";
+import { MarketRecord, assert, parseMarketRecord } from "../utils";
 
 export type GetMarketRecordsOptions = {
   market: Market;
@@ -48,7 +47,7 @@ export async function getMarketRecords(
     fetchPolicy
   });
   const marketData = result.data.market;
-  assert(marketData, `Market not found in subgraph: ${market.address}`);
+  assert(!!marketData, `Market not found in subgraph: ${market.address}`);
   const {
     delinquencyRecords,
     borrowRecords,
