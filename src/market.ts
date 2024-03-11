@@ -129,6 +129,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     borrowRecords: SubgraphBorrowDataFragment[] = [],
     feeCollectionRecords: SubgraphFeesCollectedDataFragment[] = [],
     public deployedEvent?: SubgraphMarketDeployedEventFragment,
+    public eventIndex?: number,
     public signerAddress?: string
   ) {
     super(_provider);
@@ -137,10 +138,13 @@ export class Market extends ContractWrapper<WildcatMarket> {
       parseMarketRecord(this.underlyingToken, log)
     );
     this.borrowRecords = borrowRecords.map((log) => parseMarketRecord(this.underlyingToken, log));
-    this.feeCollectionRecords = feeCollectionRecords.map(({ feesCollected, ...rest }) => ({
-      ...rest,
-      amount: this.underlyingToken.getAmount(feesCollected)
-    }));
+    this.feeCollectionRecords = feeCollectionRecords.map(
+      ({ feesCollected, __typename, ...rest }) => ({
+        ...rest,
+        __typename: "FeesCollected",
+        amount: this.underlyingToken.getAmount(feesCollected)
+      })
+    );
   }
 
   readonly contractFactory = WildcatMarket__factory;
@@ -582,6 +586,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.borrowRecords,
       data.feeCollectionRecords,
       data.deployedEvent,
+      data.eventIndex,
       signerAddress
     );
   }
@@ -628,6 +633,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       data.unpaidWithdrawalBatchExpiries,
       underlyingToken.getAmount(data.coverageLiquidity),
       underlyingToken.getAmount(data.borrowableAssets),
+      undefined,
       undefined,
       undefined,
       undefined,
