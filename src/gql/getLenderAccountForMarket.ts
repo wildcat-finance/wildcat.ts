@@ -6,7 +6,7 @@ import {
   SubgraphGetLenderAccountForMarketQueryVariables
 } from "./graphql";
 import { MarketAccount } from "../account";
-import assert from "assert";
+import { assert } from "../utils";
 
 type GetLenderAccountForMarketOptions = Omit<
   SubgraphGetLenderAccountForMarketQueryVariables,
@@ -33,7 +33,7 @@ export async function getLenderAccountForMarket(
     fetchPolicy
   });
   const marketData = result.data.market;
-  assert(marketData, `Market not found in subgraph: ${market.address}`);
+  assert(!!marketData, `Market not found in subgraph: ${market.address}`);
   if (!marketData.lenders.length) {
     return MarketAccount.fromMarketDataOnly(market, lender, false);
   }
