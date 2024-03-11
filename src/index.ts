@@ -18,6 +18,7 @@ export * from "./withdrawal-batch";
 export * from "./withdrawal-status";
 export * from "./utils";
 export * as typechain from "./typechain";
+export * from "./gql";
 
 export const { getMarket, getMarkets, getAllMarkets, getMarketsCount, getPaginatedMarkets } =
   Market;
