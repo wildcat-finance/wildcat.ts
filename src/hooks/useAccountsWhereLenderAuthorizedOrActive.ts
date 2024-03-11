@@ -54,8 +54,7 @@ export function useAccountsWhereLenderAuthorizedOrActive({
       query: GetAccountsWhereLenderAuthorizedOrActiveDocument,
       variables: {
         lender: lender as string,
-        ...filters,
-        numWithdrawals: 1
+        ...filters
       }
     });
     logger.debug(`Got ${result.data.lenderAccounts.length} existing lender accounts...`);
