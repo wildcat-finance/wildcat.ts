@@ -317,6 +317,42 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
   }
 }
 
+query getMarketEvents(
+  $market: ID!
+  $startEventID: ID!
+  $endEventID: ID!
+) {
+  market(id: $market) {
+    marketClosedEvent {
+      ...MarketClosedData
+    }
+    delinquencyRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+      ...DelinquencyStatusChangedData
+    }
+    borrowRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+      ...BorrowData
+    }
+    depositRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+      ...DepositData
+    }
+    feeCollectionRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+      ...FeesCollectedData
+    }
+    repaymentRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+      ...RepaymentData
+    }
+    annualInterestBipsUpdatedRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+      ...AnnualInterestBipsUpdatedData
+    }
+    maxTotalSupplyUpdatedRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+      ...MaxTotalSupplyUpdatedData
+    }
+    withdrawalRequestRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+      ...WithdrawalRequestProperties
+    }
+  }
+}
+
 # ---------------------------------------------------------------------------- #
 #                                Borrower Views                                #
 # ---------------------------------------------------------------------------- #

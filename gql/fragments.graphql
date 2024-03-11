@@ -90,6 +90,7 @@ fragment MarketData on Market {
   totalDelinquencyFeesAccrued
   totalProtocolFeesAccrued
   totalDeposited
+  eventIndex
 
   deployedEvent {
     ...MarketDeployedEvent
@@ -105,8 +106,20 @@ fragment AprConstraints on ParameterConstraints {
 #                                    Events                                    #
 # ---------------------------------------------------------------------------- #
 
+fragment DelinquencyStatusChangedData on DelinquencyStatusChanged {
+  id
+  eventIndex
+  isDelinquent
+  liquidityCoverageRequired
+  totalAssets
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
 fragment DepositData on Deposit {
   id
+  eventIndex
   account {
     address
   }
@@ -138,6 +151,7 @@ fragment WithdrawalBatchPaymentProperties on WithdrawalBatchPayment {
 }
 fragment WithdrawalRequestProperties on WithdrawalRequest {
   id
+  eventIndex
   requestIndex
   account {
     address
@@ -262,6 +276,7 @@ fragment MarketRecords on Market {
 }
 
 fragment BorrowData on Borrow {
+  eventIndex
   assetAmount
   blockNumber
   blockTimestamp
@@ -269,6 +284,7 @@ fragment BorrowData on Borrow {
 }
 
 fragment RepaymentData on DebtRepaid {
+  eventIndex
   from
   assetAmount
   blockNumber
@@ -277,7 +293,33 @@ fragment RepaymentData on DebtRepaid {
 }
 
 fragment FeesCollectedData on FeesCollected {
+  eventIndex
   feesCollected
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment AnnualInterestBipsUpdatedData on AnnualInterestBipsUpdated {
+  eventIndex
+  oldAnnualInterestBips
+  newAnnualInterestBips
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment MaxTotalSupplyUpdatedData on MaxTotalSupplyUpdated {
+  eventIndex
+  oldMaxTotalSupply
+  newMaxTotalSupply
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment MarketClosedData on MarketClosed {
+  eventIndex
   blockNumber
   blockTimestamp
   transactionHash

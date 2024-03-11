@@ -30,6 +30,170 @@ export enum SubgraphAggregation_Interval {
   Hour = "hour"
 }
 
+export type SubgraphAnnualInterestBipsUpdated = {
+  __typename?: "AnnualInterestBipsUpdated";
+  annualInterestBipsUpdatedIndex: Scalars["Int"]["output"];
+  blockNumber: Scalars["Int"]["output"];
+  blockTimestamp: Scalars["Int"]["output"];
+  eventIndex: Scalars["Int"]["output"];
+  id: Scalars["ID"]["output"];
+  market: SubgraphMarket;
+  newAnnualInterestBips: Scalars["Int"]["output"];
+  oldAnnualInterestBips: Scalars["Int"]["output"];
+  transactionHash: Scalars["Bytes"]["output"];
+};
+
+export type SubgraphAnnualInterestBipsUpdated_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphAnnualInterestBipsUpdated_Filter>>>;
+  annualInterestBipsUpdatedIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  annualInterestBipsUpdatedIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockNumber?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockNumber_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockTimestamp?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockTimestamp_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  id_lt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_lte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  market?: InputMaybe<Scalars["String"]["input"]>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars["String"]["input"]>;
+  market_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_gt?: InputMaybe<Scalars["String"]["input"]>;
+  market_gte?: InputMaybe<Scalars["String"]["input"]>;
+  market_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  market_lt?: InputMaybe<Scalars["String"]["input"]>;
+  market_lte?: InputMaybe<Scalars["String"]["input"]>;
+  market_not?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  market_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  newAnnualInterestBips?: InputMaybe<Scalars["Int"]["input"]>;
+  newAnnualInterestBips_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  newAnnualInterestBips_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  newAnnualInterestBips_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  newAnnualInterestBips_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  newAnnualInterestBips_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  newAnnualInterestBips_not?: InputMaybe<Scalars["Int"]["input"]>;
+  newAnnualInterestBips_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  oldAnnualInterestBips?: InputMaybe<Scalars["Int"]["input"]>;
+  oldAnnualInterestBips_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  oldAnnualInterestBips_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  oldAnnualInterestBips_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  oldAnnualInterestBips_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  oldAnnualInterestBips_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  oldAnnualInterestBips_not?: InputMaybe<Scalars["Int"]["input"]>;
+  oldAnnualInterestBips_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphAnnualInterestBipsUpdated_Filter>>>;
+  transactionHash?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  transactionHash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+};
+
+export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
+  AnnualInterestBipsUpdatedIndex = "annualInterestBipsUpdatedIndex",
+  BlockNumber = "blockNumber",
+  BlockTimestamp = "blockTimestamp",
+  EventIndex = "eventIndex",
+  Id = "id",
+  Market = "market",
+  MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
+  MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
+  MarketDecimals = "market__decimals",
+  MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
+  MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
+  MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
+  MarketId = "market__id",
+  MarketIsClosed = "market__isClosed",
+  MarketIsDelinquent = "market__isDelinquent",
+  MarketIsRegistered = "market__isRegistered",
+  MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
+  MarketName = "market__name",
+  MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
+  MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
+  MarketPendingProtocolFees = "market__pendingProtocolFees",
+  MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
+  MarketProtocolFeeBips = "market__protocolFeeBips",
+  MarketReserveRatioBips = "market__reserveRatioBips",
+  MarketScaleFactor = "market__scaleFactor",
+  MarketScaledPendingWithdrawals = "market__scaledPendingWithdrawals",
+  MarketScaledTotalSupply = "market__scaledTotalSupply",
+  MarketSentinel = "market__sentinel",
+  MarketSymbol = "market__symbol",
+  MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
+  MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
+  MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
+  MarketTotalBorrowed = "market__totalBorrowed",
+  MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
+  MarketTotalDeposited = "market__totalDeposited",
+  MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
+  MarketTotalRepaid = "market__totalRepaid",
+  MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
+  NewAnnualInterestBips = "newAnnualInterestBips",
+  OldAnnualInterestBips = "oldAnnualInterestBips",
+  TransactionHash = "transactionHash"
+}
+
 export type SubgraphApproval = {
   __typename?: "Approval";
   blockNumber: Scalars["Int"]["output"];
@@ -203,6 +367,8 @@ export type SubgraphBorrow = {
   assetAmount: Scalars["BigInt"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
+  borrowIndex: Scalars["Int"]["output"];
+  eventIndex: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
   market: SubgraphMarket;
   transactionHash: Scalars["Bytes"]["output"];
@@ -236,6 +402,22 @@ export type SubgraphBorrow_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  borrowIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  borrowIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  borrowIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  borrowIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  borrowIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  borrowIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  borrowIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  borrowIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -282,21 +464,31 @@ export enum SubgraphBorrow_OrderBy {
   AssetAmount = "assetAmount",
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
+  BorrowIndex = "borrowIndex",
+  EventIndex = "eventIndex",
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -320,6 +512,7 @@ export enum SubgraphBorrow_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   TransactionHash = "transactionHash"
 }
 
@@ -1068,6 +1261,8 @@ export type SubgraphDebtRepaid = {
   assetAmount: Scalars["BigInt"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
+  debtRepaidIndex: Scalars["Int"]["output"];
+  eventIndex: Scalars["Int"]["output"];
   from: Scalars["Bytes"]["output"];
   id: Scalars["ID"]["output"];
   market: SubgraphMarket;
@@ -1102,6 +1297,22 @@ export type SubgraphDebtRepaid_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  debtRepaidIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  debtRepaidIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  debtRepaidIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  debtRepaidIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  debtRepaidIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  debtRepaidIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  debtRepaidIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  debtRepaidIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   from?: InputMaybe<Scalars["Bytes"]["input"]>;
   from_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   from_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
@@ -1158,22 +1369,32 @@ export enum SubgraphDebtRepaid_OrderBy {
   AssetAmount = "assetAmount",
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
+  DebtRepaidIndex = "debtRepaidIndex",
+  EventIndex = "eventIndex",
   From = "from",
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -1197,6 +1418,7 @@ export enum SubgraphDebtRepaid_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   TransactionHash = "transactionHash"
 }
 
@@ -1204,6 +1426,8 @@ export type SubgraphDelinquencyStatusChanged = {
   __typename?: "DelinquencyStatusChanged";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
+  delinquencyStatusChangedIndex: Scalars["Int"]["output"];
+  eventIndex: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
   isDelinquent: Scalars["Boolean"]["output"];
   liquidityCoverageRequired: Scalars["BigInt"]["output"];
@@ -1232,6 +1456,22 @@ export type SubgraphDelinquencyStatusChanged_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  delinquencyStatusChangedIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyStatusChangedIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyStatusChangedIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyStatusChangedIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  delinquencyStatusChangedIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyStatusChangedIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyStatusChangedIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyStatusChangedIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -1297,23 +1537,33 @@ export type SubgraphDelinquencyStatusChanged_Filter = {
 export enum SubgraphDelinquencyStatusChanged_OrderBy {
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
+  DelinquencyStatusChangedIndex = "delinquencyStatusChangedIndex",
+  EventIndex = "eventIndex",
   Id = "id",
   IsDelinquent = "isDelinquent",
   LiquidityCoverageRequired = "liquidityCoverageRequired",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -1337,6 +1587,7 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   TotalAssets = "totalAssets",
   TransactionHash = "transactionHash"
 }
@@ -1347,6 +1598,8 @@ export type SubgraphDeposit = {
   assetAmount: Scalars["BigInt"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
+  depositIndex: Scalars["Int"]["output"];
+  eventIndex: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
   market: SubgraphMarket;
   scaledAmount: Scalars["BigInt"]["output"];
@@ -1402,6 +1655,22 @@ export type SubgraphDeposit_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  depositIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  depositIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  depositIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  depositIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  depositIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  depositIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  depositIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  depositIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -1466,21 +1735,31 @@ export enum SubgraphDeposit_OrderBy {
   AssetAmount = "assetAmount",
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
+  DepositIndex = "depositIndex",
+  EventIndex = "eventIndex",
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -1504,6 +1783,7 @@ export enum SubgraphDeposit_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   ScaledAmount = "scaledAmount",
   TransactionHash = "transactionHash"
 }
@@ -1512,7 +1792,9 @@ export type SubgraphFeesCollected = {
   __typename?: "FeesCollected";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
+  eventIndex: Scalars["Int"]["output"];
   feesCollected: Scalars["BigInt"]["output"];
+  feesCollectedIndex: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
   market: SubgraphMarket;
   transactionHash: Scalars["Bytes"]["output"];
@@ -1538,7 +1820,23 @@ export type SubgraphFeesCollected_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   feesCollected?: InputMaybe<Scalars["BigInt"]["input"]>;
+  feesCollectedIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  feesCollectedIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  feesCollectedIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  feesCollectedIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  feesCollectedIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  feesCollectedIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  feesCollectedIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  feesCollectedIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   feesCollected_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   feesCollected_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
   feesCollected_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
@@ -1591,22 +1889,32 @@ export type SubgraphFeesCollected_Filter = {
 export enum SubgraphFeesCollected_OrderBy {
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
+  EventIndex = "eventIndex",
   FeesCollected = "feesCollected",
+  FeesCollectedIndex = "feesCollectedIndex",
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -1630,6 +1938,7 @@ export enum SubgraphFeesCollected_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   TransactionHash = "transactionHash"
 }
 
@@ -1810,18 +2119,26 @@ export enum SubgraphLenderAccount_OrderBy {
   LastUpdatedTimestamp = "lastUpdatedTimestamp",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -1845,6 +2162,7 @@ export enum SubgraphLenderAccount_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   NumPendingWithdrawalBatches = "numPendingWithdrawalBatches",
   Role = "role",
   ScaledBalance = "scaledBalance",
@@ -2182,18 +2500,26 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   InterestEarned = "interestEarned",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -2217,6 +2543,7 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   TransactionHash = "transactionHash"
 }
 
@@ -2400,20 +2727,28 @@ export enum SubgraphLenderWithdrawalStatus_OrderBy {
 export type SubgraphMarket = {
   __typename?: "Market";
   annualInterestBips: Scalars["Int"]["output"];
+  annualInterestBipsUpdatedIndex: Scalars["Int"]["output"];
+  annualInterestBipsUpdatedRecords: SubgraphAnnualInterestBipsUpdated[];
   archController: SubgraphArchController;
   asset: SubgraphToken;
+  borrowIndex: Scalars["Int"]["output"];
   borrowRecords: SubgraphBorrow[];
   borrower: Scalars["Bytes"]["output"];
   controller: SubgraphController;
   createdAt: Scalars["Int"]["output"];
+  debtRepaidIndex: Scalars["Int"]["output"];
   decimals: Scalars["Int"]["output"];
   delinquencyFeeBips: Scalars["Int"]["output"];
   delinquencyGracePeriod: Scalars["Int"]["output"];
   delinquencyRecords: SubgraphDelinquencyStatusChanged[];
+  delinquencyStatusChangedIndex: Scalars["Int"]["output"];
   deployedEvent: SubgraphMarketDeployed;
+  depositIndex: Scalars["Int"]["output"];
   depositRecords: SubgraphDeposit[];
+  eventIndex: Scalars["Int"]["output"];
   feeCollectionRecords: SubgraphFeesCollected[];
   feeRecipient: Scalars["Bytes"]["output"];
+  feesCollectedIndex: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
   interestAccrualRecords: SubgraphMarketInterestAccrued[];
   isClosed: Scalars["Boolean"]["output"];
@@ -2421,7 +2756,10 @@ export type SubgraphMarket = {
   isRegistered: Scalars["Boolean"]["output"];
   lastInterestAccruedTimestamp: Scalars["Int"]["output"];
   lenders: SubgraphLenderAccount[];
+  marketClosedEvent?: Maybe<SubgraphMarketClosed>;
   maxTotalSupply: Scalars["BigInt"]["output"];
+  maxTotalSupplyUpdatedIndex: Scalars["Int"]["output"];
+  maxTotalSupplyUpdatedRecords: SubgraphMaxTotalSupplyUpdated[];
   name: Scalars["String"]["output"];
   normalizedUnclaimedWithdrawals: Scalars["BigInt"]["output"];
   originalAnnualInterestBips: Scalars["Int"]["output"];
@@ -2432,6 +2770,7 @@ export type SubgraphMarket = {
   removal?: Maybe<SubgraphMarketRemoved>;
   repaymentRecords: SubgraphDebtRepaid[];
   reserveRatioBips: Scalars["Int"]["output"];
+  reserveRatioBipsUpdatedRecords: SubgraphReserveRatioBipsUpdated[];
   scaleFactor: Scalars["BigInt"]["output"];
   scaledPendingWithdrawals: Scalars["BigInt"]["output"];
   scaledTotalSupply: Scalars["BigInt"]["output"];
@@ -2448,6 +2787,16 @@ export type SubgraphMarket = {
   totalRepaid: Scalars["BigInt"]["output"];
   withdrawalBatchDuration: Scalars["Int"]["output"];
   withdrawalBatches: SubgraphWithdrawalBatch[];
+  withdrawalRequestRecords: SubgraphWithdrawalRequest[];
+  withdrawalRequestsIndex: Scalars["Int"]["output"];
+};
+
+export type SubgraphMarketAnnualInterestBipsUpdatedRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphAnnualInterestBipsUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphAnnualInterestBipsUpdated_Filter>;
 };
 
 export type SubgraphMarketBorrowRecordsArgs = {
@@ -2486,12 +2835,28 @@ export type SubgraphMarketInterestAccrualRecordsArgs = {
 
 export type SubgraphMarketLendersArgs = SubgraphLenderAuthorizationMarketAccountsArgs;
 
+export type SubgraphMarketMaxTotalSupplyUpdatedRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphMaxTotalSupplyUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphMaxTotalSupplyUpdated_Filter>;
+};
+
 export type SubgraphMarketRepaymentRecordsArgs = {
   first?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<SubgraphDebtRepaid_OrderBy>;
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   where?: InputMaybe<SubgraphDebtRepaid_Filter>;
+};
+
+export type SubgraphMarketReserveRatioBipsUpdatedRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphReserveRatioBipsUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphReserveRatioBipsUpdated_Filter>;
 };
 
 export type SubgraphMarketWithdrawalBatchesArgs = {
@@ -2501,6 +2866,8 @@ export type SubgraphMarketWithdrawalBatchesArgs = {
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   where?: InputMaybe<SubgraphWithdrawalBatch_Filter>;
 };
+
+export type SubgraphMarketWithdrawalRequestRecordsArgs = SubgraphLenderWithdrawalStatusRequestsArgs;
 
 export type SubgraphMarketAdded = {
   __typename?: "MarketAdded";
@@ -2605,18 +2972,26 @@ export enum SubgraphMarketAdded_OrderBy {
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -2640,6 +3015,7 @@ export enum SubgraphMarketAdded_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   TransactionHash = "transactionHash"
 }
 
@@ -2647,6 +3023,7 @@ export type SubgraphMarketClosed = {
   __typename?: "MarketClosed";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
+  eventIndex: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
   market: SubgraphMarket;
   timestamp: Scalars["Int"]["output"];
@@ -2673,6 +3050,14 @@ export type SubgraphMarketClosed_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -2726,21 +3111,30 @@ export type SubgraphMarketClosed_Filter = {
 export enum SubgraphMarketClosed_OrderBy {
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
+  EventIndex = "eventIndex",
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -2764,6 +3158,7 @@ export enum SubgraphMarketClosed_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   Timestamp = "timestamp",
   TransactionHash = "transactionHash"
 }
@@ -2845,18 +3240,26 @@ export enum SubgraphMarketDeployed_OrderBy {
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -2880,6 +3283,7 @@ export enum SubgraphMarketDeployed_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   TransactionHash = "transactionHash"
 }
 
@@ -3037,18 +3441,26 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -3072,6 +3484,7 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   ProtocolFeesAccrued = "protocolFeesAccrued",
   TimeWithPenalties = "timeWithPenalties",
   ToTimestamp = "toTimestamp",
@@ -3155,18 +3568,26 @@ export enum SubgraphMarketRemoved_OrderBy {
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -3190,6 +3611,7 @@ export enum SubgraphMarketRemoved_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   TransactionHash = "transactionHash"
 }
 
@@ -3198,6 +3620,15 @@ export type SubgraphMarket_Filter = {
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<SubgraphMarket_Filter>>>;
   annualInterestBips?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  annualInterestBipsUpdatedIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  annualInterestBipsUpdatedIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  annualInterestBipsUpdatedRecords_?: InputMaybe<SubgraphAnnualInterestBipsUpdated_Filter>;
   annualInterestBips_gt?: InputMaybe<Scalars["Int"]["input"]>;
   annualInterestBips_gte?: InputMaybe<Scalars["Int"]["input"]>;
   annualInterestBips_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
@@ -3247,6 +3678,14 @@ export type SubgraphMarket_Filter = {
   asset_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   asset_starts_with?: InputMaybe<Scalars["String"]["input"]>;
   asset_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  borrowIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  borrowIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  borrowIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  borrowIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  borrowIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  borrowIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  borrowIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  borrowIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   borrowRecords_?: InputMaybe<SubgraphBorrow_Filter>;
   borrower?: InputMaybe<Scalars["Bytes"]["input"]>;
   borrower_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
@@ -3287,6 +3726,14 @@ export type SubgraphMarket_Filter = {
   createdAt_lte?: InputMaybe<Scalars["Int"]["input"]>;
   createdAt_not?: InputMaybe<Scalars["Int"]["input"]>;
   createdAt_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  debtRepaidIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  debtRepaidIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  debtRepaidIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  debtRepaidIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  debtRepaidIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  debtRepaidIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  debtRepaidIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  debtRepaidIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   decimals?: InputMaybe<Scalars["Int"]["input"]>;
   decimals_gt?: InputMaybe<Scalars["Int"]["input"]>;
   decimals_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -3312,6 +3759,14 @@ export type SubgraphMarket_Filter = {
   delinquencyGracePeriod_not?: InputMaybe<Scalars["Int"]["input"]>;
   delinquencyGracePeriod_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   delinquencyRecords_?: InputMaybe<SubgraphDelinquencyStatusChanged_Filter>;
+  delinquencyStatusChangedIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyStatusChangedIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyStatusChangedIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyStatusChangedIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  delinquencyStatusChangedIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyStatusChangedIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyStatusChangedIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyStatusChangedIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   deployedEvent?: InputMaybe<Scalars["String"]["input"]>;
   deployedEvent_?: InputMaybe<SubgraphMarketDeployed_Filter>;
   deployedEvent_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -3333,7 +3788,23 @@ export type SubgraphMarket_Filter = {
   deployedEvent_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   deployedEvent_starts_with?: InputMaybe<Scalars["String"]["input"]>;
   deployedEvent_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  depositIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  depositIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  depositIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  depositIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  depositIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  depositIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  depositIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  depositIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   depositRecords_?: InputMaybe<SubgraphDeposit_Filter>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   feeCollectionRecords_?: InputMaybe<SubgraphFeesCollected_Filter>;
   feeRecipient?: InputMaybe<Scalars["Bytes"]["input"]>;
   feeRecipient_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
@@ -3345,6 +3816,14 @@ export type SubgraphMarket_Filter = {
   feeRecipient_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   feeRecipient_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   feeRecipient_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  feesCollectedIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  feesCollectedIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  feesCollectedIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  feesCollectedIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  feesCollectedIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  feesCollectedIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  feesCollectedIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  feesCollectedIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -3375,7 +3854,17 @@ export type SubgraphMarket_Filter = {
   lastInterestAccruedTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   lastInterestAccruedTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   lenders_?: InputMaybe<SubgraphLenderAccount_Filter>;
+  marketClosedEvent_?: InputMaybe<SubgraphMarketClosed_Filter>;
   maxTotalSupply?: InputMaybe<Scalars["BigInt"]["input"]>;
+  maxTotalSupplyUpdatedIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  maxTotalSupplyUpdatedIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  maxTotalSupplyUpdatedIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  maxTotalSupplyUpdatedIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  maxTotalSupplyUpdatedIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  maxTotalSupplyUpdatedIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  maxTotalSupplyUpdatedIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  maxTotalSupplyUpdatedIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  maxTotalSupplyUpdatedRecords_?: InputMaybe<SubgraphMaxTotalSupplyUpdated_Filter>;
   maxTotalSupply_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   maxTotalSupply_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
   maxTotalSupply_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
@@ -3455,6 +3944,7 @@ export type SubgraphMarket_Filter = {
   removal_?: InputMaybe<SubgraphMarketRemoved_Filter>;
   repaymentRecords_?: InputMaybe<SubgraphDebtRepaid_Filter>;
   reserveRatioBips?: InputMaybe<Scalars["Int"]["input"]>;
+  reserveRatioBipsUpdatedRecords_?: InputMaybe<SubgraphReserveRatioBipsUpdated_Filter>;
   reserveRatioBips_gt?: InputMaybe<Scalars["Int"]["input"]>;
   reserveRatioBips_gte?: InputMaybe<Scalars["Int"]["input"]>;
   reserveRatioBips_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
@@ -3593,10 +4083,21 @@ export type SubgraphMarket_Filter = {
   withdrawalBatchDuration_not?: InputMaybe<Scalars["Int"]["input"]>;
   withdrawalBatchDuration_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   withdrawalBatches_?: InputMaybe<SubgraphWithdrawalBatch_Filter>;
+  withdrawalRequestRecords_?: InputMaybe<SubgraphWithdrawalRequest_Filter>;
+  withdrawalRequestsIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  withdrawalRequestsIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  withdrawalRequestsIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  withdrawalRequestsIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  withdrawalRequestsIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  withdrawalRequestsIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  withdrawalRequestsIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  withdrawalRequestsIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
 };
 
 export enum SubgraphMarket_OrderBy {
   AnnualInterestBips = "annualInterestBips",
+  AnnualInterestBipsUpdatedIndex = "annualInterestBipsUpdatedIndex",
+  AnnualInterestBipsUpdatedRecords = "annualInterestBipsUpdatedRecords",
   ArchController = "archController",
   ArchControllerId = "archController__id",
   Asset = "asset",
@@ -3606,6 +4107,7 @@ export enum SubgraphMarket_OrderBy {
   AssetIsMock = "asset__isMock",
   AssetName = "asset__name",
   AssetSymbol = "asset__symbol",
+  BorrowIndex = "borrowIndex",
   BorrowRecords = "borrowRecords",
   Borrower = "borrower",
   Controller = "controller",
@@ -3613,18 +4115,23 @@ export enum SubgraphMarket_OrderBy {
   ControllerId = "controller__id",
   ControllerIsRegistered = "controller__isRegistered",
   CreatedAt = "createdAt",
+  DebtRepaidIndex = "debtRepaidIndex",
   Decimals = "decimals",
   DelinquencyFeeBips = "delinquencyFeeBips",
   DelinquencyGracePeriod = "delinquencyGracePeriod",
   DelinquencyRecords = "delinquencyRecords",
+  DelinquencyStatusChangedIndex = "delinquencyStatusChangedIndex",
   DeployedEvent = "deployedEvent",
   DeployedEventBlockNumber = "deployedEvent__blockNumber",
   DeployedEventBlockTimestamp = "deployedEvent__blockTimestamp",
   DeployedEventId = "deployedEvent__id",
   DeployedEventTransactionHash = "deployedEvent__transactionHash",
+  DepositIndex = "depositIndex",
   DepositRecords = "depositRecords",
+  EventIndex = "eventIndex",
   FeeCollectionRecords = "feeCollectionRecords",
   FeeRecipient = "feeRecipient",
+  FeesCollectedIndex = "feesCollectedIndex",
   Id = "id",
   InterestAccrualRecords = "interestAccrualRecords",
   IsClosed = "isClosed",
@@ -3632,7 +4139,16 @@ export enum SubgraphMarket_OrderBy {
   IsRegistered = "isRegistered",
   LastInterestAccruedTimestamp = "lastInterestAccruedTimestamp",
   Lenders = "lenders",
+  MarketClosedEvent = "marketClosedEvent",
+  MarketClosedEventBlockNumber = "marketClosedEvent__blockNumber",
+  MarketClosedEventBlockTimestamp = "marketClosedEvent__blockTimestamp",
+  MarketClosedEventEventIndex = "marketClosedEvent__eventIndex",
+  MarketClosedEventId = "marketClosedEvent__id",
+  MarketClosedEventTimestamp = "marketClosedEvent__timestamp",
+  MarketClosedEventTransactionHash = "marketClosedEvent__transactionHash",
   MaxTotalSupply = "maxTotalSupply",
+  MaxTotalSupplyUpdatedIndex = "maxTotalSupplyUpdatedIndex",
+  MaxTotalSupplyUpdatedRecords = "maxTotalSupplyUpdatedRecords",
   Name = "name",
   NormalizedUnclaimedWithdrawals = "normalizedUnclaimedWithdrawals",
   OriginalAnnualInterestBips = "originalAnnualInterestBips",
@@ -3647,6 +4163,7 @@ export enum SubgraphMarket_OrderBy {
   RemovalTransactionHash = "removal__transactionHash",
   RepaymentRecords = "repaymentRecords",
   ReserveRatioBips = "reserveRatioBips",
+  ReserveRatioBipsUpdatedRecords = "reserveRatioBipsUpdatedRecords",
   ScaleFactor = "scaleFactor",
   ScaledPendingWithdrawals = "scaledPendingWithdrawals",
   ScaledTotalSupply = "scaledTotalSupply",
@@ -3662,15 +4179,19 @@ export enum SubgraphMarket_OrderBy {
   TotalProtocolFeesAccrued = "totalProtocolFeesAccrued",
   TotalRepaid = "totalRepaid",
   WithdrawalBatchDuration = "withdrawalBatchDuration",
-  WithdrawalBatches = "withdrawalBatches"
+  WithdrawalBatches = "withdrawalBatches",
+  WithdrawalRequestRecords = "withdrawalRequestRecords",
+  WithdrawalRequestsIndex = "withdrawalRequestsIndex"
 }
 
 export type SubgraphMaxTotalSupplyUpdated = {
   __typename?: "MaxTotalSupplyUpdated";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
+  eventIndex: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
   market: SubgraphMarket;
+  maxTotalSupplyUpdatedIndex: Scalars["Int"]["output"];
   newMaxTotalSupply: Scalars["BigInt"]["output"];
   oldMaxTotalSupply: Scalars["BigInt"]["output"];
   transactionHash: Scalars["Bytes"]["output"];
@@ -3696,6 +4217,14 @@ export type SubgraphMaxTotalSupplyUpdated_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -3725,6 +4254,14 @@ export type SubgraphMaxTotalSupplyUpdated_Filter = {
   market_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   market_starts_with?: InputMaybe<Scalars["String"]["input"]>;
   market_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  maxTotalSupplyUpdatedIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  maxTotalSupplyUpdatedIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  maxTotalSupplyUpdatedIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  maxTotalSupplyUpdatedIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  maxTotalSupplyUpdatedIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  maxTotalSupplyUpdatedIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  maxTotalSupplyUpdatedIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  maxTotalSupplyUpdatedIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   newMaxTotalSupply?: InputMaybe<Scalars["BigInt"]["input"]>;
   newMaxTotalSupply_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   newMaxTotalSupply_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -3757,21 +4294,30 @@ export type SubgraphMaxTotalSupplyUpdated_Filter = {
 export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
+  EventIndex = "eventIndex",
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -3795,6 +4341,8 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
+  MaxTotalSupplyUpdatedIndex = "maxTotalSupplyUpdatedIndex",
   NewMaxTotalSupply = "newMaxTotalSupply",
   OldMaxTotalSupply = "oldMaxTotalSupply",
   TransactionHash = "transactionHash"
@@ -4366,6 +4914,8 @@ export type SubgraphQuery = {
   __typename?: "Query";
   /** Access to subgraph metadata */
   _meta?: Maybe<Subgraph_Meta_>;
+  annualInterestBipsUpdated?: Maybe<SubgraphAnnualInterestBipsUpdated>;
+  annualInterestBipsUpdateds: SubgraphAnnualInterestBipsUpdated[];
   approval?: Maybe<SubgraphApproval>;
   approvals: SubgraphApproval[];
   archController?: Maybe<SubgraphArchController>;
@@ -4468,11 +5018,23 @@ export type SubgraphQuery_MetaArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
 };
 
-export type SubgraphQueryApprovalArgs = {
+export type SubgraphQueryAnnualInterestBipsUpdatedArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars["ID"]["input"];
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
 };
+
+export type SubgraphQueryAnnualInterestBipsUpdatedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphAnnualInterestBipsUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphAnnualInterestBipsUpdated_Filter>;
+};
+
+export type SubgraphQueryApprovalArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryApprovalsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4484,7 +5046,7 @@ export type SubgraphQueryApprovalsArgs = {
   where?: InputMaybe<SubgraphApproval_Filter>;
 };
 
-export type SubgraphQueryArchControllerArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryArchControllerArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryArchControllersArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4496,9 +5058,10 @@ export type SubgraphQueryArchControllersArgs = {
   where?: InputMaybe<SubgraphArchController_Filter>;
 };
 
-export type SubgraphQueryBorrowArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryBorrowArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphQueryBorrowerRegistrationChangeArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryBorrowerRegistrationChangeArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryBorrowerRegistrationChangesArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4520,9 +5083,9 @@ export type SubgraphQueryBorrowsArgs = {
   where?: InputMaybe<SubgraphBorrow_Filter>;
 };
 
-export type SubgraphQueryControllerArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryControllerArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphQueryControllerAddedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryControllerAddedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryControllerAddedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4544,9 +5107,9 @@ export type SubgraphQueryControllerFactoriesArgs = {
   where?: InputMaybe<SubgraphControllerFactory_Filter>;
 };
 
-export type SubgraphQueryControllerFactoryArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryControllerFactoryArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphQueryControllerFactoryAddedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryControllerFactoryAddedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryControllerFactoryAddedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4558,7 +5121,7 @@ export type SubgraphQueryControllerFactoryAddedsArgs = {
   where?: InputMaybe<SubgraphControllerFactoryAdded_Filter>;
 };
 
-export type SubgraphQueryControllerFactoryRemovedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryControllerFactoryRemovedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryControllerFactoryRemovedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4570,7 +5133,7 @@ export type SubgraphQueryControllerFactoryRemovedsArgs = {
   where?: InputMaybe<SubgraphControllerFactoryRemoved_Filter>;
 };
 
-export type SubgraphQueryControllerRemovedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryControllerRemovedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryControllerRemovedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4592,7 +5155,7 @@ export type SubgraphQueryControllersArgs = {
   where?: InputMaybe<SubgraphController_Filter>;
 };
 
-export type SubgraphQueryDebtRepaidArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryDebtRepaidArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryDebtRepaidsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4604,7 +5167,7 @@ export type SubgraphQueryDebtRepaidsArgs = {
   where?: InputMaybe<SubgraphDebtRepaid_Filter>;
 };
 
-export type SubgraphQueryDelinquencyStatusChangedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryDelinquencyStatusChangedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryDelinquencyStatusChangedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4616,7 +5179,7 @@ export type SubgraphQueryDelinquencyStatusChangedsArgs = {
   where?: InputMaybe<SubgraphDelinquencyStatusChanged_Filter>;
 };
 
-export type SubgraphQueryDepositArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryDepositArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryDepositsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4628,7 +5191,7 @@ export type SubgraphQueryDepositsArgs = {
   where?: InputMaybe<SubgraphDeposit_Filter>;
 };
 
-export type SubgraphQueryFeesCollectedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryFeesCollectedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryFeesCollectedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4640,7 +5203,7 @@ export type SubgraphQueryFeesCollectedsArgs = {
   where?: InputMaybe<SubgraphFeesCollected_Filter>;
 };
 
-export type SubgraphQueryLenderAccountArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryLenderAccountArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryLenderAccountsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4652,9 +5215,9 @@ export type SubgraphQueryLenderAccountsArgs = {
   where?: InputMaybe<SubgraphLenderAccount_Filter>;
 };
 
-export type SubgraphQueryLenderAuthorizationArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryLenderAuthorizationArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphQueryLenderAuthorizationChangeArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryLenderAuthorizationChangeArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryLenderAuthorizationChangesArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4676,7 +5239,7 @@ export type SubgraphQueryLenderAuthorizationsArgs = {
   where?: InputMaybe<SubgraphLenderAuthorization_Filter>;
 };
 
-export type SubgraphQueryLenderInterestAccruedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryLenderInterestAccruedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryLenderInterestAccruedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4688,7 +5251,7 @@ export type SubgraphQueryLenderInterestAccruedsArgs = {
   where?: InputMaybe<SubgraphLenderInterestAccrued_Filter>;
 };
 
-export type SubgraphQueryLenderWithdrawalStatusArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryLenderWithdrawalStatusArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryLenderWithdrawalStatusesArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4700,9 +5263,9 @@ export type SubgraphQueryLenderWithdrawalStatusesArgs = {
   where?: InputMaybe<SubgraphLenderWithdrawalStatus_Filter>;
 };
 
-export type SubgraphQueryMarketArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryMarketArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphQueryMarketAddedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryMarketAddedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryMarketAddedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4714,7 +5277,7 @@ export type SubgraphQueryMarketAddedsArgs = {
   where?: InputMaybe<SubgraphMarketAdded_Filter>;
 };
 
-export type SubgraphQueryMarketClosedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryMarketClosedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryMarketClosedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4726,7 +5289,7 @@ export type SubgraphQueryMarketClosedsArgs = {
   where?: InputMaybe<SubgraphMarketClosed_Filter>;
 };
 
-export type SubgraphQueryMarketDeployedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryMarketDeployedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryMarketDeployedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4738,7 +5301,7 @@ export type SubgraphQueryMarketDeployedsArgs = {
   where?: InputMaybe<SubgraphMarketDeployed_Filter>;
 };
 
-export type SubgraphQueryMarketInterestAccruedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryMarketInterestAccruedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryMarketInterestAccruedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4750,7 +5313,7 @@ export type SubgraphQueryMarketInterestAccruedsArgs = {
   where?: InputMaybe<SubgraphMarketInterestAccrued_Filter>;
 };
 
-export type SubgraphQueryMarketRemovedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryMarketRemovedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryMarketRemovedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4772,7 +5335,7 @@ export type SubgraphQueryMarketsArgs = {
   where?: InputMaybe<SubgraphMarket_Filter>;
 };
 
-export type SubgraphQueryMaxTotalSupplyUpdatedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryMaxTotalSupplyUpdatedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryMaxTotalSupplyUpdatedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4784,7 +5347,7 @@ export type SubgraphQueryMaxTotalSupplyUpdatedsArgs = {
   where?: InputMaybe<SubgraphMaxTotalSupplyUpdated_Filter>;
 };
 
-export type SubgraphQueryNewControllerArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryNewControllerArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryNewControllersArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4796,7 +5359,7 @@ export type SubgraphQueryNewControllersArgs = {
   where?: InputMaybe<SubgraphNewController_Filter>;
 };
 
-export type SubgraphQueryNewSanctionsEscrowArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryNewSanctionsEscrowArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryNewSanctionsEscrowsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4808,7 +5371,7 @@ export type SubgraphQueryNewSanctionsEscrowsArgs = {
   where?: InputMaybe<SubgraphNewSanctionsEscrow_Filter>;
 };
 
-export type SubgraphQueryOwnershipHandoverCanceledArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryOwnershipHandoverCanceledArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryOwnershipHandoverCanceledsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4820,7 +5383,8 @@ export type SubgraphQueryOwnershipHandoverCanceledsArgs = {
   where?: InputMaybe<SubgraphOwnershipHandoverCanceled_Filter>;
 };
 
-export type SubgraphQueryOwnershipHandoverRequestedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryOwnershipHandoverRequestedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryOwnershipHandoverRequestedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4832,7 +5396,7 @@ export type SubgraphQueryOwnershipHandoverRequestedsArgs = {
   where?: InputMaybe<SubgraphOwnershipHandoverRequested_Filter>;
 };
 
-export type SubgraphQueryOwnershipTransferredArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryOwnershipTransferredArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryOwnershipTransferredsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4844,7 +5408,7 @@ export type SubgraphQueryOwnershipTransferredsArgs = {
   where?: InputMaybe<SubgraphOwnershipTransferred_Filter>;
 };
 
-export type SubgraphQueryParameterConstraintsArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryParameterConstraintsArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryParameterConstraints_CollectionArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4856,7 +5420,7 @@ export type SubgraphQueryParameterConstraints_CollectionArgs = {
   where?: InputMaybe<SubgraphParameterConstraints_Filter>;
 };
 
-export type SubgraphQueryRegisteredBorrowerArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryRegisteredBorrowerArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryRegisteredBorrowersArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4868,7 +5432,7 @@ export type SubgraphQueryRegisteredBorrowersArgs = {
   where?: InputMaybe<SubgraphRegisteredBorrower_Filter>;
 };
 
-export type SubgraphQueryReserveRatioBipsUpdatedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryReserveRatioBipsUpdatedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryReserveRatioBipsUpdatedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4880,9 +5444,9 @@ export type SubgraphQueryReserveRatioBipsUpdatedsArgs = {
   where?: InputMaybe<SubgraphReserveRatioBipsUpdated_Filter>;
 };
 
-export type SubgraphQuerySanctionOverrideArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQuerySanctionOverrideArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphQuerySanctionOverrideRemovedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQuerySanctionOverrideRemovedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQuerySanctionOverrideRemovedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4904,7 +5468,8 @@ export type SubgraphQuerySanctionOverridesArgs = {
   where?: InputMaybe<SubgraphSanctionOverride_Filter>;
 };
 
-export type SubgraphQuerySanctionedAccountAssetsSentToEscrowArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQuerySanctionedAccountAssetsSentToEscrowArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQuerySanctionedAccountAssetsSentToEscrowsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4916,7 +5481,8 @@ export type SubgraphQuerySanctionedAccountAssetsSentToEscrowsArgs = {
   where?: InputMaybe<SubgraphSanctionedAccountAssetsSentToEscrow_Filter>;
 };
 
-export type SubgraphQuerySanctionedAccountWithdrawalSentToEscrowArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQuerySanctionedAccountWithdrawalSentToEscrowArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQuerySanctionedAccountWithdrawalSentToEscrowsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4928,7 +5494,7 @@ export type SubgraphQuerySanctionedAccountWithdrawalSentToEscrowsArgs = {
   where?: InputMaybe<SubgraphSanctionedAccountWithdrawalSentToEscrow_Filter>;
 };
 
-export type SubgraphQueryTokenArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryTokenArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryTokensArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4940,7 +5506,7 @@ export type SubgraphQueryTokensArgs = {
   where?: InputMaybe<SubgraphToken_Filter>;
 };
 
-export type SubgraphQueryTransferArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryTransferArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryTransfersArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4952,7 +5518,8 @@ export type SubgraphQueryTransfersArgs = {
   where?: InputMaybe<SubgraphTransfer_Filter>;
 };
 
-export type SubgraphQueryUpdateProtocolFeeConfigurationArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryUpdateProtocolFeeConfigurationArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryUpdateProtocolFeeConfigurationsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4964,9 +5531,9 @@ export type SubgraphQueryUpdateProtocolFeeConfigurationsArgs = {
   where?: InputMaybe<SubgraphUpdateProtocolFeeConfiguration_Filter>;
 };
 
-export type SubgraphQueryWithdrawalBatchArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryWithdrawalBatchArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphQueryWithdrawalBatchCreatedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryWithdrawalBatchCreatedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryWithdrawalBatchCreatedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4978,7 +5545,7 @@ export type SubgraphQueryWithdrawalBatchCreatedsArgs = {
   where?: InputMaybe<SubgraphWithdrawalBatchCreated_Filter>;
 };
 
-export type SubgraphQueryWithdrawalBatchExpiredArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryWithdrawalBatchExpiredArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryWithdrawalBatchExpiredsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -4990,7 +5557,8 @@ export type SubgraphQueryWithdrawalBatchExpiredsArgs = {
   where?: InputMaybe<SubgraphWithdrawalBatchExpired_Filter>;
 };
 
-export type SubgraphQueryWithdrawalBatchInterestAccruedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryWithdrawalBatchInterestAccruedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryWithdrawalBatchInterestAccruedsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -5002,7 +5570,7 @@ export type SubgraphQueryWithdrawalBatchInterestAccruedsArgs = {
   where?: InputMaybe<SubgraphWithdrawalBatchInterestAccrued_Filter>;
 };
 
-export type SubgraphQueryWithdrawalBatchPaymentArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryWithdrawalBatchPaymentArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryWithdrawalBatchPaymentsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -5024,7 +5592,7 @@ export type SubgraphQueryWithdrawalBatchesArgs = {
   where?: InputMaybe<SubgraphWithdrawalBatch_Filter>;
 };
 
-export type SubgraphQueryWithdrawalExecutionArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryWithdrawalExecutionArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryWithdrawalExecutionsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -5036,7 +5604,7 @@ export type SubgraphQueryWithdrawalExecutionsArgs = {
   where?: InputMaybe<SubgraphWithdrawalExecution_Filter>;
 };
 
-export type SubgraphQueryWithdrawalRequestArgs = SubgraphQueryApprovalArgs;
+export type SubgraphQueryWithdrawalRequestArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphQueryWithdrawalRequestsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
@@ -5220,18 +5788,26 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -5255,6 +5831,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   NewReserveRatioBips = "newReserveRatioBips",
   OldReserveRatioBips = "oldReserveRatioBips",
   TransactionHash = "transactionHash"
@@ -5614,6 +6191,8 @@ export type SubgraphSubscription = {
   __typename?: "Subscription";
   /** Access to subgraph metadata */
   _meta?: Maybe<Subgraph_Meta_>;
+  annualInterestBipsUpdated?: Maybe<SubgraphAnnualInterestBipsUpdated>;
+  annualInterestBipsUpdateds: SubgraphAnnualInterestBipsUpdated[];
   approval?: Maybe<SubgraphApproval>;
   approvals: SubgraphApproval[];
   archController?: Maybe<SubgraphArchController>;
@@ -5714,217 +6293,246 @@ export type SubgraphSubscription = {
 
 export type SubgraphSubscription_MetaArgs = SubgraphQuery_MetaArgs;
 
-export type SubgraphSubscriptionApprovalArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionAnnualInterestBipsUpdatedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
+
+export type SubgraphSubscriptionAnnualInterestBipsUpdatedsArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedsArgs;
+
+export type SubgraphSubscriptionApprovalArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionApprovalsArgs = SubgraphQueryApprovalsArgs;
 
-export type SubgraphSubscriptionArchControllerArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionArchControllerArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionArchControllersArgs = SubgraphQueryArchControllersArgs;
 
-export type SubgraphSubscriptionBorrowArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionBorrowArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphSubscriptionBorrowerRegistrationChangeArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionBorrowerRegistrationChangeArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionBorrowerRegistrationChangesArgs =
   SubgraphQueryBorrowerRegistrationChangesArgs;
 
 export type SubgraphSubscriptionBorrowsArgs = SubgraphQueryBorrowsArgs;
 
-export type SubgraphSubscriptionControllerArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionControllerArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphSubscriptionControllerAddedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionControllerAddedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionControllerAddedsArgs = SubgraphQueryControllerAddedsArgs;
 
 export type SubgraphSubscriptionControllerFactoriesArgs = SubgraphQueryControllerFactoriesArgs;
 
-export type SubgraphSubscriptionControllerFactoryArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionControllerFactoryArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphSubscriptionControllerFactoryAddedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionControllerFactoryAddedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionControllerFactoryAddedsArgs =
   SubgraphQueryControllerFactoryAddedsArgs;
 
-export type SubgraphSubscriptionControllerFactoryRemovedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionControllerFactoryRemovedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionControllerFactoryRemovedsArgs =
   SubgraphQueryControllerFactoryRemovedsArgs;
 
-export type SubgraphSubscriptionControllerRemovedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionControllerRemovedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionControllerRemovedsArgs = SubgraphQueryControllerRemovedsArgs;
 
 export type SubgraphSubscriptionControllersArgs = SubgraphQueryControllersArgs;
 
-export type SubgraphSubscriptionDebtRepaidArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionDebtRepaidArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionDebtRepaidsArgs = SubgraphQueryDebtRepaidsArgs;
 
-export type SubgraphSubscriptionDelinquencyStatusChangedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionDelinquencyStatusChangedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionDelinquencyStatusChangedsArgs =
   SubgraphQueryDelinquencyStatusChangedsArgs;
 
-export type SubgraphSubscriptionDepositArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionDepositArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionDepositsArgs = SubgraphQueryDepositsArgs;
 
-export type SubgraphSubscriptionFeesCollectedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionFeesCollectedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionFeesCollectedsArgs = SubgraphQueryFeesCollectedsArgs;
 
-export type SubgraphSubscriptionLenderAccountArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionLenderAccountArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionLenderAccountsArgs = SubgraphQueryLenderAccountsArgs;
 
-export type SubgraphSubscriptionLenderAuthorizationArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionLenderAuthorizationArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphSubscriptionLenderAuthorizationChangeArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionLenderAuthorizationChangeArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionLenderAuthorizationChangesArgs =
   SubgraphQueryLenderAuthorizationChangesArgs;
 
 export type SubgraphSubscriptionLenderAuthorizationsArgs = SubgraphQueryLenderAuthorizationsArgs;
 
-export type SubgraphSubscriptionLenderInterestAccruedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionLenderInterestAccruedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionLenderInterestAccruedsArgs =
   SubgraphQueryLenderInterestAccruedsArgs;
 
-export type SubgraphSubscriptionLenderWithdrawalStatusArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionLenderWithdrawalStatusArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionLenderWithdrawalStatusesArgs =
   SubgraphQueryLenderWithdrawalStatusesArgs;
 
-export type SubgraphSubscriptionMarketArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionMarketArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphSubscriptionMarketAddedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionMarketAddedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionMarketAddedsArgs = SubgraphQueryMarketAddedsArgs;
 
-export type SubgraphSubscriptionMarketClosedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionMarketClosedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionMarketClosedsArgs = SubgraphQueryMarketClosedsArgs;
 
-export type SubgraphSubscriptionMarketDeployedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionMarketDeployedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionMarketDeployedsArgs = SubgraphQueryMarketDeployedsArgs;
 
-export type SubgraphSubscriptionMarketInterestAccruedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionMarketInterestAccruedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionMarketInterestAccruedsArgs =
   SubgraphQueryMarketInterestAccruedsArgs;
 
-export type SubgraphSubscriptionMarketRemovedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionMarketRemovedArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionMarketRemovedsArgs = SubgraphQueryMarketRemovedsArgs;
 
 export type SubgraphSubscriptionMarketsArgs = SubgraphQueryMarketsArgs;
 
-export type SubgraphSubscriptionMaxTotalSupplyUpdatedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionMaxTotalSupplyUpdatedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionMaxTotalSupplyUpdatedsArgs =
   SubgraphQueryMaxTotalSupplyUpdatedsArgs;
 
-export type SubgraphSubscriptionNewControllerArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionNewControllerArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionNewControllersArgs = SubgraphQueryNewControllersArgs;
 
-export type SubgraphSubscriptionNewSanctionsEscrowArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionNewSanctionsEscrowArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionNewSanctionsEscrowsArgs = SubgraphQueryNewSanctionsEscrowsArgs;
 
-export type SubgraphSubscriptionOwnershipHandoverCanceledArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionOwnershipHandoverCanceledArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionOwnershipHandoverCanceledsArgs =
   SubgraphQueryOwnershipHandoverCanceledsArgs;
 
-export type SubgraphSubscriptionOwnershipHandoverRequestedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionOwnershipHandoverRequestedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionOwnershipHandoverRequestedsArgs =
   SubgraphQueryOwnershipHandoverRequestedsArgs;
 
-export type SubgraphSubscriptionOwnershipTransferredArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionOwnershipTransferredArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionOwnershipTransferredsArgs = SubgraphQueryOwnershipTransferredsArgs;
 
-export type SubgraphSubscriptionParameterConstraintsArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionParameterConstraintsArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionParameterConstraints_CollectionArgs =
   SubgraphQueryParameterConstraints_CollectionArgs;
 
-export type SubgraphSubscriptionRegisteredBorrowerArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionRegisteredBorrowerArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionRegisteredBorrowersArgs = SubgraphQueryRegisteredBorrowersArgs;
 
-export type SubgraphSubscriptionReserveRatioBipsUpdatedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionReserveRatioBipsUpdatedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionReserveRatioBipsUpdatedsArgs =
   SubgraphQueryReserveRatioBipsUpdatedsArgs;
 
-export type SubgraphSubscriptionSanctionOverrideArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionSanctionOverrideArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphSubscriptionSanctionOverrideRemovedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionSanctionOverrideRemovedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionSanctionOverrideRemovedsArgs =
   SubgraphQuerySanctionOverrideRemovedsArgs;
 
 export type SubgraphSubscriptionSanctionOverridesArgs = SubgraphQuerySanctionOverridesArgs;
 
-export type SubgraphSubscriptionSanctionedAccountAssetsSentToEscrowArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionSanctionedAccountAssetsSentToEscrowArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionSanctionedAccountAssetsSentToEscrowsArgs =
   SubgraphQuerySanctionedAccountAssetsSentToEscrowsArgs;
 
 export type SubgraphSubscriptionSanctionedAccountWithdrawalSentToEscrowArgs =
-  SubgraphQueryApprovalArgs;
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionSanctionedAccountWithdrawalSentToEscrowsArgs =
   SubgraphQuerySanctionedAccountWithdrawalSentToEscrowsArgs;
 
-export type SubgraphSubscriptionTokenArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionTokenArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionTokensArgs = SubgraphQueryTokensArgs;
 
-export type SubgraphSubscriptionTransferArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionTransferArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionTransfersArgs = SubgraphQueryTransfersArgs;
 
-export type SubgraphSubscriptionUpdateProtocolFeeConfigurationArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionUpdateProtocolFeeConfigurationArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionUpdateProtocolFeeConfigurationsArgs =
   SubgraphQueryUpdateProtocolFeeConfigurationsArgs;
 
-export type SubgraphSubscriptionWithdrawalBatchArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionWithdrawalBatchArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
-export type SubgraphSubscriptionWithdrawalBatchCreatedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionWithdrawalBatchCreatedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionWithdrawalBatchCreatedsArgs =
   SubgraphQueryWithdrawalBatchCreatedsArgs;
 
-export type SubgraphSubscriptionWithdrawalBatchExpiredArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionWithdrawalBatchExpiredArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionWithdrawalBatchExpiredsArgs =
   SubgraphQueryWithdrawalBatchExpiredsArgs;
 
-export type SubgraphSubscriptionWithdrawalBatchInterestAccruedArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionWithdrawalBatchInterestAccruedArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionWithdrawalBatchInterestAccruedsArgs =
   SubgraphQueryWithdrawalBatchInterestAccruedsArgs;
 
-export type SubgraphSubscriptionWithdrawalBatchPaymentArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionWithdrawalBatchPaymentArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionWithdrawalBatchPaymentsArgs =
   SubgraphQueryWithdrawalBatchPaymentsArgs;
 
 export type SubgraphSubscriptionWithdrawalBatchesArgs = SubgraphQueryWithdrawalBatchesArgs;
 
-export type SubgraphSubscriptionWithdrawalExecutionArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionWithdrawalExecutionArgs =
+  SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionWithdrawalExecutionsArgs = SubgraphQueryWithdrawalExecutionsArgs;
 
-export type SubgraphSubscriptionWithdrawalRequestArgs = SubgraphQueryApprovalArgs;
+export type SubgraphSubscriptionWithdrawalRequestArgs = SubgraphQueryAnnualInterestBipsUpdatedArgs;
 
 export type SubgraphSubscriptionWithdrawalRequestsArgs = SubgraphQueryWithdrawalRequestsArgs;
 
@@ -6174,18 +6782,26 @@ export enum SubgraphTransfer_OrderBy {
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -6209,6 +6825,7 @@ export enum SubgraphTransfer_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   ScaledAmount = "scaledAmount",
   To = "to",
   ToAddress = "to__address",
@@ -6706,18 +7323,26 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   InterestEarned = "interestEarned",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -6741,6 +7366,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   TransactionHash = "transactionHash"
 }
 
@@ -7002,18 +7628,26 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   LastUpdatedTimestamp = "lastUpdatedTimestamp",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
   MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
   MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketName = "market__name",
   MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
   MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
@@ -7037,6 +7671,7 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
   MarketTotalRepaid = "market__totalRepaid",
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   NormalizedAmountClaimed = "normalizedAmountClaimed",
   NormalizedAmountPaid = "normalizedAmountPaid",
   Payments = "payments",
@@ -7219,12 +7854,15 @@ export type SubgraphWithdrawalRequest = {
   batch: SubgraphWithdrawalBatch;
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
+  eventIndex: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
+  market: SubgraphMarket;
   normalizedAmount: Scalars["BigInt"]["output"];
   requestIndex: Scalars["Int"]["output"];
   scaledAmount: Scalars["BigInt"]["output"];
   status: SubgraphLenderWithdrawalStatus;
   transactionHash: Scalars["Bytes"]["output"];
+  withdrawalRequestsIndex: Scalars["Int"]["output"];
 };
 
 export type SubgraphWithdrawalRequest_Filter = {
@@ -7289,6 +7927,14 @@ export type SubgraphWithdrawalRequest_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -7297,6 +7943,27 @@ export type SubgraphWithdrawalRequest_Filter = {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  market?: InputMaybe<Scalars["String"]["input"]>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars["String"]["input"]>;
+  market_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_gt?: InputMaybe<Scalars["String"]["input"]>;
+  market_gte?: InputMaybe<Scalars["String"]["input"]>;
+  market_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  market_lt?: InputMaybe<Scalars["String"]["input"]>;
+  market_lte?: InputMaybe<Scalars["String"]["input"]>;
+  market_not?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  market_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   normalizedAmount?: InputMaybe<Scalars["BigInt"]["input"]>;
   normalizedAmount_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   normalizedAmount_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -7353,6 +8020,14 @@ export type SubgraphWithdrawalRequest_Filter = {
   transactionHash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   transactionHash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   transactionHash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  withdrawalRequestsIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  withdrawalRequestsIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  withdrawalRequestsIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  withdrawalRequestsIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  withdrawalRequestsIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  withdrawalRequestsIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  withdrawalRequestsIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  withdrawalRequestsIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
 };
 
 export enum SubgraphWithdrawalRequest_OrderBy {
@@ -7382,7 +8057,54 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   BatchTotalNormalizedRequests = "batch__totalNormalizedRequests",
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
+  EventIndex = "eventIndex",
   Id = "id",
+  Market = "market",
+  MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
+  MarketBorrower = "market__borrower",
+  MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
+  MarketDecimals = "market__decimals",
+  MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
+  MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketEventIndex = "market__eventIndex",
+  MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
+  MarketId = "market__id",
+  MarketIsClosed = "market__isClosed",
+  MarketIsDelinquent = "market__isDelinquent",
+  MarketIsRegistered = "market__isRegistered",
+  MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
+  MarketName = "market__name",
+  MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
+  MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
+  MarketPendingProtocolFees = "market__pendingProtocolFees",
+  MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
+  MarketProtocolFeeBips = "market__protocolFeeBips",
+  MarketReserveRatioBips = "market__reserveRatioBips",
+  MarketScaleFactor = "market__scaleFactor",
+  MarketScaledPendingWithdrawals = "market__scaledPendingWithdrawals",
+  MarketScaledTotalSupply = "market__scaledTotalSupply",
+  MarketSentinel = "market__sentinel",
+  MarketSymbol = "market__symbol",
+  MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
+  MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
+  MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
+  MarketTotalBorrowed = "market__totalBorrowed",
+  MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
+  MarketTotalDeposited = "market__totalDeposited",
+  MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
+  MarketTotalRepaid = "market__totalRepaid",
+  MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   NormalizedAmount = "normalizedAmount",
   RequestIndex = "requestIndex",
   ScaledAmount = "scaledAmount",
@@ -7394,7 +8116,8 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   StatusRequestsCount = "status__requestsCount",
   StatusScaledAmount = "status__scaledAmount",
   StatusTotalNormalizedRequests = "status__totalNormalizedRequests",
-  TransactionHash = "transactionHash"
+  TransactionHash = "transactionHash",
+  WithdrawalRequestsIndex = "withdrawalRequestsIndex"
 }
 
 export type Subgraph_Block_ = {
@@ -7498,6 +8221,7 @@ export type SubgraphMarketDataFragment = {
   totalDelinquencyFeesAccrued: string;
   totalProtocolFeesAccrued: string;
   totalDeposited: string;
+  eventIndex: number;
   controller: { __typename?: "Controller"; id: string };
   _asset: {
     __typename?: "Token";
@@ -7517,9 +8241,22 @@ export type SubgraphAprConstraintsFragment = {
   maximumAnnualInterestBips: number;
 };
 
+export type SubgraphDelinquencyStatusChangedDataFragment = {
+  __typename?: "DelinquencyStatusChanged";
+  id: string;
+  eventIndex: number;
+  isDelinquent: boolean;
+  liquidityCoverageRequired: string;
+  totalAssets: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+};
+
 export type SubgraphDepositDataFragment = {
   __typename?: "Deposit";
   id: string;
+  eventIndex: number;
   assetAmount: string;
   scaledAmount: string;
   blockNumber: number;
@@ -7572,6 +8309,7 @@ export type SubgraphMarketDataWithEventsFragment = {
   totalDelinquencyFeesAccrued: string;
   totalProtocolFeesAccrued: string;
   totalDeposited: string;
+  eventIndex: number;
   controller: { __typename?: "Controller"; id: string };
   _asset: {
     __typename?: "Token";
@@ -7602,6 +8340,7 @@ export type SubgraphWithdrawalBatchPaymentPropertiesFragment = {
 export type SubgraphWithdrawalRequestPropertiesFragment = {
   __typename?: "WithdrawalRequest";
   id: string;
+  eventIndex: number;
   requestIndex: number;
   scaledAmount: string;
   normalizedAmount: string;
@@ -7709,6 +8448,7 @@ export type SubgraphMarketRecordsFragment = {
 
 export type SubgraphBorrowDataFragment = {
   __typename?: "Borrow";
+  eventIndex: number;
   assetAmount: string;
   blockNumber: number;
   blockTimestamp: number;
@@ -7717,6 +8457,7 @@ export type SubgraphBorrowDataFragment = {
 
 export type SubgraphRepaymentDataFragment = {
   __typename?: "DebtRepaid";
+  eventIndex: number;
   from: string;
   assetAmount: string;
   blockNumber: number;
@@ -7726,7 +8467,36 @@ export type SubgraphRepaymentDataFragment = {
 
 export type SubgraphFeesCollectedDataFragment = {
   __typename?: "FeesCollected";
+  eventIndex: number;
   feesCollected: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+};
+
+export type SubgraphAnnualInterestBipsUpdatedDataFragment = {
+  __typename?: "AnnualInterestBipsUpdated";
+  eventIndex: number;
+  oldAnnualInterestBips: number;
+  newAnnualInterestBips: number;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+};
+
+export type SubgraphMaxTotalSupplyUpdatedDataFragment = {
+  __typename?: "MaxTotalSupplyUpdated";
+  eventIndex: number;
+  oldMaxTotalSupply: string;
+  newMaxTotalSupply: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+};
+
+export type SubgraphMarketClosedDataFragment = {
+  __typename?: "MarketClosed";
+  eventIndex: number;
   blockNumber: number;
   blockTimestamp: number;
   transactionHash: string;
@@ -7805,6 +8575,7 @@ export type SubgraphGetLenderAccountWithMarketQuery = {
     totalDelinquencyFeesAccrued: string;
     totalProtocolFeesAccrued: string;
     totalDeposited: string;
+    eventIndex: number;
     lenders: SubgraphAccountDataForLenderViewFragment[];
     borrowRecords: SubgraphBorrowDataFragment[];
     repaymentRecords: SubgraphRepaymentDataFragment[];
@@ -7877,6 +8648,7 @@ export type SubgraphGetAllMarketsForLenderViewQuery = {
     totalDelinquencyFeesAccrued: string;
     totalProtocolFeesAccrued: string;
     totalDeposited: string;
+    eventIndex: number;
     borrowRecords: SubgraphBorrowDataFragment[];
     repaymentRecords: SubgraphRepaymentDataFragment[];
     controller: { __typename?: "Controller"; id: string };
@@ -7983,6 +8755,7 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
       totalDelinquencyFeesAccrued: string;
       totalProtocolFeesAccrued: string;
       totalDeposited: string;
+      eventIndex: number;
       borrowRecords: SubgraphBorrowDataFragment[];
       repaymentRecords: SubgraphRepaymentDataFragment[];
       controller: { __typename?: "Controller"; id: string };
@@ -8043,6 +8816,7 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
         totalDelinquencyFeesAccrued: string;
         totalProtocolFeesAccrued: string;
         totalDeposited: string;
+        eventIndex: number;
         borrowRecords: SubgraphBorrowDataFragment[];
         repaymentRecords: SubgraphRepaymentDataFragment[];
         controller: { __typename?: "Controller"; id: string };
@@ -8125,6 +8899,28 @@ export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery = {
     withdrawals: SubgraphLenderWithdrawalPropertiesWithEventsFragment[];
     deposits: SubgraphDepositDataFragment[];
   }>;
+};
+
+export type SubgraphGetMarketEventsQueryVariables = Exact<{
+  market: Scalars["ID"]["input"];
+  startEventID: Scalars["ID"]["input"];
+  endEventID: Scalars["ID"]["input"];
+}>;
+
+export type SubgraphGetMarketEventsQuery = {
+  __typename?: "Query";
+  market?: {
+    __typename?: "Market";
+    marketClosedEvent?: SubgraphMarketClosedDataFragment | null;
+    delinquencyRecords: SubgraphDelinquencyStatusChangedDataFragment[];
+    borrowRecords: SubgraphBorrowDataFragment[];
+    depositRecords: SubgraphDepositDataFragment[];
+    feeCollectionRecords: SubgraphFeesCollectedDataFragment[];
+    repaymentRecords: SubgraphRepaymentDataFragment[];
+    annualInterestBipsUpdatedRecords: SubgraphAnnualInterestBipsUpdatedDataFragment[];
+    maxTotalSupplyUpdatedRecords: SubgraphMaxTotalSupplyUpdatedDataFragment[];
+    withdrawalRequestRecords: SubgraphWithdrawalRequestPropertiesFragment[];
+  } | null;
 };
 
 export type SubgraphGetMarketsForBorrowerQueryVariables = Exact<{
@@ -8328,6 +9124,7 @@ export const LenderPropertiesFragmentDoc = gql`
 export const DepositDataFragmentDoc = gql`
   fragment DepositData on Deposit {
     id
+    eventIndex
     account {
       address
     }
@@ -8358,6 +9155,18 @@ export const AprConstraintsFragmentDoc = gql`
   fragment AprConstraints on ParameterConstraints {
     minimumAnnualInterestBips
     maximumAnnualInterestBips
+  }
+`;
+export const DelinquencyStatusChangedDataFragmentDoc = gql`
+  fragment DelinquencyStatusChangedData on DelinquencyStatusChanged {
+    id
+    eventIndex
+    isDelinquent
+    liquidityCoverageRequired
+    totalAssets
+    blockNumber
+    blockTimestamp
+    transactionHash
   }
 `;
 export const MarketDeployedEventFragmentDoc = gql`
@@ -8415,6 +9224,7 @@ export const MarketDataFragmentDoc = gql`
     totalDelinquencyFeesAccrued
     totalProtocolFeesAccrued
     totalDeposited
+    eventIndex
     deployedEvent {
       ...MarketDeployedEvent
     }
@@ -8422,6 +9232,7 @@ export const MarketDataFragmentDoc = gql`
 `;
 export const BorrowDataFragmentDoc = gql`
   fragment BorrowData on Borrow {
+    eventIndex
     assetAmount
     blockNumber
     blockTimestamp
@@ -8430,6 +9241,7 @@ export const BorrowDataFragmentDoc = gql`
 `;
 export const FeesCollectedDataFragmentDoc = gql`
   fragment FeesCollectedData on FeesCollected {
+    eventIndex
     feesCollected
     blockNumber
     blockTimestamp
@@ -8438,6 +9250,7 @@ export const FeesCollectedDataFragmentDoc = gql`
 `;
 export const RepaymentDataFragmentDoc = gql`
   fragment RepaymentData on DebtRepaid {
+    eventIndex
     from
     assetAmount
     blockNumber
@@ -8539,6 +9352,7 @@ export const WithdrawalBatchPropertiesFragmentDoc = gql`
 export const WithdrawalRequestPropertiesFragmentDoc = gql`
   fragment WithdrawalRequestProperties on WithdrawalRequest {
     id
+    eventIndex
     requestIndex
     account {
       address
@@ -8588,6 +9402,34 @@ export const WithdrawalBatchPropertiesWithEventsFragmentDoc = gql`
     executions {
       ...WithdrawalExecutionProperties
     }
+  }
+`;
+export const AnnualInterestBipsUpdatedDataFragmentDoc = gql`
+  fragment AnnualInterestBipsUpdatedData on AnnualInterestBipsUpdated {
+    eventIndex
+    oldAnnualInterestBips
+    newAnnualInterestBips
+    blockNumber
+    blockTimestamp
+    transactionHash
+  }
+`;
+export const MaxTotalSupplyUpdatedDataFragmentDoc = gql`
+  fragment MaxTotalSupplyUpdatedData on MaxTotalSupplyUpdated {
+    eventIndex
+    oldMaxTotalSupply
+    newMaxTotalSupply
+    blockNumber
+    blockTimestamp
+    transactionHash
+  }
+`;
+export const MarketClosedDataFragmentDoc = gql`
+  fragment MarketClosedData on MarketClosed {
+    eventIndex
+    blockNumber
+    blockTimestamp
+    transactionHash
   }
 `;
 export const GetLenderAccountForMarketDocument = gql`
@@ -9465,6 +10307,151 @@ export type GetMarketsAndLogsWhereLenderAuthorizedOrActiveSuspenseQueryHookResul
 export type GetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryResult = Apollo.QueryResult<
   SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery,
   SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
+>;
+export const GetMarketEventsDocument = gql`
+  query getMarketEvents($market: ID!, $startEventID: ID!, $endEventID: ID!) {
+    market(id: $market) {
+      marketClosedEvent {
+        ...MarketClosedData
+      }
+      delinquencyRecords(
+        where: { id_gte: $startEventID, id_lt: $endEventID }
+        orderBy: id
+        orderDirection: desc
+      ) {
+        ...DelinquencyStatusChangedData
+      }
+      borrowRecords(
+        where: { id_gte: $startEventID, id_lt: $endEventID }
+        orderBy: id
+        orderDirection: desc
+      ) {
+        ...BorrowData
+      }
+      depositRecords(
+        where: { id_gte: $startEventID, id_lt: $endEventID }
+        orderBy: id
+        orderDirection: desc
+      ) {
+        ...DepositData
+      }
+      feeCollectionRecords(
+        where: { id_gte: $startEventID, id_lt: $endEventID }
+        orderBy: id
+        orderDirection: desc
+      ) {
+        ...FeesCollectedData
+      }
+      repaymentRecords(
+        where: { id_gte: $startEventID, id_lt: $endEventID }
+        orderBy: id
+        orderDirection: desc
+      ) {
+        ...RepaymentData
+      }
+      annualInterestBipsUpdatedRecords(
+        where: { id_gte: $startEventID, id_lt: $endEventID }
+        orderBy: id
+        orderDirection: desc
+      ) {
+        ...AnnualInterestBipsUpdatedData
+      }
+      maxTotalSupplyUpdatedRecords(
+        where: { id_gte: $startEventID, id_lt: $endEventID }
+        orderBy: id
+        orderDirection: desc
+      ) {
+        ...MaxTotalSupplyUpdatedData
+      }
+      withdrawalRequestRecords(
+        where: { id_gte: $startEventID, id_lt: $endEventID }
+        orderBy: id
+        orderDirection: desc
+      ) {
+        ...WithdrawalRequestProperties
+      }
+    }
+  }
+  ${MarketClosedDataFragmentDoc}
+  ${DelinquencyStatusChangedDataFragmentDoc}
+  ${BorrowDataFragmentDoc}
+  ${DepositDataFragmentDoc}
+  ${FeesCollectedDataFragmentDoc}
+  ${RepaymentDataFragmentDoc}
+  ${AnnualInterestBipsUpdatedDataFragmentDoc}
+  ${MaxTotalSupplyUpdatedDataFragmentDoc}
+  ${WithdrawalRequestPropertiesFragmentDoc}
+`;
+
+/**
+ * __useGetMarketEventsQuery__
+ *
+ * To run a query within a React component, call `useGetMarketEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMarketEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMarketEventsQuery({
+ *   variables: {
+ *      market: // value for 'market'
+ *      startEventID: // value for 'startEventID'
+ *      endEventID: // value for 'endEventID'
+ *   },
+ * });
+ */
+export function useGetMarketEventsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    SubgraphGetMarketEventsQuery,
+    SubgraphGetMarketEventsQueryVariables
+  >
+): GetMarketEventsQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SubgraphGetMarketEventsQuery, SubgraphGetMarketEventsQueryVariables>(
+    GetMarketEventsDocument,
+    options
+  );
+}
+export function useGetMarketEventsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SubgraphGetMarketEventsQuery,
+    SubgraphGetMarketEventsQueryVariables
+  >
+): GetMarketEventsLazyQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<SubgraphGetMarketEventsQuery, SubgraphGetMarketEventsQueryVariables>(
+    GetMarketEventsDocument,
+    options
+  );
+}
+export function useGetMarketEventsSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    SubgraphGetMarketEventsQuery,
+    SubgraphGetMarketEventsQueryVariables
+  >
+): GetMarketEventsSuspenseQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    SubgraphGetMarketEventsQuery,
+    SubgraphGetMarketEventsQueryVariables
+  >(GetMarketEventsDocument, options);
+}
+export type GetMarketEventsQueryHookResult = Apollo.QueryResult<
+  SubgraphGetMarketEventsQuery,
+  SubgraphGetMarketEventsQueryVariables
+>;
+export type GetMarketEventsLazyQueryHookResult = Apollo.LazyQueryResultTuple<
+  SubgraphGetMarketEventsQuery,
+  SubgraphGetMarketEventsQueryVariables
+>;
+export type GetMarketEventsSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
+  SubgraphGetMarketEventsQuery,
+  SubgraphGetMarketEventsQueryVariables
+>;
+export type GetMarketEventsQueryResult = Apollo.QueryResult<
+  SubgraphGetMarketEventsQuery,
+  SubgraphGetMarketEventsQueryVariables
 >;
 export const GetMarketsForBorrowerDocument = gql`
   query getMarketsForBorrower(
