@@ -17,9 +17,7 @@ import {
   WithdrawalRecordParserMap,
   WithdrawalRecordKind,
   WithdrawalDataFragmentByType,
-  WithdrawalRecordByType,
-  WithdrawalDataFragment,
-  WithdrawalRecord
+  WithdrawalRecordByType
 } from "./record-types";
 
 import { WithdrawalBatch } from "../withdrawal-batch";
