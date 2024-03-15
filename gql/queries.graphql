@@ -319,35 +319,76 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
 
 query getMarketEvents(
   $market: ID!
-  $startEventID: ID!
-  $endEventID: ID!
+  $startEventIndex: Int = 0
+  $endEventIndex: Int = 100000000
+  $limit: Int = 10
 ) {
   market(id: $market) {
     marketClosedEvent {
       ...MarketClosedData
     }
-    delinquencyRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+    delinquencyRecords(
+      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
       ...DelinquencyStatusChangedData
     }
-    borrowRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+    borrowRecords(
+      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
       ...BorrowData
     }
-    depositRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+    depositRecords(
+      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
       ...DepositData
     }
-    feeCollectionRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+    feeCollectionRecords(
+      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
       ...FeesCollectedData
     }
-    repaymentRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+    repaymentRecords(
+      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
       ...RepaymentData
     }
-    annualInterestBipsUpdatedRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+    annualInterestBipsUpdatedRecords(
+      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
       ...AnnualInterestBipsUpdatedData
     }
-    maxTotalSupplyUpdatedRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+    maxTotalSupplyUpdatedRecords(
+      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
       ...MaxTotalSupplyUpdatedData
     }
-    withdrawalRequestRecords(where: { id_gte: $startEventID, id_lt: $endEventID }, orderBy: id, orderDirection: desc) {
+    withdrawalRequestRecords(
+      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
       ...WithdrawalRequestProperties
     }
   }

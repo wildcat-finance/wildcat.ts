@@ -25,15 +25,8 @@ export async function getMarketRecords(
   if (endEventIndex === undefined && market.eventIndex !== undefined) {
     endEventIndex = market.eventIndex;
   }
-
-  // Get the end ID to query - either the ID for the provided `endEventIndex` or
-  // the ID for a market with an address one higher
-  const endEventID = endEventIndex
-    ? `RECORD-${marketAddress}-${endEventIndex}`
-    : `RECORD-${BigNumber.from(marketAddress).add(1).toString().toLowerCase()}`;
-
-  const startEventIndex = endEventIndex ? Math.max(0, endEventIndex - (limit || 100)) : 0;
-  const startEventID = `RECORD-${marketAddress}-${startEventIndex}`;
+  const startEventIndex = endEventIndex ? Math.max(0, endEventIndex - limit) : 0;
+  const t1 = Date.now();
   const result = await subgraphClient.query<
     SubgraphGetMarketEventsQuery,
     SubgraphGetMarketEventsQueryVariables
@@ -41,11 +34,15 @@ export async function getMarketRecords(
     query: GetMarketEventsDocument,
     variables: {
       market: marketAddress,
-      startEventID,
-      endEventID
+      startEventIndex,
+      endEventIndex: endEventIndex ?? 10_000,
+      limit
     },
     fetchPolicy
   });
+  const t2 = Date.now();
+  console.log(`Querying market records took ${t2 - t1} ms`);
+
   const marketData = result.data.market;
   assert(!!marketData, `Market not found in subgraph: ${market.address}`);
   const {

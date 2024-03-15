@@ -8903,8 +8903,9 @@ export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery = {
 
 export type SubgraphGetMarketEventsQueryVariables = Exact<{
   market: Scalars["ID"]["input"];
-  startEventID: Scalars["ID"]["input"];
-  endEventID: Scalars["ID"]["input"];
+  startEventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  endEventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
 }>;
 
 export type SubgraphGetMarketEventsQuery = {
@@ -10309,64 +10310,77 @@ export type GetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryResult = Apollo.Q
   SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
 >;
 export const GetMarketEventsDocument = gql`
-  query getMarketEvents($market: ID!, $startEventID: ID!, $endEventID: ID!) {
+  query getMarketEvents(
+    $market: ID!
+    $startEventIndex: Int = 0
+    $endEventIndex: Int = 100000000
+    $limit: Int = 10
+  ) {
     market(id: $market) {
       marketClosedEvent {
         ...MarketClosedData
       }
       delinquencyRecords(
-        where: { id_gte: $startEventID, id_lt: $endEventID }
-        orderBy: id
+        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        orderBy: eventIndex
         orderDirection: desc
+        first: $limit
       ) {
         ...DelinquencyStatusChangedData
       }
       borrowRecords(
-        where: { id_gte: $startEventID, id_lt: $endEventID }
-        orderBy: id
+        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        orderBy: eventIndex
         orderDirection: desc
+        first: $limit
       ) {
         ...BorrowData
       }
       depositRecords(
-        where: { id_gte: $startEventID, id_lt: $endEventID }
-        orderBy: id
+        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        orderBy: eventIndex
         orderDirection: desc
+        first: $limit
       ) {
         ...DepositData
       }
       feeCollectionRecords(
-        where: { id_gte: $startEventID, id_lt: $endEventID }
-        orderBy: id
+        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        orderBy: eventIndex
         orderDirection: desc
+        first: $limit
       ) {
         ...FeesCollectedData
       }
       repaymentRecords(
-        where: { id_gte: $startEventID, id_lt: $endEventID }
-        orderBy: id
+        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        orderBy: eventIndex
         orderDirection: desc
+        first: $limit
       ) {
         ...RepaymentData
       }
       annualInterestBipsUpdatedRecords(
-        where: { id_gte: $startEventID, id_lt: $endEventID }
-        orderBy: id
+        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        orderBy: eventIndex
         orderDirection: desc
+        first: $limit
       ) {
         ...AnnualInterestBipsUpdatedData
       }
       maxTotalSupplyUpdatedRecords(
-        where: { id_gte: $startEventID, id_lt: $endEventID }
-        orderBy: id
+        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        orderBy: eventIndex
         orderDirection: desc
+        first: $limit
       ) {
         ...MaxTotalSupplyUpdatedData
       }
       withdrawalRequestRecords(
-        where: { id_gte: $startEventID, id_lt: $endEventID }
-        orderBy: id
+        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        orderBy: eventIndex
         orderDirection: desc
+        first: $limit
       ) {
         ...WithdrawalRequestProperties
       }
@@ -10396,8 +10410,9 @@ export const GetMarketEventsDocument = gql`
  * const { data, loading, error } = useGetMarketEventsQuery({
  *   variables: {
  *      market: // value for 'market'
- *      startEventID: // value for 'startEventID'
- *      endEventID: // value for 'endEventID'
+ *      startEventIndex: // value for 'startEventIndex'
+ *      endEventIndex: // value for 'endEventIndex'
+ *      limit: // value for 'limit'
  *   },
  * });
  */
