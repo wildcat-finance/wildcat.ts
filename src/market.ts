@@ -16,7 +16,6 @@ import {
   RAY,
   bipToRay,
   BIP,
-  calculateLinearInterestFromBips,
   SECONDS_IN_365_DAYS
 } from "./utils/math";
 import {
