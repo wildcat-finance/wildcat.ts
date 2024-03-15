@@ -31,7 +31,7 @@ export enum SubgraphAggregation_Interval {
 }
 
 export type SubgraphAnnualInterestBipsUpdated = {
-  __typename?: "AnnualInterestBipsUpdated";
+  __typename: "AnnualInterestBipsUpdated";
   annualInterestBipsUpdatedIndex: Scalars["Int"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
@@ -195,7 +195,7 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
 }
 
 export type SubgraphApproval = {
-  __typename?: "Approval";
+  __typename: "Approval";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
@@ -285,7 +285,7 @@ export enum SubgraphApproval_OrderBy {
 }
 
 export type SubgraphArchController = {
-  __typename?: "ArchController";
+  __typename: "ArchController";
   borrowers: SubgraphRegisteredBorrower[];
   controllerFactories: SubgraphControllerFactory[];
   controllers: SubgraphController[];
@@ -363,7 +363,7 @@ export type SubgraphBlock_Height = {
 };
 
 export type SubgraphBorrow = {
-  __typename?: "Borrow";
+  __typename: "Borrow";
   assetAmount: Scalars["BigInt"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
@@ -517,7 +517,7 @@ export enum SubgraphBorrow_OrderBy {
 }
 
 export type SubgraphBorrowerRegistrationChange = {
-  __typename?: "BorrowerRegistrationChange";
+  __typename: "BorrowerRegistrationChange";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
@@ -605,7 +605,7 @@ export enum SubgraphBorrowerRegistrationChange_OrderBy {
 }
 
 export type SubgraphController = {
-  __typename?: "Controller";
+  __typename: "Controller";
   archController: SubgraphArchController;
   authorizationChanges: SubgraphLenderAuthorizationChange[];
   authorizedLenders: SubgraphLenderAuthorization[];
@@ -636,7 +636,7 @@ export type SubgraphControllerAuthorizedLendersArgs = {
 export type SubgraphControllerMarketsArgs = SubgraphArchControllerMarketsArgs;
 
 export type SubgraphControllerAdded = {
-  __typename?: "ControllerAdded";
+  __typename: "ControllerAdded";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   controller: SubgraphController;
@@ -748,7 +748,7 @@ export enum SubgraphControllerAdded_OrderBy {
 }
 
 export type SubgraphControllerFactory = {
-  __typename?: "ControllerFactory";
+  __typename: "ControllerFactory";
   archController: SubgraphArchController;
   constraints: SubgraphParameterConstraints;
   controllers: SubgraphController[];
@@ -765,7 +765,7 @@ export type SubgraphControllerFactory = {
 export type SubgraphControllerFactoryControllersArgs = SubgraphArchControllerControllersArgs;
 
 export type SubgraphControllerFactoryAdded = {
-  __typename?: "ControllerFactoryAdded";
+  __typename: "ControllerFactoryAdded";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   controllerFactory: SubgraphControllerFactory;
@@ -851,7 +851,7 @@ export enum SubgraphControllerFactoryAdded_OrderBy {
 }
 
 export type SubgraphControllerFactoryRemoved = {
-  __typename?: "ControllerFactoryRemoved";
+  __typename: "ControllerFactoryRemoved";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   controllerFactory: SubgraphControllerFactory;
@@ -1076,7 +1076,7 @@ export enum SubgraphControllerFactory_OrderBy {
 }
 
 export type SubgraphControllerRemoved = {
-  __typename?: "ControllerRemoved";
+  __typename: "ControllerRemoved";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   controller: SubgraphController;
@@ -1257,7 +1257,7 @@ export enum SubgraphController_OrderBy {
 }
 
 export type SubgraphDebtRepaid = {
-  __typename?: "DebtRepaid";
+  __typename: "DebtRepaid";
   assetAmount: Scalars["BigInt"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
@@ -1423,7 +1423,7 @@ export enum SubgraphDebtRepaid_OrderBy {
 }
 
 export type SubgraphDelinquencyStatusChanged = {
-  __typename?: "DelinquencyStatusChanged";
+  __typename: "DelinquencyStatusChanged";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   delinquencyStatusChangedIndex: Scalars["Int"]["output"];
@@ -1593,7 +1593,7 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
 }
 
 export type SubgraphDeposit = {
-  __typename?: "Deposit";
+  __typename: "Deposit";
   account: SubgraphLenderAccount;
   assetAmount: Scalars["BigInt"]["output"];
   blockNumber: Scalars["Int"]["output"];
@@ -1789,7 +1789,7 @@ export enum SubgraphDeposit_OrderBy {
 }
 
 export type SubgraphFeesCollected = {
-  __typename?: "FeesCollected";
+  __typename: "FeesCollected";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   eventIndex: Scalars["Int"]["output"];
@@ -1943,7 +1943,7 @@ export enum SubgraphFeesCollected_OrderBy {
 }
 
 export type SubgraphLenderAccount = {
-  __typename?: "LenderAccount";
+  __typename: "LenderAccount";
   address: Scalars["Bytes"]["output"];
   controllerAuthorization: SubgraphLenderAuthorization;
   deposits: SubgraphDeposit[];
@@ -2172,7 +2172,7 @@ export enum SubgraphLenderAccount_OrderBy {
 }
 
 export type SubgraphLenderAuthorization = {
-  __typename?: "LenderAuthorization";
+  __typename: "LenderAuthorization";
   authorized: Scalars["Boolean"]["output"];
   changes: SubgraphLenderAuthorizationChange[];
   controller: SubgraphController;
@@ -2192,7 +2192,7 @@ export type SubgraphLenderAuthorizationMarketAccountsArgs = {
 };
 
 export type SubgraphLenderAuthorizationChange = {
-  __typename?: "LenderAuthorizationChange";
+  __typename: "LenderAuthorizationChange";
   authorization: SubgraphLenderAuthorization;
   authorized: Scalars["Boolean"]["output"];
   blockNumber: Scalars["Int"]["output"];
@@ -2382,7 +2382,7 @@ export enum SubgraphLenderAuthorization_OrderBy {
 }
 
 export type SubgraphLenderInterestAccrued = {
-  __typename?: "LenderInterestAccrued";
+  __typename: "LenderInterestAccrued";
   account: SubgraphLenderAccount;
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
@@ -2555,7 +2555,7 @@ export enum SubgraphLenderStatus {
 }
 
 export type SubgraphLenderWithdrawalStatus = {
-  __typename?: "LenderWithdrawalStatus";
+  __typename: "LenderWithdrawalStatus";
   account: SubgraphLenderAccount;
   batch: SubgraphWithdrawalBatch;
   executions: SubgraphWithdrawalExecution[];
@@ -2725,7 +2725,7 @@ export enum SubgraphLenderWithdrawalStatus_OrderBy {
 }
 
 export type SubgraphMarket = {
-  __typename?: "Market";
+  __typename: "Market";
   annualInterestBips: Scalars["Int"]["output"];
   annualInterestBipsUpdatedIndex: Scalars["Int"]["output"];
   annualInterestBipsUpdatedRecords: SubgraphAnnualInterestBipsUpdated[];
@@ -2870,7 +2870,7 @@ export type SubgraphMarketWithdrawalBatchesArgs = {
 export type SubgraphMarketWithdrawalRequestRecordsArgs = SubgraphLenderWithdrawalStatusRequestsArgs;
 
 export type SubgraphMarketAdded = {
-  __typename?: "MarketAdded";
+  __typename: "MarketAdded";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   controller: SubgraphController;
@@ -3020,7 +3020,7 @@ export enum SubgraphMarketAdded_OrderBy {
 }
 
 export type SubgraphMarketClosed = {
-  __typename?: "MarketClosed";
+  __typename: "MarketClosed";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   eventIndex: Scalars["Int"]["output"];
@@ -3164,7 +3164,7 @@ export enum SubgraphMarketClosed_OrderBy {
 }
 
 export type SubgraphMarketDeployed = {
-  __typename?: "MarketDeployed";
+  __typename: "MarketDeployed";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
@@ -3288,7 +3288,7 @@ export enum SubgraphMarketDeployed_OrderBy {
 }
 
 export type SubgraphMarketInterestAccrued = {
-  __typename?: "MarketInterestAccrued";
+  __typename: "MarketInterestAccrued";
   baseInterestAccrued: Scalars["BigInt"]["output"];
   baseInterestRay: Scalars["BigInt"]["output"];
   blockNumber: Scalars["Int"]["output"];
@@ -3492,7 +3492,7 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
 }
 
 export type SubgraphMarketRemoved = {
-  __typename?: "MarketRemoved";
+  __typename: "MarketRemoved";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
@@ -4185,7 +4185,7 @@ export enum SubgraphMarket_OrderBy {
 }
 
 export type SubgraphMaxTotalSupplyUpdated = {
-  __typename?: "MaxTotalSupplyUpdated";
+  __typename: "MaxTotalSupplyUpdated";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   eventIndex: Scalars["Int"]["output"];
@@ -4349,7 +4349,7 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
 }
 
 export type SubgraphNewController = {
-  __typename?: "NewController";
+  __typename: "NewController";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   borrower: Scalars["Bytes"]["output"];
@@ -4473,7 +4473,7 @@ export enum SubgraphNewController_OrderBy {
 }
 
 export type SubgraphNewSanctionsEscrow = {
-  __typename?: "NewSanctionsEscrow";
+  __typename: "NewSanctionsEscrow";
   account: Scalars["Bytes"]["output"];
   asset: Scalars["Bytes"]["output"];
   blockNumber: Scalars["Int"]["output"];
@@ -4571,7 +4571,7 @@ export enum SubgraphOrderDirection {
 }
 
 export type SubgraphOwnershipHandoverCanceled = {
-  __typename?: "OwnershipHandoverCanceled";
+  __typename: "OwnershipHandoverCanceled";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
@@ -4639,7 +4639,7 @@ export enum SubgraphOwnershipHandoverCanceled_OrderBy {
 }
 
 export type SubgraphOwnershipHandoverRequested = {
-  __typename?: "OwnershipHandoverRequested";
+  __typename: "OwnershipHandoverRequested";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
@@ -4707,7 +4707,7 @@ export enum SubgraphOwnershipHandoverRequested_OrderBy {
 }
 
 export type SubgraphOwnershipTransferred = {
-  __typename?: "OwnershipTransferred";
+  __typename: "OwnershipTransferred";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
@@ -4787,7 +4787,7 @@ export enum SubgraphOwnershipTransferred_OrderBy {
 }
 
 export type SubgraphParameterConstraints = {
-  __typename?: "ParameterConstraints";
+  __typename: "ParameterConstraints";
   id: Scalars["ID"]["output"];
   maximumAnnualInterestBips: Scalars["Int"]["output"];
   maximumDelinquencyFeeBips: Scalars["Int"]["output"];
@@ -4911,7 +4911,7 @@ export enum SubgraphParameterConstraints_OrderBy {
 }
 
 export type SubgraphQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   /** Access to subgraph metadata */
   _meta?: Maybe<Subgraph_Meta_>;
   annualInterestBipsUpdated?: Maybe<SubgraphAnnualInterestBipsUpdated>;
@@ -5617,7 +5617,7 @@ export type SubgraphQueryWithdrawalRequestsArgs = {
 };
 
 export type SubgraphRegisteredBorrower = {
-  __typename?: "RegisteredBorrower";
+  __typename: "RegisteredBorrower";
   archController: SubgraphArchController;
   borrower: Scalars["Bytes"]["output"];
   changes: SubgraphBorrowerRegistrationChange[];
@@ -5694,7 +5694,7 @@ export enum SubgraphRegisteredBorrower_OrderBy {
 }
 
 export type SubgraphReserveRatioBipsUpdated = {
-  __typename?: "ReserveRatioBipsUpdated";
+  __typename: "ReserveRatioBipsUpdated";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
@@ -5838,7 +5838,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
 }
 
 export type SubgraphSanctionOverride = {
-  __typename?: "SanctionOverride";
+  __typename: "SanctionOverride";
   account: Scalars["Bytes"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
@@ -5848,7 +5848,7 @@ export type SubgraphSanctionOverride = {
 };
 
 export type SubgraphSanctionOverrideRemoved = {
-  __typename?: "SanctionOverrideRemoved";
+  __typename: "SanctionOverrideRemoved";
   account: Scalars["Bytes"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
@@ -5998,7 +5998,7 @@ export enum SubgraphSanctionOverride_OrderBy {
 }
 
 export type SubgraphSanctionedAccountAssetsSentToEscrow = {
-  __typename?: "SanctionedAccountAssetsSentToEscrow";
+  __typename: "SanctionedAccountAssetsSentToEscrow";
   account: Scalars["Bytes"]["output"];
   amount: Scalars["BigInt"]["output"];
   blockNumber: Scalars["Int"]["output"];
@@ -6088,7 +6088,7 @@ export enum SubgraphSanctionedAccountAssetsSentToEscrow_OrderBy {
 }
 
 export type SubgraphSanctionedAccountWithdrawalSentToEscrow = {
-  __typename?: "SanctionedAccountWithdrawalSentToEscrow";
+  __typename: "SanctionedAccountWithdrawalSentToEscrow";
   account: Scalars["Bytes"]["output"];
   amount: Scalars["BigInt"]["output"];
   blockNumber: Scalars["Int"]["output"];
@@ -6188,7 +6188,7 @@ export enum SubgraphSanctionedAccountWithdrawalSentToEscrow_OrderBy {
 }
 
 export type SubgraphSubscription = {
-  __typename?: "Subscription";
+  __typename: "Subscription";
   /** Access to subgraph metadata */
   _meta?: Maybe<Subgraph_Meta_>;
   annualInterestBipsUpdated?: Maybe<SubgraphAnnualInterestBipsUpdated>;
@@ -6537,7 +6537,7 @@ export type SubgraphSubscriptionWithdrawalRequestArgs = SubgraphQueryAnnualInter
 export type SubgraphSubscriptionWithdrawalRequestsArgs = SubgraphQueryWithdrawalRequestsArgs;
 
 export type SubgraphToken = {
-  __typename?: "Token";
+  __typename: "Token";
   address: Scalars["Bytes"]["output"];
   decimals: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
@@ -6633,7 +6633,7 @@ export enum SubgraphToken_OrderBy {
 }
 
 export type SubgraphTransfer = {
-  __typename?: "Transfer";
+  __typename: "Transfer";
   amount: Scalars["BigInt"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
@@ -6841,7 +6841,7 @@ export enum SubgraphTransfer_OrderBy {
 }
 
 export type SubgraphUpdateProtocolFeeConfiguration = {
-  __typename?: "UpdateProtocolFeeConfiguration";
+  __typename: "UpdateProtocolFeeConfiguration";
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   feeRecipient: Scalars["Bytes"]["output"];
@@ -6941,7 +6941,7 @@ export enum SubgraphUpdateProtocolFeeConfiguration_OrderBy {
 }
 
 export type SubgraphWithdrawalBatch = {
-  __typename?: "WithdrawalBatch";
+  __typename: "WithdrawalBatch";
   creation: SubgraphWithdrawalBatchCreated;
   executions: SubgraphWithdrawalExecution[];
   expiry: Scalars["BigInt"]["output"];
@@ -6987,7 +6987,7 @@ export type SubgraphWithdrawalBatchRequestsArgs = SubgraphLenderWithdrawalStatus
 export type SubgraphWithdrawalBatchWithdrawalsArgs = SubgraphLenderAccountWithdrawalsArgs;
 
 export type SubgraphWithdrawalBatchCreated = {
-  __typename?: "WithdrawalBatchCreated";
+  __typename: "WithdrawalBatchCreated";
   batch: SubgraphWithdrawalBatch;
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
@@ -7079,7 +7079,7 @@ export enum SubgraphWithdrawalBatchCreated_OrderBy {
 }
 
 export type SubgraphWithdrawalBatchExpired = {
-  __typename?: "WithdrawalBatchExpired";
+  __typename: "WithdrawalBatchExpired";
   batch: SubgraphWithdrawalBatch;
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
@@ -7201,7 +7201,7 @@ export enum SubgraphWithdrawalBatchExpired_OrderBy {
 }
 
 export type SubgraphWithdrawalBatchInterestAccrued = {
-  __typename?: "WithdrawalBatchInterestAccrued";
+  __typename: "WithdrawalBatchInterestAccrued";
   batch: SubgraphWithdrawalBatch;
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
@@ -7371,7 +7371,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
 }
 
 export type SubgraphWithdrawalBatchPayment = {
-  __typename?: "WithdrawalBatchPayment";
+  __typename: "WithdrawalBatchPayment";
   batch: SubgraphWithdrawalBatch;
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
@@ -7685,7 +7685,7 @@ export enum SubgraphWithdrawalBatch_OrderBy {
 }
 
 export type SubgraphWithdrawalExecution = {
-  __typename?: "WithdrawalExecution";
+  __typename: "WithdrawalExecution";
   account: SubgraphLenderAccount;
   batch: SubgraphWithdrawalBatch;
   blockNumber: Scalars["Int"]["output"];
@@ -7849,7 +7849,7 @@ export enum SubgraphWithdrawalExecution_OrderBy {
 }
 
 export type SubgraphWithdrawalRequest = {
-  __typename?: "WithdrawalRequest";
+  __typename: "WithdrawalRequest";
   account: SubgraphLenderAccount;
   batch: SubgraphWithdrawalBatch;
   blockNumber: Scalars["Int"]["output"];
@@ -8121,7 +8121,7 @@ export enum SubgraphWithdrawalRequest_OrderBy {
 }
 
 export type Subgraph_Block_ = {
-  __typename?: "_Block_";
+  __typename: "_Block_";
   /** The hash of the block */
   hash?: Maybe<Scalars["Bytes"]["output"]>;
   /** The block number */
@@ -8134,7 +8134,7 @@ export type Subgraph_Block_ = {
 
 /** The type for the top-level _meta field */
 export type Subgraph_Meta_ = {
-  __typename?: "_Meta_";
+  __typename: "_Meta_";
   /**
    * Information about a specific subgraph block. The hash of the block
    * will be null if the _meta field has a block constraint that asks for
@@ -8157,7 +8157,7 @@ export enum Subgraph_SubgraphErrorPolicy_ {
 }
 
 export type SubgraphAccountDataForLenderViewFragment = {
-  __typename?: "LenderAccount";
+  __typename: "LenderAccount";
   id: string;
   address: string;
   scaledBalance: string;
@@ -8167,12 +8167,12 @@ export type SubgraphAccountDataForLenderViewFragment = {
   lastUpdatedTimestamp: number;
   totalInterestEarned: string;
   numPendingWithdrawalBatches: number;
-  controllerAuthorization: { __typename?: "LenderAuthorization"; authorized: boolean };
+  controllerAuthorization: { __typename: "LenderAuthorization"; authorized: boolean };
   deposits: SubgraphDepositDataFragment[];
 };
 
 export type SubgraphLenderPropertiesFragment = {
-  __typename?: "LenderAccount";
+  __typename: "LenderAccount";
   id: string;
   address: string;
   scaledBalance: string;
@@ -8185,7 +8185,7 @@ export type SubgraphLenderPropertiesFragment = {
 };
 
 export type SubgraphMarketDataFragment = {
-  __typename?: "Market";
+  __typename: "Market";
   id: string;
   isRegistered: boolean;
   isClosed: boolean;
@@ -8222,9 +8222,9 @@ export type SubgraphMarketDataFragment = {
   totalProtocolFeesAccrued: string;
   totalDeposited: string;
   eventIndex: number;
-  controller: { __typename?: "Controller"; id: string };
+  controller: { __typename: "Controller"; id: string };
   _asset: {
-    __typename?: "Token";
+    __typename: "Token";
     id: string;
     address: string;
     name: string;
@@ -8236,13 +8236,13 @@ export type SubgraphMarketDataFragment = {
 };
 
 export type SubgraphAprConstraintsFragment = {
-  __typename?: "ParameterConstraints";
+  __typename: "ParameterConstraints";
   minimumAnnualInterestBips: number;
   maximumAnnualInterestBips: number;
 };
 
 export type SubgraphDelinquencyStatusChangedDataFragment = {
-  __typename?: "DelinquencyStatusChanged";
+  __typename: "DelinquencyStatusChanged";
   id: string;
   eventIndex: number;
   isDelinquent: boolean;
@@ -8254,7 +8254,7 @@ export type SubgraphDelinquencyStatusChangedDataFragment = {
 };
 
 export type SubgraphDepositDataFragment = {
-  __typename?: "Deposit";
+  __typename: "Deposit";
   id: string;
   eventIndex: number;
   assetAmount: string;
@@ -8262,18 +8262,18 @@ export type SubgraphDepositDataFragment = {
   blockNumber: number;
   blockTimestamp: number;
   transactionHash: string;
-  account: { __typename?: "LenderAccount"; address: string };
+  account: { __typename: "LenderAccount"; address: string };
 };
 
 export type SubgraphMarketDeployedEventFragment = {
-  __typename?: "MarketDeployed";
+  __typename: "MarketDeployed";
   blockNumber: number;
   blockTimestamp: number;
   transactionHash: string;
 };
 
 export type SubgraphMarketDataWithEventsFragment = {
-  __typename?: "Market";
+  __typename: "Market";
   id: string;
   isRegistered: boolean;
   isClosed: boolean;
@@ -8310,9 +8310,9 @@ export type SubgraphMarketDataWithEventsFragment = {
   totalProtocolFeesAccrued: string;
   totalDeposited: string;
   eventIndex: number;
-  controller: { __typename?: "Controller"; id: string };
+  controller: { __typename: "Controller"; id: string };
   _asset: {
-    __typename?: "Token";
+    __typename: "Token";
     id: string;
     address: string;
     name: string;
@@ -8328,7 +8328,7 @@ export type SubgraphMarketDataWithEventsFragment = {
 };
 
 export type SubgraphWithdrawalBatchPaymentPropertiesFragment = {
-  __typename?: "WithdrawalBatchPayment";
+  __typename: "WithdrawalBatchPayment";
   id: string;
   scaledAmountBurned: string;
   normalizedAmountPaid: string;
@@ -8338,7 +8338,7 @@ export type SubgraphWithdrawalBatchPaymentPropertiesFragment = {
 };
 
 export type SubgraphWithdrawalRequestPropertiesFragment = {
-  __typename?: "WithdrawalRequest";
+  __typename: "WithdrawalRequest";
   id: string;
   eventIndex: number;
   requestIndex: number;
@@ -8347,21 +8347,21 @@ export type SubgraphWithdrawalRequestPropertiesFragment = {
   blockNumber: number;
   blockTimestamp: number;
   transactionHash: string;
-  account: { __typename?: "LenderAccount"; address: string };
+  account: { __typename: "LenderAccount"; address: string };
 };
 
 export type SubgraphWithdrawalExecutionPropertiesFragment = {
-  __typename?: "WithdrawalExecution";
+  __typename: "WithdrawalExecution";
   id: string;
   normalizedAmount: string;
   blockNumber: number;
   blockTimestamp: number;
   transactionHash: string;
-  account: { __typename?: "LenderAccount"; address: string };
+  account: { __typename: "LenderAccount"; address: string };
 };
 
 export type SubgraphLenderWithdrawalPropertiesFragment = {
-  __typename?: "LenderWithdrawalStatus";
+  __typename: "LenderWithdrawalStatus";
   id: string;
   requestsCount: number;
   executionsCount: number;
@@ -8369,11 +8369,11 @@ export type SubgraphLenderWithdrawalPropertiesFragment = {
   normalizedAmountWithdrawn: string;
   totalNormalizedRequests: string;
   isCompleted: boolean;
-  account: { __typename?: "LenderAccount"; address: string };
+  account: { __typename: "LenderAccount"; address: string };
 };
 
 export type SubgraphLenderWithdrawalPropertiesWithEventsFragment = {
-  __typename?: "LenderWithdrawalStatus";
+  __typename: "LenderWithdrawalStatus";
   id: string;
   requestsCount: number;
   executionsCount: number;
@@ -8384,11 +8384,11 @@ export type SubgraphLenderWithdrawalPropertiesWithEventsFragment = {
   batch: SubgraphWithdrawalBatchPropertiesFragment;
   requests: SubgraphWithdrawalRequestPropertiesFragment[];
   executions: SubgraphWithdrawalExecutionPropertiesFragment[];
-  account: { __typename?: "LenderAccount"; address: string };
+  account: { __typename: "LenderAccount"; address: string };
 };
 
 export type SubgraphWithdrawalBatchPropertiesFragment = {
-  __typename?: "WithdrawalBatch";
+  __typename: "WithdrawalBatch";
   id: string;
   expiry: string;
   scaledTotalAmount: string;
@@ -8403,7 +8403,7 @@ export type SubgraphWithdrawalBatchPropertiesFragment = {
   lastUpdatedTimestamp: number;
   totalInterestEarned: string;
   creation: {
-    __typename?: "WithdrawalBatchCreated";
+    __typename: "WithdrawalBatchCreated";
     blockNumber: number;
     blockTimestamp: number;
     transactionHash: string;
@@ -8412,7 +8412,7 @@ export type SubgraphWithdrawalBatchPropertiesFragment = {
 };
 
 export type SubgraphWithdrawalBatchPropertiesWithEventsFragment = {
-  __typename?: "WithdrawalBatch";
+  __typename: "WithdrawalBatch";
   id: string;
   expiry: string;
   scaledTotalAmount: string;
@@ -8430,7 +8430,7 @@ export type SubgraphWithdrawalBatchPropertiesWithEventsFragment = {
   requests: SubgraphWithdrawalRequestPropertiesFragment[];
   executions: SubgraphWithdrawalExecutionPropertiesFragment[];
   creation: {
-    __typename?: "WithdrawalBatchCreated";
+    __typename: "WithdrawalBatchCreated";
     blockNumber: number;
     blockTimestamp: number;
     transactionHash: string;
@@ -8439,7 +8439,7 @@ export type SubgraphWithdrawalBatchPropertiesWithEventsFragment = {
 };
 
 export type SubgraphMarketRecordsFragment = {
-  __typename?: "Market";
+  __typename: "Market";
   depositRecords: SubgraphDepositDataFragment[];
   borrowRecords: SubgraphBorrowDataFragment[];
   feeCollectionRecords: SubgraphFeesCollectedDataFragment[];
@@ -8447,7 +8447,7 @@ export type SubgraphMarketRecordsFragment = {
 };
 
 export type SubgraphBorrowDataFragment = {
-  __typename?: "Borrow";
+  __typename: "Borrow";
   eventIndex: number;
   assetAmount: string;
   blockNumber: number;
@@ -8456,7 +8456,7 @@ export type SubgraphBorrowDataFragment = {
 };
 
 export type SubgraphRepaymentDataFragment = {
-  __typename?: "DebtRepaid";
+  __typename: "DebtRepaid";
   eventIndex: number;
   from: string;
   assetAmount: string;
@@ -8466,7 +8466,7 @@ export type SubgraphRepaymentDataFragment = {
 };
 
 export type SubgraphFeesCollectedDataFragment = {
-  __typename?: "FeesCollected";
+  __typename: "FeesCollected";
   eventIndex: number;
   feesCollected: string;
   blockNumber: number;
@@ -8475,7 +8475,7 @@ export type SubgraphFeesCollectedDataFragment = {
 };
 
 export type SubgraphAnnualInterestBipsUpdatedDataFragment = {
-  __typename?: "AnnualInterestBipsUpdated";
+  __typename: "AnnualInterestBipsUpdated";
   eventIndex: number;
   oldAnnualInterestBips: number;
   newAnnualInterestBips: number;
@@ -8485,7 +8485,7 @@ export type SubgraphAnnualInterestBipsUpdatedDataFragment = {
 };
 
 export type SubgraphMaxTotalSupplyUpdatedDataFragment = {
-  __typename?: "MaxTotalSupplyUpdated";
+  __typename: "MaxTotalSupplyUpdated";
   eventIndex: number;
   oldMaxTotalSupply: string;
   newMaxTotalSupply: string;
@@ -8495,7 +8495,7 @@ export type SubgraphMaxTotalSupplyUpdatedDataFragment = {
 };
 
 export type SubgraphMarketClosedDataFragment = {
-  __typename?: "MarketClosed";
+  __typename: "MarketClosed";
   eventIndex: number;
   blockNumber: number;
   blockTimestamp: number;
@@ -8512,9 +8512,9 @@ export type SubgraphGetLenderAccountForMarketQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetLenderAccountForMarketQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   market?: {
-    __typename?: "Market";
+    __typename: "Market";
     lenders: SubgraphAccountDataForLenderViewFragment[];
   } | null;
 };
@@ -8537,9 +8537,9 @@ export type SubgraphGetLenderAccountWithMarketQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetLenderAccountWithMarketQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   market?: {
-    __typename?: "Market";
+    __typename: "Market";
     id: string;
     isRegistered: boolean;
     isClosed: boolean;
@@ -8579,9 +8579,9 @@ export type SubgraphGetLenderAccountWithMarketQuery = {
     lenders: SubgraphAccountDataForLenderViewFragment[];
     borrowRecords: SubgraphBorrowDataFragment[];
     repaymentRecords: SubgraphRepaymentDataFragment[];
-    controller: { __typename?: "Controller"; id: string };
+    controller: { __typename: "Controller"; id: string };
     _asset: {
-      __typename?: "Token";
+      __typename: "Token";
       id: string;
       address: string;
       name: string;
@@ -8610,9 +8610,9 @@ export type SubgraphGetAllMarketsForLenderViewQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetAllMarketsForLenderViewQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   markets: Array<{
-    __typename?: "Market";
+    __typename: "Market";
     id: string;
     isRegistered: boolean;
     isClosed: boolean;
@@ -8651,9 +8651,9 @@ export type SubgraphGetAllMarketsForLenderViewQuery = {
     eventIndex: number;
     borrowRecords: SubgraphBorrowDataFragment[];
     repaymentRecords: SubgraphRepaymentDataFragment[];
-    controller: { __typename?: "Controller"; id: string };
+    controller: { __typename: "Controller"; id: string };
     _asset: {
-      __typename?: "Token";
+      __typename: "Token";
       id: string;
       address: string;
       name: string;
@@ -8664,7 +8664,7 @@ export type SubgraphGetAllMarketsForLenderViewQuery = {
     deployedEvent: SubgraphMarketDeployedEventFragment;
   }>;
   lenderAccounts: Array<{
-    __typename?: "LenderAccount";
+    __typename: "LenderAccount";
     id: string;
     address: string;
     scaledBalance: string;
@@ -8674,18 +8674,15 @@ export type SubgraphGetAllMarketsForLenderViewQuery = {
     lastUpdatedTimestamp: number;
     totalInterestEarned: string;
     numPendingWithdrawalBatches: number;
-    market: { __typename?: "Market"; id: string };
-    controllerAuthorization: { __typename?: "LenderAuthorization"; authorized: boolean };
+    market: { __typename: "Market"; id: string };
+    controllerAuthorization: { __typename: "LenderAuthorization"; authorized: boolean };
     deposits: SubgraphDepositDataFragment[];
   }>;
   controllerAuthorizations: Array<{
-    __typename?: "LenderAuthorization";
+    __typename: "LenderAuthorization";
     lender: string;
     authorized: boolean;
-    controller: {
-      __typename?: "Controller";
-      markets: Array<{ __typename?: "Market"; id: string }>;
-    };
+    controller: { __typename: "Controller"; markets: Array<{ __typename: "Market"; id: string }> };
   }>;
 };
 
@@ -8706,9 +8703,9 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables = Exa
 }>;
 
 export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   lenderAccounts: Array<{
-    __typename?: "LenderAccount";
+    __typename: "LenderAccount";
     id: string;
     address: string;
     scaledBalance: string;
@@ -8719,7 +8716,7 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
     totalInterestEarned: string;
     numPendingWithdrawalBatches: number;
     market: {
-      __typename?: "Market";
+      __typename: "Market";
       id: string;
       isRegistered: boolean;
       isClosed: boolean;
@@ -8758,9 +8755,9 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
       eventIndex: number;
       borrowRecords: SubgraphBorrowDataFragment[];
       repaymentRecords: SubgraphRepaymentDataFragment[];
-      controller: { __typename?: "Controller"; id: string };
+      controller: { __typename: "Controller"; id: string };
       _asset: {
-        __typename?: "Token";
+        __typename: "Token";
         id: string;
         address: string;
         name: string;
@@ -8770,17 +8767,17 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
       };
       deployedEvent: SubgraphMarketDeployedEventFragment;
     };
-    controllerAuthorization: { __typename?: "LenderAuthorization"; authorized: boolean };
+    controllerAuthorization: { __typename: "LenderAuthorization"; authorized: boolean };
     deposits: SubgraphDepositDataFragment[];
   }>;
   controllerAuthorizations: Array<{
-    __typename?: "LenderAuthorization";
+    __typename: "LenderAuthorization";
     lender: string;
     authorized: boolean;
     controller: {
-      __typename?: "Controller";
+      __typename: "Controller";
       markets: Array<{
-        __typename?: "Market";
+        __typename: "Market";
         id: string;
         isRegistered: boolean;
         isClosed: boolean;
@@ -8819,9 +8816,9 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
         eventIndex: number;
         borrowRecords: SubgraphBorrowDataFragment[];
         repaymentRecords: SubgraphRepaymentDataFragment[];
-        controller: { __typename?: "Controller"; id: string };
+        controller: { __typename: "Controller"; id: string };
         _asset: {
-          __typename?: "Token";
+          __typename: "Token";
           id: string;
           address: string;
           name: string;
@@ -8843,11 +8840,11 @@ export type SubgraphGetLenderWithdrawalsForMarketQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetLenderWithdrawalsForMarketQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   market?: {
-    __typename?: "Market";
+    __typename: "Market";
     lenders: Array<{
-      __typename?: "LenderAccount";
+      __typename: "LenderAccount";
       incompleteWithdrawals: SubgraphLenderWithdrawalPropertiesWithEventsFragment[];
       completeWithdrawals: SubgraphLenderWithdrawalPropertiesWithEventsFragment[];
     }>;
@@ -8860,13 +8857,13 @@ export type SubgraphGetLenderAuthorizationByMarketQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetLenderAuthorizationByMarketQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   market?: {
-    __typename?: "Market";
+    __typename: "Market";
     controller: {
-      __typename?: "Controller";
+      __typename: "Controller";
       authorizedLenders: Array<{
-        __typename?: "LenderAuthorization";
+        __typename: "LenderAuthorization";
         lender: string;
         authorized: boolean;
       }>;
@@ -8886,16 +8883,16 @@ export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
 }>;
 
 export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   lenderAccounts: Array<{
-    __typename?: "LenderAccount";
+    __typename: "LenderAccount";
     scaledBalance: string;
     role: SubgraphLenderStatus;
     totalDeposited: string;
     lastScaleFactor: string;
     totalInterestEarned: string;
-    market: { __typename?: "Market"; id: string };
-    controllerAuthorization: { __typename?: "LenderAuthorization"; authorized: boolean };
+    market: { __typename: "Market"; id: string };
+    controllerAuthorization: { __typename: "LenderAuthorization"; authorized: boolean };
     withdrawals: SubgraphLenderWithdrawalPropertiesWithEventsFragment[];
     deposits: SubgraphDepositDataFragment[];
   }>;
@@ -8909,9 +8906,9 @@ export type SubgraphGetMarketEventsQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetMarketEventsQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   market?: {
-    __typename?: "Market";
+    __typename: "Market";
     marketClosedEvent?: SubgraphMarketClosedDataFragment | null;
     delinquencyRecords: SubgraphDelinquencyStatusChangedDataFragment[];
     borrowRecords: SubgraphBorrowDataFragment[];
@@ -8949,9 +8946,9 @@ export type SubgraphGetMarketsForBorrowerQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetMarketsForBorrowerQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   controllers: Array<{
-    __typename?: "Controller";
+    __typename: "Controller";
     markets: SubgraphMarketDataWithEventsFragment[];
   }>;
 };
@@ -8980,7 +8977,7 @@ export type SubgraphGetMarketsForAllBorrowersQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetMarketsForAllBorrowersQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   markets: SubgraphMarketDataWithEventsFragment[];
 };
 
@@ -9005,7 +9002,7 @@ export type SubgraphGetMarketQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetMarketQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   market?: SubgraphMarketDataWithEventsFragment | null;
 };
 
@@ -9018,7 +9015,7 @@ export type SubgraphGetWithdrawalRequestsByMarketQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetWithdrawalRequestsByMarketQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   withdrawalRequests: SubgraphWithdrawalRequestPropertiesFragment[];
 };
 
@@ -9027,9 +9024,9 @@ export type SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables = Exac
 }>;
 
 export type SubgraphGetAllPendingWithdrawalBatchesForMarketQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   market?: {
-    __typename?: "Market";
+    __typename: "Market";
     withdrawalBatches: SubgraphWithdrawalBatchPropertiesWithEventsFragment[];
   } | null;
 };
@@ -9037,7 +9034,7 @@ export type SubgraphGetAllPendingWithdrawalBatchesForMarketQuery = {
 export type SubgraphGetAllMarketsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type SubgraphGetAllMarketsQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   markets: SubgraphMarketDataFragment[];
 };
 
@@ -9046,12 +9043,12 @@ export type SubgraphGetAuthorizedLendersByMarketQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetAuthorizedLendersByMarketQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   market?: {
-    __typename?: "Market";
+    __typename: "Market";
     controller: {
-      __typename?: "Controller";
-      authorizedLenders: Array<{ __typename?: "LenderAuthorization"; lender: string }>;
+      __typename: "Controller";
+      authorizedLenders: Array<{ __typename: "LenderAuthorization"; lender: string }>;
     };
   } | null;
 };
@@ -9061,22 +9058,22 @@ export type SubgraphGetAuthorizedLendersByBorrowerQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetAuthorizedLendersByBorrowerQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   controllers: Array<{
-    __typename?: "Controller";
-    authorizedLenders: Array<{ __typename?: "LenderAuthorization"; lender: string }>;
+    __typename: "Controller";
+    authorizedLenders: Array<{ __typename: "LenderAuthorization"; lender: string }>;
   }>;
 };
 
 export type SubgraphGetSubgraphStatusQueryVariables = Exact<{ [key: string]: never }>;
 
 export type SubgraphGetSubgraphStatusQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   _meta?: {
-    __typename?: "_Meta_";
+    __typename: "_Meta_";
     hasIndexingErrors: boolean;
     block: {
-      __typename?: "_Block_";
+      __typename: "_Block_";
       hash?: string | null;
       number: number;
       timestamp?: number | null;
@@ -9105,7 +9102,7 @@ export type SubgraphGetMarketRecordsQueryVariables = Exact<{
 }>;
 
 export type SubgraphGetMarketRecordsQuery = {
-  __typename?: "Query";
+  __typename: "Query";
   market?: SubgraphMarketRecordsFragment | null;
 };
 

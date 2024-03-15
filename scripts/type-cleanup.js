@@ -1,7 +1,14 @@
+const { writeFileSync, readFileSync } = require("fs");
 const path = require("path");
 const { Project, SyntaxKind, TypeLiteralNode, Writers } = require("ts-morph");
 
 const filePath = path.join(__dirname, "../src/gql/graphql.ts");
+
+// Replace any instance of:
+// `{ __typename?: "SomeStringLiteral" }`
+// with
+// `{ __typename: "SomeStringLiteral" }`
+writeFileSync(filePath, readFileSync(filePath, "utf-8").replace(/__typename\?:/g, "__typename:"));
 
 console.log(
   `Replacing duplicate type definitions in ${path.relative(path.join(__dirname, ".."), filePath)}`
@@ -25,11 +32,15 @@ const typeAliases = sourceFile.getDescendantsOfKind(SyntaxKind.TypeAliasDeclarat
 // Fix use* hooks
 let i = 0;
 
+const cleanUpTypeText = (text) => text.replace(/\s/g, "");
+
 // Gather unique type definitions
 typeAliases.forEach((alias) => {
   const typeNode = alias.getTypeNode();
+
   if (typeNode) {
-    const text = typeNode.getText().replace(/\s/g, "");
+    const text = cleanUpTypeText(typeNode.getText());
+
     if (!typeMap.has(text)) {
       typeMap.set(text, alias.getName());
     }
@@ -39,7 +50,7 @@ function tryReplaceNode(node) {
   if (node.wasForgotten()) return false;
 
   const parent = node.getParent();
-  const text = node.getText().replace(/\s/g, "");
+  const text = cleanUpTypeText(node.getText());
   const typeName = typeMap.get(text);
 
   if (typeName) {
