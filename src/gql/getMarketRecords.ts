@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers";
 import { Market } from "../market";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import {
@@ -6,18 +5,19 @@ import {
   SubgraphGetMarketEventsQuery,
   SubgraphGetMarketEventsQueryVariables
 } from "./graphql";
-import { MarketRecord, assert, parseMarketRecord } from "../utils";
+import { MarketRecord, MarketRecordKind, assert, parseMarketRecord } from "../utils";
 
 export type GetMarketRecordsOptions = {
   market: Market;
   fetchPolicy: FetchPolicy;
   limit?: number;
   endEventIndex?: number;
+  kinds?: MarketRecordKind[];
 };
 
 export async function getMarketRecords(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
-  { market, fetchPolicy, limit = 100, endEventIndex }: GetMarketRecordsOptions
+  { market, fetchPolicy, limit = 100, endEventIndex, kinds }: GetMarketRecordsOptions
 ): Promise<MarketRecord[]> {
   const marketAddress = market.address.toLowerCase();
   // If no end index provided, try to set it with the market's eventIndex, which is
@@ -34,7 +34,7 @@ export async function getMarketRecords(
     variables: {
       market: marketAddress,
       startEventIndex,
-      endEventIndex: endEventIndex ?? 10_000,
+      endEventIndex,
       limit
     },
     fetchPolicy
@@ -53,6 +53,7 @@ export async function getMarketRecords(
     withdrawalRequestRecords,
     marketClosedEvent
   } = marketData;
+  const filter = kinds ? (r: MarketRecord) => kinds.includes(r.__typename) : () => true;
   const records: MarketRecord[] = [
     ...delinquencyRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
     ...borrowRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
@@ -62,7 +63,7 @@ export async function getMarketRecords(
     ...annualInterestBipsUpdatedRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
     ...maxTotalSupplyUpdatedRecords.map((r) => parseMarketRecord(market.marketToken, r)),
     ...withdrawalRequestRecords.map((r) => parseMarketRecord(market.underlyingToken, r))
-  ];
+  ].filter(filter);
   if (marketClosedEvent) {
     const { eventIndex } = marketClosedEvent;
     // If the market is closed, we should only include the market closed event
