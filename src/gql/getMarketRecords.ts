@@ -26,7 +26,6 @@ export async function getMarketRecords(
     endEventIndex = market.eventIndex;
   }
   const startEventIndex = endEventIndex ? Math.max(0, endEventIndex - limit) : 0;
-  const t1 = Date.now();
   const result = await subgraphClient.query<
     SubgraphGetMarketEventsQuery,
     SubgraphGetMarketEventsQueryVariables
@@ -40,8 +39,6 @@ export async function getMarketRecords(
     },
     fetchPolicy
   });
-  const t2 = Date.now();
-  console.log(`Querying market records took ${t2 - t1} ms`);
 
   const marketData = result.data.market;
   assert(!!marketData, `Market not found in subgraph: ${market.address}`);
