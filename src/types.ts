@@ -1,8 +1,7 @@
 import { Provider } from "@ethersproject/abstract-provider";
 import { Signer } from "@ethersproject/abstract-signer";
-import { AccessList } from "@ethersproject/transactions";
-import { BaseContract, BigNumber, PopulatedTransaction } from "ethers";
-import { assert } from "./utils";
+import { BaseContract } from "ethers";
+import { Token, TokenAmount } from "./token";
 
 export type SignerOrProvider = Signer | Provider;
 
@@ -57,4 +56,24 @@ export type PartialTransaction = {
   to: string;
   data: string;
   value: string;
+};
+
+export type FeeConfiguration = {
+  feeRecipient: string;
+  protocolFeeBips: number;
+  originationFeeToken: Token | undefined;
+  originationFeeAmount: TokenAmount | undefined;
+};
+
+export type MarketParameterConstraints = {
+  minimumDelinquencyGracePeriod: number;
+  maximumDelinquencyGracePeriod: number;
+  minimumReserveRatioBips: number;
+  maximumReserveRatioBips: number;
+  minimumDelinquencyFeeBips: number;
+  maximumDelinquencyFeeBips: number;
+  minimumWithdrawalBatchDuration: number;
+  maximumWithdrawalBatchDuration: number;
+  minimumAnnualInterestBips: number;
+  maximumAnnualInterestBips: number;
 };
