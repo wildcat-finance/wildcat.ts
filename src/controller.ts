@@ -10,17 +10,17 @@ import {
   getMockArchControllerOwnerContract,
   hasDeploymentAddress
 } from "./constants";
-import { ContractWrapper, PartialTransaction, SignerOrProvider } from "./types";
+import {
+  ContractWrapper,
+  PartialTransaction,
+  SignerOrProvider,
+  FeeConfiguration,
+  MarketParameterConstraints
+} from "./types";
 import { Market } from "./market";
 import { ContractReceipt, ContractTransaction } from "ethers";
 import { Token, TokenAmount } from "./token";
-import {
-  FeeConfiguration,
-  MarketParameterConstraints,
-  assert,
-  parseFeeConfiguration,
-  parseMarketParameterConstraints
-} from "./utils";
+import { assert, parseFeeConfiguration, parseMarketParameterConstraints } from "./utils";
 import { MarketDeployedEvent } from "./typechain/WildcatMarketController";
 
 export class MarketController extends ContractWrapper<WildcatMarketController> {
