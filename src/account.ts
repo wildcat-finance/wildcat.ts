@@ -67,6 +67,7 @@ export type SetAprStatus =
       // This status indicates the new reserve ratio required to set the new APR
       // would make the market delinquent.
       status: "InsufficientReserves";
+      newReserveRatio: number;
       newCoverageLiquidity: TokenAmount;
       missingReserves: TokenAmount;
       changeCausedByReset: boolean;
@@ -179,34 +180,45 @@ export class MarketAccount {
     const [originalReserveRatioBips, originalAnnualInterestBips] =
       this.market.originalReserveRatioAndAnnualInterestBips;
 
-    if (apr < originalAnnualInterestBips || this.market.temporaryReserveRatio) {
-      const newReserveRatioBips = this.market.getReserveRatioForNewAPR(apr);
-      const newCoverageLiquidity =
-        this.market.calculateLiquidityCoverageForReserveRatio(newReserveRatioBips);
-      const changeCausedByReset =
-        this.market.temporaryReserveRatio && newReserveRatioBips <= originalReserveRatioBips;
-      // @todo
-      if (this.market.totalAssets.gte(newCoverageLiquidity)) {
+    const newReserveRatioBips = this.market.getReserveRatioForNewAPR(apr);
+    const willChangeReserveRatio = newReserveRatioBips !== this.market.reserveRatioBips;
+    const changeCausedByReset =
+      this.market.temporaryReserveRatio && apr >= originalAnnualInterestBips;
+
+    // If the market will update its reserve ratio, either because the new APR is lower
+    // or because there is an old reserve ratio that needs to be reset, we need to check
+    // if the market will become delinquent or already is, respectively.
+    if (willChangeReserveRatio) {
+      // If reserve is dropping, must currently not be delinquent, if it is increasing, must not become delinquent
+      const reserveRatioThatMustNotBeDelinquent = Math.max(
+        originalReserveRatioBips,
+        newReserveRatioBips
+      );
+      const newCoverageLiquidity = this.market.calculateLiquidityCoverageForReserveRatio(
+        reserveRatioThatMustNotBeDelinquent
+      );
+      if (this.market.totalAssets.lt(newCoverageLiquidity)) {
         return {
-          status: "Ready",
-          willChangeReserveRatio: originalReserveRatioBips !== newReserveRatioBips,
+          status: "InsufficientReserves",
           newCoverageLiquidity,
           newReserveRatio: newReserveRatioBips,
+          missingReserves: newCoverageLiquidity.sub(this.market.totalAssets),
           changeCausedByReset
         };
       } else {
         return {
-          status: "InsufficientReserves",
+          status: "Ready",
+          willChangeReserveRatio: true,
           newCoverageLiquidity,
-          missingReserves: newCoverageLiquidity.sub(this.market.totalAssets),
+          newReserveRatio: newReserveRatioBips,
           changeCausedByReset
         };
       }
-    }
-
-    return {
-      status: "Ready",
-      willChangeReserveRatio: false
+    } else {
+      return {
+        status: "Ready",
+        willChangeReserveRatio: false
+      };
     }
   }
 
