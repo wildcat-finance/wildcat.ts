@@ -394,10 +394,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
   /*                                   Set APR                                  */
   /* -------------------------------------------------------------------------- */
 
+  get originalReserveRatioAndAnnualInterestBips(): [number, number] {
+    return this.temporaryReserveRatio
+      ? [this.originalReserveRatioBips, this.originalAnnualInterestBips]
+      : [this.reserveRatioBips, this.annualInterestBips];
+  }
+
   getReserveRatioForNewAPR(annualInterestBips: number): number {
-    const originalAnnualInterestBips = this.temporaryReserveRatio
-      ? this.originalAnnualInterestBips
-      : this.annualInterestBips;
+    const [originalReserveRatioBips, originalAnnualInterestBips] =
+      this.originalReserveRatioAndAnnualInterestBips;
+    // If the new APR is lower, the new reserve ratio is double the relative reduction
     if (annualInterestBips < originalAnnualInterestBips) {
       const doubleRelativeDiff = mulDiv(
         toBn(20000),
@@ -405,12 +411,12 @@ export class Market extends ContractWrapper<WildcatMarket> {
         toBn(originalAnnualInterestBips)
       ).toNumber();
       const boundRelativeDiff = Math.min(10000, doubleRelativeDiff);
-      return Math.max(boundRelativeDiff, this.originalReserveRatioBips);
-    }
-    if (this.temporaryReserveRatio) {
+      return Math.max(boundRelativeDiff, originalReserveRatioBips);
+    } else if (this.temporaryReserveRatio) {
       return this.originalReserveRatioBips;
     }
-    return this.reserveRatioBips;
+    // If there is a previous change that has expired, the original reserve
+    return originalReserveRatioBips;
   }
 
   calculateLiquidityCoverageForReserveRatio(reserveRatio: number): TokenAmount {
