@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs");
-const dir = path.join(__dirname, "src/typechain");
+const dir = path.join(__dirname, "../src/typechain");
 
 const isDirectory = (_path) => fs.lstatSync(_path).isDirectory();
 

@@ -1,7 +1,7 @@
+const { createHash } = require("crypto");
 const { writeFileSync, readFileSync } = require("fs");
 const path = require("path");
-const { Project, SyntaxKind, TypeLiteralNode, Writers } = require("ts-morph");
-
+const { Project, SyntaxKind } = require("ts-morph");
 const filePath = path.join(__dirname, "../src/gql/graphql.ts");
 
 // Replace any instance of:
@@ -108,3 +108,14 @@ for (const func of functions) {
   // break;
 }
 sourceFile.saveSync();
+
+const generateFileChecksum = (filePath) =>
+  createHash("md5").update(readFileSync(filePath), "utf8").digest("hex");
+
+const currentChecksums = [
+  generateFileChecksum(path.join(__dirname, "../gql/fragments.graphql")),
+  generateFileChecksum(path.join(__dirname, "../gql/queries.graphql")),
+  generateFileChecksum(filePath)
+].join("\n");
+
+writeFileSync(path.join(__dirname, ".gql-cache"), currentChecksums);
