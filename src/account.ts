@@ -44,13 +44,33 @@ export type CloseMarketStatus =
 
 export type SetAprStatus =
   | {
-      status: "Ready" | "NotBorrower" | "InvalidApr";
+      status: "NotBorrower" | "InvalidApr";
+    }
+  | {
+      status: "Ready";
+      willChangeReserveRatio: true;
+      // The new liquidity coverage that will be required for the temporary reserve ratio.
+      newCoverageLiquidity: TokenAmount;
+      // The new reserve ratio that will be temporarily imposed.
+      newReserveRatio: number;
+      // Whether the change to the reserve ratio will be caused by an old temporary
+      // reserve ratio resetting.
+      changeCausedByReset: boolean;
+    }
+  | {
+      // This status indicates the change will not affect the reserve ratio,
+      // i.e. the relative reduction is <= 1/2 of the reserve ratio.
+      status: "Ready";
+      willChangeReserveRatio: false;
     }
   | {
       // This status indicates the new reserve ratio required to set the new APR
       // would make the market delinquent.
       status: "InsufficientReserves";
-      newReservesRequired: TokenAmount;
+      newReserveRatio: number;
+      newCoverageLiquidity: TokenAmount;
+      missingReserves: TokenAmount;
+      changeCausedByReset: boolean;
     };
 export type QueueWithdrawalStatus = {
   status: "Ready" | "InsufficientBalance" | "InsufficientRole";
@@ -156,15 +176,50 @@ export class MarketAccount {
   checkSetAPRStep(apr: number): SetAprStatus {
     if (!this.isBorrower) return { status: "NotBorrower" };
     if (!(apr > 0 && apr <= 10000)) return { status: "InvalidApr" };
-    if (!this.market.canChangeAPR(apr)) {
+
+    const [originalReserveRatioBips, originalAnnualInterestBips] =
+      this.market.originalReserveRatioAndAnnualInterestBips;
+
+    const newReserveRatioBips = this.market.getReserveRatioForNewAPR(apr);
+    const willChangeReserveRatio = newReserveRatioBips !== this.market.reserveRatioBips;
+    const changeCausedByReset =
+      this.market.temporaryReserveRatio && apr >= originalAnnualInterestBips;
+
+    // If the market will update its reserve ratio, either because the new APR is lower
+    // or because there is an old reserve ratio that needs to be reset, we need to check
+    // if the market will become delinquent or already is, respectively.
+    if (willChangeReserveRatio) {
+      // If reserve is dropping, must currently not be delinquent, if it is increasing, must not become delinquent
+      const reserveRatioThatMustNotBeDelinquent = Math.max(
+        originalReserveRatioBips,
+        newReserveRatioBips
+      );
+      const newCoverageLiquidity = this.market.calculateLiquidityCoverageForReserveRatio(
+        reserveRatioThatMustNotBeDelinquent
+      );
+      if (this.market.totalAssets.lt(newCoverageLiquidity)) {
+        return {
+          status: "InsufficientReserves",
+          newCoverageLiquidity,
+          newReserveRatio: newReserveRatioBips,
+          missingReserves: newCoverageLiquidity.sub(this.market.totalAssets),
+          changeCausedByReset
+        };
+      } else {
+        return {
+          status: "Ready",
+          willChangeReserveRatio: true,
+          newCoverageLiquidity,
+          newReserveRatio: newReserveRatioBips,
+          changeCausedByReset
+        };
+      }
+    } else {
       return {
-        status: "InsufficientReserves",
-        newReservesRequired: this.market.calculateLiquidityCoverageForReserveRatio(
-          this.market.getReserveRatioForNewAPR(apr)
-        )
+        status: "Ready",
+        willChangeReserveRatio: false
       };
     }
-    return { status: "Ready" };
   }
 
   /* -------------------------------------------------------------------------- */

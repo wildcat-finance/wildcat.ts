@@ -33,6 +33,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "hardhat": "^2.13.0",
+    "mocha": "^10.4.0",
     "prettier": "^2.8.8",
     "ts-morph": "^20.0.0",
     "ts-node": "^10.9.1",
@@ -58,6 +59,7 @@
     "lint:fix": "eslint src/ test/ --ext=ts --fix",
     "prepublishOnly": "yarn build",
     "test": "react-scripts test",
+    "mocha": "NODE_OPTIONS='--max-old-space-size=2048' mocha",
     "typechain": "yarn clean:typechain; hardhat compile; cp -r typechain-types src/typechain; node ./typechain-imports.js"
   }
 }
