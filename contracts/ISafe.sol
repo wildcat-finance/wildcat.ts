@@ -40,4 +40,8 @@ interface ISafe {
    * This function call must use less than 30 000 gas.
    */
   function supportsInterface(bytes4 interfaceId) external view returns (bool);
+
+  function getMessageHash(bytes memory message) external view returns (bytes32);
+
+  function encodeMessageDataForSafe(address safe, bytes memory message) external view returns (bytes memory);
 }
