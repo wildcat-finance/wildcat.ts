@@ -542,6 +542,11 @@ query getAuthorizedLendersByMarket($market: ID!) {
         lender
       }
     }
+    lenders {
+      address
+      scaledBalance
+      role
+    }
   }
 }
 

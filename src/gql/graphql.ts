@@ -23,6 +23,7 @@ export type Scalars = {
   BigInt: { input: string | number | bigint; output: string };
   Bytes: { input: string; output: string };
   Int8: { input: any; output: any };
+  Timestamp: { input: any; output: any };
 };
 
 export enum SubgraphAggregation_Interval {
@@ -9050,6 +9051,12 @@ export type SubgraphGetAuthorizedLendersByMarketQuery = {
       __typename: "Controller";
       authorizedLenders: Array<{ __typename: "LenderAuthorization"; lender: string }>;
     };
+    lenders: Array<{
+      __typename: "LenderAccount";
+      address: string;
+      scaledBalance: string;
+      role: SubgraphLenderStatus;
+    }>;
   } | null;
 };
 
@@ -11102,6 +11109,11 @@ export const GetAuthorizedLendersByMarketDocument = gql`
         authorizedLenders(where: { authorized: true }) {
           lender
         }
+      }
+      lenders {
+        address
+        scaledBalance
+        role
       }
     }
   }
