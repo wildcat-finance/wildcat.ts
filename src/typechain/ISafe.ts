@@ -23,6 +23,8 @@ import type {
 export interface ISafeInterface extends utils.Interface {
   functions: {
     "VERSION()": FunctionFragment;
+    "encodeMessageDataForSafe(address,bytes)": FunctionFragment;
+    "getMessageHash(bytes)": FunctionFragment;
     "getOwners()": FunctionFragment;
     "getThreshold()": FunctionFragment;
     "isOwner(address)": FunctionFragment;
@@ -34,6 +36,8 @@ export interface ISafeInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "VERSION"
+      | "encodeMessageDataForSafe"
+      | "getMessageHash"
       | "getOwners"
       | "getThreshold"
       | "isOwner"
@@ -43,6 +47,14 @@ export interface ISafeInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "VERSION", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "encodeMessageDataForSafe",
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMessageHash",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(functionFragment: "getOwners", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getThreshold",
@@ -66,6 +78,14 @@ export interface ISafeInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "VERSION", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "encodeMessageDataForSafe",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMessageHash",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getOwners", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getThreshold",
@@ -119,6 +139,17 @@ export interface ISafe extends BaseContract {
   functions: {
     VERSION(overrides?: CallOverrides): Promise<[string]>;
 
+    encodeMessageDataForSafe(
+      safe: PromiseOrValue<string>,
+      message: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getMessageHash(
+      message: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getOwners(overrides?: CallOverrides): Promise<[string[]]>;
 
     getThreshold(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -148,6 +179,17 @@ export interface ISafe extends BaseContract {
 
   VERSION(overrides?: CallOverrides): Promise<string>;
 
+  encodeMessageDataForSafe(
+    safe: PromiseOrValue<string>,
+    message: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getMessageHash(
+    message: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getOwners(overrides?: CallOverrides): Promise<string[]>;
 
   getThreshold(overrides?: CallOverrides): Promise<BigNumber>;
@@ -176,6 +218,17 @@ export interface ISafe extends BaseContract {
 
   callStatic: {
     VERSION(overrides?: CallOverrides): Promise<string>;
+
+    encodeMessageDataForSafe(
+      safe: PromiseOrValue<string>,
+      message: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getMessageHash(
+      message: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getOwners(overrides?: CallOverrides): Promise<string[]>;
 
@@ -209,6 +262,17 @@ export interface ISafe extends BaseContract {
   estimateGas: {
     VERSION(overrides?: CallOverrides): Promise<BigNumber>;
 
+    encodeMessageDataForSafe(
+      safe: PromiseOrValue<string>,
+      message: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getMessageHash(
+      message: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getOwners(overrides?: CallOverrides): Promise<BigNumber>;
 
     getThreshold(overrides?: CallOverrides): Promise<BigNumber>;
@@ -238,6 +302,17 @@ export interface ISafe extends BaseContract {
 
   populateTransaction: {
     VERSION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    encodeMessageDataForSafe(
+      safe: PromiseOrValue<string>,
+      message: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMessageHash(
+      message: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getOwners(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
