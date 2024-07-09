@@ -321,6 +321,24 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   /**
+   * @dev Calculate token amount to be repayed by borrower for a given duration
+   * to keep the market healthy.
+   * @return token amount to be repayed
+   **/
+  repayRequiredForDuration(timeToPayInSeconds: number): TokenAmount {
+    const effectiveBorrowerAPR = bipMul(
+      bipToRay(this.annualInterestBips),
+      BIP.add(this.protocolFeeBips)
+    );
+
+    const interestPerSecond = this.totalSupply
+      .rayMul(effectiveBorrowerAPR)
+      .div(SECONDS_IN_365_DAYS);
+
+    return interestPerSecond.mul(timeToPayInSeconds);
+  }
+
+  /**
    * @dev Calculate effective interest rate currently paid by borrower.
    *      Borrower pays base APR, protocol fee (on base APR) and delinquency
    *      fee (if delinquent beyond grace period).
