@@ -9048,7 +9048,15 @@ export type SubgraphGetAuthorizedLendersByMarketQuery = {
     __typename: "Market";
     controller: {
       __typename: "Controller";
-      authorizedLenders: Array<{ __typename: "LenderAuthorization"; lender: string }>;
+      authorizedLenders: Array<{
+        __typename: "LenderAuthorization";
+        lender: string;
+        authorized: boolean;
+        changes: Array<{
+          __typename: "Change";
+          blockTimestamp: number;
+        }>;
+      }>;
     };
   } | null;
 };
@@ -11099,8 +11107,12 @@ export const GetAuthorizedLendersByMarketDocument = gql`
   query getAuthorizedLendersByMarket($market: ID!) {
     market(id: $market) {
       controller {
-        authorizedLenders(where: { authorized: true }) {
+        authorizedLenders {
           lender
+          authorized
+          changes(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
+            blockTimestamp
+          }
         }
       }
     }
