@@ -11104,13 +11104,17 @@ export type GetAllMarketsQueryResult = Apollo.QueryResult<
   SubgraphGetAllMarketsQueryVariables
 >;
 export const GetAuthorizedLendersByMarketDocument = gql`
-  query getAuthorizedLendersByMarket($market: ID!) {
-    market(id: $market) {
+  query getAuthorizedLendersByMarket(
+    $id: ID = ""
+    $first: Int = 1
+    $orderDirection: OrderDirection = desc
+  ) {
+    market(id: $id) {
       controller {
         authorizedLenders {
           lender
           authorized
-          changes(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
+          changes(first: $first, orderBy: blockTimestamp, orderDirection: $orderDirection) {
             blockTimestamp
           }
         }
