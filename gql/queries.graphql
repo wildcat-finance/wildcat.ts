@@ -538,8 +538,12 @@ query getAllMarkets {
 query getAuthorizedLendersByMarket($market: ID!) {
   market(id: $market) {
     controller {
-      authorizedLenders(where: { authorized: true }) {
+      authorizedLenders {
         lender
+        authorized
+        changes(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
+          blockTimestamp
+        }
       }
     }
     lenders {
