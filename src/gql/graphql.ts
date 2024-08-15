@@ -9053,10 +9053,7 @@ export type SubgraphGetAuthorizedLendersByMarketQuery = {
         __typename: "LenderAuthorization";
         lender: string;
         authorized: boolean;
-        changes: Array<{
-          __typename: "Change";
-          blockTimestamp: number;
-        }>;
+        changes: Array<{ __typename: "LenderAuthorizationChange"; blockTimestamp: number }>;
       }>;
     };
     lenders: Array<{
