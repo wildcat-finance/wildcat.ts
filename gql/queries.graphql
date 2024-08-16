@@ -529,6 +529,26 @@ query getAllPendingWithdrawalBatchesForMarket($market: ID!) {
   }
 }
 
+query getIncompleteWithdrawalsForMarket(
+  $market: ID!
+  $numWithdrawalBatches: Int = 100
+  $skipWithdrawalBatches: Int = 0
+  $orderWithdrawalBatches: WithdrawalBatch_orderBy = expiry
+  $directionWithdrawalBatches: OrderDirection = desc
+) {
+  market(id: $market) {
+    withdrawalBatches(
+      orderBy: $orderWithdrawalBatches
+      orderDirection: $directionWithdrawalBatches
+      first: $numWithdrawalBatches
+      skip: $skipWithdrawalBatches
+      where: { isCompleted: false }
+    ) {
+      ...WithdrawalBatchPropertiesWithEvents
+    }
+  }
+}
+
 query getAllMarkets {
   markets {
     ...MarketData

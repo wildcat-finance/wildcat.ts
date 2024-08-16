@@ -2701,12 +2701,15 @@ export enum SubgraphLenderWithdrawalStatus_OrderBy {
   AccountTotalDeposited = "account__totalDeposited",
   AccountTotalInterestEarned = "account__totalInterestEarned",
   Batch = "batch",
+  BatchCompletedWithdrawalsCount = "batch__completedWithdrawalsCount",
   BatchExpiry = "batch__expiry",
   BatchId = "batch__id",
   BatchIsClosed = "batch__isClosed",
+  BatchIsCompleted = "batch__isCompleted",
   BatchIsExpired = "batch__isExpired",
   BatchLastScaleFactor = "batch__lastScaleFactor",
   BatchLastUpdatedTimestamp = "batch__lastUpdatedTimestamp",
+  BatchLenderWithdrawalsCount = "batch__lenderWithdrawalsCount",
   BatchNormalizedAmountClaimed = "batch__normalizedAmountClaimed",
   BatchNormalizedAmountPaid = "batch__normalizedAmountPaid",
   BatchPaymentsCount = "batch__paymentsCount",
@@ -6943,15 +6946,18 @@ export enum SubgraphUpdateProtocolFeeConfiguration_OrderBy {
 
 export type SubgraphWithdrawalBatch = {
   __typename: "WithdrawalBatch";
+  completedWithdrawalsCount: Scalars["Int"]["output"];
   creation: SubgraphWithdrawalBatchCreated;
   executions: SubgraphWithdrawalExecution[];
   expiry: Scalars["BigInt"]["output"];
   id: Scalars["ID"]["output"];
   interestAccrualRecords: SubgraphWithdrawalBatchInterestAccrued[];
   isClosed: Scalars["Boolean"]["output"];
+  isCompleted: Scalars["Boolean"]["output"];
   isExpired: Scalars["Boolean"]["output"];
   lastScaleFactor: Scalars["BigInt"]["output"];
   lastUpdatedTimestamp: Scalars["Int"]["output"];
+  lenderWithdrawalsCount: Scalars["Int"]["output"];
   market: SubgraphMarket;
   normalizedAmountClaimed: Scalars["BigInt"]["output"];
   normalizedAmountPaid: Scalars["BigInt"]["output"];
@@ -7060,12 +7066,15 @@ export type SubgraphWithdrawalBatchCreated_Filter = {
 
 export enum SubgraphWithdrawalBatchCreated_OrderBy {
   Batch = "batch",
+  BatchCompletedWithdrawalsCount = "batch__completedWithdrawalsCount",
   BatchExpiry = "batch__expiry",
   BatchId = "batch__id",
   BatchIsClosed = "batch__isClosed",
+  BatchIsCompleted = "batch__isCompleted",
   BatchIsExpired = "batch__isExpired",
   BatchLastScaleFactor = "batch__lastScaleFactor",
   BatchLastUpdatedTimestamp = "batch__lastUpdatedTimestamp",
+  BatchLenderWithdrawalsCount = "batch__lenderWithdrawalsCount",
   BatchNormalizedAmountClaimed = "batch__normalizedAmountClaimed",
   BatchNormalizedAmountPaid = "batch__normalizedAmountPaid",
   BatchPaymentsCount = "batch__paymentsCount",
@@ -7179,12 +7188,15 @@ export type SubgraphWithdrawalBatchExpired_Filter = {
 
 export enum SubgraphWithdrawalBatchExpired_OrderBy {
   Batch = "batch",
+  BatchCompletedWithdrawalsCount = "batch__completedWithdrawalsCount",
   BatchExpiry = "batch__expiry",
   BatchId = "batch__id",
   BatchIsClosed = "batch__isClosed",
+  BatchIsCompleted = "batch__isCompleted",
   BatchIsExpired = "batch__isExpired",
   BatchLastScaleFactor = "batch__lastScaleFactor",
   BatchLastUpdatedTimestamp = "batch__lastUpdatedTimestamp",
+  BatchLenderWithdrawalsCount = "batch__lenderWithdrawalsCount",
   BatchNormalizedAmountClaimed = "batch__normalizedAmountClaimed",
   BatchNormalizedAmountPaid = "batch__normalizedAmountPaid",
   BatchPaymentsCount = "batch__paymentsCount",
@@ -7305,12 +7317,15 @@ export type SubgraphWithdrawalBatchInterestAccrued_Filter = {
 
 export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   Batch = "batch",
+  BatchCompletedWithdrawalsCount = "batch__completedWithdrawalsCount",
   BatchExpiry = "batch__expiry",
   BatchId = "batch__id",
   BatchIsClosed = "batch__isClosed",
+  BatchIsCompleted = "batch__isCompleted",
   BatchIsExpired = "batch__isExpired",
   BatchLastScaleFactor = "batch__lastScaleFactor",
   BatchLastUpdatedTimestamp = "batch__lastUpdatedTimestamp",
+  BatchLenderWithdrawalsCount = "batch__lenderWithdrawalsCount",
   BatchNormalizedAmountClaimed = "batch__normalizedAmountClaimed",
   BatchNormalizedAmountPaid = "batch__normalizedAmountPaid",
   BatchPaymentsCount = "batch__paymentsCount",
@@ -7462,12 +7477,15 @@ export type SubgraphWithdrawalBatchPayment_Filter = {
 
 export enum SubgraphWithdrawalBatchPayment_OrderBy {
   Batch = "batch",
+  BatchCompletedWithdrawalsCount = "batch__completedWithdrawalsCount",
   BatchExpiry = "batch__expiry",
   BatchId = "batch__id",
   BatchIsClosed = "batch__isClosed",
+  BatchIsCompleted = "batch__isCompleted",
   BatchIsExpired = "batch__isExpired",
   BatchLastScaleFactor = "batch__lastScaleFactor",
   BatchLastUpdatedTimestamp = "batch__lastUpdatedTimestamp",
+  BatchLenderWithdrawalsCount = "batch__lenderWithdrawalsCount",
   BatchNormalizedAmountClaimed = "batch__normalizedAmountClaimed",
   BatchNormalizedAmountPaid = "batch__normalizedAmountPaid",
   BatchPaymentsCount = "batch__paymentsCount",
@@ -7487,6 +7505,14 @@ export type SubgraphWithdrawalBatch_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<SubgraphWithdrawalBatch_Filter>>>;
+  completedWithdrawalsCount?: InputMaybe<Scalars["Int"]["input"]>;
+  completedWithdrawalsCount_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  completedWithdrawalsCount_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  completedWithdrawalsCount_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  completedWithdrawalsCount_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  completedWithdrawalsCount_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  completedWithdrawalsCount_not?: InputMaybe<Scalars["Int"]["input"]>;
+  completedWithdrawalsCount_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   creation_?: InputMaybe<SubgraphWithdrawalBatchCreated_Filter>;
   executions_?: InputMaybe<SubgraphWithdrawalExecution_Filter>;
   expiry?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -7510,6 +7536,10 @@ export type SubgraphWithdrawalBatch_Filter = {
   isClosed_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   isClosed_not?: InputMaybe<Scalars["Boolean"]["input"]>;
   isClosed_not_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  isCompleted?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isCompleted_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  isCompleted_not?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isCompleted_not_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   isExpired?: InputMaybe<Scalars["Boolean"]["input"]>;
   isExpired_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   isExpired_not?: InputMaybe<Scalars["Boolean"]["input"]>;
@@ -7530,6 +7560,14 @@ export type SubgraphWithdrawalBatch_Filter = {
   lastUpdatedTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   lastUpdatedTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   lastUpdatedTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  lenderWithdrawalsCount?: InputMaybe<Scalars["Int"]["input"]>;
+  lenderWithdrawalsCount_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  lenderWithdrawalsCount_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  lenderWithdrawalsCount_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  lenderWithdrawalsCount_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  lenderWithdrawalsCount_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  lenderWithdrawalsCount_not?: InputMaybe<Scalars["Int"]["input"]>;
+  lenderWithdrawalsCount_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   market?: InputMaybe<Scalars["String"]["input"]>;
   market_?: InputMaybe<SubgraphMarket_Filter>;
   market_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -7614,6 +7652,7 @@ export type SubgraphWithdrawalBatch_Filter = {
 };
 
 export enum SubgraphWithdrawalBatch_OrderBy {
+  CompletedWithdrawalsCount = "completedWithdrawalsCount",
   Creation = "creation",
   CreationBlockNumber = "creation__blockNumber",
   CreationBlockTimestamp = "creation__blockTimestamp",
@@ -7624,9 +7663,11 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   Id = "id",
   InterestAccrualRecords = "interestAccrualRecords",
   IsClosed = "isClosed",
+  IsCompleted = "isCompleted",
   IsExpired = "isExpired",
   LastScaleFactor = "lastScaleFactor",
   LastUpdatedTimestamp = "lastUpdatedTimestamp",
+  LenderWithdrawalsCount = "lenderWithdrawalsCount",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
@@ -7821,12 +7862,15 @@ export enum SubgraphWithdrawalExecution_OrderBy {
   AccountTotalDeposited = "account__totalDeposited",
   AccountTotalInterestEarned = "account__totalInterestEarned",
   Batch = "batch",
+  BatchCompletedWithdrawalsCount = "batch__completedWithdrawalsCount",
   BatchExpiry = "batch__expiry",
   BatchId = "batch__id",
   BatchIsClosed = "batch__isClosed",
+  BatchIsCompleted = "batch__isCompleted",
   BatchIsExpired = "batch__isExpired",
   BatchLastScaleFactor = "batch__lastScaleFactor",
   BatchLastUpdatedTimestamp = "batch__lastUpdatedTimestamp",
+  BatchLenderWithdrawalsCount = "batch__lenderWithdrawalsCount",
   BatchNormalizedAmountClaimed = "batch__normalizedAmountClaimed",
   BatchNormalizedAmountPaid = "batch__normalizedAmountPaid",
   BatchPaymentsCount = "batch__paymentsCount",
@@ -8043,12 +8087,15 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   AccountTotalDeposited = "account__totalDeposited",
   AccountTotalInterestEarned = "account__totalInterestEarned",
   Batch = "batch",
+  BatchCompletedWithdrawalsCount = "batch__completedWithdrawalsCount",
   BatchExpiry = "batch__expiry",
   BatchId = "batch__id",
   BatchIsClosed = "batch__isClosed",
+  BatchIsCompleted = "batch__isCompleted",
   BatchIsExpired = "batch__isExpired",
   BatchLastScaleFactor = "batch__lastScaleFactor",
   BatchLastUpdatedTimestamp = "batch__lastUpdatedTimestamp",
+  BatchLenderWithdrawalsCount = "batch__lenderWithdrawalsCount",
   BatchNormalizedAmountClaimed = "batch__normalizedAmountClaimed",
   BatchNormalizedAmountPaid = "batch__normalizedAmountPaid",
   BatchPaymentsCount = "batch__paymentsCount",
@@ -8399,6 +8446,7 @@ export type SubgraphWithdrawalBatchPropertiesFragment = {
   totalNormalizedRequests: string;
   isExpired: boolean;
   isClosed: boolean;
+  isCompleted: boolean;
   paymentsCount: number;
   lastScaleFactor: string;
   lastUpdatedTimestamp: number;
@@ -8423,6 +8471,7 @@ export type SubgraphWithdrawalBatchPropertiesWithEventsFragment = {
   totalNormalizedRequests: string;
   isExpired: boolean;
   isClosed: boolean;
+  isCompleted: boolean;
   paymentsCount: number;
   lastScaleFactor: string;
   lastUpdatedTimestamp: number;
@@ -9032,6 +9081,17 @@ export type SubgraphGetAllPendingWithdrawalBatchesForMarketQuery = {
   } | null;
 };
 
+export type SubgraphGetIncompleteWithdrawalsForMarketQueryVariables = Exact<{
+  market: Scalars["ID"]["input"];
+  numWithdrawalBatches?: InputMaybe<Scalars["Int"]["input"]>;
+  skipWithdrawalBatches?: InputMaybe<Scalars["Int"]["input"]>;
+  orderWithdrawalBatches?: InputMaybe<SubgraphWithdrawalBatch_OrderBy>;
+  directionWithdrawalBatches?: InputMaybe<SubgraphOrderDirection>;
+}>;
+
+export type SubgraphGetIncompleteWithdrawalsForMarketQuery =
+  SubgraphGetAllPendingWithdrawalBatchesForMarketQuery;
+
 export type SubgraphGetAllMarketsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type SubgraphGetAllMarketsQuery = {
@@ -9345,6 +9405,7 @@ export const WithdrawalBatchPropertiesFragmentDoc = gql`
     totalNormalizedRequests
     isExpired
     isClosed
+    isCompleted
     paymentsCount
     lastScaleFactor
     lastUpdatedTimestamp
@@ -11029,6 +11090,107 @@ export type GetAllPendingWithdrawalBatchesForMarketSuspenseQueryHookResult =
 export type GetAllPendingWithdrawalBatchesForMarketQueryResult = Apollo.QueryResult<
   SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
   SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
+>;
+export const GetIncompleteWithdrawalsForMarketDocument = gql`
+  query getIncompleteWithdrawalsForMarket(
+    $market: ID!
+    $numWithdrawalBatches: Int = 100
+    $skipWithdrawalBatches: Int = 0
+    $orderWithdrawalBatches: WithdrawalBatch_orderBy = expiry
+    $directionWithdrawalBatches: OrderDirection = desc
+  ) {
+    market(id: $market) {
+      withdrawalBatches(
+        orderBy: $orderWithdrawalBatches
+        orderDirection: $directionWithdrawalBatches
+        first: $numWithdrawalBatches
+        skip: $skipWithdrawalBatches
+        where: { isCompleted: false }
+      ) {
+        ...WithdrawalBatchPropertiesWithEvents
+      }
+    }
+  }
+  ${WithdrawalBatchPropertiesWithEventsFragmentDoc}
+  ${WithdrawalBatchPropertiesFragmentDoc}
+  ${WithdrawalBatchPaymentPropertiesFragmentDoc}
+  ${LenderWithdrawalPropertiesFragmentDoc}
+  ${WithdrawalRequestPropertiesFragmentDoc}
+  ${WithdrawalExecutionPropertiesFragmentDoc}
+`;
+
+/**
+ * __useGetIncompleteWithdrawalsForMarketQuery__
+ *
+ * To run a query within a React component, call `useGetIncompleteWithdrawalsForMarketQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetIncompleteWithdrawalsForMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetIncompleteWithdrawalsForMarketQuery({
+ *   variables: {
+ *      market: // value for 'market'
+ *      numWithdrawalBatches: // value for 'numWithdrawalBatches'
+ *      skipWithdrawalBatches: // value for 'skipWithdrawalBatches'
+ *      orderWithdrawalBatches: // value for 'orderWithdrawalBatches'
+ *      directionWithdrawalBatches: // value for 'directionWithdrawalBatches'
+ *   },
+ * });
+ */
+export function useGetIncompleteWithdrawalsForMarketQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    SubgraphGetIncompleteWithdrawalsForMarketQuery,
+    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
+  >
+): GetIncompleteWithdrawalsForMarketQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    SubgraphGetIncompleteWithdrawalsForMarketQuery,
+    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
+  >(GetIncompleteWithdrawalsForMarketDocument, options);
+}
+export function useGetIncompleteWithdrawalsForMarketLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SubgraphGetIncompleteWithdrawalsForMarketQuery,
+    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
+  >
+): GetIncompleteWithdrawalsForMarketLazyQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    SubgraphGetIncompleteWithdrawalsForMarketQuery,
+    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
+  >(GetIncompleteWithdrawalsForMarketDocument, options);
+}
+export function useGetIncompleteWithdrawalsForMarketSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    SubgraphGetIncompleteWithdrawalsForMarketQuery,
+    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
+  >
+): GetIncompleteWithdrawalsForMarketSuspenseQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    SubgraphGetIncompleteWithdrawalsForMarketQuery,
+    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
+  >(GetIncompleteWithdrawalsForMarketDocument, options);
+}
+export type GetIncompleteWithdrawalsForMarketQueryHookResult = Apollo.QueryResult<
+  SubgraphGetIncompleteWithdrawalsForMarketQuery,
+  SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
+>;
+export type GetIncompleteWithdrawalsForMarketLazyQueryHookResult = Apollo.LazyQueryResultTuple<
+  SubgraphGetIncompleteWithdrawalsForMarketQuery,
+  SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
+>;
+export type GetIncompleteWithdrawalsForMarketSuspenseQueryHookResult =
+  Apollo.UseSuspenseQueryResult<
+    SubgraphGetIncompleteWithdrawalsForMarketQuery,
+    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
+  >;
+export type GetIncompleteWithdrawalsForMarketQueryResult = Apollo.QueryResult<
+  SubgraphGetIncompleteWithdrawalsForMarketQuery,
+  SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
 >;
 export const GetAllMarketsDocument = gql`
   query getAllMarkets {
