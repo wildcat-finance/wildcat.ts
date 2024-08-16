@@ -31,13 +31,18 @@ export class LenderWithdrawalStatus {
     public scaledAmount: BigNumber,
     public normalizedAmountWithdrawn: TokenAmount,
     public normalizedAmountOwed: TokenAmount,
-    public availableWithdrawalAmount: TokenAmount,
     public isCompleted: boolean,
     requests: SubgraphWithdrawalRequestPropertiesFragment[] = [],
     executions: SubgraphWithdrawalExecutionPropertiesFragment[] = []
   ) {
     this.executions = executions.map((w) => parseWithdrawalRecord(this.batch, w));
     this.requests = requests.map((w) => parseWithdrawalRecord(this.batch, w));
+  }
+
+  get availableWithdrawalAmount(): TokenAmount {
+    return this.batch.normalizedAmountPaid
+      .mulDiv(this.scaledAmount, this.batch.scaledTotalAmount)
+      .sub(this.normalizedAmountWithdrawn);
   }
 
   get chainId(): SupportedChainId {
@@ -71,9 +76,6 @@ export class LenderWithdrawalStatus {
       data.normalizedAmountWithdrawn
     );
     this.normalizedAmountOwed = this.market.underlyingToken.getAmount(data.normalizedAmountOwed);
-    this.availableWithdrawalAmount = this.market.underlyingToken.getAmount(
-      data.availableWithdrawalAmount
-    );
   }
 
   get normalizedUnpaidAmount(): TokenAmount {
@@ -98,11 +100,6 @@ export class LenderWithdrawalStatus {
         normalizedAmountWithdrawn.raw
       )
     );
-    const availableWithdrawalAmount = market.underlyingToken.getAmount(
-      mulDiv(batch.normalizedAmountPaid.raw, scaledAmount, batch.scaledTotalAmount).sub(
-        normalizedAmountWithdrawn.raw
-      )
-    );
 
     return new LenderWithdrawalStatus(
       batch,
@@ -110,7 +107,6 @@ export class LenderWithdrawalStatus {
       scaledAmount,
       normalizedAmountWithdrawn,
       normalizedAmountOwed,
-      availableWithdrawalAmount,
       status.isCompleted,
       status.requests || undefined,
       status.executions || undefined
@@ -153,7 +149,6 @@ export class LenderWithdrawalStatus {
       data.scaledAmount,
       market.underlyingToken.getAmount(data.normalizedAmountWithdrawn),
       market.underlyingToken.getAmount(data.normalizedAmountOwed),
-      market.underlyingToken.getAmount(data.availableWithdrawalAmount),
       isCompleted
     );
   }
