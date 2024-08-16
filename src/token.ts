@@ -93,9 +93,11 @@ export class TokenAmount {
     return this.token.getAmount(this.raw.mul(amount));
   }
 
-  div(amount: RhsAmount): TokenAmount {
+  div(amount: RhsAmount, allowDivideByZero = false): TokenAmount {
     amount = toBn(amount);
-    return this.token.getAmount(this.raw.div(amount));
+    return this.token.getAmount(
+      allowDivideByZero && amount.isZero() ? BigNumber.from(0) : this.raw.div(amount)
+    );
   }
 
   mulDiv(numer: RhsAmount, denom: RhsAmount): TokenAmount {

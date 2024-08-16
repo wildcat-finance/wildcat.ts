@@ -316,7 +316,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       .bipMul(this.reserveRatioBips);
     return this.liquidReserves
       .sub(this.minimumReserves)
-      .div(interestPerSecondAddedToRequirements)
+      .div(interestPerSecondAddedToRequirements, true)
       .raw.toNumber();
   }
 
