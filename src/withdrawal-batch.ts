@@ -45,6 +45,7 @@ export class WithdrawalBatch {
     public paymentsCount?: number,
     public lastUpdatedTimestamp?: number,
     public totalInterestEarned?: TokenAmount,
+    public isCompleted?: boolean,
     payments: SubgraphWithdrawalBatchPaymentPropertiesFragment[] = [],
     withdrawals: SubgraphLenderWithdrawalPropertiesFragment[] = [],
     executions: SubgraphWithdrawalExecutionPropertiesFragment[] = [],
@@ -134,6 +135,18 @@ export class WithdrawalBatch {
         : this.scaledAmountBurned.eq(this.scaledTotalAmount)
         ? BatchStatus.Complete
         : BatchStatus.Unpaid;
+    if (this.status === BatchStatus.Complete) {
+      const scaledTotalFromRecords = this.withdrawals.reduce(
+        (total, w) => total.add(w.scaledAmount),
+        BigNumber.from(0)
+      );
+      if (
+        scaledTotalFromRecords.eq(this.scaledTotalAmount) &&
+        this.withdrawals.every((w) => w.isCompleted)
+      ) {
+        this.isCompleted = true;
+      }
+    }
     this.processWithdrawalBatchInterestAccrued();
   }
 
@@ -199,6 +212,7 @@ export class WithdrawalBatch {
       batch.paymentsCount,
       batch.lastUpdatedTimestamp,
       market.underlyingToken.getAmount(batch.totalInterestEarned),
+      batch.isCompleted,
       batch.payments || undefined,
       batch.withdrawals || undefined,
       batch.executions || undefined,

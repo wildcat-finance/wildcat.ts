@@ -32,6 +32,7 @@ export class LenderWithdrawalStatus {
     public normalizedAmountWithdrawn: TokenAmount,
     public normalizedAmountOwed: TokenAmount,
     public availableWithdrawalAmount: TokenAmount,
+    public isCompleted: boolean,
     requests: SubgraphWithdrawalRequestPropertiesFragment[] = [],
     executions: SubgraphWithdrawalExecutionPropertiesFragment[] = []
   ) {
@@ -110,6 +111,7 @@ export class LenderWithdrawalStatus {
       normalizedAmountWithdrawn,
       normalizedAmountOwed,
       availableWithdrawalAmount,
+      status.isCompleted,
       status.requests || undefined,
       status.executions || undefined
     );
@@ -139,13 +141,20 @@ export class LenderWithdrawalStatus {
     batch: WithdrawalBatch,
     data: WithdrawalBatchLenderStatusStructOutput
   ): LenderWithdrawalStatus {
+    const isCompleted =
+      batch.status === BatchStatus.Complete &&
+      batch.expiry < Math.floor(Date.now() / 1000) &&
+      batch.normalizedAmountPaid
+        .mulDiv(data.scaledAmount, batch.scaledTotalAmount)
+        .eq(data.normalizedAmountWithdrawn);
     return new LenderWithdrawalStatus(
       batch,
       data.lender,
       data.scaledAmount,
       market.underlyingToken.getAmount(data.normalizedAmountWithdrawn),
       market.underlyingToken.getAmount(data.normalizedAmountOwed),
-      market.underlyingToken.getAmount(data.availableWithdrawalAmount)
+      market.underlyingToken.getAmount(data.availableWithdrawalAmount),
+      isCompleted
     );
   }
 
