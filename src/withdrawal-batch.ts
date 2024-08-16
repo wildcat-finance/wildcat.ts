@@ -82,11 +82,19 @@ export class WithdrawalBatch {
     }
   }
 
+  /**
+   * @description Whether the batch is expired and all owed funds have been paid to it.
+   * @note        Does not indicate the batch is "complete" in the way `isCompleted`
+   *              indicates, which means all withdrawals have been claimed.
+   */
   get isClosed(): boolean {
-    return this.scaledAmountBurned.eq(this.scaledTotalAmount);
+    return this.status === BatchStatus.Complete;
   }
 
-  get isExpired(): boolean {
+  /**
+   * @description Whether the batch is expired but the market has not yet been updated
+   */
+  get isPendingExpired(): boolean {
     return this.status === BatchStatus.Pending && this.expiry < Math.floor(Date.now() / 1000);
   }
 
