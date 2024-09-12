@@ -182,7 +182,15 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   /** @returns Whether the borrower is in penalized delinquency */
   get isIncurringPenalties(): boolean {
-    return this.isDelinquent && this.timeDelinquent > this.delinquencyGracePeriod;
+    return this.timeDelinquent > this.delinquencyGracePeriod;
+  }
+
+  /**
+   * @returns Whether the market is currently flagged as delinquent or will be
+   *          flagged upon the next state update.
+   */
+  get willBeDelinquent(): boolean {
+    return this.getTotalDebtBreakdown().status === "delinquent";
   }
 
   /** @returns Total debts of the market without subtracting assets */
@@ -309,7 +317,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   get secondsBeforeDelinquency(): number {
-    if (this.isDelinquent || this.totalDebts.eq(0)) return 0;
+    if (this.willBeDelinquent || this.totalDebts.eq(0)) return 0;
     const interestPerSecondAddedToRequirements = this.totalSupply
       .rayMul(this.effectiveBorrowerAPR)
       .div(SECONDS_IN_365_DAYS)
