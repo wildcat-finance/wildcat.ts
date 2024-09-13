@@ -1,6 +1,6 @@
 {
   "name": "@wildcatfi/wildcat-sdk",
-  "version": "2.0.78",
+  "version": "2.0.80",
   "license": "MIT",
   "files": [
     "dist"

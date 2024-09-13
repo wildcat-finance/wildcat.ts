@@ -574,6 +574,18 @@ query getAuthorizedLendersByMarket($market: ID!) {
   }
 }
 
+query getAllAuthorizedLenders($borrower: Bytes!) {
+  markets(where:{ borrower: $borrower }) {
+    ...AllAuthorizedLendersViewMarketInfo
+
+    controller {
+      authorizedLenders(where: { authorized: true } ) {
+        ...AllAuthorizedLendersView
+      }
+    }
+  }
+}
+
 query getAuthorizedLendersByBorrower($filter: Controller_filter!) {
   controllers(where: $filter) {
     authorizedLenders(where: { authorized: true }) {
