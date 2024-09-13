@@ -11400,10 +11400,10 @@ export type GetAuthorizedLendersByMarketQueryResult = Apollo.QueryResult<
 >;
 export const GetAllAuthorizedLendersDocument = gql`
   query getAllAuthorizedLenders($borrower: Bytes!) {
-    markets(where: { borrower: $borrower }) {
+    markets(where: { borrower: $borrower, isClosed: false }) {
       ...AllAuthorizedLendersViewMarketInfo
       controller {
-        authorizedLenders(where: { authorized: true }) {
+        authorizedLenders {
           ...AllAuthorizedLendersView
         }
       }
