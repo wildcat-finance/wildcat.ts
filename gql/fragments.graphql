@@ -32,6 +32,20 @@ fragment LenderProperties on LenderAccount {
   numPendingWithdrawalBatches
 }
 
+
+fragment AllAuthorizedLendersViewMarketInfo on Market {
+  id
+  name
+}
+
+fragment AllAuthorizedLendersView on LenderAuthorization {
+  lender
+  authorized
+  changes(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
+    blockTimestamp
+  }
+}
+
 # ---------------------------------------------------------------------------- #
 #                                Borrower Views                                #
 # ---------------------------------------------------------------------------- #

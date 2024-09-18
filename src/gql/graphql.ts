@@ -8232,6 +8232,19 @@ export type SubgraphLenderPropertiesFragment = {
   numPendingWithdrawalBatches: number;
 };
 
+export type SubgraphAllAuthorizedLendersViewMarketInfoFragment = {
+  __typename: "Market";
+  id: string;
+  name: string;
+};
+
+export type SubgraphAllAuthorizedLendersViewFragment = {
+  __typename: "LenderAuthorization";
+  lender: string;
+  authorized: boolean;
+  changes: Array<{ __typename: "LenderAuthorizationChange"; blockTimestamp: number }>;
+};
+
 export type SubgraphMarketDataFragment = {
   __typename: "Market";
   id: string;
@@ -9109,12 +9122,7 @@ export type SubgraphGetAuthorizedLendersByMarketQuery = {
     __typename: "Market";
     controller: {
       __typename: "Controller";
-      authorizedLenders: Array<{
-        __typename: "LenderAuthorization";
-        lender: string;
-        authorized: boolean;
-        changes: Array<{ __typename: "LenderAuthorizationChange"; blockTimestamp: number }>;
-      }>;
+      authorizedLenders: SubgraphAllAuthorizedLendersViewFragment[];
     };
     lenders: Array<{
       __typename: "LenderAccount";
@@ -9123,6 +9131,23 @@ export type SubgraphGetAuthorizedLendersByMarketQuery = {
       role: SubgraphLenderStatus;
     }>;
   } | null;
+};
+
+export type SubgraphGetAllAuthorizedLendersQueryVariables = Exact<{
+  borrower: Scalars["Bytes"]["input"];
+}>;
+
+export type SubgraphGetAllAuthorizedLendersQuery = {
+  __typename: "Query";
+  markets: Array<{
+    __typename: "Market";
+    id: string;
+    name: string;
+    controller: {
+      __typename: "Controller";
+      authorizedLenders: SubgraphAllAuthorizedLendersViewFragment[];
+    };
+  }>;
 };
 
 export type SubgraphGetAuthorizedLendersByBorrowerQueryVariables = Exact<{
@@ -9218,6 +9243,21 @@ export const AccountDataForLenderViewFragmentDoc = gql`
       orderDirection: $directionDeposits
     ) {
       ...DepositData
+    }
+  }
+`;
+export const AllAuthorizedLendersViewMarketInfoFragmentDoc = gql`
+  fragment AllAuthorizedLendersViewMarketInfo on Market {
+    id
+    name
+  }
+`;
+export const AllAuthorizedLendersViewFragmentDoc = gql`
+  fragment AllAuthorizedLendersView on LenderAuthorization {
+    lender
+    authorized
+    changes(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
+      blockTimestamp
     }
   }
 `;
@@ -11357,6 +11397,89 @@ export type GetAuthorizedLendersByMarketSuspenseQueryHookResult = Apollo.UseSusp
 export type GetAuthorizedLendersByMarketQueryResult = Apollo.QueryResult<
   SubgraphGetAuthorizedLendersByMarketQuery,
   SubgraphGetAuthorizedLendersByMarketQueryVariables
+>;
+export const GetAllAuthorizedLendersDocument = gql`
+  query getAllAuthorizedLenders($borrower: Bytes!) {
+    markets(where: { borrower: $borrower, isClosed: false }) {
+      ...AllAuthorizedLendersViewMarketInfo
+      controller {
+        authorizedLenders {
+          ...AllAuthorizedLendersView
+        }
+      }
+    }
+  }
+  ${AllAuthorizedLendersViewMarketInfoFragmentDoc}
+  ${AllAuthorizedLendersViewFragmentDoc}
+`;
+
+/**
+ * __useGetAllAuthorizedLendersQuery__
+ *
+ * To run a query within a React component, call `useGetAllAuthorizedLendersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllAuthorizedLendersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllAuthorizedLendersQuery({
+ *   variables: {
+ *      borrower: // value for 'borrower'
+ *   },
+ * });
+ */
+export function useGetAllAuthorizedLendersQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    SubgraphGetAllAuthorizedLendersQuery,
+    SubgraphGetAllAuthorizedLendersQueryVariables
+  >
+): GetAllAuthorizedLendersQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    SubgraphGetAllAuthorizedLendersQuery,
+    SubgraphGetAllAuthorizedLendersQueryVariables
+  >(GetAllAuthorizedLendersDocument, options);
+}
+export function useGetAllAuthorizedLendersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SubgraphGetAllAuthorizedLendersQuery,
+    SubgraphGetAllAuthorizedLendersQueryVariables
+  >
+): GetAllAuthorizedLendersLazyQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    SubgraphGetAllAuthorizedLendersQuery,
+    SubgraphGetAllAuthorizedLendersQueryVariables
+  >(GetAllAuthorizedLendersDocument, options);
+}
+export function useGetAllAuthorizedLendersSuspenseQuery(
+  baseOptions?: Apollo.SuspenseQueryHookOptions<
+    SubgraphGetAllAuthorizedLendersQuery,
+    SubgraphGetAllAuthorizedLendersQueryVariables
+  >
+): GetAllAuthorizedLendersSuspenseQueryHookResult {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    SubgraphGetAllAuthorizedLendersQuery,
+    SubgraphGetAllAuthorizedLendersQueryVariables
+  >(GetAllAuthorizedLendersDocument, options);
+}
+export type GetAllAuthorizedLendersQueryHookResult = Apollo.QueryResult<
+  SubgraphGetAllAuthorizedLendersQuery,
+  SubgraphGetAllAuthorizedLendersQueryVariables
+>;
+export type GetAllAuthorizedLendersLazyQueryHookResult = Apollo.LazyQueryResultTuple<
+  SubgraphGetAllAuthorizedLendersQuery,
+  SubgraphGetAllAuthorizedLendersQueryVariables
+>;
+export type GetAllAuthorizedLendersSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
+  SubgraphGetAllAuthorizedLendersQuery,
+  SubgraphGetAllAuthorizedLendersQueryVariables
+>;
+export type GetAllAuthorizedLendersQueryResult = Apollo.QueryResult<
+  SubgraphGetAllAuthorizedLendersQuery,
+  SubgraphGetAllAuthorizedLendersQueryVariables
 >;
 export const GetAuthorizedLendersByBorrowerDocument = gql`
   query getAuthorizedLendersByBorrower($filter: Controller_filter!) {

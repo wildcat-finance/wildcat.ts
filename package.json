@@ -1,6 +1,6 @@
 {
   "name": "@wildcatfi/wildcat-sdk",
-  "version": "2.0.79",
+  "version": "2.0.81",
   "license": "MIT",
   "files": [
     "dist"
@@ -44,7 +44,7 @@
     "@apollo/client": "^3.8.6",
     "@tanstack/react-query": "^4.29.14",
     "@types/jest": "^29.5.8",
-    "ethers": "^5.5.3",
+    "ethers": "^5.7.2",
     "graphql": "^16.8.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
