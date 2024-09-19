@@ -316,6 +316,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     return rayDiv(amount, this.scaleFactor);
   }
 
+
   get secondsBeforeDelinquency(): number {
     if (this.willBeDelinquent || this.totalDebts.eq(0)) return 0;
     const interestPerSecondAddedToRequirements = this.totalSupply
@@ -324,6 +325,31 @@ export class Market extends ContractWrapper<WildcatMarket> {
       .bipMul(this.reserveRatioBips);
     return this.liquidReserves
       .sub(this.minimumReserves)
+      .div(interestPerSecondAddedToRequirements, true)
+      .raw.toNumber();
+  }
+
+  get secondsBeforeDelinquency(): number {
+    if (this.willBeDelinquent || this.totalDebts.eq(0)) return 0;
+    const interestPerSecondAddedToRequirements = this.totalSupply
+      .rayMul(this.effectiveBorrowerAPR)
+      .div(SECONDS_IN_365_DAYS)
+      .bipMul(this.reserveRatioBips);
+    return this.liquidReserves
+      .sub(this.minimumReserves)
+      .div(interestPerSecondAddedToRequirements, true)
+      .raw.toNumber();
+  }
+
+  getSecondsBeforeDelinquencyForBorrowedAmount(borrowAmount: TokenAmount): number {
+    if (this.isDelinquent || this.totalDebts.eq(0)) return 0;
+    const interestPerSecondAddedToRequirements = this.totalSupply
+      .rayMul(this.effectiveBorrowerAPR)
+      .div(SECONDS_IN_365_DAYS)
+      .bipMul(this.reserveRatioBips);
+    return this.liquidReserves
+      .sub(this.minimumReserves)
+      .sub(borrowAmount)
       .div(interestPerSecondAddedToRequirements, true)
       .raw.toNumber();
   }
