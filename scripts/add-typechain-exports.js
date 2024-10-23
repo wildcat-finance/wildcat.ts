@@ -36,6 +36,30 @@ const getExportedTypes = (file) => {
   }
   return types;
 };
+const CommonPath = path.join(dir, "common.ts");
+
+const cleanupPromiseOrValue = (filePath) => {
+  let file = fs.readFileSync(filePath, "utf8");
+  if (filePath === CommonPath) return file;
+  const BalancedSquareBrackets = "(?:[^\\]\\[]+|\\[(?:[^\\]\\[]+|\\[[^\\]\\[]*\\])*\\])*?";
+  const re = new RegExp(
+    ["(export type \\w+StructOutput = )", BalancedSquareBrackets, " & "].join(""),
+    "g"
+  );
+  file = file.replace(
+    // new RegExp(["(export type \\w+StructOutput = )(\\[[^\\]]+\\]) & "].join(""), "g"),
+    re,
+    "$1"
+  );
+  fs.writeFileSync(filePath, file);
+  return file;
+  /* const BalancedAnglesInner = "(?:[^><]+|<((?:[^><]+|<[^><]*>))*>)*?";
+  const BalancedAngles = ["PromiseOrValue<(", ...BalancedAnglesInner, ")>"].join("");
+  const re = new RegExp(BalancedAngles, "g");
+  file = file.replace(re, `$1`);
+  fs.writeFileSync(filePath, file);
+  return file; */
+};
 
 const typechainFiles = getAllFilesInDirectory(dir, ".ts").filter(
   (fileName) => !fileName.endsWith("index.ts")
@@ -43,7 +67,7 @@ const typechainFiles = getAllFilesInDirectory(dir, ".ts").filter(
 const extraExports = [];
 const allTypes = [];
 for (const typechainFile of typechainFiles) {
-  const file = fs.readFileSync(path.join(dir, typechainFile), "utf8");
+  const file = cleanupPromiseOrValue(path.join(dir, typechainFile));
   const types = getExportedTypes(file).filter((typ) => !allTypes.includes(typ));
   allTypes.push(...types);
   if (types.length > 0) {
