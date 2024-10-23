@@ -1,80 +1,38 @@
 import { BigNumber, ContractReceipt, ContractTransaction } from "ethers";
-import { Token, TokenAmount, minTokenAmount, toBn } from "./token";
-import { Market } from "./market";
+import { Token, TokenAmount, minTokenAmount, toBn } from "../token";
+import { Market } from "../market";
 import {
   MarketLenderStatusStructOutput,
-  MarketDataWithLenderStatusStructOutput
-} from "./typechain";
-import { assert, bipMul, rayMul } from "./utils";
-import { SupportedChainId, getControllerContract, getLensContract } from "./constants";
-import { PartialTransaction, SignerOrProvider } from "./types";
-import { LenderWithdrawalStatus } from "./withdrawal-status";
-import { WithdrawalQueuedEvent } from "./typechain/WildcatMarket";
+  MarketDataWithLenderStatusStructOutput,
+  WildcatMarketV2__factory,
+  LenderAccountDataStructOutput
+} from "../typechain";
+import { assert, bipMul, DepositRecord, parseMarketRecord, rayMul } from "../utils";
+import { SupportedChainId, getControllerContract, getLensContract } from "../constants";
+import { MarketVersion, PartialTransaction, SignerOrProvider } from "../types";
+import { LenderWithdrawalStatus } from "../withdrawal-status";
+import { WithdrawalQueuedEvent } from "../typechain/WildcatMarket";
 import {
   SubgraphAccountDataForLenderViewFragment,
-  SubgraphDepositDataFragment
-} from "./gql/graphql";
-
-export type DepositStatus =
-  | {
-      status: "InsufficientBalance" | "ExceedsMaximumDeposit" | "Ready" | "InsufficientRole";
-    }
-  | {
-      status: "InsufficientAllowance";
-      remainder: TokenAmount;
-    };
-
-export type RepayStatus =
-  | {
-      status: "InsufficientBalance" | "ExceedsOutstandingDebt" | "Ready";
-    }
-  | {
-      status: "InsufficientAllowance";
-      remainder: TokenAmount;
-    };
-
-export type CloseMarketStatus =
-  | {
-      status: "InsufficientBalance" | "UnpaidWithdrawalBatches" | "Ready" | "NotBorrower";
-    }
-  | {
-      status: "InsufficientAllowance";
-      remainder: TokenAmount;
-    };
-
-export type SetAprStatus =
-  | {
-      status: "NotBorrower" | "InvalidApr";
-    }
-  | {
-      status: "Ready";
-      willChangeReserveRatio: true;
-      // The new liquidity coverage that will be required for the temporary reserve ratio.
-      newCoverageLiquidity: TokenAmount;
-      // The new reserve ratio that will be temporarily imposed.
-      newReserveRatio: number;
-      // Whether the change to the reserve ratio will be caused by an old temporary
-      // reserve ratio resetting.
-      changeCausedByReset: boolean;
-    }
-  | {
-      // This status indicates the change will not affect the reserve ratio,
-      // i.e. the relative reduction is <= 1/2 of the reserve ratio.
-      status: "Ready";
-      willChangeReserveRatio: false;
-    }
-  | {
-      // This status indicates the new reserve ratio required to set the new APR
-      // would make the market delinquent.
-      status: "InsufficientReserves";
-      newReserveRatio: number;
-      newCoverageLiquidity: TokenAmount;
-      missingReserves: TokenAmount;
-      changeCausedByReset: boolean;
-    };
-export type QueueWithdrawalStatus = {
-  status: "Ready" | "InsufficientBalance" | "InsufficientRole";
-};
+  SubgraphDepositDataFragment,
+  SubgraphLenderHooksAccessDataFragment
+} from "../gql/graphql";
+import {
+  DepositStatus,
+  RepayStatus,
+  CloseMarketPreview,
+  SetAprPreview,
+  QueueWithdrawalStatus,
+  isMarketInstanceArray,
+  FunctionAvailability,
+  SetAprStatus,
+  CloseMarketStatus,
+  SetMaxTotalSupplyPreview,
+  SetMaxTotalSupplyStatus,
+  DepositPreview,
+  QueueWithdrawalPreview,
+  RepayPreview
+} from "./validation";
 
 export enum LenderRole {
   Null = 0,
@@ -83,9 +41,40 @@ export enum LenderRole {
   DepositAndWithdraw = 3
 }
 
-const isMarketInstanceArray = (markets: Market[] | string[]): markets is Market[] => {
-  return typeof markets[0] !== "string";
+export type MarketAccountArgs = {
+  account: string;
+  isAuthorizedOnController?: boolean;
+  credential?: HooksCredential;
+  isKnownLender?: boolean;
+  role: LenderRole;
+  scaledMarketBalance: BigNumber;
+  marketBalance: TokenAmount;
+  underlyingBalance: TokenAmount;
+  underlyingApproval: BigNumber;
+  market: Market;
+  deposits?: SubgraphDepositDataFragment[];
+  totalDeposited?: TokenAmount;
+  lastScaleFactor?: BigNumber;
+  lastUpdatedTimestamp?: number;
+  totalInterestEarned?: TokenAmount;
+  numPendingWithdrawalBatches?: number;
 };
+
+type HooksCredential = {
+  isBlockedFromDeposits: boolean;
+  canRefresh: boolean;
+  lastApprovalTimestamp: number;
+  lastProvider?: {
+    providerAddress: string;
+    timeToLive: number;
+    isPullProvider: boolean;
+    pullProviderIndex: number;
+    isApproved: boolean;
+  };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface MarketAccount extends Omit<MarketAccountArgs, "deposits"> {}
 
 /**
  * Class to provide information about a market user's account
@@ -96,22 +85,14 @@ const isMarketInstanceArray = (markets: Market[] | string[]): markets is Market[
  *
  */
 export class MarketAccount {
-  constructor(
-    public account: string,
-    public isAuthorizedOnController: boolean,
-    public role: LenderRole,
-    public scaledMarketBalance: BigNumber,
-    public marketBalance: TokenAmount,
-    public underlyingBalance: TokenAmount,
-    public underlyingApproval: BigNumber,
-    public market: Market,
-    public deposits: SubgraphDepositDataFragment[] = [],
-    public totalDeposited?: TokenAmount,
-    public lastScaleFactor?: BigNumber,
-    public lastUpdatedTimestamp?: number,
-    public totalInterestEarned?: TokenAmount,
-    public numPendingWithdrawalBatches?: number
-  ) {}
+  public depositRecords: DepositRecord[];
+
+  constructor(args: MarketAccountArgs) {
+    Object.assign(this, args);
+    this.depositRecords = (args.deposits ?? []).map((log) =>
+      parseMarketRecord(this.market.underlyingToken, log)
+    );
+  }
 
   get chainId(): SupportedChainId {
     return this.market.chainId;
@@ -129,53 +110,102 @@ export class MarketAccount {
     return this.market.borrower.toLowerCase() === this.account.toLowerCase();
   }
 
-  get canDeposit(): boolean {
-    return (
-      this.role === LenderRole.DepositAndWithdraw ||
-      (this.role === LenderRole.Null && this.isAuthorizedOnController)
-    );
+  get credentialExpiry(): number | undefined {
+    if (this.credential && this.credential.lastProvider) {
+      return this.credential.lastApprovalTimestamp + this.credential.lastProvider.timeToLive;
+    }
+    return undefined;
   }
 
-  get canWithdraw(): boolean {
-    return (
-      this.role === LenderRole.WithdrawOnly ||
-      this.role === LenderRole.DepositAndWithdraw ||
-      (this.role === LenderRole.Null && this.isAuthorizedOnController)
-    );
+  get hasValidCredential(): boolean {
+    const expiry = this.credentialExpiry;
+    return expiry !== undefined && expiry >= Date.now() / 1000;
+  }
+
+  get depositAvailability(): DepositStatus {
+    if (this.market.isClosed) return DepositStatus.MarketClosed;
+    if (this.market.version === MarketVersion.V1) {
+      if (this.role === LenderRole.Blocked) return DepositStatus.Blocked;
+      if (
+        this.role === LenderRole.DepositAndWithdraw ||
+        (this.role === LenderRole.Null && !!this.isAuthorizedOnController)
+      ) {
+        return DepositStatus.Ready;
+      }
+      return DepositStatus.InsufficientRole;
+    } else {
+      // Can deposit if the market does not use the onDeposit hook
+      if (!this.market.flags!.useOnDeposit) DepositStatus.Ready;
+      // Can not deposit if the lender is blocked
+      if (this.credential?.isBlockedFromDeposits) DepositStatus.Blocked;
+      // Can deposit if lender has credential or market does not require one
+      if (this.market.depositRequiresAccess && !this.hasValidCredential) {
+        return DepositStatus.RequiresAccess;
+      }
+      return DepositStatus.Ready;
+    }
+  }
+
+  get withdrawalAvailability(): QueueWithdrawalStatus {
+    if (this.market.version === MarketVersion.V1) {
+      if (
+        this.role === LenderRole.WithdrawOnly ||
+        this.role === LenderRole.DepositAndWithdraw ||
+        (this.role === LenderRole.Null && !!this.isAuthorizedOnController)
+      ) {
+        return QueueWithdrawalStatus.Ready;
+      }
+      return QueueWithdrawalStatus.InsufficientRole;
+    } else {
+      // Can withdraw if market does not use wd hook
+      if (!this.market.flags!.useOnQueueWithdrawal) return QueueWithdrawalStatus.Ready;
+      // Can not withdraw if market in fixed term
+      if (this.market.isInFixedTerm) return QueueWithdrawalStatus.MarketInClosedTerm;
+      // Can not withdraw if market requires access and lender has no credential and is not a known lender
+      if (
+        this.market.flags?.useOnQueueWithdrawal &&
+        this.market.queueWithdrawalRequiresAccess &&
+        !(this.hasValidCredential || this.isKnownLender)
+      ) {
+        return QueueWithdrawalStatus.RequiresAccess;
+      }
+      return QueueWithdrawalStatus.Ready;
+    }
   }
 
   canChangeAPR(apr: number): boolean {
     return this.isBorrower && apr > 0 && apr <= 10000 && this.market.canChangeAPR(apr);
   }
 
-  checkCloseMarketStep(): CloseMarketStatus {
-    if (!this.isBorrower) return { status: "NotBorrower" };
+  previewCloseMarket(): CloseMarketPreview {
+    if (!this.isBorrower) return { status: CloseMarketStatus.NotBorrower };
+    if (this.market.isInFixedTerm && !this.market.allowClosureBeforeTerm) {
+      return { status: CloseMarketStatus.EarlyClosureNotAllowed };
+    }
+
     // add 0.1% to account for interest
     const amount = this.market.underlyingToken.getAmount(
       bipMul(this.market.outstandingDebt.raw, toBn(10010))
     );
     if (amount.gt(this.underlyingBalance)) {
-      return { status: "InsufficientBalance" };
+      return { status: CloseMarketStatus.InsufficientBalance };
     }
     if (this.market.unpaidWithdrawalBatchExpiries.length > 0) {
-      return { status: "UnpaidWithdrawalBatches" };
+      return { status: CloseMarketStatus.UnpaidWithdrawalBatches };
     }
     if (
       !this.isApprovedFor(
         this.market.underlyingToken.getAmount(bipMul(this.market.outstandingDebt.raw, toBn(10006)))
       )
     ) {
-      return {
-        status: "InsufficientAllowance",
-        remainder: amount
-      };
+      return { status: CloseMarketStatus.InsufficientAllowance };
     }
-    return { status: "Ready" };
+    return { status: CloseMarketStatus.Ready };
   }
 
-  checkSetAPRStep(apr: number): SetAprStatus {
-    if (!this.isBorrower) return { status: "NotBorrower" };
-    if (!(apr > 0 && apr <= 10000)) return { status: "InvalidApr" };
+  previewSetAPR(apr: number): SetAprPreview {
+    if (!this.isBorrower) return { status: SetAprStatus.NotBorrower };
+    if (!(apr > 0 && apr <= 10000)) return { status: SetAprStatus.InvalidApr };
 
     const [originalReserveRatioBips, originalAnnualInterestBips] =
       this.market.originalReserveRatioAndAnnualInterestBips;
@@ -199,7 +229,7 @@ export class MarketAccount {
       );
       if (this.market.totalAssets.lt(newCoverageLiquidity)) {
         return {
-          status: "InsufficientReserves",
+          status: SetAprStatus.InsufficientReserves,
           newCoverageLiquidity,
           newReserveRatio: newReserveRatioBips,
           missingReserves: newCoverageLiquidity.sub(this.market.totalAssets),
@@ -207,7 +237,7 @@ export class MarketAccount {
         };
       } else {
         return {
-          status: "Ready",
+          status: SetAprStatus.Ready,
           willChangeReserveRatio: true,
           newCoverageLiquidity,
           newReserveRatio: newReserveRatioBips,
@@ -216,10 +246,18 @@ export class MarketAccount {
       }
     } else {
       return {
-        status: "Ready",
+        status: SetAprStatus.Ready,
         willChangeReserveRatio: false
       };
     }
+  }
+
+  previewSetMaxTotalSupply(amount: TokenAmount): SetMaxTotalSupplyPreview {
+    if (!this.isBorrower) return { status: SetMaxTotalSupplyStatus.NotBorrower };
+    if (this.market.version === MarketVersion.V1 && amount.lt(this.market.totalSupply)) {
+      return { status: SetMaxTotalSupplyStatus.BelowCurrentSupply };
+    }
+    return { status: SetMaxTotalSupplyStatus.Ready };
   }
 
   /* -------------------------------------------------------------------------- */
@@ -227,45 +265,65 @@ export class MarketAccount {
   /* -------------------------------------------------------------------------- */
 
   async closeMarket(): Promise<ContractTransaction> {
-    const { status } = this.checkCloseMarketStep();
-    if (status !== "Ready") {
-      throw Error(`Cannot close market: ${status}`);
+    const { status } = this.previewCloseMarket();
+    assert(status === CloseMarketStatus.Ready, `Cannot close market: ${status}`);
+    if (this.market.version === MarketVersion.V1) {
+      assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
+      const controller = getControllerContract(this.market.signer, this.market.controller);
+      return controller.closeMarket(this.market.address);
     }
-    const controller = getControllerContract(this.market.signer, this.market.controller);
-    return controller.closeMarket(this.market.address);
+    return this.market.contract.closeMarket();
   }
 
   async populateCloseMarket(): Promise<PartialTransaction> {
-    const { status } = this.checkCloseMarketStep();
-    if (status !== "Ready") {
-      throw Error(`Cannot close market: ${status}`);
-    }
-    const controller = getControllerContract(this.market.signer, this.market.controller);
+    const { status } = this.previewCloseMarket();
+    assert(status === CloseMarketStatus.Ready, `Cannot close market: ${status}`);
 
+    if (this.market.version === MarketVersion.V1) {
+      assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
+      const controller = getControllerContract(this.market.signer, this.market.controller);
+      return {
+        to: controller.address,
+        data: controller.interface.encodeFunctionData("closeMarket", [this.market.address]),
+        value: "0"
+      };
+    }
     return {
-      to: controller.address,
-      data: controller.interface.encodeFunctionData("closeMarket", [this.market.address]),
+      to: this.market.address,
+      data: this.market.contract.interface.encodeFunctionData("closeMarket"),
       value: "0"
     };
   }
 
   async setMaxTotalSupply(amount: TokenAmount): Promise<ContractTransaction> {
-    assert(this.isBorrower, "Only borrower can set maxTotalSupply");
-    if (amount.lt(this.market.totalSupply)) {
-      throw Error("New max total supply must be at least current total supply");
+    const { status } = this.previewSetMaxTotalSupply(amount);
+    assert(status === SetMaxTotalSupplyStatus.Ready, `Cannot close market: ${status}`);
+    if (this.market.version === MarketVersion.V1) {
+      assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
+      const controller = getControllerContract(this.market.signer, this.market.controller);
+      return controller.setMaxTotalSupply(this.market.address, amount.raw);
+    } else {
+      return this.market.contract.setMaxTotalSupply(amount.raw);
     }
-    const controller = getControllerContract(this.market.signer, this.market.controller);
-    return controller.setMaxTotalSupply(this.market.address, amount.raw);
   }
 
   async setAnnualInterestBips(newAprBips: number): Promise<ContractTransaction> {
-    const { status } = this.checkSetAPRStep(newAprBips);
-    if (status !== "Ready") {
-      throw Error(`Cannot set new APR of ${newAprBips / 10_000}%: ${status}`);
+    const { status } = this.previewSetAPR(newAprBips);
+    assert(
+      status === SetAprStatus.Ready,
+      `Cannot set new APR of ${newAprBips / 10_000}%: ${status}`
+    );
+    if (this.market.version === MarketVersion.V1) {
+      assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
+      const controller = getControllerContract(this.market.provider, this.market.controller);
+      return controller.setAnnualInterestBips(this.market.address, newAprBips);
+    } else {
+      const contract = WildcatMarketV2__factory.connect(this.market.address, this.market.signer);
+      return contract.setAnnualInterestAndReserveRatioBips(
+        newAprBips,
+        this.market.reserveRatioBips
+      );
     }
-    const controller = getControllerContract(this.market.provider, this.market.controller);
-    assert(this.market.controller === controller.address, "Unexpected controller address");
-    return controller.setAnnualInterestBips(this.market.address, newAprBips);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -276,23 +334,12 @@ export class MarketAccount {
     return this.underlyingApproval.gte(amount.raw);
   }
 
-  /**
-   * @returns Amount of underlying token user must approve
-   *          market to spend to make a deposit.
-   */
-  getAllowanceRemainder(amount: TokenAmount): TokenAmount {
-    return this.underlyingApproval.gte(amount.raw)
-      ? this.market.underlyingToken.getAmount(0)
-      : amount;
-  }
-
-  async approveAllowanceRemainder(amount: TokenAmount): Promise<ContractTransaction> {
+  async approveMarket(amount: TokenAmount): Promise<ContractTransaction> {
     const token = this.market.underlyingToken;
     const signer = await token.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    amount = this.getAllowanceRemainder(amount);
     return token.contract.approve(this.market.address, amount.raw);
   }
 
@@ -302,7 +349,6 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    amount = this.getAllowanceRemainder(amount);
     return {
       to: token.address,
       data: token.contract.interface.encodeFunctionData("approve", [
@@ -333,35 +379,28 @@ export class MarketAccount {
     return minTokenAmount(amount, this.maximumDeposit);
   }
 
-  /**
-   * @returns Status for deposit
-   */
-  checkDepositStep(amount: TokenAmount): DepositStatus {
-    if (!this.canDeposit) {
-      return { status: "InsufficientRole" };
-    }
+  previewDeposit(amount: TokenAmount): DepositPreview {
+    const status = this.depositAvailability;
+    if (status !== DepositStatus.Ready) return { status };
     if (amount.gt(this.market.maximumDeposit)) {
-      return { status: "ExceedsMaximumDeposit" };
+      return { status: DepositStatus.ExceedsMaximumDeposit };
     }
     if (amount.gt(this.underlyingBalance)) {
-      return { status: "InsufficientBalance" };
+      return { status: DepositStatus.InsufficientBalance };
     }
     if (!this.isApprovedFor(amount)) {
-      return {
-        status: "InsufficientAllowance",
-        remainder: this.getAllowanceRemainder(amount)
-      };
+      return { status: DepositStatus.InsufficientAllowance };
     }
-    return { status: "Ready" };
+    return { status: DepositStatus.Ready };
   }
 
   async populateDeposit(amount: TokenAmount): Promise<PartialTransaction> {
+    const { status } = this.previewDeposit(amount);
+    assert(status === DepositStatus.Ready, `Cannot deposit: ${status}`);
+
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    if (amount.gt(this.underlyingBalance)) {
-      throw Error("Insufficient balance");
     }
 
     return {
@@ -371,28 +410,25 @@ export class MarketAccount {
     };
   }
 
-  // TODO: Add support for depositUpTo
   async deposit(amount: TokenAmount): Promise<ContractTransaction> {
+    const { status } = this.previewDeposit(amount);
+    assert(status === DepositStatus.Ready, `Cannot deposit: ${status}`);
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    if (amount.gt(this.underlyingBalance)) {
-      throw Error("Insufficient balance");
     }
     return this.market.contract.deposit(amount.raw);
   }
 
   /* ------ Withdrawals ------ */
 
-  checkQueueWithdrawalStep(amount: TokenAmount): QueueWithdrawalStatus {
-    if (!this.canWithdraw) {
-      return { status: "InsufficientRole" };
-    }
+  previewQueueWithdrawal(amount: TokenAmount): QueueWithdrawalPreview {
+    const status = this.withdrawalAvailability;
+    if (status !== QueueWithdrawalStatus.Ready) return { status };
     if (amount.gt(this.marketBalance)) {
-      return { status: "InsufficientBalance" };
+      return { status: QueueWithdrawalStatus.InsufficientBalance };
     }
-    return { status: "Ready" };
+    return { status: QueueWithdrawalStatus.Ready };
   }
 
   async queueWithdrawal(amount: TokenAmount): Promise<{
@@ -400,9 +436,9 @@ export class MarketAccount {
     transaction: ContractTransaction;
     receipt: ContractReceipt;
   }> {
-    if (!this.canWithdraw) {
-      throw Error(`Lender role insufficient to withdraw`);
-    }
+    const { status } = this.previewQueueWithdrawal(amount);
+    assert(status === QueueWithdrawalStatus.Ready, `Cannot queue withdrawal: ${status}`);
+
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
@@ -414,9 +450,8 @@ export class MarketAccount {
       this.market.underlyingToken,
       receipt.events!.find((e) => e.topics[0] === queuedWithdrawalTopic) as WithdrawalQueuedEvent
     );
-    if (!queuedWithdrawalTransaction) {
-      throw Error("No queued withdrawal event found");
-    }
+    if (!queuedWithdrawalTransaction) throw Error("No queued withdrawal event found");
+
     const withdrawal = await LenderWithdrawalStatus.getWithdrawalForLender(
       this.market,
       queuedWithdrawalTransaction.expiry,
@@ -453,20 +488,15 @@ export class MarketAccount {
     return minTokenAmount(amount, this.maximumRepay);
   }
 
-  /**
-   * @returns Status for deposit
-   */
-  checkRepayStep(amount: TokenAmount): RepayStatus {
+  previewRepay(amount: TokenAmount): RepayPreview {
+    if (this.market.isClosed) return { status: RepayStatus.MarketClosed };
     if (amount.gt(this.underlyingBalance)) {
-      return { status: "InsufficientBalance" };
+      return { status: RepayStatus.InsufficientBalance };
     }
     if (!this.isApprovedFor(amount)) {
-      return {
-        status: "InsufficientAllowance",
-        remainder: this.getAllowanceRemainder(amount)
-      };
+      return { status: RepayStatus.InsufficientAllowance };
     }
-    return { status: "Ready" };
+    return { status: RepayStatus.Ready };
   }
 
   async repay(amount: BigNumber): Promise<ContractTransaction> {
@@ -474,9 +504,7 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    if (!this.isBorrower) {
-      throw Error("Only borrower can repay");
-    }
+    if (!this.isBorrower) throw Error("Only borrower can repay");
 
     return this.market.contract.repay(amount);
   }
@@ -486,9 +514,7 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    if (!this.isBorrower) {
-      throw Error("Only borrower can repay");
-    }
+    if (!this.isBorrower) throw Error("Only borrower can repay");
 
     return {
       to: this.market.address,
@@ -498,24 +524,26 @@ export class MarketAccount {
   }
 
   async repayOutstandingDebt(): Promise<ContractTransaction> {
+    if (this.market.version !== MarketVersion.V1) {
+      throw Error(`Only V1 supports repayOutstandingDebt`);
+    }
+    if (!this.isBorrower) throw Error("Only borrower can repay");
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    if (!this.isBorrower) {
-      throw Error("Only borrower can repay");
     }
 
     return this.market.contract.repayOutstandingDebt();
   }
 
   async populateRepayOutstandingDebt(): Promise<PartialTransaction> {
+    if (this.market.version !== MarketVersion.V1) {
+      throw Error(`Only V1 supports repayOutstandingDebt`);
+    }
+    if (!this.isBorrower) throw Error("Only borrower can repay");
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    if (!this.isBorrower) {
-      throw Error("Only borrower can repay");
     }
 
     return {
@@ -526,24 +554,26 @@ export class MarketAccount {
   }
 
   async repayDelinquentDebt(): Promise<ContractTransaction> {
+    if (this.market.version !== MarketVersion.V1) {
+      throw Error(`Only V1 supports repayDelinquentDebt`);
+    }
+    if (!this.isBorrower) throw Error("Only borrower can repay");
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    if (!this.isBorrower) {
-      throw Error("Only borrower can repay");
     }
 
     return this.market.contract.repayDelinquentDebt();
   }
 
   async populateRepayDelinquentDebt(): Promise<PartialTransaction> {
+    if (this.market.version !== MarketVersion.V1) {
+      throw Error(`Only V1 supports repayDelinquentDebt`);
+    }
+    if (!this.isBorrower) throw Error("Only borrower can repay");
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    if (!this.isBorrower) {
-      throw Error("Only borrower can repay");
     }
 
     return {
@@ -566,11 +596,9 @@ export class MarketAccount {
 
   async borrow(amount: TokenAmount): Promise<ContractTransaction> {
     const signer = await this.market.signer.getAddress();
+    if (!this.isBorrower) throw Error("Only borrower can borrow");
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    if (!this.isBorrower) {
-      throw Error("Only borrower can borrow");
     }
     if (amount.gt(this.market.borrowableAssets)) {
       throw Error("Insufficient borrowable assets");
@@ -637,22 +665,25 @@ export class MarketAccount {
       DepositAndWithdraw: LenderRole.DepositAndWithdraw
     };
     const scaledBalance = BigNumber.from(data.scaledBalance);
-    const account = new MarketAccount(
-      data.address,
-      data.controllerAuthorization.authorized,
-      RolesMap[data.role],
-      scaledBalance,
-      market.marketToken.getAmount(rayMul(scaledBalance, market.scaleFactor)),
-      market.underlyingToken.getAmount(0),
-      BigNumber.from(0),
+
+    const account = new MarketAccount({
+      account: data.address,
+      isAuthorizedOnController: data.controllerAuthorization?.authorized ?? false,
+      role: RolesMap[data.role],
+      scaledMarketBalance: scaledBalance,
+      marketBalance: market.marketToken.getAmount(rayMul(scaledBalance, market.scaleFactor)),
+      underlyingBalance: market.underlyingToken.getAmount(0),
+      underlyingApproval: BigNumber.from(0),
       market,
-      data.deposits,
-      market.underlyingToken.getAmount(data.totalDeposited),
-      BigNumber.from(data.lastScaleFactor),
-      data.lastUpdatedTimestamp,
-      market.underlyingToken.getAmount(data.totalInterestEarned),
-      data.numPendingWithdrawalBatches
-    );
+      deposits: data.deposits,
+      totalDeposited: market.underlyingToken.getAmount(data.totalDeposited),
+      lastScaleFactor: BigNumber.from(data.lastScaleFactor),
+      lastUpdatedTimestamp: data.lastUpdatedTimestamp,
+      totalInterestEarned: market.underlyingToken.getAmount(data.totalInterestEarned),
+      numPendingWithdrawalBatches: data.numPendingWithdrawalBatches,
+      credential: data.hooksAccess ? toCredential(data.hooksAccess) : undefined,
+      isKnownLender: !!data.knownLenderStatus?.id
+    });
     account.processInterestAccrued();
     return account;
   }
@@ -662,16 +693,43 @@ export class MarketAccount {
     info: MarketLenderStatusStructOutput,
     market: Market
   ): MarketAccount {
-    return new MarketAccount(
+    return new MarketAccount({
       account,
-      info.isAuthorizedOnController,
-      info.role as LenderRole,
-      info.scaledBalance,
-      market.marketToken.getAmount(info.normalizedBalance),
-      market.underlyingToken.getAmount(info.underlyingBalance),
-      info.underlyingApproval,
+      isAuthorizedOnController: info.isAuthorizedOnController,
+      role: info.role as LenderRole,
+      scaledMarketBalance: info.scaledBalance,
+      marketBalance: market.marketToken.getAmount(info.normalizedBalance),
+      underlyingBalance: market.underlyingToken.getAmount(info.underlyingBalance),
+      underlyingApproval: info.underlyingApproval,
       market
-    );
+    });
+  }
+
+  static fromLenderAccountData(market: Market, data: LenderAccountDataStructOutput): MarketAccount {
+    return new MarketAccount({
+      account: data.lender,
+      market,
+      role: LenderRole.Null,
+      marketBalance: market.marketToken.getAmount(data.normalizedBalance),
+      scaledMarketBalance: data.scaledBalance,
+      underlyingApproval: data.underlyingApproval,
+      underlyingBalance: market.underlyingToken.getAmount(data.underlyingBalance),
+      isAuthorizedOnController: false,
+      isKnownLender: data.isKnownLender,
+      credential: {
+        canRefresh: data.canRefresh,
+        isBlockedFromDeposits: data.isBlockedFromDeposits,
+        lastApprovalTimestamp: data.lastApprovalTimestamp,
+        lastProvider: {
+          isApproved: true,
+          isPullProvider:
+            data.lastProvider.pullProviderIndex !== BigNumber.from(2).pow(24).sub(1).toNumber(),
+          providerAddress: data.lastProvider.providerAddress,
+          pullProviderIndex: data.lastProvider.pullProviderIndex,
+          timeToLive: data.lastProvider.timeToLive
+        }
+      }
+    });
   }
 
   static fromMarketDataWithLenderStatus(
@@ -692,16 +750,16 @@ export class MarketAccount {
     account: string,
     isAuthorizedOnController: boolean
   ): MarketAccount {
-    return new MarketAccount(
+    return new MarketAccount({
       account,
       isAuthorizedOnController,
-      LenderRole.Null,
-      BigNumber.from(0),
-      market.marketToken.getAmount(0),
-      market.underlyingToken.getAmount(0),
-      BigNumber.from(0),
+      role: LenderRole.Null,
+      scaledMarketBalance: BigNumber.from(0),
+      marketBalance: market.marketToken.getAmount(0),
+      underlyingBalance: market.underlyingToken.getAmount(0),
+      underlyingApproval: BigNumber.from(0),
       market
-    );
+    });
   }
 
   /**
@@ -826,3 +884,20 @@ const toQueueWithdrawalTransaction = (
   scaledAmount: log.args.scaledAmount,
   originalAmount: underlyingToken.getAmount(log.args.normalizedAmount)
 });
+
+const toCredential = ({
+  canRefresh,
+  isBlockedFromDeposits,
+  lastApprovalTimestamp,
+  lender,
+  lastProvider
+}: SubgraphLenderHooksAccessDataFragment): HooksCredential => {
+  const { isApproved, isPullProvider, providerAddress, pullProviderIndex, timeToLive } =
+    lastProvider!;
+  return {
+    canRefresh,
+    isBlockedFromDeposits,
+    lastApprovalTimestamp,
+    lastProvider: { isApproved, isPullProvider, providerAddress, pullProviderIndex, timeToLive }
+  };
+};
