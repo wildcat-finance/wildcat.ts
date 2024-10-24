@@ -133,6 +133,7 @@ query getAllMarketsForLenderView(
 
 query getAccountsWhereLenderAuthorizedOrActive(
   $lender: Bytes!
+  $accountFilter: LenderAccount_filter = { address_not: null }
   # deposits
   $numDeposits: Int = 200
   $skipDeposits: Int = 0
@@ -152,12 +153,15 @@ query getAccountsWhereLenderAuthorizedOrActive(
   lenderAccounts(
     where: {
       and: [
+        $accountFilter,
         { address: $lender }
         {
           or: [
             { role_in: [DepositAndWithdraw, WithdrawOnly] }
             { scaledBalance_gt: 0 }
             { controllerAuthorization_: { authorized: true } }
+            { knownLenderStatus_: { id_not: null } }
+            { hooksAccess_: { lastApprovalTimestamp_gt: 0 } }
             { totalDeposited_gt: 0 }
           ]
         }
@@ -575,7 +579,7 @@ query getAuthorizedLendersByMarket($market: ID!) {
 }
 
 query getAllAuthorizedLenders($borrower: Bytes!) {
-  markets(where:{ borrower: $borrower, isClosed: false }) {
+  markets(where: { borrower: $borrower, isClosed: false }) {
     ...AllAuthorizedLendersViewMarketInfo
 
     controller {

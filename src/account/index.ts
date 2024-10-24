@@ -9,7 +9,13 @@ import {
 } from "../typechain";
 import { assert, bipMul, DepositRecord, parseMarketRecord, rayMul } from "../utils";
 import { SupportedChainId, getControllerContract, getLensContract } from "../constants";
-import { MarketVersion, PartialTransaction, SignerOrProvider } from "../types";
+import {
+  HooksKind,
+  MarketVersion,
+  PartialTransaction,
+  RoleProvider,
+  SignerOrProvider
+} from "../types";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 import { WithdrawalQueuedEvent } from "../typechain/WildcatMarket";
 import {
@@ -24,7 +30,6 @@ import {
   SetAprPreview,
   QueueWithdrawalStatus,
   isMarketInstanceArray,
-  FunctionAvailability,
   SetAprStatus,
   CloseMarketStatus,
   SetMaxTotalSupplyPreview,
@@ -33,6 +38,7 @@ import {
   QueueWithdrawalPreview,
   RepayPreview
 } from "./validation";
+export * from "./validation";
 
 export enum LenderRole {
   Null = 0,
@@ -60,17 +66,11 @@ export type MarketAccountArgs = {
   numPendingWithdrawalBatches?: number;
 };
 
-type HooksCredential = {
+export type HooksCredential = {
   isBlockedFromDeposits: boolean;
   canRefresh: boolean;
   lastApprovalTimestamp: number;
-  lastProvider?: {
-    providerAddress: string;
-    timeToLive: number;
-    isPullProvider: boolean;
-    pullProviderIndex: number;
-    isApproved: boolean;
-  };
+  lastProvider?: RoleProvider;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -134,12 +134,14 @@ export class MarketAccount {
       }
       return DepositStatus.InsufficientRole;
     } else {
+      const config = this.market.hooksConfig;
+      assert(config !== undefined, `V2 market missing hooksConfig`);
       // Can deposit if the market does not use the onDeposit hook
-      if (!this.market.flags!.useOnDeposit) DepositStatus.Ready;
+      if (!config.flags!.useOnDeposit) return DepositStatus.Ready;
       // Can not deposit if the lender is blocked
-      if (this.credential?.isBlockedFromDeposits) DepositStatus.Blocked;
+      if (this.credential?.isBlockedFromDeposits) return DepositStatus.Blocked;
       // Can deposit if lender has credential or market does not require one
-      if (this.market.depositRequiresAccess && !this.hasValidCredential) {
+      if (config.depositRequiresAccess && !this.hasValidCredential) {
         return DepositStatus.RequiresAccess;
       }
       return DepositStatus.Ready;
@@ -157,14 +159,18 @@ export class MarketAccount {
       }
       return QueueWithdrawalStatus.InsufficientRole;
     } else {
+      const config = this.market.hooksConfig;
+      assert(config !== undefined, `V2 market missing hooksConfig`);
       // Can withdraw if market does not use wd hook
-      if (!this.market.flags!.useOnQueueWithdrawal) return QueueWithdrawalStatus.Ready;
+      if (!config.flags!.useOnQueueWithdrawal) return QueueWithdrawalStatus.Ready;
       // Can not withdraw if market in fixed term
       if (this.market.isInFixedTerm) return QueueWithdrawalStatus.MarketInClosedTerm;
       // Can not withdraw if market requires access and lender has no credential and is not a known lender
       if (
-        this.market.flags?.useOnQueueWithdrawal &&
-        this.market.queueWithdrawalRequiresAccess &&
+        config.flags.useOnQueueWithdrawal &&
+        (config.kind === HooksKind.FixedTerm
+          ? config.queueWithdrawalRequiresAccess
+          : config.flags.useOnQueueWithdrawal) &&
         !(this.hasValidCredential || this.isKnownLender)
       ) {
         return QueueWithdrawalStatus.RequiresAccess;
@@ -179,8 +185,16 @@ export class MarketAccount {
 
   previewCloseMarket(): CloseMarketPreview {
     if (!this.isBorrower) return { status: CloseMarketStatus.NotBorrower };
-    if (this.market.isInFixedTerm && !this.market.allowClosureBeforeTerm) {
-      return { status: CloseMarketStatus.EarlyClosureNotAllowed };
+    if (this.market.version === MarketVersion.V2) {
+      const config = this.market.hooksConfig;
+      assert(config !== undefined, `V2 market missing hooksConfig`);
+      if (
+        this.market.isInFixedTerm &&
+        config.kind === HooksKind.FixedTerm &&
+        config.allowClosureBeforeTerm
+      ) {
+        return { status: CloseMarketStatus.EarlyClosureNotAllowed };
+      }
     }
 
     // add 0.1% to account for interest
@@ -194,6 +208,7 @@ export class MarketAccount {
       return { status: CloseMarketStatus.UnpaidWithdrawalBatches };
     }
     if (
+      // @todo proper calculation
       !this.isApprovedFor(
         this.market.underlyingToken.getAmount(bipMul(this.market.outstandingDebt.raw, toBn(10006)))
       )

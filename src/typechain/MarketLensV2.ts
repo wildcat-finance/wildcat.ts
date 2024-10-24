@@ -37,18 +37,100 @@ export type TokenMetadataStructOutput = {
   isMock: boolean;
 };
 
-export type FeeConfigurationStruct = {
+export type FeeConfigurationV2Struct = {
   feeRecipient: PromiseOrValue<string>;
   protocolFeeBips: PromiseOrValue<BigNumberish>;
   originationFeeToken: TokenMetadataStruct;
   originationFeeAmount: PromiseOrValue<BigNumberish>;
+  borrowerOriginationFeeBalance: PromiseOrValue<BigNumberish>;
+  borrowerOriginationFeeApproval: PromiseOrValue<BigNumberish>;
 };
 
-export type FeeConfigurationStructOutput = {
+export type FeeConfigurationV2StructOutput = {
   feeRecipient: string;
   protocolFeeBips: number;
   originationFeeToken: TokenMetadataStructOutput;
   originationFeeAmount: BigNumber;
+  borrowerOriginationFeeBalance: BigNumber;
+  borrowerOriginationFeeApproval: BigNumber;
+};
+
+export type HooksTemplateDataStruct = {
+  hooksTemplate: PromiseOrValue<string>;
+  fees: FeeConfigurationV2Struct;
+  exists: PromiseOrValue<boolean>;
+  enabled: PromiseOrValue<boolean>;
+  index: PromiseOrValue<BigNumberish>;
+  name: PromiseOrValue<string>;
+  totalMarkets: PromiseOrValue<BigNumberish>;
+};
+
+export type HooksTemplateDataStructOutput = {
+  hooksTemplate: string;
+  fees: FeeConfigurationV2StructOutput;
+  exists: boolean;
+  enabled: boolean;
+  index: number;
+  name: string;
+  totalMarkets: BigNumber;
+};
+
+export type HooksConfigDataStruct = {
+  useOnDeposit: PromiseOrValue<boolean>;
+  useOnQueueWithdrawal: PromiseOrValue<boolean>;
+  useOnExecuteWithdrawal: PromiseOrValue<boolean>;
+  useOnTransfer: PromiseOrValue<boolean>;
+  useOnBorrow: PromiseOrValue<boolean>;
+  useOnRepay: PromiseOrValue<boolean>;
+  useOnCloseMarket: PromiseOrValue<boolean>;
+  useOnNukeFromOrbit: PromiseOrValue<boolean>;
+  useOnSetMaxTotalSupply: PromiseOrValue<boolean>;
+  useOnSetAnnualInterestAndReserveRatioBips: PromiseOrValue<boolean>;
+  useOnSetProtocolFeeBips: PromiseOrValue<boolean>;
+};
+
+export type HooksConfigDataStructOutput = {
+  useOnDeposit: boolean;
+  useOnQueueWithdrawal: boolean;
+  useOnExecuteWithdrawal: boolean;
+  useOnTransfer: boolean;
+  useOnBorrow: boolean;
+  useOnRepay: boolean;
+  useOnCloseMarket: boolean;
+  useOnNukeFromOrbit: boolean;
+  useOnSetMaxTotalSupply: boolean;
+  useOnSetAnnualInterestAndReserveRatioBips: boolean;
+  useOnSetProtocolFeeBips: boolean;
+};
+
+export type MarketHooksDataStruct = {
+  hooksAddress: PromiseOrValue<string>;
+  flags: HooksConfigDataStruct;
+  kind: PromiseOrValue<BigNumberish>;
+  transferRequiresAccess: PromiseOrValue<boolean>;
+  depositRequiresAccess: PromiseOrValue<boolean>;
+  minimumDeposit: PromiseOrValue<BigNumberish>;
+  transfersDisabled: PromiseOrValue<boolean>;
+  allowForceBuyBacks: PromiseOrValue<boolean>;
+  withdrawalRequiresAccess: PromiseOrValue<boolean>;
+  fixedTermEndTime: PromiseOrValue<BigNumberish>;
+  allowClosureBeforeTerm: PromiseOrValue<boolean>;
+  allowTermReduction: PromiseOrValue<boolean>;
+};
+
+export type MarketHooksDataStructOutput = {
+  hooksAddress: string;
+  flags: HooksConfigDataStructOutput;
+  kind: number;
+  transferRequiresAccess: boolean;
+  depositRequiresAccess: boolean;
+  minimumDeposit: BigNumber;
+  transfersDisabled: boolean;
+  allowForceBuyBacks: boolean;
+  withdrawalRequiresAccess: boolean;
+  fixedTermEndTime: number;
+  allowClosureBeforeTerm: boolean;
+  allowTermReduction: boolean;
 };
 
 export type MarketParameterConstraintsStruct = {
@@ -77,23 +159,71 @@ export type MarketParameterConstraintsStructOutput = {
   maximumAnnualInterestBips: number;
 };
 
-export type MarketDataStruct = {
+export type HooksDeploymentFlagsStruct = {
+  optional: HooksConfigDataStruct;
+  required: HooksConfigDataStruct;
+};
+
+export type HooksDeploymentFlagsStructOutput = {
+  optional: HooksConfigDataStructOutput;
+  required: HooksConfigDataStructOutput;
+};
+
+export type RoleProviderDataStruct = {
+  timeToLive: PromiseOrValue<BigNumberish>;
+  providerAddress: PromiseOrValue<string>;
+  pullProviderIndex: PromiseOrValue<BigNumberish>;
+};
+
+export type RoleProviderDataStructOutput = {
+  timeToLive: number;
+  providerAddress: string;
+  pullProviderIndex: number;
+};
+
+export type HooksInstanceDataStruct = {
+  hooksAddress: PromiseOrValue<string>;
+  borrower: PromiseOrValue<string>;
+  kind: PromiseOrValue<BigNumberish>;
+  hooksTemplate: PromiseOrValue<string>;
+  hooksTemplateName: PromiseOrValue<string>;
+  constraints: MarketParameterConstraintsStruct;
+  deploymentFlags: HooksDeploymentFlagsStruct;
+  pullProviders: RoleProviderDataStruct[];
+  totalMarkets: PromiseOrValue<BigNumberish>;
+};
+
+export type HooksInstanceDataStructOutput = {
+  hooksAddress: string;
+  borrower: string;
+  kind: number;
+  hooksTemplate: string;
+  hooksTemplateName: string;
+  constraints: MarketParameterConstraintsStructOutput;
+  deploymentFlags: HooksDeploymentFlagsStructOutput;
+  pullProviders: RoleProviderDataStructOutput[];
+  totalMarkets: BigNumber;
+};
+
+export type MarketDataV2Struct = {
   marketToken: TokenMetadataStruct;
   underlyingToken: TokenMetadataStruct;
+  hooksFactory: PromiseOrValue<string>;
   borrower: PromiseOrValue<string>;
-  controller: PromiseOrValue<string>;
+  hooksConfig: MarketHooksDataStruct;
+  withdrawalBatchDuration: PromiseOrValue<BigNumberish>;
   feeRecipient: PromiseOrValue<string>;
-  protocolFeeBips: PromiseOrValue<BigNumberish>;
   delinquencyFeeBips: PromiseOrValue<BigNumberish>;
   delinquencyGracePeriod: PromiseOrValue<BigNumberish>;
-  withdrawalBatchDuration: PromiseOrValue<BigNumberish>;
-  reserveRatioBips: PromiseOrValue<BigNumberish>;
-  annualInterestBips: PromiseOrValue<BigNumberish>;
+  hooks: HooksInstanceDataStruct;
   temporaryReserveRatio: PromiseOrValue<boolean>;
   originalAnnualInterestBips: PromiseOrValue<BigNumberish>;
   originalReserveRatioBips: PromiseOrValue<BigNumberish>;
   temporaryReserveRatioExpiry: PromiseOrValue<BigNumberish>;
   isClosed: PromiseOrValue<boolean>;
+  protocolFeeBips: PromiseOrValue<BigNumberish>;
+  reserveRatioBips: PromiseOrValue<BigNumberish>;
+  annualInterestBips: PromiseOrValue<BigNumberish>;
   scaleFactor: PromiseOrValue<BigNumberish>;
   totalSupply: PromiseOrValue<BigNumberish>;
   maxTotalSupply: PromiseOrValue<BigNumberish>;
@@ -108,27 +238,27 @@ export type MarketDataStruct = {
   lastInterestAccruedTimestamp: PromiseOrValue<BigNumberish>;
   unpaidWithdrawalBatchExpiries: PromiseOrValue<BigNumberish>[];
   coverageLiquidity: PromiseOrValue<BigNumberish>;
-  borrowableAssets: PromiseOrValue<BigNumberish>;
-  delinquentDebt: PromiseOrValue<BigNumberish>;
 };
 
-export type MarketDataStructOutput = {
+export type MarketDataV2StructOutput = {
   marketToken: TokenMetadataStructOutput;
   underlyingToken: TokenMetadataStructOutput;
+  hooksFactory: string;
   borrower: string;
-  controller: string;
+  hooksConfig: MarketHooksDataStructOutput;
+  withdrawalBatchDuration: BigNumber;
   feeRecipient: string;
-  protocolFeeBips: BigNumber;
   delinquencyFeeBips: BigNumber;
   delinquencyGracePeriod: BigNumber;
-  withdrawalBatchDuration: BigNumber;
-  reserveRatioBips: BigNumber;
-  annualInterestBips: BigNumber;
+  hooks: HooksInstanceDataStructOutput;
   temporaryReserveRatio: boolean;
   originalAnnualInterestBips: BigNumber;
   originalReserveRatioBips: BigNumber;
   temporaryReserveRatioExpiry: BigNumber;
   isClosed: boolean;
+  protocolFeeBips: BigNumber;
+  reserveRatioBips: BigNumber;
+  annualInterestBips: BigNumber;
   scaleFactor: BigNumber;
   totalSupply: BigNumber;
   maxTotalSupply: BigNumber;
@@ -143,98 +273,56 @@ export type MarketDataStructOutput = {
   lastInterestAccruedTimestamp: BigNumber;
   unpaidWithdrawalBatchExpiries: number[];
   coverageLiquidity: BigNumber;
-  borrowableAssets: BigNumber;
-  delinquentDebt: BigNumber;
 };
 
-export type ControllerDataStruct = {
+export type HooksDataForBorrowerStruct = {
   borrower: PromiseOrValue<string>;
-  controller: PromiseOrValue<string>;
-  controllerFactory: PromiseOrValue<string>;
   isRegisteredBorrower: PromiseOrValue<boolean>;
-  hasDeployedController: PromiseOrValue<boolean>;
-  fees: FeeConfigurationStruct;
-  constraints: MarketParameterConstraintsStruct;
-  markets: MarketDataStruct[];
-  borrowerOriginationFeeBalance: PromiseOrValue<BigNumberish>;
-  borrowerOriginationFeeApproval: PromiseOrValue<BigNumberish>;
+  hooksTemplates: HooksTemplateDataStruct[];
+  hooksInstances: HooksInstanceDataStruct[];
 };
 
-export type ControllerDataStructOutput = {
+export type HooksDataForBorrowerStructOutput = {
   borrower: string;
-  controller: string;
-  controllerFactory: string;
   isRegisteredBorrower: boolean;
-  hasDeployedController: boolean;
-  fees: FeeConfigurationStructOutput;
-  constraints: MarketParameterConstraintsStructOutput;
-  markets: MarketDataStructOutput[];
-  borrowerOriginationFeeBalance: BigNumber;
-  borrowerOriginationFeeApproval: BigNumber;
+  hooksTemplates: HooksTemplateDataStructOutput[];
+  hooksInstances: HooksInstanceDataStructOutput[];
 };
 
-export type MarketLenderStatusStruct = {
+export type LenderAccountDataStruct = {
   lender: PromiseOrValue<string>;
-  isAuthorizedOnController: PromiseOrValue<boolean>;
-  role: PromiseOrValue<BigNumberish>;
   scaledBalance: PromiseOrValue<BigNumberish>;
   normalizedBalance: PromiseOrValue<BigNumberish>;
   underlyingBalance: PromiseOrValue<BigNumberish>;
   underlyingApproval: PromiseOrValue<BigNumberish>;
+  isBlockedFromDeposits: PromiseOrValue<boolean>;
+  lastProvider: RoleProviderDataStruct;
+  canRefresh: PromiseOrValue<boolean>;
+  lastApprovalTimestamp: PromiseOrValue<BigNumberish>;
+  isKnownLender: PromiseOrValue<boolean>;
 };
 
-export type MarketLenderStatusStructOutput = {
+export type LenderAccountDataStructOutput = {
   lender: string;
-  isAuthorizedOnController: boolean;
-  role: number;
   scaledBalance: BigNumber;
   normalizedBalance: BigNumber;
   underlyingBalance: BigNumber;
   underlyingApproval: BigNumber;
+  isBlockedFromDeposits: boolean;
+  lastProvider: RoleProviderDataStructOutput;
+  canRefresh: boolean;
+  lastApprovalTimestamp: number;
+  isKnownLender: boolean;
 };
 
-export type MarketDataWithLenderStatusStruct = {
-  market: MarketDataStruct;
-  lenderStatus: MarketLenderStatusStruct;
+export type MarketDataWithLenderStatusV2Struct = {
+  market: MarketDataV2Struct;
+  lenderStatus: LenderAccountDataStruct;
 };
 
-export type MarketDataWithLenderStatusStructOutput = {
-  market: MarketDataStructOutput;
-  lenderStatus: MarketLenderStatusStructOutput;
-};
-
-export type ArchControllerDataStruct = {
-  archController: PromiseOrValue<string>;
-  borrowersCount: PromiseOrValue<BigNumberish>;
-  borrowers: PromiseOrValue<string>[];
-  controllerFactoriesCount: PromiseOrValue<BigNumberish>;
-  controllerFactories: PromiseOrValue<string>[];
-  controllersCount: PromiseOrValue<BigNumberish>;
-  controllers: PromiseOrValue<string>[];
-  marketsCount: PromiseOrValue<BigNumberish>;
-  markets: PromiseOrValue<string>[];
-};
-
-export type ArchControllerDataStructOutput = {
-  archController: string;
-  borrowersCount: BigNumber;
-  borrowers: string[];
-  controllerFactoriesCount: BigNumber;
-  controllerFactories: string[];
-  controllersCount: BigNumber;
-  controllers: string[];
-  marketsCount: BigNumber;
-  markets: string[];
-};
-
-export type SliceParametersStruct = {
-  start: PromiseOrValue<BigNumberish>;
-  end: PromiseOrValue<BigNumberish>;
-};
-
-export type SliceParametersStructOutput = {
-  start: BigNumber;
-  end: BigNumber;
+export type MarketDataWithLenderStatusV2StructOutput = {
+  market: MarketDataV2StructOutput;
+  lenderStatus: LenderAccountDataStructOutput;
 };
 
 export type WithdrawalBatchDataStruct = {
@@ -281,28 +369,47 @@ export type WithdrawalBatchDataWithLenderStatusStructOutput = {
   lenderStatus: WithdrawalBatchLenderStatusStructOutput;
 };
 
-export interface MarketLensInterface extends utils.Interface {
+export type LenderAccountQueryStruct = {
+  lender: PromiseOrValue<string>;
+  market: PromiseOrValue<string>;
+  withdrawalBatchExpiries: PromiseOrValue<BigNumberish>[];
+};
+
+export type LenderAccountQueryStructOutput = {
+  lender: string;
+  market: string;
+  withdrawalBatchExpiries: number[];
+};
+
+export type LenderAccountQueryResultStruct = {
+  market: MarketDataV2Struct;
+  lenderStatus: LenderAccountDataStruct;
+  withdrawalBatches: WithdrawalBatchDataWithLenderStatusStruct[];
+};
+
+export type LenderAccountQueryResultStructOutput = {
+  market: MarketDataV2StructOutput;
+  lenderStatus: LenderAccountDataStructOutput;
+  withdrawalBatches: WithdrawalBatchDataWithLenderStatusStructOutput[];
+};
+
+export interface MarketLensV2Interface extends utils.Interface {
   functions: {
     "archController()": FunctionFragment;
-    "controllerFactory()": FunctionFragment;
-    "getAllControllersDataForBorrowers()": FunctionFragment;
-    "getAllMarketsData()": FunctionFragment;
-    "getAllMarketsDataWithLenderStatus(address)": FunctionFragment;
-    "getAllMarketsLenderStatus(address)": FunctionFragment;
-    "getArchControllerData()": FunctionFragment;
-    "getControllerDataForBorrower(address)": FunctionFragment;
-    "getControllersDataForBorrowers(address[])": FunctionFragment;
+    "getAllHooksTemplatesForBorrower(address)": FunctionFragment;
+    "getAllMarketsDataForHooksTemplate(address)": FunctionFragment;
+    "getHooksDataForBorrower(address)": FunctionFragment;
+    "getHooksInstancesForBorrower(address)": FunctionFragment;
+    "getHooksTemplateForBorrower(address,address)": FunctionFragment;
+    "getHooksTemplatesForBorrower(address,address[])": FunctionFragment;
+    "getLenderAccountData(address,address)": FunctionFragment;
+    "getLenderAccountData(address,address[])": FunctionFragment;
     "getMarketData(address)": FunctionFragment;
     "getMarketDataWithLenderStatus(address,address)": FunctionFragment;
-    "getMarketLenderStatus(address,address)": FunctionFragment;
-    "getMarketsCount()": FunctionFragment;
     "getMarketsData(address[])": FunctionFragment;
     "getMarketsDataWithLenderStatus(address,address[])": FunctionFragment;
-    "getMarketsLenderStatus(address,address[])": FunctionFragment;
-    "getPaginatedArchControllerData((uint256,uint256),(uint256,uint256),(uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "getPaginatedControllersDataForBorrowers(uint256,uint256)": FunctionFragment;
-    "getPaginatedMarketsData(uint256,uint256)": FunctionFragment;
-    "getPaginatedMarketsDataWithLenderStatus(address,uint256,uint256)": FunctionFragment;
+    "getMarketsForHooksTemplateCount(address)": FunctionFragment;
+    "getPaginatedMarketsDataForHooksTemplate(address,uint256,uint256)": FunctionFragment;
     "getTokenInfo(address)": FunctionFragment;
     "getTokensInfo(address[])": FunctionFragment;
     "getWithdrawalBatchData(address,uint32)": FunctionFragment;
@@ -310,30 +417,28 @@ export interface MarketLensInterface extends utils.Interface {
     "getWithdrawalBatchDataWithLendersStatus(address,uint32,address[])": FunctionFragment;
     "getWithdrawalBatchesData(address,uint32[])": FunctionFragment;
     "getWithdrawalBatchesDataWithLenderStatus(address,uint32[],address)": FunctionFragment;
+    "hooksFactory()": FunctionFragment;
+    "queryLenderAccount((address,address,uint32[]))": FunctionFragment;
+    "queryLenderAccounts((address,address,uint32[])[])": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "archController"
-      | "controllerFactory"
-      | "getAllControllersDataForBorrowers"
-      | "getAllMarketsData"
-      | "getAllMarketsDataWithLenderStatus"
-      | "getAllMarketsLenderStatus"
-      | "getArchControllerData"
-      | "getControllerDataForBorrower"
-      | "getControllersDataForBorrowers"
+      | "getAllHooksTemplatesForBorrower"
+      | "getAllMarketsDataForHooksTemplate"
+      | "getHooksDataForBorrower"
+      | "getHooksInstancesForBorrower"
+      | "getHooksTemplateForBorrower"
+      | "getHooksTemplatesForBorrower"
+      | "getLenderAccountData(address,address)"
+      | "getLenderAccountData(address,address[])"
       | "getMarketData"
       | "getMarketDataWithLenderStatus"
-      | "getMarketLenderStatus"
-      | "getMarketsCount"
       | "getMarketsData"
       | "getMarketsDataWithLenderStatus"
-      | "getMarketsLenderStatus"
-      | "getPaginatedArchControllerData"
-      | "getPaginatedControllersDataForBorrowers"
-      | "getPaginatedMarketsData"
-      | "getPaginatedMarketsDataWithLenderStatus"
+      | "getMarketsForHooksTemplateCount"
+      | "getPaginatedMarketsDataForHooksTemplate"
       | "getTokenInfo"
       | "getTokensInfo"
       | "getWithdrawalBatchData"
@@ -341,6 +446,9 @@ export interface MarketLensInterface extends utils.Interface {
       | "getWithdrawalBatchDataWithLendersStatus"
       | "getWithdrawalBatchesData"
       | "getWithdrawalBatchesDataWithLenderStatus"
+      | "hooksFactory"
+      | "queryLenderAccount"
+      | "queryLenderAccounts"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -348,36 +456,36 @@ export interface MarketLensInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "controllerFactory",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAllControllersDataForBorrowers",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAllMarketsData",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAllMarketsDataWithLenderStatus",
+    functionFragment: "getAllHooksTemplatesForBorrower",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getAllMarketsLenderStatus",
+    functionFragment: "getAllMarketsDataForHooksTemplate",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getArchControllerData",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getControllerDataForBorrower",
+    functionFragment: "getHooksDataForBorrower",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getControllersDataForBorrowers",
-    values: [PromiseOrValue<string>[]]
+    functionFragment: "getHooksInstancesForBorrower",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getHooksTemplateForBorrower",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getHooksTemplatesForBorrower",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLenderAccountData(address,address)",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLenderAccountData(address,address[])",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "getMarketData",
@@ -388,14 +496,6 @@ export interface MarketLensInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getMarketLenderStatus",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getMarketsCount",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getMarketsData",
     values: [PromiseOrValue<string>[]]
   ): string;
@@ -404,28 +504,11 @@ export interface MarketLensInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "getMarketsLenderStatus",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>[]]
+    functionFragment: "getMarketsForHooksTemplateCount",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getPaginatedArchControllerData",
-    values: [
-      SliceParametersStruct,
-      SliceParametersStruct,
-      SliceParametersStruct,
-      SliceParametersStruct
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPaginatedControllersDataForBorrowers",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPaginatedMarketsData",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPaginatedMarketsDataWithLenderStatus",
+    functionFragment: "getPaginatedMarketsDataForHooksTemplate",
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
@@ -472,41 +555,53 @@ export interface MarketLensInterface extends utils.Interface {
       PromiseOrValue<string>
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "hooksFactory",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "queryLenderAccount",
+    values: [LenderAccountQueryStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "queryLenderAccounts",
+    values: [LenderAccountQueryStruct[]]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "archController",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "controllerFactory",
+    functionFragment: "getAllHooksTemplatesForBorrower",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getAllControllersDataForBorrowers",
+    functionFragment: "getAllMarketsDataForHooksTemplate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getAllMarketsData",
+    functionFragment: "getHooksDataForBorrower",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getAllMarketsDataWithLenderStatus",
+    functionFragment: "getHooksInstancesForBorrower",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getAllMarketsLenderStatus",
+    functionFragment: "getHooksTemplateForBorrower",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getArchControllerData",
+    functionFragment: "getHooksTemplatesForBorrower",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getControllerDataForBorrower",
+    functionFragment: "getLenderAccountData(address,address)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getControllersDataForBorrowers",
+    functionFragment: "getLenderAccountData(address,address[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -518,14 +613,6 @@ export interface MarketLensInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getMarketLenderStatus",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getMarketsCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getMarketsData",
     data: BytesLike
   ): Result;
@@ -534,23 +621,11 @@ export interface MarketLensInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getMarketsLenderStatus",
+    functionFragment: "getMarketsForHooksTemplateCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getPaginatedArchControllerData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getPaginatedControllersDataForBorrowers",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getPaginatedMarketsData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getPaginatedMarketsDataWithLenderStatus",
+    functionFragment: "getPaginatedMarketsDataForHooksTemplate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -581,18 +656,30 @@ export interface MarketLensInterface extends utils.Interface {
     functionFragment: "getWithdrawalBatchesDataWithLenderStatus",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "hooksFactory",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "queryLenderAccount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "queryLenderAccounts",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
 
-export interface MarketLens extends BaseContract {
-  contractName: "MarketLens";
+export interface MarketLensV2 extends BaseContract {
+  contractName: "MarketLensV2";
 
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: MarketLensInterface;
+  interface: MarketLensV2Interface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -616,145 +703,120 @@ export interface MarketLens extends BaseContract {
   functions: {
     archController(overrides?: CallOverrides): Promise<[string]>;
 
-    controllerFactory(overrides?: CallOverrides): Promise<[string]>;
-
-    getAllControllersDataForBorrowers(
-      overrides?: CallOverrides
-    ): Promise<
-      [ControllerDataStructOutput[]] & { data: ControllerDataStructOutput[] }
-    >;
-
-    getAllMarketsData(
-      overrides?: CallOverrides
-    ): Promise<[MarketDataStructOutput[]] & { data: MarketDataStructOutput[] }>;
-
-    getAllMarketsDataWithLenderStatus(
-      lender: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [MarketDataWithLenderStatusStructOutput[]] & {
-        data: MarketDataWithLenderStatusStructOutput[];
-      }
-    >;
-
-    getAllMarketsLenderStatus(
-      lender: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [MarketLenderStatusStructOutput[]] & {
-        status: MarketLenderStatusStructOutput[];
-      }
-    >;
-
-    getArchControllerData(
-      overrides?: CallOverrides
-    ): Promise<
-      [ArchControllerDataStructOutput] & {
-        data: ArchControllerDataStructOutput;
-      }
-    >;
-
-    getControllerDataForBorrower(
+    getAllHooksTemplatesForBorrower(
       borrower: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
-      [ControllerDataStructOutput] & { data: ControllerDataStructOutput }
+      [HooksTemplateDataStructOutput[]] & {
+        data: HooksTemplateDataStructOutput[];
+      }
     >;
 
-    getControllersDataForBorrowers(
-      borrowers: PromiseOrValue<string>[],
+    getAllMarketsDataForHooksTemplate(
+      hooksTemplate: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
-      [ControllerDataStructOutput[]] & { data: ControllerDataStructOutput[] }
+      [MarketDataV2StructOutput[]] & { data: MarketDataV2StructOutput[] }
+    >;
+
+    getHooksDataForBorrower(
+      borrower: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [HooksDataForBorrowerStructOutput] & {
+        data: HooksDataForBorrowerStructOutput;
+      }
+    >;
+
+    getHooksInstancesForBorrower(
+      borrower: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [HooksInstanceDataStructOutput[]] & {
+        arr: HooksInstanceDataStructOutput[];
+      }
+    >;
+
+    getHooksTemplateForBorrower(
+      borrower: PromiseOrValue<string>,
+      hooksTemplate: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [HooksTemplateDataStructOutput] & { data: HooksTemplateDataStructOutput }
+    >;
+
+    getHooksTemplatesForBorrower(
+      borrower: PromiseOrValue<string>,
+      hooksTemplates: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<
+      [HooksTemplateDataStructOutput[]] & {
+        data: HooksTemplateDataStructOutput[];
+      }
+    >;
+
+    "getLenderAccountData(address,address)"(
+      lender: PromiseOrValue<string>,
+      market: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [LenderAccountDataStructOutput] & { data: LenderAccountDataStructOutput }
+    >;
+
+    "getLenderAccountData(address,address[])"(
+      lender: PromiseOrValue<string>,
+      markets: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<
+      [LenderAccountDataStructOutput[]] & {
+        arr: LenderAccountDataStructOutput[];
+      }
     >;
 
     getMarketData(
       market: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[MarketDataStructOutput] & { data: MarketDataStructOutput }>;
+    ): Promise<[MarketDataV2StructOutput] & { data: MarketDataV2StructOutput }>;
 
     getMarketDataWithLenderStatus(
       lender: PromiseOrValue<string>,
       market: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
-      [MarketDataWithLenderStatusStructOutput] & {
-        data: MarketDataWithLenderStatusStructOutput;
+      [MarketDataWithLenderStatusV2StructOutput] & {
+        data: MarketDataWithLenderStatusV2StructOutput;
       }
     >;
-
-    getMarketLenderStatus(
-      lender: PromiseOrValue<string>,
-      market: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [MarketLenderStatusStructOutput] & {
-        status: MarketLenderStatusStructOutput;
-      }
-    >;
-
-    getMarketsCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getMarketsData(
       markets: PromiseOrValue<string>[],
       overrides?: CallOverrides
-    ): Promise<[MarketDataStructOutput[]] & { data: MarketDataStructOutput[] }>;
+    ): Promise<
+      [MarketDataV2StructOutput[]] & { data: MarketDataV2StructOutput[] }
+    >;
 
     getMarketsDataWithLenderStatus(
       lender: PromiseOrValue<string>,
       markets: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<
-      [MarketDataWithLenderStatusStructOutput[]] & {
-        data: MarketDataWithLenderStatusStructOutput[];
+      [MarketDataWithLenderStatusV2StructOutput[]] & {
+        data: MarketDataWithLenderStatusV2StructOutput[];
       }
     >;
 
-    getMarketsLenderStatus(
-      lender: PromiseOrValue<string>,
-      market: PromiseOrValue<string>[],
+    getMarketsForHooksTemplateCount(
+      hooksTemplate: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<
-      [MarketLenderStatusStructOutput[]] & {
-        status: MarketLenderStatusStructOutput[];
-      }
-    >;
+    ): Promise<[BigNumber]>;
 
-    getPaginatedArchControllerData(
-      borrowersSlice: SliceParametersStruct,
-      controllerFactoriesSlice: SliceParametersStruct,
-      controllersSlice: SliceParametersStruct,
-      marketsSlice: SliceParametersStruct,
-      overrides?: CallOverrides
-    ): Promise<
-      [ArchControllerDataStructOutput] & {
-        data: ArchControllerDataStructOutput;
-      }
-    >;
-
-    getPaginatedControllersDataForBorrowers(
+    getPaginatedMarketsDataForHooksTemplate(
+      hooksTemplate: PromiseOrValue<string>,
       start: PromiseOrValue<BigNumberish>,
       end: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [ControllerDataStructOutput[]] & { data: ControllerDataStructOutput[] }
-    >;
-
-    getPaginatedMarketsData(
-      start: PromiseOrValue<BigNumberish>,
-      end: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[MarketDataStructOutput[]] & { data: MarketDataStructOutput[] }>;
-
-    getPaginatedMarketsDataWithLenderStatus(
-      lender: PromiseOrValue<string>,
-      start: PromiseOrValue<BigNumberish>,
-      end: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [MarketDataWithLenderStatusStructOutput[]] & {
-        data: MarketDataWithLenderStatusStructOutput[];
-      }
+      [MarketDataV2StructOutput[]] & { data: MarketDataV2StructOutput[] }
     >;
 
     getTokenInfo(
@@ -827,106 +889,107 @@ export interface MarketLens extends BaseContract {
         statuses: WithdrawalBatchDataWithLenderStatusStructOutput[];
       }
     >;
+
+    hooksFactory(overrides?: CallOverrides): Promise<[string]>;
+
+    queryLenderAccount(
+      query: LenderAccountQueryStruct,
+      overrides?: CallOverrides
+    ): Promise<
+      [LenderAccountQueryResultStructOutput] & {
+        result: LenderAccountQueryResultStructOutput;
+      }
+    >;
+
+    queryLenderAccounts(
+      queries: LenderAccountQueryStruct[],
+      overrides?: CallOverrides
+    ): Promise<
+      [LenderAccountQueryResultStructOutput[]] & {
+        result: LenderAccountQueryResultStructOutput[];
+      }
+    >;
   };
 
   archController(overrides?: CallOverrides): Promise<string>;
 
-  controllerFactory(overrides?: CallOverrides): Promise<string>;
-
-  getAllControllersDataForBorrowers(
-    overrides?: CallOverrides
-  ): Promise<ControllerDataStructOutput[]>;
-
-  getAllMarketsData(
-    overrides?: CallOverrides
-  ): Promise<MarketDataStructOutput[]>;
-
-  getAllMarketsDataWithLenderStatus(
-    lender: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<MarketDataWithLenderStatusStructOutput[]>;
-
-  getAllMarketsLenderStatus(
-    lender: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<MarketLenderStatusStructOutput[]>;
-
-  getArchControllerData(
-    overrides?: CallOverrides
-  ): Promise<ArchControllerDataStructOutput>;
-
-  getControllerDataForBorrower(
+  getAllHooksTemplatesForBorrower(
     borrower: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<ControllerDataStructOutput>;
+  ): Promise<HooksTemplateDataStructOutput[]>;
 
-  getControllersDataForBorrowers(
-    borrowers: PromiseOrValue<string>[],
+  getAllMarketsDataForHooksTemplate(
+    hooksTemplate: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<ControllerDataStructOutput[]>;
+  ): Promise<MarketDataV2StructOutput[]>;
+
+  getHooksDataForBorrower(
+    borrower: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<HooksDataForBorrowerStructOutput>;
+
+  getHooksInstancesForBorrower(
+    borrower: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<HooksInstanceDataStructOutput[]>;
+
+  getHooksTemplateForBorrower(
+    borrower: PromiseOrValue<string>,
+    hooksTemplate: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<HooksTemplateDataStructOutput>;
+
+  getHooksTemplatesForBorrower(
+    borrower: PromiseOrValue<string>,
+    hooksTemplates: PromiseOrValue<string>[],
+    overrides?: CallOverrides
+  ): Promise<HooksTemplateDataStructOutput[]>;
+
+  "getLenderAccountData(address,address)"(
+    lender: PromiseOrValue<string>,
+    market: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<LenderAccountDataStructOutput>;
+
+  "getLenderAccountData(address,address[])"(
+    lender: PromiseOrValue<string>,
+    markets: PromiseOrValue<string>[],
+    overrides?: CallOverrides
+  ): Promise<LenderAccountDataStructOutput[]>;
 
   getMarketData(
     market: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<MarketDataStructOutput>;
+  ): Promise<MarketDataV2StructOutput>;
 
   getMarketDataWithLenderStatus(
     lender: PromiseOrValue<string>,
     market: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<MarketDataWithLenderStatusStructOutput>;
-
-  getMarketLenderStatus(
-    lender: PromiseOrValue<string>,
-    market: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<MarketLenderStatusStructOutput>;
-
-  getMarketsCount(overrides?: CallOverrides): Promise<BigNumber>;
+  ): Promise<MarketDataWithLenderStatusV2StructOutput>;
 
   getMarketsData(
     markets: PromiseOrValue<string>[],
     overrides?: CallOverrides
-  ): Promise<MarketDataStructOutput[]>;
+  ): Promise<MarketDataV2StructOutput[]>;
 
   getMarketsDataWithLenderStatus(
     lender: PromiseOrValue<string>,
     markets: PromiseOrValue<string>[],
     overrides?: CallOverrides
-  ): Promise<MarketDataWithLenderStatusStructOutput[]>;
+  ): Promise<MarketDataWithLenderStatusV2StructOutput[]>;
 
-  getMarketsLenderStatus(
-    lender: PromiseOrValue<string>,
-    market: PromiseOrValue<string>[],
+  getMarketsForHooksTemplateCount(
+    hooksTemplate: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<MarketLenderStatusStructOutput[]>;
+  ): Promise<BigNumber>;
 
-  getPaginatedArchControllerData(
-    borrowersSlice: SliceParametersStruct,
-    controllerFactoriesSlice: SliceParametersStruct,
-    controllersSlice: SliceParametersStruct,
-    marketsSlice: SliceParametersStruct,
-    overrides?: CallOverrides
-  ): Promise<ArchControllerDataStructOutput>;
-
-  getPaginatedControllersDataForBorrowers(
+  getPaginatedMarketsDataForHooksTemplate(
+    hooksTemplate: PromiseOrValue<string>,
     start: PromiseOrValue<BigNumberish>,
     end: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<ControllerDataStructOutput[]>;
-
-  getPaginatedMarketsData(
-    start: PromiseOrValue<BigNumberish>,
-    end: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<MarketDataStructOutput[]>;
-
-  getPaginatedMarketsDataWithLenderStatus(
-    lender: PromiseOrValue<string>,
-    start: PromiseOrValue<BigNumberish>,
-    end: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<MarketDataWithLenderStatusStructOutput[]>;
+  ): Promise<MarketDataV2StructOutput[]>;
 
   getTokenInfo(
     token: PromiseOrValue<string>,
@@ -979,105 +1042,98 @@ export interface MarketLens extends BaseContract {
     overrides?: CallOverrides
   ): Promise<WithdrawalBatchDataWithLenderStatusStructOutput[]>;
 
+  hooksFactory(overrides?: CallOverrides): Promise<string>;
+
+  queryLenderAccount(
+    query: LenderAccountQueryStruct,
+    overrides?: CallOverrides
+  ): Promise<LenderAccountQueryResultStructOutput>;
+
+  queryLenderAccounts(
+    queries: LenderAccountQueryStruct[],
+    overrides?: CallOverrides
+  ): Promise<LenderAccountQueryResultStructOutput[]>;
+
   callStatic: {
     archController(overrides?: CallOverrides): Promise<string>;
 
-    controllerFactory(overrides?: CallOverrides): Promise<string>;
-
-    getAllControllersDataForBorrowers(
-      overrides?: CallOverrides
-    ): Promise<ControllerDataStructOutput[]>;
-
-    getAllMarketsData(
-      overrides?: CallOverrides
-    ): Promise<MarketDataStructOutput[]>;
-
-    getAllMarketsDataWithLenderStatus(
-      lender: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<MarketDataWithLenderStatusStructOutput[]>;
-
-    getAllMarketsLenderStatus(
-      lender: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<MarketLenderStatusStructOutput[]>;
-
-    getArchControllerData(
-      overrides?: CallOverrides
-    ): Promise<ArchControllerDataStructOutput>;
-
-    getControllerDataForBorrower(
+    getAllHooksTemplatesForBorrower(
       borrower: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<ControllerDataStructOutput>;
+    ): Promise<HooksTemplateDataStructOutput[]>;
 
-    getControllersDataForBorrowers(
-      borrowers: PromiseOrValue<string>[],
+    getAllMarketsDataForHooksTemplate(
+      hooksTemplate: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<ControllerDataStructOutput[]>;
+    ): Promise<MarketDataV2StructOutput[]>;
+
+    getHooksDataForBorrower(
+      borrower: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<HooksDataForBorrowerStructOutput>;
+
+    getHooksInstancesForBorrower(
+      borrower: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<HooksInstanceDataStructOutput[]>;
+
+    getHooksTemplateForBorrower(
+      borrower: PromiseOrValue<string>,
+      hooksTemplate: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<HooksTemplateDataStructOutput>;
+
+    getHooksTemplatesForBorrower(
+      borrower: PromiseOrValue<string>,
+      hooksTemplates: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<HooksTemplateDataStructOutput[]>;
+
+    "getLenderAccountData(address,address)"(
+      lender: PromiseOrValue<string>,
+      market: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<LenderAccountDataStructOutput>;
+
+    "getLenderAccountData(address,address[])"(
+      lender: PromiseOrValue<string>,
+      markets: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<LenderAccountDataStructOutput[]>;
 
     getMarketData(
       market: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<MarketDataStructOutput>;
+    ): Promise<MarketDataV2StructOutput>;
 
     getMarketDataWithLenderStatus(
       lender: PromiseOrValue<string>,
       market: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<MarketDataWithLenderStatusStructOutput>;
-
-    getMarketLenderStatus(
-      lender: PromiseOrValue<string>,
-      market: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<MarketLenderStatusStructOutput>;
-
-    getMarketsCount(overrides?: CallOverrides): Promise<BigNumber>;
+    ): Promise<MarketDataWithLenderStatusV2StructOutput>;
 
     getMarketsData(
       markets: PromiseOrValue<string>[],
       overrides?: CallOverrides
-    ): Promise<MarketDataStructOutput[]>;
+    ): Promise<MarketDataV2StructOutput[]>;
 
     getMarketsDataWithLenderStatus(
       lender: PromiseOrValue<string>,
       markets: PromiseOrValue<string>[],
       overrides?: CallOverrides
-    ): Promise<MarketDataWithLenderStatusStructOutput[]>;
+    ): Promise<MarketDataWithLenderStatusV2StructOutput[]>;
 
-    getMarketsLenderStatus(
-      lender: PromiseOrValue<string>,
-      market: PromiseOrValue<string>[],
+    getMarketsForHooksTemplateCount(
+      hooksTemplate: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<MarketLenderStatusStructOutput[]>;
+    ): Promise<BigNumber>;
 
-    getPaginatedArchControllerData(
-      borrowersSlice: SliceParametersStruct,
-      controllerFactoriesSlice: SliceParametersStruct,
-      controllersSlice: SliceParametersStruct,
-      marketsSlice: SliceParametersStruct,
-      overrides?: CallOverrides
-    ): Promise<ArchControllerDataStructOutput>;
-
-    getPaginatedControllersDataForBorrowers(
+    getPaginatedMarketsDataForHooksTemplate(
+      hooksTemplate: PromiseOrValue<string>,
       start: PromiseOrValue<BigNumberish>,
       end: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<ControllerDataStructOutput[]>;
-
-    getPaginatedMarketsData(
-      start: PromiseOrValue<BigNumberish>,
-      end: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<MarketDataStructOutput[]>;
-
-    getPaginatedMarketsDataWithLenderStatus(
-      lender: PromiseOrValue<string>,
-      start: PromiseOrValue<BigNumberish>,
-      end: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<MarketDataWithLenderStatusStructOutput[]>;
+    ): Promise<MarketDataV2StructOutput[]>;
 
     getTokenInfo(
       token: PromiseOrValue<string>,
@@ -1129,6 +1185,18 @@ export interface MarketLens extends BaseContract {
       lender: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<WithdrawalBatchDataWithLenderStatusStructOutput[]>;
+
+    hooksFactory(overrides?: CallOverrides): Promise<string>;
+
+    queryLenderAccount(
+      query: LenderAccountQueryStruct,
+      overrides?: CallOverrides
+    ): Promise<LenderAccountQueryResultStructOutput>;
+
+    queryLenderAccounts(
+      queries: LenderAccountQueryStruct[],
+      overrides?: CallOverrides
+    ): Promise<LenderAccountQueryResultStructOutput[]>;
   };
 
   filters: {};
@@ -1136,33 +1204,47 @@ export interface MarketLens extends BaseContract {
   estimateGas: {
     archController(overrides?: CallOverrides): Promise<BigNumber>;
 
-    controllerFactory(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getAllControllersDataForBorrowers(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getAllMarketsData(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getAllMarketsDataWithLenderStatus(
-      lender: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getAllMarketsLenderStatus(
-      lender: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getArchControllerData(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getControllerDataForBorrower(
+    getAllHooksTemplatesForBorrower(
       borrower: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getControllersDataForBorrowers(
-      borrowers: PromiseOrValue<string>[],
+    getAllMarketsDataForHooksTemplate(
+      hooksTemplate: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getHooksDataForBorrower(
+      borrower: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getHooksInstancesForBorrower(
+      borrower: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getHooksTemplateForBorrower(
+      borrower: PromiseOrValue<string>,
+      hooksTemplate: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getHooksTemplatesForBorrower(
+      borrower: PromiseOrValue<string>,
+      hooksTemplates: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getLenderAccountData(address,address)"(
+      lender: PromiseOrValue<string>,
+      market: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getLenderAccountData(address,address[])"(
+      lender: PromiseOrValue<string>,
+      markets: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1177,14 +1259,6 @@ export interface MarketLens extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getMarketLenderStatus(
-      lender: PromiseOrValue<string>,
-      market: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getMarketsCount(overrides?: CallOverrides): Promise<BigNumber>;
-
     getMarketsData(
       markets: PromiseOrValue<string>[],
       overrides?: CallOverrides
@@ -1196,34 +1270,13 @@ export interface MarketLens extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getMarketsLenderStatus(
-      lender: PromiseOrValue<string>,
-      market: PromiseOrValue<string>[],
+    getMarketsForHooksTemplateCount(
+      hooksTemplate: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getPaginatedArchControllerData(
-      borrowersSlice: SliceParametersStruct,
-      controllerFactoriesSlice: SliceParametersStruct,
-      controllersSlice: SliceParametersStruct,
-      marketsSlice: SliceParametersStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPaginatedControllersDataForBorrowers(
-      start: PromiseOrValue<BigNumberish>,
-      end: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPaginatedMarketsData(
-      start: PromiseOrValue<BigNumberish>,
-      end: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPaginatedMarketsDataWithLenderStatus(
-      lender: PromiseOrValue<string>,
+    getPaginatedMarketsDataForHooksTemplate(
+      hooksTemplate: PromiseOrValue<string>,
       start: PromiseOrValue<BigNumberish>,
       end: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1269,6 +1322,18 @@ export interface MarketLens extends BaseContract {
       market: PromiseOrValue<string>,
       expiries: PromiseOrValue<BigNumberish>[],
       lender: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    hooksFactory(overrides?: CallOverrides): Promise<BigNumber>;
+
+    queryLenderAccount(
+      query: LenderAccountQueryStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    queryLenderAccounts(
+      queries: LenderAccountQueryStruct[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -1276,35 +1341,47 @@ export interface MarketLens extends BaseContract {
   populateTransaction: {
     archController(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    controllerFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getAllControllersDataForBorrowers(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getAllMarketsData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getAllMarketsDataWithLenderStatus(
-      lender: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getAllMarketsLenderStatus(
-      lender: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getArchControllerData(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getControllerDataForBorrower(
+    getAllHooksTemplatesForBorrower(
       borrower: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getControllersDataForBorrowers(
-      borrowers: PromiseOrValue<string>[],
+    getAllMarketsDataForHooksTemplate(
+      hooksTemplate: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getHooksDataForBorrower(
+      borrower: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getHooksInstancesForBorrower(
+      borrower: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getHooksTemplateForBorrower(
+      borrower: PromiseOrValue<string>,
+      hooksTemplate: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getHooksTemplatesForBorrower(
+      borrower: PromiseOrValue<string>,
+      hooksTemplates: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getLenderAccountData(address,address)"(
+      lender: PromiseOrValue<string>,
+      market: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getLenderAccountData(address,address[])"(
+      lender: PromiseOrValue<string>,
+      markets: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1319,14 +1396,6 @@ export interface MarketLens extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getMarketLenderStatus(
-      lender: PromiseOrValue<string>,
-      market: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getMarketsCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getMarketsData(
       markets: PromiseOrValue<string>[],
       overrides?: CallOverrides
@@ -1338,34 +1407,13 @@ export interface MarketLens extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getMarketsLenderStatus(
-      lender: PromiseOrValue<string>,
-      market: PromiseOrValue<string>[],
+    getMarketsForHooksTemplateCount(
+      hooksTemplate: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getPaginatedArchControllerData(
-      borrowersSlice: SliceParametersStruct,
-      controllerFactoriesSlice: SliceParametersStruct,
-      controllersSlice: SliceParametersStruct,
-      marketsSlice: SliceParametersStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getPaginatedControllersDataForBorrowers(
-      start: PromiseOrValue<BigNumberish>,
-      end: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getPaginatedMarketsData(
-      start: PromiseOrValue<BigNumberish>,
-      end: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getPaginatedMarketsDataWithLenderStatus(
-      lender: PromiseOrValue<string>,
+    getPaginatedMarketsDataForHooksTemplate(
+      hooksTemplate: PromiseOrValue<string>,
       start: PromiseOrValue<BigNumberish>,
       end: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1411,6 +1459,18 @@ export interface MarketLens extends BaseContract {
       market: PromiseOrValue<string>,
       expiries: PromiseOrValue<BigNumberish>[],
       lender: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    hooksFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    queryLenderAccount(
+      query: LenderAccountQueryStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    queryLenderAccounts(
+      queries: LenderAccountQueryStruct[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

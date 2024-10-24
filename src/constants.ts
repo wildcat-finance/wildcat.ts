@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers";
 import {
   MarketLens,
   MarketLens__factory,
@@ -9,14 +8,18 @@ import {
   MockERC20Factory,
   MockERC20Factory__factory,
   WildcatArchController,
-  WildcatArchController__factory
+  WildcatArchController__factory,
+  MarketLensV2,
+  MarketLensV2__factory
 } from "./typechain";
-import { SignerOrProvider } from "./types";
+import { MarketParameterConstraints, SignerOrProvider } from "./types";
 import { ApolloClient, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
 import { assert } from "./utils";
 
 type NetworkDeployments = {
+  HooksFactory: string;
   MarketLens: string;
+  MarketLensV2: string;
   MockArchControllerOwner?: string;
   MockChainalysis?: string;
   MockERC20Factory?: string;
@@ -46,13 +49,17 @@ export const hasDeploymentAddress = (
 
 export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
   [SupportedChainId.Mainnet]: {
+    HooksFactory: "0x0000000000000000000000000000000000000000",
     MarketLens: "0xf1D516954f96c1363f8b0aE48D79c8ddE6237847",
+    MarketLensV2: "0x0000000000000000000000000000000000000000",
     WildcatArchController: "0xfEB516d9D946dD487A9346F6fee11f40C6945eE4",
     WildcatMarketControllerFactory: "0xFd31007613C9F671df6A8D4234901324986Bfd13",
     WildcatSanctionsSentinel: "0x437e0551892C2C9b06d3fFd248fe60572e08CD1A"
   },
   [SupportedChainId.Sepolia]: {
+    HooksFactory: "0x0000000000000000000000000000000000000000",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
+    MarketLensV2: "0x0000000000000000000000000000000000000000",
     MockArchControllerOwner: "0xa476920af80B587f696734430227869795E2Ea78",
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
@@ -106,6 +113,20 @@ export const getLensContract = (
   return MarketLens__factory.connect(getDeploymentAddress(chainId, "MarketLens"), provider);
 };
 
+export const getHooksFactoryContract = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider
+): MarketLensV2 => {
+  return MarketLensV2__factory.connect(getDeploymentAddress(chainId, "HooksFactory"), provider);
+};
+
+export const getMarketLensV2Contract = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider
+): MarketLensV2 => {
+  return MarketLensV2__factory.connect(getDeploymentAddress(chainId, "MarketLensV2"), provider);
+};
+
 export const getMockERC20Factory = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
@@ -138,3 +159,16 @@ export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<Norma
     cache: new InMemoryCache(),
     uri: SubgraphUrls[chainId]
   });
+const day = 86_400;
+export const DefaultV2ParameterConstraints: MarketParameterConstraints = {
+  minimumDelinquencyGracePeriod: 0,
+  maximumDelinquencyGracePeriod: 90 * day,
+  minimumReserveRatioBips: 0,
+  maximumReserveRatioBips: 10_000,
+  minimumDelinquencyFeeBips: 0,
+  maximumDelinquencyFeeBips: 10_000,
+  minimumWithdrawalBatchDuration: 0,
+  maximumWithdrawalBatchDuration: 365 * day,
+  minimumAnnualInterestBips: 0,
+  maximumAnnualInterestBips: 10_000
+};

@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export type MarketStateStruct = {
+export type MarketStateV2Struct = {
   isClosed: PromiseOrValue<boolean>;
   maxTotalSupply: PromiseOrValue<BigNumberish>;
   accruedProtocolFees: PromiseOrValue<BigNumberish>;
@@ -37,13 +37,14 @@ export type MarketStateStruct = {
   pendingWithdrawalExpiry: PromiseOrValue<BigNumberish>;
   isDelinquent: PromiseOrValue<boolean>;
   timeDelinquent: PromiseOrValue<BigNumberish>;
+  protocolFeeBips: PromiseOrValue<BigNumberish>;
   annualInterestBips: PromiseOrValue<BigNumberish>;
   reserveRatioBips: PromiseOrValue<BigNumberish>;
   scaleFactor: PromiseOrValue<BigNumberish>;
   lastInterestAccruedTimestamp: PromiseOrValue<BigNumberish>;
 };
 
-export type MarketStateStructOutput = {
+export type MarketStateV2StructOutput = {
   isClosed: boolean;
   maxTotalSupply: BigNumber;
   accruedProtocolFees: BigNumber;
@@ -53,6 +54,7 @@ export type MarketStateStructOutput = {
   pendingWithdrawalExpiry: number;
   isDelinquent: boolean;
   timeDelinquent: number;
+  protocolFeeBips: number;
   annualInterestBips: number;
   reserveRatioBips: number;
   scaleFactor: BigNumber;
@@ -81,145 +83,117 @@ export type WithdrawalBatchStructOutput = {
   normalizedAmountPaid: BigNumber;
 };
 
-export interface WildcatMarketInterface extends utils.Interface {
+export interface WildcatMarketV2Interface extends utils.Interface {
   functions: {
     "accruedProtocolFees()": FunctionFragment;
-    "allowance(address,address)": FunctionFragment;
     "annualInterestBips()": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
-    "asset()": FunctionFragment;
+    "archController()": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "borrow(uint256)": FunctionFragment;
     "borrowableAssets()": FunctionFragment;
-    "borrower()": FunctionFragment;
+    "changeSphereXEngine(address)": FunctionFragment;
     "closeMarket()": FunctionFragment;
     "collectFees()": FunctionFragment;
-    "controller()": FunctionFragment;
     "coverageLiquidity()": FunctionFragment;
     "currentState()": FunctionFragment;
-    "decimals()": FunctionFragment;
-    "delinquencyFeeBips()": FunctionFragment;
-    "delinquencyGracePeriod()": FunctionFragment;
-    "delinquentDebt()": FunctionFragment;
     "deposit(uint256)": FunctionFragment;
     "depositUpTo(uint256)": FunctionFragment;
-    "effectiveBorrowerAPR()": FunctionFragment;
-    "effectiveLenderAPR()": FunctionFragment;
     "executeWithdrawal(address,uint32)": FunctionFragment;
     "executeWithdrawals(address[],uint32[])": FunctionFragment;
-    "feeRecipient()": FunctionFragment;
-    "getAccountRole(address)": FunctionFragment;
+    "forceBuyBack(address,uint256)": FunctionFragment;
     "getAccountWithdrawalStatus(address,uint32)": FunctionFragment;
     "getAvailableWithdrawalAmount(address,uint32)": FunctionFragment;
     "getUnpaidBatchExpiries()": FunctionFragment;
     "getWithdrawalBatch(uint32)": FunctionFragment;
+    "isClosed()": FunctionFragment;
     "maxTotalSupply()": FunctionFragment;
     "maximumDeposit()": FunctionFragment;
     "name()": FunctionFragment;
     "nukeFromOrbit(address)": FunctionFragment;
-    "outstandingDebt()": FunctionFragment;
     "previousState()": FunctionFragment;
-    "protocolFeeBips()": FunctionFragment;
+    "queueFullWithdrawal()": FunctionFragment;
     "queueWithdrawal(uint256)": FunctionFragment;
     "repay(uint256)": FunctionFragment;
     "repayAndProcessUnpaidWithdrawalBatches(uint256,uint256)": FunctionFragment;
-    "repayDelinquentDebt()": FunctionFragment;
-    "repayOutstandingDebt()": FunctionFragment;
+    "rescueTokens(address)": FunctionFragment;
     "reserveRatioBips()": FunctionFragment;
     "scaleFactor()": FunctionFragment;
     "scaledBalanceOf(address)": FunctionFragment;
     "scaledTotalSupply()": FunctionFragment;
-    "sentinel()": FunctionFragment;
-    "setAnnualInterestBips(uint16)": FunctionFragment;
+    "setAnnualInterestAndReserveRatioBips(uint16,uint16)": FunctionFragment;
     "setMaxTotalSupply(uint256)": FunctionFragment;
-    "setReserveRatioBips(uint16)": FunctionFragment;
-    "stunningReversal(address)": FunctionFragment;
+    "setProtocolFeeBips(uint16)": FunctionFragment;
+    "sphereXEngine()": FunctionFragment;
+    "sphereXOperator()": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalAssets()": FunctionFragment;
     "totalDebts()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
-    "updateAccountAuthorizations(address[],bool)": FunctionFragment;
     "updateState()": FunctionFragment;
     "version()": FunctionFragment;
     "withdrawableProtocolFees()": FunctionFragment;
-    "withdrawalBatchDuration()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "accruedProtocolFees"
-      | "allowance"
       | "annualInterestBips"
       | "approve"
-      | "asset"
+      | "archController"
       | "balanceOf"
       | "borrow"
       | "borrowableAssets"
-      | "borrower"
+      | "changeSphereXEngine"
       | "closeMarket"
       | "collectFees"
-      | "controller"
       | "coverageLiquidity"
       | "currentState"
-      | "decimals"
-      | "delinquencyFeeBips"
-      | "delinquencyGracePeriod"
-      | "delinquentDebt"
       | "deposit"
       | "depositUpTo"
-      | "effectiveBorrowerAPR"
-      | "effectiveLenderAPR"
       | "executeWithdrawal"
       | "executeWithdrawals"
-      | "feeRecipient"
-      | "getAccountRole"
+      | "forceBuyBack"
       | "getAccountWithdrawalStatus"
       | "getAvailableWithdrawalAmount"
       | "getUnpaidBatchExpiries"
       | "getWithdrawalBatch"
+      | "isClosed"
       | "maxTotalSupply"
       | "maximumDeposit"
       | "name"
       | "nukeFromOrbit"
-      | "outstandingDebt"
       | "previousState"
-      | "protocolFeeBips"
+      | "queueFullWithdrawal"
       | "queueWithdrawal"
       | "repay"
       | "repayAndProcessUnpaidWithdrawalBatches"
-      | "repayDelinquentDebt"
-      | "repayOutstandingDebt"
+      | "rescueTokens"
       | "reserveRatioBips"
       | "scaleFactor"
       | "scaledBalanceOf"
       | "scaledTotalSupply"
-      | "sentinel"
-      | "setAnnualInterestBips"
+      | "setAnnualInterestAndReserveRatioBips"
       | "setMaxTotalSupply"
-      | "setReserveRatioBips"
-      | "stunningReversal"
+      | "setProtocolFeeBips"
+      | "sphereXEngine"
+      | "sphereXOperator"
       | "symbol"
       | "totalAssets"
       | "totalDebts"
       | "totalSupply"
       | "transfer"
       | "transferFrom"
-      | "updateAccountAuthorizations"
       | "updateState"
       | "version"
       | "withdrawableProtocolFees"
-      | "withdrawalBatchDuration"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "accruedProtocolFees",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "allowance",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "annualInterestBips",
@@ -229,7 +203,10 @@ export interface WildcatMarketInterface extends utils.Interface {
     functionFragment: "approve",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "asset", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "archController",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [PromiseOrValue<string>]
@@ -242,7 +219,10 @@ export interface WildcatMarketInterface extends utils.Interface {
     functionFragment: "borrowableAssets",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "borrower", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "changeSphereXEngine",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "closeMarket",
     values?: undefined
@@ -252,28 +232,11 @@ export interface WildcatMarketInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "controller",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "coverageLiquidity",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "currentState",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "delinquencyFeeBips",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "delinquencyGracePeriod",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "delinquentDebt",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -285,14 +248,6 @@ export interface WildcatMarketInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "effectiveBorrowerAPR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "effectiveLenderAPR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "executeWithdrawal",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -301,12 +256,8 @@ export interface WildcatMarketInterface extends utils.Interface {
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "feeRecipient",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAccountRole",
-    values: [PromiseOrValue<string>]
+    functionFragment: "forceBuyBack",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getAccountWithdrawalStatus",
@@ -324,6 +275,7 @@ export interface WildcatMarketInterface extends utils.Interface {
     functionFragment: "getWithdrawalBatch",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "isClosed", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "maxTotalSupply",
     values?: undefined
@@ -338,15 +290,11 @@ export interface WildcatMarketInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "outstandingDebt",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "previousState",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "protocolFeeBips",
+    functionFragment: "queueFullWithdrawal",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -362,12 +310,8 @@ export interface WildcatMarketInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "repayDelinquentDebt",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "repayOutstandingDebt",
-    values?: undefined
+    functionFragment: "rescueTokens",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "reserveRatioBips",
@@ -385,22 +329,25 @@ export interface WildcatMarketInterface extends utils.Interface {
     functionFragment: "scaledTotalSupply",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "sentinel", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "setAnnualInterestBips",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "setAnnualInterestAndReserveRatioBips",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setMaxTotalSupply",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setReserveRatioBips",
+    functionFragment: "setProtocolFeeBips",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "stunningReversal",
-    values: [PromiseOrValue<string>]
+    functionFragment: "sphereXEngine",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sphereXOperator",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
@@ -428,10 +375,6 @@ export interface WildcatMarketInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateAccountAuthorizations",
-    values: [PromiseOrValue<string>[], PromiseOrValue<boolean>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "updateState",
     values?: undefined
   ): string;
@@ -440,29 +383,30 @@ export interface WildcatMarketInterface extends utils.Interface {
     functionFragment: "withdrawableProtocolFees",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawalBatchDuration",
-    values?: undefined
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "accruedProtocolFees",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "annualInterestBips",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "archController",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "borrow", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "borrowableAssets",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "borrower", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "changeSphereXEngine",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "closeMarket",
     data: BytesLike
@@ -471,7 +415,6 @@ export interface WildcatMarketInterface extends utils.Interface {
     functionFragment: "collectFees",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "controller", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "coverageLiquidity",
     data: BytesLike
@@ -480,30 +423,9 @@ export interface WildcatMarketInterface extends utils.Interface {
     functionFragment: "currentState",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "delinquencyFeeBips",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "delinquencyGracePeriod",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "delinquentDebt",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "depositUpTo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "effectiveBorrowerAPR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "effectiveLenderAPR",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -515,11 +437,7 @@ export interface WildcatMarketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "feeRecipient",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getAccountRole",
+    functionFragment: "forceBuyBack",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -538,6 +456,7 @@ export interface WildcatMarketInterface extends utils.Interface {
     functionFragment: "getWithdrawalBatch",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "isClosed", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "maxTotalSupply",
     data: BytesLike
@@ -552,15 +471,11 @@ export interface WildcatMarketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "outstandingDebt",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "previousState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "protocolFeeBips",
+    functionFragment: "queueFullWithdrawal",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -573,11 +488,7 @@ export interface WildcatMarketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "repayDelinquentDebt",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "repayOutstandingDebt",
+    functionFragment: "rescueTokens",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -596,9 +507,8 @@ export interface WildcatMarketInterface extends utils.Interface {
     functionFragment: "scaledTotalSupply",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "sentinel", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setAnnualInterestBips",
+    functionFragment: "setAnnualInterestAndReserveRatioBips",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -606,11 +516,15 @@ export interface WildcatMarketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setReserveRatioBips",
+    functionFragment: "setProtocolFeeBips",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "stunningReversal",
+    functionFragment: "sphereXEngine",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "sphereXOperator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
@@ -629,10 +543,6 @@ export interface WildcatMarketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateAccountAuthorizations",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "updateState",
     data: BytesLike
   ): Result;
@@ -641,28 +551,28 @@ export interface WildcatMarketInterface extends utils.Interface {
     functionFragment: "withdrawableProtocolFees",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawalBatchDuration",
-    data: BytesLike
-  ): Result;
 
   events: {
+    "AccountSanctioned(address)": EventFragment;
     "AnnualInterestBipsUpdated(uint256)": EventFragment;
     "Approval(address,address,uint256)": EventFragment;
-    "AuthorizationStatusUpdated(address,uint8)": EventFragment;
     "Borrow(uint256)": EventFragment;
+    "ChangedSpherexEngineAddress(address,address)": EventFragment;
+    "ChangedSpherexOperator(address,address)": EventFragment;
     "DebtRepaid(address,uint256)": EventFragment;
     "Deposit(address,uint256,uint256)": EventFragment;
     "FeesCollected(uint256)": EventFragment;
+    "ForceBuyBack(address,uint256,uint256)": EventFragment;
+    "InterestAndFeesAccrued(uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "MarketClosed(uint256)": EventFragment;
     "MaxTotalSupplyUpdated(uint256)": EventFragment;
+    "ProtocolFeeBipsUpdated(uint256)": EventFragment;
     "ReserveRatioBipsUpdated(uint256)": EventFragment;
+    "SanctionedAccountAssetsQueuedForWithdrawal(address,uint256,uint256,uint256)": EventFragment;
     "SanctionedAccountAssetsSentToEscrow(address,address,uint256)": EventFragment;
     "SanctionedAccountWithdrawalSentToEscrow(address,address,uint32,uint256)": EventFragment;
-    "ScaleFactorUpdated(uint256,uint256,uint256,uint256)": EventFragment;
     "StateUpdated(uint256,bool)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
-    "Withdrawal(address,uint256,uint256)": EventFragment;
     "WithdrawalBatchClosed(uint256)": EventFragment;
     "WithdrawalBatchCreated(uint256)": EventFragment;
     "WithdrawalBatchExpired(uint256,uint256,uint256,uint256)": EventFragment;
@@ -671,26 +581,34 @@ export interface WildcatMarketInterface extends utils.Interface {
     "WithdrawalQueued(uint256,address,uint256,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AccountSanctioned"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AnnualInterestBipsUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AuthorizationStatusUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Borrow"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "ChangedSpherexEngineAddress"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ChangedSpherexOperator"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DebtRepaid"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesCollected"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ForceBuyBack"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "InterestAndFeesAccrued"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketClosed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MaxTotalSupplyUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProtocolFeeBipsUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ReserveRatioBipsUpdated"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "SanctionedAccountAssetsQueuedForWithdrawal"
+  ): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "SanctionedAccountAssetsSentToEscrow"
   ): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "SanctionedAccountWithdrawalSentToEscrow"
   ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ScaleFactorUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StateUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WithdrawalBatchClosed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WithdrawalBatchCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WithdrawalBatchExpired"): EventFragment;
@@ -698,6 +616,17 @@ export interface WildcatMarketInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "WithdrawalExecuted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WithdrawalQueued"): EventFragment;
 }
+
+export interface AccountSanctionedEventObject {
+  account: string;
+}
+export type AccountSanctionedEvent = TypedEvent<
+  [string],
+  AccountSanctionedEventObject
+>;
+
+export type AccountSanctionedEventFilter =
+  TypedEventFilter<AccountSanctionedEvent>;
 
 export interface AnnualInterestBipsUpdatedEventObject {
   annualInterestBipsUpdated: BigNumber;
@@ -722,24 +651,36 @@ export type ApprovalEvent = TypedEvent<
 
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 
-export interface AuthorizationStatusUpdatedEventObject {
-  account: string;
-  role: number;
-}
-export type AuthorizationStatusUpdatedEvent = TypedEvent<
-  [string, number],
-  AuthorizationStatusUpdatedEventObject
->;
-
-export type AuthorizationStatusUpdatedEventFilter =
-  TypedEventFilter<AuthorizationStatusUpdatedEvent>;
-
 export interface BorrowEventObject {
   assetAmount: BigNumber;
 }
 export type BorrowEvent = TypedEvent<[BigNumber], BorrowEventObject>;
 
 export type BorrowEventFilter = TypedEventFilter<BorrowEvent>;
+
+export interface ChangedSpherexEngineAddressEventObject {
+  oldEngineAddress: string;
+  newEngineAddress: string;
+}
+export type ChangedSpherexEngineAddressEvent = TypedEvent<
+  [string, string],
+  ChangedSpherexEngineAddressEventObject
+>;
+
+export type ChangedSpherexEngineAddressEventFilter =
+  TypedEventFilter<ChangedSpherexEngineAddressEvent>;
+
+export interface ChangedSpherexOperatorEventObject {
+  oldSphereXAdmin: string;
+  newSphereXAdmin: string;
+}
+export type ChangedSpherexOperatorEvent = TypedEvent<
+  [string, string],
+  ChangedSpherexOperatorEventObject
+>;
+
+export type ChangedSpherexOperatorEventFilter =
+  TypedEventFilter<ChangedSpherexOperatorEvent>;
 
 export interface DebtRepaidEventObject {
   from: string;
@@ -774,6 +715,34 @@ export type FeesCollectedEvent = TypedEvent<
 
 export type FeesCollectedEventFilter = TypedEventFilter<FeesCollectedEvent>;
 
+export interface ForceBuyBackEventObject {
+  lender: string;
+  scaledAmount: BigNumber;
+  normalizedAmount: BigNumber;
+}
+export type ForceBuyBackEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  ForceBuyBackEventObject
+>;
+
+export type ForceBuyBackEventFilter = TypedEventFilter<ForceBuyBackEvent>;
+
+export interface InterestAndFeesAccruedEventObject {
+  fromTimestamp: BigNumber;
+  toTimestamp: BigNumber;
+  scaleFactor: BigNumber;
+  baseInterestRay: BigNumber;
+  delinquencyFeeRay: BigNumber;
+  protocolFees: BigNumber;
+}
+export type InterestAndFeesAccruedEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
+  InterestAndFeesAccruedEventObject
+>;
+
+export type InterestAndFeesAccruedEventFilter =
+  TypedEventFilter<InterestAndFeesAccruedEvent>;
+
 export interface MarketClosedEventObject {
   timestamp: BigNumber;
 }
@@ -795,6 +764,17 @@ export type MaxTotalSupplyUpdatedEvent = TypedEvent<
 export type MaxTotalSupplyUpdatedEventFilter =
   TypedEventFilter<MaxTotalSupplyUpdatedEvent>;
 
+export interface ProtocolFeeBipsUpdatedEventObject {
+  protocolFeeBips: BigNumber;
+}
+export type ProtocolFeeBipsUpdatedEvent = TypedEvent<
+  [BigNumber],
+  ProtocolFeeBipsUpdatedEventObject
+>;
+
+export type ProtocolFeeBipsUpdatedEventFilter =
+  TypedEventFilter<ProtocolFeeBipsUpdatedEvent>;
+
 export interface ReserveRatioBipsUpdatedEventObject {
   reserveRatioBipsUpdated: BigNumber;
 }
@@ -805,6 +785,20 @@ export type ReserveRatioBipsUpdatedEvent = TypedEvent<
 
 export type ReserveRatioBipsUpdatedEventFilter =
   TypedEventFilter<ReserveRatioBipsUpdatedEvent>;
+
+export interface SanctionedAccountAssetsQueuedForWithdrawalEventObject {
+  account: string;
+  expiry: BigNumber;
+  scaledAmount: BigNumber;
+  normalizedAmount: BigNumber;
+}
+export type SanctionedAccountAssetsQueuedForWithdrawalEvent = TypedEvent<
+  [string, BigNumber, BigNumber, BigNumber],
+  SanctionedAccountAssetsQueuedForWithdrawalEventObject
+>;
+
+export type SanctionedAccountAssetsQueuedForWithdrawalEventFilter =
+  TypedEventFilter<SanctionedAccountAssetsQueuedForWithdrawalEvent>;
 
 export interface SanctionedAccountAssetsSentToEscrowEventObject {
   account: string;
@@ -833,20 +827,6 @@ export type SanctionedAccountWithdrawalSentToEscrowEvent = TypedEvent<
 export type SanctionedAccountWithdrawalSentToEscrowEventFilter =
   TypedEventFilter<SanctionedAccountWithdrawalSentToEscrowEvent>;
 
-export interface ScaleFactorUpdatedEventObject {
-  scaleFactor: BigNumber;
-  baseInterestRay: BigNumber;
-  delinquencyFeeRay: BigNumber;
-  protocolFee: BigNumber;
-}
-export type ScaleFactorUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, BigNumber],
-  ScaleFactorUpdatedEventObject
->;
-
-export type ScaleFactorUpdatedEventFilter =
-  TypedEventFilter<ScaleFactorUpdatedEvent>;
-
 export interface StateUpdatedEventObject {
   scaleFactor: BigNumber;
   isDelinquent: boolean;
@@ -869,18 +849,6 @@ export type TransferEvent = TypedEvent<
 >;
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
-
-export interface WithdrawalEventObject {
-  account: string;
-  assetAmount: BigNumber;
-  scaledAmount: BigNumber;
-}
-export type WithdrawalEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  WithdrawalEventObject
->;
-
-export type WithdrawalEventFilter = TypedEventFilter<WithdrawalEvent>;
 
 export interface WithdrawalBatchClosedEventObject {
   expiry: BigNumber;
@@ -958,14 +926,14 @@ export type WithdrawalQueuedEvent = TypedEvent<
 export type WithdrawalQueuedEventFilter =
   TypedEventFilter<WithdrawalQueuedEvent>;
 
-export interface WildcatMarket extends BaseContract {
-  contractName: "WildcatMarket";
+export interface WildcatMarketV2 extends BaseContract {
+  contractName: "WildcatMarketV2";
 
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: WildcatMarketInterface;
+  interface: WildcatMarketV2Interface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -987,15 +955,13 @@ export interface WildcatMarket extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    accruedProtocolFees(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    allowance(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+    accruedProtocolFees(
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
-    annualInterestBips(overrides?: CallOverrides): Promise<[BigNumber]>;
+    annualInterestBips(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
     approve(
       spender: PromiseOrValue<string>,
@@ -1003,21 +969,28 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    asset(overrides?: CallOverrides): Promise<[string]>;
+    archController(
+      overrides?: CallOverrides
+    ): Promise<[string] & { param0: string }>;
 
     balanceOf(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
     borrow(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    borrowableAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
+    borrowableAssets(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
-    borrower(overrides?: CallOverrides): Promise<[string]>;
+    changeSphereXEngine(
+      newSphereXEngine: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     closeMarket(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1027,21 +1000,15 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    controller(overrides?: CallOverrides): Promise<[string]>;
-
-    coverageLiquidity(overrides?: CallOverrides): Promise<[BigNumber]>;
+    coverageLiquidity(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
     currentState(
       overrides?: CallOverrides
-    ): Promise<[MarketStateStructOutput] & { state: MarketStateStructOutput }>;
-
-    decimals(overrides?: CallOverrides): Promise<[number]>;
-
-    delinquencyFeeBips(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    delinquencyGracePeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    delinquentDebt(overrides?: CallOverrides): Promise<[BigNumber]>;
+    ): Promise<
+      [MarketStateV2StructOutput] & { state: MarketStateV2StructOutput }
+    >;
 
     deposit(
       amount: PromiseOrValue<BigNumberish>,
@@ -1052,10 +1019,6 @@ export interface WildcatMarket extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    effectiveBorrowerAPR(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    effectiveLenderAPR(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     executeWithdrawal(
       accountAddress: PromiseOrValue<string>,
@@ -1069,50 +1032,67 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    feeRecipient(overrides?: CallOverrides): Promise<[string]>;
-
-    getAccountRole(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
+    forceBuyBack(
+      lender: PromiseOrValue<string>,
+      normalizedAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     getAccountWithdrawalStatus(
       accountAddress: PromiseOrValue<string>,
       expiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[AccountWithdrawalStatusStructOutput]>;
+    ): Promise<
+      [AccountWithdrawalStatusStructOutput] & {
+        status: AccountWithdrawalStatusStructOutput;
+      }
+    >;
 
     getAvailableWithdrawalAmount(
       accountAddress: PromiseOrValue<string>,
       expiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
-    getUnpaidBatchExpiries(overrides?: CallOverrides): Promise<[number[]]>;
+    getUnpaidBatchExpiries(
+      overrides?: CallOverrides
+    ): Promise<[number[]] & { param0: number[] }>;
 
     getWithdrawalBatch(
       expiry: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[WithdrawalBatchStructOutput]>;
+    ): Promise<
+      [WithdrawalBatchStructOutput] & { batch: WithdrawalBatchStructOutput }
+    >;
 
-    maxTotalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+    isClosed(
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { param0: boolean }>;
 
-    maximumDeposit(overrides?: CallOverrides): Promise<[BigNumber]>;
+    maxTotalSupply(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
-    name(overrides?: CallOverrides): Promise<[string]>;
+    maximumDeposit(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
+
+    name(overrides?: CallOverrides): Promise<[string] & { param0: string }>;
 
     nukeFromOrbit(
       accountAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    outstandingDebt(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     previousState(
       overrides?: CallOverrides
-    ): Promise<[MarketStateStructOutput]>;
+    ): Promise<
+      [MarketStateV2StructOutput] & { param0: MarketStateV2StructOutput }
+    >;
 
-    protocolFeeBips(overrides?: CallOverrides): Promise<[BigNumber]>;
+    queueFullWithdrawal(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     queueWithdrawal(
       amount: PromiseOrValue<BigNumberish>,
@@ -1130,29 +1110,31 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    repayDelinquentDebt(
+    rescueTokens(
+      token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    repayOutstandingDebt(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    reserveRatioBips(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
-    reserveRatioBips(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    scaleFactor(overrides?: CallOverrides): Promise<[BigNumber]>;
+    scaleFactor(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
     scaledBalanceOf(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
-    scaledTotalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+    scaledTotalSupply(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
-    sentinel(overrides?: CallOverrides): Promise<[string]>;
-
-    setAnnualInterestBips(
+    setAnnualInterestAndReserveRatioBips(
       _annualInterestBips: PromiseOrValue<BigNumberish>,
+      _reserveRatioBips: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1161,23 +1143,32 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setReserveRatioBips(
-      _reserveRatioBips: PromiseOrValue<BigNumberish>,
+    setProtocolFeeBips(
+      _protocolFeeBips: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    stunningReversal(
-      accountAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    sphereXEngine(
+      overrides?: CallOverrides
+    ): Promise<[string] & { param0: string }>;
 
-    symbol(overrides?: CallOverrides): Promise<[string]>;
+    sphereXOperator(
+      overrides?: CallOverrides
+    ): Promise<[string] & { param0: string }>;
 
-    totalAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
+    symbol(overrides?: CallOverrides): Promise<[string] & { param0: string }>;
 
-    totalDebts(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalAssets(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalDebts(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
+
+    totalSupply(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
 
     transfer(
       to: PromiseOrValue<string>,
@@ -1192,30 +1183,18 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    updateAccountAuthorizations(
-      accounts: PromiseOrValue<string>[],
-      authorize: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     updateState(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    version(overrides?: CallOverrides): Promise<[string]>;
+    version(overrides?: CallOverrides): Promise<[string] & { param0: string }>;
 
-    withdrawableProtocolFees(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    withdrawalBatchDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+    withdrawableProtocolFees(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { param0: BigNumber }>;
   };
 
   accruedProtocolFees(overrides?: CallOverrides): Promise<BigNumber>;
-
-  allowance(
-    arg0: PromiseOrValue<string>,
-    arg1: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   annualInterestBips(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1225,7 +1204,7 @@ export interface WildcatMarket extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  asset(overrides?: CallOverrides): Promise<string>;
+  archController(overrides?: CallOverrides): Promise<string>;
 
   balanceOf(
     account: PromiseOrValue<string>,
@@ -1239,7 +1218,10 @@ export interface WildcatMarket extends BaseContract {
 
   borrowableAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-  borrower(overrides?: CallOverrides): Promise<string>;
+  changeSphereXEngine(
+    newSphereXEngine: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   closeMarket(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1249,19 +1231,9 @@ export interface WildcatMarket extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  controller(overrides?: CallOverrides): Promise<string>;
-
   coverageLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
 
-  currentState(overrides?: CallOverrides): Promise<MarketStateStructOutput>;
-
-  decimals(overrides?: CallOverrides): Promise<number>;
-
-  delinquencyFeeBips(overrides?: CallOverrides): Promise<BigNumber>;
-
-  delinquencyGracePeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-  delinquentDebt(overrides?: CallOverrides): Promise<BigNumber>;
+  currentState(overrides?: CallOverrides): Promise<MarketStateV2StructOutput>;
 
   deposit(
     amount: PromiseOrValue<BigNumberish>,
@@ -1272,10 +1244,6 @@ export interface WildcatMarket extends BaseContract {
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  effectiveBorrowerAPR(overrides?: CallOverrides): Promise<BigNumber>;
-
-  effectiveLenderAPR(overrides?: CallOverrides): Promise<BigNumber>;
 
   executeWithdrawal(
     accountAddress: PromiseOrValue<string>,
@@ -1289,12 +1257,11 @@ export interface WildcatMarket extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  feeRecipient(overrides?: CallOverrides): Promise<string>;
-
-  getAccountRole(
-    account: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<number>;
+  forceBuyBack(
+    lender: PromiseOrValue<string>,
+    normalizedAmount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   getAccountWithdrawalStatus(
     accountAddress: PromiseOrValue<string>,
@@ -1315,6 +1282,8 @@ export interface WildcatMarket extends BaseContract {
     overrides?: CallOverrides
   ): Promise<WithdrawalBatchStructOutput>;
 
+  isClosed(overrides?: CallOverrides): Promise<boolean>;
+
   maxTotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   maximumDeposit(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1326,11 +1295,11 @@ export interface WildcatMarket extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  outstandingDebt(overrides?: CallOverrides): Promise<BigNumber>;
+  previousState(overrides?: CallOverrides): Promise<MarketStateV2StructOutput>;
 
-  previousState(overrides?: CallOverrides): Promise<MarketStateStructOutput>;
-
-  protocolFeeBips(overrides?: CallOverrides): Promise<BigNumber>;
+  queueFullWithdrawal(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   queueWithdrawal(
     amount: PromiseOrValue<BigNumberish>,
@@ -1348,11 +1317,8 @@ export interface WildcatMarket extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  repayDelinquentDebt(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  repayOutstandingDebt(
+  rescueTokens(
+    token: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1367,10 +1333,9 @@ export interface WildcatMarket extends BaseContract {
 
   scaledTotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-  sentinel(overrides?: CallOverrides): Promise<string>;
-
-  setAnnualInterestBips(
+  setAnnualInterestAndReserveRatioBips(
     _annualInterestBips: PromiseOrValue<BigNumberish>,
+    _reserveRatioBips: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1379,15 +1344,14 @@ export interface WildcatMarket extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setReserveRatioBips(
-    _reserveRatioBips: PromiseOrValue<BigNumberish>,
+  setProtocolFeeBips(
+    _protocolFeeBips: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  stunningReversal(
-    accountAddress: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  sphereXEngine(overrides?: CallOverrides): Promise<string>;
+
+  sphereXOperator(overrides?: CallOverrides): Promise<string>;
 
   symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -1410,12 +1374,6 @@ export interface WildcatMarket extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  updateAccountAuthorizations(
-    accounts: PromiseOrValue<string>[],
-    authorize: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   updateState(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1424,16 +1382,8 @@ export interface WildcatMarket extends BaseContract {
 
   withdrawableProtocolFees(overrides?: CallOverrides): Promise<BigNumber>;
 
-  withdrawalBatchDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
   callStatic: {
     accruedProtocolFees(overrides?: CallOverrides): Promise<BigNumber>;
-
-    allowance(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     annualInterestBips(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1443,7 +1393,7 @@ export interface WildcatMarket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    asset(overrides?: CallOverrides): Promise<string>;
+    archController(overrides?: CallOverrides): Promise<string>;
 
     balanceOf(
       account: PromiseOrValue<string>,
@@ -1457,25 +1407,18 @@ export interface WildcatMarket extends BaseContract {
 
     borrowableAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-    borrower(overrides?: CallOverrides): Promise<string>;
+    changeSphereXEngine(
+      newSphereXEngine: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     closeMarket(overrides?: CallOverrides): Promise<void>;
 
     collectFees(overrides?: CallOverrides): Promise<void>;
 
-    controller(overrides?: CallOverrides): Promise<string>;
-
     coverageLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
 
-    currentState(overrides?: CallOverrides): Promise<MarketStateStructOutput>;
-
-    decimals(overrides?: CallOverrides): Promise<number>;
-
-    delinquencyFeeBips(overrides?: CallOverrides): Promise<BigNumber>;
-
-    delinquencyGracePeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    delinquentDebt(overrides?: CallOverrides): Promise<BigNumber>;
+    currentState(overrides?: CallOverrides): Promise<MarketStateV2StructOutput>;
 
     deposit(
       amount: PromiseOrValue<BigNumberish>,
@@ -1486,10 +1429,6 @@ export interface WildcatMarket extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    effectiveBorrowerAPR(overrides?: CallOverrides): Promise<BigNumber>;
-
-    effectiveLenderAPR(overrides?: CallOverrides): Promise<BigNumber>;
 
     executeWithdrawal(
       accountAddress: PromiseOrValue<string>,
@@ -1503,12 +1442,11 @@ export interface WildcatMarket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    feeRecipient(overrides?: CallOverrides): Promise<string>;
-
-    getAccountRole(
-      account: PromiseOrValue<string>,
+    forceBuyBack(
+      lender: PromiseOrValue<string>,
+      normalizedAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<number>;
+    ): Promise<void>;
 
     getAccountWithdrawalStatus(
       accountAddress: PromiseOrValue<string>,
@@ -1529,6 +1467,8 @@ export interface WildcatMarket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<WithdrawalBatchStructOutput>;
 
+    isClosed(overrides?: CallOverrides): Promise<boolean>;
+
     maxTotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     maximumDeposit(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1540,16 +1480,16 @@ export interface WildcatMarket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    outstandingDebt(overrides?: CallOverrides): Promise<BigNumber>;
+    previousState(
+      overrides?: CallOverrides
+    ): Promise<MarketStateV2StructOutput>;
 
-    previousState(overrides?: CallOverrides): Promise<MarketStateStructOutput>;
-
-    protocolFeeBips(overrides?: CallOverrides): Promise<BigNumber>;
+    queueFullWithdrawal(overrides?: CallOverrides): Promise<number>;
 
     queueWithdrawal(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<number>;
 
     repay(
       amount: PromiseOrValue<BigNumberish>,
@@ -1562,9 +1502,10 @@ export interface WildcatMarket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    repayDelinquentDebt(overrides?: CallOverrides): Promise<void>;
-
-    repayOutstandingDebt(overrides?: CallOverrides): Promise<void>;
+    rescueTokens(
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     reserveRatioBips(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1577,10 +1518,9 @@ export interface WildcatMarket extends BaseContract {
 
     scaledTotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-    sentinel(overrides?: CallOverrides): Promise<string>;
-
-    setAnnualInterestBips(
+    setAnnualInterestAndReserveRatioBips(
       _annualInterestBips: PromiseOrValue<BigNumberish>,
+      _reserveRatioBips: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1589,15 +1529,14 @@ export interface WildcatMarket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setReserveRatioBips(
-      _reserveRatioBips: PromiseOrValue<BigNumberish>,
+    setProtocolFeeBips(
+      _protocolFeeBips: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    stunningReversal(
-      accountAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    sphereXEngine(overrides?: CallOverrides): Promise<string>;
+
+    sphereXOperator(overrides?: CallOverrides): Promise<string>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -1620,22 +1559,21 @@ export interface WildcatMarket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    updateAccountAuthorizations(
-      accounts: PromiseOrValue<string>[],
-      authorize: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     updateState(overrides?: CallOverrides): Promise<void>;
 
     version(overrides?: CallOverrides): Promise<string>;
 
     withdrawableProtocolFees(overrides?: CallOverrides): Promise<BigNumber>;
-
-    withdrawalBatchDuration(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {
+    "AccountSanctioned(address)"(
+      account?: PromiseOrValue<string> | null
+    ): AccountSanctionedEventFilter;
+    AccountSanctioned(
+      account?: PromiseOrValue<string> | null
+    ): AccountSanctionedEventFilter;
+
     "AnnualInterestBipsUpdated(uint256)"(
       annualInterestBipsUpdated?: null
     ): AnnualInterestBipsUpdatedEventFilter;
@@ -1654,17 +1592,26 @@ export interface WildcatMarket extends BaseContract {
       value?: null
     ): ApprovalEventFilter;
 
-    "AuthorizationStatusUpdated(address,uint8)"(
-      account?: PromiseOrValue<string> | null,
-      role?: null
-    ): AuthorizationStatusUpdatedEventFilter;
-    AuthorizationStatusUpdated(
-      account?: PromiseOrValue<string> | null,
-      role?: null
-    ): AuthorizationStatusUpdatedEventFilter;
-
     "Borrow(uint256)"(assetAmount?: null): BorrowEventFilter;
     Borrow(assetAmount?: null): BorrowEventFilter;
+
+    "ChangedSpherexEngineAddress(address,address)"(
+      oldEngineAddress?: null,
+      newEngineAddress?: null
+    ): ChangedSpherexEngineAddressEventFilter;
+    ChangedSpherexEngineAddress(
+      oldEngineAddress?: null,
+      newEngineAddress?: null
+    ): ChangedSpherexEngineAddressEventFilter;
+
+    "ChangedSpherexOperator(address,address)"(
+      oldSphereXAdmin?: null,
+      newSphereXAdmin?: null
+    ): ChangedSpherexOperatorEventFilter;
+    ChangedSpherexOperator(
+      oldSphereXAdmin?: null,
+      newSphereXAdmin?: null
+    ): ChangedSpherexOperatorEventFilter;
 
     "DebtRepaid(address,uint256)"(
       from?: PromiseOrValue<string> | null,
@@ -1689,6 +1636,34 @@ export interface WildcatMarket extends BaseContract {
     "FeesCollected(uint256)"(assets?: null): FeesCollectedEventFilter;
     FeesCollected(assets?: null): FeesCollectedEventFilter;
 
+    "ForceBuyBack(address,uint256,uint256)"(
+      lender?: PromiseOrValue<string> | null,
+      scaledAmount?: null,
+      normalizedAmount?: null
+    ): ForceBuyBackEventFilter;
+    ForceBuyBack(
+      lender?: PromiseOrValue<string> | null,
+      scaledAmount?: null,
+      normalizedAmount?: null
+    ): ForceBuyBackEventFilter;
+
+    "InterestAndFeesAccrued(uint256,uint256,uint256,uint256,uint256,uint256)"(
+      fromTimestamp?: null,
+      toTimestamp?: null,
+      scaleFactor?: null,
+      baseInterestRay?: null,
+      delinquencyFeeRay?: null,
+      protocolFees?: null
+    ): InterestAndFeesAccruedEventFilter;
+    InterestAndFeesAccrued(
+      fromTimestamp?: null,
+      toTimestamp?: null,
+      scaleFactor?: null,
+      baseInterestRay?: null,
+      delinquencyFeeRay?: null,
+      protocolFees?: null
+    ): InterestAndFeesAccruedEventFilter;
+
     "MarketClosed(uint256)"(timestamp?: null): MarketClosedEventFilter;
     MarketClosed(timestamp?: null): MarketClosedEventFilter;
 
@@ -1697,12 +1672,32 @@ export interface WildcatMarket extends BaseContract {
     ): MaxTotalSupplyUpdatedEventFilter;
     MaxTotalSupplyUpdated(assets?: null): MaxTotalSupplyUpdatedEventFilter;
 
+    "ProtocolFeeBipsUpdated(uint256)"(
+      protocolFeeBips?: null
+    ): ProtocolFeeBipsUpdatedEventFilter;
+    ProtocolFeeBipsUpdated(
+      protocolFeeBips?: null
+    ): ProtocolFeeBipsUpdatedEventFilter;
+
     "ReserveRatioBipsUpdated(uint256)"(
       reserveRatioBipsUpdated?: null
     ): ReserveRatioBipsUpdatedEventFilter;
     ReserveRatioBipsUpdated(
       reserveRatioBipsUpdated?: null
     ): ReserveRatioBipsUpdatedEventFilter;
+
+    "SanctionedAccountAssetsQueuedForWithdrawal(address,uint256,uint256,uint256)"(
+      account?: PromiseOrValue<string> | null,
+      expiry?: null,
+      scaledAmount?: null,
+      normalizedAmount?: null
+    ): SanctionedAccountAssetsQueuedForWithdrawalEventFilter;
+    SanctionedAccountAssetsQueuedForWithdrawal(
+      account?: PromiseOrValue<string> | null,
+      expiry?: null,
+      scaledAmount?: null,
+      normalizedAmount?: null
+    ): SanctionedAccountAssetsQueuedForWithdrawalEventFilter;
 
     "SanctionedAccountAssetsSentToEscrow(address,address,uint256)"(
       account?: PromiseOrValue<string> | null,
@@ -1728,19 +1723,6 @@ export interface WildcatMarket extends BaseContract {
       amount?: null
     ): SanctionedAccountWithdrawalSentToEscrowEventFilter;
 
-    "ScaleFactorUpdated(uint256,uint256,uint256,uint256)"(
-      scaleFactor?: null,
-      baseInterestRay?: null,
-      delinquencyFeeRay?: null,
-      protocolFee?: null
-    ): ScaleFactorUpdatedEventFilter;
-    ScaleFactorUpdated(
-      scaleFactor?: null,
-      baseInterestRay?: null,
-      delinquencyFeeRay?: null,
-      protocolFee?: null
-    ): ScaleFactorUpdatedEventFilter;
-
     "StateUpdated(uint256,bool)"(
       scaleFactor?: null,
       isDelinquent?: null
@@ -1760,17 +1742,6 @@ export interface WildcatMarket extends BaseContract {
       to?: PromiseOrValue<string> | null,
       value?: null
     ): TransferEventFilter;
-
-    "Withdrawal(address,uint256,uint256)"(
-      account?: PromiseOrValue<string> | null,
-      assetAmount?: null,
-      scaledAmount?: null
-    ): WithdrawalEventFilter;
-    Withdrawal(
-      account?: PromiseOrValue<string> | null,
-      assetAmount?: null,
-      scaledAmount?: null
-    ): WithdrawalEventFilter;
 
     "WithdrawalBatchClosed(uint256)"(
       expiry?: PromiseOrValue<BigNumberish> | null
@@ -1838,12 +1809,6 @@ export interface WildcatMarket extends BaseContract {
   estimateGas: {
     accruedProtocolFees(overrides?: CallOverrides): Promise<BigNumber>;
 
-    allowance(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     annualInterestBips(overrides?: CallOverrides): Promise<BigNumber>;
 
     approve(
@@ -1852,7 +1817,7 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    asset(overrides?: CallOverrides): Promise<BigNumber>;
+    archController(overrides?: CallOverrides): Promise<BigNumber>;
 
     balanceOf(
       account: PromiseOrValue<string>,
@@ -1866,7 +1831,10 @@ export interface WildcatMarket extends BaseContract {
 
     borrowableAssets(overrides?: CallOverrides): Promise<BigNumber>;
 
-    borrower(overrides?: CallOverrides): Promise<BigNumber>;
+    changeSphereXEngine(
+      newSphereXEngine: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     closeMarket(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1876,19 +1844,9 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    controller(overrides?: CallOverrides): Promise<BigNumber>;
-
     coverageLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentState(overrides?: CallOverrides): Promise<BigNumber>;
-
-    decimals(overrides?: CallOverrides): Promise<BigNumber>;
-
-    delinquencyFeeBips(overrides?: CallOverrides): Promise<BigNumber>;
-
-    delinquencyGracePeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    delinquentDebt(overrides?: CallOverrides): Promise<BigNumber>;
 
     deposit(
       amount: PromiseOrValue<BigNumberish>,
@@ -1899,10 +1857,6 @@ export interface WildcatMarket extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    effectiveBorrowerAPR(overrides?: CallOverrides): Promise<BigNumber>;
-
-    effectiveLenderAPR(overrides?: CallOverrides): Promise<BigNumber>;
 
     executeWithdrawal(
       accountAddress: PromiseOrValue<string>,
@@ -1916,11 +1870,10 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    feeRecipient(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getAccountRole(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
+    forceBuyBack(
+      lender: PromiseOrValue<string>,
+      normalizedAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getAccountWithdrawalStatus(
@@ -1942,6 +1895,8 @@ export interface WildcatMarket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    isClosed(overrides?: CallOverrides): Promise<BigNumber>;
+
     maxTotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     maximumDeposit(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1953,11 +1908,11 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    outstandingDebt(overrides?: CallOverrides): Promise<BigNumber>;
-
     previousState(overrides?: CallOverrides): Promise<BigNumber>;
 
-    protocolFeeBips(overrides?: CallOverrides): Promise<BigNumber>;
+    queueFullWithdrawal(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     queueWithdrawal(
       amount: PromiseOrValue<BigNumberish>,
@@ -1975,11 +1930,8 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    repayDelinquentDebt(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    repayOutstandingDebt(
+    rescueTokens(
+      token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1994,10 +1946,9 @@ export interface WildcatMarket extends BaseContract {
 
     scaledTotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-    sentinel(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setAnnualInterestBips(
+    setAnnualInterestAndReserveRatioBips(
       _annualInterestBips: PromiseOrValue<BigNumberish>,
+      _reserveRatioBips: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2006,15 +1957,14 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setReserveRatioBips(
-      _reserveRatioBips: PromiseOrValue<BigNumberish>,
+    setProtocolFeeBips(
+      _protocolFeeBips: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    stunningReversal(
-      accountAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    sphereXEngine(overrides?: CallOverrides): Promise<BigNumber>;
+
+    sphereXOperator(overrides?: CallOverrides): Promise<BigNumber>;
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2037,12 +1987,6 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    updateAccountAuthorizations(
-      accounts: PromiseOrValue<string>[],
-      authorize: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     updateState(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -2050,18 +1994,10 @@ export interface WildcatMarket extends BaseContract {
     version(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdrawableProtocolFees(overrides?: CallOverrides): Promise<BigNumber>;
-
-    withdrawalBatchDuration(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     accruedProtocolFees(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    allowance(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2075,7 +2011,7 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    archController(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     balanceOf(
       account: PromiseOrValue<string>,
@@ -2089,7 +2025,10 @@ export interface WildcatMarket extends BaseContract {
 
     borrowableAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    borrower(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    changeSphereXEngine(
+      newSphereXEngine: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     closeMarket(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2099,23 +2038,9 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    controller(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     coverageLiquidity(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     currentState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    delinquencyFeeBips(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    delinquencyGracePeriod(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    delinquentDebt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     deposit(
       amount: PromiseOrValue<BigNumberish>,
@@ -2125,14 +2050,6 @@ export interface WildcatMarket extends BaseContract {
     depositUpTo(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    effectiveBorrowerAPR(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    effectiveLenderAPR(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     executeWithdrawal(
@@ -2147,11 +2064,10 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    feeRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getAccountRole(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
+    forceBuyBack(
+      lender: PromiseOrValue<string>,
+      normalizedAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getAccountWithdrawalStatus(
@@ -2175,6 +2091,8 @@ export interface WildcatMarket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    isClosed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     maxTotalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     maximumDeposit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2186,11 +2104,11 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    outstandingDebt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     previousState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    protocolFeeBips(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    queueFullWithdrawal(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     queueWithdrawal(
       amount: PromiseOrValue<BigNumberish>,
@@ -2208,11 +2126,8 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    repayDelinquentDebt(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    repayOutstandingDebt(
+    rescueTokens(
+      token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2227,10 +2142,9 @@ export interface WildcatMarket extends BaseContract {
 
     scaledTotalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    sentinel(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setAnnualInterestBips(
+    setAnnualInterestAndReserveRatioBips(
       _annualInterestBips: PromiseOrValue<BigNumberish>,
+      _reserveRatioBips: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2239,15 +2153,14 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setReserveRatioBips(
-      _reserveRatioBips: PromiseOrValue<BigNumberish>,
+    setProtocolFeeBips(
+      _protocolFeeBips: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    stunningReversal(
-      accountAddress: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    sphereXEngine(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    sphereXOperator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2270,12 +2183,6 @@ export interface WildcatMarket extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateAccountAuthorizations(
-      accounts: PromiseOrValue<string>[],
-      authorize: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     updateState(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -2283,10 +2190,6 @@ export interface WildcatMarket extends BaseContract {
     version(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     withdrawableProtocolFees(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    withdrawalBatchDuration(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

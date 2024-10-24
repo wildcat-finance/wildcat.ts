@@ -27,7 +27,7 @@ export type AccountDescriptionStruct = {
   threshold: PromiseOrValue<BigNumberish>;
 };
 
-export type AccountDescriptionStructOutput = [number, string[], BigNumber] & {
+export type AccountDescriptionStructOutput = {
   kind: number;
   owners: string[];
   threshold: BigNumber;

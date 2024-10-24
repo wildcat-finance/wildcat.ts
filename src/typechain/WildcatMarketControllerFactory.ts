@@ -45,23 +45,7 @@ export type MarketControllerParametersStruct = {
   maximumAnnualInterestBips: PromiseOrValue<BigNumberish>;
 };
 
-export type MarketControllerParametersStructOutput = [
-  string,
-  string,
-  string,
-  string,
-  BigNumber,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number
-] & {
+export type MarketControllerParametersStructOutput = {
   archController: string;
   borrower: string;
   sentinel: string;
@@ -92,18 +76,7 @@ export type MarketParameterConstraintsStruct = {
   maximumAnnualInterestBips: PromiseOrValue<BigNumberish>;
 };
 
-export type MarketParameterConstraintsStructOutput = [
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number
-] & {
+export type MarketParameterConstraintsStructOutput = {
   minimumDelinquencyGracePeriod: number;
   maximumDelinquencyGracePeriod: number;
   minimumReserveRatioBips: number;

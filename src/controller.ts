@@ -25,7 +25,7 @@ import { MarketDeployedEvent } from "./typechain/WildcatMarketController";
 
 export class MarketController extends ContractWrapper<WildcatMarketController> {
   readonly contractFactory = WildcatMarketController__factory;
-
+  protected _contractAddress = this.address;
   public authorizedLenders: string[] = [];
 
   constructor(

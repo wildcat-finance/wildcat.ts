@@ -144,6 +144,8 @@ export class Token extends ContractWrapper<IERC20> {
     super(provider);
   }
 
+  protected _contractAddress = this.address;
+
   async faucet(): Promise<ContractTransaction> {
     if (!this.isMock) {
       throw Error("Can not use faucet on non-mock token");

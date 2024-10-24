@@ -1,13 +1,42 @@
 # import './fragments.graphql'
 
-# -------------------------------------------------------------------------- #
+fragment AccessControlHooksProviderData on AccessControlHooksProvider {
+  id
+  providerAddress
+  timeToLive
+  isPullProvider
+  pullProviderIndex
+  isApproved
+}
+
+fragment LenderHooksAccessData on LenderHooksAccess {
+  id
+  lender
+  isBlockedFromDeposits
+  lastProvider {
+    ...AccessControlHooksProviderData
+  }
+  canRefresh
+  lastApprovalTimestamp
+}
+
+# ========================================================================== #
 #                                Lender Views                                #
-# -------------------------------------------------------------------------- #
+# ========================================================================== #
 
 fragment AccountDataForLenderView on LenderAccount {
   ...LenderProperties
+
   controllerAuthorization {
     authorized
+  }
+
+  hooksAccess {
+    ...LenderHooksAccessData
+  }
+
+  knownLenderStatus {
+    id
   }
 
   deposits(
@@ -32,7 +61,6 @@ fragment LenderProperties on LenderAccount {
   numPendingWithdrawalBatches
 }
 
-
 fragment AllAuthorizedLendersViewMarketInfo on Market {
   id
   name
@@ -46,14 +74,15 @@ fragment AllAuthorizedLendersView on LenderAuthorization {
   }
 }
 
-# ---------------------------------------------------------------------------- #
+# ============================================================================ #
 #                                Borrower Views                                #
-# ---------------------------------------------------------------------------- #
+# ============================================================================ #
 
 fragment MarketData on Market {
   id
+  version
 
-  # --------------------------------- Config --------------------------------- #
+  # ================================= Config ================================= #
   isRegistered
   isClosed
   controller {
@@ -79,7 +108,15 @@ fragment MarketData on Market {
     isMock
   }
 
-  # ---------------------------------- State --------------------------------- #
+  hooksConfig {
+    ...HooksConfigDataForMarket
+  }
+  hooks {
+    ...AccessControlHooksDataForMarket
+  }
+  minimumDeposit
+
+  # ================================== State ================================= #
   maxTotalSupply
   pendingProtocolFees
   normalizedUnclaimedWithdrawals
@@ -97,7 +134,7 @@ fragment MarketData on Market {
   temporaryReserveRatioExpiry
   temporaryReserveRatioActive
 
-  # -------------------------------- Metadata -------------------------------- #
+  # ================================ Metadata ================================ #
   totalBorrowed
   totalRepaid
   totalBaseInterestAccrued
@@ -116,9 +153,9 @@ fragment AprConstraints on ParameterConstraints {
   maximumAnnualInterestBips
 }
 
-# ---------------------------------------------------------------------------- #
+# ============================================================================ #
 #                                    Events                                    #
-# ---------------------------------------------------------------------------- #
+# ============================================================================ #
 
 fragment DelinquencyStatusChangedData on DelinquencyStatusChanged {
   id
@@ -338,4 +375,49 @@ fragment MarketClosedData on MarketClosed {
   blockNumber
   blockTimestamp
   transactionHash
+}
+
+# ========================================================================== #
+#                                 V2 Markets                                 #
+# ========================================================================== #
+
+fragment HooksConfigDataForMarket on HooksConfig {
+  id
+  # Exclude hooks, market
+  useOnDeposit
+  useOnQueueWithdrawal
+  useOnExecuteWithdrawal
+  useOnTransfer
+  useOnBorrow
+  useOnRepay
+  useOnCloseMarket
+  useOnNukeFromOrbit
+  useOnSetMaxTotalSupply
+  useOnSetAnnualInterestAndReserveRatioBips
+  useOnSetProtocolFeeBips
+  depositRequiresAccess
+  queueWithdrawalRequiresAccess
+  transferRequiresAccess
+}
+
+fragment AccessControlHooksDataForMarket on AccessControlHooks {
+  id
+  borrower
+  hooksTemplate {
+    ...HooksTemplateDataForMarket
+  }
+  providers {
+    ...AccessControlHooksProviderData
+  }
+  eventIndex
+}
+
+fragment HooksTemplateDataForMarket on HooksTemplate {
+  id
+  name
+  feeRecipient
+  protocolFeeBips
+  originationFeeAsset
+  originationFeeAmount
+  disabled
 }

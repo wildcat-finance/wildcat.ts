@@ -2,6 +2,9 @@ import { Provider } from "@ethersproject/abstract-provider";
 import { Signer } from "@ethersproject/abstract-signer";
 import { BaseContract } from "ethers";
 import { Token, TokenAmount } from "./token";
+import { SubgraphMarketVersion } from "./gql/graphql";
+import { HooksTemplate } from "./access";
+export { SubgraphMarketVersion as MarketVersion };
 
 export type SignerOrProvider = Signer | Provider;
 
@@ -16,7 +19,7 @@ export abstract class ContractWrapper<Contract extends BaseContract> {
     connect(address: string, signerOrProvider: Signer | Provider): Contract;
   };
 
-  abstract get address(): string;
+  protected abstract _contractAddress: string;
 
   get signer(): Signer {
     if (this._provider instanceof Signer) {
@@ -32,7 +35,7 @@ export abstract class ContractWrapper<Contract extends BaseContract> {
   set provider(provider: SignerOrProvider) {
     this._provider = provider;
     if (this._contract) {
-      this._contract = this.contractFactory.connect(this.address, this.provider);
+      this._contract = this.contractFactory.connect(this._contractAddress, this.provider);
     }
     for (const property of Object.values(this)) {
       if (property instanceof ContractWrapper) {
@@ -43,7 +46,7 @@ export abstract class ContractWrapper<Contract extends BaseContract> {
 
   get contract(): Contract {
     if (!this._contract) {
-      this._contract = this.contractFactory.connect(this.address, this.provider);
+      this._contract = this.contractFactory.connect(this._contractAddress, this.provider);
     }
     return this._contract;
   }
@@ -65,6 +68,24 @@ export type FeeConfiguration = {
   originationFeeAmount: TokenAmount | undefined;
 };
 
+export type FeeConfigurationV2 = {
+  feeRecipient: string;
+  protocolFeeBips: number;
+} & (
+  | {
+      originationFeeToken: Token;
+      originationFeeAmount: TokenAmount;
+      borrowerOriginationFeeBalance?: TokenAmount;
+      borrowerOriginationFeeApproval?: TokenAmount;
+    }
+  | {
+      originationFeeToken?: undefined;
+      originationFeeAmount?: undefined;
+      borrowerOriginationFeeBalance?: undefined;
+      borrowerOriginationFeeApproval?: undefined;
+    }
+);
+
 export type MarketParameterConstraints = {
   minimumDelinquencyGracePeriod: number;
   maximumDelinquencyGracePeriod: number;
@@ -77,3 +98,123 @@ export type MarketParameterConstraints = {
   minimumAnnualInterestBips: number;
   maximumAnnualInterestBips: number;
 };
+
+export type HooksFlags = {
+  useOnDeposit: boolean;
+  useOnQueueWithdrawal: boolean;
+  useOnExecuteWithdrawal: boolean;
+  useOnTransfer: boolean;
+  useOnBorrow: boolean;
+  useOnRepay: boolean;
+  useOnCloseMarket: boolean;
+  useOnNukeFromOrbit: boolean;
+  useOnSetMaxTotalSupply: boolean;
+  useOnSetAnnualInterestAndReserveRatioBips: boolean;
+  useOnSetProtocolFeeBips: boolean;
+};
+
+type AccessControlHooksConfig = {
+  hooksAddress: string;
+  kind: HooksKind.AccessControl;
+  flags: HooksFlags;
+  transferRequiresAccess: boolean;
+  depositRequiresAccess: boolean;
+  minimumDeposit?: TokenAmount;
+  transfersDisabled: boolean;
+  allowForceBuyBacks: boolean;
+  template?: HooksTemplate;
+};
+
+type FixedTermHooksConfig = {
+  hooksAddress: string;
+  kind: HooksKind.FixedTerm;
+  flags: HooksFlags;
+  transferRequiresAccess: boolean;
+  depositRequiresAccess: boolean;
+  minimumDeposit?: TokenAmount;
+  transfersDisabled: boolean;
+  queueWithdrawalRequiresAccess: boolean;
+  fixedTermEndTime: number;
+  allowClosureBeforeTerm: boolean;
+  allowTermReduction: boolean;
+  template?: HooksTemplate;
+};
+
+export type HooksConfig = AccessControlHooksConfig | FixedTermHooksConfig;
+
+/* export type HooksConfig = {
+  hooksAddress: string;
+  hooksKind: HooksKind;
+  flags: HooksFlags;
+  transferRequiresAccess?: boolean;
+  depositRequiresAccess?: boolean;
+  minimumDeposit?: TokenAmount;
+  transfersDisabled?: boolean;
+  allowForceBuyBacks?: boolean;
+  queueWithdrawalRequiresAccess?: boolean;
+  fixedTermEndTime?: number;
+  allowClosureBeforeTerm?: boolean;
+  allowTermReduction?: boolean;
+  template?: HooksTemplate;
+}; */
+
+export enum HooksKind {
+  Unknown = "Unknown",
+  AccessControl = "AccessControl",
+  FixedTerm = "FixedTerm"
+}
+
+export type RoleProvider = {
+  providerAddress: string;
+  timeToLive: number;
+  isPullProvider: boolean;
+  pullProviderIndex: number;
+  isApproved: boolean;
+};
+
+/** Level of access required for accounts to receive a transfer */
+export enum TransferAccess {
+  /**
+   * No transfers allowed
+   * `transfersDisabled` = true
+   */
+  Disabled,
+  /**
+   * Transfer recipient must have a credential or be a known lender
+   * `transfersDisabled` = false, `useOnTransfer` = true (in deployment hooks config)
+   */
+  RequiresCredential,
+  /**
+   * Anyone can receive a transfer
+   * `transfersDisabled` = false, `useOnTransfer` = false (in deployment hooks config)
+   */
+  Open
+}
+
+/** Level of access required for a lender to make a deposit */
+export enum DepositAccess {
+  /**
+   * Depositors must have a credential
+   * `useOnDeposit` = true (in deployment hooks config)
+   */
+  RequiresCredential,
+  /**
+   * Anyone can make a deposit
+   * `useOnDeposit` = false (in deployment hooks config)
+   */
+  Open
+}
+
+/** Level of access required for a lender to make a withdrawal request */
+export enum WithdrawalAccess {
+  /**
+   * Withdrawing account must have a credential or be a known lender
+   * `useOnQueueWithdrawal` = true (in deployment hooks config)
+   */
+  RequiresCredential,
+  /**
+   * Anyone can make a withdrawal request
+   * `useOnQueueWithdrawal` = false (in deployment hooks config)
+   */
+  Open
+}
