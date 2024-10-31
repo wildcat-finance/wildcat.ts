@@ -5,10 +5,16 @@ import {
   MarketLenderStatusStructOutput,
   MarketDataWithLenderStatusStructOutput,
   WildcatMarketV2__factory,
-  LenderAccountDataStructOutput
+  LenderAccountDataStructOutput,
+  MarketDataWithLenderStatusV2StructOutput
 } from "../typechain";
 import { assert, bipMul, DepositRecord, parseMarketRecord, rayMul } from "../utils";
-import { SupportedChainId, getControllerContract, getLensContract } from "../constants";
+import {
+  SupportedChainId,
+  getControllerContract,
+  getLensContract,
+  getLensV2Contract
+} from "../constants";
 import {
   HooksKind,
   MarketVersion,
@@ -46,6 +52,8 @@ export enum LenderRole {
   WithdrawOnly = 2,
   DepositAndWithdraw = 3
 }
+
+const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
 
 export type MarketAccountArgs = {
   account: string;
@@ -633,9 +641,35 @@ export class MarketAccount {
     this.updateWith(acccountMarketInfo);
   }
 
-  updateWith(info: MarketLenderStatusStructOutput): void {
-    this.isAuthorizedOnController = info.isAuthorizedOnController;
-    this.role = info.role;
+  updateWith(info: MarketLenderStatusStructOutput | LenderAccountDataStructOutput): void {
+    if ("isAuthorizedOnController" in info) {
+      assert(
+        this.market.version === MarketVersion.V1,
+        "V2 market can not be updated with V1 lens data"
+      );
+      this.isAuthorizedOnController = info.isAuthorizedOnController;
+      this.role = info.role;
+    } else {
+      assert(
+        this.market.version === MarketVersion.V2,
+        "V1 market can not be updated with V2 lens data"
+      );
+      this.credential = {
+        canRefresh: info.canRefresh,
+        isBlockedFromDeposits: info.isBlockedFromDeposits,
+        lastApprovalTimestamp: info.lastApprovalTimestamp,
+        lastProvider: {
+          isApproved: true,
+          providerAddress: info.lastProvider.providerAddress,
+          isPullProvider: info.lastProvider.pullProviderIndex !== NullProviderIndex,
+          isPushProvider: info.lastProvider.pushProviderIndex !== NullProviderIndex,
+          pullProviderIndex: info.lastProvider.pullProviderIndex,
+          pushProviderIndex: info.lastProvider.pushProviderIndex,
+          timeToLive: info.lastProvider.timeToLive
+        }
+      };
+      this.isKnownLender = info.isKnownLender;
+    }
     this.scaledMarketBalance = info.scaledBalance;
     this.marketBalance = this.market.marketToken.getAmount(info.normalizedBalance);
     this.underlyingBalance = this.market.underlyingToken.getAmount(info.underlyingBalance);
@@ -737,10 +771,11 @@ export class MarketAccount {
         lastApprovalTimestamp: data.lastApprovalTimestamp,
         lastProvider: {
           isApproved: true,
-          isPullProvider:
-            data.lastProvider.pullProviderIndex !== BigNumber.from(2).pow(24).sub(1).toNumber(),
           providerAddress: data.lastProvider.providerAddress,
+          isPullProvider: data.lastProvider.pullProviderIndex !== NullProviderIndex,
           pullProviderIndex: data.lastProvider.pullProviderIndex,
+          isPushProvider: data.lastProvider.pushProviderIndex !== NullProviderIndex,
+          pushProviderIndex: data.lastProvider.pushProviderIndex,
           timeToLive: data.lastProvider.timeToLive
         }
       }
@@ -751,13 +786,22 @@ export class MarketAccount {
     chainId: SupportedChainId,
     provider: SignerOrProvider,
     account: string,
-    info: MarketDataWithLenderStatusStructOutput
+    info: MarketDataWithLenderStatusStructOutput | MarketDataWithLenderStatusV2StructOutput
   ): MarketAccount {
-    return MarketAccount.fromMarketLenderStatus(
-      account,
-      info.lenderStatus,
-      Market.fromMarketData(chainId, info.market, provider)
-    );
+    if ("controller" in info.market) {
+      info = info as MarketDataWithLenderStatusStructOutput;
+      return MarketAccount.fromMarketLenderStatus(
+        account,
+        info.lenderStatus,
+        Market.fromMarketData(chainId, info.market, provider)
+      );
+    } else {
+      info = info as MarketDataWithLenderStatusV2StructOutput;
+      return MarketAccount.fromLenderAccountData(
+        Market.fromMarketDataV2(chainId, provider, info.market),
+        info.lenderStatus
+      );
+    }
   }
 
   static fromMarketDataOnly(
@@ -792,6 +836,32 @@ export class MarketAccount {
       return lens
         .getMarketLenderStatus(account, market.address)
         .then((info) => MarketAccount.fromMarketLenderStatus(account, info, market));
+    } else {
+      return lens
+        .getMarketDataWithLenderStatus(account, market)
+        .then((info) =>
+          MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
+        );
+    }
+  }
+
+  /**
+   * Get a `MarketAccount` for a given account and existing `Market` instance.
+   * If `market` is a string, the market data will be fetched in the same call as the account data.
+   */
+  static async getMarketAccountV2(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider,
+    account: string,
+    market: Market | string
+  ): Promise<MarketAccount> {
+    const lens = getLensV2Contract(chainId, provider);
+    if (market instanceof Market) {
+      return lens
+        .getMarketDataWithLenderStatus(account, market.address)
+        .then((info) =>
+          MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
+        );
     } else {
       return lens
         .getMarketDataWithLenderStatus(account, market)
@@ -907,12 +977,27 @@ const toCredential = ({
   lender,
   lastProvider
 }: SubgraphLenderHooksAccessDataFragment): HooksCredential => {
-  const { isApproved, isPullProvider, providerAddress, pullProviderIndex, timeToLive } =
-    lastProvider!;
+  const {
+    isApproved,
+    providerAddress,
+    isPullProvider,
+    pullProviderIndex,
+    isPushProvider,
+    pushProviderIndex,
+    timeToLive
+  } = lastProvider!;
   return {
     canRefresh,
     isBlockedFromDeposits,
     lastApprovalTimestamp,
-    lastProvider: { isApproved, isPullProvider, providerAddress, pullProviderIndex, timeToLive }
+    lastProvider: {
+      isApproved,
+      providerAddress,
+      isPullProvider,
+      pullProviderIndex,
+      isPushProvider,
+      pushProviderIndex,
+      timeToLive
+    }
   };
 };
