@@ -1,11 +1,22 @@
 # import './fragments.graphql'
 
-fragment AccessControlHooksProviderData on AccessControlHooksProvider {
+fragment TokenData on Token {
+  id
+  address
+  name
+  symbol
+  decimals
+  isMock
+}
+
+fragment RoleProviderData on RoleProvider {
   id
   providerAddress
   timeToLive
   isPullProvider
   pullProviderIndex
+  isPushProvider
+  pushProviderIndex
   isApproved
 }
 
@@ -14,7 +25,7 @@ fragment LenderHooksAccessData on LenderHooksAccess {
   lender
   isBlockedFromDeposits
   lastProvider {
-    ...AccessControlHooksProviderData
+    ...RoleProviderData
   }
   canRefresh
   lastApprovalTimestamp
@@ -100,21 +111,15 @@ fragment MarketData on Market {
   withdrawalBatchDuration
 
   _asset: asset {
-    id
-    address
-    name
-    symbol
-    decimals
-    isMock
+    ...TokenData
   }
 
   hooksConfig {
     ...HooksConfigDataForMarket
   }
   hooks {
-    ...AccessControlHooksDataForMarket
+    ...HooksInstanceDataForMarket
   }
-  minimumDeposit
 
   # ================================== State ================================= #
   maxTotalSupply
@@ -395,19 +400,29 @@ fragment HooksConfigDataForMarket on HooksConfig {
   useOnSetMaxTotalSupply
   useOnSetAnnualInterestAndReserveRatioBips
   useOnSetProtocolFeeBips
+
+  # Common config values
   depositRequiresAccess
-  queueWithdrawalRequiresAccess
   transferRequiresAccess
+  transfersDisabled
+  minimumDeposit
+  allowForceBuyBacks
+
+  # FixedTermHooks config values
+  queueWithdrawalRequiresAccess
+  fixedTermEndTime
+  allowClosureBeforeTerm
+  allowTermReduction
 }
 
-fragment AccessControlHooksDataForMarket on AccessControlHooks {
+fragment HooksInstanceDataForMarket on HooksInstance {
   id
   borrower
   hooksTemplate {
     ...HooksTemplateDataForMarket
   }
   providers {
-    ...AccessControlHooksProviderData
+    ...RoleProviderData
   }
   eventIndex
 }
@@ -417,7 +432,9 @@ fragment HooksTemplateDataForMarket on HooksTemplate {
   name
   feeRecipient
   protocolFeeBips
-  originationFeeAsset
+  originationFeeAsset {
+    ...TokenData
+  }
   originationFeeAmount
   disabled
 }

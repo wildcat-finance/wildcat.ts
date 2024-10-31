@@ -27,13 +27,9 @@ export async function getMarketsForBorrower(
     fetchPolicy
   });
 
-  const controller = result.data.controllers[0];
-  if (controller) {
-    return (
-      controller.markets.map((market) =>
-        Market.fromSubgraphMarketData(chainId, signerOrProvider, market)
-      ) ?? []
-    );
-  }
-  return [];
+  return (
+    result.data.markets.map((market) =>
+      Market.fromSubgraphMarketData(chainId, signerOrProvider, market)
+    ) ?? []
+  );
 }

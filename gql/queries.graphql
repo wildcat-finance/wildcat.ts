@@ -63,6 +63,7 @@ query getLenderAccountWithMarket(
 
 query getAllMarketsForLenderView(
   $lender: Bytes
+  $marketFilter: Market_filter = { id_not: null }
   # deposits
   $numDeposits: Int = 200
   $skipDeposits: Int = 0
@@ -79,7 +80,7 @@ query getAllMarketsForLenderView(
   $orderRepayments: DebtRepaid_orderBy = blockTimestamp
   $directionRepayments: OrderDirection = desc
 ) {
-  markets {
+  markets(where: $marketFilter) {
     ...MarketData
     borrowRecords(
       first: $numBorrows
@@ -153,7 +154,7 @@ query getAccountsWhereLenderAuthorizedOrActive(
   lenderAccounts(
     where: {
       and: [
-        $accountFilter,
+        $accountFilter
         { address: $lender }
         {
           or: [
@@ -262,6 +263,7 @@ query getLenderAuthorizationByMarket($market: ID!, $lender: Bytes!) {
 query getMarketsAndLogsWhereLenderAuthorizedOrActive(
   $lender: Bytes!
   $minimumBalance: BigInt = 1
+  $accountFilter: LenderAccount_filter = { address_not: null }
   # deposits
   $numDeposits: Int = 200
   $skipDeposits: Int = 0
@@ -273,11 +275,16 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
 ) {
   lenderAccounts(
     where: {
-      address: $lender
-      or: [
-        { role_in: [DepositAndWithdraw, WithdrawOnly] }
-        { scaledBalance_gt: $minimumBalance }
-        { controllerAuthorization_: { authorized: true } }
+      and: [
+        {
+          address: $lender
+          or: [
+            { role_in: [DepositAndWithdraw, WithdrawOnly] }
+            { scaledBalance_gt: $minimumBalance }
+            { controllerAuthorization_: { authorized: true } }
+          ]
+        }
+        $accountFilter
       ]
     }
   ) {
@@ -404,6 +411,7 @@ query getMarketEvents(
 
 query getMarketsForBorrower(
   $borrower: Bytes!
+  $marketFilter: Market_filter = { id_not: null }
   # markets - default order is newest first
   $numMarkets: Int = 1000
   $skipMarkets: Int = 0
@@ -430,15 +438,14 @@ query getMarketsForBorrower(
   $orderRepayments: DebtRepaid_orderBy = blockTimestamp
   $directionRepayments: OrderDirection = desc
 ) {
-  controllers(where: { borrower: $borrower }) {
-    markets(
-      orderBy: $orderMarkets
-      orderDirection: $directionMarkets
-      first: $numMarkets
-      skip: $skipMarkets
-    ) {
-      ...MarketDataWithEvents
-    }
+  markets(
+    where: { and: [{ borrower: $borrower }, $marketFilter] }
+    orderBy: $orderMarkets
+    orderDirection: $directionMarkets
+    first: $numMarkets
+    skip: $skipMarkets
+  ) {
+    ...MarketDataWithEvents
   }
 }
 
