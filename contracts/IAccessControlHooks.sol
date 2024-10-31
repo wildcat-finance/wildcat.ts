@@ -21,12 +21,14 @@ struct HookedMarket {
   bool allowForceBuyBacks;
 }
 
-interface IAccessControlHooks {
+interface IOpenTermHooks {
   error AnnualInterestBipsOutOfBounds();
 
   error CallerNotBorrower();
 
   error CallerNotFactory();
+
+  error CreateRoleProviderFailed();
 
   error DelinquencyFeeBipsOutOfBounds();
 
@@ -72,20 +74,30 @@ interface IAccessControlHooks {
 
   event AccountUnblockedFromDeposits(address indexed accountAddress);
 
+  event DisabledForceBuyBacks(address market);
+
   event MinimumDepositUpdated(address market, uint128 newMinimumDeposit);
+
+  event NameUpdated(string name);
 
   event RoleProviderAdded(
     address indexed providerAddress,
     uint32 timeToLive,
-    uint24 pullProviderIndex
+    uint24 pullProviderIndex,
+    uint24 pushProviderIndex
   );
 
-  event RoleProviderRemoved(address indexed providerAddress, uint24 pullProviderIndex);
+  event RoleProviderRemoved(
+    address indexed providerAddress,
+    uint24 pullProviderIndex,
+    uint24 pushProviderIndex
+  );
 
   event RoleProviderUpdated(
     address indexed providerAddress,
     uint32 timeToLive,
-    uint24 pullProviderIndex
+    uint24 pullProviderIndex,
+    uint24 pushProviderIndex
   );
 
   event TemporaryExcessReserveRatioActivated(
@@ -110,7 +122,19 @@ interface IAccessControlHooks {
 
   function blockFromDeposits(address account) external;
 
+  function borrower() external view returns (address);
+
   function config() external view returns (HooksDeploymentConfig param0);
+
+  function createRoleProvider(
+    address providerFactory,
+    uint32 timeToLive,
+    bytes calldata data
+  ) external;
+
+  function disableForceBuyBacks(address market) external;
+
+  function factory() external view returns (address);
 
   function getHookedMarket(
     address marketAddress
@@ -135,6 +159,8 @@ interface IAccessControlHooks {
 
   function getPullProviders() external view returns (RoleProvider[] memory param0);
 
+  function getPushProviders() external view returns (RoleProvider[] memory param0);
+
   function getRoleProvider(address providerAddress) external view returns (RoleProvider param0);
 
   function grantRole(address account, uint32 roleGrantedTimestamp) external;
@@ -143,6 +169,10 @@ interface IAccessControlHooks {
     address[] calldata accounts,
     uint32[] calldata roleGrantedTimestamps
   ) external;
+
+  function isKnownLenderOnMarket(address key0, address key1) external view returns (bool);
+
+  function name() external view returns (string memory);
 
   function onBorrow(uint256 param0, MarketStateV2 calldata param1, bytes calldata param2) external;
 
@@ -170,10 +200,10 @@ interface IAccessControlHooks {
   ) external;
 
   function onForceBuyBack(
-    address lender,
-    uint256 scaledAmount,
-    MarketStateV2 calldata intermediateState,
-    bytes calldata extraData
+    address param0,
+    uint256 param1,
+    MarketStateV2 calldata param2,
+    bytes calldata param3
   ) external;
 
   function onNukeFromOrbit(
@@ -229,6 +259,15 @@ interface IAccessControlHooks {
   function revokeRole(address account) external;
 
   function setMinimumDeposit(address market, uint128 newMinimumDeposit) external;
+
+  function setName(string calldata _name) external;
+
+  function temporaryExcessReserveRatio(
+    address key0
+  )
+    external
+    view
+    returns (uint16 originalAnnualInterestBips, uint16 originalReserveRatioBips, uint32 expiry);
 
   function unblockFromDeposits(address account) external;
 

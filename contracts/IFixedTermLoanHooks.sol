@@ -22,9 +22,10 @@ struct FixedTermHookedMarket {
   bool transfersDisabled;
   bool allowClosureBeforeTerm;
   bool allowTermReduction;
+  bool allowForceBuyBacks;
 }
 
-interface IFixedTermLoanHooks {
+interface IFixedTermHooks {
   error AnnualInterestBipsOutOfBounds();
 
   error CallerNotBorrower();
@@ -33,6 +34,8 @@ interface IFixedTermLoanHooks {
 
   error ClosureDisabledBeforeTerm();
 
+  error CreateRoleProviderFailed();
+
   error DelinquencyFeeBipsOutOfBounds();
 
   error DelinquencyGracePeriodOutOfBounds();
@@ -40,6 +43,8 @@ interface IFixedTermLoanHooks {
   error DepositBelowMinimum();
 
   error FixedTermNotProvided();
+
+  error ForceBuyBackDisabledBeforeTerm();
 
   error ForceBuyBacksDisabled();
 
@@ -89,22 +94,32 @@ interface IFixedTermLoanHooks {
 
   event AccountUnblockedFromDeposits(address indexed accountAddress);
 
+  event DisabledForceBuyBacks(address market);
+
   event FixedTermUpdated(address market, uint32 fixedTermEndTime);
 
   event MinimumDepositUpdated(address market, uint128 newMinimumDeposit);
 
+  event NameUpdated(string name);
+
   event RoleProviderAdded(
     address indexed providerAddress,
     uint32 timeToLive,
-    uint24 pullProviderIndex
+    uint24 pullProviderIndex,
+    uint24 pushProviderIndex
   );
 
-  event RoleProviderRemoved(address indexed providerAddress, uint24 pullProviderIndex);
+  event RoleProviderRemoved(
+    address indexed providerAddress,
+    uint24 pullProviderIndex,
+    uint24 pushProviderIndex
+  );
 
   event RoleProviderUpdated(
     address indexed providerAddress,
     uint32 timeToLive,
-    uint24 pullProviderIndex
+    uint24 pullProviderIndex,
+    uint24 pushProviderIndex
   );
 
   event TemporaryExcessReserveRatioActivated(
@@ -129,7 +144,19 @@ interface IFixedTermLoanHooks {
 
   function blockFromDeposits(address account) external;
 
+  function borrower() external view returns (address);
+
   function config() external view returns (HooksDeploymentConfig param0);
+
+  function createRoleProvider(
+    address providerFactory,
+    uint32 timeToLive,
+    bytes calldata data
+  ) external;
+
+  function disableForceBuyBacks(address market) external;
+
+  function factory() external view returns (address);
 
   function getHookedMarket(
     address marketAddress
@@ -154,6 +181,8 @@ interface IFixedTermLoanHooks {
 
   function getPullProviders() external view returns (RoleProvider[] memory param0);
 
+  function getPushProviders() external view returns (RoleProvider[] memory param0);
+
   function getRoleProvider(address providerAddress) external view returns (RoleProvider param0);
 
   function grantRole(address account, uint32 roleGrantedTimestamp) external;
@@ -162,6 +191,12 @@ interface IFixedTermLoanHooks {
     address[] calldata accounts,
     uint32[] calldata roleGrantedTimestamps
   ) external;
+
+  function isKnownLenderOnMarket(address key0, address key1) external view returns (bool);
+
+  function MaximumLoanTerm() external view returns (uint32);
+
+  function name() external view returns (string memory);
 
   function onBorrow(uint256 param0, MarketStateV2 calldata param1, bytes calldata param2) external;
 
@@ -189,10 +224,10 @@ interface IFixedTermLoanHooks {
   ) external;
 
   function onForceBuyBack(
-    address lender,
-    uint256 scaledAmount,
-    MarketStateV2 calldata intermediateState,
-    bytes calldata extraData
+    address param0,
+    uint256 param1,
+    MarketStateV2 calldata param2,
+    bytes calldata param3
   ) external;
 
   function onNukeFromOrbit(
@@ -250,6 +285,15 @@ interface IFixedTermLoanHooks {
   function setFixedTermEndTime(address market, uint32 newFixedTermEndTime) external;
 
   function setMinimumDeposit(address market, uint128 newMinimumDeposit) external;
+
+  function setName(string calldata _name) external;
+
+  function temporaryExcessReserveRatio(
+    address key0
+  )
+    external
+    view
+    returns (uint16 originalAnnualInterestBips, uint16 originalReserveRatioBips, uint32 expiry);
 
   function unblockFromDeposits(address account) external;
 
