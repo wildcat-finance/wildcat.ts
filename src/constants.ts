@@ -57,9 +57,9 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatSanctionsSentinel: "0x437e0551892C2C9b06d3fFd248fe60572e08CD1A"
   },
   [SupportedChainId.Sepolia]: {
-    HooksFactory: "0x0000000000000000000000000000000000000000",
+    HooksFactory: "0xE3e4B7C9E0Ab4ccbC70e0583Dca7B4Db9B4CFD88",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
-    MarketLensV2: "0x0000000000000000000000000000000000000000",
+    MarketLensV2: "0xa47237531fae13c82a4361D68aa1e53FC939d70f",
     MockArchControllerOwner: "0xa476920af80B587f696734430227869795E2Ea78",
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
@@ -120,7 +120,7 @@ export const getHooksFactoryContract = (
   return MarketLensV2__factory.connect(getDeploymentAddress(chainId, "HooksFactory"), provider);
 };
 
-export const getMarketLensV2Contract = (
+export const getLensV2Contract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
 ): MarketLensV2 => {
@@ -149,7 +149,7 @@ export const getMockArchControllerOwnerContract = (
 
 export const SubgraphUrls = {
   [SupportedChainId.Sepolia]:
-    "https://api.studio.thegraph.com/query/56451/wildcat-finance/version/latest",
+    "https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/api",
   [SupportedChainId.Mainnet]:
     "https://api.studio.thegraph.com/query/56451/wildcat-finance-mainnet/version/latest"
 };
