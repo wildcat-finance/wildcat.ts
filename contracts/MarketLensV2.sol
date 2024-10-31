@@ -98,6 +98,7 @@ struct HooksInstanceData {
   MarketParameterConstraints constraints;
   HooksDeploymentFlags deploymentFlags;
   RoleProviderData[] pullProviders;
+  RoleProviderData[] pushProviders;
   uint256 totalMarkets;
 }
 
