@@ -6,7 +6,7 @@ import {
 } from "../constants";
 import { MarketParameters } from "../controller";
 import {
-  SubgraphAccessControlHooksDataForMarketFragment,
+  SubgraphHooksInstanceDataForMarketFragment,
   SubgraphHooksTemplateDataForMarketFragment
 } from "../gql/graphql";
 import { TokenAmount } from "../token";
@@ -16,14 +16,15 @@ import {
   HooksFactory__factory,
   HooksInstanceDataStructOutput,
   HooksTemplateDataStructOutput,
-  IAccessControlHooks,
-  IAccessControlHooks__factory
+  IOpenTermHooks,
+  IOpenTermHooks__factory
 } from "../typechain";
 import {
   ContractWrapper,
   DepositAccess,
   FeeConfigurationV2,
   HooksKind,
+  MarketHooksInstanceInputs,
   MarketParameterConstraints,
   RoleProvider,
   SignerOrProvider,
@@ -31,15 +32,18 @@ import {
   WithdrawalAccess
 } from "../types";
 import { assert, encodeHooksConfig, parseFeeConfigurationV2 } from "../utils";
-import { constants, ContractTransaction } from "ethers";
+import { BigNumber, constants, ContractTransaction } from "ethers";
 import { DeployMarketPreview, DeployMarketStatus } from "./validation";
+import { encodeMarketHooksInstanceInputs } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface FixedTermHooks extends Omit<FixedTermHooksArgs, "roleProviders" | "constraints"> {}
 
-export class FixedTermHooks extends ContractWrapper<IAccessControlHooks> {
+const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
+
+export class FixedTermHooks extends ContractWrapper<IOpenTermHooks> {
   readonly kind: HooksKind.FixedTerm = HooksKind.FixedTerm;
-  readonly contractFactory = IAccessControlHooks__factory;
+  readonly contractFactory = IOpenTermHooks__factory;
   public roleProviders: RoleProvider[];
   public constraints: MarketParameterConstraints;
   public _contractAddress = this.address;
@@ -68,11 +72,13 @@ export class FixedTermHooks extends ContractWrapper<IAccessControlHooks> {
       templateAddress: data.hooksTemplate,
       borrower: data.borrower,
       constraints: data.constraints,
-      roleProviders: data.pullProviders.map((p) => ({
+      roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => ({
         isApproved: true,
-        isPullProvider: true,
         providerAddress: p.providerAddress,
+        isPullProvider: p.pullProviderIndex !== NullProviderIndex,
         pullProviderIndex: p.pullProviderIndex,
+        isPushProvider: p.pushProviderIndex !== NullProviderIndex,
+        pushProviderIndex: p.pushProviderIndex,
         timeToLive: p.timeToLive
       }))
     });
@@ -81,7 +87,7 @@ export class FixedTermHooks extends ContractWrapper<IAccessControlHooks> {
   static fromSubgraphData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: SubgraphAccessControlHooksDataForMarketFragment
+    data: SubgraphHooksInstanceDataForMarketFragment
   ): FixedTermHooks {
     return new FixedTermHooks({
       chainId,
@@ -91,9 +97,11 @@ export class FixedTermHooks extends ContractWrapper<IAccessControlHooks> {
       templateAddress: data.hooksTemplate.id,
       roleProviders: data.providers.map((p) => ({
         isApproved: p.isApproved,
-        isPullProvider: p.isPullProvider,
         providerAddress: p.providerAddress,
+        isPullProvider: p.isPullProvider,
         pullProviderIndex: p.pullProviderIndex,
+        isPushProvider: p.isPushProvider,
+        pushProviderIndex: p.pushProviderIndex,
         timeToLive: p.timeToLive
       }))
     });
@@ -125,7 +133,7 @@ export type FixedTermHooksTemplateArgs = {
 export interface FixedTermHooksTemplate extends FixedTermHooksTemplateArgs {}
 
 export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
-  readonly kind: HooksKind.AccessControl = HooksKind.AccessControl;
+  readonly kind: HooksKind.OpenTerm = HooksKind.OpenTerm;
   readonly contractFactory = HooksFactory__factory;
   protected _contractAddress: string;
 
@@ -189,6 +197,10 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
 
   previewDeployMarket({
     hooksAddress,
+    hooksInstanceName,
+    existingProviders,
+    newProviderInputs,
+    roleProviderFactory,
     minimumDeposit,
     transferAccess,
     depositAccess,
@@ -199,6 +211,7 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     fixedTermEndTime,
     allowClosureBeforeTerm,
     allowTermReduction,
+    allowForceBuyBacks,
     ...otherParameters
   }: FixedTermMarketDeploymentArgs): DeployMarketPreview {
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
@@ -219,6 +232,9 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
         }
       }
     }
+    if (!hooksAddress && !roleProviderFactory && newProviderInputs?.length) {
+      return { status: DeployMarketStatus.CreateProviderInputsWithoutFactory };
+    }
 
     const hooksConfig = encodeHooksConfig({
       hooksAddress: hooksAddress,
@@ -227,11 +243,12 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
       useOnTransfer: transferAccess === TransferAccess.RequiresCredential
     });
     const hooksData = defaultAbiCoder.encode(
-      ["uint32", "uint128", "bool", "bool", "bool"],
+      ["uint32", "uint128", "bool", "bool", "bool", "bool"],
       [
         fixedTermEndTime,
         minimumDeposit?.raw ?? 0,
         transferAccess === TransferAccess.Disabled,
+        allowForceBuyBacks ?? false,
         allowClosureBeforeTerm ?? false,
         allowTermReduction ?? false
       ]
@@ -256,7 +273,12 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
         fn: "deployMarketAndHooks",
         args: [
           this.hooksTemplate,
-          "",
+          encodeMarketHooksInstanceInputs({
+            existingProviders,
+            newProviderInputs,
+            hooksInstanceName,
+            roleProviderFactory
+          }),
           parameters,
           hooksData,
           salt,
@@ -283,8 +305,6 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
 export type FixedTermMarketDeploymentArgs = MarketParameters & {
   /** Create2 salt to use for the market deployment */
   salt: string;
-  /** Address of an existing hooks instance to use */
-  hooksAddress?: string;
   /** Time at which the market converts to open-term */
   fixedTermEndTime: number;
   /** Minimum deposit lenders can make */
@@ -299,4 +319,6 @@ export type FixedTermMarketDeploymentArgs = MarketParameters & {
   allowClosureBeforeTerm?: boolean;
   /** Whether borrower can reduce the duration of the loan */
   allowTermReduction?: boolean;
-};
+  /** Whether borrower can force buyback market tokens */
+  allowForceBuyBacks?: boolean;
+} & MarketHooksInstanceInputs;

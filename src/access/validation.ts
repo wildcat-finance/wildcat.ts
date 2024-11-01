@@ -1,10 +1,11 @@
 import { HooksFactory } from "../typechain";
 
 export enum DeployMarketStatus {
-  Ready,
-  InsufficientBalance,
-  InsufficientAllowance,
-  NotRegisteredBorrower
+  Ready = "Ready",
+  InsufficientBalance = "InsufficientBalance",
+  InsufficientAllowance = "InsufficientAllowance",
+  NotRegisteredBorrower = "NotRegisteredBorrower",
+  CreateProviderInputsWithoutFactory = "CreateProviderInputsWithoutFactory"
 }
 
 export type DeployMarketPreview =

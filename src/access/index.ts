@@ -2,14 +2,14 @@ import { SupportedChainId } from "../constants";
 import { SubgraphHooksTemplateDataForMarketFragment } from "../gql/graphql";
 import { HooksTemplateDataStructOutput } from "../typechain";
 import { SignerOrProvider } from "../types";
-import { AccessControlHooksTemplate } from "./access-control";
+import { OpenTermHooksTemplate } from "./access-control";
 import { FixedTermHooksTemplate } from "./fixed-term";
 
 export * from "./access-control";
 export * from "./fixed-term";
 export * from "./validation";
 
-export type HooksTemplate = AccessControlHooksTemplate | FixedTermHooksTemplate;
+export type HooksTemplate = OpenTermHooksTemplate | FixedTermHooksTemplate;
 
 export function hooksTemplateFromSubgraph(
   chainId: SupportedChainId,
@@ -18,15 +18,15 @@ export function hooksTemplateFromSubgraph(
   signerAddress?: string,
   isRegisteredBorrower?: boolean
 ): HooksTemplate {
-  if (data.name === "SingleBorrowerAccessControlHooks") {
-    return AccessControlHooksTemplate.fromSubgraphData(
+  if (data.name === "OpenTermHooks") {
+    return OpenTermHooksTemplate.fromSubgraphData(
       chainId,
       provider,
       data,
       signerAddress,
       isRegisteredBorrower
     );
-  } else if (data.name === "FixedTermLoanHooks") {
+  } else if (data.name === "FixedTermHooks") {
     return FixedTermHooksTemplate.fromSubgraphData(
       chainId,
       provider,
@@ -46,15 +46,15 @@ export function hooksTemplateFromLens(
   signerAddress?: string,
   isRegisteredBorrower?: boolean
 ): HooksTemplate {
-  if (data.name === "SingleBorrowerAccessControlHooks") {
-    return AccessControlHooksTemplate.fromLensData(
+  if (data.name === "OpenTermHooks") {
+    return OpenTermHooksTemplate.fromLensData(
       chainId,
       provider,
       data,
       signerAddress,
       isRegisteredBorrower
     );
-  } else if (data.name === "FixedTermLoanHooks") {
+  } else if (data.name === "FixedTermHooks") {
     return FixedTermHooksTemplate.fromLensData(
       chainId,
       provider,

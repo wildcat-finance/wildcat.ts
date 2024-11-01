@@ -6,7 +6,7 @@ import {
 } from "../constants";
 import { MarketParameters } from "../controller";
 import {
-  SubgraphAccessControlHooksDataForMarketFragment,
+  SubgraphHooksInstanceDataForMarketFragment,
   SubgraphHooksTemplateDataForMarketFragment
 } from "../gql/graphql";
 import { TokenAmount } from "../token";
@@ -16,14 +16,15 @@ import {
   HooksFactory__factory,
   HooksInstanceDataStructOutput,
   HooksTemplateDataStructOutput,
-  IAccessControlHooks,
-  IAccessControlHooks__factory
+  IOpenTermHooks,
+  IOpenTermHooks__factory
 } from "../typechain";
 import {
   ContractWrapper,
   DepositAccess,
   FeeConfigurationV2,
   HooksKind,
+  MarketHooksInstanceInputs,
   MarketParameterConstraints,
   RoleProvider,
   SignerOrProvider,
@@ -31,16 +32,17 @@ import {
   WithdrawalAccess
 } from "../types";
 import { assert, encodeHooksConfig, parseFeeConfigurationV2 } from "../utils";
-import { constants, ContractTransaction } from "ethers";
+import { BigNumber, constants, ContractTransaction } from "ethers";
 import { DeployMarketPreview, DeployMarketStatus } from "./validation";
+import { encodeMarketHooksInstanceInputs } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface AccessControlHooks
-  extends Omit<AccessControlHooksArgs, "roleProviders" | "constraints"> {}
+export interface OpenTermHooks extends Omit<OpenTermHooksArgs, "roleProviders" | "constraints"> {}
+const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
 
-export class AccessControlHooks extends ContractWrapper<IAccessControlHooks> {
-  readonly kind: HooksKind.AccessControl = HooksKind.AccessControl;
-  readonly contractFactory = IAccessControlHooks__factory;
+export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
+  readonly kind: HooksKind.OpenTerm = HooksKind.OpenTerm;
+  readonly contractFactory = IOpenTermHooks__factory;
   public roleProviders: RoleProvider[];
   public constraints: MarketParameterConstraints;
   public _contractAddress = this.address;
@@ -50,7 +52,7 @@ export class AccessControlHooks extends ContractWrapper<IAccessControlHooks> {
     roleProviders = [],
     constraints = DefaultV2ParameterConstraints,
     ...args
-  }: AccessControlHooksArgs) {
+  }: OpenTermHooksArgs) {
     super(provider);
     Object.assign(this, args);
     this.roleProviders = roleProviders;
@@ -61,19 +63,21 @@ export class AccessControlHooks extends ContractWrapper<IAccessControlHooks> {
     chainId: SupportedChainId,
     provider: SignerOrProvider,
     data: HooksInstanceDataStructOutput
-  ): AccessControlHooks {
-    return new AccessControlHooks({
+  ): OpenTermHooks {
+    return new OpenTermHooks({
       chainId,
       provider,
       address: data.hooksAddress,
       templateAddress: data.hooksTemplate,
       borrower: data.borrower,
       constraints: data.constraints,
-      roleProviders: data.pullProviders.map((p) => ({
+      roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => ({
         isApproved: true,
-        isPullProvider: true,
         providerAddress: p.providerAddress,
+        isPullProvider: p.pullProviderIndex !== NullProviderIndex,
         pullProviderIndex: p.pullProviderIndex,
+        isPushProvider: p.pushProviderIndex !== NullProviderIndex,
+        pushProviderIndex: p.pushProviderIndex,
         timeToLive: p.timeToLive
       }))
     });
@@ -82,9 +86,9 @@ export class AccessControlHooks extends ContractWrapper<IAccessControlHooks> {
   static fromSubgraphData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: SubgraphAccessControlHooksDataForMarketFragment
-  ): AccessControlHooks {
-    return new AccessControlHooks({
+    data: SubgraphHooksInstanceDataForMarketFragment
+  ): OpenTermHooks {
+    return new OpenTermHooks({
       chainId,
       provider,
       address: data.id,
@@ -92,16 +96,18 @@ export class AccessControlHooks extends ContractWrapper<IAccessControlHooks> {
       templateAddress: data.hooksTemplate.id,
       roleProviders: data.providers.map((p) => ({
         isApproved: p.isApproved,
-        isPullProvider: p.isPullProvider,
         providerAddress: p.providerAddress,
+        isPullProvider: p.isPullProvider,
         pullProviderIndex: p.pullProviderIndex,
+        isPushProvider: p.isPushProvider,
+        pushProviderIndex: p.pushProviderIndex,
         timeToLive: p.timeToLive
       }))
     });
   }
 }
 
-export type AccessControlHooksArgs = {
+export type OpenTermHooksArgs = {
   chainId: SupportedChainId;
   provider: SignerOrProvider;
   templateAddress: string;
@@ -111,7 +117,7 @@ export type AccessControlHooksArgs = {
   roleProviders?: RoleProvider[];
 };
 
-export type AccessControlHooksTemplateArgs = {
+export type OpenTermHooksTemplateArgs = {
   signerAddress?: string;
   isRegisteredBorrower?: boolean;
   hooksTemplate: string;
@@ -123,17 +129,17 @@ export type AccessControlHooksTemplateArgs = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface AccessControlHooksTemplate extends AccessControlHooksTemplateArgs {}
+export interface OpenTermHooksTemplate extends OpenTermHooksTemplateArgs {}
 
-export class AccessControlHooksTemplate extends ContractWrapper<HooksFactory> {
-  readonly kind: HooksKind.AccessControl = HooksKind.AccessControl;
+export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
+  readonly kind: HooksKind.OpenTerm = HooksKind.OpenTerm;
   readonly contractFactory = HooksFactory__factory;
   protected _contractAddress: string;
 
   constructor(
     public chainId: SupportedChainId,
     provider: SignerOrProvider,
-    args: AccessControlHooksTemplateArgs
+    args: OpenTermHooksTemplateArgs
   ) {
     super(provider);
     Object.assign(this, args);
@@ -152,8 +158,8 @@ export class AccessControlHooksTemplate extends ContractWrapper<HooksFactory> {
     }: SubgraphHooksTemplateDataForMarketFragment,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
-  ): AccessControlHooksTemplate {
-    return new AccessControlHooksTemplate(chainId, provider, {
+  ): OpenTermHooksTemplate {
+    return new OpenTermHooksTemplate(chainId, provider, {
       hooksTemplate: id,
       fees: {
         feeRecipient,
@@ -175,8 +181,8 @@ export class AccessControlHooksTemplate extends ContractWrapper<HooksFactory> {
     data: HooksTemplateDataStructOutput,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
-  ): AccessControlHooksTemplate {
-    return new AccessControlHooksTemplate(chainId, provider, {
+  ): OpenTermHooksTemplate {
+    return new OpenTermHooksTemplate(chainId, provider, {
       enabled: data.enabled,
       fees: parseFeeConfigurationV2(chainId, provider, data.fees),
       hooksTemplate: data.hooksTemplate,
@@ -190,6 +196,10 @@ export class AccessControlHooksTemplate extends ContractWrapper<HooksFactory> {
 
   previewDeployMarket({
     hooksAddress,
+    hooksInstanceName,
+    existingProviders,
+    newProviderInputs,
+    roleProviderFactory,
     minimumDeposit,
     transferAccess,
     depositAccess,
@@ -199,7 +209,7 @@ export class AccessControlHooksTemplate extends ContractWrapper<HooksFactory> {
     salt,
     allowForceBuyBacks,
     ...otherParameters
-  }: AccessControlMarketDeploymentArgs): DeployMarketPreview {
+  }: OpenTermMarketDeploymentArgs): DeployMarketPreview {
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -217,6 +227,9 @@ export class AccessControlHooksTemplate extends ContractWrapper<HooksFactory> {
           return { status: DeployMarketStatus.InsufficientAllowance };
         }
       }
+    }
+    if (!hooksAddress && !roleProviderFactory && newProviderInputs?.length) {
+      return { status: DeployMarketStatus.CreateProviderInputsWithoutFactory };
     }
     const hooksConfig = encodeHooksConfig({
       hooksAddress: hooksAddress,
@@ -252,7 +265,12 @@ export class AccessControlHooksTemplate extends ContractWrapper<HooksFactory> {
         fn: "deployMarketAndHooks",
         args: [
           this.hooksTemplate,
-          "",
+          encodeMarketHooksInstanceInputs({
+            existingProviders,
+            newProviderInputs,
+            hooksInstanceName,
+            roleProviderFactory
+          }),
           parameters,
           hooksData,
           salt,
@@ -263,9 +281,7 @@ export class AccessControlHooksTemplate extends ContractWrapper<HooksFactory> {
     }
   }
 
-  deployMarket({
-    ...otherParameters
-  }: AccessControlMarketDeploymentArgs): Promise<ContractTransaction> {
+  deployMarket({ ...otherParameters }: OpenTermMarketDeploymentArgs): Promise<ContractTransaction> {
     const result = this.previewDeployMarket(otherParameters);
     assert(result.status === DeployMarketStatus.Ready, `Can not deploy market: ${result.status}`);
     if (result.fn === "deployMarket") {
@@ -276,11 +292,10 @@ export class AccessControlHooksTemplate extends ContractWrapper<HooksFactory> {
   }
 }
 
-export type AccessControlMarketDeploymentArgs = MarketParameters & {
+export type OpenTermMarketDeploymentArgs = MarketParameters & {
   /** Create2 salt to use for the market deployment */
   salt: string;
-  /** Address of an existing hooks instance to use */
-  hooksAddress?: string;
+
   /** Minimum deposit lenders can make */
   minimumDeposit?: TokenAmount;
   /** Level of access required for accounts to receive a transfer */
@@ -291,4 +306,4 @@ export type AccessControlMarketDeploymentArgs = MarketParameters & {
   withdrawalAccess: WithdrawalAccess;
   /** Whether borrower can force buyback market tokens */
   allowForceBuyBacks?: boolean;
-};
+} & MarketHooksInstanceInputs;
