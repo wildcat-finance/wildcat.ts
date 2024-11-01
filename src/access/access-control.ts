@@ -7,7 +7,7 @@ import {
 import { MarketParameters } from "../controller";
 import {
   SubgraphHooksInstanceDataForMarketFragment,
-  SubgraphHooksTemplateDataForMarketFragment
+  SubgraphHooksTemplateDataFragment
 } from "../gql/graphql";
 import { Token, TokenAmount } from "../token";
 import {
@@ -159,7 +159,7 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
       name,
       originationFeeAsset,
       originationFeeAmount
-    }: SubgraphHooksTemplateDataForMarketFragment,
+    }: SubgraphHooksTemplateDataFragment,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
   ): OpenTermHooksTemplate {

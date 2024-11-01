@@ -474,7 +474,7 @@ fragment HooksInstanceDataForMarket on HooksInstance {
   borrower
   name
   hooksTemplate {
-    ...HooksTemplateDataForMarket
+    ...HooksTemplateData
   }
   providers {
     ...RoleProviderData
@@ -482,7 +482,7 @@ fragment HooksInstanceDataForMarket on HooksInstance {
   eventIndex
 }
 
-fragment HooksTemplateDataForMarket on HooksTemplate {
+fragment HooksTemplateData on HooksTemplate {
   id
   name
   feeRecipient

@@ -1,5 +1,5 @@
 import { SupportedChainId } from "../constants";
-import { SubgraphHooksTemplateDataForMarketFragment } from "../gql/graphql";
+import { SubgraphHooksTemplateDataFragment } from "../gql/graphql";
 import { HooksTemplateDataStructOutput } from "../typechain";
 import { SignerOrProvider } from "../types";
 import { OpenTermHooksTemplate } from "./access-control";
@@ -14,7 +14,7 @@ export type HooksTemplate = OpenTermHooksTemplate | FixedTermHooksTemplate;
 export function hooksTemplateFromSubgraph(
   chainId: SupportedChainId,
   provider: SignerOrProvider,
-  data: SubgraphHooksTemplateDataForMarketFragment,
+  data: SubgraphHooksTemplateDataFragment,
   signerAddress?: string,
   isRegisteredBorrower?: boolean
 ): HooksTemplate {

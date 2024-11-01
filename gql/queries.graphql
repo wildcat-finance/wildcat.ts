@@ -336,6 +336,12 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
   }
 }
 
+query getAllHooksTemplates {
+  hooksTemplates {
+    ...HooksTemplateData
+  }
+}
+
 query getMarketEvents(
   $market: ID!
   $startEventIndex: Int = 0

@@ -13638,11 +13638,11 @@ export type SubgraphHooksInstanceDataForMarketFragment = {
   borrower: string;
   name: string;
   eventIndex: number;
-  hooksTemplate: SubgraphHooksTemplateDataForMarketFragment;
+  hooksTemplate: SubgraphHooksTemplateDataFragment;
   providers: SubgraphRoleProviderDataFragment[];
 };
 
-export type SubgraphHooksTemplateDataForMarketFragment = {
+export type SubgraphHooksTemplateDataFragment = {
   __typename: "HooksTemplate";
   id: string;
   name: string;
@@ -14040,6 +14040,13 @@ export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery = {
   }>;
 };
 
+export type SubgraphGetAllHooksTemplatesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type SubgraphGetAllHooksTemplatesQuery = {
+  __typename: "Query";
+  hooksTemplates: SubgraphHooksTemplateDataFragment[];
+};
+
 export type SubgraphGetMarketEventsQueryVariables = Exact<{
   market: Scalars["ID"]["input"];
   startEventIndex?: InputMaybe<Scalars["Int"]["input"]>;
@@ -14423,8 +14430,8 @@ export const HooksConfigDataForMarketFragmentDoc = gql`
     allowTermReduction
   }
 `;
-export const HooksTemplateDataForMarketFragmentDoc = gql`
-  fragment HooksTemplateDataForMarket on HooksTemplate {
+export const HooksTemplateDataFragmentDoc = gql`
+  fragment HooksTemplateData on HooksTemplate {
     id
     name
     feeRecipient
@@ -14442,7 +14449,7 @@ export const HooksInstanceDataForMarketFragmentDoc = gql`
     borrower
     name
     hooksTemplate {
-      ...HooksTemplateDataForMarket
+      ...HooksTemplateData
     }
     providers {
       ...RoleProviderData
@@ -14849,7 +14856,7 @@ export const GetLenderAccountWithMarketDocument = gql`
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataForMarketFragmentDoc}
-  ${HooksTemplateDataForMarketFragmentDoc}
+  ${HooksTemplateDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${BorrowDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
@@ -14930,7 +14937,7 @@ export const GetAllMarketsForLenderViewDocument = gql`
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataForMarketFragmentDoc}
-  ${HooksTemplateDataForMarketFragmentDoc}
+  ${HooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${BorrowDataFragmentDoc}
@@ -15037,7 +15044,7 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataForMarketFragmentDoc}
-  ${HooksTemplateDataForMarketFragmentDoc}
+  ${HooksTemplateDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${BorrowDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
@@ -15177,6 +15184,19 @@ export const GetMarketsAndLogsWhereLenderAuthorizedOrActiveDocument = gql`
 export type GetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryResult = Apollo.QueryResult<
   SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery,
   SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
+>;
+export const GetAllHooksTemplatesDocument = gql`
+  query getAllHooksTemplates {
+    hooksTemplates {
+      ...HooksTemplateData
+    }
+  }
+  ${HooksTemplateDataFragmentDoc}
+  ${TokenDataFragmentDoc}
+`;
+export type GetAllHooksTemplatesQueryResult = Apollo.QueryResult<
+  SubgraphGetAllHooksTemplatesQuery,
+  SubgraphGetAllHooksTemplatesQueryVariables
 >;
 export const GetMarketEventsDocument = gql`
   query getMarketEvents(
@@ -15349,7 +15369,7 @@ export const GetMarketsForBorrowerDocument = gql`
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataForMarketFragmentDoc}
-  ${HooksTemplateDataForMarketFragmentDoc}
+  ${HooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${MarketRecordsFragmentDoc}
@@ -15399,7 +15419,7 @@ export const GetMarketsForAllBorrowersDocument = gql`
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataForMarketFragmentDoc}
-  ${HooksTemplateDataForMarketFragmentDoc}
+  ${HooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${MarketRecordsFragmentDoc}
@@ -15441,7 +15461,7 @@ export const GetMarketDocument = gql`
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataForMarketFragmentDoc}
-  ${HooksTemplateDataForMarketFragmentDoc}
+  ${HooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${MarketRecordsFragmentDoc}
@@ -15538,7 +15558,7 @@ export const GetAllMarketsDocument = gql`
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataForMarketFragmentDoc}
-  ${HooksTemplateDataForMarketFragmentDoc}
+  ${HooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
 `;
