@@ -36,7 +36,17 @@ export enum CloseMarketStatus {
   EarlyClosureNotAllowed = "EarlyClosureNotAllowed"
 }
 
-export type CloseMarketPreview = { status: CloseMarketStatus };
+export type CloseMarketPreview =
+  | {
+      status: CloseMarketStatus.InsufficientAllowance | CloseMarketStatus.InsufficientBalance;
+      outstanding: TokenAmount;
+    }
+  | {
+      status: Exclude<
+        CloseMarketStatus,
+        CloseMarketStatus.InsufficientAllowance | CloseMarketStatus.InsufficientBalance
+      >;
+    };
 
 export enum SetMaxTotalSupplyStatus {
   NotBorrower = "NotBorrower",

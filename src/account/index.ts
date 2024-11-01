@@ -210,7 +210,7 @@ export class MarketAccount {
       bipMul(this.market.outstandingDebt.raw, toBn(10010))
     );
     if (amount.gt(this.underlyingBalance)) {
-      return { status: CloseMarketStatus.InsufficientBalance };
+      return { status: CloseMarketStatus.InsufficientBalance, outstanding: amount };
     }
     if (this.market.unpaidWithdrawalBatchExpiries.length > 0) {
       return { status: CloseMarketStatus.UnpaidWithdrawalBatches };
@@ -221,7 +221,7 @@ export class MarketAccount {
         this.market.underlyingToken.getAmount(bipMul(this.market.outstandingDebt.raw, toBn(10006)))
       )
     ) {
-      return { status: CloseMarketStatus.InsufficientAllowance };
+      return { status: CloseMarketStatus.InsufficientAllowance, outstanding: amount };
     }
     return { status: CloseMarketStatus.Ready };
   }
