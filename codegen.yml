@@ -13,6 +13,7 @@ generates:
       dedupeFragments: true
       avoidOptionals: false
       withResultType: true
+      withHooks: false
       typesPrefix: 'Subgraph'
       scalars:
         BigInt:
