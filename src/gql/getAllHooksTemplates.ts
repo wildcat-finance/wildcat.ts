@@ -5,14 +5,14 @@ import {
   SubgraphGetAllHooksTemplatesQueryVariables
 } from "./graphql";
 import { SupportedChainId } from "../constants";
-import { SignerOrProvider } from "../types";
+import { Signer, SignerOrProvider } from "../types";
 import { HooksTemplate, hooksTemplateFromSubgraph } from "../access";
 
-export type GetAllHooksTemplatesOptions = SubgraphGetAllHooksTemplatesQueryVariables & {
+export type GetAllHooksTemplatesOptions = {
   chainId: SupportedChainId;
   signerOrProvider: SignerOrProvider;
   fetchPolicy: FetchPolicy;
-  signerAddress?: string;
+  borrower?: string;
   isRegisteredBorrower?: boolean;
 };
 
@@ -22,20 +22,23 @@ export async function getAllHooksTemplates(
     chainId,
     fetchPolicy,
     signerOrProvider,
-    signerAddress,
-    isRegisteredBorrower,
-    ...variables
+    borrower,
+    isRegisteredBorrower
   }: GetAllHooksTemplatesOptions
 ): Promise<HooksTemplate[]> {
+  if (borrower === undefined && signerOrProvider instanceof Signer) {
+    borrower = await signerOrProvider.getAddress();
+  }
   const result = await subgraphClient.query<
     SubgraphGetAllHooksTemplatesQuery,
     SubgraphGetAllHooksTemplatesQueryVariables
   >({
     query: GetAllHooksTemplatesDocument,
+    fetchPolicy,
     variables: {
-      ...variables
-    },
-    fetchPolicy
+      borrower,
+      includeBorrower: !!borrower
+    }
   });
   return result.data.hooksTemplates
     .filter((t) => t.name === "OpenTermHooks" || t.name === "FixedTermHooks")
@@ -44,8 +47,8 @@ export async function getAllHooksTemplates(
         chainId,
         signerOrProvider,
         template,
-        signerAddress,
-        isRegisteredBorrower
+        borrower,
+        result.data.registeredBorrowers?.[0]?.isRegistered ?? isRegisteredBorrower
       )
     );
 }

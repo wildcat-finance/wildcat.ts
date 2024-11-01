@@ -14040,11 +14040,15 @@ export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery = {
   }>;
 };
 
-export type SubgraphGetAllHooksTemplatesQueryVariables = Exact<{ [key: string]: never }>;
+export type SubgraphGetAllHooksTemplatesQueryVariables = Exact<{
+  borrower?: InputMaybe<Scalars["Bytes"]["input"]>;
+  includeBorrower: Scalars["Boolean"]["input"];
+}>;
 
 export type SubgraphGetAllHooksTemplatesQuery = {
   __typename: "Query";
   hooksTemplates: SubgraphHooksTemplateDataFragment[];
+  registeredBorrowers?: Array<{ __typename: "RegisteredBorrower"; isRegistered: boolean }>;
 };
 
 export type SubgraphGetMarketEventsQueryVariables = Exact<{
@@ -15186,9 +15190,12 @@ export type GetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryResult = Apollo.Q
   SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
 >;
 export const GetAllHooksTemplatesDocument = gql`
-  query getAllHooksTemplates {
+  query getAllHooksTemplates($borrower: Bytes, $includeBorrower: Boolean!) {
     hooksTemplates {
       ...HooksTemplateData
+    }
+    registeredBorrowers(where: { borrower: $borrower }, first: 1) @include(if: $includeBorrower) {
+      isRegistered
     }
   }
   ${HooksTemplateDataFragmentDoc}

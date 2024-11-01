@@ -336,11 +336,22 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
   }
 }
 
-query getAllHooksTemplates {
+query getAllHooksTemplates(
+  $borrower: Bytes
+  $includeBorrower: Boolean!
+) {
   hooksTemplates {
     ...HooksTemplateData
   }
+  registeredBorrowers(
+    where: { borrower: $borrower }
+    first: 1
+  ) @include(if: $includeBorrower) {
+    isRegistered
+  }
 }
+
+# query
 
 query getMarketEvents(
   $market: ID!

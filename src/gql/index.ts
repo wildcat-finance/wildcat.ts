@@ -7,3 +7,4 @@ export * from "./getMarketRecords";
 export * from "./getMarketsForAllBorrowers";
 export * from "./getMarketsForBorrower";
 export * from "./graphql";
+export { MakeOptional } from "../utils";
