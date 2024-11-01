@@ -36,7 +36,7 @@ export function useMarketsForBorrower({
       variables: { borrower: borrower as string, ...filters }
     });
     return (
-      result.data.controllers[0].markets.map((market) =>
+      result.data.markets.map((market) =>
         Market.fromSubgraphMarketData(chainId, provider as SignerOrProvider, market)
       ) ?? []
     );
