@@ -1,9 +1,11 @@
 const { createHash } = require("crypto");
-const { writeFileSync, readFileSync } = require("fs");
+const { writeFileSync, readFileSync, existsSync } = require("fs");
 const path = require("path");
 const { Project, SyntaxKind } = require("ts-morph");
 const { getProgressBar } = require("./logs");
-const filePath = path.join(__dirname, "../src/gql/graphql.ts");
+const GRAPHQL_TS_PATH = path.join(__dirname, "../src/gql/graphql.ts");
+
+const GQL_CACHE_PATH = path.join(__dirname, ".gql-cache");
 
 /* ========================================================================== */
 /*                           WHAT THIS SCRIPT DOES:                           */
@@ -28,9 +30,12 @@ const filePath = path.join(__dirname, "../src/gql/graphql.ts");
 // `{ __typename?: "SomeStringLiteral" }`
 // with
 // `{ __typename: "SomeStringLiteral" }`
-writeFileSync(filePath, readFileSync(filePath, "utf-8").replace(/__typename\?:/g, "__typename:"));
+writeFileSync(
+  GRAPHQL_TS_PATH,
+  readFileSync(GRAPHQL_TS_PATH, "utf-8").replace(/__typename\?:/g, "__typename:")
+);
 
-const relativePath = path.relative(path.join(__dirname, ".."), filePath);
+const relativePath = path.relative(path.join(__dirname, ".."), GRAPHQL_TS_PATH);
 
 console.log(`Replacing duplicate type definitions in ${relativePath}...`);
 
@@ -40,7 +45,7 @@ const log = (msg) => DEBUG && console.log(msg);
 
 // Initialize project and source file
 const project = new Project();
-const sourceFile = project.addSourceFileAtPath(filePath);
+const sourceFile = project.addSourceFileAtPath(GRAPHQL_TS_PATH);
 
 // Map to store unique type definitions
 const typeMap = new Map();
@@ -172,14 +177,18 @@ console.log(`Repaired return types for ${functionsToRepair.length} hooks.`);
 console.log(`Saving ${relativePath}...`);
 sourceFile.saveSync();
 
-const generateFileChecksum = (filePath) =>
-  createHash("md5").update(readFileSync(filePath), "utf8").digest("hex");
+function generateFileChecksum(filePath) {
+  return createHash("md5").update(readFileSync(filePath), "utf8").digest("hex");
+}
 
-const currentChecksums = [
-  generateFileChecksum(path.join(__dirname, "../gql/fragments.graphql")),
-  generateFileChecksum(path.join(__dirname, "../gql/queries.graphql")),
-  generateFileChecksum(filePath)
-].join("\n");
+function updateChecksums() {
+  const currentChecksums = [
+    generateFileChecksum(path.join(__dirname, "../gql/fragments.graphql")),
+    generateFileChecksum(path.join(__dirname, "../gql/queries.graphql")),
+    generateFileChecksum(GRAPHQL_TS_PATH)
+  ].join("\n");
+  writeFileSync(GQL_CACHE_PATH, currentChecksums);
+  checkpoint("Saved file");
+}
 
-writeFileSync(path.join(__dirname, ".gql-cache"), currentChecksums);
-checkpoint("Saved file");
+updateChecksums();
