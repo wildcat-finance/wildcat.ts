@@ -8,7 +8,14 @@ import {
   LenderAccountDataStructOutput,
   MarketDataWithLenderStatusV2StructOutput
 } from "../typechain";
-import { assert, bipMul, DepositRecord, parseMarketRecord, rayMul } from "../utils";
+import {
+  assert,
+  bipMul,
+  DepositRecord,
+  parseMarketRecord,
+  rayMul,
+  SECONDS_IN_365_DAYS
+} from "../utils";
 import {
   SupportedChainId,
   getControllerContract,
@@ -191,6 +198,24 @@ export class MarketAccount {
     return this.isBorrower && apr > 0 && apr <= 10000 && this.market.canChangeAPR(apr);
   }
 
+  /**
+   * Get the amount of the underlying asset needed to close the market, with some
+   * room for the interest that will accrue between now and the market's closure.
+   *
+   * If the amount is being calculated to check if the borrower already has a
+   * sufficient allowance, 10 minutes of interest is added; if it is to actually
+   * set the allowance, 2 hours of interest is added.
+   */
+  getApprovalAmountForCloseMarket(forAllowanceCheck?: boolean): TokenAmount {
+    const baseAmount = this.market.outstandingDebt;
+    const interestForNextHour = this.market.underlyingToken.getAmount(
+      this.market.totalSupply
+        .rayMul(this.market.effectiveBorrowerAPR)
+        .mulDiv(forAllowanceCheck ? 600 : 7_200, SECONDS_IN_365_DAYS)
+    );
+    return baseAmount.add(interestForNextHour);
+  }
+
   previewCloseMarket(): CloseMarketPreview {
     if (!this.isBorrower) return { status: CloseMarketStatus.NotBorrower };
     if (this.market.version === MarketVersion.V2) {
@@ -205,23 +230,17 @@ export class MarketAccount {
       }
     }
 
-    // add 0.1% to account for interest
-    const amount = this.market.underlyingToken.getAmount(
-      bipMul(this.market.outstandingDebt.raw, toBn(10010))
-    );
+    // add interest to cover next hour
+    const amount = this.getApprovalAmountForCloseMarket();
     if (amount.gt(this.underlyingBalance)) {
       return { status: CloseMarketStatus.InsufficientBalance, outstanding: amount };
     }
     if (this.market.unpaidWithdrawalBatchExpiries.length > 0) {
       return { status: CloseMarketStatus.UnpaidWithdrawalBatches };
     }
-    if (
-      // @todo proper calculation
-      !this.isApprovedFor(
-        this.market.underlyingToken.getAmount(bipMul(this.market.outstandingDebt.raw, toBn(10006)))
-      )
-    ) {
-      return { status: CloseMarketStatus.InsufficientAllowance, outstanding: amount };
+    const minimumAllowance = this.getApprovalAmountForCloseMarket(true);
+    if (!this.isApprovedFor(minimumAllowance)) {
+      return { status: CloseMarketStatus.InsufficientAllowance, outstanding: minimumAllowance };
     }
     return { status: CloseMarketStatus.Ready };
   }
