@@ -264,6 +264,10 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
   $lender: Bytes!
   $minimumBalance: BigInt = 1
   $accountFilter: LenderAccount_filter = { address_not: null }
+  $numAccounts: Int = 1000
+  $skipAccounts: Int = 0
+  $orderAccounts: LenderAccount_orderBy = lastUpdatedTimestamp
+  $directionAccounts: OrderDirection = desc
   # deposits
   $numDeposits: Int = 200
   $skipDeposits: Int = 0
@@ -287,6 +291,10 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
         $accountFilter
       ]
     }
+    first: $numAccounts
+    skip: $skipAccounts
+    orderBy: $orderAccounts
+    orderDirection: $directionAccounts
   ) {
     market {
       id

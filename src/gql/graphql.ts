@@ -13668,6 +13668,10 @@ export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
   lender: Scalars["Bytes"]["input"];
   minimumBalance?: InputMaybe<Scalars["BigInt"]["input"]>;
   accountFilter?: InputMaybe<SubgraphLenderAccount_Filter>;
+  numAccounts?: InputMaybe<Scalars["Int"]["input"]>;
+  skipAccounts?: InputMaybe<Scalars["Int"]["input"]>;
+  orderAccounts?: InputMaybe<SubgraphLenderAccount_OrderBy>;
+  directionAccounts?: InputMaybe<SubgraphOrderDirection>;
   numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
@@ -15131,6 +15135,10 @@ export const GetMarketsAndLogsWhereLenderAuthorizedOrActiveDocument = gql`
     $lender: Bytes!
     $minimumBalance: BigInt = 1
     $accountFilter: LenderAccount_filter = { address_not: null }
+    $numAccounts: Int = 1000
+    $skipAccounts: Int = 0
+    $orderAccounts: LenderAccount_orderBy = lastUpdatedTimestamp
+    $directionAccounts: OrderDirection = desc
     $numDeposits: Int = 200
     $skipDeposits: Int = 0
     $orderDeposits: Deposit_orderBy = blockTimestamp
@@ -15152,6 +15160,10 @@ export const GetMarketsAndLogsWhereLenderAuthorizedOrActiveDocument = gql`
           $accountFilter
         ]
       }
+      first: $numAccounts
+      skip: $skipAccounts
+      orderBy: $orderAccounts
+      orderDirection: $directionAccounts
     ) {
       market {
         id
@@ -15209,6 +15221,10 @@ export const GetMarketsAndLogsWhereLenderAuthorizedOrActiveDocument = gql`
  *      lender: // value for 'lender'
  *      minimumBalance: // value for 'minimumBalance'
  *      accountFilter: // value for 'accountFilter'
+ *      numAccounts: // value for 'numAccounts'
+ *      skipAccounts: // value for 'skipAccounts'
+ *      orderAccounts: // value for 'orderAccounts'
+ *      directionAccounts: // value for 'directionAccounts'
  *      numDeposits: // value for 'numDeposits'
  *      skipDeposits: // value for 'skipDeposits'
  *      orderDeposits: // value for 'orderDeposits'
