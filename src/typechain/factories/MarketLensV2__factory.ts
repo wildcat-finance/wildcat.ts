@@ -602,9 +602,41 @@ const _abi = [
                     name: "pullProviderIndex",
                     type: "uint24",
                   },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
+                    type: "uint24",
+                  },
                 ],
                 internalType: "struct RoleProviderData[]",
                 name: "pullProviders",
+                type: "tuple[]",
+              },
+              {
+                components: [
+                  {
+                    internalType: "uint32",
+                    name: "timeToLive",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "address",
+                    name: "providerAddress",
+                    type: "address",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pullProviderIndex",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
+                    type: "uint24",
+                  },
+                ],
+                internalType: "struct RoleProviderData[]",
+                name: "pushProviders",
                 type: "tuple[]",
               },
               {
@@ -1091,9 +1123,41 @@ const _abi = [
                     name: "pullProviderIndex",
                     type: "uint24",
                   },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
+                    type: "uint24",
+                  },
                 ],
                 internalType: "struct RoleProviderData[]",
                 name: "pullProviders",
+                type: "tuple[]",
+              },
+              {
+                components: [
+                  {
+                    internalType: "uint32",
+                    name: "timeToLive",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "address",
+                    name: "providerAddress",
+                    type: "address",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pullProviderIndex",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
+                    type: "uint24",
+                  },
+                ],
+                internalType: "struct RoleProviderData[]",
+                name: "pushProviders",
                 type: "tuple[]",
               },
               {
@@ -1357,9 +1421,41 @@ const _abi = [
                 name: "pullProviderIndex",
                 type: "uint24",
               },
+              {
+                internalType: "uint24",
+                name: "pushProviderIndex",
+                type: "uint24",
+              },
             ],
             internalType: "struct RoleProviderData[]",
             name: "pullProviders",
+            type: "tuple[]",
+          },
+          {
+            components: [
+              {
+                internalType: "uint32",
+                name: "timeToLive",
+                type: "uint32",
+              },
+              {
+                internalType: "address",
+                name: "providerAddress",
+                type: "address",
+              },
+              {
+                internalType: "uint24",
+                name: "pullProviderIndex",
+                type: "uint24",
+              },
+              {
+                internalType: "uint24",
+                name: "pushProviderIndex",
+                type: "uint24",
+              },
+            ],
+            internalType: "struct RoleProviderData[]",
+            name: "pushProviders",
             type: "tuple[]",
           },
           {
@@ -1680,6 +1776,11 @@ const _abi = [
                 name: "pullProviderIndex",
                 type: "uint24",
               },
+              {
+                internalType: "uint24",
+                name: "pushProviderIndex",
+                type: "uint24",
+              },
             ],
             internalType: "struct RoleProviderData",
             name: "lastProvider",
@@ -1771,6 +1872,11 @@ const _abi = [
               {
                 internalType: "uint24",
                 name: "pullProviderIndex",
+                type: "uint24",
+              },
+              {
+                internalType: "uint24",
+                name: "pushProviderIndex",
                 type: "uint24",
               },
             ],
@@ -2264,9 +2370,41 @@ const _abi = [
                     name: "pullProviderIndex",
                     type: "uint24",
                   },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
+                    type: "uint24",
+                  },
                 ],
                 internalType: "struct RoleProviderData[]",
                 name: "pullProviders",
+                type: "tuple[]",
+              },
+              {
+                components: [
+                  {
+                    internalType: "uint32",
+                    name: "timeToLive",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "address",
+                    name: "providerAddress",
+                    type: "address",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pullProviderIndex",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
+                    type: "uint24",
+                  },
+                ],
+                internalType: "struct RoleProviderData[]",
+                name: "pushProviders",
                 type: "tuple[]",
               },
               {
@@ -2867,9 +3005,41 @@ const _abi = [
                         name: "pullProviderIndex",
                         type: "uint24",
                       },
+                      {
+                        internalType: "uint24",
+                        name: "pushProviderIndex",
+                        type: "uint24",
+                      },
                     ],
                     internalType: "struct RoleProviderData[]",
                     name: "pullProviders",
+                    type: "tuple[]",
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: "uint32",
+                        name: "timeToLive",
+                        type: "uint32",
+                      },
+                      {
+                        internalType: "address",
+                        name: "providerAddress",
+                        type: "address",
+                      },
+                      {
+                        internalType: "uint24",
+                        name: "pullProviderIndex",
+                        type: "uint24",
+                      },
+                      {
+                        internalType: "uint24",
+                        name: "pushProviderIndex",
+                        type: "uint24",
+                      },
+                    ],
+                    internalType: "struct RoleProviderData[]",
+                    name: "pushProviders",
                     type: "tuple[]",
                   },
                   {
@@ -3044,6 +3214,11 @@ const _abi = [
                   {
                     internalType: "uint24",
                     name: "pullProviderIndex",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
                     type: "uint24",
                   },
                 ],
@@ -3542,9 +3717,41 @@ const _abi = [
                     name: "pullProviderIndex",
                     type: "uint24",
                   },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
+                    type: "uint24",
+                  },
                 ],
                 internalType: "struct RoleProviderData[]",
                 name: "pullProviders",
+                type: "tuple[]",
+              },
+              {
+                components: [
+                  {
+                    internalType: "uint32",
+                    name: "timeToLive",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "address",
+                    name: "providerAddress",
+                    type: "address",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pullProviderIndex",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
+                    type: "uint24",
+                  },
+                ],
+                internalType: "struct RoleProviderData[]",
+                name: "pushProviders",
                 type: "tuple[]",
               },
               {
@@ -4145,9 +4352,41 @@ const _abi = [
                         name: "pullProviderIndex",
                         type: "uint24",
                       },
+                      {
+                        internalType: "uint24",
+                        name: "pushProviderIndex",
+                        type: "uint24",
+                      },
                     ],
                     internalType: "struct RoleProviderData[]",
                     name: "pullProviders",
+                    type: "tuple[]",
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: "uint32",
+                        name: "timeToLive",
+                        type: "uint32",
+                      },
+                      {
+                        internalType: "address",
+                        name: "providerAddress",
+                        type: "address",
+                      },
+                      {
+                        internalType: "uint24",
+                        name: "pullProviderIndex",
+                        type: "uint24",
+                      },
+                      {
+                        internalType: "uint24",
+                        name: "pushProviderIndex",
+                        type: "uint24",
+                      },
+                    ],
+                    internalType: "struct RoleProviderData[]",
+                    name: "pushProviders",
                     type: "tuple[]",
                   },
                   {
@@ -4322,6 +4561,11 @@ const _abi = [
                   {
                     internalType: "uint24",
                     name: "pullProviderIndex",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
                     type: "uint24",
                   },
                 ],
@@ -4849,9 +5093,41 @@ const _abi = [
                     name: "pullProviderIndex",
                     type: "uint24",
                   },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
+                    type: "uint24",
+                  },
                 ],
                 internalType: "struct RoleProviderData[]",
                 name: "pullProviders",
+                type: "tuple[]",
+              },
+              {
+                components: [
+                  {
+                    internalType: "uint32",
+                    name: "timeToLive",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "address",
+                    name: "providerAddress",
+                    type: "address",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pullProviderIndex",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
+                    type: "uint24",
+                  },
+                ],
+                internalType: "struct RoleProviderData[]",
+                name: "pushProviders",
                 type: "tuple[]",
               },
               {
@@ -5974,9 +6250,41 @@ const _abi = [
                         name: "pullProviderIndex",
                         type: "uint24",
                       },
+                      {
+                        internalType: "uint24",
+                        name: "pushProviderIndex",
+                        type: "uint24",
+                      },
                     ],
                     internalType: "struct RoleProviderData[]",
                     name: "pullProviders",
+                    type: "tuple[]",
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: "uint32",
+                        name: "timeToLive",
+                        type: "uint32",
+                      },
+                      {
+                        internalType: "address",
+                        name: "providerAddress",
+                        type: "address",
+                      },
+                      {
+                        internalType: "uint24",
+                        name: "pullProviderIndex",
+                        type: "uint24",
+                      },
+                      {
+                        internalType: "uint24",
+                        name: "pushProviderIndex",
+                        type: "uint24",
+                      },
+                    ],
+                    internalType: "struct RoleProviderData[]",
+                    name: "pushProviders",
                     type: "tuple[]",
                   },
                   {
@@ -6151,6 +6459,11 @@ const _abi = [
                   {
                     internalType: "uint24",
                     name: "pullProviderIndex",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
                     type: "uint24",
                   },
                 ],
@@ -6744,9 +7057,41 @@ const _abi = [
                         name: "pullProviderIndex",
                         type: "uint24",
                       },
+                      {
+                        internalType: "uint24",
+                        name: "pushProviderIndex",
+                        type: "uint24",
+                      },
                     ],
                     internalType: "struct RoleProviderData[]",
                     name: "pullProviders",
+                    type: "tuple[]",
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: "uint32",
+                        name: "timeToLive",
+                        type: "uint32",
+                      },
+                      {
+                        internalType: "address",
+                        name: "providerAddress",
+                        type: "address",
+                      },
+                      {
+                        internalType: "uint24",
+                        name: "pullProviderIndex",
+                        type: "uint24",
+                      },
+                      {
+                        internalType: "uint24",
+                        name: "pushProviderIndex",
+                        type: "uint24",
+                      },
+                    ],
+                    internalType: "struct RoleProviderData[]",
+                    name: "pushProviders",
                     type: "tuple[]",
                   },
                   {
@@ -6921,6 +7266,11 @@ const _abi = [
                   {
                     internalType: "uint24",
                     name: "pullProviderIndex",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "pushProviderIndex",
                     type: "uint24",
                   },
                 ],

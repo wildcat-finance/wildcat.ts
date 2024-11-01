@@ -7,9 +7,9 @@ export type { AccountQuery } from "./AccountQuery";
 export type { AccountsQuery } from "./AccountsQuery";
 export type { CheckBorrowersRegistered } from "./CheckBorrowersRegistered";
 export type { HooksFactory } from "./HooksFactory";
-export type { IAccessControlHooks } from "./IAccessControlHooks";
 export type { IERC20 } from "./IERC20";
-export type { IFixedTermLoanHooks } from "./IFixedTermLoanHooks";
+export type { IFixedTermHooks } from "./IFixedTermHooks";
+export type { IOpenTermHooks } from "./IOpenTermHooks";
 export type { ISafe } from "./ISafe";
 export type { MarketLens } from "./MarketLens";
 export type { MarketLensV2 } from "./MarketLensV2";
@@ -27,9 +27,9 @@ export { CheckBorrowersRegistered__factory } from "./factories/CheckBorrowersReg
 export type { CheckSafeSignature } from "./CheckSignatureValid.sol/CheckSafeSignature";
 export { CheckSafeSignature__factory } from "./factories/CheckSignatureValid.sol/CheckSafeSignature__factory";
 export { HooksFactory__factory } from "./factories/HooksFactory__factory";
-export { IAccessControlHooks__factory } from "./factories/IAccessControlHooks__factory";
 export { IERC20__factory } from "./factories/IERC20__factory";
-export { IFixedTermLoanHooks__factory } from "./factories/IFixedTermLoanHooks__factory";
+export { IFixedTermHooks__factory } from "./factories/IFixedTermHooks__factory";
+export { IOpenTermHooks__factory } from "./factories/IOpenTermHooks__factory";
 export { ISafe__factory } from "./factories/ISafe__factory";
 export { MarketLens__factory } from "./factories/MarketLens__factory";
 export { MarketLensV2__factory } from "./factories/MarketLensV2__factory";
@@ -45,9 +45,9 @@ export type { AccountDescriptionStruct, AccountDescriptionStructOutput } from ".
 
 export type { DeployMarketInputsV2Struct, DeployMarketInputsV2StructOutput, HooksTemplateStruct, HooksTemplateStructOutput, MarketParametersV2Struct, MarketParametersV2StructOutput } from "./HooksFactory";
 
-export type { HookedMarketStruct, HookedMarketStructOutput, LenderStatusStruct, LenderStatusStructOutput, MarketParameterConstraintsStruct, MarketParameterConstraintsStructOutput, MarketStateV2Struct, MarketStateV2StructOutput } from "./IAccessControlHooks";
+export type { FixedTermHookedMarketStruct, FixedTermHookedMarketStructOutput, LenderStatusStruct, LenderStatusStructOutput, MarketParameterConstraintsStruct, MarketParameterConstraintsStructOutput, MarketStateV2Struct, MarketStateV2StructOutput } from "./IFixedTermHooks";
 
-export type { FixedTermHookedMarketStruct, FixedTermHookedMarketStructOutput } from "./IFixedTermLoanHooks";
+export type { HookedMarketStruct, HookedMarketStructOutput } from "./IOpenTermHooks";
 
 export type { TokenMetadataStruct, TokenMetadataStructOutput, FeeConfigurationStruct, FeeConfigurationStructOutput, MarketDataStruct, MarketDataStructOutput, ControllerDataStruct, ControllerDataStructOutput, MarketLenderStatusStruct, MarketLenderStatusStructOutput, MarketDataWithLenderStatusStruct, MarketDataWithLenderStatusStructOutput, ArchControllerDataStruct, ArchControllerDataStructOutput, SliceParametersStruct, SliceParametersStructOutput, WithdrawalBatchDataStruct, WithdrawalBatchDataStructOutput, WithdrawalBatchLenderStatusStruct, WithdrawalBatchLenderStatusStructOutput, WithdrawalBatchDataWithLenderStatusStruct, WithdrawalBatchDataWithLenderStatusStructOutput } from "./MarketLens";
 

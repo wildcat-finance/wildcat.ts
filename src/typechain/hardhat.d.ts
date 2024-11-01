@@ -33,17 +33,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HooksFactory__factory>;
     getContractFactory(
-      name: "IAccessControlHooks",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IAccessControlHooks__factory>;
-    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
-      name: "IFixedTermLoanHooks",
+      name: "IFixedTermHooks",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IFixedTermLoanHooks__factory>;
+    ): Promise<Contracts.IFixedTermHooks__factory>;
+    getContractFactory(
+      name: "IOpenTermHooks",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IOpenTermHooks__factory>;
     getContractFactory(
       name: "ISafe",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -111,20 +111,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.HooksFactory>;
     getContractAt(
-      name: "IAccessControlHooks",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IAccessControlHooks>;
-    getContractAt(
       name: "IERC20",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
-      name: "IFixedTermLoanHooks",
+      name: "IFixedTermHooks",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IFixedTermLoanHooks>;
+    ): Promise<Contracts.IFixedTermHooks>;
+    getContractAt(
+      name: "IOpenTermHooks",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IOpenTermHooks>;
     getContractAt(
       name: "ISafe",
       address: string,

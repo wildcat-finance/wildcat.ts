@@ -173,12 +173,14 @@ export type RoleProviderDataStruct = {
   timeToLive: PromiseOrValue<BigNumberish>;
   providerAddress: PromiseOrValue<string>;
   pullProviderIndex: PromiseOrValue<BigNumberish>;
+  pushProviderIndex: PromiseOrValue<BigNumberish>;
 };
 
 export type RoleProviderDataStructOutput = {
   timeToLive: number;
   providerAddress: string;
   pullProviderIndex: number;
+  pushProviderIndex: number;
 };
 
 export type HooksInstanceDataStruct = {
@@ -190,6 +192,7 @@ export type HooksInstanceDataStruct = {
   constraints: MarketParameterConstraintsStruct;
   deploymentFlags: HooksDeploymentFlagsStruct;
   pullProviders: RoleProviderDataStruct[];
+  pushProviders: RoleProviderDataStruct[];
   totalMarkets: PromiseOrValue<BigNumberish>;
 };
 
@@ -202,6 +205,7 @@ export type HooksInstanceDataStructOutput = {
   constraints: MarketParameterConstraintsStructOutput;
   deploymentFlags: HooksDeploymentFlagsStructOutput;
   pullProviders: RoleProviderDataStructOutput[];
+  pushProviders: RoleProviderDataStructOutput[];
   totalMarkets: BigNumber;
 };
 

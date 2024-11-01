@@ -121,6 +121,7 @@ struct RoleProviderData {
   uint32 timeToLive;
   address providerAddress;
   uint24 pullProviderIndex;
+  uint24 pushProviderIndex;
 }
 
 struct LenderAccountData {

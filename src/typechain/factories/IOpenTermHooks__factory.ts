@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  IFixedTermLoanHooks,
-  IFixedTermLoanHooksInterface,
-} from "../IFixedTermLoanHooks";
+  IOpenTermHooks,
+  IOpenTermHooksInterface,
+} from "../IOpenTermHooks";
 
 const _abi = [
   {
@@ -27,7 +27,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "ClosureDisabledBeforeTerm",
+    name: "CreateRoleProviderFailed",
     type: "error",
   },
   {
@@ -47,11 +47,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "FixedTermNotProvided",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "ForceBuyBacksDisabled",
     type: "error",
   },
@@ -62,27 +57,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "IncreaseFixedTerm",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "InvalidArrayLength",
     type: "error",
   },
   {
     inputs: [],
     name: "InvalidCredentialReturned",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "InvalidFixedTerm",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "NoReducingAprBeforeTermEnd",
     type: "error",
   },
   {
@@ -117,17 +97,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "TermReductionDisabled",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "TransfersDisabled",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "WithdrawBeforeTermEnd",
     type: "error",
   },
   {
@@ -227,14 +197,8 @@ const _abi = [
         name: "market",
         type: "address",
       },
-      {
-        indexed: false,
-        internalType: "uint32",
-        name: "fixedTermEndTime",
-        type: "uint32",
-      },
     ],
-    name: "FixedTermUpdated",
+    name: "DisabledForceBuyBacks",
     type: "event",
   },
   {
@@ -260,6 +224,19 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+    ],
+    name: "NameUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "address",
         name: "providerAddress",
@@ -275,6 +252,12 @@ const _abi = [
         indexed: false,
         internalType: "uint24",
         name: "pullProviderIndex",
+        type: "uint24",
+      },
+      {
+        indexed: false,
+        internalType: "uint24",
+        name: "pushProviderIndex",
         type: "uint24",
       },
     ],
@@ -294,6 +277,12 @@ const _abi = [
         indexed: false,
         internalType: "uint24",
         name: "pullProviderIndex",
+        type: "uint24",
+      },
+      {
+        indexed: false,
+        internalType: "uint24",
+        name: "pushProviderIndex",
         type: "uint24",
       },
     ],
@@ -319,6 +308,12 @@ const _abi = [
         indexed: false,
         internalType: "uint24",
         name: "pullProviderIndex",
+        type: "uint24",
+      },
+      {
+        indexed: false,
+        internalType: "uint24",
+        name: "pushProviderIndex",
         type: "uint24",
       },
     ],
@@ -446,12 +441,74 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "borrower",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "config",
     outputs: [
       {
         internalType: "HooksDeploymentConfig",
         name: "param0",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "providerFactory",
+        type: "address",
+      },
+      {
+        internalType: "uint32",
+        name: "timeToLive",
+        type: "uint32",
+      },
+      {
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
+      },
+    ],
+    name: "createRoleProvider",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "market",
+        type: "address",
+      },
+    ],
+    name: "disableForceBuyBacks",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "factory",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -485,19 +542,9 @@ const _abi = [
             type: "bool",
           },
           {
-            internalType: "bool",
-            name: "withdrawalRequiresAccess",
-            type: "bool",
-          },
-          {
             internalType: "uint128",
             name: "minimumDeposit",
             type: "uint128",
-          },
-          {
-            internalType: "uint32",
-            name: "fixedTermEndTime",
-            type: "uint32",
           },
           {
             internalType: "bool",
@@ -506,16 +553,11 @@ const _abi = [
           },
           {
             internalType: "bool",
-            name: "allowClosureBeforeTerm",
-            type: "bool",
-          },
-          {
-            internalType: "bool",
-            name: "allowTermReduction",
+            name: "allowForceBuyBacks",
             type: "bool",
           },
         ],
-        internalType: "struct FixedTermHookedMarket",
+        internalType: "struct HookedMarket",
         name: "param0",
         type: "tuple",
       },
@@ -551,19 +593,9 @@ const _abi = [
             type: "bool",
           },
           {
-            internalType: "bool",
-            name: "withdrawalRequiresAccess",
-            type: "bool",
-          },
-          {
             internalType: "uint128",
             name: "minimumDeposit",
             type: "uint128",
-          },
-          {
-            internalType: "uint32",
-            name: "fixedTermEndTime",
-            type: "uint32",
           },
           {
             internalType: "bool",
@@ -572,16 +604,11 @@ const _abi = [
           },
           {
             internalType: "bool",
-            name: "allowClosureBeforeTerm",
-            type: "bool",
-          },
-          {
-            internalType: "bool",
-            name: "allowTermReduction",
+            name: "allowForceBuyBacks",
             type: "bool",
           },
         ],
-        internalType: "struct FixedTermHookedMarket[]",
+        internalType: "struct HookedMarket[]",
         name: "hookedMarkets",
         type: "tuple[]",
       },
@@ -750,6 +777,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "getPushProviders",
+    outputs: [
+      {
+        internalType: "RoleProvider[]",
+        name: "param0",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -802,6 +842,43 @@ const _abi = [
     name: "grantRoles",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "key0",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "key1",
+        type: "address",
+      },
+    ],
+    name: "isKnownLenderOnMarket",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "name",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -1279,12 +1356,12 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "lender",
+        name: "param0",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "scaledAmount",
+        name: "param1",
         type: "uint256",
       },
       {
@@ -1361,12 +1438,12 @@ const _abi = [
           },
         ],
         internalType: "struct MarketStateV2",
-        name: "intermediateState",
+        name: "param2",
         type: "tuple",
       },
       {
         internalType: "bytes",
-        name: "extraData",
+        name: "param3",
         type: "bytes",
       },
     ],
@@ -2115,24 +2192,6 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint32",
-        name: "newFixedTermEndTime",
-        type: "uint32",
-      },
-    ],
-    name: "setFixedTermEndTime",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "market",
-        type: "address",
-      },
-      {
         internalType: "uint128",
         name: "newMinimumDeposit",
         type: "uint128",
@@ -2141,6 +2200,48 @@ const _abi = [
     name: "setMinimumDeposit",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+    ],
+    name: "setName",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "key0",
+        type: "address",
+      },
+    ],
+    name: "temporaryExcessReserveRatio",
+    outputs: [
+      {
+        internalType: "uint16",
+        name: "originalAnnualInterestBips",
+        type: "uint16",
+      },
+      {
+        internalType: "uint16",
+        name: "originalReserveRatioBips",
+        type: "uint16",
+      },
+      {
+        internalType: "uint32",
+        name: "expiry",
+        type: "uint32",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -2171,15 +2272,15 @@ const _abi = [
   },
 ] as const;
 
-export class IFixedTermLoanHooks__factory {
+export class IOpenTermHooks__factory {
   static readonly abi = _abi;
-  static createInterface(): IFixedTermLoanHooksInterface {
-    return new utils.Interface(_abi) as IFixedTermLoanHooksInterface;
+  static createInterface(): IOpenTermHooksInterface {
+    return new utils.Interface(_abi) as IOpenTermHooksInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IFixedTermLoanHooks {
-    return new Contract(address, _abi, signerOrProvider) as IFixedTermLoanHooks;
+  ): IOpenTermHooks {
+    return new Contract(address, _abi, signerOrProvider) as IOpenTermHooks;
   }
 }

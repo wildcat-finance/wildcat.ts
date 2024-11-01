@@ -37,6 +37,7 @@ export type FixedTermHookedMarketStruct = {
   transfersDisabled: PromiseOrValue<boolean>;
   allowClosureBeforeTerm: PromiseOrValue<boolean>;
   allowTermReduction: PromiseOrValue<boolean>;
+  allowForceBuyBacks: PromiseOrValue<boolean>;
 };
 
 export type FixedTermHookedMarketStructOutput = {
@@ -49,6 +50,7 @@ export type FixedTermHookedMarketStructOutput = {
   transfersDisabled: boolean;
   allowClosureBeforeTerm: boolean;
   allowTermReduction: boolean;
+  allowForceBuyBacks: boolean;
 };
 
 export type LenderStatusStruct = {
@@ -151,20 +153,28 @@ export type DeployMarketInputsV2StructOutput = {
   hooks: BigNumber;
 };
 
-export interface IFixedTermLoanHooksInterface extends utils.Interface {
+export interface IFixedTermHooksInterface extends utils.Interface {
   functions: {
+    "MaximumLoanTerm()": FunctionFragment;
     "addRoleProvider(address,uint32)": FunctionFragment;
     "blockFromDeposits(address)": FunctionFragment;
+    "borrower()": FunctionFragment;
     "config()": FunctionFragment;
+    "createRoleProvider(address,uint32,bytes)": FunctionFragment;
+    "disableForceBuyBacks(address)": FunctionFragment;
+    "factory()": FunctionFragment;
     "getHookedMarket(address)": FunctionFragment;
     "getHookedMarkets(address[])": FunctionFragment;
     "getLenderStatus(address)": FunctionFragment;
     "getParameterConstraints()": FunctionFragment;
     "getPreviousLenderStatus(address)": FunctionFragment;
     "getPullProviders()": FunctionFragment;
+    "getPushProviders()": FunctionFragment;
     "getRoleProvider(address)": FunctionFragment;
     "grantRole(address,uint32)": FunctionFragment;
     "grantRoles(address[],uint32[])": FunctionFragment;
+    "isKnownLenderOnMarket(address,address)": FunctionFragment;
+    "name()": FunctionFragment;
     "onBorrow(uint256,(bool,uint128,uint128,uint128,uint104,uint104,uint32,bool,uint32,uint16,uint16,uint16,uint112,uint32),bytes)": FunctionFragment;
     "onCloseMarket((bool,uint128,uint128,uint128,uint104,uint104,uint32,bool,uint32,uint16,uint16,uint16,uint112,uint32),bytes)": FunctionFragment;
     "onCreateMarket(address,address,(address,string,string,uint128,uint16,uint16,uint32,uint16,uint32,uint256),bytes)": FunctionFragment;
@@ -182,24 +192,34 @@ export interface IFixedTermLoanHooksInterface extends utils.Interface {
     "revokeRole(address)": FunctionFragment;
     "setFixedTermEndTime(address,uint32)": FunctionFragment;
     "setMinimumDeposit(address,uint128)": FunctionFragment;
+    "setName(string)": FunctionFragment;
+    "temporaryExcessReserveRatio(address)": FunctionFragment;
     "unblockFromDeposits(address)": FunctionFragment;
     "version()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "MaximumLoanTerm"
       | "addRoleProvider"
       | "blockFromDeposits"
+      | "borrower"
       | "config"
+      | "createRoleProvider"
+      | "disableForceBuyBacks"
+      | "factory"
       | "getHookedMarket"
       | "getHookedMarkets"
       | "getLenderStatus"
       | "getParameterConstraints"
       | "getPreviousLenderStatus"
       | "getPullProviders"
+      | "getPushProviders"
       | "getRoleProvider"
       | "grantRole"
       | "grantRoles"
+      | "isKnownLenderOnMarket"
+      | "name"
       | "onBorrow"
       | "onCloseMarket"
       | "onCreateMarket"
@@ -217,10 +237,16 @@ export interface IFixedTermLoanHooksInterface extends utils.Interface {
       | "revokeRole"
       | "setFixedTermEndTime"
       | "setMinimumDeposit"
+      | "setName"
+      | "temporaryExcessReserveRatio"
       | "unblockFromDeposits"
       | "version"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "MaximumLoanTerm",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "addRoleProvider",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -229,7 +255,21 @@ export interface IFixedTermLoanHooksInterface extends utils.Interface {
     functionFragment: "blockFromDeposits",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "borrower", values?: undefined): string;
   encodeFunctionData(functionFragment: "config", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "createRoleProvider",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "disableForceBuyBacks",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(functionFragment: "factory", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getHookedMarket",
     values: [PromiseOrValue<string>]
@@ -255,6 +295,10 @@ export interface IFixedTermLoanHooksInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getPushProviders",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getRoleProvider",
     values: [PromiseOrValue<string>]
   ): string;
@@ -266,6 +310,11 @@ export interface IFixedTermLoanHooksInterface extends utils.Interface {
     functionFragment: "grantRoles",
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
+  encodeFunctionData(
+    functionFragment: "isKnownLenderOnMarket",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "onBorrow",
     values: [
@@ -393,11 +442,23 @@ export interface IFixedTermLoanHooksInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setName",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "temporaryExcessReserveRatio",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "unblockFromDeposits",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "version", values?: undefined): string;
 
+  decodeFunctionResult(
+    functionFragment: "MaximumLoanTerm",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "addRoleProvider",
     data: BytesLike
@@ -406,7 +467,17 @@ export interface IFixedTermLoanHooksInterface extends utils.Interface {
     functionFragment: "blockFromDeposits",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "borrower", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "config", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "createRoleProvider",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "disableForceBuyBacks",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "factory", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getHookedMarket",
     data: BytesLike
@@ -432,11 +503,20 @@ export interface IFixedTermLoanHooksInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getPushProviders",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getRoleProvider",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "grantRoles", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isKnownLenderOnMarket",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "onBorrow", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "onCloseMarket",
@@ -490,6 +570,11 @@ export interface IFixedTermLoanHooksInterface extends utils.Interface {
     functionFragment: "setMinimumDeposit",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setName", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "temporaryExcessReserveRatio",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "unblockFromDeposits",
     data: BytesLike
@@ -502,11 +587,13 @@ export interface IFixedTermLoanHooksInterface extends utils.Interface {
     "AccountBlockedFromDeposits(address)": EventFragment;
     "AccountMadeFirstDeposit(address,address)": EventFragment;
     "AccountUnblockedFromDeposits(address)": EventFragment;
+    "DisabledForceBuyBacks(address)": EventFragment;
     "FixedTermUpdated(address,uint32)": EventFragment;
     "MinimumDepositUpdated(address,uint128)": EventFragment;
-    "RoleProviderAdded(address,uint32,uint24)": EventFragment;
-    "RoleProviderRemoved(address,uint24)": EventFragment;
-    "RoleProviderUpdated(address,uint32,uint24)": EventFragment;
+    "NameUpdated(string)": EventFragment;
+    "RoleProviderAdded(address,uint32,uint24,uint24)": EventFragment;
+    "RoleProviderRemoved(address,uint24,uint24)": EventFragment;
+    "RoleProviderUpdated(address,uint32,uint24,uint24)": EventFragment;
     "TemporaryExcessReserveRatioActivated(address,uint256,uint256,uint256)": EventFragment;
     "TemporaryExcessReserveRatioCanceled(address)": EventFragment;
     "TemporaryExcessReserveRatioExpired(address)": EventFragment;
@@ -520,8 +607,10 @@ export interface IFixedTermLoanHooksInterface extends utils.Interface {
   getEvent(
     nameOrSignatureOrTopic: "AccountUnblockedFromDeposits"
   ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DisabledForceBuyBacks"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FixedTermUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MinimumDepositUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NameUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleProviderAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleProviderRemoved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleProviderUpdated"): EventFragment;
@@ -597,6 +686,17 @@ export type AccountUnblockedFromDepositsEvent = TypedEvent<
 export type AccountUnblockedFromDepositsEventFilter =
   TypedEventFilter<AccountUnblockedFromDepositsEvent>;
 
+export interface DisabledForceBuyBacksEventObject {
+  market: string;
+}
+export type DisabledForceBuyBacksEvent = TypedEvent<
+  [string],
+  DisabledForceBuyBacksEventObject
+>;
+
+export type DisabledForceBuyBacksEventFilter =
+  TypedEventFilter<DisabledForceBuyBacksEvent>;
+
 export interface FixedTermUpdatedEventObject {
   market: string;
   fixedTermEndTime: number;
@@ -621,13 +721,21 @@ export type MinimumDepositUpdatedEvent = TypedEvent<
 export type MinimumDepositUpdatedEventFilter =
   TypedEventFilter<MinimumDepositUpdatedEvent>;
 
+export interface NameUpdatedEventObject {
+  name: string;
+}
+export type NameUpdatedEvent = TypedEvent<[string], NameUpdatedEventObject>;
+
+export type NameUpdatedEventFilter = TypedEventFilter<NameUpdatedEvent>;
+
 export interface RoleProviderAddedEventObject {
   providerAddress: string;
   timeToLive: number;
   pullProviderIndex: number;
+  pushProviderIndex: number;
 }
 export type RoleProviderAddedEvent = TypedEvent<
-  [string, number, number],
+  [string, number, number, number],
   RoleProviderAddedEventObject
 >;
 
@@ -637,9 +745,10 @@ export type RoleProviderAddedEventFilter =
 export interface RoleProviderRemovedEventObject {
   providerAddress: string;
   pullProviderIndex: number;
+  pushProviderIndex: number;
 }
 export type RoleProviderRemovedEvent = TypedEvent<
-  [string, number],
+  [string, number, number],
   RoleProviderRemovedEventObject
 >;
 
@@ -650,9 +759,10 @@ export interface RoleProviderUpdatedEventObject {
   providerAddress: string;
   timeToLive: number;
   pullProviderIndex: number;
+  pushProviderIndex: number;
 }
 export type RoleProviderUpdatedEvent = TypedEvent<
-  [string, number, number],
+  [string, number, number, number],
   RoleProviderUpdatedEventObject
 >;
 
@@ -709,14 +819,14 @@ export type TemporaryExcessReserveRatioUpdatedEvent = TypedEvent<
 export type TemporaryExcessReserveRatioUpdatedEventFilter =
   TypedEventFilter<TemporaryExcessReserveRatioUpdatedEvent>;
 
-export interface IFixedTermLoanHooks extends BaseContract {
-  contractName: "IFixedTermLoanHooks";
+export interface IFixedTermHooks extends BaseContract {
+  contractName: "IFixedTermHooks";
 
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IFixedTermLoanHooksInterface;
+  interface: IFixedTermHooksInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -738,6 +848,8 @@ export interface IFixedTermLoanHooks extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    MaximumLoanTerm(overrides?: CallOverrides): Promise<[number]>;
+
     addRoleProvider(
       providerAddress: PromiseOrValue<string>,
       timeToLive: PromiseOrValue<BigNumberish>,
@@ -749,9 +861,25 @@ export interface IFixedTermLoanHooks extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    borrower(overrides?: CallOverrides): Promise<[string]>;
+
     config(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { param0: BigNumber }>;
+
+    createRoleProvider(
+      providerFactory: PromiseOrValue<string>,
+      timeToLive: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    disableForceBuyBacks(
+      market: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    factory(overrides?: CallOverrides): Promise<[string]>;
 
     getHookedMarket(
       marketAddress: PromiseOrValue<string>,
@@ -797,6 +925,10 @@ export interface IFixedTermLoanHooks extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]] & { param0: BigNumber[] }>;
 
+    getPushProviders(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]] & { param0: BigNumber[] }>;
+
     getRoleProvider(
       providerAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -813,6 +945,14 @@ export interface IFixedTermLoanHooks extends BaseContract {
       roleGrantedTimestamps: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    isKnownLenderOnMarket(
+      key0: PromiseOrValue<string>,
+      key1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    name(overrides?: CallOverrides): Promise<[string]>;
 
     onBorrow(
       param0: PromiseOrValue<BigNumberish>,
@@ -852,10 +992,10 @@ export interface IFixedTermLoanHooks extends BaseContract {
     ): Promise<ContractTransaction>;
 
     onForceBuyBack(
-      lender: PromiseOrValue<string>,
-      scaledAmount: PromiseOrValue<BigNumberish>,
-      intermediateState: MarketStateV2Struct,
-      extraData: PromiseOrValue<BytesLike>,
+      param0: PromiseOrValue<string>,
+      param1: PromiseOrValue<BigNumberish>,
+      param2: MarketStateV2Struct,
+      param3: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -936,6 +1076,22 @@ export interface IFixedTermLoanHooks extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setName(
+      _name: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    temporaryExcessReserveRatio(
+      key0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [number, number, number] & {
+        originalAnnualInterestBips: number;
+        originalReserveRatioBips: number;
+        expiry: number;
+      }
+    >;
+
     unblockFromDeposits(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -943,6 +1099,8 @@ export interface IFixedTermLoanHooks extends BaseContract {
 
     version(overrides?: CallOverrides): Promise<[string] & { param0: string }>;
   };
+
+  MaximumLoanTerm(overrides?: CallOverrides): Promise<number>;
 
   addRoleProvider(
     providerAddress: PromiseOrValue<string>,
@@ -955,7 +1113,23 @@ export interface IFixedTermLoanHooks extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  borrower(overrides?: CallOverrides): Promise<string>;
+
   config(overrides?: CallOverrides): Promise<BigNumber>;
+
+  createRoleProvider(
+    providerFactory: PromiseOrValue<string>,
+    timeToLive: PromiseOrValue<BigNumberish>,
+    data: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  disableForceBuyBacks(
+    market: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  factory(overrides?: CallOverrides): Promise<string>;
 
   getHookedMarket(
     marketAddress: PromiseOrValue<string>,
@@ -983,6 +1157,8 @@ export interface IFixedTermLoanHooks extends BaseContract {
 
   getPullProviders(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+  getPushProviders(overrides?: CallOverrides): Promise<BigNumber[]>;
+
   getRoleProvider(
     providerAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -999,6 +1175,14 @@ export interface IFixedTermLoanHooks extends BaseContract {
     roleGrantedTimestamps: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  isKnownLenderOnMarket(
+    key0: PromiseOrValue<string>,
+    key1: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  name(overrides?: CallOverrides): Promise<string>;
 
   onBorrow(
     param0: PromiseOrValue<BigNumberish>,
@@ -1038,10 +1222,10 @@ export interface IFixedTermLoanHooks extends BaseContract {
   ): Promise<ContractTransaction>;
 
   onForceBuyBack(
-    lender: PromiseOrValue<string>,
-    scaledAmount: PromiseOrValue<BigNumberish>,
-    intermediateState: MarketStateV2Struct,
-    extraData: PromiseOrValue<BytesLike>,
+    param0: PromiseOrValue<string>,
+    param1: PromiseOrValue<BigNumberish>,
+    param2: MarketStateV2Struct,
+    param3: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1122,6 +1306,22 @@ export interface IFixedTermLoanHooks extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setName(
+    _name: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  temporaryExcessReserveRatio(
+    key0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<
+    [number, number, number] & {
+      originalAnnualInterestBips: number;
+      originalReserveRatioBips: number;
+      expiry: number;
+    }
+  >;
+
   unblockFromDeposits(
     account: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1130,6 +1330,8 @@ export interface IFixedTermLoanHooks extends BaseContract {
   version(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    MaximumLoanTerm(overrides?: CallOverrides): Promise<number>;
+
     addRoleProvider(
       providerAddress: PromiseOrValue<string>,
       timeToLive: PromiseOrValue<BigNumberish>,
@@ -1141,7 +1343,23 @@ export interface IFixedTermLoanHooks extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    borrower(overrides?: CallOverrides): Promise<string>;
+
     config(overrides?: CallOverrides): Promise<BigNumber>;
+
+    createRoleProvider(
+      providerFactory: PromiseOrValue<string>,
+      timeToLive: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    disableForceBuyBacks(
+      market: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    factory(overrides?: CallOverrides): Promise<string>;
 
     getHookedMarket(
       marketAddress: PromiseOrValue<string>,
@@ -1169,6 +1387,8 @@ export interface IFixedTermLoanHooks extends BaseContract {
 
     getPullProviders(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+    getPushProviders(overrides?: CallOverrides): Promise<BigNumber[]>;
+
     getRoleProvider(
       providerAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1185,6 +1405,14 @@ export interface IFixedTermLoanHooks extends BaseContract {
       roleGrantedTimestamps: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    isKnownLenderOnMarket(
+      key0: PromiseOrValue<string>,
+      key1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    name(overrides?: CallOverrides): Promise<string>;
 
     onBorrow(
       param0: PromiseOrValue<BigNumberish>,
@@ -1224,10 +1452,10 @@ export interface IFixedTermLoanHooks extends BaseContract {
     ): Promise<void>;
 
     onForceBuyBack(
-      lender: PromiseOrValue<string>,
-      scaledAmount: PromiseOrValue<BigNumberish>,
-      intermediateState: MarketStateV2Struct,
-      extraData: PromiseOrValue<BytesLike>,
+      param0: PromiseOrValue<string>,
+      param1: PromiseOrValue<BigNumberish>,
+      param2: MarketStateV2Struct,
+      param3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1313,6 +1541,22 @@ export interface IFixedTermLoanHooks extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setName(
+      _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    temporaryExcessReserveRatio(
+      key0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [number, number, number] & {
+        originalAnnualInterestBips: number;
+        originalReserveRatioBips: number;
+        expiry: number;
+      }
+    >;
+
     unblockFromDeposits(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1363,6 +1607,11 @@ export interface IFixedTermLoanHooks extends BaseContract {
       accountAddress?: PromiseOrValue<string> | null
     ): AccountUnblockedFromDepositsEventFilter;
 
+    "DisabledForceBuyBacks(address)"(
+      market?: null
+    ): DisabledForceBuyBacksEventFilter;
+    DisabledForceBuyBacks(market?: null): DisabledForceBuyBacksEventFilter;
+
     "FixedTermUpdated(address,uint32)"(
       market?: null,
       fixedTermEndTime?: null
@@ -1381,35 +1630,44 @@ export interface IFixedTermLoanHooks extends BaseContract {
       newMinimumDeposit?: null
     ): MinimumDepositUpdatedEventFilter;
 
-    "RoleProviderAdded(address,uint32,uint24)"(
+    "NameUpdated(string)"(name?: null): NameUpdatedEventFilter;
+    NameUpdated(name?: null): NameUpdatedEventFilter;
+
+    "RoleProviderAdded(address,uint32,uint24,uint24)"(
       providerAddress?: PromiseOrValue<string> | null,
       timeToLive?: null,
-      pullProviderIndex?: null
+      pullProviderIndex?: null,
+      pushProviderIndex?: null
     ): RoleProviderAddedEventFilter;
     RoleProviderAdded(
       providerAddress?: PromiseOrValue<string> | null,
       timeToLive?: null,
-      pullProviderIndex?: null
+      pullProviderIndex?: null,
+      pushProviderIndex?: null
     ): RoleProviderAddedEventFilter;
 
-    "RoleProviderRemoved(address,uint24)"(
+    "RoleProviderRemoved(address,uint24,uint24)"(
       providerAddress?: PromiseOrValue<string> | null,
-      pullProviderIndex?: null
+      pullProviderIndex?: null,
+      pushProviderIndex?: null
     ): RoleProviderRemovedEventFilter;
     RoleProviderRemoved(
       providerAddress?: PromiseOrValue<string> | null,
-      pullProviderIndex?: null
+      pullProviderIndex?: null,
+      pushProviderIndex?: null
     ): RoleProviderRemovedEventFilter;
 
-    "RoleProviderUpdated(address,uint32,uint24)"(
+    "RoleProviderUpdated(address,uint32,uint24,uint24)"(
       providerAddress?: PromiseOrValue<string> | null,
       timeToLive?: null,
-      pullProviderIndex?: null
+      pullProviderIndex?: null,
+      pushProviderIndex?: null
     ): RoleProviderUpdatedEventFilter;
     RoleProviderUpdated(
       providerAddress?: PromiseOrValue<string> | null,
       timeToLive?: null,
-      pullProviderIndex?: null
+      pullProviderIndex?: null,
+      pushProviderIndex?: null
     ): RoleProviderUpdatedEventFilter;
 
     "TemporaryExcessReserveRatioActivated(address,uint256,uint256,uint256)"(
@@ -1454,6 +1712,8 @@ export interface IFixedTermLoanHooks extends BaseContract {
   };
 
   estimateGas: {
+    MaximumLoanTerm(overrides?: CallOverrides): Promise<BigNumber>;
+
     addRoleProvider(
       providerAddress: PromiseOrValue<string>,
       timeToLive: PromiseOrValue<BigNumberish>,
@@ -1465,7 +1725,23 @@ export interface IFixedTermLoanHooks extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    borrower(overrides?: CallOverrides): Promise<BigNumber>;
+
     config(overrides?: CallOverrides): Promise<BigNumber>;
+
+    createRoleProvider(
+      providerFactory: PromiseOrValue<string>,
+      timeToLive: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    disableForceBuyBacks(
+      market: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    factory(overrides?: CallOverrides): Promise<BigNumber>;
 
     getHookedMarket(
       marketAddress: PromiseOrValue<string>,
@@ -1491,6 +1767,8 @@ export interface IFixedTermLoanHooks extends BaseContract {
 
     getPullProviders(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getPushProviders(overrides?: CallOverrides): Promise<BigNumber>;
+
     getRoleProvider(
       providerAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1507,6 +1785,14 @@ export interface IFixedTermLoanHooks extends BaseContract {
       roleGrantedTimestamps: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    isKnownLenderOnMarket(
+      key0: PromiseOrValue<string>,
+      key1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    name(overrides?: CallOverrides): Promise<BigNumber>;
 
     onBorrow(
       param0: PromiseOrValue<BigNumberish>,
@@ -1546,10 +1832,10 @@ export interface IFixedTermLoanHooks extends BaseContract {
     ): Promise<BigNumber>;
 
     onForceBuyBack(
-      lender: PromiseOrValue<string>,
-      scaledAmount: PromiseOrValue<BigNumberish>,
-      intermediateState: MarketStateV2Struct,
-      extraData: PromiseOrValue<BytesLike>,
+      param0: PromiseOrValue<string>,
+      param1: PromiseOrValue<BigNumberish>,
+      param2: MarketStateV2Struct,
+      param3: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1630,6 +1916,16 @@ export interface IFixedTermLoanHooks extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setName(
+      _name: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    temporaryExcessReserveRatio(
+      key0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     unblockFromDeposits(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1639,6 +1935,8 @@ export interface IFixedTermLoanHooks extends BaseContract {
   };
 
   populateTransaction: {
+    MaximumLoanTerm(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     addRoleProvider(
       providerAddress: PromiseOrValue<string>,
       timeToLive: PromiseOrValue<BigNumberish>,
@@ -1650,7 +1948,23 @@ export interface IFixedTermLoanHooks extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    borrower(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     config(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    createRoleProvider(
+      providerFactory: PromiseOrValue<string>,
+      timeToLive: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    disableForceBuyBacks(
+      market: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getHookedMarket(
       marketAddress: PromiseOrValue<string>,
@@ -1678,6 +1992,8 @@ export interface IFixedTermLoanHooks extends BaseContract {
 
     getPullProviders(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getPushProviders(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getRoleProvider(
       providerAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1694,6 +2010,14 @@ export interface IFixedTermLoanHooks extends BaseContract {
       roleGrantedTimestamps: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    isKnownLenderOnMarket(
+      key0: PromiseOrValue<string>,
+      key1: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     onBorrow(
       param0: PromiseOrValue<BigNumberish>,
@@ -1733,10 +2057,10 @@ export interface IFixedTermLoanHooks extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     onForceBuyBack(
-      lender: PromiseOrValue<string>,
-      scaledAmount: PromiseOrValue<BigNumberish>,
-      intermediateState: MarketStateV2Struct,
-      extraData: PromiseOrValue<BytesLike>,
+      param0: PromiseOrValue<string>,
+      param1: PromiseOrValue<BigNumberish>,
+      param2: MarketStateV2Struct,
+      param3: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1815,6 +2139,16 @@ export interface IFixedTermLoanHooks extends BaseContract {
       market: PromiseOrValue<string>,
       newMinimumDeposit: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setName(
+      _name: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    temporaryExcessReserveRatio(
+      key0: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     unblockFromDeposits(
