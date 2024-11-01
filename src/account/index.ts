@@ -1,5 +1,5 @@
 import { BigNumber, ContractReceipt, ContractTransaction } from "ethers";
-import { Token, TokenAmount, minTokenAmount, toBn } from "../token";
+import { Token, TokenAmount, minTokenAmount } from "../token";
 import { Market } from "../market";
 import {
   MarketLenderStatusStructOutput,
@@ -8,14 +8,7 @@ import {
   LenderAccountDataStructOutput,
   MarketDataWithLenderStatusV2StructOutput
 } from "../typechain";
-import {
-  assert,
-  bipMul,
-  DepositRecord,
-  parseMarketRecord,
-  rayMul,
-  SECONDS_IN_365_DAYS
-} from "../utils";
+import { assert, DepositRecord, parseMarketRecord, rayMul, SECONDS_IN_365_DAYS } from "../utils";
 import {
   SupportedChainId,
   getControllerContract,
@@ -183,9 +176,7 @@ export class MarketAccount {
       // Can not withdraw if market requires access and lender has no credential and is not a known lender
       if (
         config.flags.useOnQueueWithdrawal &&
-        (config.kind === HooksKind.FixedTerm
-          ? config.queueWithdrawalRequiresAccess
-          : config.flags.useOnQueueWithdrawal) &&
+        (config.kind === HooksKind.OpenTerm || config.queueWithdrawalRequiresAccess) &&
         !(this.hasValidCredential || this.isKnownLender)
       ) {
         return QueueWithdrawalStatus.RequiresAccess;
