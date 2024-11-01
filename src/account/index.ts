@@ -8,6 +8,7 @@ import {
   LenderAccountDataStructOutput,
   MarketDataWithLenderStatusV2StructOutput
 } from "../typechain";
+import { WithdrawalQueuedEvent } from "../typechain/WildcatMarket";
 import { assert, DepositRecord, parseMarketRecord, rayMul, SECONDS_IN_365_DAYS } from "../utils";
 import {
   SupportedChainId,
@@ -23,7 +24,6 @@ import {
   SignerOrProvider
 } from "../types";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
-import { WithdrawalQueuedEvent } from "../typechain/WildcatMarket";
 import {
   SubgraphAccountDataForLenderViewFragment,
   SubgraphDepositDataFragment,
