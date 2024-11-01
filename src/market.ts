@@ -15,7 +15,9 @@ import {
   MarketVersion,
   HooksFlags,
   HooksKind,
-  HooksConfig
+  HooksConfig,
+  OpenTermHooksConfig,
+  FixedTermHooksConfig
 } from "./types";
 import { formatUnits } from "ethers/lib/utils";
 import { MarketAccount } from "./account";
@@ -657,28 +659,33 @@ export class Market extends ContractWrapper<WildcatMarket> {
       assert(!!data.hooksConfig, `V2 markets require hooksConfig`);
       const {
         __typename: _,
+        minimumDeposit: _minimumDeposit,
         depositRequiresAccess,
         transferRequiresAccess,
         queueWithdrawalRequiresAccess,
-
+        allowClosureBeforeTerm,
+        allowForceBuyBacks,
+        allowTermReduction,
+        fixedTermEndTime,
+        transfersDisabled,
         ...flags
       } = data.hooksConfig;
       const { id, hooksTemplate: hooksTemplateData } = data.hooks;
       const template = hooksTemplateFromSubgraph(chainId, provider, hooksTemplateData);
-      const minimumDeposit = data.minimumDeposit
-        ? underlyingToken.getAmount(data.minimumDeposit)
+      const minimumDeposit = _minimumDeposit
+        ? underlyingToken.getAmount(_minimumDeposit)
         : undefined;
-      if (template.kind === HooksKind.AccessControl) {
+      if (template.kind === HooksKind.OpenTerm) {
         hooksConfig = {
-          kind: HooksKind.AccessControl,
+          kind: HooksKind.OpenTerm,
           hooksAddress: id,
           template,
           flags,
           minimumDeposit,
           transferRequiresAccess,
           depositRequiresAccess,
-          allowForceBuyBacks: false, // @todo update
-          transfersDisabled: false // @todo update
+          allowForceBuyBacks,
+          transfersDisabled
         };
       } else if (template.kind === HooksKind.FixedTerm) {
         hooksConfig = {
@@ -689,11 +696,12 @@ export class Market extends ContractWrapper<WildcatMarket> {
           minimumDeposit,
           transferRequiresAccess,
           depositRequiresAccess,
-          transfersDisabled: false, // @todo update
-          allowClosureBeforeTerm: false, // @todo update
-          allowTermReduction: false, // @todo update
-          fixedTermEndTime: 0, // @todo update
-          queueWithdrawalRequiresAccess // @todo update
+          queueWithdrawalRequiresAccess,
+          allowClosureBeforeTerm,
+          allowForceBuyBacks,
+          allowTermReduction,
+          fixedTermEndTime,
+          transfersDisabled
         };
       } else {
         throw Error(`Unknown hook kind: ${template.kind}`);
@@ -823,7 +831,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     let hooksConfig: HooksConfig;
     if (hooksConfigData.kind === 1) {
       hooksConfig = {
-        kind: HooksKind.AccessControl,
+        kind: HooksKind.OpenTerm,
         hooksAddress: hooksAddress,
         flags: { ...hooksConfigData.flags },
         depositRequiresAccess: hooksConfigData.depositRequiresAccess,
@@ -831,7 +839,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
         transfersDisabled: hooksConfigData.transfersDisabled,
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
         allowForceBuyBacks: hooksConfigData.allowForceBuyBacks
-      };
+      } as OpenTermHooksConfig;
     } else if (hooksConfigData.kind === 2) {
       hooksConfig = {
         kind: HooksKind.FixedTerm,
@@ -844,8 +852,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
         fixedTermEndTime: hooksConfigData.fixedTermEndTime,
         queueWithdrawalRequiresAccess: hooksConfigData.withdrawalRequiresAccess,
         allowTermReduction: hooksConfigData.allowTermReduction,
-        allowClosureBeforeTerm: hooksConfigData.allowClosureBeforeTerm
-      };
+        allowClosureBeforeTerm: hooksConfigData.allowClosureBeforeTerm,
+        allowForceBuyBacks: hooksConfigData.allowForceBuyBacks
+      } as FixedTermHooksConfig;
     } else {
       throw Error(
         `Unknown hooks kind: ${hooks.hooksTemplateName}, version #${hooksConfigData.kind}`
@@ -973,4 +982,4 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 }
 
-// class AccessControlledMarket extends Market {
+// class OpenTermMarket extends Market {

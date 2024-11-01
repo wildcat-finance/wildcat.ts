@@ -113,9 +113,36 @@ export type HooksFlags = {
   useOnSetProtocolFeeBips: boolean;
 };
 
-type AccessControlHooksConfig = {
+export type MarketHooksInstanceInputs =
+  | {
+      /** Address of an existing hooks instance to use */
+      hooksAddress: string;
+      roleProviderFactory?: undefined;
+      hooksInstanceName?: undefined;
+      existingProviders?: undefined;
+      newProviderInputs?: undefined;
+    }
+  | {
+      hooksAddress?: undefined;
+      roleProviderFactory?: string;
+      hooksInstanceName?: string;
+      existingProviders?: ExistingProviderInput[];
+      newProviderInputs?: CreateProviderInput[];
+    };
+
+export type ExistingProviderInput = {
+  providerAddress: string;
+  timeToLive: number;
+};
+
+export type CreateProviderInput = {
+  data: string;
+  timeToLive: number;
+};
+
+export type OpenTermHooksConfig = {
   hooksAddress: string;
-  kind: HooksKind.AccessControl;
+  kind: HooksKind.OpenTerm;
   flags: HooksFlags;
   transferRequiresAccess: boolean;
   depositRequiresAccess: boolean;
@@ -125,7 +152,7 @@ type AccessControlHooksConfig = {
   template?: HooksTemplate;
 };
 
-type FixedTermHooksConfig = {
+export type FixedTermHooksConfig = {
   hooksAddress: string;
   kind: HooksKind.FixedTerm;
   flags: HooksFlags;
@@ -133,6 +160,7 @@ type FixedTermHooksConfig = {
   depositRequiresAccess: boolean;
   minimumDeposit?: TokenAmount;
   transfersDisabled: boolean;
+  allowForceBuyBacks: boolean;
   queueWithdrawalRequiresAccess: boolean;
   fixedTermEndTime: number;
   allowClosureBeforeTerm: boolean;
@@ -140,7 +168,7 @@ type FixedTermHooksConfig = {
   template?: HooksTemplate;
 };
 
-export type HooksConfig = AccessControlHooksConfig | FixedTermHooksConfig;
+export type HooksConfig = OpenTermHooksConfig | FixedTermHooksConfig;
 
 /* export type HooksConfig = {
   hooksAddress: string;
@@ -160,7 +188,7 @@ export type HooksConfig = AccessControlHooksConfig | FixedTermHooksConfig;
 
 export enum HooksKind {
   Unknown = "Unknown",
-  AccessControl = "AccessControl",
+  OpenTerm = "OpenTerm",
   FixedTerm = "FixedTerm"
 }
 
@@ -168,6 +196,8 @@ export type RoleProvider = {
   providerAddress: string;
   timeToLive: number;
   isPullProvider: boolean;
+  isPushProvider: boolean;
+  pushProviderIndex: number;
   pullProviderIndex: number;
   isApproved: boolean;
 };
