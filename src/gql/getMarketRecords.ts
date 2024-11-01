@@ -5,7 +5,13 @@ import {
   SubgraphGetMarketEventsQuery,
   SubgraphGetMarketEventsQueryVariables
 } from "./graphql";
-import { MarketRecord, MarketRecordKind, assert, parseMarketRecord } from "../utils";
+import {
+  MarketDataFragment,
+  MarketRecord,
+  MarketRecordKind,
+  assert,
+  parseMarketRecord
+} from "../utils";
 
 export type GetMarketRecordsOptions = {
   market: Market;
@@ -43,35 +49,54 @@ export async function getMarketRecords(
   const marketData = result.data.market;
   assert(!!marketData, `Market not found in subgraph: ${market.address}`);
   const {
-    delinquencyRecords,
-    borrowRecords,
-    depositRecords,
-    feeCollectionRecords,
-    repaymentRecords,
     annualInterestBipsUpdatedRecords,
+    borrowRecords,
+    repaymentRecords: debtRepaidRecords,
+    delinquencyRecords,
+    depositRecords,
+    forceBuyBackDisabledRecord: disabledForceBuyBacksRecord,
+    feeCollectionRecords: feesCollectedRecords,
+    fixedTermUpdatedRecords,
+    forceBuyBackRecords,
     maxTotalSupplyUpdatedRecords,
     withdrawalRequestRecords,
-    marketClosedEvent
+    marketClosedEvent,
+    minimumDepositUpdateRecords,
+    protocolFeeBipsUpdatedRecords
   } = marketData;
   const filter = kinds ? (r: MarketRecord) => kinds.includes(r.__typename) : () => true;
+  const handleSingleton = <T extends MarketDataFragment>(event: T | undefined | null): T[] => {
+    const eventIndex = event?.eventIndex;
+    // For singular events like MarketClosed and DisabledForceBuyBacks, filters don't apply so
+    // we have to check if it is within the range of events we are querying for.
+    if (
+      eventIndex !== undefined &&
+      eventIndex >= startEventIndex &&
+      (!endEventIndex || eventIndex < endEventIndex)
+    ) {
+      return [event!];
+    }
+    return [];
+  };
+
   const records: MarketRecord[] = [
-    ...delinquencyRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
-    ...borrowRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
-    ...depositRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
-    ...feeCollectionRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
-    ...repaymentRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
     ...annualInterestBipsUpdatedRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
+    ...borrowRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
+    ...debtRepaidRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
+    ...delinquencyRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
+    ...depositRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
+    ...handleSingleton(disabledForceBuyBacksRecord).map((r) =>
+      parseMarketRecord(market.underlyingToken, r)
+    ),
+    ...feesCollectedRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
+    ...fixedTermUpdatedRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
+    ...forceBuyBackRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
+    ...handleSingleton(marketClosedEvent).map((r) => parseMarketRecord(market.underlyingToken, r)),
     ...maxTotalSupplyUpdatedRecords.map((r) => parseMarketRecord(market.marketToken, r)),
+    ...minimumDepositUpdateRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
+    ...protocolFeeBipsUpdatedRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
     ...withdrawalRequestRecords.map((r) => parseMarketRecord(market.underlyingToken, r))
   ].filter(filter);
-  if (marketClosedEvent) {
-    const { eventIndex } = marketClosedEvent;
-    // If the market is closed, we should only include the market closed event
-    // if it is within the range of events we are querying for.
-    if (eventIndex >= startEventIndex && (!endEventIndex || eventIndex < endEventIndex)) {
-      records.push(parseMarketRecord(market.underlyingToken, marketClosedEvent));
-    }
-  }
   records.sort((a, b) => b.eventIndex - a.eventIndex);
   return records.slice(0, limit);
 }

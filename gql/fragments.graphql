@@ -242,6 +242,60 @@ fragment LenderWithdrawalProperties on LenderWithdrawalStatus {
   isCompleted
 }
 
+fragment ForceBuyBackData on ForceBuyBack {
+  id
+  account {
+    address
+  }
+  eventIndex
+  withdrawalExpiry
+  scaledAmount
+  normalizedAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment MinimumDepositUpdatedData on MinimumDepositUpdated {
+  id
+  eventIndex
+  oldMinimumDeposit
+  newMinimumDeposit
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment ProtocolFeeBipsUpdatedData on ProtocolFeeBipsUpdated {
+  id
+  protocolFeeBipsUpdatedIndex
+  eventIndex
+  oldProtocolFeeBips
+  newProtocolFeeBips
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment DisabledForceBuyBacksData on DisabledForceBuyBacks {
+  id
+  blockNumber
+  blockTimestamp
+  transactionHash
+  eventIndex
+}
+
+fragment FixedTermUpdatedData on FixedTermUpdated {
+  id
+  oldFixedTermEndTime
+  newFixedTermEndTime
+  blockNumber
+  blockTimestamp
+  transactionHash
+  eventIndex
+  fixedTermUpdatedIndex
+}
+
 fragment LenderWithdrawalPropertiesWithEvents on LenderWithdrawalStatus {
   ...LenderWithdrawalProperties
 
@@ -418,6 +472,7 @@ fragment HooksConfigDataForMarket on HooksConfig {
 fragment HooksInstanceDataForMarket on HooksInstance {
   id
   borrower
+  name
   hooksTemplate {
     ...HooksTemplateDataForMarket
   }

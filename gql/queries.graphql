@@ -346,6 +346,9 @@ query getMarketEvents(
     marketClosedEvent {
       ...MarketClosedData
     }
+    forceBuyBackDisabledRecord {
+      ...DisabledForceBuyBacksData
+    }
     delinquencyRecords(
       where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
       orderBy: eventIndex
@@ -409,6 +412,38 @@ query getMarketEvents(
       first: $limit
     ) {
       ...WithdrawalRequestProperties
+    }
+    forceBuyBackRecords(
+      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
+      ...ForceBuyBackData
+    }
+    minimumDepositUpdateRecords(
+      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
+      ...MinimumDepositUpdatedData
+    }
+    protocolFeeBipsUpdatedRecords(
+      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
+      ...ProtocolFeeBipsUpdatedData
+    }
+    fixedTermUpdatedRecords(
+      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
+      ...FixedTermUpdatedData
     }
   }
 }

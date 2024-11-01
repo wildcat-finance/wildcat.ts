@@ -11,7 +11,6 @@ export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> =
 export type Incremental<T> =
   | T
   | { [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never };
-const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string };
@@ -33,6 +32,7 @@ export type SubgraphAccountAccessGranted = {
   blockTimestamp: Scalars["Int"]["output"];
   credentialTimestamp: Scalars["Int"]["output"];
   eventIndex: Scalars["Int"]["output"];
+  hooks: SubgraphHooksInstance;
   id: Scalars["ID"]["output"];
   provider: SubgraphRoleProvider;
   transactionHash: Scalars["Bytes"]["output"];
@@ -95,6 +95,27 @@ export type SubgraphAccountAccessGranted_Filter = {
   eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  hooks?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_?: InputMaybe<SubgraphHooksInstance_Filter>;
+  hooks_contains?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_gt?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_gte?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  hooks_lt?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_lte?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  hooks_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -148,6 +169,12 @@ export enum SubgraphAccountAccessGranted_OrderBy {
   BlockTimestamp = "blockTimestamp",
   CredentialTimestamp = "credentialTimestamp",
   EventIndex = "eventIndex",
+  Hooks = "hooks",
+  HooksBorrower = "hooks__borrower",
+  HooksEventIndex = "hooks__eventIndex",
+  HooksId = "hooks__id",
+  HooksKind = "hooks__kind",
+  HooksName = "hooks__name",
   Id = "id",
   Provider = "provider",
   ProviderId = "provider__id",
@@ -167,6 +194,7 @@ export type SubgraphAccountAccessRevoked = {
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   eventIndex: Scalars["Int"]["output"];
+  hooks: SubgraphHooksInstance;
   id: Scalars["ID"]["output"];
   transactionHash: Scalars["Bytes"]["output"];
 };
@@ -220,6 +248,27 @@ export type SubgraphAccountAccessRevoked_Filter = {
   eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  hooks?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_?: InputMaybe<SubgraphHooksInstance_Filter>;
+  hooks_contains?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_gt?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_gte?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  hooks_lt?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_lte?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  hooks_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -251,6 +300,12 @@ export enum SubgraphAccountAccessRevoked_OrderBy {
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
   EventIndex = "eventIndex",
+  Hooks = "hooks",
+  HooksBorrower = "hooks__borrower",
+  HooksEventIndex = "hooks__eventIndex",
+  HooksId = "hooks__id",
+  HooksKind = "hooks__kind",
+  HooksName = "hooks__name",
   Id = "id",
   TransactionHash = "transactionHash"
 }
@@ -261,6 +316,7 @@ export type SubgraphAccountBlockedFromDeposits = {
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   eventIndex: Scalars["Int"]["output"];
+  hooks: SubgraphHooksInstance;
   id: Scalars["ID"]["output"];
   transactionHash: Scalars["Bytes"]["output"];
 };
@@ -314,6 +370,27 @@ export type SubgraphAccountBlockedFromDeposits_Filter = {
   eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  hooks?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_?: InputMaybe<SubgraphHooksInstance_Filter>;
+  hooks_contains?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_gt?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_gte?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  hooks_lt?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_lte?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  hooks_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -345,6 +422,12 @@ export enum SubgraphAccountBlockedFromDeposits_OrderBy {
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
   EventIndex = "eventIndex",
+  Hooks = "hooks",
+  HooksBorrower = "hooks__borrower",
+  HooksEventIndex = "hooks__eventIndex",
+  HooksId = "hooks__id",
+  HooksKind = "hooks__kind",
+  HooksName = "hooks__name",
   Id = "id",
   TransactionHash = "transactionHash"
 }
@@ -554,6 +637,7 @@ export type SubgraphAccountUnblockedFromDeposits = {
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   eventIndex: Scalars["Int"]["output"];
+  hooks: SubgraphHooksInstance;
   id: Scalars["ID"]["output"];
   transactionHash: Scalars["Bytes"]["output"];
 };
@@ -607,6 +691,27 @@ export type SubgraphAccountUnblockedFromDeposits_Filter = {
   eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  hooks?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_?: InputMaybe<SubgraphHooksInstance_Filter>;
+  hooks_contains?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_gt?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_gte?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  hooks_lt?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_lte?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  hooks_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooks_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -638,6 +743,12 @@ export enum SubgraphAccountUnblockedFromDeposits_OrderBy {
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
   EventIndex = "eventIndex",
+  Hooks = "hooks",
+  HooksBorrower = "hooks__borrower",
+  HooksEventIndex = "hooks__eventIndex",
+  HooksId = "hooks__id",
+  HooksKind = "hooks__kind",
+  HooksName = "hooks__name",
   Id = "id",
   TransactionHash = "transactionHash"
 }
@@ -3537,6 +3648,9 @@ export enum SubgraphHooksFactory_OrderBy {
 
 export type SubgraphHooksInstance = {
   __typename: "HooksInstance";
+  accountAccessGrantedRecords: SubgraphAccountAccessGranted[];
+  accountAccessRevokedRecords: SubgraphAccountAccessRevoked[];
+  accountUnblockFromDepositsRecords: SubgraphAccountUnblockedFromDeposits[];
   borrower: Scalars["Bytes"]["output"];
   eventIndex: Scalars["Int"]["output"];
   hooksFactory: SubgraphHooksFactory;
@@ -3545,10 +3659,46 @@ export type SubgraphHooksInstance = {
   kind: SubgraphHooksKind;
   markets: SubgraphMarket[];
   name: Scalars["String"]["output"];
+  nameUpdatedRecords: SubgraphHooksNameUpdated[];
   providers: SubgraphRoleProvider[];
+  roleProviderAddedRecords: SubgraphRoleProviderAdded[];
+  roleProviderRemovedRecords: SubgraphRoleProviderRemoved[];
+  roleProviderUpdatedRecords: SubgraphRoleProviderUpdated[];
+};
+
+export type SubgraphHooksInstanceAccountAccessGrantedRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphAccountAccessGranted_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphAccountAccessGranted_Filter>;
+};
+
+export type SubgraphHooksInstanceAccountAccessRevokedRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphAccountAccessRevoked_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphAccountAccessRevoked_Filter>;
+};
+
+export type SubgraphHooksInstanceAccountUnblockFromDepositsRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphAccountUnblockedFromDeposits_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphAccountUnblockedFromDeposits_Filter>;
 };
 
 export type SubgraphHooksInstanceMarketsArgs = SubgraphArchControllerMarketsArgs;
+
+export type SubgraphHooksInstanceNameUpdatedRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphHooksNameUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphHooksNameUpdated_Filter>;
+};
 
 export type SubgraphHooksInstanceProvidersArgs = {
   first?: InputMaybe<Scalars["Int"]["input"]>;
@@ -3556,6 +3706,30 @@ export type SubgraphHooksInstanceProvidersArgs = {
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   where?: InputMaybe<SubgraphRoleProvider_Filter>;
+};
+
+export type SubgraphHooksInstanceRoleProviderAddedRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphRoleProviderAdded_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphRoleProviderAdded_Filter>;
+};
+
+export type SubgraphHooksInstanceRoleProviderRemovedRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphRoleProviderRemoved_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphRoleProviderRemoved_Filter>;
+};
+
+export type SubgraphHooksInstanceRoleProviderUpdatedRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphRoleProviderUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphRoleProviderUpdated_Filter>;
 };
 
 export type SubgraphHooksInstanceDeployed = {
@@ -3674,6 +3848,9 @@ export enum SubgraphHooksInstanceDeployed_OrderBy {
 export type SubgraphHooksInstance_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  accountAccessGrantedRecords_?: InputMaybe<SubgraphAccountAccessGranted_Filter>;
+  accountAccessRevokedRecords_?: InputMaybe<SubgraphAccountAccessRevoked_Filter>;
+  accountUnblockFromDepositsRecords_?: InputMaybe<SubgraphAccountUnblockedFromDeposits_Filter>;
   and?: InputMaybe<Array<InputMaybe<SubgraphHooksInstance_Filter>>>;
   borrower?: InputMaybe<Scalars["Bytes"]["input"]>;
   borrower_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
@@ -3749,6 +3926,7 @@ export type SubgraphHooksInstance_Filter = {
   kind_not_in?: InputMaybe<SubgraphHooksKind[]>;
   markets_?: InputMaybe<SubgraphMarket_Filter>;
   name?: InputMaybe<Scalars["String"]["input"]>;
+  nameUpdatedRecords_?: InputMaybe<SubgraphHooksNameUpdated_Filter>;
   name_contains?: InputMaybe<Scalars["String"]["input"]>;
   name_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
   name_ends_with?: InputMaybe<Scalars["String"]["input"]>;
@@ -3770,9 +3948,15 @@ export type SubgraphHooksInstance_Filter = {
   name_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   or?: InputMaybe<Array<InputMaybe<SubgraphHooksInstance_Filter>>>;
   providers_?: InputMaybe<SubgraphRoleProvider_Filter>;
+  roleProviderAddedRecords_?: InputMaybe<SubgraphRoleProviderAdded_Filter>;
+  roleProviderRemovedRecords_?: InputMaybe<SubgraphRoleProviderRemoved_Filter>;
+  roleProviderUpdatedRecords_?: InputMaybe<SubgraphRoleProviderUpdated_Filter>;
 };
 
 export enum SubgraphHooksInstance_OrderBy {
+  AccountAccessGrantedRecords = "accountAccessGrantedRecords",
+  AccountAccessRevokedRecords = "accountAccessRevokedRecords",
+  AccountUnblockFromDepositsRecords = "accountUnblockFromDepositsRecords",
   Borrower = "borrower",
   EventIndex = "eventIndex",
   HooksFactory = "hooksFactory",
@@ -3791,7 +3975,11 @@ export enum SubgraphHooksInstance_OrderBy {
   Kind = "kind",
   Markets = "markets",
   Name = "name",
-  Providers = "providers"
+  NameUpdatedRecords = "nameUpdatedRecords",
+  Providers = "providers",
+  RoleProviderAddedRecords = "roleProviderAddedRecords",
+  RoleProviderRemovedRecords = "roleProviderRemovedRecords",
+  RoleProviderUpdatedRecords = "roleProviderUpdatedRecords"
 }
 
 export enum SubgraphHooksKind {
@@ -5101,6 +5289,10 @@ export enum SubgraphLenderAuthorization_OrderBy {
 
 export type SubgraphLenderHooksAccess = {
   __typename: "LenderHooksAccess";
+  accountAccessGrantedRecords: SubgraphAccountAccessGranted[];
+  accountAccessRevokedRecords: SubgraphAccountAccessRevoked[];
+  accountBlockedFromDepositsRecords: SubgraphAccountBlockedFromDeposits[];
+  accountUnblockedFromDepositsRecords: SubgraphAccountUnblockedFromDeposits[];
   canRefresh: Scalars["Boolean"]["output"];
   hooks: SubgraphHooksInstance;
   id: Scalars["ID"]["output"];
@@ -5111,6 +5303,23 @@ export type SubgraphLenderHooksAccess = {
   lender: Scalars["Bytes"]["output"];
   marketAccounts: SubgraphLenderAccount[];
 };
+
+export type SubgraphLenderHooksAccessAccountAccessGrantedRecordsArgs =
+  SubgraphHooksInstanceAccountAccessGrantedRecordsArgs;
+
+export type SubgraphLenderHooksAccessAccountAccessRevokedRecordsArgs =
+  SubgraphHooksInstanceAccountAccessRevokedRecordsArgs;
+
+export type SubgraphLenderHooksAccessAccountBlockedFromDepositsRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphAccountBlockedFromDeposits_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphAccountBlockedFromDeposits_Filter>;
+};
+
+export type SubgraphLenderHooksAccessAccountUnblockedFromDepositsRecordsArgs =
+  SubgraphHooksInstanceAccountUnblockFromDepositsRecordsArgs;
 
 export type SubgraphLenderHooksAccessKnownLenderStatusesArgs = {
   first?: InputMaybe<Scalars["Int"]["input"]>;
@@ -5126,6 +5335,10 @@ export type SubgraphLenderHooksAccessMarketAccountsArgs =
 export type SubgraphLenderHooksAccess_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  accountAccessGrantedRecords_?: InputMaybe<SubgraphAccountAccessGranted_Filter>;
+  accountAccessRevokedRecords_?: InputMaybe<SubgraphAccountAccessRevoked_Filter>;
+  accountBlockedFromDepositsRecords_?: InputMaybe<SubgraphAccountBlockedFromDeposits_Filter>;
+  accountUnblockedFromDepositsRecords_?: InputMaybe<SubgraphAccountUnblockedFromDeposits_Filter>;
   and?: InputMaybe<Array<InputMaybe<SubgraphLenderHooksAccess_Filter>>>;
   canRefresh?: InputMaybe<Scalars["Boolean"]["input"]>;
   canRefresh_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
@@ -5209,6 +5422,10 @@ export type SubgraphLenderHooksAccess_Filter = {
 };
 
 export enum SubgraphLenderHooksAccess_OrderBy {
+  AccountAccessGrantedRecords = "accountAccessGrantedRecords",
+  AccountAccessRevokedRecords = "accountAccessRevokedRecords",
+  AccountBlockedFromDepositsRecords = "accountBlockedFromDepositsRecords",
+  AccountUnblockedFromDepositsRecords = "accountUnblockedFromDepositsRecords",
   CanRefresh = "canRefresh",
   Hooks = "hooks",
   HooksBorrower = "hooks__borrower",
@@ -5611,6 +5828,7 @@ export type SubgraphMarket = {
   feesCollectedIndex: Scalars["Int"]["output"];
   fixedTermUpdatedIndex: Scalars["Int"]["output"];
   fixedTermUpdatedRecords: SubgraphFixedTermUpdated[];
+  forceBuyBackDisabledRecord?: Maybe<SubgraphDisabledForceBuyBacks>;
   forceBuyBackIndex: Scalars["Int"]["output"];
   forceBuyBackRecords: SubgraphForceBuyBack[];
   hooks?: Maybe<SubgraphHooksInstance>;
@@ -5637,6 +5855,7 @@ export type SubgraphMarket = {
   pendingWithdrawalExpiry: Scalars["BigInt"]["output"];
   protocolFeeBips: Scalars["Int"]["output"];
   protocolFeeBipsUpdatedIndex: Scalars["Int"]["output"];
+  protocolFeeBipsUpdatedRecords: SubgraphProtocolFeeBipsUpdated[];
   removal?: Maybe<SubgraphMarketRemoved>;
   repaymentRecords: SubgraphDebtRepaid[];
   reserveRatioBips: Scalars["Int"]["output"];
@@ -5736,6 +5955,14 @@ export type SubgraphMarketMinimumDepositUpdateRecordsArgs = {
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   where?: InputMaybe<SubgraphMinimumDepositUpdated_Filter>;
+};
+
+export type SubgraphMarketProtocolFeeBipsUpdatedRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphProtocolFeeBipsUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphProtocolFeeBipsUpdated_Filter>;
 };
 
 export type SubgraphMarketRepaymentRecordsArgs = {
@@ -6758,6 +6985,7 @@ export type SubgraphMarket_Filter = {
   fixedTermUpdatedIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
   fixedTermUpdatedIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   fixedTermUpdatedRecords_?: InputMaybe<SubgraphFixedTermUpdated_Filter>;
+  forceBuyBackDisabledRecord_?: InputMaybe<SubgraphDisabledForceBuyBacks_Filter>;
   forceBuyBackIndex?: InputMaybe<Scalars["Int"]["input"]>;
   forceBuyBackIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
   forceBuyBackIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -6937,6 +7165,7 @@ export type SubgraphMarket_Filter = {
   protocolFeeBipsUpdatedIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
   protocolFeeBipsUpdatedIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
   protocolFeeBipsUpdatedIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  protocolFeeBipsUpdatedRecords_?: InputMaybe<SubgraphProtocolFeeBipsUpdated_Filter>;
   protocolFeeBips_gt?: InputMaybe<Scalars["Int"]["input"]>;
   protocolFeeBips_gte?: InputMaybe<Scalars["Int"]["input"]>;
   protocolFeeBips_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
@@ -7141,6 +7370,12 @@ export enum SubgraphMarket_OrderBy {
   FeesCollectedIndex = "feesCollectedIndex",
   FixedTermUpdatedIndex = "fixedTermUpdatedIndex",
   FixedTermUpdatedRecords = "fixedTermUpdatedRecords",
+  ForceBuyBackDisabledRecord = "forceBuyBackDisabledRecord",
+  ForceBuyBackDisabledRecordBlockNumber = "forceBuyBackDisabledRecord__blockNumber",
+  ForceBuyBackDisabledRecordBlockTimestamp = "forceBuyBackDisabledRecord__blockTimestamp",
+  ForceBuyBackDisabledRecordEventIndex = "forceBuyBackDisabledRecord__eventIndex",
+  ForceBuyBackDisabledRecordId = "forceBuyBackDisabledRecord__id",
+  ForceBuyBackDisabledRecordTransactionHash = "forceBuyBackDisabledRecord__transactionHash",
   ForceBuyBackIndex = "forceBuyBackIndex",
   ForceBuyBackRecords = "forceBuyBackRecords",
   Hooks = "hooks",
@@ -7203,6 +7438,7 @@ export enum SubgraphMarket_OrderBy {
   PendingWithdrawalExpiry = "pendingWithdrawalExpiry",
   ProtocolFeeBips = "protocolFeeBips",
   ProtocolFeeBipsUpdatedIndex = "protocolFeeBipsUpdatedIndex",
+  ProtocolFeeBipsUpdatedRecords = "protocolFeeBipsUpdatedRecords",
   Removal = "removal",
   RemovalBlockNumber = "removal__blockNumber",
   RemovalBlockTimestamp = "removal__blockTimestamp",
@@ -8463,6 +8699,8 @@ export type SubgraphQuery = {
   sanctionedAccountAssetsSentToEscrows: SubgraphSanctionedAccountAssetsSentToEscrow[];
   sanctionedAccountWithdrawalSentToEscrow?: Maybe<SubgraphSanctionedAccountWithdrawalSentToEscrow>;
   sanctionedAccountWithdrawalSentToEscrows: SubgraphSanctionedAccountWithdrawalSentToEscrow[];
+  subgraphVersion?: Maybe<SubgraphSubgraphVersion>;
+  subgraphVersions: SubgraphSubgraphVersion[];
   token?: Maybe<SubgraphToken>;
   tokens: SubgraphToken[];
   transfer?: Maybe<SubgraphTransfer>;
@@ -9276,6 +9514,18 @@ export type SubgraphQuerySanctionedAccountWithdrawalSentToEscrowsArgs = {
   where?: InputMaybe<SubgraphSanctionedAccountWithdrawalSentToEscrow_Filter>;
 };
 
+export type SubgraphQuerySubgraphVersionArgs = SubgraphQueryAccountAccessGrantedArgs;
+
+export type SubgraphQuerySubgraphVersionsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphSubgraphVersion_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSubgraphVersion_Filter>;
+};
+
 export type SubgraphQueryTokenArgs = SubgraphQueryAccountAccessGrantedArgs;
 
 export type SubgraphQueryTokensArgs = {
@@ -9638,13 +9888,8 @@ export type SubgraphRoleProvider = {
   updatedEvents: SubgraphRoleProviderUpdated[];
 };
 
-export type SubgraphRoleProviderUpdatedEventsArgs = {
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<SubgraphRoleProviderUpdated_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  where?: InputMaybe<SubgraphRoleProviderUpdated_Filter>;
-};
+export type SubgraphRoleProviderUpdatedEventsArgs =
+  SubgraphHooksInstanceRoleProviderUpdatedRecordsArgs;
 
 export type SubgraphRoleProviderAdded = {
   __typename: "RoleProviderAdded";
@@ -10673,6 +10918,31 @@ export enum SubgraphSanctionedAccountWithdrawalSentToEscrow_OrderBy {
   TransactionHash = "transactionHash"
 }
 
+/** v2.0.1 */
+export type SubgraphSubgraphVersion = {
+  __typename: "SubgraphVersion";
+  id: Scalars["ID"]["output"];
+};
+
+export type SubgraphSubgraphVersion_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphSubgraphVersion_Filter>>>;
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  id_lt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_lte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphSubgraphVersion_Filter>>>;
+};
+
+export enum SubgraphSubgraphVersion_OrderBy {
+  Id = "id"
+}
+
 export type SubgraphSubscription = {
   __typename: "Subscription";
   /** Access to subgraph metadata */
@@ -10807,6 +11077,8 @@ export type SubgraphSubscription = {
   sanctionedAccountAssetsSentToEscrows: SubgraphSanctionedAccountAssetsSentToEscrow[];
   sanctionedAccountWithdrawalSentToEscrow?: Maybe<SubgraphSanctionedAccountWithdrawalSentToEscrow>;
   sanctionedAccountWithdrawalSentToEscrows: SubgraphSanctionedAccountWithdrawalSentToEscrow[];
+  subgraphVersion?: Maybe<SubgraphSubgraphVersion>;
+  subgraphVersions: SubgraphSubgraphVersion[];
   token?: Maybe<SubgraphToken>;
   tokens: SubgraphToken[];
   transfer?: Maybe<SubgraphTransfer>;
@@ -11130,6 +11402,10 @@ export type SubgraphSubscriptionSanctionedAccountWithdrawalSentToEscrowArgs =
 
 export type SubgraphSubscriptionSanctionedAccountWithdrawalSentToEscrowsArgs =
   SubgraphQuerySanctionedAccountWithdrawalSentToEscrowsArgs;
+
+export type SubgraphSubscriptionSubgraphVersionArgs = SubgraphQueryAccountAccessGrantedArgs;
+
+export type SubgraphSubscriptionSubgraphVersionsArgs = SubgraphQuerySubgraphVersionsArgs;
 
 export type SubgraphSubscriptionTokenArgs = SubgraphQueryAccountAccessGrantedArgs;
 
@@ -11754,6 +12030,7 @@ export type SubgraphWithdrawalBatchExpired = {
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   id: Scalars["ID"]["output"];
+  normalizedAmountOwed: Scalars["BigInt"]["output"];
   normalizedAmountPaid: Scalars["BigInt"]["output"];
   scaledAmountBurned: Scalars["BigInt"]["output"];
   scaledTotalAmount: Scalars["BigInt"]["output"];
@@ -11809,6 +12086,14 @@ export type SubgraphWithdrawalBatchExpired_Filter = {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  normalizedAmountOwed?: InputMaybe<Scalars["BigInt"]["input"]>;
+  normalizedAmountOwed_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  normalizedAmountOwed_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  normalizedAmountOwed_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  normalizedAmountOwed_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  normalizedAmountOwed_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  normalizedAmountOwed_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  normalizedAmountOwed_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   normalizedAmountPaid?: InputMaybe<Scalars["BigInt"]["input"]>;
   normalizedAmountPaid_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   normalizedAmountPaid_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -11867,6 +12152,7 @@ export enum SubgraphWithdrawalBatchExpired_OrderBy {
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
   Id = "id",
+  NormalizedAmountOwed = "normalizedAmountOwed",
   NormalizedAmountPaid = "normalizedAmountPaid",
   ScaledAmountBurned = "scaledAmountBurned",
   ScaledTotalAmount = "scaledTotalAmount",
@@ -13132,6 +13418,63 @@ export type SubgraphLenderWithdrawalPropertiesFragment = {
   account: { __typename: "LenderAccount"; address: string };
 };
 
+export type SubgraphForceBuyBackDataFragment = {
+  __typename: "ForceBuyBack";
+  id: string;
+  eventIndex: number;
+  withdrawalExpiry: number;
+  scaledAmount: string;
+  normalizedAmount: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+  account: { __typename: "LenderAccount"; address: string };
+};
+
+export type SubgraphMinimumDepositUpdatedDataFragment = {
+  __typename: "MinimumDepositUpdated";
+  id: string;
+  eventIndex: number;
+  oldMinimumDeposit?: string | null;
+  newMinimumDeposit: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+};
+
+export type SubgraphProtocolFeeBipsUpdatedDataFragment = {
+  __typename: "ProtocolFeeBipsUpdated";
+  id: string;
+  protocolFeeBipsUpdatedIndex: number;
+  eventIndex: number;
+  oldProtocolFeeBips: number;
+  newProtocolFeeBips: number;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+};
+
+export type SubgraphDisabledForceBuyBacksDataFragment = {
+  __typename: "DisabledForceBuyBacks";
+  id: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+  eventIndex: number;
+};
+
+export type SubgraphFixedTermUpdatedDataFragment = {
+  __typename: "FixedTermUpdated";
+  id: string;
+  oldFixedTermEndTime: number;
+  newFixedTermEndTime: number;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+  eventIndex: number;
+  fixedTermUpdatedIndex: number;
+};
+
 export type SubgraphLenderWithdrawalPropertiesWithEventsFragment = {
   __typename: "LenderWithdrawalStatus";
   id: string;
@@ -13293,6 +13636,7 @@ export type SubgraphHooksInstanceDataForMarketFragment = {
   __typename: "HooksInstance";
   id: string;
   borrower: string;
+  name: string;
   eventIndex: number;
   hooksTemplate: SubgraphHooksTemplateDataForMarketFragment;
   providers: SubgraphRoleProviderDataFragment[];
@@ -13708,6 +14052,7 @@ export type SubgraphGetMarketEventsQuery = {
   market?: {
     __typename: "Market";
     marketClosedEvent?: SubgraphMarketClosedDataFragment | null;
+    forceBuyBackDisabledRecord?: SubgraphDisabledForceBuyBacksDataFragment | null;
     delinquencyRecords: SubgraphDelinquencyStatusChangedDataFragment[];
     borrowRecords: SubgraphBorrowDataFragment[];
     depositRecords: SubgraphDepositDataFragment[];
@@ -13716,6 +14061,10 @@ export type SubgraphGetMarketEventsQuery = {
     annualInterestBipsUpdatedRecords: SubgraphAnnualInterestBipsUpdatedDataFragment[];
     maxTotalSupplyUpdatedRecords: SubgraphMaxTotalSupplyUpdatedDataFragment[];
     withdrawalRequestRecords: SubgraphWithdrawalRequestPropertiesFragment[];
+    forceBuyBackRecords: SubgraphForceBuyBackDataFragment[];
+    minimumDepositUpdateRecords: SubgraphMinimumDepositUpdatedDataFragment[];
+    protocolFeeBipsUpdatedRecords: SubgraphProtocolFeeBipsUpdatedDataFragment[];
+    fixedTermUpdatedRecords: SubgraphFixedTermUpdatedDataFragment[];
   } | null;
 };
 
@@ -14091,6 +14440,7 @@ export const HooksInstanceDataForMarketFragmentDoc = gql`
   fragment HooksInstanceDataForMarket on HooksInstance {
     id
     borrower
+    name
     hooksTemplate {
       ...HooksTemplateDataForMarket
     }
@@ -14231,6 +14581,65 @@ export const MarketDataWithEventsFragmentDoc = gql`
   fragment MarketDataWithEvents on Market {
     ...MarketData
     ...MarketRecords
+  }
+`;
+export const ForceBuyBackDataFragmentDoc = gql`
+  fragment ForceBuyBackData on ForceBuyBack {
+    id
+    account {
+      address
+    }
+    eventIndex
+    withdrawalExpiry
+    scaledAmount
+    normalizedAmount
+    blockNumber
+    blockTimestamp
+    transactionHash
+  }
+`;
+export const MinimumDepositUpdatedDataFragmentDoc = gql`
+  fragment MinimumDepositUpdatedData on MinimumDepositUpdated {
+    id
+    eventIndex
+    oldMinimumDeposit
+    newMinimumDeposit
+    blockNumber
+    blockTimestamp
+    transactionHash
+  }
+`;
+export const ProtocolFeeBipsUpdatedDataFragmentDoc = gql`
+  fragment ProtocolFeeBipsUpdatedData on ProtocolFeeBipsUpdated {
+    id
+    protocolFeeBipsUpdatedIndex
+    eventIndex
+    oldProtocolFeeBips
+    newProtocolFeeBips
+    blockNumber
+    blockTimestamp
+    transactionHash
+  }
+`;
+export const DisabledForceBuyBacksDataFragmentDoc = gql`
+  fragment DisabledForceBuyBacksData on DisabledForceBuyBacks {
+    id
+    blockNumber
+    blockTimestamp
+    transactionHash
+    eventIndex
+  }
+`;
+export const FixedTermUpdatedDataFragmentDoc = gql`
+  fragment FixedTermUpdatedData on FixedTermUpdated {
+    id
+    oldFixedTermEndTime
+    newFixedTermEndTime
+    blockNumber
+    blockTimestamp
+    transactionHash
+    eventIndex
+    fixedTermUpdatedIndex
   }
 `;
 export const LenderWithdrawalPropertiesFragmentDoc = gql`
@@ -14387,76 +14796,6 @@ export const GetLenderAccountForMarketDocument = gql`
   ${RoleProviderDataFragmentDoc}
   ${DepositDataFragmentDoc}
 `;
-
-/**
- * __useGetLenderAccountForMarketQuery__
- *
- * To run a query within a React component, call `useGetLenderAccountForMarketQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLenderAccountForMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetLenderAccountForMarketQuery({
- *   variables: {
- *      market: // value for 'market'
- *      lender: // value for 'lender'
- *      numDeposits: // value for 'numDeposits'
- *      skipDeposits: // value for 'skipDeposits'
- *      orderDeposits: // value for 'orderDeposits'
- *      directionDeposits: // value for 'directionDeposits'
- *   },
- * });
- */
-export function useGetLenderAccountForMarketQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetLenderAccountForMarketQuery,
-    SubgraphGetLenderAccountForMarketQueryVariables
-  >
-): GetLenderAccountForMarketQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetLenderAccountForMarketQuery,
-    SubgraphGetLenderAccountForMarketQueryVariables
-  >(GetLenderAccountForMarketDocument, options);
-}
-export function useGetLenderAccountForMarketLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetLenderAccountForMarketQuery,
-    SubgraphGetLenderAccountForMarketQueryVariables
-  >
-): GetLenderAccountForMarketLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetLenderAccountForMarketQuery,
-    SubgraphGetLenderAccountForMarketQueryVariables
-  >(GetLenderAccountForMarketDocument, options);
-}
-export function useGetLenderAccountForMarketSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetLenderAccountForMarketQuery,
-    SubgraphGetLenderAccountForMarketQueryVariables
-  >
-): GetLenderAccountForMarketSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetLenderAccountForMarketQuery,
-    SubgraphGetLenderAccountForMarketQueryVariables
-  >(GetLenderAccountForMarketDocument, options);
-}
-export type GetLenderAccountForMarketQueryHookResult = Apollo.QueryResult<
-  SubgraphGetLenderAccountForMarketQuery,
-  SubgraphGetLenderAccountForMarketQueryVariables
->;
-export type GetLenderAccountForMarketLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetLenderAccountForMarketQuery,
-  SubgraphGetLenderAccountForMarketQueryVariables
->;
-export type GetLenderAccountForMarketSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetLenderAccountForMarketQuery,
-  SubgraphGetLenderAccountForMarketQueryVariables
->;
 export type GetLenderAccountForMarketQueryResult = Apollo.QueryResult<
   SubgraphGetLenderAccountForMarketQuery,
   SubgraphGetLenderAccountForMarketQueryVariables
@@ -14515,84 +14854,6 @@ export const GetLenderAccountWithMarketDocument = gql`
   ${BorrowDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
 `;
-
-/**
- * __useGetLenderAccountWithMarketQuery__
- *
- * To run a query within a React component, call `useGetLenderAccountWithMarketQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLenderAccountWithMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetLenderAccountWithMarketQuery({
- *   variables: {
- *      market: // value for 'market'
- *      lender: // value for 'lender'
- *      numDeposits: // value for 'numDeposits'
- *      skipDeposits: // value for 'skipDeposits'
- *      orderDeposits: // value for 'orderDeposits'
- *      directionDeposits: // value for 'directionDeposits'
- *      numBorrows: // value for 'numBorrows'
- *      skipBorrows: // value for 'skipBorrows'
- *      orderBorrows: // value for 'orderBorrows'
- *      directionBorrows: // value for 'directionBorrows'
- *      numRepayments: // value for 'numRepayments'
- *      skipRepayments: // value for 'skipRepayments'
- *      orderRepayments: // value for 'orderRepayments'
- *      directionRepayments: // value for 'directionRepayments'
- *   },
- * });
- */
-export function useGetLenderAccountWithMarketQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetLenderAccountWithMarketQuery,
-    SubgraphGetLenderAccountWithMarketQueryVariables
-  >
-): GetLenderAccountWithMarketQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetLenderAccountWithMarketQuery,
-    SubgraphGetLenderAccountWithMarketQueryVariables
-  >(GetLenderAccountWithMarketDocument, options);
-}
-export function useGetLenderAccountWithMarketLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetLenderAccountWithMarketQuery,
-    SubgraphGetLenderAccountWithMarketQueryVariables
-  >
-): GetLenderAccountWithMarketLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetLenderAccountWithMarketQuery,
-    SubgraphGetLenderAccountWithMarketQueryVariables
-  >(GetLenderAccountWithMarketDocument, options);
-}
-export function useGetLenderAccountWithMarketSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetLenderAccountWithMarketQuery,
-    SubgraphGetLenderAccountWithMarketQueryVariables
-  >
-): GetLenderAccountWithMarketSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetLenderAccountWithMarketQuery,
-    SubgraphGetLenderAccountWithMarketQueryVariables
-  >(GetLenderAccountWithMarketDocument, options);
-}
-export type GetLenderAccountWithMarketQueryHookResult = Apollo.QueryResult<
-  SubgraphGetLenderAccountWithMarketQuery,
-  SubgraphGetLenderAccountWithMarketQueryVariables
->;
-export type GetLenderAccountWithMarketLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetLenderAccountWithMarketQuery,
-  SubgraphGetLenderAccountWithMarketQueryVariables
->;
-export type GetLenderAccountWithMarketSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetLenderAccountWithMarketQuery,
-  SubgraphGetLenderAccountWithMarketQueryVariables
->;
 export type GetLenderAccountWithMarketQueryResult = Apollo.QueryResult<
   SubgraphGetLenderAccountWithMarketQuery,
   SubgraphGetLenderAccountWithMarketQueryVariables
@@ -14679,84 +14940,6 @@ export const GetAllMarketsForLenderViewDocument = gql`
   ${LenderHooksAccessDataFragmentDoc}
   ${DepositDataFragmentDoc}
 `;
-
-/**
- * __useGetAllMarketsForLenderViewQuery__
- *
- * To run a query within a React component, call `useGetAllMarketsForLenderViewQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllMarketsForLenderViewQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllMarketsForLenderViewQuery({
- *   variables: {
- *      lender: // value for 'lender'
- *      marketFilter: // value for 'marketFilter'
- *      numDeposits: // value for 'numDeposits'
- *      skipDeposits: // value for 'skipDeposits'
- *      orderDeposits: // value for 'orderDeposits'
- *      directionDeposits: // value for 'directionDeposits'
- *      numBorrows: // value for 'numBorrows'
- *      skipBorrows: // value for 'skipBorrows'
- *      orderBorrows: // value for 'orderBorrows'
- *      directionBorrows: // value for 'directionBorrows'
- *      numRepayments: // value for 'numRepayments'
- *      skipRepayments: // value for 'skipRepayments'
- *      orderRepayments: // value for 'orderRepayments'
- *      directionRepayments: // value for 'directionRepayments'
- *   },
- * });
- */
-export function useGetAllMarketsForLenderViewQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    SubgraphGetAllMarketsForLenderViewQuery,
-    SubgraphGetAllMarketsForLenderViewQueryVariables
-  >
-): GetAllMarketsForLenderViewQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetAllMarketsForLenderViewQuery,
-    SubgraphGetAllMarketsForLenderViewQueryVariables
-  >(GetAllMarketsForLenderViewDocument, options);
-}
-export function useGetAllMarketsForLenderViewLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetAllMarketsForLenderViewQuery,
-    SubgraphGetAllMarketsForLenderViewQueryVariables
-  >
-): GetAllMarketsForLenderViewLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetAllMarketsForLenderViewQuery,
-    SubgraphGetAllMarketsForLenderViewQueryVariables
-  >(GetAllMarketsForLenderViewDocument, options);
-}
-export function useGetAllMarketsForLenderViewSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetAllMarketsForLenderViewQuery,
-    SubgraphGetAllMarketsForLenderViewQueryVariables
-  >
-): GetAllMarketsForLenderViewSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetAllMarketsForLenderViewQuery,
-    SubgraphGetAllMarketsForLenderViewQueryVariables
-  >(GetAllMarketsForLenderViewDocument, options);
-}
-export type GetAllMarketsForLenderViewQueryHookResult = Apollo.QueryResult<
-  SubgraphGetAllMarketsForLenderViewQuery,
-  SubgraphGetAllMarketsForLenderViewQueryVariables
->;
-export type GetAllMarketsForLenderViewLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetAllMarketsForLenderViewQuery,
-  SubgraphGetAllMarketsForLenderViewQueryVariables
->;
-export type GetAllMarketsForLenderViewSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetAllMarketsForLenderViewQuery,
-  SubgraphGetAllMarketsForLenderViewQueryVariables
->;
 export type GetAllMarketsForLenderViewQueryResult = Apollo.QueryResult<
   SubgraphGetAllMarketsForLenderViewQuery,
   SubgraphGetAllMarketsForLenderViewQueryVariables
@@ -14859,86 +15042,6 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
   ${BorrowDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
 `;
-
-/**
- * __useGetAccountsWhereLenderAuthorizedOrActiveQuery__
- *
- * To run a query within a React component, call `useGetAccountsWhereLenderAuthorizedOrActiveQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAccountsWhereLenderAuthorizedOrActiveQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAccountsWhereLenderAuthorizedOrActiveQuery({
- *   variables: {
- *      lender: // value for 'lender'
- *      accountFilter: // value for 'accountFilter'
- *      numDeposits: // value for 'numDeposits'
- *      skipDeposits: // value for 'skipDeposits'
- *      orderDeposits: // value for 'orderDeposits'
- *      directionDeposits: // value for 'directionDeposits'
- *      numBorrows: // value for 'numBorrows'
- *      skipBorrows: // value for 'skipBorrows'
- *      orderBorrows: // value for 'orderBorrows'
- *      directionBorrows: // value for 'directionBorrows'
- *      numRepayments: // value for 'numRepayments'
- *      skipRepayments: // value for 'skipRepayments'
- *      orderRepayments: // value for 'orderRepayments'
- *      directionRepayments: // value for 'directionRepayments'
- *   },
- * });
- */
-export function useGetAccountsWhereLenderAuthorizedOrActiveQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables
-  >
-): GetAccountsWhereLenderAuthorizedOrActiveQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables
-  >(GetAccountsWhereLenderAuthorizedOrActiveDocument, options);
-}
-export function useGetAccountsWhereLenderAuthorizedOrActiveLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables
-  >
-): GetAccountsWhereLenderAuthorizedOrActiveLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables
-  >(GetAccountsWhereLenderAuthorizedOrActiveDocument, options);
-}
-export function useGetAccountsWhereLenderAuthorizedOrActiveSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables
-  >
-): GetAccountsWhereLenderAuthorizedOrActiveSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables
-  >(GetAccountsWhereLenderAuthorizedOrActiveDocument, options);
-}
-export type GetAccountsWhereLenderAuthorizedOrActiveQueryHookResult = Apollo.QueryResult<
-  SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery,
-  SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables
->;
-export type GetAccountsWhereLenderAuthorizedOrActiveLazyQueryHookResult =
-  Apollo.LazyQueryResultTuple<
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables
-  >;
-export type GetAccountsWhereLenderAuthorizedOrActiveSuspenseQueryHookResult =
-  Apollo.UseSuspenseQueryResult<
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables
-  >;
 export type GetAccountsWhereLenderAuthorizedOrActiveQueryResult = Apollo.QueryResult<
   SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery,
   SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables
@@ -14976,74 +15079,6 @@ export const GetLenderWithdrawalsForMarketDocument = gql`
   ${WithdrawalRequestPropertiesFragmentDoc}
   ${WithdrawalExecutionPropertiesFragmentDoc}
 `;
-
-/**
- * __useGetLenderWithdrawalsForMarketQuery__
- *
- * To run a query within a React component, call `useGetLenderWithdrawalsForMarketQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLenderWithdrawalsForMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetLenderWithdrawalsForMarketQuery({
- *   variables: {
- *      market: // value for 'market'
- *      lender: // value for 'lender'
- *      numWithdrawals: // value for 'numWithdrawals'
- *      skipWithdrawals: // value for 'skipWithdrawals'
- *   },
- * });
- */
-export function useGetLenderWithdrawalsForMarketQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetLenderWithdrawalsForMarketQuery,
-    SubgraphGetLenderWithdrawalsForMarketQueryVariables
-  >
-): GetLenderWithdrawalsForMarketQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetLenderWithdrawalsForMarketQuery,
-    SubgraphGetLenderWithdrawalsForMarketQueryVariables
-  >(GetLenderWithdrawalsForMarketDocument, options);
-}
-export function useGetLenderWithdrawalsForMarketLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetLenderWithdrawalsForMarketQuery,
-    SubgraphGetLenderWithdrawalsForMarketQueryVariables
-  >
-): GetLenderWithdrawalsForMarketLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetLenderWithdrawalsForMarketQuery,
-    SubgraphGetLenderWithdrawalsForMarketQueryVariables
-  >(GetLenderWithdrawalsForMarketDocument, options);
-}
-export function useGetLenderWithdrawalsForMarketSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetLenderWithdrawalsForMarketQuery,
-    SubgraphGetLenderWithdrawalsForMarketQueryVariables
-  >
-): GetLenderWithdrawalsForMarketSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetLenderWithdrawalsForMarketQuery,
-    SubgraphGetLenderWithdrawalsForMarketQueryVariables
-  >(GetLenderWithdrawalsForMarketDocument, options);
-}
-export type GetLenderWithdrawalsForMarketQueryHookResult = Apollo.QueryResult<
-  SubgraphGetLenderWithdrawalsForMarketQuery,
-  SubgraphGetLenderWithdrawalsForMarketQueryVariables
->;
-export type GetLenderWithdrawalsForMarketLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetLenderWithdrawalsForMarketQuery,
-  SubgraphGetLenderWithdrawalsForMarketQueryVariables
->;
-export type GetLenderWithdrawalsForMarketSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetLenderWithdrawalsForMarketQuery,
-  SubgraphGetLenderWithdrawalsForMarketQueryVariables
->;
 export type GetLenderWithdrawalsForMarketQueryResult = Apollo.QueryResult<
   SubgraphGetLenderWithdrawalsForMarketQuery,
   SubgraphGetLenderWithdrawalsForMarketQueryVariables
@@ -15060,72 +15095,6 @@ export const GetLenderAuthorizationByMarketDocument = gql`
     }
   }
 `;
-
-/**
- * __useGetLenderAuthorizationByMarketQuery__
- *
- * To run a query within a React component, call `useGetLenderAuthorizationByMarketQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLenderAuthorizationByMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetLenderAuthorizationByMarketQuery({
- *   variables: {
- *      market: // value for 'market'
- *      lender: // value for 'lender'
- *   },
- * });
- */
-export function useGetLenderAuthorizationByMarketQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetLenderAuthorizationByMarketQuery,
-    SubgraphGetLenderAuthorizationByMarketQueryVariables
-  >
-): GetLenderAuthorizationByMarketQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetLenderAuthorizationByMarketQuery,
-    SubgraphGetLenderAuthorizationByMarketQueryVariables
-  >(GetLenderAuthorizationByMarketDocument, options);
-}
-export function useGetLenderAuthorizationByMarketLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetLenderAuthorizationByMarketQuery,
-    SubgraphGetLenderAuthorizationByMarketQueryVariables
-  >
-): GetLenderAuthorizationByMarketLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetLenderAuthorizationByMarketQuery,
-    SubgraphGetLenderAuthorizationByMarketQueryVariables
-  >(GetLenderAuthorizationByMarketDocument, options);
-}
-export function useGetLenderAuthorizationByMarketSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetLenderAuthorizationByMarketQuery,
-    SubgraphGetLenderAuthorizationByMarketQueryVariables
-  >
-): GetLenderAuthorizationByMarketSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetLenderAuthorizationByMarketQuery,
-    SubgraphGetLenderAuthorizationByMarketQueryVariables
-  >(GetLenderAuthorizationByMarketDocument, options);
-}
-export type GetLenderAuthorizationByMarketQueryHookResult = Apollo.QueryResult<
-  SubgraphGetLenderAuthorizationByMarketQuery,
-  SubgraphGetLenderAuthorizationByMarketQueryVariables
->;
-export type GetLenderAuthorizationByMarketLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetLenderAuthorizationByMarketQuery,
-  SubgraphGetLenderAuthorizationByMarketQueryVariables
->;
-export type GetLenderAuthorizationByMarketSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetLenderAuthorizationByMarketQuery,
-  SubgraphGetLenderAuthorizationByMarketQueryVariables
->;
 export type GetLenderAuthorizationByMarketQueryResult = Apollo.QueryResult<
   SubgraphGetLenderAuthorizationByMarketQuery,
   SubgraphGetLenderAuthorizationByMarketQueryVariables
@@ -15205,85 +15174,6 @@ export const GetMarketsAndLogsWhereLenderAuthorizedOrActiveDocument = gql`
   ${WithdrawalExecutionPropertiesFragmentDoc}
   ${DepositDataFragmentDoc}
 `;
-
-/**
- * __useGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery__
- *
- * To run a query within a React component, call `useGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery({
- *   variables: {
- *      lender: // value for 'lender'
- *      minimumBalance: // value for 'minimumBalance'
- *      accountFilter: // value for 'accountFilter'
- *      numAccounts: // value for 'numAccounts'
- *      skipAccounts: // value for 'skipAccounts'
- *      orderAccounts: // value for 'orderAccounts'
- *      directionAccounts: // value for 'directionAccounts'
- *      numDeposits: // value for 'numDeposits'
- *      skipDeposits: // value for 'skipDeposits'
- *      orderDeposits: // value for 'orderDeposits'
- *      directionDeposits: // value for 'directionDeposits'
- *      numWithdrawals: // value for 'numWithdrawals'
- *      skipWithdrawals: // value for 'skipWithdrawals'
- *   },
- * });
- */
-export function useGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
-  >
-): GetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
-  >(GetMarketsAndLogsWhereLenderAuthorizedOrActiveDocument, options);
-}
-export function useGetMarketsAndLogsWhereLenderAuthorizedOrActiveLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
-  >
-): GetMarketsAndLogsWhereLenderAuthorizedOrActiveLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
-  >(GetMarketsAndLogsWhereLenderAuthorizedOrActiveDocument, options);
-}
-export function useGetMarketsAndLogsWhereLenderAuthorizedOrActiveSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
-  >
-): GetMarketsAndLogsWhereLenderAuthorizedOrActiveSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
-  >(GetMarketsAndLogsWhereLenderAuthorizedOrActiveDocument, options);
-}
-export type GetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryHookResult = Apollo.QueryResult<
-  SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery,
-  SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
->;
-export type GetMarketsAndLogsWhereLenderAuthorizedOrActiveLazyQueryHookResult =
-  Apollo.LazyQueryResultTuple<
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
-  >;
-export type GetMarketsAndLogsWhereLenderAuthorizedOrActiveSuspenseQueryHookResult =
-  Apollo.UseSuspenseQueryResult<
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery,
-    SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
-  >;
 export type GetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryResult = Apollo.QueryResult<
   SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery,
   SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
@@ -15298,6 +15188,9 @@ export const GetMarketEventsDocument = gql`
     market(id: $market) {
       marketClosedEvent {
         ...MarketClosedData
+      }
+      forceBuyBackDisabledRecord {
+        ...DisabledForceBuyBacksData
       }
       delinquencyRecords(
         where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
@@ -15363,9 +15256,42 @@ export const GetMarketEventsDocument = gql`
       ) {
         ...WithdrawalRequestProperties
       }
+      forceBuyBackRecords(
+        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        orderBy: eventIndex
+        orderDirection: desc
+        first: $limit
+      ) {
+        ...ForceBuyBackData
+      }
+      minimumDepositUpdateRecords(
+        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        orderBy: eventIndex
+        orderDirection: desc
+        first: $limit
+      ) {
+        ...MinimumDepositUpdatedData
+      }
+      protocolFeeBipsUpdatedRecords(
+        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        orderBy: eventIndex
+        orderDirection: desc
+        first: $limit
+      ) {
+        ...ProtocolFeeBipsUpdatedData
+      }
+      fixedTermUpdatedRecords(
+        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        orderBy: eventIndex
+        orderDirection: desc
+        first: $limit
+      ) {
+        ...FixedTermUpdatedData
+      }
     }
   }
   ${MarketClosedDataFragmentDoc}
+  ${DisabledForceBuyBacksDataFragmentDoc}
   ${DelinquencyStatusChangedDataFragmentDoc}
   ${BorrowDataFragmentDoc}
   ${DepositDataFragmentDoc}
@@ -15374,75 +15300,11 @@ export const GetMarketEventsDocument = gql`
   ${AnnualInterestBipsUpdatedDataFragmentDoc}
   ${MaxTotalSupplyUpdatedDataFragmentDoc}
   ${WithdrawalRequestPropertiesFragmentDoc}
+  ${ForceBuyBackDataFragmentDoc}
+  ${MinimumDepositUpdatedDataFragmentDoc}
+  ${ProtocolFeeBipsUpdatedDataFragmentDoc}
+  ${FixedTermUpdatedDataFragmentDoc}
 `;
-
-/**
- * __useGetMarketEventsQuery__
- *
- * To run a query within a React component, call `useGetMarketEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMarketEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetMarketEventsQuery({
- *   variables: {
- *      market: // value for 'market'
- *      startEventIndex: // value for 'startEventIndex'
- *      endEventIndex: // value for 'endEventIndex'
- *      limit: // value for 'limit'
- *   },
- * });
- */
-export function useGetMarketEventsQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetMarketEventsQuery,
-    SubgraphGetMarketEventsQueryVariables
-  >
-): GetMarketEventsQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SubgraphGetMarketEventsQuery, SubgraphGetMarketEventsQueryVariables>(
-    GetMarketEventsDocument,
-    options
-  );
-}
-export function useGetMarketEventsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetMarketEventsQuery,
-    SubgraphGetMarketEventsQueryVariables
-  >
-): GetMarketEventsLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SubgraphGetMarketEventsQuery, SubgraphGetMarketEventsQueryVariables>(
-    GetMarketEventsDocument,
-    options
-  );
-}
-export function useGetMarketEventsSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetMarketEventsQuery,
-    SubgraphGetMarketEventsQueryVariables
-  >
-): GetMarketEventsSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetMarketEventsQuery,
-    SubgraphGetMarketEventsQueryVariables
-  >(GetMarketEventsDocument, options);
-}
-export type GetMarketEventsQueryHookResult = Apollo.QueryResult<
-  SubgraphGetMarketEventsQuery,
-  SubgraphGetMarketEventsQueryVariables
->;
-export type GetMarketEventsLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetMarketEventsQuery,
-  SubgraphGetMarketEventsQueryVariables
->;
-export type GetMarketEventsSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetMarketEventsQuery,
-  SubgraphGetMarketEventsQueryVariables
->;
 export type GetMarketEventsQueryResult = Apollo.QueryResult<
   SubgraphGetMarketEventsQuery,
   SubgraphGetMarketEventsQueryVariables
@@ -15496,92 +15358,6 @@ export const GetMarketsForBorrowerDocument = gql`
   ${FeesCollectedDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
 `;
-
-/**
- * __useGetMarketsForBorrowerQuery__
- *
- * To run a query within a React component, call `useGetMarketsForBorrowerQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMarketsForBorrowerQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetMarketsForBorrowerQuery({
- *   variables: {
- *      borrower: // value for 'borrower'
- *      marketFilter: // value for 'marketFilter'
- *      numMarkets: // value for 'numMarkets'
- *      skipMarkets: // value for 'skipMarkets'
- *      orderMarkets: // value for 'orderMarkets'
- *      directionMarkets: // value for 'directionMarkets'
- *      numDeposits: // value for 'numDeposits'
- *      skipDeposits: // value for 'skipDeposits'
- *      orderDeposits: // value for 'orderDeposits'
- *      directionDeposits: // value for 'directionDeposits'
- *      numBorrows: // value for 'numBorrows'
- *      skipBorrows: // value for 'skipBorrows'
- *      orderBorrows: // value for 'orderBorrows'
- *      directionBorrows: // value for 'directionBorrows'
- *      numFeeCollections: // value for 'numFeeCollections'
- *      skipFeeCollections: // value for 'skipFeeCollections'
- *      orderFeeCollections: // value for 'orderFeeCollections'
- *      directionFeeCollections: // value for 'directionFeeCollections'
- *      numRepayments: // value for 'numRepayments'
- *      skipRepayments: // value for 'skipRepayments'
- *      orderRepayments: // value for 'orderRepayments'
- *      directionRepayments: // value for 'directionRepayments'
- *   },
- * });
- */
-export function useGetMarketsForBorrowerQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetMarketsForBorrowerQuery,
-    SubgraphGetMarketsForBorrowerQueryVariables
-  >
-): GetMarketsForBorrowerQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetMarketsForBorrowerQuery,
-    SubgraphGetMarketsForBorrowerQueryVariables
-  >(GetMarketsForBorrowerDocument, options);
-}
-export function useGetMarketsForBorrowerLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetMarketsForBorrowerQuery,
-    SubgraphGetMarketsForBorrowerQueryVariables
-  >
-): GetMarketsForBorrowerLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetMarketsForBorrowerQuery,
-    SubgraphGetMarketsForBorrowerQueryVariables
-  >(GetMarketsForBorrowerDocument, options);
-}
-export function useGetMarketsForBorrowerSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetMarketsForBorrowerQuery,
-    SubgraphGetMarketsForBorrowerQueryVariables
-  >
-): GetMarketsForBorrowerSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetMarketsForBorrowerQuery,
-    SubgraphGetMarketsForBorrowerQueryVariables
-  >(GetMarketsForBorrowerDocument, options);
-}
-export type GetMarketsForBorrowerQueryHookResult = Apollo.QueryResult<
-  SubgraphGetMarketsForBorrowerQuery,
-  SubgraphGetMarketsForBorrowerQueryVariables
->;
-export type GetMarketsForBorrowerLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetMarketsForBorrowerQuery,
-  SubgraphGetMarketsForBorrowerQueryVariables
->;
-export type GetMarketsForBorrowerSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetMarketsForBorrowerQuery,
-  SubgraphGetMarketsForBorrowerQueryVariables
->;
 export type GetMarketsForBorrowerQueryResult = Apollo.QueryResult<
   SubgraphGetMarketsForBorrowerQuery,
   SubgraphGetMarketsForBorrowerQueryVariables
@@ -15632,90 +15408,6 @@ export const GetMarketsForAllBorrowersDocument = gql`
   ${FeesCollectedDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
 `;
-
-/**
- * __useGetMarketsForAllBorrowersQuery__
- *
- * To run a query within a React component, call `useGetMarketsForAllBorrowersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMarketsForAllBorrowersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetMarketsForAllBorrowersQuery({
- *   variables: {
- *      numMarkets: // value for 'numMarkets'
- *      skipMarkets: // value for 'skipMarkets'
- *      orderMarkets: // value for 'orderMarkets'
- *      directionMarkets: // value for 'directionMarkets'
- *      numDeposits: // value for 'numDeposits'
- *      skipDeposits: // value for 'skipDeposits'
- *      orderDeposits: // value for 'orderDeposits'
- *      directionDeposits: // value for 'directionDeposits'
- *      numBorrows: // value for 'numBorrows'
- *      skipBorrows: // value for 'skipBorrows'
- *      orderBorrows: // value for 'orderBorrows'
- *      directionBorrows: // value for 'directionBorrows'
- *      numFeeCollections: // value for 'numFeeCollections'
- *      skipFeeCollections: // value for 'skipFeeCollections'
- *      orderFeeCollections: // value for 'orderFeeCollections'
- *      directionFeeCollections: // value for 'directionFeeCollections'
- *      numRepayments: // value for 'numRepayments'
- *      skipRepayments: // value for 'skipRepayments'
- *      orderRepayments: // value for 'orderRepayments'
- *      directionRepayments: // value for 'directionRepayments'
- *   },
- * });
- */
-export function useGetMarketsForAllBorrowersQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    SubgraphGetMarketsForAllBorrowersQuery,
-    SubgraphGetMarketsForAllBorrowersQueryVariables
-  >
-): GetMarketsForAllBorrowersQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetMarketsForAllBorrowersQuery,
-    SubgraphGetMarketsForAllBorrowersQueryVariables
-  >(GetMarketsForAllBorrowersDocument, options);
-}
-export function useGetMarketsForAllBorrowersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetMarketsForAllBorrowersQuery,
-    SubgraphGetMarketsForAllBorrowersQueryVariables
-  >
-): GetMarketsForAllBorrowersLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetMarketsForAllBorrowersQuery,
-    SubgraphGetMarketsForAllBorrowersQueryVariables
-  >(GetMarketsForAllBorrowersDocument, options);
-}
-export function useGetMarketsForAllBorrowersSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetMarketsForAllBorrowersQuery,
-    SubgraphGetMarketsForAllBorrowersQueryVariables
-  >
-): GetMarketsForAllBorrowersSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetMarketsForAllBorrowersQuery,
-    SubgraphGetMarketsForAllBorrowersQueryVariables
-  >(GetMarketsForAllBorrowersDocument, options);
-}
-export type GetMarketsForAllBorrowersQueryHookResult = Apollo.QueryResult<
-  SubgraphGetMarketsForAllBorrowersQuery,
-  SubgraphGetMarketsForAllBorrowersQueryVariables
->;
-export type GetMarketsForAllBorrowersLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetMarketsForAllBorrowersQuery,
-  SubgraphGetMarketsForAllBorrowersQueryVariables
->;
-export type GetMarketsForAllBorrowersSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetMarketsForAllBorrowersQuery,
-  SubgraphGetMarketsForAllBorrowersQueryVariables
->;
 export type GetMarketsForAllBorrowersQueryResult = Apollo.QueryResult<
   SubgraphGetMarketsForAllBorrowersQuery,
   SubgraphGetMarketsForAllBorrowersQueryVariables
@@ -15758,81 +15450,6 @@ export const GetMarketDocument = gql`
   ${FeesCollectedDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
 `;
-
-/**
- * __useGetMarketQuery__
- *
- * To run a query within a React component, call `useGetMarketQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetMarketQuery({
- *   variables: {
- *      market: // value for 'market'
- *      numDeposits: // value for 'numDeposits'
- *      skipDeposits: // value for 'skipDeposits'
- *      orderDeposits: // value for 'orderDeposits'
- *      directionDeposits: // value for 'directionDeposits'
- *      numBorrows: // value for 'numBorrows'
- *      skipBorrows: // value for 'skipBorrows'
- *      orderBorrows: // value for 'orderBorrows'
- *      directionBorrows: // value for 'directionBorrows'
- *      numFeeCollections: // value for 'numFeeCollections'
- *      skipFeeCollections: // value for 'skipFeeCollections'
- *      orderFeeCollections: // value for 'orderFeeCollections'
- *      directionFeeCollections: // value for 'directionFeeCollections'
- *      numRepayments: // value for 'numRepayments'
- *      skipRepayments: // value for 'skipRepayments'
- *      orderRepayments: // value for 'orderRepayments'
- *      directionRepayments: // value for 'directionRepayments'
- *   },
- * });
- */
-export function useGetMarketQuery(
-  baseOptions: Apollo.QueryHookOptions<SubgraphGetMarketQuery, SubgraphGetMarketQueryVariables>
-): GetMarketQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SubgraphGetMarketQuery, SubgraphGetMarketQueryVariables>(
-    GetMarketDocument,
-    options
-  );
-}
-export function useGetMarketLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<SubgraphGetMarketQuery, SubgraphGetMarketQueryVariables>
-): GetMarketLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SubgraphGetMarketQuery, SubgraphGetMarketQueryVariables>(
-    GetMarketDocument,
-    options
-  );
-}
-export function useGetMarketSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetMarketQuery,
-    SubgraphGetMarketQueryVariables
-  >
-): GetMarketSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<SubgraphGetMarketQuery, SubgraphGetMarketQueryVariables>(
-    GetMarketDocument,
-    options
-  );
-}
-export type GetMarketQueryHookResult = Apollo.QueryResult<
-  SubgraphGetMarketQuery,
-  SubgraphGetMarketQueryVariables
->;
-export type GetMarketLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetMarketQuery,
-  SubgraphGetMarketQueryVariables
->;
-export type GetMarketSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetMarketQuery,
-  SubgraphGetMarketQueryVariables
->;
 export type GetMarketQueryResult = Apollo.QueryResult<
   SubgraphGetMarketQuery,
   SubgraphGetMarketQueryVariables
@@ -15857,75 +15474,6 @@ export const GetWithdrawalRequestsByMarketDocument = gql`
   }
   ${WithdrawalRequestPropertiesFragmentDoc}
 `;
-
-/**
- * __useGetWithdrawalRequestsByMarketQuery__
- *
- * To run a query within a React component, call `useGetWithdrawalRequestsByMarketQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetWithdrawalRequestsByMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetWithdrawalRequestsByMarketQuery({
- *   variables: {
- *      market: // value for 'market'
- *      numWithdrawals: // value for 'numWithdrawals'
- *      skipWithdrawals: // value for 'skipWithdrawals'
- *      orderWithdrawals: // value for 'orderWithdrawals'
- *      directionWithdrawals: // value for 'directionWithdrawals'
- *   },
- * });
- */
-export function useGetWithdrawalRequestsByMarketQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetWithdrawalRequestsByMarketQuery,
-    SubgraphGetWithdrawalRequestsByMarketQueryVariables
-  >
-): GetWithdrawalRequestsByMarketQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetWithdrawalRequestsByMarketQuery,
-    SubgraphGetWithdrawalRequestsByMarketQueryVariables
-  >(GetWithdrawalRequestsByMarketDocument, options);
-}
-export function useGetWithdrawalRequestsByMarketLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetWithdrawalRequestsByMarketQuery,
-    SubgraphGetWithdrawalRequestsByMarketQueryVariables
-  >
-): GetWithdrawalRequestsByMarketLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetWithdrawalRequestsByMarketQuery,
-    SubgraphGetWithdrawalRequestsByMarketQueryVariables
-  >(GetWithdrawalRequestsByMarketDocument, options);
-}
-export function useGetWithdrawalRequestsByMarketSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetWithdrawalRequestsByMarketQuery,
-    SubgraphGetWithdrawalRequestsByMarketQueryVariables
-  >
-): GetWithdrawalRequestsByMarketSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetWithdrawalRequestsByMarketQuery,
-    SubgraphGetWithdrawalRequestsByMarketQueryVariables
-  >(GetWithdrawalRequestsByMarketDocument, options);
-}
-export type GetWithdrawalRequestsByMarketQueryHookResult = Apollo.QueryResult<
-  SubgraphGetWithdrawalRequestsByMarketQuery,
-  SubgraphGetWithdrawalRequestsByMarketQueryVariables
->;
-export type GetWithdrawalRequestsByMarketLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetWithdrawalRequestsByMarketQuery,
-  SubgraphGetWithdrawalRequestsByMarketQueryVariables
->;
-export type GetWithdrawalRequestsByMarketSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetWithdrawalRequestsByMarketQuery,
-  SubgraphGetWithdrawalRequestsByMarketQueryVariables
->;
 export type GetWithdrawalRequestsByMarketQueryResult = Apollo.QueryResult<
   SubgraphGetWithdrawalRequestsByMarketQuery,
   SubgraphGetWithdrawalRequestsByMarketQueryVariables
@@ -15945,73 +15493,6 @@ export const GetAllPendingWithdrawalBatchesForMarketDocument = gql`
   ${WithdrawalRequestPropertiesFragmentDoc}
   ${WithdrawalExecutionPropertiesFragmentDoc}
 `;
-
-/**
- * __useGetAllPendingWithdrawalBatchesForMarketQuery__
- *
- * To run a query within a React component, call `useGetAllPendingWithdrawalBatchesForMarketQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllPendingWithdrawalBatchesForMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllPendingWithdrawalBatchesForMarketQuery({
- *   variables: {
- *      market: // value for 'market'
- *   },
- * });
- */
-export function useGetAllPendingWithdrawalBatchesForMarketQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
-  >
-): GetAllPendingWithdrawalBatchesForMarketQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
-  >(GetAllPendingWithdrawalBatchesForMarketDocument, options);
-}
-export function useGetAllPendingWithdrawalBatchesForMarketLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
-  >
-): GetAllPendingWithdrawalBatchesForMarketLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
-  >(GetAllPendingWithdrawalBatchesForMarketDocument, options);
-}
-export function useGetAllPendingWithdrawalBatchesForMarketSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
-  >
-): GetAllPendingWithdrawalBatchesForMarketSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
-  >(GetAllPendingWithdrawalBatchesForMarketDocument, options);
-}
-export type GetAllPendingWithdrawalBatchesForMarketQueryHookResult = Apollo.QueryResult<
-  SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
-  SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
->;
-export type GetAllPendingWithdrawalBatchesForMarketLazyQueryHookResult =
-  Apollo.LazyQueryResultTuple<
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
-  >;
-export type GetAllPendingWithdrawalBatchesForMarketSuspenseQueryHookResult =
-  Apollo.UseSuspenseQueryResult<
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
-    SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
-  >;
 export type GetAllPendingWithdrawalBatchesForMarketQueryResult = Apollo.QueryResult<
   SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
   SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
@@ -16043,76 +15524,6 @@ export const GetIncompleteWithdrawalsForMarketDocument = gql`
   ${WithdrawalRequestPropertiesFragmentDoc}
   ${WithdrawalExecutionPropertiesFragmentDoc}
 `;
-
-/**
- * __useGetIncompleteWithdrawalsForMarketQuery__
- *
- * To run a query within a React component, call `useGetIncompleteWithdrawalsForMarketQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetIncompleteWithdrawalsForMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetIncompleteWithdrawalsForMarketQuery({
- *   variables: {
- *      market: // value for 'market'
- *      numWithdrawalBatches: // value for 'numWithdrawalBatches'
- *      skipWithdrawalBatches: // value for 'skipWithdrawalBatches'
- *      orderWithdrawalBatches: // value for 'orderWithdrawalBatches'
- *      directionWithdrawalBatches: // value for 'directionWithdrawalBatches'
- *   },
- * });
- */
-export function useGetIncompleteWithdrawalsForMarketQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetIncompleteWithdrawalsForMarketQuery,
-    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
-  >
-): GetIncompleteWithdrawalsForMarketQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetIncompleteWithdrawalsForMarketQuery,
-    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
-  >(GetIncompleteWithdrawalsForMarketDocument, options);
-}
-export function useGetIncompleteWithdrawalsForMarketLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetIncompleteWithdrawalsForMarketQuery,
-    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
-  >
-): GetIncompleteWithdrawalsForMarketLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetIncompleteWithdrawalsForMarketQuery,
-    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
-  >(GetIncompleteWithdrawalsForMarketDocument, options);
-}
-export function useGetIncompleteWithdrawalsForMarketSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetIncompleteWithdrawalsForMarketQuery,
-    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
-  >
-): GetIncompleteWithdrawalsForMarketSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetIncompleteWithdrawalsForMarketQuery,
-    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
-  >(GetIncompleteWithdrawalsForMarketDocument, options);
-}
-export type GetIncompleteWithdrawalsForMarketQueryHookResult = Apollo.QueryResult<
-  SubgraphGetIncompleteWithdrawalsForMarketQuery,
-  SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
->;
-export type GetIncompleteWithdrawalsForMarketLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetIncompleteWithdrawalsForMarketQuery,
-  SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
->;
-export type GetIncompleteWithdrawalsForMarketSuspenseQueryHookResult =
-  Apollo.UseSuspenseQueryResult<
-    SubgraphGetIncompleteWithdrawalsForMarketQuery,
-    SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
-  >;
 export type GetIncompleteWithdrawalsForMarketQueryResult = Apollo.QueryResult<
   SubgraphGetIncompleteWithdrawalsForMarketQuery,
   SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
@@ -16131,70 +15542,6 @@ export const GetAllMarketsDocument = gql`
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
 `;
-
-/**
- * __useGetAllMarketsQuery__
- *
- * To run a query within a React component, call `useGetAllMarketsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllMarketsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllMarketsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetAllMarketsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    SubgraphGetAllMarketsQuery,
-    SubgraphGetAllMarketsQueryVariables
-  >
-): GetAllMarketsQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SubgraphGetAllMarketsQuery, SubgraphGetAllMarketsQueryVariables>(
-    GetAllMarketsDocument,
-    options
-  );
-}
-export function useGetAllMarketsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetAllMarketsQuery,
-    SubgraphGetAllMarketsQueryVariables
-  >
-): GetAllMarketsLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SubgraphGetAllMarketsQuery, SubgraphGetAllMarketsQueryVariables>(
-    GetAllMarketsDocument,
-    options
-  );
-}
-export function useGetAllMarketsSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetAllMarketsQuery,
-    SubgraphGetAllMarketsQueryVariables
-  >
-): GetAllMarketsSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<SubgraphGetAllMarketsQuery, SubgraphGetAllMarketsQueryVariables>(
-    GetAllMarketsDocument,
-    options
-  );
-}
-export type GetAllMarketsQueryHookResult = Apollo.QueryResult<
-  SubgraphGetAllMarketsQuery,
-  SubgraphGetAllMarketsQueryVariables
->;
-export type GetAllMarketsLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetAllMarketsQuery,
-  SubgraphGetAllMarketsQueryVariables
->;
-export type GetAllMarketsSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetAllMarketsQuery,
-  SubgraphGetAllMarketsQueryVariables
->;
 export type GetAllMarketsQueryResult = Apollo.QueryResult<
   SubgraphGetAllMarketsQuery,
   SubgraphGetAllMarketsQueryVariables
@@ -16219,71 +15566,6 @@ export const GetAuthorizedLendersByMarketDocument = gql`
     }
   }
 `;
-
-/**
- * __useGetAuthorizedLendersByMarketQuery__
- *
- * To run a query within a React component, call `useGetAuthorizedLendersByMarketQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAuthorizedLendersByMarketQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAuthorizedLendersByMarketQuery({
- *   variables: {
- *      market: // value for 'market'
- *   },
- * });
- */
-export function useGetAuthorizedLendersByMarketQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetAuthorizedLendersByMarketQuery,
-    SubgraphGetAuthorizedLendersByMarketQueryVariables
-  >
-): GetAuthorizedLendersByMarketQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetAuthorizedLendersByMarketQuery,
-    SubgraphGetAuthorizedLendersByMarketQueryVariables
-  >(GetAuthorizedLendersByMarketDocument, options);
-}
-export function useGetAuthorizedLendersByMarketLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetAuthorizedLendersByMarketQuery,
-    SubgraphGetAuthorizedLendersByMarketQueryVariables
-  >
-): GetAuthorizedLendersByMarketLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetAuthorizedLendersByMarketQuery,
-    SubgraphGetAuthorizedLendersByMarketQueryVariables
-  >(GetAuthorizedLendersByMarketDocument, options);
-}
-export function useGetAuthorizedLendersByMarketSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetAuthorizedLendersByMarketQuery,
-    SubgraphGetAuthorizedLendersByMarketQueryVariables
-  >
-): GetAuthorizedLendersByMarketSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetAuthorizedLendersByMarketQuery,
-    SubgraphGetAuthorizedLendersByMarketQueryVariables
-  >(GetAuthorizedLendersByMarketDocument, options);
-}
-export type GetAuthorizedLendersByMarketQueryHookResult = Apollo.QueryResult<
-  SubgraphGetAuthorizedLendersByMarketQuery,
-  SubgraphGetAuthorizedLendersByMarketQueryVariables
->;
-export type GetAuthorizedLendersByMarketLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetAuthorizedLendersByMarketQuery,
-  SubgraphGetAuthorizedLendersByMarketQueryVariables
->;
-export type GetAuthorizedLendersByMarketSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetAuthorizedLendersByMarketQuery,
-  SubgraphGetAuthorizedLendersByMarketQueryVariables
->;
 export type GetAuthorizedLendersByMarketQueryResult = Apollo.QueryResult<
   SubgraphGetAuthorizedLendersByMarketQuery,
   SubgraphGetAuthorizedLendersByMarketQueryVariables
@@ -16302,71 +15584,6 @@ export const GetAllAuthorizedLendersDocument = gql`
   ${AllAuthorizedLendersViewMarketInfoFragmentDoc}
   ${AllAuthorizedLendersViewFragmentDoc}
 `;
-
-/**
- * __useGetAllAuthorizedLendersQuery__
- *
- * To run a query within a React component, call `useGetAllAuthorizedLendersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllAuthorizedLendersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllAuthorizedLendersQuery({
- *   variables: {
- *      borrower: // value for 'borrower'
- *   },
- * });
- */
-export function useGetAllAuthorizedLendersQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetAllAuthorizedLendersQuery,
-    SubgraphGetAllAuthorizedLendersQueryVariables
-  >
-): GetAllAuthorizedLendersQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetAllAuthorizedLendersQuery,
-    SubgraphGetAllAuthorizedLendersQueryVariables
-  >(GetAllAuthorizedLendersDocument, options);
-}
-export function useGetAllAuthorizedLendersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetAllAuthorizedLendersQuery,
-    SubgraphGetAllAuthorizedLendersQueryVariables
-  >
-): GetAllAuthorizedLendersLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetAllAuthorizedLendersQuery,
-    SubgraphGetAllAuthorizedLendersQueryVariables
-  >(GetAllAuthorizedLendersDocument, options);
-}
-export function useGetAllAuthorizedLendersSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetAllAuthorizedLendersQuery,
-    SubgraphGetAllAuthorizedLendersQueryVariables
-  >
-): GetAllAuthorizedLendersSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetAllAuthorizedLendersQuery,
-    SubgraphGetAllAuthorizedLendersQueryVariables
-  >(GetAllAuthorizedLendersDocument, options);
-}
-export type GetAllAuthorizedLendersQueryHookResult = Apollo.QueryResult<
-  SubgraphGetAllAuthorizedLendersQuery,
-  SubgraphGetAllAuthorizedLendersQueryVariables
->;
-export type GetAllAuthorizedLendersLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetAllAuthorizedLendersQuery,
-  SubgraphGetAllAuthorizedLendersQueryVariables
->;
-export type GetAllAuthorizedLendersSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetAllAuthorizedLendersQuery,
-  SubgraphGetAllAuthorizedLendersQueryVariables
->;
 export type GetAllAuthorizedLendersQueryResult = Apollo.QueryResult<
   SubgraphGetAllAuthorizedLendersQuery,
   SubgraphGetAllAuthorizedLendersQueryVariables
@@ -16380,71 +15597,6 @@ export const GetAuthorizedLendersByBorrowerDocument = gql`
     }
   }
 `;
-
-/**
- * __useGetAuthorizedLendersByBorrowerQuery__
- *
- * To run a query within a React component, call `useGetAuthorizedLendersByBorrowerQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAuthorizedLendersByBorrowerQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAuthorizedLendersByBorrowerQuery({
- *   variables: {
- *      filter: // value for 'filter'
- *   },
- * });
- */
-export function useGetAuthorizedLendersByBorrowerQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetAuthorizedLendersByBorrowerQuery,
-    SubgraphGetAuthorizedLendersByBorrowerQueryVariables
-  >
-): GetAuthorizedLendersByBorrowerQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    SubgraphGetAuthorizedLendersByBorrowerQuery,
-    SubgraphGetAuthorizedLendersByBorrowerQueryVariables
-  >(GetAuthorizedLendersByBorrowerDocument, options);
-}
-export function useGetAuthorizedLendersByBorrowerLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetAuthorizedLendersByBorrowerQuery,
-    SubgraphGetAuthorizedLendersByBorrowerQueryVariables
-  >
-): GetAuthorizedLendersByBorrowerLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetAuthorizedLendersByBorrowerQuery,
-    SubgraphGetAuthorizedLendersByBorrowerQueryVariables
-  >(GetAuthorizedLendersByBorrowerDocument, options);
-}
-export function useGetAuthorizedLendersByBorrowerSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetAuthorizedLendersByBorrowerQuery,
-    SubgraphGetAuthorizedLendersByBorrowerQueryVariables
-  >
-): GetAuthorizedLendersByBorrowerSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetAuthorizedLendersByBorrowerQuery,
-    SubgraphGetAuthorizedLendersByBorrowerQueryVariables
-  >(GetAuthorizedLendersByBorrowerDocument, options);
-}
-export type GetAuthorizedLendersByBorrowerQueryHookResult = Apollo.QueryResult<
-  SubgraphGetAuthorizedLendersByBorrowerQuery,
-  SubgraphGetAuthorizedLendersByBorrowerQueryVariables
->;
-export type GetAuthorizedLendersByBorrowerLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetAuthorizedLendersByBorrowerQuery,
-  SubgraphGetAuthorizedLendersByBorrowerQueryVariables
->;
-export type GetAuthorizedLendersByBorrowerSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetAuthorizedLendersByBorrowerQuery,
-  SubgraphGetAuthorizedLendersByBorrowerQueryVariables
->;
 export type GetAuthorizedLendersByBorrowerQueryResult = Apollo.QueryResult<
   SubgraphGetAuthorizedLendersByBorrowerQuery,
   SubgraphGetAuthorizedLendersByBorrowerQueryVariables
@@ -16461,70 +15613,6 @@ export const GetSubgraphStatusDocument = gql`
     }
   }
 `;
-
-/**
- * __useGetSubgraphStatusQuery__
- *
- * To run a query within a React component, call `useGetSubgraphStatusQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSubgraphStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetSubgraphStatusQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetSubgraphStatusQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    SubgraphGetSubgraphStatusQuery,
-    SubgraphGetSubgraphStatusQueryVariables
-  >
-): GetSubgraphStatusQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SubgraphGetSubgraphStatusQuery, SubgraphGetSubgraphStatusQueryVariables>(
-    GetSubgraphStatusDocument,
-    options
-  );
-}
-export function useGetSubgraphStatusLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetSubgraphStatusQuery,
-    SubgraphGetSubgraphStatusQueryVariables
-  >
-): GetSubgraphStatusLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    SubgraphGetSubgraphStatusQuery,
-    SubgraphGetSubgraphStatusQueryVariables
-  >(GetSubgraphStatusDocument, options);
-}
-export function useGetSubgraphStatusSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetSubgraphStatusQuery,
-    SubgraphGetSubgraphStatusQueryVariables
-  >
-): GetSubgraphStatusSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetSubgraphStatusQuery,
-    SubgraphGetSubgraphStatusQueryVariables
-  >(GetSubgraphStatusDocument, options);
-}
-export type GetSubgraphStatusQueryHookResult = Apollo.QueryResult<
-  SubgraphGetSubgraphStatusQuery,
-  SubgraphGetSubgraphStatusQueryVariables
->;
-export type GetSubgraphStatusLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetSubgraphStatusQuery,
-  SubgraphGetSubgraphStatusQueryVariables
->;
-export type GetSubgraphStatusSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetSubgraphStatusQuery,
-  SubgraphGetSubgraphStatusQueryVariables
->;
 export type GetSubgraphStatusQueryResult = Apollo.QueryResult<
   SubgraphGetSubgraphStatusQuery,
   SubgraphGetSubgraphStatusQueryVariables
@@ -16559,87 +15647,6 @@ export const GetMarketRecordsDocument = gql`
   ${FeesCollectedDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
 `;
-
-/**
- * __useGetMarketRecordsQuery__
- *
- * To run a query within a React component, call `useGetMarketRecordsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMarketRecordsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetMarketRecordsQuery({
- *   variables: {
- *      market: // value for 'market'
- *      numDeposits: // value for 'numDeposits'
- *      skipDeposits: // value for 'skipDeposits'
- *      orderDeposits: // value for 'orderDeposits'
- *      directionDeposits: // value for 'directionDeposits'
- *      numBorrows: // value for 'numBorrows'
- *      skipBorrows: // value for 'skipBorrows'
- *      orderBorrows: // value for 'orderBorrows'
- *      directionBorrows: // value for 'directionBorrows'
- *      numFeeCollections: // value for 'numFeeCollections'
- *      skipFeeCollections: // value for 'skipFeeCollections'
- *      orderFeeCollections: // value for 'orderFeeCollections'
- *      directionFeeCollections: // value for 'directionFeeCollections'
- *      numRepayments: // value for 'numRepayments'
- *      skipRepayments: // value for 'skipRepayments'
- *      orderRepayments: // value for 'orderRepayments'
- *      directionRepayments: // value for 'directionRepayments'
- *   },
- * });
- */
-export function useGetMarketRecordsQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    SubgraphGetMarketRecordsQuery,
-    SubgraphGetMarketRecordsQueryVariables
-  >
-): GetMarketRecordsQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<SubgraphGetMarketRecordsQuery, SubgraphGetMarketRecordsQueryVariables>(
-    GetMarketRecordsDocument,
-    options
-  );
-}
-export function useGetMarketRecordsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    SubgraphGetMarketRecordsQuery,
-    SubgraphGetMarketRecordsQueryVariables
-  >
-): GetMarketRecordsLazyQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<SubgraphGetMarketRecordsQuery, SubgraphGetMarketRecordsQueryVariables>(
-    GetMarketRecordsDocument,
-    options
-  );
-}
-export function useGetMarketRecordsSuspenseQuery(
-  baseOptions?: Apollo.SuspenseQueryHookOptions<
-    SubgraphGetMarketRecordsQuery,
-    SubgraphGetMarketRecordsQueryVariables
-  >
-): GetMarketRecordsSuspenseQueryHookResult {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    SubgraphGetMarketRecordsQuery,
-    SubgraphGetMarketRecordsQueryVariables
-  >(GetMarketRecordsDocument, options);
-}
-export type GetMarketRecordsQueryHookResult = Apollo.QueryResult<
-  SubgraphGetMarketRecordsQuery,
-  SubgraphGetMarketRecordsQueryVariables
->;
-export type GetMarketRecordsLazyQueryHookResult = Apollo.LazyQueryResultTuple<
-  SubgraphGetMarketRecordsQuery,
-  SubgraphGetMarketRecordsQueryVariables
->;
-export type GetMarketRecordsSuspenseQueryHookResult = Apollo.UseSuspenseQueryResult<
-  SubgraphGetMarketRecordsQuery,
-  SubgraphGetMarketRecordsQueryVariables
->;
 export type GetMarketRecordsQueryResult = Apollo.QueryResult<
   SubgraphGetMarketRecordsQuery,
   SubgraphGetMarketRecordsQueryVariables

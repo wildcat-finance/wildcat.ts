@@ -143,18 +143,27 @@ const marketRecordParsers: MarketRecordParserMap = {
     amount: token.getAmount(assetAmount),
     ...rest
   }),
-  Deposit: (token, { account, assetAmount, ...rest }) => ({
-    amount: token.getAmount(assetAmount),
-    address: account.address,
-    ...rest
-  }),
   DelinquencyStatusChanged: (token, { liquidityCoverageRequired, totalAssets, ...rest }) => ({
     liquidityCoverageRequired: token.getAmount(liquidityCoverageRequired),
     totalAssets: token.getAmount(totalAssets),
     ...rest
   }),
+  Deposit: (token, { account, assetAmount, ...rest }) => ({
+    amount: token.getAmount(assetAmount),
+    address: account.address,
+    ...rest
+  }),
+  DisabledForceBuyBacks: (_, log) => ({
+    ...log
+  }),
   FeesCollected: (token, { feesCollected, ...rest }) => ({
     amount: token.getAmount(feesCollected),
+    ...rest
+  }),
+  FixedTermUpdated: (_, log) => ({ ...log }),
+  ForceBuyBack: (token, { scaledAmount, normalizedAmount, ...rest }) => ({
+    scaledAmount: BigNumber.from(scaledAmount),
+    normalizedAmount: token.getAmount(normalizedAmount),
     ...rest
   }),
   MarketClosed: (_, log) => log,
@@ -163,6 +172,12 @@ const marketRecordParsers: MarketRecordParserMap = {
     newMaxTotalSupply: token.getAmount(newMaxTotalSupply),
     ...rest
   }),
+  MinimumDepositUpdated: (token, { oldMinimumDeposit, newMinimumDeposit, ...rest }) => ({
+    oldMinimumDeposit: token.getAmount(oldMinimumDeposit ?? 0),
+    newMinimumDeposit: token.getAmount(newMinimumDeposit),
+    ...rest
+  }),
+  ProtocolFeeBipsUpdated: (_, log) => ({ ...log }),
   WithdrawalRequest: (token, { scaledAmount, normalizedAmount, account, ...rest }) => ({
     address: account.address,
     scaledAmount: BigNumber.from(scaledAmount),
