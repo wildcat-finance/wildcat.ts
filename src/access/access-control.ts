@@ -9,7 +9,7 @@ import {
   SubgraphHooksInstanceDataForMarketFragment,
   SubgraphHooksTemplateDataForMarketFragment
 } from "../gql/graphql";
-import { TokenAmount } from "../token";
+import { Token, TokenAmount } from "../token";
 import {
   DeployMarketInputsV2Struct,
   HooksFactory,
@@ -94,6 +94,7 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
       address: data.id,
       borrower: data.borrower,
       templateAddress: data.hooksTemplate.id,
+      name: data.name,
       roleProviders: data.providers.map((p) => ({
         isApproved: p.isApproved,
         providerAddress: p.providerAddress,
@@ -115,6 +116,7 @@ export type OpenTermHooksArgs = {
   address: string;
   borrower: string;
   roleProviders?: RoleProvider[];
+  name?: string;
 };
 
 export type OpenTermHooksTemplateArgs = {
@@ -154,18 +156,28 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
       protocolFeeBips,
       disabled,
       id,
-      name
+      name,
+      originationFeeAsset,
+      originationFeeAmount
     }: SubgraphHooksTemplateDataForMarketFragment,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
   ): OpenTermHooksTemplate {
+    const originationFeeToken = originationFeeAsset
+      ? Token.fromSubgraphToken(chainId, originationFeeAsset, provider)
+      : undefined;
     return new OpenTermHooksTemplate(chainId, provider, {
       hooksTemplate: id,
       fees: {
         feeRecipient,
-        protocolFeeBips
-        // originationFeeAmount: rest.ori
-      },
+        protocolFeeBips,
+        ...(originationFeeToken
+          ? {
+              originationFeeToken,
+              originationFeeAmount: originationFeeToken!.getAmount(originationFeeAmount)
+            }
+          : {})
+      } as FeeConfigurationV2,
       enabled: !disabled,
       index: 0, // @todo
       name,
