@@ -186,9 +186,9 @@ export type RoleProviderDataStructOutput = {
 export type HooksInstanceDataStruct = {
   hooksAddress: PromiseOrValue<string>;
   borrower: PromiseOrValue<string>;
+  name: PromiseOrValue<string>;
   kind: PromiseOrValue<BigNumberish>;
-  hooksTemplate: PromiseOrValue<string>;
-  hooksTemplateName: PromiseOrValue<string>;
+  hooksTemplate: HooksTemplateDataStruct;
   constraints: MarketParameterConstraintsStruct;
   deploymentFlags: HooksDeploymentFlagsStruct;
   pullProviders: RoleProviderDataStruct[];
@@ -199,9 +199,9 @@ export type HooksInstanceDataStruct = {
 export type HooksInstanceDataStructOutput = {
   hooksAddress: string;
   borrower: string;
+  name: string;
   kind: number;
-  hooksTemplate: string;
-  hooksTemplateName: string;
+  hooksTemplate: HooksTemplateDataStructOutput;
   constraints: MarketParameterConstraintsStructOutput;
   deploymentFlags: HooksDeploymentFlagsStructOutput;
   pullProviders: RoleProviderDataStructOutput[];

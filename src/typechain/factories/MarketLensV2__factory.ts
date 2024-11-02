@@ -383,19 +383,115 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "string",
+                name: "name",
+                type: "string",
+              },
+              {
                 internalType: "enum HooksInstanceKind",
                 name: "kind",
                 type: "uint8",
               },
               {
-                internalType: "address",
+                components: [
+                  {
+                    internalType: "address",
+                    name: "hooksTemplate",
+                    type: "address",
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: "address",
+                        name: "feeRecipient",
+                        type: "address",
+                      },
+                      {
+                        internalType: "uint16",
+                        name: "protocolFeeBips",
+                        type: "uint16",
+                      },
+                      {
+                        components: [
+                          {
+                            internalType: "address",
+                            name: "token",
+                            type: "address",
+                          },
+                          {
+                            internalType: "string",
+                            name: "name",
+                            type: "string",
+                          },
+                          {
+                            internalType: "string",
+                            name: "symbol",
+                            type: "string",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "decimals",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "bool",
+                            name: "isMock",
+                            type: "bool",
+                          },
+                        ],
+                        internalType: "struct TokenMetadata",
+                        name: "originationFeeToken",
+                        type: "tuple",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "originationFeeAmount",
+                        type: "uint256",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "borrowerOriginationFeeBalance",
+                        type: "uint256",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "borrowerOriginationFeeApproval",
+                        type: "uint256",
+                      },
+                    ],
+                    internalType: "struct FeeConfigurationV2",
+                    name: "fees",
+                    type: "tuple",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "exists",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "enabled",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "index",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "string",
+                    name: "name",
+                    type: "string",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "totalMarkets",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct HooksTemplateData",
                 name: "hooksTemplate",
-                type: "address",
-              },
-              {
-                internalType: "string",
-                name: "hooksTemplateName",
-                type: "string",
+                type: "tuple",
               },
               {
                 components: [
@@ -904,19 +1000,115 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "string",
+                name: "name",
+                type: "string",
+              },
+              {
                 internalType: "enum HooksInstanceKind",
                 name: "kind",
                 type: "uint8",
               },
               {
-                internalType: "address",
+                components: [
+                  {
+                    internalType: "address",
+                    name: "hooksTemplate",
+                    type: "address",
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: "address",
+                        name: "feeRecipient",
+                        type: "address",
+                      },
+                      {
+                        internalType: "uint16",
+                        name: "protocolFeeBips",
+                        type: "uint16",
+                      },
+                      {
+                        components: [
+                          {
+                            internalType: "address",
+                            name: "token",
+                            type: "address",
+                          },
+                          {
+                            internalType: "string",
+                            name: "name",
+                            type: "string",
+                          },
+                          {
+                            internalType: "string",
+                            name: "symbol",
+                            type: "string",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "decimals",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "bool",
+                            name: "isMock",
+                            type: "bool",
+                          },
+                        ],
+                        internalType: "struct TokenMetadata",
+                        name: "originationFeeToken",
+                        type: "tuple",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "originationFeeAmount",
+                        type: "uint256",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "borrowerOriginationFeeBalance",
+                        type: "uint256",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "borrowerOriginationFeeApproval",
+                        type: "uint256",
+                      },
+                    ],
+                    internalType: "struct FeeConfigurationV2",
+                    name: "fees",
+                    type: "tuple",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "exists",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "enabled",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "index",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "string",
+                    name: "name",
+                    type: "string",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "totalMarkets",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct HooksTemplateData",
                 name: "hooksTemplate",
-                type: "address",
-              },
-              {
-                internalType: "string",
-                name: "hooksTemplateName",
-                type: "string",
+                type: "tuple",
               },
               {
                 components: [
@@ -1202,19 +1394,115 @@ const _abi = [
             type: "address",
           },
           {
+            internalType: "string",
+            name: "name",
+            type: "string",
+          },
+          {
             internalType: "enum HooksInstanceKind",
             name: "kind",
             type: "uint8",
           },
           {
-            internalType: "address",
+            components: [
+              {
+                internalType: "address",
+                name: "hooksTemplate",
+                type: "address",
+              },
+              {
+                components: [
+                  {
+                    internalType: "address",
+                    name: "feeRecipient",
+                    type: "address",
+                  },
+                  {
+                    internalType: "uint16",
+                    name: "protocolFeeBips",
+                    type: "uint16",
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: "address",
+                        name: "token",
+                        type: "address",
+                      },
+                      {
+                        internalType: "string",
+                        name: "name",
+                        type: "string",
+                      },
+                      {
+                        internalType: "string",
+                        name: "symbol",
+                        type: "string",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "decimals",
+                        type: "uint256",
+                      },
+                      {
+                        internalType: "bool",
+                        name: "isMock",
+                        type: "bool",
+                      },
+                    ],
+                    internalType: "struct TokenMetadata",
+                    name: "originationFeeToken",
+                    type: "tuple",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "originationFeeAmount",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "borrowerOriginationFeeBalance",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "borrowerOriginationFeeApproval",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct FeeConfigurationV2",
+                name: "fees",
+                type: "tuple",
+              },
+              {
+                internalType: "bool",
+                name: "exists",
+                type: "bool",
+              },
+              {
+                internalType: "bool",
+                name: "enabled",
+                type: "bool",
+              },
+              {
+                internalType: "uint24",
+                name: "index",
+                type: "uint24",
+              },
+              {
+                internalType: "string",
+                name: "name",
+                type: "string",
+              },
+              {
+                internalType: "uint256",
+                name: "totalMarkets",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct HooksTemplateData",
             name: "hooksTemplate",
-            type: "address",
-          },
-          {
-            internalType: "string",
-            name: "hooksTemplateName",
-            type: "string",
+            type: "tuple",
           },
           {
             components: [
@@ -2151,19 +2439,115 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "string",
+                name: "name",
+                type: "string",
+              },
+              {
                 internalType: "enum HooksInstanceKind",
                 name: "kind",
                 type: "uint8",
               },
               {
-                internalType: "address",
+                components: [
+                  {
+                    internalType: "address",
+                    name: "hooksTemplate",
+                    type: "address",
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: "address",
+                        name: "feeRecipient",
+                        type: "address",
+                      },
+                      {
+                        internalType: "uint16",
+                        name: "protocolFeeBips",
+                        type: "uint16",
+                      },
+                      {
+                        components: [
+                          {
+                            internalType: "address",
+                            name: "token",
+                            type: "address",
+                          },
+                          {
+                            internalType: "string",
+                            name: "name",
+                            type: "string",
+                          },
+                          {
+                            internalType: "string",
+                            name: "symbol",
+                            type: "string",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "decimals",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "bool",
+                            name: "isMock",
+                            type: "bool",
+                          },
+                        ],
+                        internalType: "struct TokenMetadata",
+                        name: "originationFeeToken",
+                        type: "tuple",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "originationFeeAmount",
+                        type: "uint256",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "borrowerOriginationFeeBalance",
+                        type: "uint256",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "borrowerOriginationFeeApproval",
+                        type: "uint256",
+                      },
+                    ],
+                    internalType: "struct FeeConfigurationV2",
+                    name: "fees",
+                    type: "tuple",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "exists",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "enabled",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "index",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "string",
+                    name: "name",
+                    type: "string",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "totalMarkets",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct HooksTemplateData",
                 name: "hooksTemplate",
-                type: "address",
-              },
-              {
-                internalType: "string",
-                name: "hooksTemplateName",
-                type: "string",
+                type: "tuple",
               },
               {
                 components: [
@@ -2786,19 +3170,115 @@ const _abi = [
                     type: "address",
                   },
                   {
+                    internalType: "string",
+                    name: "name",
+                    type: "string",
+                  },
+                  {
                     internalType: "enum HooksInstanceKind",
                     name: "kind",
                     type: "uint8",
                   },
                   {
-                    internalType: "address",
+                    components: [
+                      {
+                        internalType: "address",
+                        name: "hooksTemplate",
+                        type: "address",
+                      },
+                      {
+                        components: [
+                          {
+                            internalType: "address",
+                            name: "feeRecipient",
+                            type: "address",
+                          },
+                          {
+                            internalType: "uint16",
+                            name: "protocolFeeBips",
+                            type: "uint16",
+                          },
+                          {
+                            components: [
+                              {
+                                internalType: "address",
+                                name: "token",
+                                type: "address",
+                              },
+                              {
+                                internalType: "string",
+                                name: "name",
+                                type: "string",
+                              },
+                              {
+                                internalType: "string",
+                                name: "symbol",
+                                type: "string",
+                              },
+                              {
+                                internalType: "uint256",
+                                name: "decimals",
+                                type: "uint256",
+                              },
+                              {
+                                internalType: "bool",
+                                name: "isMock",
+                                type: "bool",
+                              },
+                            ],
+                            internalType: "struct TokenMetadata",
+                            name: "originationFeeToken",
+                            type: "tuple",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "originationFeeAmount",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "borrowerOriginationFeeBalance",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "borrowerOriginationFeeApproval",
+                            type: "uint256",
+                          },
+                        ],
+                        internalType: "struct FeeConfigurationV2",
+                        name: "fees",
+                        type: "tuple",
+                      },
+                      {
+                        internalType: "bool",
+                        name: "exists",
+                        type: "bool",
+                      },
+                      {
+                        internalType: "bool",
+                        name: "enabled",
+                        type: "bool",
+                      },
+                      {
+                        internalType: "uint24",
+                        name: "index",
+                        type: "uint24",
+                      },
+                      {
+                        internalType: "string",
+                        name: "name",
+                        type: "string",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "totalMarkets",
+                        type: "uint256",
+                      },
+                    ],
+                    internalType: "struct HooksTemplateData",
                     name: "hooksTemplate",
-                    type: "address",
-                  },
-                  {
-                    internalType: "string",
-                    name: "hooksTemplateName",
-                    type: "string",
+                    type: "tuple",
                   },
                   {
                     components: [
@@ -3498,19 +3978,115 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "string",
+                name: "name",
+                type: "string",
+              },
+              {
                 internalType: "enum HooksInstanceKind",
                 name: "kind",
                 type: "uint8",
               },
               {
-                internalType: "address",
+                components: [
+                  {
+                    internalType: "address",
+                    name: "hooksTemplate",
+                    type: "address",
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: "address",
+                        name: "feeRecipient",
+                        type: "address",
+                      },
+                      {
+                        internalType: "uint16",
+                        name: "protocolFeeBips",
+                        type: "uint16",
+                      },
+                      {
+                        components: [
+                          {
+                            internalType: "address",
+                            name: "token",
+                            type: "address",
+                          },
+                          {
+                            internalType: "string",
+                            name: "name",
+                            type: "string",
+                          },
+                          {
+                            internalType: "string",
+                            name: "symbol",
+                            type: "string",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "decimals",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "bool",
+                            name: "isMock",
+                            type: "bool",
+                          },
+                        ],
+                        internalType: "struct TokenMetadata",
+                        name: "originationFeeToken",
+                        type: "tuple",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "originationFeeAmount",
+                        type: "uint256",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "borrowerOriginationFeeBalance",
+                        type: "uint256",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "borrowerOriginationFeeApproval",
+                        type: "uint256",
+                      },
+                    ],
+                    internalType: "struct FeeConfigurationV2",
+                    name: "fees",
+                    type: "tuple",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "exists",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "enabled",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "index",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "string",
+                    name: "name",
+                    type: "string",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "totalMarkets",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct HooksTemplateData",
                 name: "hooksTemplate",
-                type: "address",
-              },
-              {
-                internalType: "string",
-                name: "hooksTemplateName",
-                type: "string",
+                type: "tuple",
               },
               {
                 components: [
@@ -4133,19 +4709,115 @@ const _abi = [
                     type: "address",
                   },
                   {
+                    internalType: "string",
+                    name: "name",
+                    type: "string",
+                  },
+                  {
                     internalType: "enum HooksInstanceKind",
                     name: "kind",
                     type: "uint8",
                   },
                   {
-                    internalType: "address",
+                    components: [
+                      {
+                        internalType: "address",
+                        name: "hooksTemplate",
+                        type: "address",
+                      },
+                      {
+                        components: [
+                          {
+                            internalType: "address",
+                            name: "feeRecipient",
+                            type: "address",
+                          },
+                          {
+                            internalType: "uint16",
+                            name: "protocolFeeBips",
+                            type: "uint16",
+                          },
+                          {
+                            components: [
+                              {
+                                internalType: "address",
+                                name: "token",
+                                type: "address",
+                              },
+                              {
+                                internalType: "string",
+                                name: "name",
+                                type: "string",
+                              },
+                              {
+                                internalType: "string",
+                                name: "symbol",
+                                type: "string",
+                              },
+                              {
+                                internalType: "uint256",
+                                name: "decimals",
+                                type: "uint256",
+                              },
+                              {
+                                internalType: "bool",
+                                name: "isMock",
+                                type: "bool",
+                              },
+                            ],
+                            internalType: "struct TokenMetadata",
+                            name: "originationFeeToken",
+                            type: "tuple",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "originationFeeAmount",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "borrowerOriginationFeeBalance",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "borrowerOriginationFeeApproval",
+                            type: "uint256",
+                          },
+                        ],
+                        internalType: "struct FeeConfigurationV2",
+                        name: "fees",
+                        type: "tuple",
+                      },
+                      {
+                        internalType: "bool",
+                        name: "exists",
+                        type: "bool",
+                      },
+                      {
+                        internalType: "bool",
+                        name: "enabled",
+                        type: "bool",
+                      },
+                      {
+                        internalType: "uint24",
+                        name: "index",
+                        type: "uint24",
+                      },
+                      {
+                        internalType: "string",
+                        name: "name",
+                        type: "string",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "totalMarkets",
+                        type: "uint256",
+                      },
+                    ],
+                    internalType: "struct HooksTemplateData",
                     name: "hooksTemplate",
-                    type: "address",
-                  },
-                  {
-                    internalType: "string",
-                    name: "hooksTemplateName",
-                    type: "string",
+                    type: "tuple",
                   },
                   {
                     components: [
@@ -4874,19 +5546,115 @@ const _abi = [
                 type: "address",
               },
               {
+                internalType: "string",
+                name: "name",
+                type: "string",
+              },
+              {
                 internalType: "enum HooksInstanceKind",
                 name: "kind",
                 type: "uint8",
               },
               {
-                internalType: "address",
+                components: [
+                  {
+                    internalType: "address",
+                    name: "hooksTemplate",
+                    type: "address",
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: "address",
+                        name: "feeRecipient",
+                        type: "address",
+                      },
+                      {
+                        internalType: "uint16",
+                        name: "protocolFeeBips",
+                        type: "uint16",
+                      },
+                      {
+                        components: [
+                          {
+                            internalType: "address",
+                            name: "token",
+                            type: "address",
+                          },
+                          {
+                            internalType: "string",
+                            name: "name",
+                            type: "string",
+                          },
+                          {
+                            internalType: "string",
+                            name: "symbol",
+                            type: "string",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "decimals",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "bool",
+                            name: "isMock",
+                            type: "bool",
+                          },
+                        ],
+                        internalType: "struct TokenMetadata",
+                        name: "originationFeeToken",
+                        type: "tuple",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "originationFeeAmount",
+                        type: "uint256",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "borrowerOriginationFeeBalance",
+                        type: "uint256",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "borrowerOriginationFeeApproval",
+                        type: "uint256",
+                      },
+                    ],
+                    internalType: "struct FeeConfigurationV2",
+                    name: "fees",
+                    type: "tuple",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "exists",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "enabled",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "uint24",
+                    name: "index",
+                    type: "uint24",
+                  },
+                  {
+                    internalType: "string",
+                    name: "name",
+                    type: "string",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "totalMarkets",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct HooksTemplateData",
                 name: "hooksTemplate",
-                type: "address",
-              },
-              {
-                internalType: "string",
-                name: "hooksTemplateName",
-                type: "string",
+                type: "tuple",
               },
               {
                 components: [
@@ -6031,19 +6799,115 @@ const _abi = [
                     type: "address",
                   },
                   {
+                    internalType: "string",
+                    name: "name",
+                    type: "string",
+                  },
+                  {
                     internalType: "enum HooksInstanceKind",
                     name: "kind",
                     type: "uint8",
                   },
                   {
-                    internalType: "address",
+                    components: [
+                      {
+                        internalType: "address",
+                        name: "hooksTemplate",
+                        type: "address",
+                      },
+                      {
+                        components: [
+                          {
+                            internalType: "address",
+                            name: "feeRecipient",
+                            type: "address",
+                          },
+                          {
+                            internalType: "uint16",
+                            name: "protocolFeeBips",
+                            type: "uint16",
+                          },
+                          {
+                            components: [
+                              {
+                                internalType: "address",
+                                name: "token",
+                                type: "address",
+                              },
+                              {
+                                internalType: "string",
+                                name: "name",
+                                type: "string",
+                              },
+                              {
+                                internalType: "string",
+                                name: "symbol",
+                                type: "string",
+                              },
+                              {
+                                internalType: "uint256",
+                                name: "decimals",
+                                type: "uint256",
+                              },
+                              {
+                                internalType: "bool",
+                                name: "isMock",
+                                type: "bool",
+                              },
+                            ],
+                            internalType: "struct TokenMetadata",
+                            name: "originationFeeToken",
+                            type: "tuple",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "originationFeeAmount",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "borrowerOriginationFeeBalance",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "borrowerOriginationFeeApproval",
+                            type: "uint256",
+                          },
+                        ],
+                        internalType: "struct FeeConfigurationV2",
+                        name: "fees",
+                        type: "tuple",
+                      },
+                      {
+                        internalType: "bool",
+                        name: "exists",
+                        type: "bool",
+                      },
+                      {
+                        internalType: "bool",
+                        name: "enabled",
+                        type: "bool",
+                      },
+                      {
+                        internalType: "uint24",
+                        name: "index",
+                        type: "uint24",
+                      },
+                      {
+                        internalType: "string",
+                        name: "name",
+                        type: "string",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "totalMarkets",
+                        type: "uint256",
+                      },
+                    ],
+                    internalType: "struct HooksTemplateData",
                     name: "hooksTemplate",
-                    type: "address",
-                  },
-                  {
-                    internalType: "string",
-                    name: "hooksTemplateName",
-                    type: "string",
+                    type: "tuple",
                   },
                   {
                     components: [
@@ -6838,19 +7702,115 @@ const _abi = [
                     type: "address",
                   },
                   {
+                    internalType: "string",
+                    name: "name",
+                    type: "string",
+                  },
+                  {
                     internalType: "enum HooksInstanceKind",
                     name: "kind",
                     type: "uint8",
                   },
                   {
-                    internalType: "address",
+                    components: [
+                      {
+                        internalType: "address",
+                        name: "hooksTemplate",
+                        type: "address",
+                      },
+                      {
+                        components: [
+                          {
+                            internalType: "address",
+                            name: "feeRecipient",
+                            type: "address",
+                          },
+                          {
+                            internalType: "uint16",
+                            name: "protocolFeeBips",
+                            type: "uint16",
+                          },
+                          {
+                            components: [
+                              {
+                                internalType: "address",
+                                name: "token",
+                                type: "address",
+                              },
+                              {
+                                internalType: "string",
+                                name: "name",
+                                type: "string",
+                              },
+                              {
+                                internalType: "string",
+                                name: "symbol",
+                                type: "string",
+                              },
+                              {
+                                internalType: "uint256",
+                                name: "decimals",
+                                type: "uint256",
+                              },
+                              {
+                                internalType: "bool",
+                                name: "isMock",
+                                type: "bool",
+                              },
+                            ],
+                            internalType: "struct TokenMetadata",
+                            name: "originationFeeToken",
+                            type: "tuple",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "originationFeeAmount",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "borrowerOriginationFeeBalance",
+                            type: "uint256",
+                          },
+                          {
+                            internalType: "uint256",
+                            name: "borrowerOriginationFeeApproval",
+                            type: "uint256",
+                          },
+                        ],
+                        internalType: "struct FeeConfigurationV2",
+                        name: "fees",
+                        type: "tuple",
+                      },
+                      {
+                        internalType: "bool",
+                        name: "exists",
+                        type: "bool",
+                      },
+                      {
+                        internalType: "bool",
+                        name: "enabled",
+                        type: "bool",
+                      },
+                      {
+                        internalType: "uint24",
+                        name: "index",
+                        type: "uint24",
+                      },
+                      {
+                        internalType: "string",
+                        name: "name",
+                        type: "string",
+                      },
+                      {
+                        internalType: "uint256",
+                        name: "totalMarkets",
+                        type: "uint256",
+                      },
+                    ],
+                    internalType: "struct HooksTemplateData",
                     name: "hooksTemplate",
-                    type: "address",
-                  },
-                  {
-                    internalType: "string",
-                    name: "hooksTemplateName",
-                    type: "string",
+                    type: "tuple",
                   },
                   {
                     components: [

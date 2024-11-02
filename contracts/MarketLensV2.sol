@@ -92,9 +92,9 @@ struct HooksDataForBorrower {
 struct HooksInstanceData {
   address hooksAddress;
   address borrower;
+  string name;
   HooksInstanceKind kind;
-  address hooksTemplate;
-  string hooksTemplateName;
+  HooksTemplateData hooksTemplate;
   MarketParameterConstraints constraints;
   HooksDeploymentFlags deploymentFlags;
   RoleProviderData[] pullProviders;
