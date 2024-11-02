@@ -336,17 +336,29 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
   }
 }
 
-query getAllHooksTemplates(
-  $borrower: Bytes
-  $includeBorrower: Boolean!
-) {
+query getAllHooksTemplates($borrower: Bytes, $includeBorrower: Boolean!) {
   hooksTemplates {
     ...HooksTemplateData
   }
-  registeredBorrowers(
-    where: { borrower: $borrower }
-    first: 1
-  ) @include(if: $includeBorrower) {
+  registeredBorrowers(where: { borrower: $borrower }, first: 1) @include(if: $includeBorrower) {
+    isRegistered
+  }
+}
+
+query getHooksInstancesForBorrower($borrower: Bytes!) {
+  hooksInstances(where: { borrower: $borrower }) {
+    ...HooksInstanceData
+  }
+}
+
+query getAllHooksDataForBorrower($borrower: Bytes!) {
+  hooksTemplates {
+    ...HooksTemplateData
+  }
+  hooksInstances(where: { borrower: $borrower }) {
+    ...HooksInstanceData
+  }
+  registeredBorrowers(where: { borrower: $borrower }, first: 1) {
     isRegistered
   }
 }

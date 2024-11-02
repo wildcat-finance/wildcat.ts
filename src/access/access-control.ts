@@ -6,7 +6,7 @@ import {
 } from "../constants";
 import { MarketParameters } from "../controller";
 import {
-  SubgraphHooksInstanceDataForMarketFragment,
+  SubgraphHooksInstanceDataFragment,
   SubgraphHooksTemplateDataFragment
 } from "../gql/graphql";
 import { Token, TokenAmount } from "../token";
@@ -59,16 +59,43 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
     this.constraints = constraints;
   }
 
+  updateWith(
+    data: HooksInstanceDataStructOutput,
+    signerAddress?: string,
+    isRegisteredBorrower?: boolean
+  ): void {
+    this.hooksTemplate.updateWith(data.hooksTemplate, signerAddress, isRegisteredBorrower);
+    this.name = data.name;
+    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => ({
+      isApproved: true,
+      providerAddress: p.providerAddress,
+      isPullProvider: p.pullProviderIndex !== NullProviderIndex,
+      pullProviderIndex: p.pullProviderIndex,
+      isPushProvider: p.pushProviderIndex !== NullProviderIndex,
+      pushProviderIndex: p.pushProviderIndex,
+      timeToLive: p.timeToLive
+    }));
+  }
+
   static fromLensData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: HooksInstanceDataStructOutput
+    data: HooksInstanceDataStructOutput,
+    signerAddress?: string,
+    isRegisteredBorrower?: boolean
   ): OpenTermHooks {
     return new OpenTermHooks({
       chainId,
       provider,
       address: data.hooksAddress,
-      templateAddress: data.hooksTemplate,
+      name: data.name,
+      hooksTemplate: OpenTermHooksTemplate.fromLensData(
+        chainId,
+        provider,
+        data.hooksTemplate,
+        signerAddress,
+        isRegisteredBorrower
+      ),
       borrower: data.borrower,
       constraints: data.constraints,
       roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => ({
@@ -86,14 +113,22 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
   static fromSubgraphData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: SubgraphHooksInstanceDataForMarketFragment
+    data: SubgraphHooksInstanceDataFragment,
+    signerAddress?: string,
+    isRegisteredBorrower?: boolean
   ): OpenTermHooks {
     return new OpenTermHooks({
       chainId,
       provider,
       address: data.id,
       borrower: data.borrower,
-      templateAddress: data.hooksTemplate.id,
+      hooksTemplate: OpenTermHooksTemplate.fromSubgraphData(
+        chainId,
+        provider,
+        data.hooksTemplate,
+        signerAddress,
+        isRegisteredBorrower
+      ),
       name: data.name,
       roleProviders: data.providers.map((p) => ({
         isApproved: p.isApproved,
@@ -111,12 +146,12 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
 export type OpenTermHooksArgs = {
   chainId: SupportedChainId;
   provider: SignerOrProvider;
-  templateAddress: string;
-  constraints?: MarketParameterConstraints;
   address: string;
+  hooksTemplate: OpenTermHooksTemplate;
+  constraints?: MarketParameterConstraints;
   borrower: string;
   roleProviders?: RoleProvider[];
-  name?: string;
+  name: string;
 };
 
 export type OpenTermHooksTemplateArgs = {
@@ -146,6 +181,39 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     super(provider);
     Object.assign(this, args);
     this._contractAddress = getDeploymentAddress(chainId, "HooksFactory");
+  }
+
+  updateWith(
+    data: HooksTemplateDataStructOutput,
+    signerAddress?: string,
+    isRegisteredBorrower?: boolean
+  ): void {
+    this.fees = parseFeeConfigurationV2(this.chainId, this.provider, data.fees);
+    this.enabled = data.enabled;
+    this.index = data.index;
+    this.name = data.name;
+    this.totalMarkets = data.totalMarkets.toNumber();
+    this.signerAddress = signerAddress;
+    this.isRegisteredBorrower = isRegisteredBorrower;
+  }
+
+  static fromLensData(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider,
+    data: HooksTemplateDataStructOutput,
+    signerAddress?: string,
+    isRegisteredBorrower?: boolean
+  ): OpenTermHooksTemplate {
+    return new OpenTermHooksTemplate(chainId, provider, {
+      enabled: data.enabled,
+      fees: parseFeeConfigurationV2(chainId, provider, data.fees),
+      hooksTemplate: data.hooksTemplate,
+      index: data.index,
+      name: data.name,
+      totalMarkets: data.totalMarkets.toNumber(),
+      signerAddress,
+      isRegisteredBorrower
+    });
   }
 
   static fromSubgraphData(
@@ -182,25 +250,6 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
       index: 0, // @todo
       name,
       totalMarkets: 0, // @todo
-      signerAddress,
-      isRegisteredBorrower
-    });
-  }
-
-  static fromLensData(
-    chainId: SupportedChainId,
-    provider: SignerOrProvider,
-    data: HooksTemplateDataStructOutput,
-    signerAddress?: string,
-    isRegisteredBorrower?: boolean
-  ): OpenTermHooksTemplate {
-    return new OpenTermHooksTemplate(chainId, provider, {
-      enabled: data.enabled,
-      fees: parseFeeConfigurationV2(chainId, provider, data.fees),
-      hooksTemplate: data.hooksTemplate,
-      index: data.index,
-      name: data.name,
-      totalMarkets: data.totalMarkets.toNumber(),
       signerAddress,
       isRegisteredBorrower
     });

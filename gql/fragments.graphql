@@ -118,7 +118,7 @@ fragment MarketData on Market {
     ...HooksConfigDataForMarket
   }
   hooks {
-    ...HooksInstanceDataForMarket
+    ...HooksInstanceData
   }
 
   # ================================== State ================================= #
@@ -469,10 +469,11 @@ fragment HooksConfigDataForMarket on HooksConfig {
   allowTermReduction
 }
 
-fragment HooksInstanceDataForMarket on HooksInstance {
+fragment HooksInstanceData on HooksInstance {
   id
   borrower
   name
+  kind
   hooksTemplate {
     ...HooksTemplateData
   }

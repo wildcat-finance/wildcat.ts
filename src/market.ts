@@ -857,7 +857,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       } as FixedTermHooksConfig;
     } else {
       throw Error(
-        `Unknown hooks kind: ${hooks.hooksTemplateName}, version #${hooksConfigData.kind}`
+        `Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksConfigData.kind}`
       );
     }
     return new Market({

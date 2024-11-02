@@ -13282,7 +13282,7 @@ export type SubgraphMarketDataFragment = {
   controller?: { __typename: "Controller"; id: string } | null;
   _asset: SubgraphTokenDataFragment;
   hooksConfig?: SubgraphHooksConfigDataForMarketFragment | null;
-  hooks?: SubgraphHooksInstanceDataForMarketFragment | null;
+  hooks?: SubgraphHooksInstanceDataFragment | null;
   deployedEvent: SubgraphMarketDeployedEventFragment;
 };
 
@@ -13365,7 +13365,7 @@ export type SubgraphMarketDataWithEventsFragment = {
   controller?: { __typename: "Controller"; id: string } | null;
   _asset: SubgraphTokenDataFragment;
   hooksConfig?: SubgraphHooksConfigDataForMarketFragment | null;
-  hooks?: SubgraphHooksInstanceDataForMarketFragment | null;
+  hooks?: SubgraphHooksInstanceDataFragment | null;
   deployedEvent: SubgraphMarketDeployedEventFragment;
   depositRecords: SubgraphDepositDataFragment[];
   borrowRecords: SubgraphBorrowDataFragment[];
@@ -13632,11 +13632,12 @@ export type SubgraphHooksConfigDataForMarketFragment = {
   allowTermReduction: boolean;
 };
 
-export type SubgraphHooksInstanceDataForMarketFragment = {
+export type SubgraphHooksInstanceDataFragment = {
   __typename: "HooksInstance";
   id: string;
   borrower: string;
   name: string;
+  kind: SubgraphHooksKind;
   eventIndex: number;
   hooksTemplate: SubgraphHooksTemplateDataFragment;
   providers: SubgraphRoleProviderDataFragment[];
@@ -13734,7 +13735,7 @@ export type SubgraphGetLenderAccountWithMarketQuery = {
     controller?: { __typename: "Controller"; id: string } | null;
     _asset: SubgraphTokenDataFragment;
     hooksConfig?: SubgraphHooksConfigDataForMarketFragment | null;
-    hooks?: SubgraphHooksInstanceDataForMarketFragment | null;
+    hooks?: SubgraphHooksInstanceDataFragment | null;
     deployedEvent: SubgraphMarketDeployedEventFragment;
   } | null;
 };
@@ -13802,7 +13803,7 @@ export type SubgraphGetAllMarketsForLenderViewQuery = {
     controller?: { __typename: "Controller"; id: string } | null;
     _asset: SubgraphTokenDataFragment;
     hooksConfig?: SubgraphHooksConfigDataForMarketFragment | null;
-    hooks?: SubgraphHooksInstanceDataForMarketFragment | null;
+    hooks?: SubgraphHooksInstanceDataFragment | null;
     deployedEvent: SubgraphMarketDeployedEventFragment;
   }>;
   lenderAccounts: Array<{
@@ -13904,7 +13905,7 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
       controller?: { __typename: "Controller"; id: string } | null;
       _asset: SubgraphTokenDataFragment;
       hooksConfig?: SubgraphHooksConfigDataForMarketFragment | null;
-      hooks?: SubgraphHooksInstanceDataForMarketFragment | null;
+      hooks?: SubgraphHooksInstanceDataFragment | null;
       deployedEvent: SubgraphMarketDeployedEventFragment;
     };
     controllerAuthorization?: { __typename: "LenderAuthorization"; authorized: boolean } | null;
@@ -13962,7 +13963,7 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
         controller?: { __typename: "Controller"; id: string } | null;
         _asset: SubgraphTokenDataFragment;
         hooksConfig?: SubgraphHooksConfigDataForMarketFragment | null;
-        hooks?: SubgraphHooksInstanceDataForMarketFragment | null;
+        hooks?: SubgraphHooksInstanceDataFragment | null;
         deployedEvent: SubgraphMarketDeployedEventFragment;
       }>;
     };
@@ -14049,6 +14050,26 @@ export type SubgraphGetAllHooksTemplatesQuery = {
   __typename: "Query";
   hooksTemplates: SubgraphHooksTemplateDataFragment[];
   registeredBorrowers?: Array<{ __typename: "RegisteredBorrower"; isRegistered: boolean }>;
+};
+
+export type SubgraphGetHooksInstancesForBorrowerQueryVariables = Exact<{
+  borrower: Scalars["Bytes"]["input"];
+}>;
+
+export type SubgraphGetHooksInstancesForBorrowerQuery = {
+  __typename: "Query";
+  hooksInstances: SubgraphHooksInstanceDataFragment[];
+};
+
+export type SubgraphGetAllHooksDataForBorrowerQueryVariables = Exact<{
+  borrower: Scalars["Bytes"]["input"];
+}>;
+
+export type SubgraphGetAllHooksDataForBorrowerQuery = {
+  __typename: "Query";
+  hooksTemplates: SubgraphHooksTemplateDataFragment[];
+  hooksInstances: SubgraphHooksInstanceDataFragment[];
+  registeredBorrowers: Array<{ __typename: "RegisteredBorrower"; isRegistered: boolean }>;
 };
 
 export type SubgraphGetMarketEventsQueryVariables = Exact<{
@@ -14447,11 +14468,12 @@ export const HooksTemplateDataFragmentDoc = gql`
     disabled
   }
 `;
-export const HooksInstanceDataForMarketFragmentDoc = gql`
-  fragment HooksInstanceDataForMarket on HooksInstance {
+export const HooksInstanceDataFragmentDoc = gql`
+  fragment HooksInstanceData on HooksInstance {
     id
     borrower
     name
+    kind
     hooksTemplate {
       ...HooksTemplateData
     }
@@ -14494,7 +14516,7 @@ export const MarketDataFragmentDoc = gql`
       ...HooksConfigDataForMarket
     }
     hooks {
-      ...HooksInstanceDataForMarket
+      ...HooksInstanceData
     }
     maxTotalSupply
     pendingProtocolFees
@@ -14859,7 +14881,7 @@ export const GetLenderAccountWithMarketDocument = gql`
   ${MarketDataFragmentDoc}
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
-  ${HooksInstanceDataForMarketFragmentDoc}
+  ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${BorrowDataFragmentDoc}
@@ -14940,7 +14962,7 @@ export const GetAllMarketsForLenderViewDocument = gql`
   ${MarketDataFragmentDoc}
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
-  ${HooksInstanceDataForMarketFragmentDoc}
+  ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
@@ -15047,7 +15069,7 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
   ${MarketDataFragmentDoc}
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
-  ${HooksInstanceDataForMarketFragmentDoc}
+  ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${BorrowDataFragmentDoc}
@@ -15204,6 +15226,42 @@ export const GetAllHooksTemplatesDocument = gql`
 export type GetAllHooksTemplatesQueryResult = Apollo.QueryResult<
   SubgraphGetAllHooksTemplatesQuery,
   SubgraphGetAllHooksTemplatesQueryVariables
+>;
+export const GetHooksInstancesForBorrowerDocument = gql`
+  query getHooksInstancesForBorrower($borrower: Bytes!) {
+    hooksInstances(where: { borrower: $borrower }) {
+      ...HooksInstanceData
+    }
+  }
+  ${HooksInstanceDataFragmentDoc}
+  ${HooksTemplateDataFragmentDoc}
+  ${TokenDataFragmentDoc}
+  ${RoleProviderDataFragmentDoc}
+`;
+export type GetHooksInstancesForBorrowerQueryResult = Apollo.QueryResult<
+  SubgraphGetHooksInstancesForBorrowerQuery,
+  SubgraphGetHooksInstancesForBorrowerQueryVariables
+>;
+export const GetAllHooksDataForBorrowerDocument = gql`
+  query getAllHooksDataForBorrower($borrower: Bytes!) {
+    hooksTemplates {
+      ...HooksTemplateData
+    }
+    hooksInstances(where: { borrower: $borrower }) {
+      ...HooksInstanceData
+    }
+    registeredBorrowers(where: { borrower: $borrower }, first: 1) {
+      isRegistered
+    }
+  }
+  ${HooksTemplateDataFragmentDoc}
+  ${TokenDataFragmentDoc}
+  ${HooksInstanceDataFragmentDoc}
+  ${RoleProviderDataFragmentDoc}
+`;
+export type GetAllHooksDataForBorrowerQueryResult = Apollo.QueryResult<
+  SubgraphGetAllHooksDataForBorrowerQuery,
+  SubgraphGetAllHooksDataForBorrowerQueryVariables
 >;
 export const GetMarketEventsDocument = gql`
   query getMarketEvents(
@@ -15375,7 +15433,7 @@ export const GetMarketsForBorrowerDocument = gql`
   ${MarketDataFragmentDoc}
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
-  ${HooksInstanceDataForMarketFragmentDoc}
+  ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
@@ -15425,7 +15483,7 @@ export const GetMarketsForAllBorrowersDocument = gql`
   ${MarketDataFragmentDoc}
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
-  ${HooksInstanceDataForMarketFragmentDoc}
+  ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
@@ -15467,7 +15525,7 @@ export const GetMarketDocument = gql`
   ${MarketDataFragmentDoc}
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
-  ${HooksInstanceDataForMarketFragmentDoc}
+  ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
@@ -15564,7 +15622,7 @@ export const GetAllMarketsDocument = gql`
   ${MarketDataFragmentDoc}
   ${TokenDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}
-  ${HooksInstanceDataForMarketFragmentDoc}
+  ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
