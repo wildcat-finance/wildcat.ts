@@ -97,7 +97,7 @@ export function hooksInstanceFromSubgraph(
       isRegisteredBorrower
     );
   } else {
-    throw Error(`Unknown hooks template: ${name}`);
+    throw Error(`Unknown hooks template: ${data.kind}`);
   }
 }
 
@@ -119,6 +119,6 @@ export function hooksInstanceFromLens(
       isRegisteredBorrower
     );
   } else {
-    throw Error(`Unknown hooks template: ${name}`);
+    throw Error(`Unknown hooks template: ${data.kind}`);
   }
 }
