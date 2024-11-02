@@ -59,7 +59,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
   [SupportedChainId.Sepolia]: {
     HooksFactory: "0xE3e4B7C9E0Ab4ccbC70e0583Dca7B4Db9B4CFD88",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
-    MarketLensV2: "0xa47237531fae13c82a4361D68aa1e53FC939d70f",
+    MarketLensV2: "0xf4aE692b91069123763d3FA28533229588A557af",
     MockArchControllerOwner: "0xa476920af80B587f696734430227869795E2Ea78",
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
