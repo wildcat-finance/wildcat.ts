@@ -8,7 +8,9 @@ import { ContractReceipt, ContractTransaction } from "ethers";
 
 export class TokenFactory extends ContractWrapper<MockERC20Factory> {
   readonly contractFactory = MockERC20Factory__factory;
-  protected _contractAddress = this.address;
+  protected get _contractAddress(): string {
+    return this.address;
+  }
   constructor(
     public chainId: SupportedChainId,
     public address: string,

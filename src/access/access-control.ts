@@ -45,7 +45,10 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
   readonly contractFactory = IOpenTermHooks__factory;
   public roleProviders: RoleProvider[];
   public constraints: MarketParameterConstraints;
-  public _contractAddress = this.address;
+
+  protected get _contractAddress(): string {
+    return this.address;
+  }
 
   constructor({
     provider,

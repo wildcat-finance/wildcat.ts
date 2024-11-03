@@ -144,7 +144,9 @@ export class Token extends ContractWrapper<IERC20> {
     super(provider);
   }
 
-  protected _contractAddress = this.address;
+  protected get _contractAddress(): string {
+    return this.address;
+  }
 
   async faucet(): Promise<ContractTransaction> {
     if (!this.isMock) {

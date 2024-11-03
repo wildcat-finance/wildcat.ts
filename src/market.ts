@@ -13,7 +13,6 @@ import {
   ContractWrapper,
   PartialTransaction,
   MarketVersion,
-  HooksFlags,
   HooksKind,
   HooksConfig,
   OpenTermHooksConfig,
@@ -48,7 +47,7 @@ import {
   SECONDS_IN_365_DAYS,
   assert
 } from "./utils";
-import { hooksTemplateFromLens, hooksTemplateFromSubgraph } from "./access";
+import { hooksTemplateFromSubgraph } from "./access";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -159,7 +158,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
   public borrowRecords: BorrowRecord[];
   public feeCollectionRecords: FeeCollectionRecord[];
 
-  protected _contractAddress = this.address;
+  protected get _contractAddress(): string {
+    return this.address;
+  }
 
   constructor({ provider, ...args }: MarketArgs & { hooksConfig?: HooksConfig }) {
     super(provider);
@@ -703,8 +704,6 @@ export class Market extends ContractWrapper<WildcatMarket> {
           fixedTermEndTime,
           transfersDisabled
         };
-      } else {
-        throw Error(`Unknown hook kind: ${template.kind}`);
       }
     }
     return new Market({
