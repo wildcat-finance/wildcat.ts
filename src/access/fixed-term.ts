@@ -170,7 +170,7 @@ export type FixedTermHooksTemplateArgs = {
 export interface FixedTermHooksTemplate extends FixedTermHooksTemplateArgs {}
 
 export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
-  readonly kind: HooksKind.OpenTerm = HooksKind.OpenTerm;
+  readonly kind: HooksKind.FixedTerm = HooksKind.FixedTerm;
   readonly contractFactory = HooksFactory__factory;
   protected _contractAddress: string;
 
