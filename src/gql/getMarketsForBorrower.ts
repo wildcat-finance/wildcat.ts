@@ -1,14 +1,15 @@
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import { Market } from "../market";
 import {
-  GetMarketsForBorrowerDocument,
-  SubgraphGetMarketsForBorrowerQuery,
-  SubgraphGetMarketsForBorrowerQueryVariables
+  GetMarketsWithEventsDocument,
+  SubgraphGetMarketsWithEventsQuery,
+  SubgraphGetMarketsWithEventsQueryVariables
 } from "./graphql";
 import { SupportedChainId } from "../constants";
 import { SignerOrProvider } from "../types";
 
-type GetMarketsForBorrowerOptions = SubgraphGetMarketsForBorrowerQueryVariables & {
+type GetMarketsForBorrowerOptions = SubgraphGetMarketsWithEventsQueryVariables & {
+  borrower: string;
   chainId: SupportedChainId;
   fetchPolicy: FetchPolicy;
   signerOrProvider: SignerOrProvider;
@@ -19,11 +20,14 @@ export async function getMarketsForBorrower(
   { borrower, chainId, fetchPolicy, signerOrProvider, ...variables }: GetMarketsForBorrowerOptions
 ): Promise<Market[]> {
   const result = await subgraphClient.query<
-    SubgraphGetMarketsForBorrowerQuery,
-    SubgraphGetMarketsForBorrowerQueryVariables
+    SubgraphGetMarketsWithEventsQuery,
+    SubgraphGetMarketsWithEventsQueryVariables
   >({
-    query: GetMarketsForBorrowerDocument,
-    variables: { borrower: borrower.toLowerCase(), ...variables },
+    query: GetMarketsWithEventsDocument,
+    variables: {
+      marketFilter: { borrower: borrower.toLowerCase(), ...variables.marketFilter },
+      ...variables
+    },
     fetchPolicy
   });
 

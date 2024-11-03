@@ -194,7 +194,7 @@ fragment MarketDeployedEvent on MarketDeployed {
 
 fragment MarketDataWithEvents on Market {
   ...MarketData
-  ...MarketRecords
+  ...MarketRecords @skip(if: $shouldSkipRecords)
 }
 
 fragment WithdrawalBatchPaymentProperties on WithdrawalBatchPayment {

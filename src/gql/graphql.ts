@@ -14100,9 +14100,9 @@ export type SubgraphGetMarketEventsQuery = {
   } | null;
 };
 
-export type SubgraphGetMarketsForBorrowerQueryVariables = Exact<{
-  borrower: Scalars["Bytes"]["input"];
+export type SubgraphGetMarketsWithEventsQueryVariables = Exact<{
   marketFilter?: InputMaybe<SubgraphMarket_Filter>;
+  shouldSkipRecords?: InputMaybe<Scalars["Boolean"]["input"]>;
   numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
   skipMarkets?: InputMaybe<Scalars["Int"]["input"]>;
   orderMarkets?: InputMaybe<SubgraphMarket_OrderBy>;
@@ -14125,38 +14125,14 @@ export type SubgraphGetMarketsForBorrowerQueryVariables = Exact<{
   directionRepayments?: InputMaybe<SubgraphOrderDirection>;
 }>;
 
-export type SubgraphGetMarketsForBorrowerQuery = {
+export type SubgraphGetMarketsWithEventsQuery = {
   __typename: "Query";
   markets: SubgraphMarketDataWithEventsFragment[];
 };
 
-export type SubgraphGetMarketsForAllBorrowersQueryVariables = Exact<{
-  numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
-  skipMarkets?: InputMaybe<Scalars["Int"]["input"]>;
-  orderMarkets?: InputMaybe<SubgraphMarket_OrderBy>;
-  directionMarkets?: InputMaybe<SubgraphOrderDirection>;
-  numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
-  skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
-  orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
-  directionDeposits?: InputMaybe<SubgraphOrderDirection>;
-  numBorrows?: InputMaybe<Scalars["Int"]["input"]>;
-  skipBorrows?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBorrows?: InputMaybe<SubgraphBorrow_OrderBy>;
-  directionBorrows?: InputMaybe<SubgraphOrderDirection>;
-  numFeeCollections?: InputMaybe<Scalars["Int"]["input"]>;
-  skipFeeCollections?: InputMaybe<Scalars["Int"]["input"]>;
-  orderFeeCollections?: InputMaybe<SubgraphFeesCollected_OrderBy>;
-  directionFeeCollections?: InputMaybe<SubgraphOrderDirection>;
-  numRepayments?: InputMaybe<Scalars["Int"]["input"]>;
-  skipRepayments?: InputMaybe<Scalars["Int"]["input"]>;
-  orderRepayments?: InputMaybe<SubgraphDebtRepaid_OrderBy>;
-  directionRepayments?: InputMaybe<SubgraphOrderDirection>;
-}>;
-
-export type SubgraphGetMarketsForAllBorrowersQuery = SubgraphGetMarketsForBorrowerQuery;
-
 export type SubgraphGetMarketQueryVariables = Exact<{
   market: Scalars["ID"]["input"];
+  shouldSkipRecords?: InputMaybe<Scalars["Boolean"]["input"]>;
   numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
@@ -14613,7 +14589,7 @@ export const MarketRecordsFragmentDoc = gql`
 export const MarketDataWithEventsFragmentDoc = gql`
   fragment MarketDataWithEvents on Market {
     ...MarketData
-    ...MarketRecords
+    ...MarketRecords @skip(if: $shouldSkipRecords)
   }
 `;
 export const ForceBuyBackDataFragmentDoc = gql`
@@ -15394,10 +15370,10 @@ export type GetMarketEventsQueryResult = Apollo.QueryResult<
   SubgraphGetMarketEventsQuery,
   SubgraphGetMarketEventsQueryVariables
 >;
-export const GetMarketsForBorrowerDocument = gql`
-  query getMarketsForBorrower(
-    $borrower: Bytes!
+export const GetMarketsWithEventsDocument = gql`
+  query getMarketsWithEvents(
     $marketFilter: Market_filter = { id_not: null }
+    $shouldSkipRecords: Boolean = false
     $numMarkets: Int = 1000
     $skipMarkets: Int = 0
     $orderMarkets: Market_orderBy = createdAt
@@ -15420,7 +15396,7 @@ export const GetMarketsForBorrowerDocument = gql`
     $directionRepayments: OrderDirection = desc
   ) {
     markets(
-      where: { and: [{ borrower: $borrower }, $marketFilter] }
+      where: $marketFilter
       orderBy: $orderMarkets
       orderDirection: $directionMarkets
       first: $numMarkets
@@ -15443,63 +15419,14 @@ export const GetMarketsForBorrowerDocument = gql`
   ${FeesCollectedDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
 `;
-export type GetMarketsForBorrowerQueryResult = Apollo.QueryResult<
-  SubgraphGetMarketsForBorrowerQuery,
-  SubgraphGetMarketsForBorrowerQueryVariables
->;
-export const GetMarketsForAllBorrowersDocument = gql`
-  query getMarketsForAllBorrowers(
-    $numMarkets: Int = 1000
-    $skipMarkets: Int = 0
-    $orderMarkets: Market_orderBy = createdAt
-    $directionMarkets: OrderDirection = desc
-    $numDeposits: Int = 10
-    $skipDeposits: Int = 0
-    $orderDeposits: Deposit_orderBy = blockTimestamp
-    $directionDeposits: OrderDirection = desc
-    $numBorrows: Int = 10
-    $skipBorrows: Int = 0
-    $orderBorrows: Borrow_orderBy = blockTimestamp
-    $directionBorrows: OrderDirection = desc
-    $numFeeCollections: Int = 10
-    $skipFeeCollections: Int = 0
-    $orderFeeCollections: FeesCollected_orderBy = blockTimestamp
-    $directionFeeCollections: OrderDirection = desc
-    $numRepayments: Int = 10
-    $skipRepayments: Int = 0
-    $orderRepayments: DebtRepaid_orderBy = blockTimestamp
-    $directionRepayments: OrderDirection = desc
-  ) {
-    markets(
-      orderBy: $orderMarkets
-      orderDirection: $directionMarkets
-      first: $numMarkets
-      skip: $skipMarkets
-    ) {
-      ...MarketDataWithEvents
-    }
-  }
-  ${MarketDataWithEventsFragmentDoc}
-  ${MarketDataFragmentDoc}
-  ${TokenDataFragmentDoc}
-  ${HooksConfigDataForMarketFragmentDoc}
-  ${HooksInstanceDataFragmentDoc}
-  ${HooksTemplateDataFragmentDoc}
-  ${RoleProviderDataFragmentDoc}
-  ${MarketDeployedEventFragmentDoc}
-  ${MarketRecordsFragmentDoc}
-  ${DepositDataFragmentDoc}
-  ${BorrowDataFragmentDoc}
-  ${FeesCollectedDataFragmentDoc}
-  ${RepaymentDataFragmentDoc}
-`;
-export type GetMarketsForAllBorrowersQueryResult = Apollo.QueryResult<
-  SubgraphGetMarketsForAllBorrowersQuery,
-  SubgraphGetMarketsForAllBorrowersQueryVariables
+export type GetMarketsWithEventsQueryResult = Apollo.QueryResult<
+  SubgraphGetMarketsWithEventsQuery,
+  SubgraphGetMarketsWithEventsQueryVariables
 >;
 export const GetMarketDocument = gql`
   query getMarket(
     $market: ID!
+    $shouldSkipRecords: Boolean = false
     $numDeposits: Int = 10
     $skipDeposits: Int = 0
     $orderDeposits: Deposit_orderBy = blockTimestamp
