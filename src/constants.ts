@@ -10,7 +10,9 @@ import {
   WildcatArchController,
   WildcatArchController__factory,
   MarketLensV2,
-  MarketLensV2__factory
+  MarketLensV2__factory,
+  HooksFactory__factory,
+  HooksFactory
 } from "./typechain";
 import { MarketParameterConstraints, SignerOrProvider } from "./types";
 import { ApolloClient, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
@@ -116,8 +118,8 @@ export const getLensContract = (
 export const getHooksFactoryContract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): MarketLensV2 => {
-  return MarketLensV2__factory.connect(getDeploymentAddress(chainId, "HooksFactory"), provider);
+): HooksFactory => {
+  return HooksFactory__factory.connect(getDeploymentAddress(chainId, "HooksFactory"), provider);
 };
 
 export const getLensV2Contract = (
