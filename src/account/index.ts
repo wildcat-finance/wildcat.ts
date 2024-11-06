@@ -132,6 +132,9 @@ export class MarketAccount {
 
   /** Shim for functions in app that use lender role */
   get inferredRole(): LenderRole | undefined {
+    if (this.market.version === MarketVersion.V1) {
+      return this.role;
+    }
     if (this.depositAvailability === DepositStatus.Ready) {
       return LenderRole.DepositAndWithdraw;
     }
