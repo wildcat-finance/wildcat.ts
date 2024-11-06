@@ -14938,24 +14938,7 @@ export const GetAllMarketsForLenderViewDocument = gql`
       ) {
         ...RepaymentData
       }
-      lenders(
-        where: {
-          and: [
-            { address: $lender }
-            {
-              or: [
-                { role_in: [DepositAndWithdraw, WithdrawOnly] }
-                { controllerAuthorization_: { authorized: true } }
-                { knownLenderStatus_: { id_not: null } }
-                { hooksAccess_: { lastApprovalTimestamp_gt: 0 } }
-                { totalDeposited_gt: 0 }
-                { scaledBalance_gt: 0 }
-              ]
-            }
-          ]
-        }
-        first: 1
-      ) {
+      lenders(where: { address: $lender }, first: 1) {
         ...AccountDataForLenderView
       }
     }
