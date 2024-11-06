@@ -61,11 +61,17 @@ query getLenderAccountWithMarket(
   }
 }
 
+# Get all markets, including lender account if lender is authorized
 query getAllMarketsForLenderView(
   $lender: Bytes
+  # markets - default order is newest first
   $marketFilter: Market_filter = { id_not: null }
+  $numMarkets: Int = 1000
+  $skipMarkets: Int = 0
+  $orderMarkets: Market_orderBy = createdAt
+  $directionMarkets: OrderDirection = desc
   # deposits
-  $numDeposits: Int = 200
+  $numDeposits: Int = 10
   $skipDeposits: Int = 0
   $orderDeposits: Deposit_orderBy = blockTimestamp
   $directionDeposits: OrderDirection = desc
@@ -80,7 +86,13 @@ query getAllMarketsForLenderView(
   $orderRepayments: DebtRepaid_orderBy = blockTimestamp
   $directionRepayments: OrderDirection = desc
 ) {
-  markets(where: $marketFilter) {
+  markets(
+    where: $marketFilter
+    orderBy: $orderMarkets
+    orderDirection: $directionMarkets
+    first: $numMarkets
+    skip: $skipMarkets
+  ) {
     ...MarketData
     borrowRecords(
       first: $numBorrows
@@ -98,25 +110,25 @@ query getAllMarketsForLenderView(
     ) {
       ...RepaymentData
     }
-  }
-  lenderAccounts(
-    where: {
-      and: [
-        { address: $lender }
-        {
-          or: [
-            { role_in: [DepositAndWithdraw, WithdrawOnly] }
-            { scaledBalance_gt: 0 }
-            { controllerAuthorization_: { authorized: true } }
-            { totalDeposited_gt: 0 }
-          ]
-        }
-      ]
-    }
-  ) {
-    ...AccountDataForLenderView
-    market {
-      id
+    lenders(
+      where: {
+        and: [
+          { address: $lender }
+          {
+            or: [
+              { role_in: [DepositAndWithdraw, WithdrawOnly] }
+              { controllerAuthorization_: { authorized: true } }
+              { knownLenderStatus_: { id_not: null } }
+              { hooksAccess_: { lastApprovalTimestamp_gt: 0 } }
+              { totalDeposited_gt: 0 }
+              { scaledBalance_gt: 0 }
+            ]
+          }
+        ]
+      }
+      first: 1
+    ) {
+      ...AccountDataForLenderView
     }
   }
   controllerAuthorizations: lenderAuthorizations(
@@ -132,9 +144,16 @@ query getAllMarketsForLenderView(
   }
 }
 
+# Get only markets where lender is authorized or active, including lender account
 query getAccountsWhereLenderAuthorizedOrActive(
   $lender: Bytes!
   $accountFilter: LenderAccount_filter = { address_not: null }
+  # markets - default order is newest first
+  $marketFilter: Market_filter = { id_not: null }
+  $numMarkets: Int = 1000
+  $skipMarkets: Int = 0
+  $orderMarkets: Market_orderBy = createdAt
+  $directionMarkets: OrderDirection = desc
   # deposits
   $numDeposits: Int = 200
   $skipDeposits: Int = 0

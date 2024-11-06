@@ -597,6 +597,7 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -891,6 +892,7 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -1227,6 +1229,7 @@ export enum SubgraphBorrow_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -2151,6 +2154,7 @@ export enum SubgraphDebtRepaid_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -2325,6 +2329,7 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -2526,6 +2531,7 @@ export enum SubgraphDeposit_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -2694,6 +2700,7 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -2853,6 +2860,7 @@ export enum SubgraphFeesCollected_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -3048,6 +3056,7 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -3258,6 +3267,7 @@ export enum SubgraphForceBuyBack_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -3500,6 +3510,7 @@ export enum SubgraphHooksConfig_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -4778,6 +4789,7 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -5038,6 +5050,7 @@ export enum SubgraphLenderAccount_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -5587,6 +5600,7 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -5838,6 +5852,7 @@ export type SubgraphMarket = {
   interestAccrualRecords: SubgraphMarketInterestAccrued[];
   isClosed: Scalars["Boolean"]["output"];
   isDelinquent: Scalars["Boolean"]["output"];
+  isIncurringPenalties: Scalars["Boolean"]["output"];
   isRegistered: Scalars["Boolean"]["output"];
   lastInterestAccruedTimestamp: Scalars["Int"]["output"];
   lenders: SubgraphLenderAccount[];
@@ -6112,6 +6127,7 @@ export enum SubgraphMarketAdded_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -6260,6 +6276,7 @@ export enum SubgraphMarketClosed_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -6390,6 +6407,7 @@ export enum SubgraphMarketDeployed_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -6596,6 +6614,7 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -6728,6 +6747,7 @@ export enum SubgraphMarketRemoved_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -7055,6 +7075,10 @@ export type SubgraphMarket_Filter = {
   isDelinquent_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   isDelinquent_not?: InputMaybe<Scalars["Boolean"]["input"]>;
   isDelinquent_not_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  isIncurringPenalties?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isIncurringPenalties_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  isIncurringPenalties_not?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isIncurringPenalties_not_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   isRegistered?: InputMaybe<Scalars["Boolean"]["input"]>;
   isRegistered_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   isRegistered_not?: InputMaybe<Scalars["Boolean"]["input"]>;
@@ -7415,6 +7439,7 @@ export enum SubgraphMarket_OrderBy {
   InterestAccrualRecords = "interestAccrualRecords",
   IsClosed = "isClosed",
   IsDelinquent = "isDelinquent",
+  IsIncurringPenalties = "isIncurringPenalties",
   IsRegistered = "isRegistered",
   LastInterestAccruedTimestamp = "lastInterestAccruedTimestamp",
   Lenders = "lenders",
@@ -7600,6 +7625,7 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -7797,6 +7823,7 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -8528,6 +8555,7 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -9836,6 +9864,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -11718,6 +11747,7 @@ export enum SubgraphTransfer_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -12303,6 +12333,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -12639,6 +12670,7 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -13083,6 +13115,7 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   MarketId = "market__id",
   MarketIsClosed = "market__isClosed",
   MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
   MarketMaxTotalSupply = "market__maxTotalSupply",
@@ -13743,6 +13776,10 @@ export type SubgraphGetLenderAccountWithMarketQuery = {
 export type SubgraphGetAllMarketsForLenderViewQueryVariables = Exact<{
   lender?: InputMaybe<Scalars["Bytes"]["input"]>;
   marketFilter?: InputMaybe<SubgraphMarket_Filter>;
+  numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  skipMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  orderMarkets?: InputMaybe<SubgraphMarket_OrderBy>;
+  directionMarkets?: InputMaybe<SubgraphOrderDirection>;
   numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
@@ -13800,28 +13837,12 @@ export type SubgraphGetAllMarketsForLenderViewQuery = {
     eventIndex: number;
     borrowRecords: SubgraphBorrowDataFragment[];
     repaymentRecords: SubgraphRepaymentDataFragment[];
+    lenders: SubgraphAccountDataForLenderViewFragment[];
     controller?: { __typename: "Controller"; id: string } | null;
     _asset: SubgraphTokenDataFragment;
     hooksConfig?: SubgraphHooksConfigDataForMarketFragment | null;
     hooks?: SubgraphHooksInstanceDataFragment | null;
     deployedEvent: SubgraphMarketDeployedEventFragment;
-  }>;
-  lenderAccounts: Array<{
-    __typename: "LenderAccount";
-    id: string;
-    address: string;
-    scaledBalance: string;
-    role: SubgraphLenderStatus;
-    totalDeposited: string;
-    lastScaleFactor: string;
-    lastUpdatedTimestamp: number;
-    totalInterestEarned: string;
-    numPendingWithdrawalBatches: number;
-    market: { __typename: "Market"; id: string };
-    controllerAuthorization?: { __typename: "LenderAuthorization"; authorized: boolean } | null;
-    hooksAccess?: SubgraphLenderHooksAccessDataFragment | null;
-    knownLenderStatus?: { __typename: "KnownLenderStatus"; id: string } | null;
-    deposits: SubgraphDepositDataFragment[];
   }>;
   controllerAuthorizations: Array<{
     __typename: "LenderAuthorization";
@@ -13834,6 +13855,11 @@ export type SubgraphGetAllMarketsForLenderViewQuery = {
 export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables = Exact<{
   lender: Scalars["Bytes"]["input"];
   accountFilter?: InputMaybe<SubgraphLenderAccount_Filter>;
+  marketFilter?: InputMaybe<SubgraphMarket_Filter>;
+  numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  skipMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  orderMarkets?: InputMaybe<SubgraphMarket_OrderBy>;
+  directionMarkets?: InputMaybe<SubgraphOrderDirection>;
   numDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   skipDeposits?: InputMaybe<Scalars["Int"]["input"]>;
   orderDeposits?: InputMaybe<SubgraphDeposit_OrderBy>;
@@ -14871,7 +14897,11 @@ export const GetAllMarketsForLenderViewDocument = gql`
   query getAllMarketsForLenderView(
     $lender: Bytes
     $marketFilter: Market_filter = { id_not: null }
-    $numDeposits: Int = 200
+    $numMarkets: Int = 1000
+    $skipMarkets: Int = 0
+    $orderMarkets: Market_orderBy = createdAt
+    $directionMarkets: OrderDirection = desc
+    $numDeposits: Int = 10
     $skipDeposits: Int = 0
     $orderDeposits: Deposit_orderBy = blockTimestamp
     $directionDeposits: OrderDirection = desc
@@ -14884,7 +14914,13 @@ export const GetAllMarketsForLenderViewDocument = gql`
     $orderRepayments: DebtRepaid_orderBy = blockTimestamp
     $directionRepayments: OrderDirection = desc
   ) {
-    markets(where: $marketFilter) {
+    markets(
+      where: $marketFilter
+      orderBy: $orderMarkets
+      orderDirection: $directionMarkets
+      first: $numMarkets
+      skip: $skipMarkets
+    ) {
       ...MarketData
       borrowRecords(
         first: $numBorrows
@@ -14902,25 +14938,25 @@ export const GetAllMarketsForLenderViewDocument = gql`
       ) {
         ...RepaymentData
       }
-    }
-    lenderAccounts(
-      where: {
-        and: [
-          { address: $lender }
-          {
-            or: [
-              { role_in: [DepositAndWithdraw, WithdrawOnly] }
-              { scaledBalance_gt: 0 }
-              { controllerAuthorization_: { authorized: true } }
-              { totalDeposited_gt: 0 }
-            ]
-          }
-        ]
-      }
-    ) {
-      ...AccountDataForLenderView
-      market {
-        id
+      lenders(
+        where: {
+          and: [
+            { address: $lender }
+            {
+              or: [
+                { role_in: [DepositAndWithdraw, WithdrawOnly] }
+                { controllerAuthorization_: { authorized: true } }
+                { knownLenderStatus_: { id_not: null } }
+                { hooksAccess_: { lastApprovalTimestamp_gt: 0 } }
+                { totalDeposited_gt: 0 }
+                { scaledBalance_gt: 0 }
+              ]
+            }
+          ]
+        }
+        first: 1
+      ) {
+        ...AccountDataForLenderView
       }
     }
     controllerAuthorizations: lenderAuthorizations(
@@ -14957,6 +14993,11 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
   query getAccountsWhereLenderAuthorizedOrActive(
     $lender: Bytes!
     $accountFilter: LenderAccount_filter = { address_not: null }
+    $marketFilter: Market_filter = { id_not: null }
+    $numMarkets: Int = 1000
+    $skipMarkets: Int = 0
+    $orderMarkets: Market_orderBy = createdAt
+    $directionMarkets: OrderDirection = desc
     $numDeposits: Int = 200
     $skipDeposits: Int = 0
     $orderDeposits: Deposit_orderBy = blockTimestamp
