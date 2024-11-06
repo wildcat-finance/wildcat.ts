@@ -130,6 +130,20 @@ export class MarketAccount {
     return expiry !== undefined && expiry >= Date.now() / 1000;
   }
 
+  /** Shim for functions in app that use lender role */
+  get inferredRole(): LenderRole | undefined {
+    if (this.depositAvailability === DepositStatus.Ready) {
+      return LenderRole.DepositAndWithdraw;
+    }
+    if (this.withdrawalAvailability === QueueWithdrawalStatus.Ready) {
+      return LenderRole.WithdrawOnly;
+    }
+    if (this.credential?.isBlockedFromDeposits) {
+      return LenderRole.Blocked;
+    }
+    return LenderRole.Null;
+  }
+
   get depositAvailability(): DepositStatus {
     if (this.market.isClosed) return DepositStatus.MarketClosed;
     if (this.market.version === MarketVersion.V1) {
