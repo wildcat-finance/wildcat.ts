@@ -57,9 +57,13 @@ const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
 
 export type MarketAccountArgs = {
   account: string;
+  /** For V1 markets - whether lender has been manually approved on controller  */
   isAuthorizedOnController?: boolean;
+  /** For V2 markets - credentials on market hooks instance */
   credential?: HooksCredential;
+  /** For V2 markets - whether lender has permanent withdrawal permissions */
   isKnownLender?: boolean;
+  /** For V1 markets - access level enum */
   role: LenderRole;
   scaledMarketBalance: BigNumber;
   marketBalance: TokenAmount;
@@ -72,6 +76,8 @@ export type MarketAccountArgs = {
   lastUpdatedTimestamp?: number;
   totalInterestEarned?: TokenAmount;
   numPendingWithdrawalBatches?: number;
+  /** Whether lender had a LenderAccount entry in the subgraph */
+  hadSubgraphEntry?: boolean;
 };
 
 export type HooksCredential = {
@@ -82,7 +88,7 @@ export type HooksCredential = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface MarketAccount extends Omit<MarketAccountArgs, "deposits"> {}
+export interface MarketAccount extends Omit<MarketAccountArgs, "deposits" | "hadSubgraphEntry"> {}
 
 /**
  * Class to provide information about a market user's account
@@ -95,10 +101,25 @@ export interface MarketAccount extends Omit<MarketAccountArgs, "deposits"> {}
 export class MarketAccount {
   public depositRecords: DepositRecord[];
 
+  /** Whether lender had a LenderAccount entry in the subgraph */
+  protected hadSubgraphEntry?: boolean;
+
   constructor(args: MarketAccountArgs) {
     Object.assign(this, args);
     this.depositRecords = (args.deposits ?? []).map((log) =>
       parseMarketRecord(this.market.underlyingToken, log)
+    );
+  }
+
+  /** Whether lender has definitely interacted with the market */
+  get hasEverInteracted(): boolean {
+    return !!(
+      this.hadSubgraphEntry ||
+      this.role !== LenderRole.Null ||
+      this.marketBalance.gt(0) ||
+      this.depositRecords.length > 0 ||
+      this.totalDeposited?.gt(0) ||
+      this.totalInterestEarned?.gt(0)
     );
   }
 
@@ -132,16 +153,13 @@ export class MarketAccount {
 
   /** Shim for functions in app that use lender role */
   get inferredRole(): LenderRole | undefined {
-    if (this.market.version === MarketVersion.V1) {
-      return this.role;
-    }
     if (this.depositAvailability === DepositStatus.Ready) {
       return LenderRole.DepositAndWithdraw;
     }
     if (this.withdrawalAvailability === QueueWithdrawalStatus.Ready) {
       return LenderRole.WithdrawOnly;
     }
-    if (this.credential?.isBlockedFromDeposits) {
+    if (this.credential?.isBlockedFromDeposits || this.role === LenderRole.Blocked) {
       return LenderRole.Blocked;
     }
     return LenderRole.Null;
@@ -758,7 +776,8 @@ export class MarketAccount {
       totalInterestEarned: market.underlyingToken.getAmount(data.totalInterestEarned),
       numPendingWithdrawalBatches: data.numPendingWithdrawalBatches,
       credential: data.hooksAccess ? toCredential(data.hooksAccess) : undefined,
-      isKnownLender: !!data.knownLenderStatus?.id
+      isKnownLender: !!data.knownLenderStatus?.id,
+      hadSubgraphEntry: true
     });
     account.processInterestAccrued();
     return account;
