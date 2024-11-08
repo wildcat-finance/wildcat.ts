@@ -625,12 +625,181 @@ query getAuthorizedLendersByMarket($market: ID!) {
 
 query getAllAuthorizedLenders($borrower: Bytes!) {
   markets(where: { borrower: $borrower, isClosed: false }) {
-    ...AllAuthorizedLendersViewMarketInfo
+    id
+    name
 
     controller {
       authorizedLenders {
         ...AllAuthorizedLendersView
       }
+    }
+    hooks {
+      lenders {
+        ...LenderHooksAccessData
+      }
+    }
+  }
+}
+
+query getV1AuthorizedLenders(
+  $borrower: Bytes!
+  # markets - default order is newest first
+  $numMarkets: Int = 1000
+  $skipMarkets: Int = 0
+  $orderMarkets: Market_orderBy = createdAt
+  $directionMarkets: OrderDirection = desc
+) {
+  controllers(where: { borrower: $borrower }, first: 1) {
+    markets(
+      where: { borrower: $borrower, isClosed: false, version: V2 }
+      first: $numMarkets
+      skip: $skipMarkets
+      orderBy: $orderMarkets
+      orderDirection: $directionMarkets
+    ) {
+      id
+      name
+    }
+
+    authorizedLenders {
+      lender
+      authorized
+    }
+  }
+}
+
+fragment V1LenderWithActiveMarkets on LenderAuthorization {
+  lender
+  authorized
+
+  marketAccounts(first: $numMarketAccountsPerLender, skip: $skipMarketAccountsPerLender) {
+    role
+    market {
+      id
+      name
+    }
+  }
+}
+
+fragment V2LenderWithActiveMarkets on LenderHooksAccess {
+  ...LenderHooksAccessData
+
+  marketAccounts(first: $numMarketAccountsPerLender, skip: $skipMarketAccountsPerLender) {
+    knownLenderStatus {
+      id
+    }
+    market {
+      id
+      name
+    }
+  }
+}
+
+fragment ControllerAuthorizedLendersWithActiveMarkets on Controller {
+  authorizedLenders(first: $numLenders, skip: $skipLenders, where: $lenderAuthorizationFilter) {
+    ...V1LenderWithActiveMarkets
+  }
+}
+
+fragment HooksInstanceLendersWithActiveMarkets on HooksInstance {
+  lenders(
+    first: $numLenders
+    skip: $skipLenders
+    orderBy: $orderLenderHooksAccess
+    orderDirection: $directionLenders
+    where: $lenderHooksAccessFilter
+  ) {
+    ...V2LenderWithActiveMarkets
+  }
+}
+
+# For a given controller or hooks instance, this query should return:
+# - hooks instance details if it is a hooks instance
+# - all lenders with a credential (past or current) on said contract with:
+#   - the source of the credential for V2 markets
+#   - active markets for the lender
+query getLendersByHooksInstanceOrController(
+  $contractAddress: ID!
+  $isController: Boolean!
+  # authorized lenders
+  $lenderHooksAccessFilter: LenderHooksAccess_filter = { id_not: null } # for V2
+  $lenderAuthorizationFilter: LenderAuthorization_filter = { id_not: null } # for V1
+  $numMarketAccountsPerLender: Int = 100
+  $skipMarketAccountsPerLender: Int = 0
+  $numLenders: Int = 1000
+  $skipLenders: Int = 0
+  $orderLenderHooksAccess: LenderHooksAccess_orderBy = lastApprovalTimestamp # for V2
+  $directionLenders: OrderDirection = desc # for V1 or V2
+) {
+  hooksInstance(id: $contractAddress) @skip(if: $isController) {
+    ...HooksInstanceData
+    ...HooksInstanceLendersWithActiveMarkets
+  }
+  controller(id: $contractAddress) @include(if: $isController) {
+    ...ControllerAuthorizedLendersWithActiveMarkets
+  }
+}
+
+# For a given controller or hooks instance, this query should return:
+# - hooks instance details if it is a hooks instance
+# - all markets for the given contract
+# - all lenders with a credential (past or current) on said contract with:
+#   - the source of the credential for V2 markets
+#   - active markets for the lender
+query getMarketsAndLendersByHooksInstanceOrController(
+  $contractAddress: ID!
+  $isController: Boolean!
+  # markets
+  $marketFilter: Market_filter = { id_not: null }
+  $numMarkets: Int = 1000
+  $skipMarkets: Int = 0
+  $orderMarkets: Market_orderBy = createdAt
+  $directionMarkets: OrderDirection = desc
+  # authorized lenders
+  $lenderHooksAccessFilter: LenderHooksAccess_filter = { id_not: null } # for V2
+  $lenderAuthorizationFilter: LenderAuthorization_filter = { id_not: null } # for V1
+  $numMarketAccountsPerLender: Int = 100
+  $skipMarketAccountsPerLender: Int = 0
+  $numLenders: Int = 1000
+  $skipLenders: Int = 0
+  $orderLenderHooksAccess: LenderHooksAccess_orderBy = lastApprovalTimestamp # for V2
+  $directionLenders: OrderDirection = desc # for V1 or V2
+) {
+  hooksInstance(id: $contractAddress) @skip(if: $isController) {
+    ...HooksInstanceData
+    markets(
+      where: $marketFilter
+      first: $numMarkets
+      skip: $skipMarkets
+      orderBy: $orderMarkets
+      orderDirection: $directionMarkets
+    ) {
+      ...MarketData
+    }
+    ...HooksInstanceLendersWithActiveMarkets
+  }
+  controller(id: $contractAddress) @include(if: $isController) {
+    markets(
+      where: $marketFilter
+      first: $numMarkets
+      skip: $skipMarkets
+      orderBy: $orderMarkets
+      orderDirection: $directionMarkets
+    ) {
+      ...MarketData
+    }
+    ...ControllerAuthorizedLendersWithActiveMarkets
+  }
+}
+
+# For a given market, get all active lenders with their:
+# address
+# balance (and info needed to derive balance with interest)
+# v1 / v2 access level info
+query getActiveLendersByMarket($market: ID!) {
+  market(id: $market) {
+    lenders {
+      ...BasicLenderData
     }
   }
 }

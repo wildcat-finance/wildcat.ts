@@ -8,5 +8,8 @@ export * from "./getMarket";
 export * from "./getMarketRecords";
 export * from "./getMarketsForBorrower";
 export * from "./getMarketsWithEvents";
+export * from "./getPolicyLenders";
+export * from "./getPolicyMarketsAndLenders";
 export * from "./graphql";
-export { MakeOptional } from "../utils";
+
+export { MakeOptional } from "../utils/misc";

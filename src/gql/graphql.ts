@@ -568,6 +568,7 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   HooksName = "hooks__name",
   Id = "id",
   LenderAccount = "lenderAccount",
+  LenderAccountAddedTimestamp = "lenderAccount__addedTimestamp",
   LenderAccountAddress = "lenderAccount__address",
   LenderAccountId = "lenderAccount__id",
   LenderAccountLastScaleFactor = "lenderAccount__lastScaleFactor",
@@ -2496,6 +2497,7 @@ export type SubgraphDeposit_Filter = {
 
 export enum SubgraphDeposit_OrderBy {
   Account = "account",
+  AccountAddedTimestamp = "account__addedTimestamp",
   AccountAddress = "account__address",
   AccountId = "account__id",
   AccountLastScaleFactor = "account__lastScaleFactor",
@@ -3233,6 +3235,7 @@ export type SubgraphForceBuyBack_Filter = {
 
 export enum SubgraphForceBuyBack_OrderBy {
   Account = "account",
+  AccountAddedTimestamp = "account__addedTimestamp",
   AccountAddress = "account__address",
   AccountId = "account__id",
   AccountLastScaleFactor = "account__lastScaleFactor",
@@ -3668,6 +3671,7 @@ export type SubgraphHooksInstance = {
   hooksTemplate: SubgraphHooksTemplate;
   id: Scalars["ID"]["output"];
   kind: SubgraphHooksKind;
+  lenders: SubgraphLenderHooksAccess[];
   markets: SubgraphMarket[];
   name: Scalars["String"]["output"];
   nameUpdatedRecords: SubgraphHooksNameUpdated[];
@@ -3699,6 +3703,14 @@ export type SubgraphHooksInstanceAccountUnblockFromDepositsRecordsArgs = {
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   where?: InputMaybe<SubgraphAccountUnblockedFromDeposits_Filter>;
+};
+
+export type SubgraphHooksInstanceLendersArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphLenderHooksAccess_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphLenderHooksAccess_Filter>;
 };
 
 export type SubgraphHooksInstanceMarketsArgs = SubgraphArchControllerMarketsArgs;
@@ -3935,6 +3947,7 @@ export type SubgraphHooksInstance_Filter = {
   kind_in?: InputMaybe<SubgraphHooksKind[]>;
   kind_not?: InputMaybe<SubgraphHooksKind>;
   kind_not_in?: InputMaybe<SubgraphHooksKind[]>;
+  lenders_?: InputMaybe<SubgraphLenderHooksAccess_Filter>;
   markets_?: InputMaybe<SubgraphMarket_Filter>;
   name?: InputMaybe<Scalars["String"]["input"]>;
   nameUpdatedRecords_?: InputMaybe<SubgraphHooksNameUpdated_Filter>;
@@ -3984,6 +3997,7 @@ export enum SubgraphHooksInstance_OrderBy {
   HooksTemplateProtocolFeeBips = "hooksTemplate__protocolFeeBips",
   Id = "id",
   Kind = "kind",
+  Lenders = "lenders",
   Markets = "markets",
   Name = "name",
   NameUpdatedRecords = "nameUpdatedRecords",
@@ -4760,6 +4774,7 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   HooksAccessLender = "hooksAccess__lender",
   Id = "id",
   LenderAccount = "lenderAccount",
+  LenderAccountAddedTimestamp = "lenderAccount__addedTimestamp",
   LenderAccountAddress = "lenderAccount__address",
   LenderAccountId = "lenderAccount__id",
   LenderAccountLastScaleFactor = "lenderAccount__lastScaleFactor",
@@ -4825,6 +4840,7 @@ export enum SubgraphKnownLenderStatus_OrderBy {
 
 export type SubgraphLenderAccount = {
   __typename: "LenderAccount";
+  addedTimestamp: Scalars["Int"]["output"];
   address: Scalars["Bytes"]["output"];
   controllerAuthorization?: Maybe<SubgraphLenderAuthorization>;
   deposits: SubgraphDeposit[];
@@ -4870,6 +4886,14 @@ export type SubgraphLenderAccountWithdrawalsArgs = {
 export type SubgraphLenderAccount_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  addedTimestamp?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  addedTimestamp_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   address?: InputMaybe<Scalars["Bytes"]["input"]>;
   address_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   address_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
@@ -5012,6 +5036,7 @@ export type SubgraphLenderAccount_Filter = {
 };
 
 export enum SubgraphLenderAccount_OrderBy {
+  AddedTimestamp = "addedTimestamp",
   Address = "address",
   ControllerAuthorization = "controllerAuthorization",
   ControllerAuthorizationAuthorized = "controllerAuthorization__authorized",
@@ -5567,6 +5592,7 @@ export type SubgraphLenderInterestAccrued_Filter = {
 
 export enum SubgraphLenderInterestAccrued_OrderBy {
   Account = "account",
+  AccountAddedTimestamp = "account__addedTimestamp",
   AccountAddress = "account__address",
   AccountId = "account__id",
   AccountLastScaleFactor = "account__lastScaleFactor",
@@ -5778,6 +5804,7 @@ export type SubgraphLenderWithdrawalStatus_Filter = {
 
 export enum SubgraphLenderWithdrawalStatus_OrderBy {
   Account = "account",
+  AccountAddedTimestamp = "account__addedTimestamp",
   AccountAddress = "account__address",
   AccountId = "account__id",
   AccountLastScaleFactor = "account__lastScaleFactor",
@@ -11717,6 +11744,7 @@ export enum SubgraphTransfer_OrderBy {
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
   From = "from",
+  FromAddedTimestamp = "from__addedTimestamp",
   FromAddress = "from__address",
   FromId = "from__id",
   FromLastScaleFactor = "from__lastScaleFactor",
@@ -11781,6 +11809,7 @@ export enum SubgraphTransfer_OrderBy {
   MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   ScaledAmount = "scaledAmount",
   To = "to",
+  ToAddedTimestamp = "to__addedTimestamp",
   ToAddress = "to__address",
   ToId = "to__id",
   ToLastScaleFactor = "to__lastScaleFactor",
@@ -12840,6 +12869,7 @@ export type SubgraphWithdrawalExecution_Filter = {
 
 export enum SubgraphWithdrawalExecution_OrderBy {
   Account = "account",
+  AccountAddedTimestamp = "account__addedTimestamp",
   AccountAddress = "account__address",
   AccountId = "account__id",
   AccountLastScaleFactor = "account__lastScaleFactor",
@@ -13065,6 +13095,7 @@ export type SubgraphWithdrawalRequest_Filter = {
 
 export enum SubgraphWithdrawalRequest_OrderBy {
   Account = "account",
+  AccountAddedTimestamp = "account__addedTimestamp",
   AccountAddress = "account__address",
   AccountId = "account__id",
   AccountLastScaleFactor = "account__lastScaleFactor",
@@ -13247,6 +13278,17 @@ export type SubgraphAccountDataForLenderViewFragment = {
   deposits: SubgraphDepositDataFragment[];
 };
 
+export type SubgraphBasicLenderDataFragment = {
+  __typename: "LenderAccount";
+  id: string;
+  address: string;
+  scaledBalance: string;
+  role: SubgraphLenderStatus;
+  controllerAuthorization?: { __typename: "LenderAuthorization"; authorized: boolean } | null;
+  hooksAccess?: SubgraphLenderHooksAccessDataFragment | null;
+  knownLenderStatus?: { __typename: "KnownLenderStatus"; id: string } | null;
+};
+
 export type SubgraphLenderPropertiesFragment = {
   __typename: "LenderAccount";
   id: string;
@@ -13258,12 +13300,6 @@ export type SubgraphLenderPropertiesFragment = {
   lastUpdatedTimestamp: number;
   totalInterestEarned: string;
   numPendingWithdrawalBatches: number;
-};
-
-export type SubgraphAllAuthorizedLendersViewMarketInfoFragment = {
-  __typename: "Market";
-  id: string;
-  name: string;
 };
 
 export type SubgraphAllAuthorizedLendersViewFragment = {
@@ -14260,7 +14296,145 @@ export type SubgraphGetAllAuthorizedLendersQuery = {
       __typename: "Controller";
       authorizedLenders: SubgraphAllAuthorizedLendersViewFragment[];
     } | null;
+    hooks?: {
+      __typename: "HooksInstance";
+      lenders: SubgraphLenderHooksAccessDataFragment[];
+    } | null;
   }>;
+};
+
+export type SubgraphGetV1AuthorizedLendersQueryVariables = Exact<{
+  borrower: Scalars["Bytes"]["input"];
+  numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  skipMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  orderMarkets?: InputMaybe<SubgraphMarket_OrderBy>;
+  directionMarkets?: InputMaybe<SubgraphOrderDirection>;
+}>;
+
+export type SubgraphGetV1AuthorizedLendersQuery = {
+  __typename: "Query";
+  controllers: Array<{
+    __typename: "Controller";
+    markets: Array<{ __typename: "Market"; id: string; name: string }>;
+    authorizedLenders: Array<{
+      __typename: "LenderAuthorization";
+      lender: string;
+      authorized: boolean;
+    }>;
+  }>;
+};
+
+export type SubgraphV1LenderWithActiveMarketsFragment = {
+  __typename: "LenderAuthorization";
+  lender: string;
+  authorized: boolean;
+  marketAccounts: Array<{
+    __typename: "LenderAccount";
+    role: SubgraphLenderStatus;
+    market: { __typename: "Market"; id: string; name: string };
+  }>;
+};
+
+export type SubgraphV2LenderWithActiveMarketsFragment = {
+  __typename: "LenderHooksAccess";
+  id: string;
+  lender: string;
+  isBlockedFromDeposits: boolean;
+  canRefresh: boolean;
+  lastApprovalTimestamp: number;
+  marketAccounts: Array<{
+    __typename: "LenderAccount";
+    knownLenderStatus?: { __typename: "KnownLenderStatus"; id: string } | null;
+    market: { __typename: "Market"; id: string; name: string };
+  }>;
+  lastProvider?: SubgraphRoleProviderDataFragment | null;
+};
+
+export type SubgraphControllerAuthorizedLendersWithActiveMarketsFragment = {
+  __typename: "Controller";
+  authorizedLenders: SubgraphV1LenderWithActiveMarketsFragment[];
+};
+
+export type SubgraphHooksInstanceLendersWithActiveMarketsFragment = {
+  __typename: "HooksInstance";
+  lenders: SubgraphV2LenderWithActiveMarketsFragment[];
+};
+
+export type SubgraphGetLendersByHooksInstanceOrControllerQueryVariables = Exact<{
+  contractAddress: Scalars["ID"]["input"];
+  isController: Scalars["Boolean"]["input"];
+  lenderHooksAccessFilter?: InputMaybe<SubgraphLenderHooksAccess_Filter>;
+  lenderAuthorizationFilter?: InputMaybe<SubgraphLenderAuthorization_Filter>;
+  numMarketAccountsPerLender?: InputMaybe<Scalars["Int"]["input"]>;
+  skipMarketAccountsPerLender?: InputMaybe<Scalars["Int"]["input"]>;
+  numLenders?: InputMaybe<Scalars["Int"]["input"]>;
+  skipLenders?: InputMaybe<Scalars["Int"]["input"]>;
+  orderLenderHooksAccess?: InputMaybe<SubgraphLenderHooksAccess_OrderBy>;
+  directionLenders?: InputMaybe<SubgraphOrderDirection>;
+}>;
+
+export type SubgraphGetLendersByHooksInstanceOrControllerQuery = {
+  __typename: "Query";
+  hooksInstance?: {
+    __typename: "HooksInstance";
+    id: string;
+    borrower: string;
+    name: string;
+    kind: SubgraphHooksKind;
+    eventIndex: number;
+    hooksTemplate: SubgraphHooksTemplateDataFragment;
+    providers: SubgraphRoleProviderDataFragment[];
+    lenders: SubgraphV2LenderWithActiveMarketsFragment[];
+  } | null;
+  controller?: SubgraphControllerAuthorizedLendersWithActiveMarketsFragment | null;
+};
+
+export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables = Exact<{
+  contractAddress: Scalars["ID"]["input"];
+  isController: Scalars["Boolean"]["input"];
+  marketFilter?: InputMaybe<SubgraphMarket_Filter>;
+  numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  skipMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  orderMarkets?: InputMaybe<SubgraphMarket_OrderBy>;
+  directionMarkets?: InputMaybe<SubgraphOrderDirection>;
+  lenderHooksAccessFilter?: InputMaybe<SubgraphLenderHooksAccess_Filter>;
+  lenderAuthorizationFilter?: InputMaybe<SubgraphLenderAuthorization_Filter>;
+  numMarketAccountsPerLender?: InputMaybe<Scalars["Int"]["input"]>;
+  skipMarketAccountsPerLender?: InputMaybe<Scalars["Int"]["input"]>;
+  numLenders?: InputMaybe<Scalars["Int"]["input"]>;
+  skipLenders?: InputMaybe<Scalars["Int"]["input"]>;
+  orderLenderHooksAccess?: InputMaybe<SubgraphLenderHooksAccess_OrderBy>;
+  directionLenders?: InputMaybe<SubgraphOrderDirection>;
+}>;
+
+export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery = {
+  __typename: "Query";
+  hooksInstance?: {
+    __typename: "HooksInstance";
+    id: string;
+    borrower: string;
+    name: string;
+    kind: SubgraphHooksKind;
+    eventIndex: number;
+    markets: SubgraphMarketDataFragment[];
+    hooksTemplate: SubgraphHooksTemplateDataFragment;
+    providers: SubgraphRoleProviderDataFragment[];
+    lenders: SubgraphV2LenderWithActiveMarketsFragment[];
+  } | null;
+  controller?: {
+    __typename: "Controller";
+    markets: SubgraphMarketDataFragment[];
+    authorizedLenders: SubgraphV1LenderWithActiveMarketsFragment[];
+  } | null;
+};
+
+export type SubgraphGetActiveLendersByMarketQueryVariables = Exact<{
+  market: Scalars["ID"]["input"];
+}>;
+
+export type SubgraphGetActiveLendersByMarketQuery = {
+  __typename: "Query";
+  market?: { __typename: "Market"; lenders: SubgraphBasicLenderDataFragment[] } | null;
 };
 
 export type SubgraphGetAuthorizedLendersByBorrowerQueryVariables = Exact<{
@@ -14389,10 +14563,21 @@ export const AccountDataForLenderViewFragmentDoc = gql`
     }
   }
 `;
-export const AllAuthorizedLendersViewMarketInfoFragmentDoc = gql`
-  fragment AllAuthorizedLendersViewMarketInfo on Market {
+export const BasicLenderDataFragmentDoc = gql`
+  fragment BasicLenderData on LenderAccount {
     id
-    name
+    address
+    scaledBalance
+    role
+    controllerAuthorization {
+      authorized
+    }
+    hooksAccess {
+      ...LenderHooksAccessData
+    }
+    knownLenderStatus {
+      id
+    }
   }
 `;
 export const AllAuthorizedLendersViewFragmentDoc = gql`
@@ -14808,6 +14993,53 @@ export const MarketClosedDataFragmentDoc = gql`
     blockNumber
     blockTimestamp
     transactionHash
+  }
+`;
+export const V1LenderWithActiveMarketsFragmentDoc = gql`
+  fragment V1LenderWithActiveMarkets on LenderAuthorization {
+    lender
+    authorized
+    marketAccounts(first: $numMarketAccountsPerLender, skip: $skipMarketAccountsPerLender) {
+      role
+      market {
+        id
+        name
+      }
+    }
+  }
+`;
+export const ControllerAuthorizedLendersWithActiveMarketsFragmentDoc = gql`
+  fragment ControllerAuthorizedLendersWithActiveMarkets on Controller {
+    authorizedLenders(first: $numLenders, skip: $skipLenders, where: $lenderAuthorizationFilter) {
+      ...V1LenderWithActiveMarkets
+    }
+  }
+`;
+export const V2LenderWithActiveMarketsFragmentDoc = gql`
+  fragment V2LenderWithActiveMarkets on LenderHooksAccess {
+    ...LenderHooksAccessData
+    marketAccounts(first: $numMarketAccountsPerLender, skip: $skipMarketAccountsPerLender) {
+      knownLenderStatus {
+        id
+      }
+      market {
+        id
+        name
+      }
+    }
+  }
+`;
+export const HooksInstanceLendersWithActiveMarketsFragmentDoc = gql`
+  fragment HooksInstanceLendersWithActiveMarkets on HooksInstance {
+    lenders(
+      first: $numLenders
+      skip: $skipLenders
+      orderBy: $orderLenderHooksAccess
+      orderDirection: $directionLenders
+      where: $lenderHooksAccessFilter
+    ) {
+      ...V2LenderWithActiveMarkets
+    }
   }
 `;
 export const GetLenderAccountForMarketDocument = gql`
@@ -15609,20 +15841,169 @@ export type GetAuthorizedLendersByMarketQueryResult = Apollo.QueryResult<
 export const GetAllAuthorizedLendersDocument = gql`
   query getAllAuthorizedLenders($borrower: Bytes!) {
     markets(where: { borrower: $borrower, isClosed: false }) {
-      ...AllAuthorizedLendersViewMarketInfo
+      id
+      name
       controller {
         authorizedLenders {
           ...AllAuthorizedLendersView
         }
       }
+      hooks {
+        lenders {
+          ...LenderHooksAccessData
+        }
+      }
     }
   }
-  ${AllAuthorizedLendersViewMarketInfoFragmentDoc}
   ${AllAuthorizedLendersViewFragmentDoc}
+  ${LenderHooksAccessDataFragmentDoc}
+  ${RoleProviderDataFragmentDoc}
 `;
 export type GetAllAuthorizedLendersQueryResult = Apollo.QueryResult<
   SubgraphGetAllAuthorizedLendersQuery,
   SubgraphGetAllAuthorizedLendersQueryVariables
+>;
+export const GetV1AuthorizedLendersDocument = gql`
+  query getV1AuthorizedLenders(
+    $borrower: Bytes!
+    $numMarkets: Int = 1000
+    $skipMarkets: Int = 0
+    $orderMarkets: Market_orderBy = createdAt
+    $directionMarkets: OrderDirection = desc
+  ) {
+    controllers(where: { borrower: $borrower }, first: 1) {
+      markets(
+        where: { borrower: $borrower, isClosed: false, version: V2 }
+        first: $numMarkets
+        skip: $skipMarkets
+        orderBy: $orderMarkets
+        orderDirection: $directionMarkets
+      ) {
+        id
+        name
+      }
+      authorizedLenders {
+        lender
+        authorized
+      }
+    }
+  }
+`;
+export type GetV1AuthorizedLendersQueryResult = Apollo.QueryResult<
+  SubgraphGetV1AuthorizedLendersQuery,
+  SubgraphGetV1AuthorizedLendersQueryVariables
+>;
+export const GetLendersByHooksInstanceOrControllerDocument = gql`
+  query getLendersByHooksInstanceOrController(
+    $contractAddress: ID!
+    $isController: Boolean!
+    $lenderHooksAccessFilter: LenderHooksAccess_filter = { id_not: null }
+    $lenderAuthorizationFilter: LenderAuthorization_filter = { id_not: null }
+    $numMarketAccountsPerLender: Int = 100
+    $skipMarketAccountsPerLender: Int = 0
+    $numLenders: Int = 1000
+    $skipLenders: Int = 0
+    $orderLenderHooksAccess: LenderHooksAccess_orderBy = lastApprovalTimestamp
+    $directionLenders: OrderDirection = desc
+  ) {
+    hooksInstance(id: $contractAddress) @skip(if: $isController) {
+      ...HooksInstanceData
+      ...HooksInstanceLendersWithActiveMarkets
+    }
+    controller(id: $contractAddress) @include(if: $isController) {
+      ...ControllerAuthorizedLendersWithActiveMarkets
+    }
+  }
+  ${HooksInstanceDataFragmentDoc}
+  ${HooksTemplateDataFragmentDoc}
+  ${TokenDataFragmentDoc}
+  ${RoleProviderDataFragmentDoc}
+  ${HooksInstanceLendersWithActiveMarketsFragmentDoc}
+  ${V2LenderWithActiveMarketsFragmentDoc}
+  ${LenderHooksAccessDataFragmentDoc}
+  ${ControllerAuthorizedLendersWithActiveMarketsFragmentDoc}
+  ${V1LenderWithActiveMarketsFragmentDoc}
+`;
+export type GetLendersByHooksInstanceOrControllerQueryResult = Apollo.QueryResult<
+  SubgraphGetLendersByHooksInstanceOrControllerQuery,
+  SubgraphGetLendersByHooksInstanceOrControllerQueryVariables
+>;
+export const GetMarketsAndLendersByHooksInstanceOrControllerDocument = gql`
+  query getMarketsAndLendersByHooksInstanceOrController(
+    $contractAddress: ID!
+    $isController: Boolean!
+    $marketFilter: Market_filter = { id_not: null }
+    $numMarkets: Int = 1000
+    $skipMarkets: Int = 0
+    $orderMarkets: Market_orderBy = createdAt
+    $directionMarkets: OrderDirection = desc
+    $lenderHooksAccessFilter: LenderHooksAccess_filter = { id_not: null }
+    $lenderAuthorizationFilter: LenderAuthorization_filter = { id_not: null }
+    $numMarketAccountsPerLender: Int = 100
+    $skipMarketAccountsPerLender: Int = 0
+    $numLenders: Int = 1000
+    $skipLenders: Int = 0
+    $orderLenderHooksAccess: LenderHooksAccess_orderBy = lastApprovalTimestamp
+    $directionLenders: OrderDirection = desc
+  ) {
+    hooksInstance(id: $contractAddress) @skip(if: $isController) {
+      ...HooksInstanceData
+      markets(
+        where: $marketFilter
+        first: $numMarkets
+        skip: $skipMarkets
+        orderBy: $orderMarkets
+        orderDirection: $directionMarkets
+      ) {
+        ...MarketData
+      }
+      ...HooksInstanceLendersWithActiveMarkets
+    }
+    controller(id: $contractAddress) @include(if: $isController) {
+      markets(
+        where: $marketFilter
+        first: $numMarkets
+        skip: $skipMarkets
+        orderBy: $orderMarkets
+        orderDirection: $directionMarkets
+      ) {
+        ...MarketData
+      }
+      ...ControllerAuthorizedLendersWithActiveMarkets
+    }
+  }
+  ${HooksInstanceDataFragmentDoc}
+  ${HooksTemplateDataFragmentDoc}
+  ${TokenDataFragmentDoc}
+  ${RoleProviderDataFragmentDoc}
+  ${MarketDataFragmentDoc}
+  ${HooksConfigDataForMarketFragmentDoc}
+  ${MarketDeployedEventFragmentDoc}
+  ${HooksInstanceLendersWithActiveMarketsFragmentDoc}
+  ${V2LenderWithActiveMarketsFragmentDoc}
+  ${LenderHooksAccessDataFragmentDoc}
+  ${ControllerAuthorizedLendersWithActiveMarketsFragmentDoc}
+  ${V1LenderWithActiveMarketsFragmentDoc}
+`;
+export type GetMarketsAndLendersByHooksInstanceOrControllerQueryResult = Apollo.QueryResult<
+  SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery,
+  SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables
+>;
+export const GetActiveLendersByMarketDocument = gql`
+  query getActiveLendersByMarket($market: ID!) {
+    market(id: $market) {
+      lenders {
+        ...BasicLenderData
+      }
+    }
+  }
+  ${BasicLenderDataFragmentDoc}
+  ${LenderHooksAccessDataFragmentDoc}
+  ${RoleProviderDataFragmentDoc}
+`;
+export type GetActiveLendersByMarketQueryResult = Apollo.QueryResult<
+  SubgraphGetActiveLendersByMarketQuery,
+  SubgraphGetActiveLendersByMarketQueryVariables
 >;
 export const GetAuthorizedLendersByBorrowerDocument = gql`
   query getAuthorizedLendersByBorrower($filter: Controller_filter!) {

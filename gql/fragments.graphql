@@ -60,6 +60,29 @@ fragment AccountDataForLenderView on LenderAccount {
   }
 }
 
+# Lender data with:
+# address
+# information needed to derive current balance with interest
+# time added
+# access level & authorization source (if any)
+fragment BasicLenderData on LenderAccount {
+  id
+  address
+
+  scaledBalance
+
+  role
+  controllerAuthorization {
+    authorized
+  }
+  hooksAccess {
+    ...LenderHooksAccessData
+  }
+  knownLenderStatus {
+    id
+  }
+}
+
 fragment LenderProperties on LenderAccount {
   id
   address
@@ -70,11 +93,6 @@ fragment LenderProperties on LenderAccount {
   lastUpdatedTimestamp
   totalInterestEarned
   numPendingWithdrawalBatches
-}
-
-fragment AllAuthorizedLendersViewMarketInfo on Market {
-  id
-  name
 }
 
 fragment AllAuthorizedLendersView on LenderAuthorization {
