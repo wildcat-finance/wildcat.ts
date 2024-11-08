@@ -13283,6 +13283,7 @@ export type SubgraphBasicLenderDataFragment = {
   id: string;
   address: string;
   scaledBalance: string;
+  addedTimestamp: number;
   role: SubgraphLenderStatus;
   controllerAuthorization?: { __typename: "LenderAuthorization"; authorized: boolean } | null;
   hooksAccess?: SubgraphLenderHooksAccessDataFragment | null;
@@ -14430,6 +14431,11 @@ export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery = {
 
 export type SubgraphGetActiveLendersByMarketQueryVariables = Exact<{
   market: Scalars["ID"]["input"];
+  accountFilter?: InputMaybe<SubgraphLenderAccount_Filter>;
+  numAccounts?: InputMaybe<Scalars["Int"]["input"]>;
+  skipAccounts?: InputMaybe<Scalars["Int"]["input"]>;
+  orderAccounts?: InputMaybe<SubgraphLenderAccount_OrderBy>;
+  directionAccounts?: InputMaybe<SubgraphOrderDirection>;
 }>;
 
 export type SubgraphGetActiveLendersByMarketQuery = {
@@ -14568,6 +14574,7 @@ export const BasicLenderDataFragmentDoc = gql`
     id
     address
     scaledBalance
+    addedTimestamp
     role
     controllerAuthorization {
       authorized
@@ -15990,9 +15997,22 @@ export type GetMarketsAndLendersByHooksInstanceOrControllerQueryResult = Apollo.
   SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables
 >;
 export const GetActiveLendersByMarketDocument = gql`
-  query getActiveLendersByMarket($market: ID!) {
+  query getActiveLendersByMarket(
+    $market: ID!
+    $accountFilter: LenderAccount_filter = { address_not: null }
+    $numAccounts: Int = 1000
+    $skipAccounts: Int = 0
+    $orderAccounts: LenderAccount_orderBy = lastUpdatedTimestamp
+    $directionAccounts: OrderDirection = desc
+  ) {
     market(id: $market) {
-      lenders {
+      lenders(
+        where: $accountFilter
+        first: $numAccounts
+        skip: $skipAccounts
+        orderBy: $orderAccounts
+        orderDirection: $directionAccounts
+      ) {
         ...BasicLenderData
       }
     }

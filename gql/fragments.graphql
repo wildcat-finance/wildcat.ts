@@ -62,7 +62,7 @@ fragment AccountDataForLenderView on LenderAccount {
 
 # Lender data with:
 # address
-# information needed to derive current balance with interest
+# balance
 # time added
 # access level & authorization source (if any)
 fragment BasicLenderData on LenderAccount {
@@ -70,6 +70,7 @@ fragment BasicLenderData on LenderAccount {
   address
 
   scaledBalance
+  addedTimestamp
 
   role
   controllerAuthorization {

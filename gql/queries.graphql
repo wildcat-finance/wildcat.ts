@@ -796,9 +796,22 @@ query getMarketsAndLendersByHooksInstanceOrController(
 # address
 # balance (and info needed to derive balance with interest)
 # v1 / v2 access level info
-query getActiveLendersByMarket($market: ID!) {
+query getActiveLendersByMarket(
+  $market: ID!
+  $accountFilter: LenderAccount_filter = { address_not: null }
+  $numAccounts: Int = 1000
+  $skipAccounts: Int = 0
+  $orderAccounts: LenderAccount_orderBy = lastUpdatedTimestamp
+  $directionAccounts: OrderDirection = desc
+) {
   market(id: $market) {
-    lenders {
+    lenders(
+      where: $accountFilter
+      first: $numAccounts
+      skip: $skipAccounts
+      orderBy: $orderAccounts
+      orderDirection: $directionAccounts
+    ) {
       ...BasicLenderData
     }
   }

@@ -1,3 +1,4 @@
+export * from "./getActiveLendersByMarket";
 export * from "./getAllHooksDataForBorrower";
 export * from "./getAllHooksTemplates";
 export * from "./getAllPendingWithdrawalBatchesForMarket";
