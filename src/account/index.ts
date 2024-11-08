@@ -9,7 +9,15 @@ import {
   MarketDataWithLenderStatusV2StructOutput
 } from "../typechain";
 import { WithdrawalQueuedEvent } from "../typechain/WildcatMarket";
-import { assert, DepositRecord, parseMarketRecord, rayMul, SECONDS_IN_365_DAYS } from "../utils";
+import {
+  assert,
+  DepositRecord,
+  parseMarketRecord,
+  parseSubgraphLenderStatus,
+  parseSubgraphLenderHooksAccess,
+  rayMul,
+  SECONDS_IN_365_DAYS
+} from "../utils";
 import {
   SupportedChainId,
   getControllerContract,
@@ -17,6 +25,7 @@ import {
   getLensV2Contract
 } from "../constants";
 import {
+  HooksCredential,
   HooksKind,
   MarketVersion,
   PartialTransaction,
@@ -78,13 +87,6 @@ export type MarketAccountArgs = {
   numPendingWithdrawalBatches?: number;
   /** Whether lender had a LenderAccount entry in the subgraph */
   hadSubgraphEntry?: boolean;
-};
-
-export type HooksCredential = {
-  isBlockedFromDeposits: boolean;
-  canRefresh: boolean;
-  lastApprovalTimestamp: number;
-  lastProvider?: RoleProvider;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -752,18 +754,12 @@ export class MarketAccount {
     market: Market,
     data: SubgraphAccountDataForLenderViewFragment
   ): MarketAccount {
-    const RolesMap = {
-      Null: LenderRole.Null,
-      Blocked: LenderRole.Blocked,
-      WithdrawOnly: LenderRole.WithdrawOnly,
-      DepositAndWithdraw: LenderRole.DepositAndWithdraw
-    };
     const scaledBalance = BigNumber.from(data.scaledBalance);
 
     const account = new MarketAccount({
       account: data.address,
       isAuthorizedOnController: data.controllerAuthorization?.authorized ?? false,
-      role: RolesMap[data.role],
+      role: parseSubgraphLenderStatus(data.role),
       scaledMarketBalance: scaledBalance,
       marketBalance: market.marketToken.getAmount(rayMul(scaledBalance, market.scaleFactor)),
       underlyingBalance: market.underlyingToken.getAmount(0),
@@ -775,7 +771,7 @@ export class MarketAccount {
       lastUpdatedTimestamp: data.lastUpdatedTimestamp,
       totalInterestEarned: market.underlyingToken.getAmount(data.totalInterestEarned),
       numPendingWithdrawalBatches: data.numPendingWithdrawalBatches,
-      credential: data.hooksAccess ? toCredential(data.hooksAccess) : undefined,
+      credential: data.hooksAccess ? parseSubgraphLenderHooksAccess(data.hooksAccess) : undefined,
       isKnownLender: !!data.knownLenderStatus?.id,
       hadSubgraphEntry: true
     });
@@ -1015,35 +1011,3 @@ const toQueueWithdrawalTransaction = (
   scaledAmount: log.args.scaledAmount,
   originalAmount: underlyingToken.getAmount(log.args.normalizedAmount)
 });
-
-const toCredential = ({
-  canRefresh,
-  isBlockedFromDeposits,
-  lastApprovalTimestamp,
-  lender,
-  lastProvider
-}: SubgraphLenderHooksAccessDataFragment): HooksCredential => {
-  const {
-    isApproved,
-    providerAddress,
-    isPullProvider,
-    pullProviderIndex,
-    isPushProvider,
-    pushProviderIndex,
-    timeToLive
-  } = lastProvider!;
-  return {
-    canRefresh,
-    isBlockedFromDeposits,
-    lastApprovalTimestamp,
-    lastProvider: {
-      isApproved,
-      providerAddress,
-      isPullProvider,
-      pullProviderIndex,
-      isPushProvider,
-      pushProviderIndex,
-      timeToLive
-    }
-  };
-};

@@ -6,13 +6,14 @@ import {
 import {
   FeeConfiguration,
   FeeConfigurationV2,
+  HooksCredential,
   HooksFlags,
   MarketParameterConstraints,
   PartialTransaction,
   SignerOrProvider
 } from "../types";
 import { BigNumber, PopulatedTransaction, constants } from "ethers";
-import { Token, TokenAmount } from "../token";
+import { Token } from "../token";
 
 import {
   WithdrawalRequestRecord,
@@ -29,7 +30,12 @@ import {
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { SupportedChainId } from "../constants";
 import { assert } from "./assert";
-import { SubgraphWithdrawalRequestPropertiesFragment } from "../gql/graphql";
+import {
+  SubgraphLenderHooksAccessDataFragment,
+  SubgraphLenderStatus,
+  SubgraphWithdrawalRequestPropertiesFragment
+} from "../gql/graphql";
+import { LenderRole } from "../account";
 
 export const parseMarketParameterConstraints = (
   constraints: MarketParameterConstraintsStructOutput
@@ -255,3 +261,27 @@ export function decodeHooksConfig(hooks: bigint): HooksFlags & { hooksAddress: s
     useOnSetProtocolFeeBips: Boolean((hooks >> Bit_Enabled_SetProtocolFeeBips) & 1n)
   };
 }
+
+export function parseSubgraphLenderStatus(role: SubgraphLenderStatus): LenderRole {
+  const RolesMap = {
+    Null: LenderRole.Null,
+    Blocked: LenderRole.Blocked,
+    WithdrawOnly: LenderRole.WithdrawOnly,
+    DepositAndWithdraw: LenderRole.DepositAndWithdraw
+  };
+  return RolesMap[role];
+}
+
+export const parseSubgraphLenderHooksAccess = ({
+  canRefresh,
+  isBlockedFromDeposits,
+  lastApprovalTimestamp,
+  lastProvider
+}: SubgraphLenderHooksAccessDataFragment): HooksCredential => {
+  return {
+    canRefresh,
+    isBlockedFromDeposits,
+    lastApprovalTimestamp,
+    lastProvider: lastProvider!
+  };
+};

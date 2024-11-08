@@ -202,6 +202,13 @@ export type RoleProvider = {
   isApproved: boolean;
 };
 
+export type HooksCredential = {
+  isBlockedFromDeposits: boolean;
+  canRefresh: boolean;
+  lastApprovalTimestamp: number;
+  lastProvider?: RoleProvider;
+};
+
 /** Level of access required for accounts to receive a transfer */
 export enum TransferAccess {
   /**
