@@ -29,14 +29,12 @@ import {
   HooksKind,
   MarketVersion,
   PartialTransaction,
-  RoleProvider,
   SignerOrProvider
 } from "../types";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 import {
   SubgraphAccountDataForLenderViewFragment,
-  SubgraphDepositDataFragment,
-  SubgraphLenderHooksAccessDataFragment
+  SubgraphDepositDataFragment
 } from "../gql/graphql";
 import {
   DepositStatus,
