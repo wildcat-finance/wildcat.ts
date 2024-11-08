@@ -26,7 +26,6 @@ export async function getPolicyMarketsAndLenders(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   {
     contractAddress,
-    isController,
     fetchPolicy,
     chainId,
     signerOrProvider,
@@ -40,13 +39,12 @@ export async function getPolicyMarketsAndLenders(
     query: GetMarketsAndLendersByHooksInstanceOrControllerDocument,
     variables: {
       contractAddress,
-      isController,
       ...otherVariables
     },
     fetchPolicy
   });
 
-  if (isController) {
+  if (result.data.controller) {
     const controller = result.data.controller;
     assert(
       controller !== undefined && controller !== null,

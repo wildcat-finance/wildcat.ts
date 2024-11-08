@@ -14392,7 +14392,6 @@ export type SubgraphGetLendersByHooksInstanceOrControllerQuery = {
 
 export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables = Exact<{
   contractAddress: Scalars["ID"]["input"];
-  isController: Scalars["Boolean"]["input"];
   marketFilter?: InputMaybe<SubgraphMarket_Filter>;
   numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
   skipMarkets?: InputMaybe<Scalars["Int"]["input"]>;
@@ -15938,7 +15937,6 @@ export type GetLendersByHooksInstanceOrControllerQueryResult = Apollo.QueryResul
 export const GetMarketsAndLendersByHooksInstanceOrControllerDocument = gql`
   query getMarketsAndLendersByHooksInstanceOrController(
     $contractAddress: ID!
-    $isController: Boolean!
     $marketFilter: Market_filter = { id_not: null }
     $numMarkets: Int = 1000
     $skipMarkets: Int = 0
@@ -15953,7 +15951,7 @@ export const GetMarketsAndLendersByHooksInstanceOrControllerDocument = gql`
     $orderLenderHooksAccess: LenderHooksAccess_orderBy = lastApprovalTimestamp
     $directionLenders: OrderDirection = desc
   ) {
-    hooksInstance(id: $contractAddress) @skip(if: $isController) {
+    hooksInstance(id: $contractAddress) {
       ...HooksInstanceData
       markets(
         where: $marketFilter
@@ -15966,7 +15964,7 @@ export const GetMarketsAndLendersByHooksInstanceOrControllerDocument = gql`
       }
       ...HooksInstanceLendersWithActiveMarkets
     }
-    controller(id: $contractAddress) @include(if: $isController) {
+    controller(id: $contractAddress) {
       markets(
         where: $marketFilter
         first: $numMarkets

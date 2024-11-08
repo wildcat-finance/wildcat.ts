@@ -748,7 +748,6 @@ query getLendersByHooksInstanceOrController(
 #   - active markets for the lender
 query getMarketsAndLendersByHooksInstanceOrController(
   $contractAddress: ID!
-  $isController: Boolean!
   # markets
   $marketFilter: Market_filter = { id_not: null }
   $numMarkets: Int = 1000
@@ -765,7 +764,7 @@ query getMarketsAndLendersByHooksInstanceOrController(
   $orderLenderHooksAccess: LenderHooksAccess_orderBy = lastApprovalTimestamp # for V2
   $directionLenders: OrderDirection = desc # for V1 or V2
 ) {
-  hooksInstance(id: $contractAddress) @skip(if: $isController) {
+  hooksInstance(id: $contractAddress) {
     ...HooksInstanceData
     markets(
       where: $marketFilter
@@ -778,7 +777,7 @@ query getMarketsAndLendersByHooksInstanceOrController(
     }
     ...HooksInstanceLendersWithActiveMarkets
   }
-  controller(id: $contractAddress) @include(if: $isController) {
+  controller(id: $contractAddress) {
     markets(
       where: $marketFilter
       first: $numMarkets
