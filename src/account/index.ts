@@ -532,6 +532,45 @@ export class MarketAccount {
     };
   }
 
+  async queueFullWithdrawal(): Promise<{
+    withdrawal: LenderWithdrawalStatus;
+    transaction: ContractTransaction;
+    receipt: ContractReceipt;
+  }> {
+    const { status } = this.previewQueueWithdrawal(this.marketBalance);
+    assert(status === QueueWithdrawalStatus.Ready, `Cannot queue withdrawal: ${status}`);
+
+    const signer = await this.market.signer.getAddress();
+    if (signer.toLowerCase() !== this.account.toLowerCase()) {
+      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
+    }
+    let transaction: ContractTransaction;
+    if (this.market.version === MarketVersion.V2) {
+      const contract = WildcatMarketV2__factory.connect(this.market.address, this.market.signer);
+      transaction = await contract.queueFullWithdrawal();
+    } else {
+      transaction = await this.market.contract.queueWithdrawal(this.marketBalance.raw);
+    }
+    const receipt = await transaction.wait();
+    const queuedWithdrawalTopic = this.market.contract.interface.getEventTopic("WithdrawalQueued");
+    const queuedWithdrawalTransaction = toQueueWithdrawalTransaction(
+      this.market.underlyingToken,
+      receipt.events!.find((e) => e.topics[0] === queuedWithdrawalTopic) as WithdrawalQueuedEvent
+    );
+    if (!queuedWithdrawalTransaction) throw Error("No queued withdrawal event found");
+
+    const withdrawal = await LenderWithdrawalStatus.getWithdrawalForLender(
+      this.market,
+      queuedWithdrawalTransaction.expiry,
+      this.account
+    );
+    return {
+      withdrawal,
+      transaction,
+      receipt
+    };
+  }
+
   /* -------------------------------------------------------------------------- */
   /*                                 Repayments                                 */
   /* -------------------------------------------------------------------------- */
