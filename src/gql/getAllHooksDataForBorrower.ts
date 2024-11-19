@@ -13,6 +13,7 @@ import {
   hooksInstanceFromSubgraph,
   hooksTemplateFromSubgraph
 } from "../access";
+import { MarketController } from "../controller";
 
 export type GetAllHooksDataForBorrowerOptions = {
   chainId: SupportedChainId;
@@ -25,6 +26,7 @@ export type GetAllHooksDataForBorrowerResult = {
   hooksTemplates: HooksTemplate[];
   hooksInstances: HooksInstance[];
   isRegisteredBorrower: boolean;
+  controller?: MarketController;
 };
 
 export async function getAllHooksDataForBorrower(
@@ -55,9 +57,18 @@ export async function getAllHooksDataForBorrower(
     .map((instance) =>
       hooksInstanceFromSubgraph(chainId, signerOrProvider, instance, borrower, isRegisteredBorrower)
     );
+  const controller =
+    result.data.controllers.length > 0
+      ? MarketController.fromSubgraphControllerData(
+          chainId,
+          signerOrProvider,
+          result.data.controllers[0]
+        )
+      : undefined;
   return {
     hooksTemplates,
     hooksInstances,
-    isRegisteredBorrower
+    isRegisteredBorrower,
+    controller
   };
 }

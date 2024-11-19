@@ -104,6 +104,28 @@ fragment AllAuthorizedLendersView on LenderAuthorization {
   }
 }
 
+fragment MinimalControllerData on Controller {
+  id
+  borrower
+  numMarkets
+  controllerFactory {
+    id
+    constraints {
+      ...ParameterConstraintsData
+    }
+    feeRecipient
+    protocolFeeBips
+    originationFeeAsset {
+      ...TokenData
+    }
+    originationFeeAmount
+  }
+  archController {
+    id
+  }
+  isRegistered
+}
+
 # ============================================================================ #
 #                                Borrower Views                                #
 # ============================================================================ #
@@ -173,6 +195,19 @@ fragment MarketData on Market {
 }
 
 fragment AprConstraints on ParameterConstraints {
+  minimumAnnualInterestBips
+  maximumAnnualInterestBips
+}
+
+fragment ParameterConstraintsData on ParameterConstraints {
+  minimumDelinquencyGracePeriod
+  maximumDelinquencyGracePeriod
+  minimumReserveRatioBips
+  maximumReserveRatioBips
+  minimumDelinquencyFeeBips
+  maximumDelinquencyFeeBips
+  minimumWithdrawalBatchDuration
+  maximumWithdrawalBatchDuration
   minimumAnnualInterestBips
   maximumAnnualInterestBips
 }
@@ -493,6 +528,7 @@ fragment HooksInstanceData on HooksInstance {
   borrower
   name
   kind
+  numMarkets
   hooksTemplate {
     ...HooksTemplateData
   }

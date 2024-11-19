@@ -363,6 +363,9 @@ query getAllHooksDataForBorrower($borrower: Bytes!) {
   registeredBorrowers(where: { borrower: $borrower }, first: 1) {
     isRegistered
   }
+  controllers(where: { borrower: $borrower }, first: 1) {
+    ...MinimalControllerData
+  }
 }
 
 # query

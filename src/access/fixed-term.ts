@@ -139,7 +139,8 @@ export class FixedTermHooks extends ContractWrapper<IOpenTermHooks> {
         isPushProvider: p.isPushProvider,
         pushProviderIndex: p.pushProviderIndex,
         timeToLive: p.timeToLive
-      }))
+      })),
+      numMarkets: data.numMarkets
     });
   }
 }
@@ -153,6 +154,7 @@ export type FixedTermHooksArgs = {
   borrower: string;
   roleProviders?: RoleProvider[];
   name: string;
+  numMarkets?: number;
 };
 
 export type FixedTermHooksTemplateArgs = {

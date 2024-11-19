@@ -175,6 +175,7 @@ export enum SubgraphAccountAccessGranted_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   Provider = "provider",
   ProviderId = "provider__id",
@@ -306,6 +307,7 @@ export enum SubgraphAccountAccessRevoked_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   TransactionHash = "transactionHash"
 }
@@ -428,6 +430,7 @@ export enum SubgraphAccountBlockedFromDeposits_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   TransactionHash = "transactionHash"
 }
@@ -566,6 +569,7 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   LenderAccount = "lenderAccount",
   LenderAccountAddedTimestamp = "lenderAccount__addedTimestamp",
@@ -751,6 +755,7 @@ export enum SubgraphAccountUnblockedFromDeposits_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   TransactionHash = "transactionHash"
 }
@@ -1363,6 +1368,7 @@ export type SubgraphController = {
   id: Scalars["ID"]["output"];
   isRegistered: Scalars["Boolean"]["output"];
   markets: SubgraphMarket[];
+  numMarkets: Scalars["Int"]["output"];
   removal?: Maybe<SubgraphControllerRemoved>;
 };
 
@@ -1491,6 +1497,7 @@ export enum SubgraphControllerAdded_OrderBy {
   ControllerBorrower = "controller__borrower",
   ControllerId = "controller__id",
   ControllerIsRegistered = "controller__isRegistered",
+  ControllerNumMarkets = "controller__numMarkets",
   Id = "id",
   TransactionHash = "transactionHash"
 }
@@ -1916,6 +1923,7 @@ export enum SubgraphControllerRemoved_OrderBy {
   ControllerBorrower = "controller__borrower",
   ControllerId = "controller__id",
   ControllerIsRegistered = "controller__isRegistered",
+  ControllerNumMarkets = "controller__numMarkets",
   Id = "id",
   TransactionHash = "transactionHash"
 }
@@ -1991,6 +1999,14 @@ export type SubgraphController_Filter = {
   isRegistered_not?: InputMaybe<Scalars["Boolean"]["input"]>;
   isRegistered_not_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   markets_?: InputMaybe<SubgraphMarket_Filter>;
+  numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  numMarkets_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  numMarkets_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  numMarkets_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  numMarkets_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  numMarkets_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  numMarkets_not?: InputMaybe<Scalars["Int"]["input"]>;
+  numMarkets_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   or?: InputMaybe<Array<InputMaybe<SubgraphController_Filter>>>;
   removal_?: InputMaybe<SubgraphControllerRemoved_Filter>;
 };
@@ -2011,6 +2027,7 @@ export enum SubgraphController_OrderBy {
   Id = "id",
   IsRegistered = "isRegistered",
   Markets = "markets",
+  NumMarkets = "numMarkets",
   Removal = "removal",
   RemovalBlockNumber = "removal__blockNumber",
   RemovalBlockTimestamp = "removal__blockTimestamp",
@@ -2681,6 +2698,7 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
@@ -3037,6 +3055,7 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
@@ -3492,6 +3511,7 @@ export enum SubgraphHooksConfig_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
@@ -3675,6 +3695,7 @@ export type SubgraphHooksInstance = {
   markets: SubgraphMarket[];
   name: Scalars["String"]["output"];
   nameUpdatedRecords: SubgraphHooksNameUpdated[];
+  numMarkets: Scalars["Int"]["output"];
   providers: SubgraphRoleProvider[];
   roleProviderAddedRecords: SubgraphRoleProviderAdded[];
   roleProviderRemovedRecords: SubgraphRoleProviderRemoved[];
@@ -3864,6 +3885,7 @@ export enum SubgraphHooksInstanceDeployed_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   TransactionHash = "transactionHash"
 }
@@ -3970,6 +3992,14 @@ export type SubgraphHooksInstance_Filter = {
   name_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   name_starts_with?: InputMaybe<Scalars["String"]["input"]>;
   name_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  numMarkets_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  numMarkets_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  numMarkets_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  numMarkets_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  numMarkets_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  numMarkets_not?: InputMaybe<Scalars["Int"]["input"]>;
+  numMarkets_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   or?: InputMaybe<Array<InputMaybe<SubgraphHooksInstance_Filter>>>;
   providers_?: InputMaybe<SubgraphRoleProvider_Filter>;
   roleProviderAddedRecords_?: InputMaybe<SubgraphRoleProviderAdded_Filter>;
@@ -4001,6 +4031,7 @@ export enum SubgraphHooksInstance_OrderBy {
   Markets = "markets",
   Name = "name",
   NameUpdatedRecords = "nameUpdatedRecords",
+  NumMarkets = "numMarkets",
   Providers = "providers",
   RoleProviderAddedRecords = "roleProviderAddedRecords",
   RoleProviderRemovedRecords = "roleProviderRemovedRecords",
@@ -4145,6 +4176,7 @@ export enum SubgraphHooksNameUpdated_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   NewName = "newName",
   OldName = "oldName",
@@ -5256,6 +5288,7 @@ export enum SubgraphLenderAuthorizationChange_OrderBy {
   ControllerBorrower = "controller__borrower",
   ControllerId = "controller__id",
   ControllerIsRegistered = "controller__isRegistered",
+  ControllerNumMarkets = "controller__numMarkets",
   Id = "id",
   Lender = "lender",
   TransactionHash = "transactionHash"
@@ -5320,6 +5353,7 @@ export enum SubgraphLenderAuthorization_OrderBy {
   ControllerBorrower = "controller__borrower",
   ControllerId = "controller__id",
   ControllerIsRegistered = "controller__isRegistered",
+  ControllerNumMarkets = "controller__numMarkets",
   Id = "id",
   Lender = "lender",
   MarketAccounts = "marketAccounts"
@@ -5471,6 +5505,7 @@ export enum SubgraphLenderHooksAccess_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   IsBlockedFromDeposits = "isBlockedFromDeposits",
   KnownLenderStatuses = "knownLenderStatuses",
@@ -6133,6 +6168,7 @@ export enum SubgraphMarketAdded_OrderBy {
   ControllerBorrower = "controller__borrower",
   ControllerId = "controller__id",
   ControllerIsRegistered = "controller__isRegistered",
+  ControllerNumMarkets = "controller__numMarkets",
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
@@ -7401,6 +7437,7 @@ export enum SubgraphMarket_OrderBy {
   ControllerBorrower = "controller__borrower",
   ControllerId = "controller__id",
   ControllerIsRegistered = "controller__isRegistered",
+  ControllerNumMarkets = "controller__numMarkets",
   CreatedAt = "createdAt",
   DebtRepaidIndex = "debtRepaidIndex",
   Decimals = "decimals",
@@ -7462,6 +7499,7 @@ export enum SubgraphMarket_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   InterestAccrualRecords = "interestAccrualRecords",
   IsClosed = "isClosed",
@@ -7829,6 +7867,7 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   Market = "market",
   MarketAnnualInterestBips = "market__annualInterestBips",
@@ -10096,6 +10135,7 @@ export enum SubgraphRoleProviderAdded_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   IsPullProvider = "isPullProvider",
   IsPushProvider = "isPushProvider",
@@ -10226,6 +10266,7 @@ export enum SubgraphRoleProviderRemoved_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   Provider = "provider",
   ProviderId = "provider__id",
@@ -10388,6 +10429,7 @@ export enum SubgraphRoleProviderUpdated_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   IsPullProvider = "isPullProvider",
   IsPushProvider = "isPushProvider",
@@ -10509,6 +10551,7 @@ export enum SubgraphRoleProvider_OrderBy {
   HooksId = "hooks__id",
   HooksKind = "hooks__kind",
   HooksName = "hooks__name",
+  HooksNumMarkets = "hooks__numMarkets",
   Id = "id",
   IsApproved = "isApproved",
   IsPullProvider = "isPullProvider",
@@ -13310,6 +13353,24 @@ export type SubgraphAllAuthorizedLendersViewFragment = {
   changes: Array<{ __typename: "LenderAuthorizationChange"; blockTimestamp: number }>;
 };
 
+export type SubgraphMinimalControllerDataFragment = {
+  __typename: "Controller";
+  id: string;
+  borrower: string;
+  numMarkets: number;
+  isRegistered: boolean;
+  controllerFactory: {
+    __typename: "ControllerFactory";
+    id: string;
+    feeRecipient: string;
+    protocolFeeBips: number;
+    originationFeeAmount: string;
+    constraints: SubgraphParameterConstraintsDataFragment;
+    originationFeeAsset?: SubgraphTokenDataFragment | null;
+  };
+  archController: { __typename: "ArchController"; id: string };
+};
+
 export type SubgraphMarketDataFragment = {
   __typename: "Market";
   id: string;
@@ -13358,6 +13419,20 @@ export type SubgraphMarketDataFragment = {
 
 export type SubgraphAprConstraintsFragment = {
   __typename: "ParameterConstraints";
+  minimumAnnualInterestBips: number;
+  maximumAnnualInterestBips: number;
+};
+
+export type SubgraphParameterConstraintsDataFragment = {
+  __typename: "ParameterConstraints";
+  minimumDelinquencyGracePeriod: number;
+  maximumDelinquencyGracePeriod: number;
+  minimumReserveRatioBips: number;
+  maximumReserveRatioBips: number;
+  minimumDelinquencyFeeBips: number;
+  maximumDelinquencyFeeBips: number;
+  minimumWithdrawalBatchDuration: number;
+  maximumWithdrawalBatchDuration: number;
   minimumAnnualInterestBips: number;
   maximumAnnualInterestBips: number;
 };
@@ -13708,6 +13783,7 @@ export type SubgraphHooksInstanceDataFragment = {
   borrower: string;
   name: string;
   kind: SubgraphHooksKind;
+  numMarkets: number;
   eventIndex: number;
   hooksTemplate: SubgraphHooksTemplateDataFragment;
   providers: SubgraphRoleProviderDataFragment[];
@@ -14133,6 +14209,7 @@ export type SubgraphGetAllHooksDataForBorrowerQuery = {
   hooksTemplates: SubgraphHooksTemplateDataFragment[];
   hooksInstances: SubgraphHooksInstanceDataFragment[];
   registeredBorrowers: Array<{ __typename: "RegisteredBorrower"; isRegistered: boolean }>;
+  controllers: SubgraphMinimalControllerDataFragment[];
 };
 
 export type SubgraphGetMarketEventsQueryVariables = Exact<{
@@ -14382,6 +14459,7 @@ export type SubgraphGetLendersByHooksInstanceOrControllerQuery = {
     borrower: string;
     name: string;
     kind: SubgraphHooksKind;
+    numMarkets: number;
     eventIndex: number;
     hooksTemplate: SubgraphHooksTemplateDataFragment;
     providers: SubgraphRoleProviderDataFragment[];
@@ -14415,6 +14493,7 @@ export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery = {
     borrower: string;
     name: string;
     kind: SubgraphHooksKind;
+    numMarkets: number;
     eventIndex: number;
     markets: SubgraphMarketDataFragment[];
     hooksTemplate: SubgraphHooksTemplateDataFragment;
@@ -14595,6 +14674,53 @@ export const AllAuthorizedLendersViewFragmentDoc = gql`
     }
   }
 `;
+export const ParameterConstraintsDataFragmentDoc = gql`
+  fragment ParameterConstraintsData on ParameterConstraints {
+    minimumDelinquencyGracePeriod
+    maximumDelinquencyGracePeriod
+    minimumReserveRatioBips
+    maximumReserveRatioBips
+    minimumDelinquencyFeeBips
+    maximumDelinquencyFeeBips
+    minimumWithdrawalBatchDuration
+    maximumWithdrawalBatchDuration
+    minimumAnnualInterestBips
+    maximumAnnualInterestBips
+  }
+`;
+export const TokenDataFragmentDoc = gql`
+  fragment TokenData on Token {
+    id
+    address
+    name
+    symbol
+    decimals
+    isMock
+  }
+`;
+export const MinimalControllerDataFragmentDoc = gql`
+  fragment MinimalControllerData on Controller {
+    id
+    borrower
+    numMarkets
+    controllerFactory {
+      id
+      constraints {
+        ...ParameterConstraintsData
+      }
+      feeRecipient
+      protocolFeeBips
+      originationFeeAsset {
+        ...TokenData
+      }
+      originationFeeAmount
+    }
+    archController {
+      id
+    }
+    isRegistered
+  }
+`;
 export const AprConstraintsFragmentDoc = gql`
   fragment AprConstraints on ParameterConstraints {
     minimumAnnualInterestBips
@@ -14611,16 +14737,6 @@ export const DelinquencyStatusChangedDataFragmentDoc = gql`
     blockNumber
     blockTimestamp
     transactionHash
-  }
-`;
-export const TokenDataFragmentDoc = gql`
-  fragment TokenData on Token {
-    id
-    address
-    name
-    symbol
-    decimals
-    isMock
   }
 `;
 export const HooksConfigDataForMarketFragmentDoc = gql`
@@ -14667,6 +14783,7 @@ export const HooksInstanceDataFragmentDoc = gql`
     borrower
     name
     kind
+    numMarkets
     hooksTemplate {
       ...HooksTemplateData
     }
@@ -15491,11 +15608,16 @@ export const GetAllHooksDataForBorrowerDocument = gql`
     registeredBorrowers(where: { borrower: $borrower }, first: 1) {
       isRegistered
     }
+    controllers(where: { borrower: $borrower }, first: 1) {
+      ...MinimalControllerData
+    }
   }
   ${HooksTemplateDataFragmentDoc}
   ${TokenDataFragmentDoc}
   ${HooksInstanceDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
+  ${MinimalControllerDataFragmentDoc}
+  ${ParameterConstraintsDataFragmentDoc}
 `;
 export type GetAllHooksDataForBorrowerQueryResult = Apollo.QueryResult<
   SubgraphGetAllHooksDataForBorrowerQuery,

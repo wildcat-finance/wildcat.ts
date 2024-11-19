@@ -6,7 +6,6 @@ import {
   SubgraphGetAllMarketsForLenderViewQueryVariables
 } from "./graphql";
 import { MarketAccount } from "../account";
-import { assert } from "../utils";
 import { SupportedChainId } from "../constants";
 import { SignerOrProvider } from "../types";
 

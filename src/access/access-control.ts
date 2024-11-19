@@ -141,7 +141,8 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
         isPushProvider: p.isPushProvider,
         pushProviderIndex: p.pushProviderIndex,
         timeToLive: p.timeToLive
-      }))
+      })),
+      numMarkets: data.numMarkets
     });
   }
 }
@@ -155,6 +156,7 @@ export type OpenTermHooksArgs = {
   borrower: string;
   roleProviders?: RoleProvider[];
   name: string;
+  numMarkets?: number;
 };
 
 export type OpenTermHooksTemplateArgs = {
