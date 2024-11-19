@@ -5,7 +5,11 @@ const { Project, SyntaxKind } = require("ts-morph");
 const { getProgressBar } = require("./logs");
 const GRAPHQL_TS_PATH = path.join(__dirname, "../src/gql/graphql.ts");
 
+const CODEGEN_YML_PATH = path.join(__dirname, "../codegen.yml");
+const SCHEMA_JSON_PATH = path.join(__dirname, "schema.json");
 const GQL_CACHE_PATH = path.join(__dirname, ".gql-cache");
+const GQL_FRAGMENTS_PATH = path.join(__dirname, "../gql/fragments.graphql");
+const GQL_QUERIES_PATH = path.join(__dirname, "../gql/queries.graphql");
 
 /* ========================================================================== */
 /*                           WHAT THIS SCRIPT DOES:                           */
@@ -183,8 +187,10 @@ function generateFileChecksum(filePath) {
 
 function updateChecksums() {
   const currentChecksums = [
-    generateFileChecksum(path.join(__dirname, "../gql/fragments.graphql")),
-    generateFileChecksum(path.join(__dirname, "../gql/queries.graphql")),
+    generateFileChecksum(CODEGEN_YML_PATH),
+    generateFileChecksum(SCHEMA_JSON_PATH),
+    generateFileChecksum(GQL_FRAGMENTS_PATH),
+    generateFileChecksum(GQL_QUERIES_PATH),
     generateFileChecksum(GRAPHQL_TS_PATH)
   ].join("\n");
   writeFileSync(GQL_CACHE_PATH, currentChecksums);
