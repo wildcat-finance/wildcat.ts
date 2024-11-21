@@ -122,6 +122,8 @@ interface IOpenTermHooks {
 
   function blockFromDeposits(address account) external;
 
+  function blockFromDeposits(address[] calldata accounts) external;
+
   function borrower() external view returns (address);
 
   function config() external view returns (HooksDeploymentConfig param0);
