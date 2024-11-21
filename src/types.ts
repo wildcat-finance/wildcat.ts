@@ -255,3 +255,8 @@ export enum WithdrawalAccess {
    */
   Open
 }
+
+export type AddLenderInput = {
+  lender: string;
+  credentialTimestamp?: number;
+};
