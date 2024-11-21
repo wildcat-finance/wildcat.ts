@@ -24,3 +24,12 @@ export type DeployMarketPreview =
   | {
       status: Exclude<DeployMarketStatus, DeployMarketStatus.Ready>;
     };
+
+export enum ChangeLenderRoleStatus {
+  Ready = "Ready",
+  NotBorrower = "NotBorrower"
+}
+
+export type ChangeLenderRolePreview = {
+  status: ChangeLenderRoleStatus;
+};

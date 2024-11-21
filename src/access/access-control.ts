@@ -20,12 +20,14 @@ import {
   IOpenTermHooks__factory
 } from "../typechain";
 import {
+  AddLenderInput,
   ContractWrapper,
   DepositAccess,
   FeeConfigurationV2,
   HooksKind,
   MarketHooksInstanceInputs,
   MarketParameterConstraints,
+  PartialTransaction,
   RoleProvider,
   SignerOrProvider,
   TransferAccess,
@@ -33,7 +35,12 @@ import {
 } from "../types";
 import { assert, encodeHooksConfig, parseFeeConfigurationV2 } from "../utils";
 import { BigNumber, constants, ContractTransaction } from "ethers";
-import { DeployMarketPreview, DeployMarketStatus } from "./validation";
+import {
+  ChangeLenderRolePreview,
+  ChangeLenderRoleStatus,
+  DeployMarketPreview,
+  DeployMarketStatus
+} from "./validation";
 import { encodeMarketHooksInstanceInputs } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -80,6 +87,109 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
     }));
   }
 
+  /* ========================================================================== */
+  /*                                 addLenders                                 */
+  /* ========================================================================== */
+
+  previewAddLenders(_: AddLenderInput[]): ChangeLenderRolePreview {
+    if (this.signerAddress?.toLowerCase() !== this.borrower.toLowerCase()) {
+      return { status: ChangeLenderRoleStatus.NotBorrower };
+    }
+    return {
+      status: ChangeLenderRoleStatus.Ready
+    };
+  }
+
+  populateAddLenders(inputs: AddLenderInput[]): PartialTransaction {
+    const lenders = inputs.map((input) => input.lender);
+    const credentialTimestamps = inputs.map(
+      (input) => input.credentialTimestamp ?? Math.floor(Date.now() / 1000)
+    );
+    return {
+      to: this.address,
+      data:
+        inputs.length === 1
+          ? this.contract.interface.encodeFunctionData("grantRole", [
+              lenders[0],
+              credentialTimestamps[0]
+            ])
+          : this.contract.interface.encodeFunctionData("grantRoles", [
+              lenders,
+              credentialTimestamps
+            ]),
+      value: "0"
+    };
+  }
+
+  addLenders(inputs: AddLenderInput[]): Promise<ContractTransaction> {
+    const result = this.previewAddLenders(inputs);
+    assert(result.status === ChangeLenderRoleStatus.Ready, `Can not add lenders: ${result.status}`);
+
+    const lenders = inputs.map((input) => input.lender);
+    const credentialTimestamps = inputs.map(
+      (input) => input.credentialTimestamp ?? Math.floor(Date.now() / 1000)
+    );
+    return lenders.length === 1
+      ? this.contract.grantRole(lenders[0], credentialTimestamps[0])
+      : this.contract.grantRoles(lenders, credentialTimestamps);
+  }
+
+  /* ========================================================================== */
+  /*                                blockLenders                                */
+  /* ========================================================================== */
+
+  previewBlockLenders(_: string[]): ChangeLenderRolePreview {
+    if (this.signerAddress?.toLowerCase() !== this.borrower.toLowerCase()) {
+      return { status: ChangeLenderRoleStatus.NotBorrower };
+    }
+    return {
+      status: ChangeLenderRoleStatus.Ready
+    };
+  }
+
+  populateBlockLenders(lenders: string[]): PartialTransaction {
+    return {
+      to: this.address,
+      data:
+        lenders.length === 1
+          ? this.contract.interface.encodeFunctionData("blockFromDeposits(address)", [lenders[0]])
+          : this.contract.interface.encodeFunctionData("blockFromDeposits(address[])", [lenders]),
+      value: "0"
+    };
+  }
+
+  previewUnblockLender(): ChangeLenderRolePreview {
+    if (this.signerAddress?.toLowerCase() !== this.borrower.toLowerCase()) {
+      return { status: ChangeLenderRoleStatus.NotBorrower };
+    }
+    return {
+      status: ChangeLenderRoleStatus.Ready
+    };
+  }
+
+  blockLenders(lenders: string[]): Promise<ContractTransaction> {
+    const result = this.previewBlockLenders(lenders);
+    assert(
+      result.status === ChangeLenderRoleStatus.Ready,
+      `Can not block lenders: ${result.status}`
+    );
+    return lenders.length === 1
+      ? this.contract["blockFromDeposits(address)"](lenders[0])
+      : this.contract["blockFromDeposits(address[])"](lenders);
+  }
+
+  populateUnblockLender(lender: string): PartialTransaction {
+    return {
+      to: this.address,
+      data: this.contract.interface.encodeFunctionData("unblockFromDeposits", [lender]),
+      value: "0"
+    };
+  }
+
+  /* ========================================================================== */
+  /*                               static builders                              */
+  /* ========================================================================== */
+
   static fromLensData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
@@ -92,6 +202,7 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
       provider,
       address: data.hooksAddress,
       name: data.name,
+      signerAddress,
       hooksTemplate: OpenTermHooksTemplate.fromLensData(
         chainId,
         provider,
@@ -125,6 +236,7 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
       provider,
       address: data.id,
       borrower: data.borrower,
+      signerAddress,
       hooksTemplate: OpenTermHooksTemplate.fromSubgraphData(
         chainId,
         provider,
@@ -157,6 +269,7 @@ export type OpenTermHooksArgs = {
   roleProviders?: RoleProvider[];
   name: string;
   numMarkets?: number;
+  signerAddress?: string;
 };
 
 export type OpenTermHooksTemplateArgs = {
