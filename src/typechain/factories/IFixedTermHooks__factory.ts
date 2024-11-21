@@ -512,6 +512,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "accounts",
+        type: "address[]",
+      },
+    ],
+    name: "blockFromDeposits",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "borrower",
     outputs: [

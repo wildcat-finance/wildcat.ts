@@ -149,6 +149,7 @@ export interface IOpenTermHooksInterface extends utils.Interface {
   functions: {
     "addRoleProvider(address,uint32)": FunctionFragment;
     "blockFromDeposits(address)": FunctionFragment;
+    "blockFromDeposits(address[])": FunctionFragment;
     "borrower()": FunctionFragment;
     "config()": FunctionFragment;
     "createRoleProvider(address,uint32,bytes)": FunctionFragment;
@@ -191,7 +192,8 @@ export interface IOpenTermHooksInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addRoleProvider"
-      | "blockFromDeposits"
+      | "blockFromDeposits(address)"
+      | "blockFromDeposits(address[])"
       | "borrower"
       | "config"
       | "createRoleProvider"
@@ -236,8 +238,12 @@ export interface IOpenTermHooksInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "blockFromDeposits",
+    functionFragment: "blockFromDeposits(address)",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "blockFromDeposits(address[])",
+    values: [PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(functionFragment: "borrower", values?: undefined): string;
   encodeFunctionData(functionFragment: "config", values?: undefined): string;
@@ -440,7 +446,11 @@ export interface IOpenTermHooksInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "blockFromDeposits",
+    functionFragment: "blockFromDeposits(address)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "blockFromDeposits(address[])",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "borrower", data: BytesLike): Result;
@@ -812,8 +822,13 @@ export interface IOpenTermHooks extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    blockFromDeposits(
+    "blockFromDeposits(address)"(
       account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "blockFromDeposits(address[])"(
+      accounts: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1054,8 +1069,13 @@ export interface IOpenTermHooks extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  blockFromDeposits(
+  "blockFromDeposits(address)"(
     account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "blockFromDeposits(address[])"(
+    accounts: PromiseOrValue<string>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1276,8 +1296,13 @@ export interface IOpenTermHooks extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    blockFromDeposits(
+    "blockFromDeposits(address)"(
       account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "blockFromDeposits(address[])"(
+      accounts: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1641,8 +1666,13 @@ export interface IOpenTermHooks extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    blockFromDeposits(
+    "blockFromDeposits(address)"(
       account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "blockFromDeposits(address[])"(
+      accounts: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1856,8 +1886,13 @@ export interface IOpenTermHooks extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    blockFromDeposits(
+    "blockFromDeposits(address)"(
       account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "blockFromDeposits(address[])"(
+      accounts: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
