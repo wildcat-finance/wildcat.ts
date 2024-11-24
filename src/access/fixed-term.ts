@@ -16,6 +16,8 @@ import {
   HooksFactory__factory,
   HooksInstanceDataStructOutput,
   HooksTemplateDataStructOutput,
+  IFixedTermHooks,
+  IFixedTermHooks__factory,
   IOpenTermHooks,
   IOpenTermHooks__factory
 } from "../typechain";
@@ -48,12 +50,15 @@ export interface FixedTermHooks extends Omit<FixedTermHooksArgs, "roleProviders"
 
 const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
 
-export class FixedTermHooks extends ContractWrapper<IOpenTermHooks> {
+export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
   readonly kind: HooksKind.FixedTerm = HooksKind.FixedTerm;
-  readonly contractFactory = IOpenTermHooks__factory;
+  readonly contractFactory = IFixedTermHooks__factory;
   public roleProviders: RoleProvider[];
   public constraints: MarketParameterConstraints;
-  public _contractAddress = this.address;
+
+  protected get _contractAddress(): string {
+    return this.address;
+  }
 
   constructor({
     provider,
