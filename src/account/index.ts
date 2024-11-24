@@ -49,7 +49,9 @@ import {
   SetMaxTotalSupplyStatus,
   DepositPreview,
   QueueWithdrawalPreview,
-  RepayPreview
+  RepayPreview,
+  ForceBuyBackPreview,
+  ForceBuyBackStatus
 } from "./validation";
 export * from "./validation";
 
@@ -423,6 +425,51 @@ export class MarketAccount {
         this.market.address,
         amount.raw
       ]),
+      value: "0"
+    };
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                                ForceBuyBack                                */
+  /* -------------------------------------------------------------------------- */
+
+  previewForceBuyBack(lender: string, amount: TokenAmount): ForceBuyBackPreview {
+    if (!this.isBorrower) return { status: ForceBuyBackStatus.NotBorrower };
+    if (this.market.version !== MarketVersion.V2) {
+      return { status: ForceBuyBackStatus.V1NotSupported };
+    }
+    if (amount.gt(this.underlyingBalance)) {
+      return { status: ForceBuyBackStatus.InsufficientBalance };
+    }
+    if (!this.isApprovedFor(amount)) {
+      return { status: ForceBuyBackStatus.InsufficientAllowance };
+    }
+    if (this.market.isDelinquent || this.market.willBeDelinquent) {
+      return { status: ForceBuyBackStatus.MarketDelinquent };
+    }
+    if (this.market.isInFixedTerm) {
+      return { status: ForceBuyBackStatus.MarketInClosedTerm };
+    }
+    return {
+      status: ForceBuyBackStatus.Ready
+    };
+  }
+
+  async forceBuyBack(lender: string, amount: TokenAmount): Promise<ContractTransaction> {
+    const { status } = this.previewForceBuyBack(lender, amount);
+    assert(status === ForceBuyBackStatus.Ready, `Cannot force buy back: ${status}`);
+    const contract = WildcatMarketV2__factory.connect(this.market.address, this.market.signer);
+    return await contract.forceBuyBack(lender, amount.raw);
+  }
+
+  populateForceBuyBack(lender: string, amount: TokenAmount): PartialTransaction {
+    const { status } = this.previewForceBuyBack(lender, amount);
+    assert(status === ForceBuyBackStatus.Ready, `Cannot force buy back: ${status}`);
+
+    const contract = WildcatMarketV2__factory.connect(this.market.address, this.market.signer);
+    return {
+      to: this.market.address,
+      data: contract.interface.encodeFunctionData("forceBuyBack", [lender, amount.raw]),
       value: "0"
     };
   }

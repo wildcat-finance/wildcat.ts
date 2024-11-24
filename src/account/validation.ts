@@ -138,3 +138,15 @@ export type FunctionAvailability =
       available: false;
       reason: string;
     };
+
+export enum ForceBuyBackStatus {
+  Ready = "Ready",
+  V1NotSupported = "V1NotSupported",
+  MarketDelinquent = "MarketDelinquent",
+  InsufficientBalance = "InsufficientBalance",
+  InsufficientAllowance = "InsufficientAllowance",
+  MarketInClosedTerm = "MarketInClosedTerm",
+  NotBorrower = "NotBorrower"
+}
+
+export type ForceBuyBackPreview = { status: ForceBuyBackStatus };
