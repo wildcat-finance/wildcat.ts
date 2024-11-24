@@ -39,7 +39,7 @@ export class BasicLenderData {
   }
 
   get marketBalance(): TokenAmount {
-    return this.market.marketToken.getAmount(this.market.scaleAmount(this.scaledBalance));
+    return this.market.marketToken.getAmount(this.market.normalizeAmount(this.scaledBalance));
   }
 
   get credentialExpiry(): number | undefined {
