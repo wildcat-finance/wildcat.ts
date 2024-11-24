@@ -14502,7 +14502,21 @@ export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery = {
   } | null;
   controller?: {
     __typename: "Controller";
+    id: string;
+    borrower: string;
+    numMarkets: number;
+    isRegistered: boolean;
     markets: SubgraphMarketDataFragment[];
+    controllerFactory: {
+      __typename: "ControllerFactory";
+      id: string;
+      feeRecipient: string;
+      protocolFeeBips: number;
+      originationFeeAmount: string;
+      constraints: SubgraphParameterConstraintsDataFragment;
+      originationFeeAsset?: SubgraphTokenDataFragment | null;
+    };
+    archController: { __typename: "ArchController"; id: string };
     authorizedLenders: SubgraphV1LenderWithActiveMarketsFragment[];
   } | null;
 };
@@ -16087,6 +16101,7 @@ export const GetMarketsAndLendersByHooksInstanceOrControllerDocument = gql`
       ...HooksInstanceLendersWithActiveMarkets
     }
     controller(id: $contractAddress) {
+      ...MinimalControllerData
       markets(
         where: $marketFilter
         first: $numMarkets
@@ -16109,6 +16124,8 @@ export const GetMarketsAndLendersByHooksInstanceOrControllerDocument = gql`
   ${HooksInstanceLendersWithActiveMarketsFragmentDoc}
   ${V2LenderWithActiveMarketsFragmentDoc}
   ${LenderHooksAccessDataFragmentDoc}
+  ${MinimalControllerDataFragmentDoc}
+  ${ParameterConstraintsDataFragmentDoc}
   ${ControllerAuthorizedLendersWithActiveMarketsFragmentDoc}
   ${V1LenderWithActiveMarketsFragmentDoc}
 `;

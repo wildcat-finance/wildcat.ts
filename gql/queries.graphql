@@ -781,6 +781,7 @@ query getMarketsAndLendersByHooksInstanceOrController(
     ...HooksInstanceLendersWithActiveMarkets
   }
   controller(id: $contractAddress) {
+    ...MinimalControllerData
     markets(
       where: $marketFilter
       first: $numMarkets

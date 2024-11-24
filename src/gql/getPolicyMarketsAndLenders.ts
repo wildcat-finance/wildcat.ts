@@ -8,6 +8,7 @@ import { HooksInstance, hooksInstanceFromSubgraph } from "../access";
 import { Market } from "../market";
 import { parsePolicyLender, PolicyLender } from "./utils";
 import { SupportedChainId } from "../constants";
+import { MarketController } from "../controller";
 
 export type GetPolicyMarketsAndLendersOptions =
   SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables & {
@@ -20,6 +21,7 @@ export type PolicyMarketsAndLenders = {
   hooksInstance?: HooksInstance;
   markets: Market[];
   lenders: PolicyLender[];
+  controller?: MarketController;
 };
 
 export async function getPolicyMarketsAndLenders(
@@ -56,7 +58,8 @@ export async function getPolicyMarketsAndLenders(
     );
     return {
       lenders,
-      markets
+      markets,
+      controller: MarketController.fromSubgraphControllerData(chainId, signerOrProvider, controller)
     };
   }
 
