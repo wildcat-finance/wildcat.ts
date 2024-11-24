@@ -451,10 +451,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
     return this.contract.executeWithdrawals(lenders, expiries);
   }
 
-  async populateRepayAndProcessUnpaidWithdrawalBatches(
+  populateRepayAndProcessUnpaidWithdrawalBatches(
     amount: TokenAmount,
     maxBatches = 10
-  ): Promise<PartialTransaction> {
+  ): PartialTransaction {
     return {
       to: this.address,
       data: this.contract.interface.encodeFunctionData("repayAndProcessUnpaidWithdrawalBatches", [

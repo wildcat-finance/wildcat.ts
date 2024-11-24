@@ -144,7 +144,6 @@ export enum ForceBuyBackStatus {
   V1NotSupported = "V1NotSupported",
   MarketDelinquent = "MarketDelinquent",
   InsufficientBalance = "InsufficientBalance",
-  InsufficientAllowance = "InsufficientAllowance",
   MarketInClosedTerm = "MarketInClosedTerm",
   NotBorrower = "NotBorrower"
 }

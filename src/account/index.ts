@@ -345,7 +345,7 @@ export class MarketAccount {
     return this.market.contract.closeMarket();
   }
 
-  async populateCloseMarket(): Promise<PartialTransaction> {
+  populateCloseMarket(): PartialTransaction {
     const { status } = this.previewCloseMarket();
     assert(status === CloseMarketStatus.Ready, `Cannot close market: ${status}`);
 
@@ -440,9 +440,6 @@ export class MarketAccount {
     }
     if (amount.gt(this.underlyingBalance)) {
       return { status: ForceBuyBackStatus.InsufficientBalance };
-    }
-    if (!this.isApprovedFor(amount)) {
-      return { status: ForceBuyBackStatus.InsufficientAllowance };
     }
     if (this.market.isDelinquent || this.market.willBeDelinquent) {
       return { status: ForceBuyBackStatus.MarketDelinquent };

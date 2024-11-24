@@ -129,7 +129,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     return this.contract.deauthorizeLenders(lenders);
   }
 
-  async populateDeauthorizeLenders(lenders: string[]): Promise<PartialTransaction> {
+  populateDeauthorizeLenders(lenders: string[]): PartialTransaction {
     return {
       to: this.address,
       data: this.contract.interface.encodeFunctionData("deauthorizeLenders", [lenders]),
