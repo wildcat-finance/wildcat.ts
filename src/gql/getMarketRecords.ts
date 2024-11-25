@@ -2,6 +2,18 @@ import { Market } from "../market";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import {
   GetMarketEventsDocument,
+  SubgraphDelinquencyStatusChanged_Filter,
+  SubgraphBorrow_Filter,
+  SubgraphDeposit_Filter,
+  SubgraphFeesCollected_Filter,
+  SubgraphDebtRepaid_Filter,
+  SubgraphAnnualInterestBipsUpdated_Filter,
+  SubgraphMaxTotalSupplyUpdated_Filter,
+  SubgraphWithdrawalRequest_Filter,
+  SubgraphForceBuyBack_Filter,
+  SubgraphMinimumDepositUpdated_Filter,
+  SubgraphProtocolFeeBipsUpdated_Filter,
+  SubgraphFixedTermUpdated_Filter,
   SubgraphGetMarketEventsQuery,
   SubgraphGetMarketEventsQueryVariables
 } from "./graphql";
@@ -15,15 +27,44 @@ import {
 
 export type GetMarketRecordsOptions = {
   market: Market;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy?: FetchPolicy;
   limit?: number;
   endEventIndex?: number;
   kinds?: MarketRecordKind[];
+  additionalFilter?: CommonFilter;
 };
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+type CommonKeys<T, R = {}> = R extends T ? keyof T & CommonKeys<Exclude<T, R>> : keyof T;
+
+type FilterUnion =
+  | SubgraphDelinquencyStatusChanged_Filter
+  | SubgraphBorrow_Filter
+  | SubgraphDeposit_Filter
+  | SubgraphFeesCollected_Filter
+  | SubgraphDebtRepaid_Filter
+  | SubgraphAnnualInterestBipsUpdated_Filter
+  | SubgraphMaxTotalSupplyUpdated_Filter
+  | SubgraphWithdrawalRequest_Filter
+  | SubgraphForceBuyBack_Filter
+  | SubgraphMinimumDepositUpdated_Filter
+  | SubgraphProtocolFeeBipsUpdated_Filter
+  | SubgraphFixedTermUpdated_Filter;
+
+type Common<T> = Pick<T, CommonKeys<T>>;
+
+type CommonFilter = Common<FilterUnion>;
 
 export async function getMarketRecords(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
-  { market, fetchPolicy, limit = 100, endEventIndex, kinds }: GetMarketRecordsOptions
+  {
+    market,
+    fetchPolicy = "network-only",
+    limit = 100,
+    endEventIndex,
+    kinds,
+    additionalFilter
+  }: GetMarketRecordsOptions
 ): Promise<MarketRecord[]> {
   const marketAddress = market.address.toLowerCase();
   // If no end index provided, try to set it with the market's eventIndex, which is
@@ -41,7 +82,19 @@ export async function getMarketRecords(
       market: marketAddress,
       startEventIndex,
       endEventIndex,
-      limit
+      limit,
+      delinquencyRecordsFilter: additionalFilter,
+      borrowRecordsFilter: additionalFilter,
+      depositRecordsFilter: additionalFilter,
+      feeCollectionRecordsFilter: additionalFilter,
+      repaymentRecordsFilter: additionalFilter,
+      annualInterestBipsUpdatedRecordsFilter: additionalFilter,
+      maxTotalSupplyUpdatedRecordsFilter: additionalFilter,
+      withdrawalRequestRecordsFilter: additionalFilter,
+      forceBuyBackRecordsFilter: additionalFilter,
+      minimumDepositUpdateRecordsFilter: additionalFilter,
+      protocolFeeBipsUpdatedRecordsFilter: additionalFilter,
+      fixedTermUpdatedRecordsFilter: additionalFilter
     },
     fetchPolicy
   });

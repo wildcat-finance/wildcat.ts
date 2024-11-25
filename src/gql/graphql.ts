@@ -14217,6 +14217,18 @@ export type SubgraphGetMarketEventsQueryVariables = Exact<{
   startEventIndex?: InputMaybe<Scalars["Int"]["input"]>;
   endEventIndex?: InputMaybe<Scalars["Int"]["input"]>;
   limit?: InputMaybe<Scalars["Int"]["input"]>;
+  delinquencyRecordsFilter?: InputMaybe<SubgraphDelinquencyStatusChanged_Filter>;
+  borrowRecordsFilter?: InputMaybe<SubgraphBorrow_Filter>;
+  depositRecordsFilter?: InputMaybe<SubgraphDeposit_Filter>;
+  feeCollectionRecordsFilter?: InputMaybe<SubgraphFeesCollected_Filter>;
+  repaymentRecordsFilter?: InputMaybe<SubgraphDebtRepaid_Filter>;
+  annualInterestBipsUpdatedRecordsFilter?: InputMaybe<SubgraphAnnualInterestBipsUpdated_Filter>;
+  maxTotalSupplyUpdatedRecordsFilter?: InputMaybe<SubgraphMaxTotalSupplyUpdated_Filter>;
+  withdrawalRequestRecordsFilter?: InputMaybe<SubgraphWithdrawalRequest_Filter>;
+  forceBuyBackRecordsFilter?: InputMaybe<SubgraphForceBuyBack_Filter>;
+  minimumDepositUpdateRecordsFilter?: InputMaybe<SubgraphMinimumDepositUpdated_Filter>;
+  protocolFeeBipsUpdatedRecordsFilter?: InputMaybe<SubgraphProtocolFeeBipsUpdated_Filter>;
+  fixedTermUpdatedRecordsFilter?: InputMaybe<SubgraphFixedTermUpdated_Filter>;
 }>;
 
 export type SubgraphGetMarketEventsQuery = {
@@ -15643,6 +15655,18 @@ export const GetMarketEventsDocument = gql`
     $startEventIndex: Int = 0
     $endEventIndex: Int = 100000000
     $limit: Int = 10
+    $delinquencyRecordsFilter: DelinquencyStatusChanged_filter = { id_not: null }
+    $borrowRecordsFilter: Borrow_filter = { id_not: null }
+    $depositRecordsFilter: Deposit_filter = { id_not: null }
+    $feeCollectionRecordsFilter: FeesCollected_filter = { id_not: null }
+    $repaymentRecordsFilter: DebtRepaid_filter = { id_not: null }
+    $annualInterestBipsUpdatedRecordsFilter: AnnualInterestBipsUpdated_filter = { id_not: null }
+    $maxTotalSupplyUpdatedRecordsFilter: MaxTotalSupplyUpdated_filter = { id_not: null }
+    $withdrawalRequestRecordsFilter: WithdrawalRequest_filter = { id_not: null }
+    $forceBuyBackRecordsFilter: ForceBuyBack_filter = { id_not: null }
+    $minimumDepositUpdateRecordsFilter: MinimumDepositUpdated_filter = { id_not: null }
+    $protocolFeeBipsUpdatedRecordsFilter: ProtocolFeeBipsUpdated_filter = { id_not: null }
+    $fixedTermUpdatedRecordsFilter: FixedTermUpdated_filter = { id_not: null }
   ) {
     market(id: $market) {
       marketClosedEvent {
@@ -15652,7 +15676,12 @@ export const GetMarketEventsDocument = gql`
         ...DisabledForceBuyBacksData
       }
       delinquencyRecords(
-        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        where: {
+          and: [
+            $delinquencyRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
         orderBy: eventIndex
         orderDirection: desc
         first: $limit
@@ -15660,7 +15689,12 @@ export const GetMarketEventsDocument = gql`
         ...DelinquencyStatusChangedData
       }
       borrowRecords(
-        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        where: {
+          and: [
+            $borrowRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
         orderBy: eventIndex
         orderDirection: desc
         first: $limit
@@ -15668,7 +15702,12 @@ export const GetMarketEventsDocument = gql`
         ...BorrowData
       }
       depositRecords(
-        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        where: {
+          and: [
+            $depositRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
         orderBy: eventIndex
         orderDirection: desc
         first: $limit
@@ -15676,7 +15715,12 @@ export const GetMarketEventsDocument = gql`
         ...DepositData
       }
       feeCollectionRecords(
-        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        where: {
+          and: [
+            $feeCollectionRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
         orderBy: eventIndex
         orderDirection: desc
         first: $limit
@@ -15684,7 +15728,12 @@ export const GetMarketEventsDocument = gql`
         ...FeesCollectedData
       }
       repaymentRecords(
-        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        where: {
+          and: [
+            $repaymentRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
         orderBy: eventIndex
         orderDirection: desc
         first: $limit
@@ -15692,7 +15741,12 @@ export const GetMarketEventsDocument = gql`
         ...RepaymentData
       }
       annualInterestBipsUpdatedRecords(
-        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        where: {
+          and: [
+            $annualInterestBipsUpdatedRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
         orderBy: eventIndex
         orderDirection: desc
         first: $limit
@@ -15700,7 +15754,12 @@ export const GetMarketEventsDocument = gql`
         ...AnnualInterestBipsUpdatedData
       }
       maxTotalSupplyUpdatedRecords(
-        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        where: {
+          and: [
+            $maxTotalSupplyUpdatedRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
         orderBy: eventIndex
         orderDirection: desc
         first: $limit
@@ -15708,7 +15767,12 @@ export const GetMarketEventsDocument = gql`
         ...MaxTotalSupplyUpdatedData
       }
       withdrawalRequestRecords(
-        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        where: {
+          and: [
+            $withdrawalRequestRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
         orderBy: eventIndex
         orderDirection: desc
         first: $limit
@@ -15716,7 +15780,12 @@ export const GetMarketEventsDocument = gql`
         ...WithdrawalRequestProperties
       }
       forceBuyBackRecords(
-        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        where: {
+          and: [
+            $forceBuyBackRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
         orderBy: eventIndex
         orderDirection: desc
         first: $limit
@@ -15724,7 +15793,12 @@ export const GetMarketEventsDocument = gql`
         ...ForceBuyBackData
       }
       minimumDepositUpdateRecords(
-        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        where: {
+          and: [
+            $minimumDepositUpdateRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
         orderBy: eventIndex
         orderDirection: desc
         first: $limit
@@ -15732,7 +15806,12 @@ export const GetMarketEventsDocument = gql`
         ...MinimumDepositUpdatedData
       }
       protocolFeeBipsUpdatedRecords(
-        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        where: {
+          and: [
+            $protocolFeeBipsUpdatedRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
         orderBy: eventIndex
         orderDirection: desc
         first: $limit
@@ -15740,7 +15819,12 @@ export const GetMarketEventsDocument = gql`
         ...ProtocolFeeBipsUpdatedData
       }
       fixedTermUpdatedRecords(
-        where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        where: {
+          and: [
+            $fixedTermUpdatedRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
         orderBy: eventIndex
         orderDirection: desc
         first: $limit
