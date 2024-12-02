@@ -10,11 +10,11 @@ import {
   Overrides,
 } from "ethers";
 import type { Provider, TransactionRequest } from "@ethersproject/providers";
-import type { PromiseOrValue } from "../../common";
+import type { PromiseOrValue } from "../common";
 import type {
   CheckSafeSignature,
   CheckSafeSignatureInterface,
-} from "../../CheckSignatureValid.sol/CheckSafeSignature";
+} from "../CheckSafeSignature";
 
 const _abi = [
   {

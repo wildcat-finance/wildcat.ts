@@ -9,7 +9,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-} from "../common";
+} from "./common";
 
 export interface CheckSafeSignatureInterface extends utils.Interface {
   functions: {};
