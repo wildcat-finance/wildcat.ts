@@ -151,8 +151,7 @@ export const getMockArchControllerOwnerContract = (
 
 export const SubgraphUrls = {
   [SupportedChainId.Sepolia]:
-    "https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/api",
-  // "https://api.studio.thegraph.com/query/56451/wildcat-test-deployment/version/latest",
+    "https://api.studio.thegraph.com/query/56451/wildcat-test-deployment/version/latest",
   [SupportedChainId.Mainnet]:
     "https://api.studio.thegraph.com/query/56451/wildcat-finance-mainnet/version/latest"
 };
