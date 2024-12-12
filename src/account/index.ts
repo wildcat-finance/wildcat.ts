@@ -260,15 +260,23 @@ export class MarketAccount {
 
     // add interest to cover next hour
     const amount = this.getApprovalAmountForCloseMarket();
-    if (amount.gt(this.underlyingBalance)) {
+    const minimumAllowance = this.getApprovalAmountForCloseMarket(true);
+    // If the borrower does not have enough balance to repay the market's outstanding debt plus
+    // 10 minutes of interest, return InsufficientBalance
+    if (minimumAllowance.gt(this.underlyingBalance)) {
       return { status: CloseMarketStatus.InsufficientBalance, outstanding: amount };
     }
-    if (this.market.unpaidWithdrawalBatchExpiries.length > 0) {
+    if (
+      this.market.unpaidWithdrawalBatchExpiries.length > 0 &&
+      this.market.version === MarketVersion.V1
+    ) {
       return { status: CloseMarketStatus.UnpaidWithdrawalBatches };
     }
-    const minimumAllowance = this.getApprovalAmountForCloseMarket(true);
+    // If the borrower does not have enough allowance to repay the market's outstanding debt plus
+    // 10 minutes of interest, return InsufficientAllowance with a request to approve for an additional
+    // 2 hours of interest
     if (!this.isApprovedFor(minimumAllowance)) {
-      return { status: CloseMarketStatus.InsufficientAllowance, outstanding: minimumAllowance };
+      return { status: CloseMarketStatus.InsufficientAllowance, outstanding: amount };
     }
     return { status: CloseMarketStatus.Ready };
   }
