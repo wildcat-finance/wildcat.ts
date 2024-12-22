@@ -61,6 +61,16 @@ query getLenderAccountWithMarket(
   }
 }
 
+# Check whether a borrower is registered and has any markets
+query getBasicBorrowerData($borrower: Bytes!) {
+  registeredBorrowers(where: { borrower: $borrower }, first: 1) {
+    isRegistered
+  }
+  markets(where: { borrower: $borrower }, first: 1) {
+    id
+  }
+}
+
 # Get all markets, including lender account if lender is authorized
 query getAllMarketsForLenderView(
   $lender: Bytes

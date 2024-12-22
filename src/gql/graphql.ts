@@ -13886,6 +13886,16 @@ export type SubgraphGetLenderAccountWithMarketQuery = {
   } | null;
 };
 
+export type SubgraphGetBasicBorrowerDataQueryVariables = Exact<{
+  borrower: Scalars["Bytes"]["input"];
+}>;
+
+export type SubgraphGetBasicBorrowerDataQuery = {
+  __typename: "Query";
+  registeredBorrowers: Array<{ __typename: "RegisteredBorrower"; isRegistered: boolean }>;
+  markets: Array<{ __typename: "Market"; id: string }>;
+};
+
 export type SubgraphGetAllMarketsForLenderViewQueryVariables = Exact<{
   lender?: InputMaybe<Scalars["Bytes"]["input"]>;
   marketFilter?: InputMaybe<SubgraphMarket_Filter>;
@@ -15273,6 +15283,20 @@ export const GetLenderAccountWithMarketDocument = gql`
 export type GetLenderAccountWithMarketQueryResult = Apollo.QueryResult<
   SubgraphGetLenderAccountWithMarketQuery,
   SubgraphGetLenderAccountWithMarketQueryVariables
+>;
+export const GetBasicBorrowerDataDocument = gql`
+  query getBasicBorrowerData($borrower: Bytes!) {
+    registeredBorrowers(where: { borrower: $borrower }, first: 1) {
+      isRegistered
+    }
+    markets(where: { borrower: $borrower }, first: 1) {
+      id
+    }
+  }
+`;
+export type GetBasicBorrowerDataQueryResult = Apollo.QueryResult<
+  SubgraphGetBasicBorrowerDataQuery,
+  SubgraphGetBasicBorrowerDataQueryVariables
 >;
 export const GetAllMarketsForLenderViewDocument = gql`
   query getAllMarketsForLenderView(
