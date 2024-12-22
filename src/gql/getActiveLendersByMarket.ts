@@ -143,9 +143,19 @@ export async function getActiveLendersByMarket(
   });
   assert(marketData !== undefined && marketData !== null, `Market not found ${market.address}`);
   return marketData.lenders.map(
-    ({ controllerAuthorization, hooksAccess, knownLenderStatus, scaledBalance, role, ...rest }) => {
+    ({
+      controllerAuthorization,
+      hooksAccess,
+      knownLenderStatus,
+      scaledBalance,
+      role,
+      addedTimestamp,
+      ...rest
+    }) => {
       return new BasicLenderData({
         ...rest,
+        addedTimestamp:
+          controllerAuthorization?.addedTimestamp ?? hooksAccess?.addedTimestamp ?? addedTimestamp,
         market,
         scaledBalance: BigNumber.from(scaledBalance),
         credential: hooksAccess ? parseSubgraphLenderHooksAccess(hooksAccess) : undefined,

@@ -29,6 +29,7 @@ fragment LenderHooksAccessData on LenderHooksAccess {
   }
   canRefresh
   lastApprovalTimestamp
+  addedTimestamp
 }
 
 # ========================================================================== #
@@ -75,6 +76,7 @@ fragment BasicLenderData on LenderAccount {
   role
   controllerAuthorization {
     authorized
+    addedTimestamp
   }
   hooksAccess {
     ...LenderHooksAccessData

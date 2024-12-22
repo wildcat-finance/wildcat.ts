@@ -160,6 +160,7 @@ export type SubgraphAccountAccessGranted_Filter = {
 
 export enum SubgraphAccountAccessGranted_OrderBy {
   Account = "account",
+  AccountAddedTimestamp = "account__addedTimestamp",
   AccountCanRefresh = "account__canRefresh",
   AccountId = "account__id",
   AccountIsBlockedFromDeposits = "account__isBlockedFromDeposits",
@@ -293,6 +294,7 @@ export type SubgraphAccountAccessRevoked_Filter = {
 
 export enum SubgraphAccountAccessRevoked_OrderBy {
   Account = "account",
+  AccountAddedTimestamp = "account__addedTimestamp",
   AccountCanRefresh = "account__canRefresh",
   AccountId = "account__id",
   AccountIsBlockedFromDeposits = "account__isBlockedFromDeposits",
@@ -416,6 +418,7 @@ export type SubgraphAccountBlockedFromDeposits_Filter = {
 
 export enum SubgraphAccountBlockedFromDeposits_OrderBy {
   Account = "account",
+  AccountAddedTimestamp = "account__addedTimestamp",
   AccountCanRefresh = "account__canRefresh",
   AccountId = "account__id",
   AccountIsBlockedFromDeposits = "account__isBlockedFromDeposits",
@@ -741,6 +744,7 @@ export type SubgraphAccountUnblockedFromDeposits_Filter = {
 
 export enum SubgraphAccountUnblockedFromDeposits_OrderBy {
   Account = "account",
+  AccountAddedTimestamp = "account__addedTimestamp",
   AccountCanRefresh = "account__canRefresh",
   AccountId = "account__id",
   AccountIsBlockedFromDeposits = "account__isBlockedFromDeposits",
@@ -4799,6 +4803,7 @@ export type SubgraphKnownLenderStatus_Filter = {
 
 export enum SubgraphKnownLenderStatus_OrderBy {
   HooksAccess = "hooksAccess",
+  HooksAccessAddedTimestamp = "hooksAccess__addedTimestamp",
   HooksAccessCanRefresh = "hooksAccess__canRefresh",
   HooksAccessId = "hooksAccess__id",
   HooksAccessIsBlockedFromDeposits = "hooksAccess__isBlockedFromDeposits",
@@ -5071,11 +5076,13 @@ export enum SubgraphLenderAccount_OrderBy {
   AddedTimestamp = "addedTimestamp",
   Address = "address",
   ControllerAuthorization = "controllerAuthorization",
+  ControllerAuthorizationAddedTimestamp = "controllerAuthorization__addedTimestamp",
   ControllerAuthorizationAuthorized = "controllerAuthorization__authorized",
   ControllerAuthorizationId = "controllerAuthorization__id",
   ControllerAuthorizationLender = "controllerAuthorization__lender",
   Deposits = "deposits",
   HooksAccess = "hooksAccess",
+  HooksAccessAddedTimestamp = "hooksAccess__addedTimestamp",
   HooksAccessCanRefresh = "hooksAccess__canRefresh",
   HooksAccessId = "hooksAccess__id",
   HooksAccessIsBlockedFromDeposits = "hooksAccess__isBlockedFromDeposits",
@@ -5149,6 +5156,7 @@ export enum SubgraphLenderAccount_OrderBy {
 
 export type SubgraphLenderAuthorization = {
   __typename: "LenderAuthorization";
+  addedTimestamp: Scalars["Int"]["output"];
   authorized: Scalars["Boolean"]["output"];
   changes: SubgraphLenderAuthorizationChange[];
   controller: SubgraphController;
@@ -5278,6 +5286,7 @@ export type SubgraphLenderAuthorizationChange_Filter = {
 
 export enum SubgraphLenderAuthorizationChange_OrderBy {
   Authorization = "authorization",
+  AuthorizationAddedTimestamp = "authorization__addedTimestamp",
   AuthorizationAuthorized = "authorization__authorized",
   AuthorizationId = "authorization__id",
   AuthorizationLender = "authorization__lender",
@@ -5297,6 +5306,14 @@ export enum SubgraphLenderAuthorizationChange_OrderBy {
 export type SubgraphLenderAuthorization_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  addedTimestamp?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  addedTimestamp_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphLenderAuthorization_Filter>>>;
   authorized?: InputMaybe<Scalars["Boolean"]["input"]>;
   authorized_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
@@ -5347,6 +5364,7 @@ export type SubgraphLenderAuthorization_Filter = {
 };
 
 export enum SubgraphLenderAuthorization_OrderBy {
+  AddedTimestamp = "addedTimestamp",
   Authorized = "authorized",
   Changes = "changes",
   Controller = "controller",
@@ -5365,6 +5383,7 @@ export type SubgraphLenderHooksAccess = {
   accountAccessRevokedRecords: SubgraphAccountAccessRevoked[];
   accountBlockedFromDepositsRecords: SubgraphAccountBlockedFromDeposits[];
   accountUnblockedFromDepositsRecords: SubgraphAccountUnblockedFromDeposits[];
+  addedTimestamp: Scalars["Int"]["output"];
   canRefresh: Scalars["Boolean"]["output"];
   hooks: SubgraphHooksInstance;
   id: Scalars["ID"]["output"];
@@ -5411,6 +5430,14 @@ export type SubgraphLenderHooksAccess_Filter = {
   accountAccessRevokedRecords_?: InputMaybe<SubgraphAccountAccessRevoked_Filter>;
   accountBlockedFromDepositsRecords_?: InputMaybe<SubgraphAccountBlockedFromDeposits_Filter>;
   accountUnblockedFromDepositsRecords_?: InputMaybe<SubgraphAccountUnblockedFromDeposits_Filter>;
+  addedTimestamp?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  addedTimestamp_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
+  addedTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphLenderHooksAccess_Filter>>>;
   canRefresh?: InputMaybe<Scalars["Boolean"]["input"]>;
   canRefresh_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
@@ -5498,6 +5525,7 @@ export enum SubgraphLenderHooksAccess_OrderBy {
   AccountAccessRevokedRecords = "accountAccessRevokedRecords",
   AccountBlockedFromDepositsRecords = "accountBlockedFromDepositsRecords",
   AccountUnblockedFromDepositsRecords = "accountUnblockedFromDepositsRecords",
+  AddedTimestamp = "addedTimestamp",
   CanRefresh = "canRefresh",
   Hooks = "hooks",
   HooksBorrower = "hooks__borrower",
@@ -13301,6 +13329,7 @@ export type SubgraphLenderHooksAccessDataFragment = {
   isBlockedFromDeposits: boolean;
   canRefresh: boolean;
   lastApprovalTimestamp: number;
+  addedTimestamp: number;
   lastProvider?: SubgraphRoleProviderDataFragment | null;
 };
 
@@ -13328,7 +13357,11 @@ export type SubgraphBasicLenderDataFragment = {
   scaledBalance: string;
   addedTimestamp: number;
   role: SubgraphLenderStatus;
-  controllerAuthorization?: { __typename: "LenderAuthorization"; authorized: boolean } | null;
+  controllerAuthorization?: {
+    __typename: "LenderAuthorization";
+    authorized: boolean;
+    addedTimestamp: number;
+  } | null;
   hooksAccess?: SubgraphLenderHooksAccessDataFragment | null;
   knownLenderStatus?: { __typename: "KnownLenderStatus"; id: string } | null;
 };
@@ -14428,6 +14461,7 @@ export type SubgraphV1LenderWithActiveMarketsFragment = {
   __typename: "LenderAuthorization";
   lender: string;
   authorized: boolean;
+  addedTimestamp: number;
   marketAccounts: Array<{
     __typename: "LenderAccount";
     role: SubgraphLenderStatus;
@@ -14437,6 +14471,7 @@ export type SubgraphV1LenderWithActiveMarketsFragment = {
 
 export type SubgraphV2LenderWithActiveMarketsFragment = {
   __typename: "LenderHooksAccess";
+  addedTimestamp: number;
   id: string;
   lender: string;
   isBlockedFromDeposits: boolean;
@@ -14645,6 +14680,7 @@ export const LenderHooksAccessDataFragmentDoc = gql`
     }
     canRefresh
     lastApprovalTimestamp
+    addedTimestamp
   }
 `;
 export const DepositDataFragmentDoc = gql`
@@ -14692,6 +14728,7 @@ export const BasicLenderDataFragmentDoc = gql`
     role
     controllerAuthorization {
       authorized
+      addedTimestamp
     }
     hooksAccess {
       ...LenderHooksAccessData
@@ -15158,6 +15195,7 @@ export const V1LenderWithActiveMarketsFragmentDoc = gql`
   fragment V1LenderWithActiveMarkets on LenderAuthorization {
     lender
     authorized
+    addedTimestamp
     marketAccounts(first: $numMarketAccountsPerLender, skip: $skipMarketAccountsPerLender) {
       role
       market {
@@ -15177,6 +15215,7 @@ export const ControllerAuthorizedLendersWithActiveMarketsFragmentDoc = gql`
 export const V2LenderWithActiveMarketsFragmentDoc = gql`
   fragment V2LenderWithActiveMarkets on LenderHooksAccess {
     ...LenderHooksAccessData
+    addedTimestamp
     marketAccounts(first: $numMarketAccountsPerLender, skip: $skipMarketAccountsPerLender) {
       knownLenderStatus {
         id

@@ -756,7 +756,7 @@ query getV1AuthorizedLenders(
 fragment V1LenderWithActiveMarkets on LenderAuthorization {
   lender
   authorized
-
+  addedTimestamp
   marketAccounts(first: $numMarketAccountsPerLender, skip: $skipMarketAccountsPerLender) {
     role
     market {
@@ -769,6 +769,7 @@ fragment V1LenderWithActiveMarkets on LenderAuthorization {
 fragment V2LenderWithActiveMarkets on LenderHooksAccess {
   ...LenderHooksAccessData
 
+  addedTimestamp
   marketAccounts(first: $numMarketAccountsPerLender, skip: $skipMarketAccountsPerLender) {
     knownLenderStatus {
       id
