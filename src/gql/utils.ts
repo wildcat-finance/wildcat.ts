@@ -8,6 +8,7 @@ import {
 
 export type PolicyLender = {
   address: string;
+  addedTimestamp: number;
   /** For V2 markets - credentials on market hooks instance */
   credential?: HooksCredential;
 
@@ -30,6 +31,7 @@ export function parsePolicyLender(
     const { authorized, lender, marketAccounts } = data;
     return {
       address: lender,
+      addedTimestamp: data.addedTimestamp,
       isAuthorizedOnController: authorized,
       activeMarkets: marketAccounts.map(({ market, role }) => ({
         address: market.id,
@@ -42,6 +44,7 @@ export function parsePolicyLender(
   const { marketAccounts, ...hooksAccess } = data;
   return {
     address: hooksAccess.lender,
+    addedTimestamp: hooksAccess.addedTimestamp,
     credential: parseSubgraphLenderHooksAccess(hooksAccess),
     activeMarkets: marketAccounts.map(({ market, knownLenderStatus }) => ({
       address: market.id,
