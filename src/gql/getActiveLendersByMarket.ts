@@ -10,6 +10,9 @@ import { HooksCredential, HooksKind, MarketVersion } from "../types";
 import { BigNumber } from "ethers";
 import { TokenAmount } from "../token";
 import { assert, parseSubgraphLenderHooksAccess, parseSubgraphLenderStatus } from "../utils";
+import { LenderAccountDataStructOutput } from "../typechain";
+
+const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
 
 export type GetActiveLendersByMarketOptions = SubgraphGetActiveLendersByMarketQueryVariables & {
   fetchPolicy?: FetchPolicy;
@@ -121,6 +124,25 @@ export class BasicLenderData {
       }
       return true;
     }
+  }
+
+  updateWith(data: LenderAccountDataStructOutput): void {
+    this.scaledBalance = data.scaledBalance;
+    this.isKnownLender = data.isKnownLender;
+    this.credential = {
+      canRefresh: data.canRefresh,
+      isBlockedFromDeposits: data.isBlockedFromDeposits,
+      lastApprovalTimestamp: data.lastApprovalTimestamp,
+      lastProvider: {
+        isApproved: true,
+        providerAddress: data.lastProvider.providerAddress,
+        isPullProvider: data.lastProvider.pullProviderIndex !== NullProviderIndex,
+        pullProviderIndex: data.lastProvider.pullProviderIndex,
+        isPushProvider: data.lastProvider.pushProviderIndex !== NullProviderIndex,
+        pushProviderIndex: data.lastProvider.pushProviderIndex,
+        timeToLive: data.lastProvider.timeToLive
+      }
+    };
   }
 }
 
