@@ -408,6 +408,7 @@ export interface MarketLensV2Interface extends utils.Interface {
     "getHooksTemplatesForBorrower(address,address[])": FunctionFragment;
     "getLenderAccountData(address,address)": FunctionFragment;
     "getLenderAccountData(address,address[])": FunctionFragment;
+    "getLenderAccountsData(address,address[])": FunctionFragment;
     "getMarketData(address)": FunctionFragment;
     "getMarketDataWithLenderStatus(address,address)": FunctionFragment;
     "getMarketsData(address[])": FunctionFragment;
@@ -437,6 +438,7 @@ export interface MarketLensV2Interface extends utils.Interface {
       | "getHooksTemplatesForBorrower"
       | "getLenderAccountData(address,address)"
       | "getLenderAccountData(address,address[])"
+      | "getLenderAccountsData"
       | "getMarketData"
       | "getMarketDataWithLenderStatus"
       | "getMarketsData"
@@ -489,6 +491,10 @@ export interface MarketLensV2Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getLenderAccountData(address,address[])",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLenderAccountsData",
     values: [PromiseOrValue<string>, PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(
@@ -606,6 +612,10 @@ export interface MarketLensV2Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getLenderAccountData(address,address[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLenderAccountsData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -774,6 +784,16 @@ export interface MarketLensV2 extends BaseContract {
     ): Promise<
       [LenderAccountDataStructOutput[]] & {
         arr: LenderAccountDataStructOutput[];
+      }
+    >;
+
+    getLenderAccountsData(
+      marketAddress: PromiseOrValue<string>,
+      lenders: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<
+      [LenderAccountDataStructOutput[]] & {
+        data: LenderAccountDataStructOutput[];
       }
     >;
 
@@ -961,6 +981,12 @@ export interface MarketLensV2 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<LenderAccountDataStructOutput[]>;
 
+  getLenderAccountsData(
+    marketAddress: PromiseOrValue<string>,
+    lenders: PromiseOrValue<string>[],
+    overrides?: CallOverrides
+  ): Promise<LenderAccountDataStructOutput[]>;
+
   getMarketData(
     market: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -1102,6 +1128,12 @@ export interface MarketLensV2 extends BaseContract {
     "getLenderAccountData(address,address[])"(
       lender: PromiseOrValue<string>,
       markets: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<LenderAccountDataStructOutput[]>;
+
+    getLenderAccountsData(
+      marketAddress: PromiseOrValue<string>,
+      lenders: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<LenderAccountDataStructOutput[]>;
 
@@ -1252,6 +1284,12 @@ export interface MarketLensV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getLenderAccountsData(
+      marketAddress: PromiseOrValue<string>,
+      lenders: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getMarketData(
       market: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1386,6 +1424,12 @@ export interface MarketLensV2 extends BaseContract {
     "getLenderAccountData(address,address[])"(
       lender: PromiseOrValue<string>,
       markets: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getLenderAccountsData(
+      marketAddress: PromiseOrValue<string>,
+      lenders: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

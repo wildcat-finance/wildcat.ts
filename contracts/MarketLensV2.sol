@@ -261,6 +261,11 @@ interface MarketLensV2 {
     address lender
   ) external view returns (WithdrawalBatchDataWithLenderStatus[] memory statuses);
 
+  function getLenderAccountsData(
+    address marketAddress,
+    address[] calldata lenders
+  ) external view returns (LenderAccountData[] memory data);
+
   function hooksFactory() external view returns (address);
 
   function queryLenderAccount(

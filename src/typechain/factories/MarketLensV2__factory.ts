@@ -2200,6 +2200,104 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "marketAddress",
+        type: "address",
+      },
+      {
+        internalType: "address[]",
+        name: "lenders",
+        type: "address[]",
+      },
+    ],
+    name: "getLenderAccountsData",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "lender",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "scaledBalance",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "normalizedBalance",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "underlyingBalance",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "underlyingApproval",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isBlockedFromDeposits",
+            type: "bool",
+          },
+          {
+            components: [
+              {
+                internalType: "uint32",
+                name: "timeToLive",
+                type: "uint32",
+              },
+              {
+                internalType: "address",
+                name: "providerAddress",
+                type: "address",
+              },
+              {
+                internalType: "uint24",
+                name: "pullProviderIndex",
+                type: "uint24",
+              },
+              {
+                internalType: "uint24",
+                name: "pushProviderIndex",
+                type: "uint24",
+              },
+            ],
+            internalType: "struct RoleProviderData",
+            name: "lastProvider",
+            type: "tuple",
+          },
+          {
+            internalType: "bool",
+            name: "canRefresh",
+            type: "bool",
+          },
+          {
+            internalType: "uint32",
+            name: "lastApprovalTimestamp",
+            type: "uint32",
+          },
+          {
+            internalType: "bool",
+            name: "isKnownLender",
+            type: "bool",
+          },
+        ],
+        internalType: "struct LenderAccountData[]",
+        name: "data",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "market",
         type: "address",
       },
