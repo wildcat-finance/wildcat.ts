@@ -511,6 +511,13 @@ export class MarketAccount {
     if (!this.isApprovedFor(amount)) {
       return { status: DepositStatus.InsufficientAllowance };
     }
+    if (
+      this.market.version === MarketVersion.V2 &&
+      this.market.hooksConfig?.minimumDeposit?.gt(0) &&
+      amount.lt(this.market.hooksConfig.minimumDeposit)
+    ) {
+      return { status: DepositStatus.BelowMinimumDeposit };
+    }
     return { status: DepositStatus.Ready };
   }
 
