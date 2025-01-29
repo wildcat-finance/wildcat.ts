@@ -11,6 +11,6 @@ export async function getBasicBorrowerData(
   });
   return {
     isRegisteredBorrower: data.registeredBorrowers[0]?.isRegistered ?? false,
-    hasMarkets: data.markets[0]?.id !== null
+    hasMarkets: !!data.markets[0]
   };
 }
