@@ -6,7 +6,7 @@ import {
   WildcatMarket,
   WildcatMarket__factory
 } from "./typechain";
-import { SupportedChainId, getLensContract } from "./constants";
+import { SupportedChainId, getLensContract, getLensV2Contract } from "./constants";
 import { TokenAmount, Token, toBn } from "./token";
 import {
   SignerOrProvider,
@@ -919,6 +919,18 @@ export class Market extends ContractWrapper<WildcatMarket> {
       provider,
       provider instanceof Signer ? await provider.getAddress() : undefined
     );
+  }
+  /**
+   * @returns `Market` instance for `market`
+   */
+  static async getMarketV2(
+    chainId: SupportedChainId,
+    market: string,
+    provider: SignerOrProvider
+  ): Promise<Market> {
+    const lens = getLensV2Contract(chainId, provider);
+    const data = await lens.getMarketData(market);
+    return Market.fromMarketDataV2(chainId, provider, data);
   }
 
   /**
