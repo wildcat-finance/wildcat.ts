@@ -201,7 +201,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   get isInFixedTerm(): boolean {
-    if (this.version !== MarketVersion.V1) return false;
+    if (this.version !== MarketVersion.V2) return false;
     const config = this.hooksConfig!;
     if (config.kind !== HooksKind.FixedTerm) return false;
     const fixedTermEndTime = config.fixedTermEndTime;
