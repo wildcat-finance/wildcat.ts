@@ -1,6 +1,6 @@
 {
   "name": "@wildcatfi/wildcat-sdk",
-  "version": "3.0.30",
+  "version": "3.0.33",
   "license": "MIT",
   "files": [
     "dist"
@@ -61,6 +61,7 @@
     "lint:fix": "eslint src/ test/ --ext=ts --fix",
     "prepublishOnly": "yarn build",
     "test": "react-scripts test",
-    "mocha": "NODE_OPTIONS='--max-old-space-size=2048' mocha"
+    "mocha": "NODE_OPTIONS='--max-old-space-size=2048' mocha",
+    "x": "ts-node test/at1.ts"
   }
 }
