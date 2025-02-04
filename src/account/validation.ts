@@ -149,3 +149,22 @@ export enum ForceBuyBackStatus {
 }
 
 export type ForceBuyBackPreview = { status: ForceBuyBackStatus };
+
+export enum SetMinimumDepositStatus {
+  Ready = "Ready",
+  NotBorrower = "NotBorrower",
+  NotV2Market = "NotV2Market"
+}
+
+export type SetMinimumDepositPreview = { status: SetMinimumDepositStatus };
+
+export enum SetFixedTermEndTimeStatus {
+  Ready = "Ready",
+  NotBorrower = "NotBorrower",
+  NotV2Market = "NotV2Market",
+  NotFixedTermMarket = "NotFixedTermMarket",
+  FixedTermEndTimeNotChangeable = "FixedTermEndTimeNotChangeable",
+  FixedTermEndTimeIncrease = "FixedTermEndTimeIncrease"
+}
+
+export type SetFixedTermEndTimePreview = { status: SetFixedTermEndTimeStatus };

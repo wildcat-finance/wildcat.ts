@@ -6,7 +6,9 @@ import {
   MarketDataWithLenderStatusStructOutput,
   WildcatMarketV2__factory,
   LenderAccountDataStructOutput,
-  MarketDataWithLenderStatusV2StructOutput
+  MarketDataWithLenderStatusV2StructOutput,
+  IOpenTermHooks__factory,
+  IFixedTermHooks__factory
 } from "../typechain";
 import { WithdrawalQueuedEvent } from "../typechain/WildcatMarket";
 import {
@@ -51,7 +53,11 @@ import {
   QueueWithdrawalPreview,
   RepayPreview,
   ForceBuyBackPreview,
-  ForceBuyBackStatus
+  ForceBuyBackStatus,
+  SetMinimumDepositPreview,
+  SetMinimumDepositStatus,
+  SetFixedTermEndTimeStatus,
+  SetFixedTermEndTimePreview
 } from "./validation";
 export * from "./validation";
 
@@ -336,6 +342,75 @@ export class MarketAccount {
       return { status: SetMaxTotalSupplyStatus.BelowCurrentSupply };
     }
     return { status: SetMaxTotalSupplyStatus.Ready };
+  }
+
+  previewSetMinimumDeposit(_: TokenAmount): SetMinimumDepositPreview {
+    if (this.market.version !== MarketVersion.V2)
+      return { status: SetMinimumDepositStatus.NotV2Market };
+    if (!this.isBorrower) return { status: SetMinimumDepositStatus.NotBorrower };
+    return { status: SetMinimumDepositStatus.Ready };
+  }
+
+  previewSetFixedTermEndTime(endTime: number): SetFixedTermEndTimePreview {
+    if (this.market.version !== MarketVersion.V2)
+      return { status: SetFixedTermEndTimeStatus.NotV2Market };
+    if (!this.isBorrower) return { status: SetFixedTermEndTimeStatus.NotBorrower };
+    const config = this.market.hooksConfig;
+    if (config && config.kind === HooksKind.FixedTerm) {
+      if (!config.allowTermReduction && endTime <= config.fixedTermEndTime) {
+        return { status: SetFixedTermEndTimeStatus.FixedTermEndTimeNotChangeable };
+      }
+      if (endTime > config.fixedTermEndTime) {
+        return { status: SetFixedTermEndTimeStatus.FixedTermEndTimeIncrease };
+      }
+    } else {
+      return { status: SetFixedTermEndTimeStatus.NotFixedTermMarket };
+    }
+    return { status: SetFixedTermEndTimeStatus.Ready };
+  }
+
+  async populateSetMinimumDeposit(amount: TokenAmount): Promise<PartialTransaction> {
+    const { status } = this.previewSetMinimumDeposit(amount);
+    assert(status === SetMinimumDepositStatus.Ready, `Cannot set minimum deposit: ${status}`);
+    const config = this.market.hooksConfig;
+    assert(config !== undefined, `V2 market missing hooksConfig`);
+    const iface = IOpenTermHooks__factory.createInterface();
+    return {
+      to: this.market.address,
+      data: iface.encodeFunctionData("setMinimumDeposit", [this.market.address, amount.raw]),
+      value: "0"
+    };
+  }
+
+  async populateSetFixedTermEndTime(endTime: number): Promise<PartialTransaction> {
+    const { status } = this.previewSetFixedTermEndTime(endTime);
+    assert(status === SetFixedTermEndTimeStatus.Ready, `Cannot set fixed term end time: ${status}`);
+    const config = this.market.hooksConfig;
+    assert(config !== undefined, `V2 market missing hooksConfig`);
+    const iface = IFixedTermHooks__factory.createInterface();
+    return {
+      to: this.market.address,
+      data: iface.encodeFunctionData("setFixedTermEndTime", [this.market.address, endTime]),
+      value: "0"
+    };
+  }
+
+  async setMinimumDeposit(amount: TokenAmount): Promise<ContractTransaction> {
+    const { status } = this.previewSetMinimumDeposit(amount);
+    assert(status === SetMinimumDepositStatus.Ready, `Cannot set minimum deposit: ${status}`);
+    const config = this.market.hooksConfig;
+    assert(config !== undefined, `V2 market missing hooksConfig`);
+    const contract = IOpenTermHooks__factory.connect(config.hooksAddress, this.market.signer);
+    return contract.setMinimumDeposit(this.market.address, amount.raw);
+  }
+
+  async setFixedTermEndTime(endTime: number): Promise<ContractTransaction> {
+    const { status } = this.previewSetFixedTermEndTime(endTime);
+    assert(status === SetFixedTermEndTimeStatus.Ready, `Cannot set fixed term end time: ${status}`);
+    const config = this.market.hooksConfig;
+    assert(config !== undefined, `V2 market missing hooksConfig`);
+    const contract = IFixedTermHooks__factory.connect(config.hooksAddress, this.market.signer);
+    return contract.setFixedTermEndTime(this.market.address, endTime);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -662,6 +737,9 @@ export class MarketAccount {
     if (!this.isApprovedFor(amount)) {
       return { status: RepayStatus.InsufficientAllowance };
     }
+    // if (amount.gt(this.market.outstandingDebt)) {
+    //   return { status: RepayStatus.ExceedsOutstandingDebt };
+    // }
     return { status: RepayStatus.Ready };
   }
 
