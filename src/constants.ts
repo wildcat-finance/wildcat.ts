@@ -150,8 +150,7 @@ export const getMockArchControllerOwnerContract = (
 };
 
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]:
-    "https://api.studio.thegraph.com/query/56451/wildcat-test-deployment/version/latest",
+  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cm6qmixpg1im301rphcbbfx97/subgraphs/sepolia/2.0.15/gn`,
   [SupportedChainId.Mainnet]:
     "https://api.studio.thegraph.com/query/56451/wildcat-finance-mainnet/version/latest"
 };
