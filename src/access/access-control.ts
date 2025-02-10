@@ -417,12 +417,14 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
       useOnTransfer: transferAccess === TransferAccess.RequiresCredential
     });
     const hooksData = defaultAbiCoder.encode(
-      ["uint128", "bool", "bool"],
-      [
-        minimumDeposit?.raw ?? 0,
-        transferAccess === TransferAccess.Disabled,
-        allowForceBuyBacks ?? false
-      ]
+      this.chainId === SupportedChainId.Sepolia ? ["uint128", "bool", "bool"] : ["uint128", "bool"],
+      this.chainId === SupportedChainId.Sepolia
+        ? [
+            minimumDeposit?.raw ?? 0,
+            transferAccess === TransferAccess.Disabled,
+            allowForceBuyBacks ?? false
+          ]
+        : [minimumDeposit?.raw ?? 0, transferAccess === TransferAccess.Disabled]
     );
     const parameters = {
       ...otherParameters,

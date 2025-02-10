@@ -425,15 +425,26 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
       useOnTransfer: transferAccess === TransferAccess.RequiresCredential
     });
     const hooksData = defaultAbiCoder.encode(
-      ["uint32", "uint128", "bool", "bool", "bool", "bool"],
-      [
-        fixedTermEndTime,
-        minimumDeposit?.raw ?? 0,
-        transferAccess === TransferAccess.Disabled,
-        allowForceBuyBacks ?? false,
-        allowClosureBeforeTerm ?? false,
-        allowTermReduction ?? false
-      ]
+      this.chainId === SupportedChainId.Sepolia
+        ? ["uint32", "uint128", "bool", "bool", "bool", "bool"]
+        : ["uint32", "uint128", "bool", "bool", "bool"],
+
+      this.chainId === SupportedChainId.Sepolia
+        ? [
+            fixedTermEndTime,
+            minimumDeposit?.raw ?? 0,
+            transferAccess === TransferAccess.Disabled,
+            allowForceBuyBacks ?? false,
+            allowClosureBeforeTerm ?? false,
+            allowTermReduction ?? false
+          ]
+        : [
+            fixedTermEndTime,
+            minimumDeposit?.raw ?? 0,
+            transferAccess === TransferAccess.Disabled,
+            allowClosureBeforeTerm ?? false,
+            allowTermReduction ?? false
+          ]
     );
     const parameters = {
       ...otherParameters,

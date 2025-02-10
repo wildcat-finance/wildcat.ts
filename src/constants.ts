@@ -51,9 +51,9 @@ export const hasDeploymentAddress = (
 
 export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
   [SupportedChainId.Mainnet]: {
-    HooksFactory: "0x0000000000000000000000000000000000000000",
+    HooksFactory: "0xdd7dd3b5076cf89440d05585ff56d246386207be",
     MarketLens: "0xf1D516954f96c1363f8b0aE48D79c8ddE6237847",
-    MarketLensV2: "0x0000000000000000000000000000000000000000",
+    MarketLensV2: "0xFfA74a0e4090200BE6895A5D349cA88AC32D1b5C",
     WildcatArchController: "0xfEB516d9D946dD487A9346F6fee11f40C6945eE4",
     WildcatMarketControllerFactory: "0xFd31007613C9F671df6A8D4234901324986Bfd13",
     WildcatSanctionsSentinel: "0x437e0551892C2C9b06d3fFd248fe60572e08CD1A"
@@ -152,7 +152,7 @@ export const getMockArchControllerOwnerContract = (
 export const SubgraphUrls = {
   [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cm6qmixpg1im301rphcbbfx97/subgraphs/sepolia/2.0.15/gn`,
   [SupportedChainId.Mainnet]:
-    "https://api.studio.thegraph.com/query/56451/wildcat-finance-mainnet/version/latest"
+    "https://api.goldsky.com/api/public/project_cm6qmixpg1im301rphcbbfx97/subgraphs/mainnet/2.0.16/gn"
 };
 
 export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
