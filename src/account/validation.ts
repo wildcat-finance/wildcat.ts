@@ -142,6 +142,7 @@ export type FunctionAvailability =
 export enum ForceBuyBackStatus {
   Ready = "Ready",
   V1NotSupported = "V1NotSupported",
+  MainnetNotSupported = "MainnetNotSupported",
   MarketDelinquent = "MarketDelinquent",
   InsufficientBalance = "InsufficientBalance",
   MarketInClosedTerm = "MarketInClosedTerm",

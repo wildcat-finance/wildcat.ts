@@ -521,6 +521,9 @@ export class MarketAccount {
     if (this.market.version !== MarketVersion.V2) {
       return { status: ForceBuyBackStatus.V1NotSupported };
     }
+    if (this.market.chainId === SupportedChainId.Mainnet) {
+      return { status: ForceBuyBackStatus.MainnetNotSupported };
+    }
     if (amount.gt(this.underlyingBalance)) {
       return { status: ForceBuyBackStatus.InsufficientBalance };
     }
