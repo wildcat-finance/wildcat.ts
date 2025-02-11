@@ -150,9 +150,9 @@ export const getMockArchControllerOwnerContract = (
 };
 
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cm6qmixpg1im301rphcbbfx97/subgraphs/sepolia/2.0.15/gn`,
+  [SupportedChainId.Sepolia]: `https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/api`,
   [SupportedChainId.Mainnet]:
-    "https://api.goldsky.com/api/public/project_cm6qmixpg1im301rphcbbfx97/subgraphs/mainnet/2.0.16/gn"
+    "https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/mainnet/api"
 };
 
 export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
@@ -160,7 +160,9 @@ export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<Norma
     cache: new InMemoryCache(),
     uri: SubgraphUrls[chainId]
   });
+
 const day = 86_400;
+
 export const DefaultV2ParameterConstraints: MarketParameterConstraints = {
   minimumDelinquencyGracePeriod: 0,
   maximumDelinquencyGracePeriod: 90 * day,
