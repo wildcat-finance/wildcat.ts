@@ -28,6 +28,8 @@ type NetworkDeployments = {
   WildcatArchController: string;
   WildcatMarketControllerFactory: string;
   WildcatSanctionsSentinel: string;
+  Chainalysis: string;
+  OpenAccessRoleProvider: string;
 };
 
 export enum SupportedChainId {
@@ -56,7 +58,9 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     MarketLensV2: "0xFfA74a0e4090200BE6895A5D349cA88AC32D1b5C",
     WildcatArchController: "0xfEB516d9D946dD487A9346F6fee11f40C6945eE4",
     WildcatMarketControllerFactory: "0xFd31007613C9F671df6A8D4234901324986Bfd13",
-    WildcatSanctionsSentinel: "0x437e0551892C2C9b06d3fFd248fe60572e08CD1A"
+    WildcatSanctionsSentinel: "0x437e0551892C2C9b06d3fFd248fe60572e08CD1A",
+    Chainalysis: "0x40C57923924B5c5c5455c48D93317139ADDaC8fb",
+    OpenAccessRoleProvider: "0x5620553d8881335F74AD19259daaCD1d9B373101"
   },
   [SupportedChainId.Sepolia]: {
     HooksFactory: "0x10A64ABa0159720F8a23E1A552800CA4eb21576C",
@@ -67,7 +71,9 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
     WildcatArchController: "0xC003f20F2642c76B81e5e1620c6D8cdEE826408f",
     WildcatMarketControllerFactory: "0xEb97C8E52d7Fdf978a64a538F28271Fd8499b864",
-    WildcatSanctionsSentinel: "0xFBCE262eC835be5e6A458cE1722EeCe0E453316B"
+    WildcatSanctionsSentinel: "0xFBCE262eC835be5e6A458cE1722EeCe0E453316B",
+    Chainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
+    OpenAccessRoleProvider: "0x9aCdE253F7A51456c48604185C0ceA4Fc9e58E3a"
   }
 };
 
