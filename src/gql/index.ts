@@ -2,6 +2,7 @@ export * from "./getActiveLendersByMarket";
 export * from "./getAllHooksDataForBorrower";
 export * from "./getAllHooksTemplates";
 export * from "./getAllPendingWithdrawalBatchesForMarket";
+export * from "./getAllTokensWithMarkets";
 export * from "./getAuthorizedLendersByMarket";
 export * from "./getBasicBorrowerData";
 export * from "./getLenderAccountForMarket";

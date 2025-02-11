@@ -5907,6 +5907,7 @@ export enum SubgraphLenderWithdrawalStatus_OrderBy {
 
 export type SubgraphMarket = {
   __typename: "Market";
+  accountMadeFirstDepositRecords: SubgraphAccountMadeFirstDeposit[];
   annualInterestBips: Scalars["Int"]["output"];
   annualInterestBipsUpdatedIndex: Scalars["Int"]["output"];
   annualInterestBipsUpdatedRecords: SubgraphAnnualInterestBipsUpdated[];
@@ -5984,6 +5985,14 @@ export type SubgraphMarket = {
   withdrawalBatches: SubgraphWithdrawalBatch[];
   withdrawalRequestRecords: SubgraphWithdrawalRequest[];
   withdrawalRequestsIndex: Scalars["Int"]["output"];
+};
+
+export type SubgraphMarketAccountMadeFirstDepositRecordsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphAccountMadeFirstDeposit_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphAccountMadeFirstDeposit_Filter>;
 };
 
 export type SubgraphMarketAnnualInterestBipsUpdatedRecordsArgs = {
@@ -6881,6 +6890,7 @@ export enum SubgraphMarketVersion {
 export type SubgraphMarket_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  accountMadeFirstDepositRecords_?: InputMaybe<SubgraphAccountMadeFirstDeposit_Filter>;
   and?: InputMaybe<Array<InputMaybe<SubgraphMarket_Filter>>>;
   annualInterestBips?: InputMaybe<Scalars["Int"]["input"]>;
   annualInterestBipsUpdatedIndex?: InputMaybe<Scalars["Int"]["input"]>;
@@ -7446,6 +7456,7 @@ export type SubgraphMarket_Filter = {
 };
 
 export enum SubgraphMarket_OrderBy {
+  AccountMadeFirstDepositRecords = "accountMadeFirstDepositRecords",
   AnnualInterestBips = "annualInterestBips",
   AnnualInterestBipsUpdatedIndex = "annualInterestBipsUpdatedIndex",
   AnnualInterestBipsUpdatedRecords = "annualInterestBipsUpdatedRecords",
@@ -14645,6 +14656,19 @@ export type SubgraphGetMarketRecordsQuery = {
   market?: SubgraphMarketRecordsFragment | null;
 };
 
+export type SubgraphGetAllTokensWithMarketsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type SubgraphGetAllTokensWithMarketsQuery = {
+  __typename: "Query";
+  tokens: Array<{
+    __typename: "Token";
+    address: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+  }>;
+};
+
 export const LenderPropertiesFragmentDoc = gql`
   fragment LenderProperties on LenderAccount {
     id
@@ -16371,4 +16395,18 @@ export const GetMarketRecordsDocument = gql`
 export type GetMarketRecordsQueryResult = Apollo.QueryResult<
   SubgraphGetMarketRecordsQuery,
   SubgraphGetMarketRecordsQueryVariables
+>;
+export const GetAllTokensWithMarketsDocument = gql`
+  query getAllTokensWithMarkets {
+    tokens {
+      address
+      name
+      symbol
+      decimals
+    }
+  }
+`;
+export type GetAllTokensWithMarketsQueryResult = Apollo.QueryResult<
+  SubgraphGetAllTokensWithMarketsQuery,
+  SubgraphGetAllTokensWithMarketsQueryVariables
 >;

@@ -949,3 +949,12 @@ query getMarketRecords(
     ...MarketRecords
   }
 }
+
+query getAllTokensWithMarkets {
+  tokens {
+    address
+    name
+    symbol
+    decimals
+  }
+}
