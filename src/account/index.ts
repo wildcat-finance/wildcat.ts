@@ -258,7 +258,10 @@ export class MarketAccount {
       if (
         this.market.isInFixedTerm &&
         config.kind === HooksKind.FixedTerm &&
-        config.allowClosureBeforeTerm
+        !(
+          config.allowClosureBeforeTerm ||
+          (config.allowTermReduction && this.chainId === SupportedChainId.Mainnet)
+        )
       ) {
         return { status: CloseMarketStatus.EarlyClosureNotAllowed };
       }
