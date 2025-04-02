@@ -60,7 +60,7 @@ export async function getMarketRecords(
   {
     market,
     fetchPolicy = "network-only",
-    limit = 100,
+    limit = 300,
     endEventIndex,
     kinds,
     additionalFilter
@@ -73,6 +73,7 @@ export async function getMarketRecords(
     endEventIndex = market.eventIndex;
   }
   const startEventIndex = endEventIndex ? Math.max(0, endEventIndex - limit) : 0;
+
   const result = await subgraphClient.query<
     SubgraphGetMarketEventsQuery,
     SubgraphGetMarketEventsQueryVariables
@@ -80,8 +81,6 @@ export async function getMarketRecords(
     query: GetMarketEventsDocument,
     variables: {
       market: marketAddress,
-      startEventIndex,
-      endEventIndex,
       limit,
       delinquencyRecordsFilter: additionalFilter,
       borrowRecordsFilter: additionalFilter,
@@ -150,6 +149,8 @@ export async function getMarketRecords(
     ...protocolFeeBipsUpdatedRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
     ...withdrawalRequestRecords.map((r) => parseMarketRecord(market.underlyingToken, r))
   ].filter(filter);
+
   records.sort((a, b) => b.eventIndex - a.eventIndex);
-  return records.slice(0, limit);
+
+  return records;
 }
