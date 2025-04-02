@@ -81,6 +81,7 @@ export async function getMarketRecords(
     query: GetMarketEventsDocument,
     variables: {
       market: marketAddress,
+      endEventIndex,
       limit,
       delinquencyRecordsFilter: additionalFilter,
       borrowRecordsFilter: additionalFilter,
