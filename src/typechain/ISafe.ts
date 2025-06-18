@@ -23,6 +23,8 @@ import type {
 export interface ISafeInterface extends utils.Interface {
   functions: {
     "VERSION()": FunctionFragment;
+    "approvedHashes(address,bytes32)": FunctionFragment;
+    "domainSeparator()": FunctionFragment;
     "encodeMessageDataForSafe(address,bytes)": FunctionFragment;
     "getMessageHash(bytes)": FunctionFragment;
     "getOwners()": FunctionFragment;
@@ -36,6 +38,8 @@ export interface ISafeInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "VERSION"
+      | "approvedHashes"
+      | "domainSeparator"
       | "encodeMessageDataForSafe"
       | "getMessageHash"
       | "getOwners"
@@ -47,6 +51,14 @@ export interface ISafeInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "VERSION", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "approvedHashes",
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "domainSeparator",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "encodeMessageDataForSafe",
     values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
@@ -78,6 +90,14 @@ export interface ISafeInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "VERSION", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "approvedHashes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "domainSeparator",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "encodeMessageDataForSafe",
     data: BytesLike
@@ -139,6 +159,14 @@ export interface ISafe extends BaseContract {
   functions: {
     VERSION(overrides?: CallOverrides): Promise<[string]>;
 
+    approvedHashes(
+      owner: PromiseOrValue<string>,
+      hash: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    domainSeparator(overrides?: CallOverrides): Promise<[string]>;
+
     encodeMessageDataForSafe(
       safe: PromiseOrValue<string>,
       message: PromiseOrValue<BytesLike>,
@@ -179,6 +207,14 @@ export interface ISafe extends BaseContract {
 
   VERSION(overrides?: CallOverrides): Promise<string>;
 
+  approvedHashes(
+    owner: PromiseOrValue<string>,
+    hash: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  domainSeparator(overrides?: CallOverrides): Promise<string>;
+
   encodeMessageDataForSafe(
     safe: PromiseOrValue<string>,
     message: PromiseOrValue<BytesLike>,
@@ -218,6 +254,14 @@ export interface ISafe extends BaseContract {
 
   callStatic: {
     VERSION(overrides?: CallOverrides): Promise<string>;
+
+    approvedHashes(
+      owner: PromiseOrValue<string>,
+      hash: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    domainSeparator(overrides?: CallOverrides): Promise<string>;
 
     encodeMessageDataForSafe(
       safe: PromiseOrValue<string>,
@@ -262,6 +306,14 @@ export interface ISafe extends BaseContract {
   estimateGas: {
     VERSION(overrides?: CallOverrides): Promise<BigNumber>;
 
+    approvedHashes(
+      owner: PromiseOrValue<string>,
+      hash: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    domainSeparator(overrides?: CallOverrides): Promise<BigNumber>;
+
     encodeMessageDataForSafe(
       safe: PromiseOrValue<string>,
       message: PromiseOrValue<BytesLike>,
@@ -302,6 +354,14 @@ export interface ISafe extends BaseContract {
 
   populateTransaction: {
     VERSION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    approvedHashes(
+      owner: PromiseOrValue<string>,
+      hash: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    domainSeparator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     encodeMessageDataForSafe(
       safe: PromiseOrValue<string>,

@@ -551,3 +551,149 @@ fragment HooksTemplateData on HooksTemplate {
   originationFeeAmount
   disabled
 }
+
+fragment ApprovedLiquidatorData on ApprovedLiquidator {
+  isApproved
+  liquidator
+}
+
+fragment LiquidatorApprovedData on LiquidatorApproved {
+  liquidator
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment LiquidatorRemovedData on LiquidatorRemoved {
+  liquidator
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment SimpleCollateralContractData on SimpleCollateralContract {
+  id
+  factory { id }
+  bebopSettlementContract
+  market {
+    id
+    underlyingAsset: asset {
+      ...TokenData
+    }
+    isClosed
+    isDelinquent
+    timeDelinquent
+    delinquencyGracePeriod
+  }
+  collateralAsset {
+    ...TokenData
+  }
+  liquidationCooldown
+  nextLiquidationTrigger
+
+  totalDeposited
+  totalReclaimed
+  totalLiquidated
+  totalShares
+  availableCollateral
+
+  lastFullLiquidationIndex
+  depositIndex
+  eventIndex
+}
+
+fragment SimpleCollateralContractReclaimData on SimpleCollateralContractReclaim {
+  id
+  collateralContract { id }
+  account { id }
+
+  amountReclaimed
+  sharesBurned
+
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment SimpleCollateralContractDepositorData on SimpleCollateralContractDepositor {
+  id
+  collateralContract { id }
+
+  shares
+  totalDeposited
+  totalReclaimed
+}
+
+fragment SimpleCollateralContractLiquidationData on SimpleCollateralContractLiquidation {
+  id
+  collateralContract { id }
+
+  collateralLiquidated
+  underlyingReceived
+  liquidator
+
+  eventIndex
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment SimpleCollateralContractFullResetData on SimpleCollateralContractFullReset {
+  id
+  collateralContract { id }
+  lastFullLiquidationIndex
+
+  eventIndex
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment SimpleCollateralContractLiquidatedSharesResetData on SimpleCollateralContractLiquidatedSharesReset {
+  id
+
+  collateralContract { id }
+  account { id }
+  sharesReset
+
+  eventIndex
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment SimpleCollateralContractDepositData on SimpleCollateralContractDeposit {
+  id
+  collateralContract { id }
+  account { id }
+
+  amountDeposited
+  sharesMinted
+  lastFullLiquidationIndex
+  depositIndex
+
+
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment SimpleCollateralContractDataWithEvents on SimpleCollateralContract {
+  ...SimpleCollateralContractData
+
+  depositors {
+    ...SimpleCollateralContractDepositorData
+  }
+  liquidations {
+    ...SimpleCollateralContractLiquidationData
+  }
+  deposits {
+    ...SimpleCollateralContractDepositData
+  }
+  reclaims {
+    ...SimpleCollateralContractReclaimData
+  }
+  fullResets {
+    ...SimpleCollateralContractFullResetData
+  }
+}

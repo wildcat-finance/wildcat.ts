@@ -958,3 +958,93 @@ query getAllTokensWithMarkets {
     decimals
   }
 }
+
+query getCollateralContractsByMarket($market: ID!) {
+  market(id: $market) {
+    collateralContracts {
+      ...SimpleCollateralContractData
+    }
+  }
+}
+
+query getCollateralContract($collateralContract: ID!) {
+  simpleCollateralContract(id: $collateralContract) {
+    ...SimpleCollateralContractData
+  }
+}
+
+query getApprovedLiquidators {
+  approvedLiquidators(where: { isApproved: true }) {
+    liquidator
+  }
+}
+
+query getCollateralContractEvents(
+  $collateralContract: ID!
+  $startEventIndex: Int = 0
+  $endEventIndex: Int = 100000000
+  $limit: Int = 10
+  $depositRecordsFilter: SimpleCollateralContractDeposit_filter = { id_not: null }
+  $includeDeposits: Boolean = true
+  $reclaimRecordsFilter: SimpleCollateralContractReclaim_filter = { id_not: null }
+  $includeReclaims: Boolean = true
+  $liquidationRecordsFilter: SimpleCollateralContractLiquidation_filter = { id_not: null }
+  $includeLiquidations: Boolean = true
+  $fullResetRecordsFilter: SimpleCollateralContractFullReset_filter = { id_not: null }
+  $includeFullResets: Boolean = true
+) {
+  simpleCollateralContract(id: $collateralContract) {
+    deposits(
+      where: {
+        and: [
+          $depositRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) @include(if: $includeDeposits) {
+      ...SimpleCollateralContractDepositData
+    } 
+    reclaims(
+      where: {
+        and: [
+          $reclaimRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) @include(if: $includeReclaims) {
+      ...SimpleCollateralContractReclaimData
+    }
+    liquidations(
+      where: {
+        and: [
+          $liquidationRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) @include(if: $includeLiquidations) {
+      ...SimpleCollateralContractLiquidationData
+    }
+    fullResets(
+      where: {
+        and: [
+          $fullResetRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) @include(if: $includeFullResets) {
+      ...SimpleCollateralContractFullResetData
+    }
+  }
+}

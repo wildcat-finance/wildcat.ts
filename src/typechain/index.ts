@@ -5,6 +5,8 @@ export type { AccountQuery } from "./AccountQuery";
 export type { AccountsQuery } from "./AccountsQuery";
 export type { CheckBorrowersRegistered } from "./CheckBorrowersRegistered";
 export type { CheckSafeSignature } from "./CheckSafeSignature";
+export type { CollateralLens } from "./CollateralLens";
+export type { DescribeSignature } from "./DescribeSignature";
 export type { HooksFactory } from "./HooksFactory";
 export type { IERC20 } from "./IERC20";
 export type { IFixedTermHooks } from "./IFixedTermHooks";
@@ -14,7 +16,9 @@ export type { MarketLens } from "./MarketLens";
 export type { MarketLensV2 } from "./MarketLensV2";
 export type { MockArchControllerOwner } from "./MockArchControllerOwner";
 export type { MockERC20Factory } from "./MockERC20Factory";
+export type { SimpleMarketCollateral } from "./SimpleMarketCollateral";
 export type { WildcatArchController } from "./WildcatArchController";
+export type { WildcatCollateralFactory } from "./WildcatCollateralFactory";
 export type { WildcatMarket } from "./WildcatMarket";
 export type { WildcatMarketController } from "./WildcatMarketController";
 export type { WildcatMarketControllerFactory } from "./WildcatMarketControllerFactory";
@@ -24,6 +28,8 @@ export { AccountQuery__factory } from "./factories/AccountQuery__factory";
 export { AccountsQuery__factory } from "./factories/AccountsQuery__factory";
 export { CheckBorrowersRegistered__factory } from "./factories/CheckBorrowersRegistered__factory";
 export { CheckSafeSignature__factory } from "./factories/CheckSafeSignature__factory";
+export { CollateralLens__factory } from "./factories/CollateralLens__factory";
+export { DescribeSignature__factory } from "./factories/DescribeSignature__factory";
 export { HooksFactory__factory } from "./factories/HooksFactory__factory";
 export { IERC20__factory } from "./factories/IERC20__factory";
 export { IFixedTermHooks__factory } from "./factories/IFixedTermHooks__factory";
@@ -33,7 +39,9 @@ export { MarketLens__factory } from "./factories/MarketLens__factory";
 export { MarketLensV2__factory } from "./factories/MarketLensV2__factory";
 export { MockArchControllerOwner__factory } from "./factories/MockArchControllerOwner__factory";
 export { MockERC20Factory__factory } from "./factories/MockERC20Factory__factory";
+export { SimpleMarketCollateral__factory } from "./factories/SimpleMarketCollateral__factory";
 export { WildcatArchController__factory } from "./factories/WildcatArchController__factory";
+export { WildcatCollateralFactory__factory } from "./factories/WildcatCollateralFactory__factory";
 export { WildcatMarket__factory } from "./factories/WildcatMarket__factory";
 export { WildcatMarketController__factory } from "./factories/WildcatMarketController__factory";
 export { WildcatMarketControllerFactory__factory } from "./factories/WildcatMarketControllerFactory__factory";
@@ -41,15 +49,21 @@ export { WildcatMarketV2__factory } from "./factories/WildcatMarketV2__factory";
 
 export type { AccountDescriptionStruct, AccountDescriptionStructOutput } from "./AccountQuery";
 
+export type { TokenMetadataStruct, TokenMetadataStructOutput, CollateralContractDataStruct, CollateralContractDataStructOutput, CollateralContractDepositorDataStruct, CollateralContractDepositorDataStructOutput } from "./CollateralLens";
+
+export type { SubSignatureStruct, SubSignatureStructOutput, SignatureDataStruct, SignatureDataStructOutput } from "./DescribeSignature";
+
 export type { DeployMarketInputsV2Struct, DeployMarketInputsV2StructOutput, HooksTemplateStruct, HooksTemplateStructOutput, MarketParametersV2Struct, MarketParametersV2StructOutput } from "./HooksFactory";
 
 export type { FixedTermHookedMarketStruct, FixedTermHookedMarketStructOutput, LenderStatusStruct, LenderStatusStructOutput, MarketParameterConstraintsStruct, MarketParameterConstraintsStructOutput, MarketStateV2Struct, MarketStateV2StructOutput } from "./IFixedTermHooks";
 
 export type { HookedMarketStruct, HookedMarketStructOutput } from "./IOpenTermHooks";
 
-export type { TokenMetadataStruct, TokenMetadataStructOutput, FeeConfigurationStruct, FeeConfigurationStructOutput, MarketDataStruct, MarketDataStructOutput, ControllerDataStruct, ControllerDataStructOutput, MarketLenderStatusStruct, MarketLenderStatusStructOutput, MarketDataWithLenderStatusStruct, MarketDataWithLenderStatusStructOutput, ArchControllerDataStruct, ArchControllerDataStructOutput, SliceParametersStruct, SliceParametersStructOutput, WithdrawalBatchDataStruct, WithdrawalBatchDataStructOutput, WithdrawalBatchLenderStatusStruct, WithdrawalBatchLenderStatusStructOutput, WithdrawalBatchDataWithLenderStatusStruct, WithdrawalBatchDataWithLenderStatusStructOutput } from "./MarketLens";
+export type { FeeConfigurationStruct, FeeConfigurationStructOutput, MarketDataStruct, MarketDataStructOutput, ControllerDataStruct, ControllerDataStructOutput, MarketLenderStatusStruct, MarketLenderStatusStructOutput, MarketDataWithLenderStatusStruct, MarketDataWithLenderStatusStructOutput, ArchControllerDataStruct, ArchControllerDataStructOutput, SliceParametersStruct, SliceParametersStructOutput, WithdrawalBatchDataStruct, WithdrawalBatchDataStructOutput, WithdrawalBatchLenderStatusStruct, WithdrawalBatchLenderStatusStructOutput, WithdrawalBatchDataWithLenderStatusStruct, WithdrawalBatchDataWithLenderStatusStructOutput } from "./MarketLens";
 
 export type { FeeConfigurationV2Struct, FeeConfigurationV2StructOutput, HooksTemplateDataStruct, HooksTemplateDataStructOutput, HooksConfigDataStruct, HooksConfigDataStructOutput, MarketHooksDataStruct, MarketHooksDataStructOutput, HooksDeploymentFlagsStruct, HooksDeploymentFlagsStructOutput, RoleProviderDataStruct, RoleProviderDataStructOutput, HooksInstanceDataStruct, HooksInstanceDataStructOutput, MarketDataV2Struct, MarketDataV2StructOutput, HooksDataForBorrowerStruct, HooksDataForBorrowerStructOutput, LenderAccountDataStruct, LenderAccountDataStructOutput, MarketDataWithLenderStatusV2Struct, MarketDataWithLenderStatusV2StructOutput, LenderAccountQueryStruct, LenderAccountQueryStructOutput, LenderAccountQueryResultStruct, LenderAccountQueryResultStructOutput } from "./MarketLensV2";
+
+export type { DepositorStruct, DepositorStructOutput } from "./SimpleMarketCollateral";
 
 export type { MarketStateStruct, MarketStateStructOutput, AccountWithdrawalStatusStruct, AccountWithdrawalStatusStructOutput, WithdrawalBatchStruct, WithdrawalBatchStructOutput } from "./WildcatMarket";
 
