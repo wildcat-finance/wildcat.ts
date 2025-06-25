@@ -152,6 +152,7 @@ fragment MarketData on Market {
   delinquencyGracePeriod
   delinquencyFeeBips
   withdrawalBatchDuration
+  numCollateralContracts
 
   _asset: asset {
     ...TokenData
