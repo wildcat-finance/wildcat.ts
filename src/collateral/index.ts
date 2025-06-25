@@ -61,8 +61,7 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
   }
 
   get maxRepayment(): TokenAmount {
-    const maxRepay = this.market.delinquentDebt.bipMul(this.maxRepaymentBips);
-    return maxTokenAmount(this.availableCollateral, maxRepay);
+    return this.market.delinquentDebt.bipMul(this.maxRepaymentBips);
   }
 
   async deposit(amount: TokenAmount): Promise<ContractTransaction> {
