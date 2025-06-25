@@ -184,7 +184,7 @@ export const getCollateralFactoryContract = (
 };
 
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: `https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/version/v2.0.17/api`,
+  [SupportedChainId.Sepolia]: `https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/version/v2.0.18/api`,
   [SupportedChainId.Mainnet]:
     "https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/mainnet/api"
 };
