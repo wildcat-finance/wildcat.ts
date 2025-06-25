@@ -125,6 +125,7 @@ export type MarketArgs = {
   unpaidWithdrawalBatchExpiries: number[];
   // Amount of underlying assets that should be held in reserve for current supply
   coverageLiquidity: TokenAmount;
+  numCollateralContracts?: number;
   totalBorrowed?: TokenAmount;
   totalRepaid?: TokenAmount;
   totalBaseInterestAccrued?: TokenAmount;
@@ -755,6 +756,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       feeCollectionRecords: data.feeCollectionRecords,
       deployedEvent: data.deployedEvent,
       eventIndex: data.eventIndex,
+      numCollateralContracts: data.numCollateralContracts,
       signerAddress
     });
   }
@@ -992,5 +994,3 @@ export class Market extends ContractWrapper<WildcatMarket> {
     return lens.getMarketsCount().then((count) => count.toNumber());
   }
 }
-
-// class OpenTermMarket extends Market {
