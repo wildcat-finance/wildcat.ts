@@ -1,4 +1,4 @@
-schema: 'https://api.studio.thegraph.com/query/56451/wildcat-test-deployment/version/latest'
+schema: 'https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/version/v2.0.18/api'
 overwrite: true
 documents:
   - './gql/queries.graphql'
