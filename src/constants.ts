@@ -62,7 +62,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
   [SupportedChainId.Mainnet]: {
     HooksFactory: "0xdd7dd3b5076cf89440d05585ff56d246386207be",
     MarketLens: "0xf1D516954f96c1363f8b0aE48D79c8ddE6237847",
-    MarketLensV2: "0xFfA74a0e4090200BE6895A5D349cA88AC32D1b5C",
+    MarketLensV2: "0xfDA5C5B96bb198D2fca1A01d759620B64Ae5afE7",
     WildcatArchController: "0xfEB516d9D946dD487A9346F6fee11f40C6945eE4",
     WildcatMarketControllerFactory: "0xFd31007613C9F671df6A8D4234901324986Bfd13",
     WildcatSanctionsSentinel: "0x437e0551892C2C9b06d3fFd248fe60572e08CD1A",
@@ -73,7 +73,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
   [SupportedChainId.Sepolia]: {
     HooksFactory: "0x10A64ABa0159720F8a23E1A552800CA4eb21576C",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
-    MarketLensV2: "0x6381a0eCaa64Ec7A7F3c255d1A12Cc4863584014",
+    MarketLensV2: "0x5D8cEacEe19c06C3b4108b8Ae5B881eb0240B9c7",
     MockArchControllerOwner: "0xa476920af80B587f696734430227869795E2Ea78",
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
