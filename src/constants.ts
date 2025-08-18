@@ -68,7 +68,9 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatSanctionsSentinel: "0x437e0551892C2C9b06d3fFd248fe60572e08CD1A",
     Chainalysis: "0x40C57923924B5c5c5455c48D93317139ADDaC8fb",
     OpenAccessRoleProvider: "0x5620553d8881335F74AD19259daaCD1d9B373101",
-    BebopSettlementContract: "0xbbbbbBB520d69a9775E85b458C58c648259FAD5F"
+    BebopSettlementContract: "0xbbbbbBB520d69a9775E85b458C58c648259FAD5F",
+    WildcatCollateralFactory: "0xBdf64bd7Ea91A534445d06736a0f0E2a33FfA47c",
+    CollateralLens: "0x422489bA6bDdD5954C379C41B6C97Ab0E4494f90"
   },
   [SupportedChainId.Sepolia]: {
     HooksFactory: "0x10A64ABa0159720F8a23E1A552800CA4eb21576C",
@@ -82,9 +84,9 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatSanctionsSentinel: "0xFBCE262eC835be5e6A458cE1722EeCe0E453316B",
     Chainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     OpenAccessRoleProvider: "0x9aCdE253F7A51456c48604185C0ceA4Fc9e58E3a",
-    WildcatCollateralFactory: "0x58D15313379cce02693bc50E75085f79386Bda41",
-    BebopSettlementContract: "0x7815C2FEE9B582fD40512F13986951C832264eeE",
-    CollateralLens: "0x5FCea9a52e325D68357C7E8e0b85Fc31E84EfF3a"
+    WildcatCollateralFactory: "0xe11E41e9162ad07F1a9853c3123c33B7e9Cf59D6",
+    BebopSettlementContract: "0x513826b6bb38fc159f152a4bf6e1ec3650a7ee46",
+    CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578"
   }
 };
 
@@ -184,9 +186,9 @@ export const getCollateralFactoryContract = (
 };
 
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: `https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/version/v2.0.18/api`,
+  [SupportedChainId.Sepolia]: `https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/version/v2.0.19/api`,
   [SupportedChainId.Mainnet]:
-    "https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/mainnet/api"
+    "https://subgraph.satsuma-prod.com/dillons-team--345508/mainnet/version/v2.0.19/api"
 };
 
 export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
