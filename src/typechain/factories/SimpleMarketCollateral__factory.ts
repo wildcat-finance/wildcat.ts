@@ -12,6 +12,19 @@ import type {
 const _abi = [
   {
     inputs: [],
+    name: "LIQUIDATION_COOLDOWN",
+    outputs: [
+      {
+        internalType: "uint32",
+        name: "",
+        type: "uint32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "availableCollateral",
     outputs: [
       {
@@ -165,6 +178,11 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "exchange",
+        type: "address",
+      },
+      {
         internalType: "bytes",
         name: "quoteCalldata",
         type: "bytes",
@@ -194,19 +212,6 @@ const _abi = [
       },
     ],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "liquidationCooldown",
-    outputs: [
-      {
-        internalType: "uint32",
-        name: "",
-        type: "uint32",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {

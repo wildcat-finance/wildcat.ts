@@ -1031,6 +1031,72 @@ export enum SubgraphApproval_OrderBy {
   Value = "value"
 }
 
+export type SubgraphApprovedCollateralExchange = {
+  __typename: "ApprovedCollateralExchange";
+  exchange: Scalars["Bytes"]["output"];
+  factory: SubgraphSimpleCollateralFactory;
+  id: Scalars["ID"]["output"];
+  isApproved: Scalars["Boolean"]["output"];
+};
+
+export type SubgraphApprovedCollateralExchange_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphApprovedCollateralExchange_Filter>>>;
+  exchange?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  exchange_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  factory?: InputMaybe<Scalars["String"]["input"]>;
+  factory_?: InputMaybe<SubgraphSimpleCollateralFactory_Filter>;
+  factory_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factory_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_gt?: InputMaybe<Scalars["String"]["input"]>;
+  factory_gte?: InputMaybe<Scalars["String"]["input"]>;
+  factory_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factory_lt?: InputMaybe<Scalars["String"]["input"]>;
+  factory_lte?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factory_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  id_lt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_lte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  isApproved?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isApproved_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  isApproved_not?: InputMaybe<Scalars["Boolean"]["input"]>;
+  isApproved_not_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphApprovedCollateralExchange_Filter>>>;
+};
+
+export enum SubgraphApprovedCollateralExchange_OrderBy {
+  Exchange = "exchange",
+  Factory = "factory",
+  FactoryId = "factory__id",
+  Id = "id",
+  IsApproved = "isApproved"
+}
+
 export type SubgraphApprovedLiquidator = {
   __typename: "ApprovedLiquidator";
   factory: SubgraphSimpleCollateralFactory;
@@ -1428,6 +1494,190 @@ export enum SubgraphBorrowerRegistrationChange_OrderBy {
   RegistrationBorrower = "registration__borrower",
   RegistrationId = "registration__id",
   RegistrationIsRegistered = "registration__isRegistered",
+  TransactionHash = "transactionHash"
+}
+
+export type SubgraphCollateralExchangeApproved = {
+  __typename: "CollateralExchangeApproved";
+  blockNumber: Scalars["Int"]["output"];
+  blockTimestamp: Scalars["Int"]["output"];
+  exchange: Scalars["Bytes"]["output"];
+  factory: SubgraphSimpleCollateralFactory;
+  id: Scalars["ID"]["output"];
+  transactionHash: Scalars["Bytes"]["output"];
+};
+
+export type SubgraphCollateralExchangeApproved_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphCollateralExchangeApproved_Filter>>>;
+  blockNumber?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockNumber_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockTimestamp?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockTimestamp_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  exchange?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  exchange_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  factory?: InputMaybe<Scalars["String"]["input"]>;
+  factory_?: InputMaybe<SubgraphSimpleCollateralFactory_Filter>;
+  factory_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factory_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_gt?: InputMaybe<Scalars["String"]["input"]>;
+  factory_gte?: InputMaybe<Scalars["String"]["input"]>;
+  factory_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factory_lt?: InputMaybe<Scalars["String"]["input"]>;
+  factory_lte?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factory_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  id_lt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_lte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphCollateralExchangeApproved_Filter>>>;
+  transactionHash?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  transactionHash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+};
+
+export enum SubgraphCollateralExchangeApproved_OrderBy {
+  BlockNumber = "blockNumber",
+  BlockTimestamp = "blockTimestamp",
+  Exchange = "exchange",
+  Factory = "factory",
+  FactoryId = "factory__id",
+  Id = "id",
+  TransactionHash = "transactionHash"
+}
+
+export type SubgraphCollateralExchangeRemoved = {
+  __typename: "CollateralExchangeRemoved";
+  blockNumber: Scalars["Int"]["output"];
+  blockTimestamp: Scalars["Int"]["output"];
+  exchange: Scalars["Bytes"]["output"];
+  factory: SubgraphSimpleCollateralFactory;
+  id: Scalars["ID"]["output"];
+  transactionHash: Scalars["Bytes"]["output"];
+};
+
+export type SubgraphCollateralExchangeRemoved_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphCollateralExchangeRemoved_Filter>>>;
+  blockNumber?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockNumber_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockTimestamp?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockTimestamp_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  exchange?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  exchange_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  exchange_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  factory?: InputMaybe<Scalars["String"]["input"]>;
+  factory_?: InputMaybe<SubgraphSimpleCollateralFactory_Filter>;
+  factory_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factory_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_gt?: InputMaybe<Scalars["String"]["input"]>;
+  factory_gte?: InputMaybe<Scalars["String"]["input"]>;
+  factory_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factory_lt?: InputMaybe<Scalars["String"]["input"]>;
+  factory_lte?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factory_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  id_lt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_lte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphCollateralExchangeRemoved_Filter>>>;
+  transactionHash?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  transactionHash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+};
+
+export enum SubgraphCollateralExchangeRemoved_OrderBy {
+  BlockNumber = "blockNumber",
+  BlockTimestamp = "blockTimestamp",
+  Exchange = "exchange",
+  Factory = "factory",
+  FactoryId = "factory__id",
+  Id = "id",
   TransactionHash = "transactionHash"
 }
 
@@ -9009,6 +9259,8 @@ export type SubgraphQuery = {
   annualInterestBipsUpdateds: SubgraphAnnualInterestBipsUpdated[];
   approval?: Maybe<SubgraphApproval>;
   approvals: SubgraphApproval[];
+  approvedCollateralExchange?: Maybe<SubgraphApprovedCollateralExchange>;
+  approvedCollateralExchanges: SubgraphApprovedCollateralExchange[];
   approvedLiquidator?: Maybe<SubgraphApprovedLiquidator>;
   approvedLiquidators: SubgraphApprovedLiquidator[];
   archController?: Maybe<SubgraphArchController>;
@@ -9017,6 +9269,10 @@ export type SubgraphQuery = {
   borrowerRegistrationChange?: Maybe<SubgraphBorrowerRegistrationChange>;
   borrowerRegistrationChanges: SubgraphBorrowerRegistrationChange[];
   borrows: SubgraphBorrow[];
+  collateralExchangeApproved?: Maybe<SubgraphCollateralExchangeApproved>;
+  collateralExchangeApproveds: SubgraphCollateralExchangeApproved[];
+  collateralExchangeRemoved?: Maybe<SubgraphCollateralExchangeRemoved>;
+  collateralExchangeRemoveds: SubgraphCollateralExchangeRemoved[];
   controller?: Maybe<SubgraphController>;
   controllerAdded?: Maybe<SubgraphControllerAdded>;
   controllerAddeds: SubgraphControllerAdded[];
@@ -9263,6 +9519,18 @@ export type SubgraphQueryApprovalsArgs = {
   where?: InputMaybe<SubgraphApproval_Filter>;
 };
 
+export type SubgraphQueryApprovedCollateralExchangeArgs = SubgraphQueryAccountAccessGrantedArgs;
+
+export type SubgraphQueryApprovedCollateralExchangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphApprovedCollateralExchange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphApprovedCollateralExchange_Filter>;
+};
+
 export type SubgraphQueryApprovedLiquidatorArgs = SubgraphQueryAccountAccessGrantedArgs;
 
 export type SubgraphQueryApprovedLiquidatorsArgs = {
@@ -9309,6 +9577,30 @@ export type SubgraphQueryBorrowsArgs = {
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
   where?: InputMaybe<SubgraphBorrow_Filter>;
+};
+
+export type SubgraphQueryCollateralExchangeApprovedArgs = SubgraphQueryAccountAccessGrantedArgs;
+
+export type SubgraphQueryCollateralExchangeApprovedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphCollateralExchangeApproved_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphCollateralExchangeApproved_Filter>;
+};
+
+export type SubgraphQueryCollateralExchangeRemovedArgs = SubgraphQueryAccountAccessGrantedArgs;
+
+export type SubgraphQueryCollateralExchangeRemovedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphCollateralExchangeRemoved_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphCollateralExchangeRemoved_Filter>;
 };
 
 export type SubgraphQueryControllerArgs = SubgraphQueryAccountAccessGrantedArgs;
@@ -12641,11 +12933,20 @@ export enum SubgraphSimpleCollateralContract_OrderBy {
 
 export type SubgraphSimpleCollateralFactory = {
   __typename: "SimpleCollateralFactory";
+  approvedExchanges: SubgraphApprovedCollateralExchange[];
   approvedLiquidators: SubgraphApprovedLiquidator[];
   collateralContracts: SubgraphSimpleCollateralContract[];
   id: Scalars["ID"]["output"];
   liquidatorApprovals: SubgraphLiquidatorApproved[];
   liquidatorRemovals: SubgraphLiquidatorRemoved[];
+};
+
+export type SubgraphSimpleCollateralFactoryApprovedExchangesArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphApprovedCollateralExchange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphApprovedCollateralExchange_Filter>;
 };
 
 export type SubgraphSimpleCollateralFactoryApprovedLiquidatorsArgs = {
@@ -12679,6 +12980,7 @@ export type SubgraphSimpleCollateralFactory_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<SubgraphSimpleCollateralFactory_Filter>>>;
+  approvedExchanges_?: InputMaybe<SubgraphApprovedCollateralExchange_Filter>;
   approvedLiquidators_?: InputMaybe<SubgraphApprovedLiquidator_Filter>;
   collateralContracts_?: InputMaybe<SubgraphSimpleCollateralContract_Filter>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
@@ -12695,6 +12997,7 @@ export type SubgraphSimpleCollateralFactory_Filter = {
 };
 
 export enum SubgraphSimpleCollateralFactory_OrderBy {
+  ApprovedExchanges = "approvedExchanges",
   ApprovedLiquidators = "approvedLiquidators",
   CollateralContracts = "collateralContracts",
   Id = "id",
@@ -12745,6 +13048,8 @@ export type SubgraphSubscription = {
   annualInterestBipsUpdateds: SubgraphAnnualInterestBipsUpdated[];
   approval?: Maybe<SubgraphApproval>;
   approvals: SubgraphApproval[];
+  approvedCollateralExchange?: Maybe<SubgraphApprovedCollateralExchange>;
+  approvedCollateralExchanges: SubgraphApprovedCollateralExchange[];
   approvedLiquidator?: Maybe<SubgraphApprovedLiquidator>;
   approvedLiquidators: SubgraphApprovedLiquidator[];
   archController?: Maybe<SubgraphArchController>;
@@ -12753,6 +13058,10 @@ export type SubgraphSubscription = {
   borrowerRegistrationChange?: Maybe<SubgraphBorrowerRegistrationChange>;
   borrowerRegistrationChanges: SubgraphBorrowerRegistrationChange[];
   borrows: SubgraphBorrow[];
+  collateralExchangeApproved?: Maybe<SubgraphCollateralExchangeApproved>;
+  collateralExchangeApproveds: SubgraphCollateralExchangeApproved[];
+  collateralExchangeRemoved?: Maybe<SubgraphCollateralExchangeRemoved>;
+  collateralExchangeRemoveds: SubgraphCollateralExchangeRemoved[];
   controller?: Maybe<SubgraphController>;
   controllerAdded?: Maybe<SubgraphControllerAdded>;
   controllerAddeds: SubgraphControllerAdded[];
@@ -12944,6 +13253,12 @@ export type SubgraphSubscriptionApprovalArgs = SubgraphQueryAccountAccessGranted
 
 export type SubgraphSubscriptionApprovalsArgs = SubgraphQueryApprovalsArgs;
 
+export type SubgraphSubscriptionApprovedCollateralExchangeArgs =
+  SubgraphQueryAccountAccessGrantedArgs;
+
+export type SubgraphSubscriptionApprovedCollateralExchangesArgs =
+  SubgraphQueryApprovedCollateralExchangesArgs;
+
 export type SubgraphSubscriptionApprovedLiquidatorArgs = SubgraphQueryAccountAccessGrantedArgs;
 
 export type SubgraphSubscriptionApprovedLiquidatorsArgs = SubgraphQueryApprovedLiquidatorsArgs;
@@ -12961,6 +13276,18 @@ export type SubgraphSubscriptionBorrowerRegistrationChangesArgs =
   SubgraphQueryBorrowerRegistrationChangesArgs;
 
 export type SubgraphSubscriptionBorrowsArgs = SubgraphQueryBorrowsArgs;
+
+export type SubgraphSubscriptionCollateralExchangeApprovedArgs =
+  SubgraphQueryAccountAccessGrantedArgs;
+
+export type SubgraphSubscriptionCollateralExchangeApprovedsArgs =
+  SubgraphQueryCollateralExchangeApprovedsArgs;
+
+export type SubgraphSubscriptionCollateralExchangeRemovedArgs =
+  SubgraphQueryAccountAccessGrantedArgs;
+
+export type SubgraphSubscriptionCollateralExchangeRemovedsArgs =
+  SubgraphQueryCollateralExchangeRemovedsArgs;
 
 export type SubgraphSubscriptionControllerArgs = SubgraphQueryAccountAccessGrantedArgs;
 
@@ -15602,7 +15929,6 @@ export type SubgraphLiquidatorRemovedDataFragment = {
 export type SubgraphSimpleCollateralContractDataFragment = {
   __typename: "SimpleCollateralContract";
   id: string;
-  bebopSettlementContract: string;
   liquidationCooldown: number;
   nextLiquidationTrigger: number;
   totalDeposited: string;
@@ -15613,7 +15939,11 @@ export type SubgraphSimpleCollateralContractDataFragment = {
   lastFullLiquidationIndex: number;
   depositIndex: number;
   eventIndex: number;
-  factory: { __typename: "SimpleCollateralFactory"; id: string };
+  factory: {
+    __typename: "SimpleCollateralFactory";
+    id: string;
+    approvedExchanges: Array<{ __typename: "ApprovedCollateralExchange"; exchange: string }>;
+  };
   market: {
     __typename: "Market";
     id: string;
@@ -15700,7 +16030,6 @@ export type SubgraphSimpleCollateralContractDepositDataFragment = {
 export type SubgraphSimpleCollateralContractDataWithEventsFragment = {
   __typename: "SimpleCollateralContract";
   id: string;
-  bebopSettlementContract: string;
   liquidationCooldown: number;
   nextLiquidationTrigger: number;
   totalDeposited: string;
@@ -15716,7 +16045,11 @@ export type SubgraphSimpleCollateralContractDataWithEventsFragment = {
   deposits: SubgraphSimpleCollateralContractDepositDataFragment[];
   reclaims: SubgraphSimpleCollateralContractReclaimDataFragment[];
   fullResets: SubgraphSimpleCollateralContractFullResetDataFragment[];
-  factory: { __typename: "SimpleCollateralFactory"; id: string };
+  factory: {
+    __typename: "SimpleCollateralFactory";
+    id: string;
+    approvedExchanges: Array<{ __typename: "ApprovedCollateralExchange"; exchange: string }>;
+  };
   market: {
     __typename: "Market";
     id: string;
@@ -17202,8 +17535,10 @@ export const SimpleCollateralContractDataFragmentDoc = gql`
     id
     factory {
       id
+      approvedExchanges(where: { isApproved: true }) {
+        exchange
+      }
     }
-    bebopSettlementContract
     market {
       id
       underlyingAsset: asset {

@@ -35,6 +35,7 @@ export type DepositorStructOutput = {
 
 export interface SimpleMarketCollateralInterface extends utils.Interface {
   functions: {
+    "LIQUIDATION_COOLDOWN()": FunctionFragment;
     "availableCollateral()": FunctionFragment;
     "bebopSettlementContract()": FunctionFragment;
     "collateralAsset()": FunctionFragment;
@@ -44,8 +45,7 @@ export interface SimpleMarketCollateralInterface extends utils.Interface {
     "getDepositor(address)": FunctionFragment;
     "getMarketDelinquencyStatus()": FunctionFragment;
     "getReclaimableAmount(address)": FunctionFragment;
-    "liquidateCollateral(bytes,uint256,uint256,uint256)": FunctionFragment;
-    "liquidationCooldown()": FunctionFragment;
+    "liquidateCollateral(address,bytes,uint256,uint256,uint256)": FunctionFragment;
     "market()": FunctionFragment;
     "marketBorrower()": FunctionFragment;
     "maxRepaymentBips()": FunctionFragment;
@@ -60,6 +60,7 @@ export interface SimpleMarketCollateralInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "LIQUIDATION_COOLDOWN"
       | "availableCollateral"
       | "bebopSettlementContract"
       | "collateralAsset"
@@ -70,7 +71,6 @@ export interface SimpleMarketCollateralInterface extends utils.Interface {
       | "getMarketDelinquencyStatus"
       | "getReclaimableAmount"
       | "liquidateCollateral"
-      | "liquidationCooldown"
       | "market"
       | "marketBorrower"
       | "maxRepaymentBips"
@@ -83,6 +83,10 @@ export interface SimpleMarketCollateralInterface extends utils.Interface {
       | "underlyingAsset"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "LIQUIDATION_COOLDOWN",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "availableCollateral",
     values?: undefined
@@ -119,15 +123,12 @@ export interface SimpleMarketCollateralInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "liquidateCollateral",
     values: [
+      PromiseOrValue<string>,
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidationCooldown",
-    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "market", values?: undefined): string;
   encodeFunctionData(
@@ -165,6 +166,10 @@ export interface SimpleMarketCollateralInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "LIQUIDATION_COOLDOWN",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "availableCollateral",
     data: BytesLike
   ): Result;
@@ -196,10 +201,6 @@ export interface SimpleMarketCollateralInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "liquidateCollateral",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidationCooldown",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "market", data: BytesLike): Result;
@@ -266,6 +267,8 @@ export interface SimpleMarketCollateral extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    LIQUIDATION_COOLDOWN(overrides?: CallOverrides): Promise<[number]>;
+
     availableCollateral(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     bebopSettlementContract(overrides?: CallOverrides): Promise<[string]>;
@@ -301,14 +304,13 @@ export interface SimpleMarketCollateral extends BaseContract {
     ): Promise<[BigNumber]>;
 
     liquidateCollateral(
+      exchange: PromiseOrValue<string>,
       quoteCalldata: PromiseOrValue<BytesLike>,
       lengthWithdrawalQueue: PromiseOrValue<BigNumberish>,
       maxCollateralToLiquidate: PromiseOrValue<BigNumberish>,
       minUnderlyingOut: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    liquidationCooldown(overrides?: CallOverrides): Promise<[number]>;
 
     market(overrides?: CallOverrides): Promise<[string]>;
 
@@ -338,6 +340,8 @@ export interface SimpleMarketCollateral extends BaseContract {
 
     underlyingAsset(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  LIQUIDATION_COOLDOWN(overrides?: CallOverrides): Promise<number>;
 
   availableCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -374,14 +378,13 @@ export interface SimpleMarketCollateral extends BaseContract {
   ): Promise<BigNumber>;
 
   liquidateCollateral(
+    exchange: PromiseOrValue<string>,
     quoteCalldata: PromiseOrValue<BytesLike>,
     lengthWithdrawalQueue: PromiseOrValue<BigNumberish>,
     maxCollateralToLiquidate: PromiseOrValue<BigNumberish>,
     minUnderlyingOut: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  liquidationCooldown(overrides?: CallOverrides): Promise<number>;
 
   market(overrides?: CallOverrides): Promise<string>;
 
@@ -412,6 +415,8 @@ export interface SimpleMarketCollateral extends BaseContract {
   underlyingAsset(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    LIQUIDATION_COOLDOWN(overrides?: CallOverrides): Promise<number>;
+
     availableCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
     bebopSettlementContract(overrides?: CallOverrides): Promise<string>;
@@ -447,14 +452,13 @@ export interface SimpleMarketCollateral extends BaseContract {
     ): Promise<BigNumber>;
 
     liquidateCollateral(
+      exchange: PromiseOrValue<string>,
       quoteCalldata: PromiseOrValue<BytesLike>,
       lengthWithdrawalQueue: PromiseOrValue<BigNumberish>,
       maxCollateralToLiquidate: PromiseOrValue<BigNumberish>,
       minUnderlyingOut: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    liquidationCooldown(overrides?: CallOverrides): Promise<number>;
 
     market(overrides?: CallOverrides): Promise<string>;
 
@@ -486,6 +490,8 @@ export interface SimpleMarketCollateral extends BaseContract {
   filters: {};
 
   estimateGas: {
+    LIQUIDATION_COOLDOWN(overrides?: CallOverrides): Promise<BigNumber>;
+
     availableCollateral(overrides?: CallOverrides): Promise<BigNumber>;
 
     bebopSettlementContract(overrides?: CallOverrides): Promise<BigNumber>;
@@ -514,14 +520,13 @@ export interface SimpleMarketCollateral extends BaseContract {
     ): Promise<BigNumber>;
 
     liquidateCollateral(
+      exchange: PromiseOrValue<string>,
       quoteCalldata: PromiseOrValue<BytesLike>,
       lengthWithdrawalQueue: PromiseOrValue<BigNumberish>,
       maxCollateralToLiquidate: PromiseOrValue<BigNumberish>,
       minUnderlyingOut: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    liquidationCooldown(overrides?: CallOverrides): Promise<BigNumber>;
 
     market(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -553,6 +558,10 @@ export interface SimpleMarketCollateral extends BaseContract {
   };
 
   populateTransaction: {
+    LIQUIDATION_COOLDOWN(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     availableCollateral(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -589,15 +598,12 @@ export interface SimpleMarketCollateral extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     liquidateCollateral(
+      exchange: PromiseOrValue<string>,
       quoteCalldata: PromiseOrValue<BytesLike>,
       lengthWithdrawalQueue: PromiseOrValue<BigNumberish>,
       maxCollateralToLiquidate: PromiseOrValue<BigNumberish>,
       minUnderlyingOut: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    liquidationCooldown(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     market(overrides?: CallOverrides): Promise<PopulatedTransaction>;

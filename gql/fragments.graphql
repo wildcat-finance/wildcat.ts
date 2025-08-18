@@ -574,8 +574,12 @@ fragment LiquidatorRemovedData on LiquidatorRemoved {
 
 fragment SimpleCollateralContractData on SimpleCollateralContract {
   id
-  factory { id }
-  bebopSettlementContract
+  factory {
+    id
+    approvedExchanges(where: { isApproved: true }) {
+      exchange
+    }
+  }
   market {
     id
     underlyingAsset: asset {
@@ -605,8 +609,12 @@ fragment SimpleCollateralContractData on SimpleCollateralContract {
 
 fragment SimpleCollateralContractReclaimData on SimpleCollateralContractReclaim {
   id
-  collateralContract { id }
-  account { id }
+  collateralContract {
+    id
+  }
+  account {
+    id
+  }
 
   amountReclaimed
   sharesBurned
@@ -618,7 +626,9 @@ fragment SimpleCollateralContractReclaimData on SimpleCollateralContractReclaim 
 
 fragment SimpleCollateralContractDepositorData on SimpleCollateralContractDepositor {
   id
-  collateralContract { id }
+  collateralContract {
+    id
+  }
 
   shares
   totalDeposited
@@ -627,7 +637,9 @@ fragment SimpleCollateralContractDepositorData on SimpleCollateralContractDeposi
 
 fragment SimpleCollateralContractLiquidationData on SimpleCollateralContractLiquidation {
   id
-  collateralContract { id }
+  collateralContract {
+    id
+  }
 
   collateralLiquidated
   underlyingReceived
@@ -641,7 +653,9 @@ fragment SimpleCollateralContractLiquidationData on SimpleCollateralContractLiqu
 
 fragment SimpleCollateralContractFullResetData on SimpleCollateralContractFullReset {
   id
-  collateralContract { id }
+  collateralContract {
+    id
+  }
   lastFullLiquidationIndex
 
   eventIndex
@@ -653,8 +667,12 @@ fragment SimpleCollateralContractFullResetData on SimpleCollateralContractFullRe
 fragment SimpleCollateralContractLiquidatedSharesResetData on SimpleCollateralContractLiquidatedSharesReset {
   id
 
-  collateralContract { id }
-  account { id }
+  collateralContract {
+    id
+  }
+  account {
+    id
+  }
   sharesReset
 
   eventIndex
@@ -665,14 +683,17 @@ fragment SimpleCollateralContractLiquidatedSharesResetData on SimpleCollateralCo
 
 fragment SimpleCollateralContractDepositData on SimpleCollateralContractDeposit {
   id
-  collateralContract { id }
-  account { id }
+  collateralContract {
+    id
+  }
+  account {
+    id
+  }
 
   amountDeposited
   sharesMinted
   lastFullLiquidationIndex
   depositIndex
-
 
   blockNumber
   blockTimestamp

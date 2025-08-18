@@ -25,6 +25,7 @@ struct CollateralContractData {
 }
 
 struct CollateralContractDepositorData {
+  bool isLiquidator;
   uint256 shares;
   uint256 lastFullLiquidationIndex;
   uint256 balanceCollateralAsset;

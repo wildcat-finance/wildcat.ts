@@ -26,7 +26,7 @@ interface SimpleMarketCollateral {
 
   function bebopSettlementContract() external view returns (address);
 
-  function liquidationCooldown() external view returns (uint32);
+  function LIQUIDATION_COOLDOWN() external view returns (uint32);
 
   function maxRepaymentBips() external view returns (uint16);
 
@@ -44,6 +44,7 @@ interface SimpleMarketCollateral {
     returns (bool marketInPenalty, uint256 delinquentDebt);
 
   function liquidateCollateral(
+    address exchange,
     bytes calldata quoteCalldata,
     uint lengthWithdrawalQueue,
     uint maxCollateralToLiquidate,
