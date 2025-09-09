@@ -363,8 +363,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   get secondsBeforeDelinquency(): number {
     if (this.willBeDelinquent || this.totalDebts.eq(0)) return 0;
 
-    const scaledBase = this.scaledTotalSupply.sub(this.scaledPendingWithdrawals);
-    if (scaledBase.lte(0)) return 0; // no supply after accounting for pending withdraws
+    const scaledBase = this.scaledTotalSupply;
     const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
 
     const baseAPRRay = bipToRay(this.annualInterestBips);
@@ -398,8 +397,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   getSecondsBeforeDelinquencyForBorrowedAmount(borrowAmount: TokenAmount): number {
     if (this.isDelinquent || this.totalDebts.eq(0)) return 0;
-    const scaledBase = this.scaledTotalSupply.sub(this.scaledPendingWithdrawals);
-    if (scaledBase.lte(0)) return 0;
+    const scaledBase = this.scaledTotalSupply;
 
     const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
     const baseAPRRay = bipToRay(this.annualInterestBips);
