@@ -362,45 +362,95 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   get secondsBeforeDelinquency(): number {
     if (this.willBeDelinquent || this.totalDebts.eq(0)) return 0;
-    const interestPerSecondAddedToRequirements = this.totalSupply
-      .rayMul(this.effectiveBorrowerAPR)
+
+    const scaledBase = this.scaledTotalSupply;
+    const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
+
+    const baseAPRRay = bipToRay(this.annualInterestBips);
+    const protocolFeeAPRRay = bipMul(baseAPRRay, BigNumber.from(this.protocolFeeBips));
+    const delinquencyFeeAPRRay =
+      this.timeDelinquent > this.delinquencyGracePeriod
+        ? bipToRay(this.delinquencyFeeBips)
+        : BigNumber.from(0);
+
+    // lender APR portion
+    const lenderRequirementGrowthPerSecond = basePrincipal
+      .rayMul(baseAPRRay.add(delinquencyFeeAPRRay))
       .div(SECONDS_IN_365_DAYS)
       .bipMul(this.reserveRatioBips);
-    return this.liquidReserves
-      .sub(this.minimumReserves)
-      .div(interestPerSecondAddedToRequirements, true)
-      .raw.toNumber();
+
+    // protocol fee portion
+    const protocolRequirementGrowthPerSecond = basePrincipal
+      .rayMul(protocolFeeAPRRay)
+      .div(SECONDS_IN_365_DAYS);
+
+    const totalRequirementGrowthPerSecond = lenderRequirementGrowthPerSecond.add(
+      protocolRequirementGrowthPerSecond.raw
+    );
+    // essentially if  apr=0 and rr=0 then bips alone wont move us to delinquency
+    if (totalRequirementGrowthPerSecond.raw.isZero()) return Number.MAX_SAFE_INTEGER;
+
+    const buffer = this.liquidReserves.sub(this.minimumReserves);
+    if (buffer.raw.lte(0)) return 0; // we are delinquent
+    return buffer.div(totalRequirementGrowthPerSecond, true).raw.toNumber(); // seconds until the party
   }
 
   getSecondsBeforeDelinquencyForBorrowedAmount(borrowAmount: TokenAmount): number {
     if (this.isDelinquent || this.totalDebts.eq(0)) return 0;
-    const interestPerSecondAddedToRequirements = this.totalSupply
-      .rayMul(this.effectiveBorrowerAPR)
+    const scaledBase = this.scaledTotalSupply;
+
+    const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
+    const baseAPRRay = bipToRay(this.annualInterestBips);
+    const protocolFeeAPRRay = bipMul(baseAPRRay, BigNumber.from(this.protocolFeeBips));
+    const delinquencyFeeAPRRay =
+      this.timeDelinquent > this.delinquencyGracePeriod
+        ? bipToRay(this.delinquencyFeeBips)
+        : BigNumber.from(0);
+
+    const lenderRequirementGrowthPerSecond = basePrincipal
+      .rayMul(baseAPRRay.add(delinquencyFeeAPRRay))
       .div(SECONDS_IN_365_DAYS)
       .bipMul(this.reserveRatioBips);
-    return this.liquidReserves
-      .sub(this.minimumReserves)
-      .sub(borrowAmount)
-      .div(interestPerSecondAddedToRequirements, true)
-      .raw.toNumber();
-  }
 
+    const protocolRequirementGrowthPerSecond = basePrincipal
+      .rayMul(protocolFeeAPRRay)
+      .div(SECONDS_IN_365_DAYS);
+
+    const totalRequirementGrowthPerSecond = lenderRequirementGrowthPerSecond.add(
+      protocolRequirementGrowthPerSecond.raw
+    );
+    if (totalRequirementGrowthPerSecond.raw.isZero()) return Number.MAX_SAFE_INTEGER;
+
+    const postBorrowBuffer = this.liquidReserves.sub(this.minimumReserves).sub(borrowAmount);
+    if (postBorrowBuffer.raw.lte(0)) return 0;
+    return postBorrowBuffer.div(totalRequirementGrowthPerSecond, true).raw.toNumber();
+  }
   /**
    * @dev Calculate token amount to be repayed by borrower for a given duration
    * to keep the market healthy.
    * @return token amount to be repayed
    **/
   repayRequiredForDuration(timeToPayInSeconds: number): TokenAmount {
-    const effectiveBorrowerAPR = bipMul(
-      bipToRay(this.annualInterestBips),
-      BIP.add(this.protocolFeeBips)
-    );
-
-    const interestPerSecond = this.totalSupply
-      .rayMul(effectiveBorrowerAPR)
+    const scaledBase = this.scaledTotalSupply.sub(this.scaledPendingWithdrawals);
+    if (scaledBase.lte(0)) return this.underlyingToken.getAmount(0);
+    const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
+    const baseAPRRay = bipToRay(this.annualInterestBips);
+    const protocolFeeAPRRay = bipMul(baseAPRRay, BigNumber.from(this.protocolFeeBips));
+    const delinquencyFeeAPRRay =
+      this.timeDelinquent > this.delinquencyGracePeriod
+        ? bipToRay(this.delinquencyFeeBips)
+        : BigNumber.from(0);
+    const lenderRequirementGrowthPerSecond = basePrincipal
+      .rayMul(baseAPRRay.add(delinquencyFeeAPRRay))
+      .div(SECONDS_IN_365_DAYS)
+      .bipMul(this.reserveRatioBips);
+    const protocolRequirementGrowthPerSecond = basePrincipal
+      .rayMul(protocolFeeAPRRay)
       .div(SECONDS_IN_365_DAYS);
-
-    return interestPerSecond.mul(timeToPayInSeconds);
+    const totalRequirementGrowthPerSecond = lenderRequirementGrowthPerSecond.add(
+      protocolRequirementGrowthPerSecond.raw
+    );
+    return totalRequirementGrowthPerSecond.mul(timeToPayInSeconds);
   }
 
   /**
