@@ -260,7 +260,7 @@ export class MarketAccount {
         config.kind === HooksKind.FixedTerm &&
         !(
           config.allowClosureBeforeTerm ||
-          (config.allowTermReduction && this.chainId === SupportedChainId.Mainnet)
+          (config.allowTermReduction && this.chainId !== SupportedChainId.Sepolia)
         )
       ) {
         return { status: CloseMarketStatus.EarlyClosureNotAllowed };
@@ -524,7 +524,7 @@ export class MarketAccount {
     if (this.market.version !== MarketVersion.V2) {
       return { status: ForceBuyBackStatus.V1NotSupported };
     }
-    if (this.market.chainId === SupportedChainId.Mainnet) {
+    if (this.market.chainId !== SupportedChainId.Sepolia) {
       return { status: ForceBuyBackStatus.MainnetNotSupported };
     }
     if (amount.gt(this.underlyingBalance)) {
