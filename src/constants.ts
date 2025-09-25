@@ -24,27 +24,32 @@ import { assert } from "./utils";
 
 type NetworkDeployments = {
   HooksFactory: string;
-  MarketLens: string;
+  MarketLens?: string;
   MarketLensV2: string;
   MockArchControllerOwner?: string;
   MockChainalysis?: string;
   MockERC20Factory?: string;
   WildcatArchController: string;
-  WildcatMarketControllerFactory: string;
+  WildcatMarketControllerFactory?: string;
   WildcatSanctionsSentinel: string;
   Chainalysis: string;
   OpenAccessRoleProvider: string;
   WildcatCollateralFactory?: string;
-  BebopSettlementContract: string;
+  BebopSettlementContract?: string;
   CollateralLens?: string;
 };
 
 export enum SupportedChainId {
   Mainnet = 1,
-  Sepolia = 11155111
+  Sepolia = 11155111,
+  PlasmaTestnet = 9746
 }
 
-export const SupportedChainIds = [SupportedChainId.Mainnet, SupportedChainId.Sepolia];
+export const SupportedChainIds = [
+  SupportedChainId.Mainnet,
+  SupportedChainId.Sepolia,
+  SupportedChainId.PlasmaTestnet
+];
 
 export const isSupportedChainId = (chainId: number): chainId is SupportedChainId => {
   return SupportedChainIds.includes(chainId as SupportedChainId);
@@ -87,6 +92,17 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatCollateralFactory: "0xe11E41e9162ad07F1a9853c3123c33B7e9Cf59D6",
     BebopSettlementContract: "0x513826b6bb38fc159f152a4bf6e1ec3650a7ee46",
     CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578"
+  },
+  [SupportedChainId.PlasmaTestnet]: {
+    HooksFactory: "0x5Ad00b665eA71E27628D75102B1497CC75E531FB",
+    MarketLensV2: "0xBA370992D7041b5C3B9AEBc61E0CC52C57138918",
+    MockArchControllerOwner: "0x2BF8b4eA29259C01eB2Cc6BF6bd21A6F4D23fD8f",
+    MockChainalysis: "0x0ac22d06121fc336B2F3DBeb284df65C97BcA547",
+    MockERC20Factory: "0xF3fE96705d85A1592B31592B628667eA21fdd7C7",
+    WildcatArchController: "0x1EeBC079aE1e7dCDe31C74A7EF48fA8737673A6a",
+    WildcatSanctionsSentinel: "0x7cc91e3c64A0b5844650d586B87B291AC3A3aaD4",
+    Chainalysis: "0x0ac22d06121fc336B2F3DBeb284df65C97BcA547",
+    OpenAccessRoleProvider: "0xC9490f78A131c51829cda5C4455E88CAAc6246f0"
   }
 };
 
@@ -188,7 +204,9 @@ export const getCollateralFactoryContract = (
 export const SubgraphUrls = {
   [SupportedChainId.Sepolia]: `https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/version/v2.0.19/api`,
   [SupportedChainId.Mainnet]:
-    "https://subgraph.satsuma-prod.com/dillons-team--345508/mainnet/version/v2.0.19/api"
+    "https://subgraph.satsuma-prod.com/dillons-team--345508/mainnet/version/v2.0.19/api",
+  [SupportedChainId.PlasmaTestnet]:
+    "https://api.goldsky.com/api/public/project_cmfvpdktfz5v701z62hog8qhj/subgraphs/wildcat-plasma/2.0.19/gn"
 };
 
 export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
