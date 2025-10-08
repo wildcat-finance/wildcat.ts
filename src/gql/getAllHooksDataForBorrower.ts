@@ -33,7 +33,7 @@ export async function getAllHooksDataForBorrower(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   { chainId, fetchPolicy, signerOrProvider, borrower }: GetAllHooksDataForBorrowerOptions
 ): Promise<GetAllHooksDataForBorrowerResult> {
-  if (borrower === undefined && signerOrProvider instanceof Signer) {
+  if (borrower === undefined && Signer.isSigner(signerOrProvider)) {
     borrower = await signerOrProvider.getAddress();
   }
   const result = await subgraphClient.query<

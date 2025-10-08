@@ -26,7 +26,7 @@ export async function getAllHooksTemplates(
     isRegisteredBorrower
   }: GetAllHooksTemplatesOptions
 ): Promise<HooksTemplate[]> {
-  if (borrower === undefined && signerOrProvider instanceof Signer) {
+  if (borrower === undefined && Signer.isSigner(signerOrProvider)) {
     borrower = await signerOrProvider.getAddress();
   }
   const result = await subgraphClient.query<

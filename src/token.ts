@@ -2,7 +2,7 @@ import { BigNumber, BigNumberish, ContractTransaction } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { IERC20, IERC20__factory, TokenMetadataStructOutput } from "./typechain";
 import { ContractWrapper, SignerOrProvider } from "./types";
-import { SupportedChainId, getLensContract } from "./constants";
+import { SupportedChainId, getLensContract, getLensV2Contract } from "./constants";
 import { bipMul, formatBnFixed, mulDiv, rayDiv, rayMul } from "./utils";
 import { SubgraphMarketDataFragment, SubgraphToken } from "./gql/graphql";
 
@@ -209,7 +209,7 @@ export class Token extends ContractWrapper<IERC20> {
     token: string,
     provider: SignerOrProvider
   ): Promise<Token> {
-    const lens = getLensContract(chainId, provider);
+    const lens = getLensV2Contract(chainId, provider);
     const metadata = await lens.getTokenInfo(token);
     return Token.fromTokenMetadata(chainId, metadata, provider);
   }

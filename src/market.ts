@@ -969,7 +969,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       chainId,
       data,
       provider,
-      provider instanceof Signer ? await provider.getAddress() : undefined
+      Signer.isSigner(provider) ? await provider.getAddress() : undefined
     );
   }
   /**
@@ -995,7 +995,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   ): Promise<Market[]> {
     const lens = getLensContract(chainId, provider);
     const data = await lens.getMarketsData(markets);
-    const signerAddress = provider instanceof Signer ? await provider.getAddress() : undefined;
+    const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
     return data.map((market) => Market.fromMarketData(chainId, market, provider, signerAddress));
   }
 
@@ -1007,7 +1007,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     provider: SignerOrProvider
   ): Promise<Market[]> {
     const lens = getLensContract(chainId, provider);
-    const signerAddress = provider instanceof Signer ? await provider.getAddress() : undefined;
+    const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
     return lens
       .getAllMarketsData()
       .then((data) =>
@@ -1024,7 +1024,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     start = 0,
     count: number
   ): Promise<Market[]> {
-    const signerAddress = provider instanceof Signer ? await provider.getAddress() : undefined;
+    const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
     const lens = getLensContract(chainId, provider);
     return lens
       .getPaginatedMarketsData(start, count)

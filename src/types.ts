@@ -22,7 +22,7 @@ export abstract class ContractWrapper<Contract extends BaseContract> {
   protected abstract _contractAddress: string;
 
   get signer(): Signer {
-    if (this._provider instanceof Signer) {
+    if (Signer.isSigner(this._provider)) {
       return this._provider;
     }
     throw new Error("Provider is not a signer");
