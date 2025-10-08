@@ -42,13 +42,15 @@ type NetworkDeployments = {
 export enum SupportedChainId {
   Mainnet = 1,
   Sepolia = 11155111,
-  PlasmaTestnet = 9746
+  PlasmaTestnet = 9746,
+  PlasmaMainnet = 9745
 }
 
 export const SupportedChainIds = [
   SupportedChainId.Mainnet,
   SupportedChainId.Sepolia,
-  SupportedChainId.PlasmaTestnet
+  SupportedChainId.PlasmaTestnet,
+  SupportedChainId.PlasmaMainnet
 ];
 
 export const isSupportedChainId = (chainId: number): chainId is SupportedChainId => {
@@ -103,6 +105,14 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatSanctionsSentinel: "0x7cc91e3c64A0b5844650d586B87B291AC3A3aaD4",
     Chainalysis: "0x0ac22d06121fc336B2F3DBeb284df65C97BcA547",
     OpenAccessRoleProvider: "0xC9490f78A131c51829cda5C4455E88CAAc6246f0"
+  },
+  [SupportedChainId.PlasmaMainnet]: {
+    HooksFactory: "0xB46bae25AC6D23148531ed1853a8881FD842E517",
+    MarketLensV2: "0x7e5d6d9f9a2091dD781118514F5397A8107c81c5",
+    WildcatArchController: "0xdb2e0DE97d6d96aa56754635704a4273E0F348ae",
+    Chainalysis: "0x38056F7fE6396417b191BF7Dc6a3aA04235f3f46",
+    OpenAccessRoleProvider: "0x792F1368f8B8f450c14875eb6FF0028dFc2629b4",
+    WildcatSanctionsSentinel: "0x37064895ba2C1e269EAF7FF32564818d08903f5B"
   }
 };
 
@@ -206,7 +216,9 @@ export const SubgraphUrls = {
   [SupportedChainId.Mainnet]:
     "https://subgraph.satsuma-prod.com/dillons-team--345508/mainnet/version/v2.0.19/api",
   [SupportedChainId.PlasmaTestnet]:
-    "https://api.goldsky.com/api/public/project_cmfvpdktfz5v701z62hog8qhj/subgraphs/wildcat-plasma/2.0.19/gn"
+    "https://api.goldsky.com/api/public/project_cmfvpdktfz5v701z62hog8qhj/subgraphs/wildcat-plasma/2.0.19/gn",
+  [SupportedChainId.PlasmaMainnet]:
+    "https://api.goldsky.com/api/public/project_cmfvpdktfz5v701z62hog8qhj/subgraphs/wildcat-plasma-mainnet/2.0.19/gn"
 };
 
 export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
