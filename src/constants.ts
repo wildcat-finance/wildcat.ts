@@ -214,7 +214,7 @@ export const getCollateralFactoryContract = (
 export const SubgraphUrls = {
   [SupportedChainId.Sepolia]: `https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/version/v2.0.19/api`,
   [SupportedChainId.Mainnet]:
-    "https://subgraph.satsuma-prod.com/dillons-team--345508/mainnet/version/v2.0.19/api",
+    "https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/mainnet/version/v2.0.19/api",
   [SupportedChainId.PlasmaTestnet]:
     "https://api.goldsky.com/api/public/project_cmfvpdktfz5v701z62hog8qhj/subgraphs/wildcat-plasma/2.0.19/gn",
   [SupportedChainId.PlasmaMainnet]:
