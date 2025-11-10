@@ -20,13 +20,22 @@ import {
 import { Market } from "./market";
 import { ContractReceipt, ContractTransaction } from "ethers";
 import { Token, TokenAmount } from "./token";
-import { assert, parseFeeConfiguration, parseMarketParameterConstraints } from "./utils";
+import {
+  assert,
+  parseFeeConfiguration,
+  parseFeeConfigurationV2,
+  parseMarketParameterConstraints
+} from "./utils";
 import { MarketDeployedEvent } from "./typechain/WildcatMarketController";
+import { SubgraphMinimalControllerDataFragment } from "./gql";
 
 export class MarketController extends ContractWrapper<WildcatMarketController> {
   readonly contractFactory = WildcatMarketController__factory;
-
   public authorizedLenders: string[] = [];
+
+  protected get _contractAddress(): string {
+    return this.address;
+  }
 
   constructor(
     public chainId: SupportedChainId,
@@ -40,9 +49,13 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     public markets: Market[],
     provider: SignerOrProvider,
     public borrowerOriginationFeeBalance?: TokenAmount,
-    public borrowerOriginationFeeApproval?: TokenAmount
+    public borrowerOriginationFeeApproval?: TokenAmount,
+    public numMarkets: number = 0
   ) {
     super(provider);
+    if (markets.length > numMarkets) {
+      this.numMarkets = markets.length;
+    }
   }
 
   get hasOriginationFees(): boolean {
@@ -116,7 +129,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     return this.contract.deauthorizeLenders(lenders);
   }
 
-  async populateDeauthorizeLenders(lenders: string[]): Promise<PartialTransaction> {
+  populateDeauthorizeLenders(lenders: string[]): PartialTransaction {
     return {
       to: this.address,
       data: this.contract.interface.encodeFunctionData("deauthorizeLenders", [lenders]),
@@ -325,7 +338,51 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
       markets,
       provider,
       borrowerOriginationFeeBalance,
-      borrowerOriginationFeeApproval
+      borrowerOriginationFeeApproval,
+      markets.length
+    );
+  }
+
+  static fromSubgraphControllerData(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider,
+    {
+      id,
+      numMarkets,
+      borrower,
+      isRegistered,
+      controllerFactory: {
+        id: controllerFactoryId,
+        constraints,
+        originationFeeAsset,
+        originationFeeAmount,
+        protocolFeeBips,
+        feeRecipient
+      }
+    }: SubgraphMinimalControllerDataFragment
+  ): MarketController {
+    const originationFeeToken = originationFeeAsset
+      ? Token.fromSubgraphToken(chainId, originationFeeAsset, provider)
+      : undefined;
+    return new MarketController(
+      chainId,
+      id,
+      borrower,
+      controllerFactoryId,
+      isRegistered,
+      true,
+      {
+        feeRecipient,
+        protocolFeeBips,
+        originationFeeToken,
+        originationFeeAmount: originationFeeToken?.getAmount(originationFeeAmount)
+      },
+      constraints,
+      [],
+      provider,
+      undefined,
+      undefined,
+      numMarkets
     );
   }
 

@@ -43,21 +43,7 @@ export type MarketStateStruct = {
   lastInterestAccruedTimestamp: PromiseOrValue<BigNumberish>;
 };
 
-export type MarketStateStructOutput = [
-  boolean,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  number,
-  boolean,
-  number,
-  number,
-  number,
-  BigNumber,
-  number
-] & {
+export type MarketStateStructOutput = {
   isClosed: boolean;
   maxTotalSupply: BigNumber;
   accruedProtocolFees: BigNumber;
@@ -78,7 +64,7 @@ export type AccountWithdrawalStatusStruct = {
   normalizedAmountWithdrawn: PromiseOrValue<BigNumberish>;
 };
 
-export type AccountWithdrawalStatusStructOutput = [BigNumber, BigNumber] & {
+export type AccountWithdrawalStatusStructOutput = {
   scaledAmount: BigNumber;
   normalizedAmountWithdrawn: BigNumber;
 };
@@ -89,7 +75,7 @@ export type WithdrawalBatchStruct = {
   normalizedAmountPaid: PromiseOrValue<BigNumberish>;
 };
 
-export type WithdrawalBatchStructOutput = [BigNumber, BigNumber, BigNumber] & {
+export type WithdrawalBatchStructOutput = {
   scaledTotalAmount: BigNumber;
   scaledAmountBurned: BigNumber;
   normalizedAmountPaid: BigNumber;

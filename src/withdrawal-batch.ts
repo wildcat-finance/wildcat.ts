@@ -2,7 +2,7 @@ import { BigNumber } from "ethers";
 import { Market } from "./market";
 import { TokenAmount, minTokenAmount } from "./token";
 import { WithdrawalBatchDataStructOutput } from "./typechain";
-import { getLensContract } from "./constants";
+import { getLensContract, getLensV2Contract, hasDeploymentAddress } from "./constants";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
 import {
   MakeOptional,
@@ -19,6 +19,7 @@ import {
   parseWithdrawalRecord,
   rayMul
 } from "./utils";
+import { MarketVersion } from "./types";
 
 export enum BatchStatus {
   Pending = 0,
@@ -229,7 +230,11 @@ export class WithdrawalBatch {
   }
 
   static async getWithdrawalBatch(market: Market, expiry: number): Promise<WithdrawalBatch> {
-    const lens = getLensContract(market.chainId, market.provider);
+    const useLensV2 =
+      market.version === MarketVersion.V2 || !hasDeploymentAddress(market.chainId, "MarketLens");
+    const lens = useLensV2
+      ? getLensV2Contract(market.chainId, market.provider)
+      : getLensContract(market.chainId, market.provider);
     const data = await lens.getWithdrawalBatchData(market.address, expiry);
     return WithdrawalBatch.fromWithdrawalBatchData(market, data);
   }

@@ -7,12 +7,17 @@ import {
   SubgraphDelinquencyStatusChangedDataFragment,
   SubgraphDepositDataFragment,
   SubgraphFeesCollectedDataFragment,
+  SubgraphForceBuyBackDataFragment,
   SubgraphMarketClosedDataFragment,
   SubgraphMaxTotalSupplyUpdatedDataFragment,
   SubgraphRepaymentDataFragment,
   SubgraphWithdrawalBatchPaymentPropertiesFragment,
   SubgraphWithdrawalExecutionPropertiesFragment,
-  SubgraphWithdrawalRequestPropertiesFragment
+  SubgraphWithdrawalRequestPropertiesFragment,
+  SubgraphMinimumDepositUpdatedDataFragment,
+  SubgraphProtocolFeeBipsUpdatedDataFragment,
+  SubgraphDisabledForceBuyBacksDataFragment,
+  SubgraphFixedTermUpdatedDataFragment
 } from "../gql/graphql";
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
@@ -106,6 +111,26 @@ export type WithdrawalRecordParserMap = {
   ) => WithdrawalRecordByType<K>;
 };
 
+export type ForceBuyBackRecord = Exact<
+  {
+    scaledAmount: BigNumber;
+    normalizedAmount: TokenAmount;
+  } & Omit<SubgraphForceBuyBackDataFragment, "scaledAmount" | "normalizedAmount">
+>;
+
+export type MinimumDepositUpdatedRecord = Exact<
+  {
+    oldMinimumDeposit: TokenAmount;
+    newMinimumDeposit: TokenAmount;
+  } & Omit<SubgraphMinimumDepositUpdatedDataFragment, "oldMinimumDeposit" | "newMinimumDeposit">
+>;
+
+export type ProtocolFeeBipsUpdatedRecord = SubgraphProtocolFeeBipsUpdatedDataFragment;
+
+export type ForceBuyBacksDisabledRecord = SubgraphDisabledForceBuyBacksDataFragment;
+
+export type FixedTermUpdatedRecord = SubgraphFixedTermUpdatedDataFragment;
+
 export type WithdrawalDataFragmentByType<K extends WithdrawalRecordKind> =
   WithdrawalDataFragment extends infer C ? (C extends { __typename: K } ? C : never) : never;
 
@@ -182,7 +207,12 @@ export type MarketRecord =
   | MarketClosedRecord
   | MaxTotalSupplyUpdatedRecord
   | RepaymentRecord
-  | WithdrawalRequestPartialRecord;
+  | WithdrawalRequestPartialRecord
+  | ForceBuyBackRecord
+  | MinimumDepositUpdatedRecord
+  | ProtocolFeeBipsUpdatedRecord
+  | ForceBuyBacksDisabledRecord
+  | FixedTermUpdatedRecord;
 
 export type MarketDataFragment =
   | SubgraphAnnualInterestBipsUpdatedDataFragment
@@ -193,7 +223,12 @@ export type MarketDataFragment =
   | SubgraphMarketClosedDataFragment
   | SubgraphMaxTotalSupplyUpdatedDataFragment
   | SubgraphRepaymentDataFragment
-  | SubgraphWithdrawalRequestPropertiesFragment;
+  | SubgraphWithdrawalRequestPropertiesFragment
+  | SubgraphForceBuyBackDataFragment
+  | SubgraphMinimumDepositUpdatedDataFragment
+  | SubgraphProtocolFeeBipsUpdatedDataFragment
+  | SubgraphDisabledForceBuyBacksDataFragment
+  | SubgraphFixedTermUpdatedDataFragment;
 
 export type MarketRecordByType<K extends MarketRecordKind> = MarketRecord extends infer C
   ? C extends { __typename: K }

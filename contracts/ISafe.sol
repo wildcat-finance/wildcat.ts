@@ -4,6 +4,8 @@ pragma solidity ^0.8.20;
 interface ISafe {
   function VERSION() external view returns (string memory);
 
+  function domainSeparator() external view returns (bytes32);
+
   function getThreshold() external view returns (uint256);
 
   /**
@@ -44,4 +46,6 @@ interface ISafe {
   function getMessageHash(bytes memory message) external view returns (bytes32);
 
   function encodeMessageDataForSafe(address safe, bytes memory message) external view returns (bytes memory);
+
+  function approvedHashes(address owner,bytes32 hash) external view returns (uint);
 }

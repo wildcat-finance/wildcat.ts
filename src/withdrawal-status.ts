@@ -5,7 +5,12 @@ import {
   WithdrawalBatchLenderStatusStructOutput,
   WithdrawalBatchDataWithLenderStatusStructOutput
 } from "./typechain";
-import { SupportedChainId, getLensContract } from "./constants";
+import {
+  SupportedChainId,
+  getLensContract,
+  getLensV2Contract,
+  hasDeploymentAddress
+} from "./constants";
 import {
   WithdrawalExecutionRecord,
   WithdrawalRequestRecord,
@@ -14,6 +19,7 @@ import {
   parseWithdrawalRecord
 } from "./utils";
 import { WithdrawalBatch, BatchStatus } from "./withdrawal-batch";
+import { MarketVersion } from "./types";
 import {
   SubgraphLenderWithdrawalPropertiesFragment,
   SubgraphWithdrawalExecution,
@@ -118,7 +124,11 @@ export class LenderWithdrawalStatus {
     expiry: number,
     lender: string
   ): Promise<LenderWithdrawalStatus> {
-    const lens = getLensContract(market.chainId, market.provider);
+    const useLensV2 =
+      market.version === MarketVersion.V2 || !hasDeploymentAddress(market.chainId, "MarketLens");
+    const lens = useLensV2
+      ? getLensV2Contract(market.chainId, market.provider)
+      : getLensContract(market.chainId, market.provider);
     const batchData = await lens.getWithdrawalBatchDataWithLenderStatus(
       market.address,
       expiry,

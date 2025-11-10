@@ -29,9 +29,29 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CheckSafeSignature__factory>;
     getContractFactory(
+      name: "CollateralLens",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CollateralLens__factory>;
+    getContractFactory(
+      name: "DescribeSignature",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DescribeSignature__factory>;
+    getContractFactory(
+      name: "HooksFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.HooksFactory__factory>;
+    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
+    getContractFactory(
+      name: "IFixedTermHooks",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IFixedTermHooks__factory>;
+    getContractFactory(
+      name: "IOpenTermHooks",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IOpenTermHooks__factory>;
     getContractFactory(
       name: "ISafe",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -41,6 +61,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MarketLens__factory>;
     getContractFactory(
+      name: "MarketLensV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MarketLensV2__factory>;
+    getContractFactory(
       name: "MockArchControllerOwner",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockArchControllerOwner__factory>;
@@ -49,9 +73,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockERC20Factory__factory>;
     getContractFactory(
+      name: "SimpleMarketCollateral",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SimpleMarketCollateral__factory>;
+    getContractFactory(
       name: "WildcatArchController",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WildcatArchController__factory>;
+    getContractFactory(
+      name: "WildcatCollateralFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.WildcatCollateralFactory__factory>;
     getContractFactory(
       name: "WildcatMarket",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -64,6 +96,10 @@ declare module "hardhat/types/runtime" {
       name: "WildcatMarketControllerFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WildcatMarketControllerFactory__factory>;
+    getContractFactory(
+      name: "WildcatMarketV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.WildcatMarketV2__factory>;
 
     getContractAt(
       name: "AccountQuery",
@@ -86,10 +122,35 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.CheckSafeSignature>;
     getContractAt(
+      name: "CollateralLens",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CollateralLens>;
+    getContractAt(
+      name: "DescribeSignature",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DescribeSignature>;
+    getContractAt(
+      name: "HooksFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.HooksFactory>;
+    getContractAt(
       name: "IERC20",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
+    getContractAt(
+      name: "IFixedTermHooks",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IFixedTermHooks>;
+    getContractAt(
+      name: "IOpenTermHooks",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IOpenTermHooks>;
     getContractAt(
       name: "ISafe",
       address: string,
@@ -101,6 +162,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MarketLens>;
     getContractAt(
+      name: "MarketLensV2",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MarketLensV2>;
+    getContractAt(
       name: "MockArchControllerOwner",
       address: string,
       signer?: ethers.Signer
@@ -111,10 +177,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MockERC20Factory>;
     getContractAt(
+      name: "SimpleMarketCollateral",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SimpleMarketCollateral>;
+    getContractAt(
       name: "WildcatArchController",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.WildcatArchController>;
+    getContractAt(
+      name: "WildcatCollateralFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.WildcatCollateralFactory>;
     getContractAt(
       name: "WildcatMarket",
       address: string,
@@ -130,6 +206,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.WildcatMarketControllerFactory>;
+    getContractAt(
+      name: "WildcatMarketV2",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.WildcatMarketV2>;
 
     // default types
     getContractFactory(

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "./WithdrawalStructs.sol";
+
 enum AuthRole {
   Null,
   Blocked,
@@ -22,17 +24,6 @@ struct MarketState {
   uint16 reserveRatioBips;
   uint112 scaleFactor;
   uint32 lastInterestAccruedTimestamp;
-}
-
-struct AccountWithdrawalStatus {
-  uint104 scaledAmount;
-  uint128 normalizedAmountWithdrawn;
-}
-
-struct WithdrawalBatch {
-  uint104 scaledTotalAmount;
-  uint104 scaledAmountBurned;
-  uint128 normalizedAmountPaid;
 }
 
 interface WildcatMarket {

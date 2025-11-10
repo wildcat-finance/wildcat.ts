@@ -44,22 +44,7 @@ export type MarketParametersStruct = {
   delinquencyGracePeriod: PromiseOrValue<BigNumberish>;
 };
 
-export type MarketParametersStructOutput = [
-  string,
-  string,
-  string,
-  string,
-  string,
-  string,
-  string,
-  BigNumber,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number
-] & {
+export type MarketParametersStructOutput = {
   asset: string;
   namePrefix: string;
   symbolPrefix: string;
@@ -89,18 +74,7 @@ export type MarketParameterConstraintsStruct = {
   maximumAnnualInterestBips: PromiseOrValue<BigNumberish>;
 };
 
-export type MarketParameterConstraintsStructOutput = [
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number
-] & {
+export type MarketParameterConstraintsStructOutput = {
   minimumDelinquencyGracePeriod: number;
   maximumDelinquencyGracePeriod: number;
   minimumReserveRatioBips: number;

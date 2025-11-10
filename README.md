@@ -1,101 +1,47 @@
-# MarketController
+<h1 align="center">wildcat sdk</h1>
 
-## Deploying markets
+> TypeScript SDK for interacting with Wildcat markets, controllers, and managing our onchain state 
 
-### 1. Get controller info for borrower
+## Table of Contents
 
-```ts
-import { getController, MarketController, MarketParameters } from "@wildcatfi/wildcat-sdk";
+1. [Overview](#overview)
+2. [Development Workflow](#development-workflow)
+3. [App Integration Testing](#app-integration-testing)
+4. [Releases](#releases)
+5. [Branch Strategy](#branch-strategy)
 
-const controller: MarketController = await getController(signer, borrower);
-```
+## Overview
 
-### 2. Get parameter constraints for new markets
+`wildcat.ts` exposes typed helpers for working with Wildcat markets: querying controllers, inspecting market state, and managing lender or borrower activity. the sdk bundles contract typings, gql fragments, utils and constants like deployment addresses, rpc urls, sugraph urls etc. [The main app](https://github.com/wildcat-finance/wildcat-app-v2/blob/989ae639d5f1160ac0a9d8c0a90609643d716a77/package.json#L40) is the consumer.
 
-`controller.constraints: MarketParameterConstraints` contains the min/max values of
+The most likely scenario for working in this repo is while also working on app side. Theres a section below specifically on _how_ to manage this as a local dependency.
 
-- `annualInterestBips`
-- `delinquencyFeeBips`
-- `withdrawalBatchDuration`
-- `reserveRatioBips`
-- `delinquencyGracePeriod`
 
-If provided values are out of this range, market deployment will revert.
+For local development inside this repo run `yarn build` (or `npm run build`) to compile TypeScript output before linking or publishing
 
-### 3. Deploying a mock token for new market
+## Development Workflow
 
-```ts
-import { deployToken } from "@wildcatfi/wildcat-sdk";
+- **Code generation**: run `yarn codegen` (or `npm run codegen`) whenever contracts in `contracts/` or GraphQL fragments in `gql/` change. This invokes:
+  - `yarn codegen:gql` → rebuilds typed gql 
+  - `yarn codegen:typechain` → regenerates typeChain bindings and exports
+- **Build**: `yarn build` (or `npm run build`) outputs the package defined by `tsconfig.prod.json`.
 
-await deployToken(signer, "name", "symbol");
-```
+## App Integration Testing
 
-### 4. Deploying new market
+To validate SDK changes against `wildcat-app-v2`:
 
-```ts
-const marketParameters: MarketParameters = {...}
+1. Run `npm pack` (or `yarn npm pack`) in this repository to produce a local tarball in the project root.
+2. in the [app](https://github.com/wildcat-finance/wildcat-app-v2) repo, update `package.json` to point to the new `.tgz` file (e.g. `"@wildcatfi/wildcat-sdk": "file:../wildcat.ts/wildcatfi-wildcat-sdk-3.0.54-beta.tgz"`).
+3. Reinstall dependencies in the app (`npm install` or use the provided reinstall script with the appropriate environment variables configured).
 
-// 1. Ensure borrower is registered on the arch-controller.
-// For the testnet deployment, anyone can register a borrower
-if (!controller.isRegisteredBorrower) {
-  await controller.registerBorrower()
-}
-// 2. Ensure the `asset, namePrefix, symbolPrefix` are unique.
-if (controller.getExistingMarketForParameters(marketParameters)) {
-  throw Error()
-}
-// 3. Deploy market
-const market: Market = await controller.deployMarket(marketParameters);
+## Releases
 
-```
+Once happy with changes publish to npm (if you have permissions):
+- `npm publish --tag beta `
 
-# Market
+## Branch Strategy
 
-## Get market instances
+- `main`: latest supported release branch. Publish production npm releases (`npm publish` or `yarn npm publish`).
+- `develop`: integration branch. Publish beta releases with `npm publish --tag beta` (or the yarn equivalent).
+- Feature branches should merge into `develop` via pull request, then graduate to `main` for release once validated.
 
-### 1. Get all `Market` instances on Wildcat
-
-```ts
-import { getAllMarkets } from "@wildcatfi/wildcat-sdk";
-
-const markets = getAllMarkets(provider);
-```
-
-### 2. Get all `Market` instances for borrower
-
-```ts
-const controller: MarketController = await getController(signer, borrower);
-// controller.markets has an array of all Market instances for the controller
-```
-
-# MarketAccount
-
-## Get `MarketAccount`
-
-### 1. Get `MarketAccount` for every market
-
-```ts
-import { getAllMarketAccountsForLender } from "@wildcatfi/wildcat-sdk";
-const accounts = await getAllMarketAccountsForLender(signer, lenderAddress);
-```
-
-## Deposit
-
-### 1. Get underlying assets from mock token
-
-```ts
-if (market.underlyingToken.isMock) {
-  await market.underlyingToken.faucet();
-}
-```
-
-# Development
-
-Whenever anything in `./gql` or `./contracts` is changed, run `yarn codegen` to regenerate the graphql and typechain types.
-
-The graphql scripts take a while to run, so the graphql script saves a file in [.gql-cache](./scripts/.gql-cache) with the checksums of the previous input/output files from gql codegen, so the script can skip graphql codegen if there's no reason to. Typechain only takes about a second so we don't do the same for it.
-
-This runs:
-
-- `yarn codegen:gql` - Generates TS types for all the graphql queries, then runs a script to simplify the type literals ([gql-type-cleanup.js](./scripts/gql-type-cleanup.js))
-- `yarn codegen:typechain` - Generates types for the contracts with typechain, then runs a script ([add-typechain-exports.js](./scripts/add-typechain-exports.js)) to add exports for all the structs in the contracts to the src/typechain index file

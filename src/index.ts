@@ -7,9 +7,9 @@ import { LenderWithdrawalStatus } from "./withdrawal-status";
 import { MarketController } from "./controller";
 
 export * from "./account";
+export * from "./collateral";
 export * from "./constants";
 export * from "./controller";
-export * from "./hooks";
 export * from "./market";
 export * from "./mockerc20factory";
 export * from "./token";

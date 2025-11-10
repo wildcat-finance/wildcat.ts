@@ -21,5 +21,5 @@ export async function getAuthorisedLendersByMarket(
     variables: { market: market.toLowerCase() },
     fetchPolicy
   });
-  return result.data.market?.controller.authorizedLenders.map((lender) => lender.lender) ?? [];
+  return result.data.market?.controller?.authorizedLenders.map((lender) => lender.lender) ?? [];
 }

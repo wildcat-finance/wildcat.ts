@@ -1,13 +1,54 @@
 # import './fragments.graphql'
 
-# -------------------------------------------------------------------------- #
+fragment TokenData on Token {
+  id
+  address
+  name
+  symbol
+  decimals
+  isMock
+}
+
+fragment RoleProviderData on RoleProvider {
+  id
+  providerAddress
+  timeToLive
+  isPullProvider
+  pullProviderIndex
+  isPushProvider
+  pushProviderIndex
+  isApproved
+}
+
+fragment LenderHooksAccessData on LenderHooksAccess {
+  id
+  lender
+  isBlockedFromDeposits
+  lastProvider {
+    ...RoleProviderData
+  }
+  canRefresh
+  lastApprovalTimestamp
+  addedTimestamp
+}
+
+# ========================================================================== #
 #                                Lender Views                                #
-# -------------------------------------------------------------------------- #
+# ========================================================================== #
 
 fragment AccountDataForLenderView on LenderAccount {
   ...LenderProperties
+
   controllerAuthorization {
     authorized
+  }
+
+  hooksAccess {
+    ...LenderHooksAccessData
+  }
+
+  knownLenderStatus {
+    id
   }
 
   deposits(
@@ -17,6 +58,31 @@ fragment AccountDataForLenderView on LenderAccount {
     orderDirection: $directionDeposits
   ) {
     ...DepositData
+  }
+}
+
+# Lender data with:
+# address
+# balance
+# time added
+# access level & authorization source (if any)
+fragment BasicLenderData on LenderAccount {
+  id
+  address
+
+  scaledBalance
+  addedTimestamp
+
+  role
+  controllerAuthorization {
+    authorized
+    addedTimestamp
+  }
+  hooksAccess {
+    ...LenderHooksAccessData
+  }
+  knownLenderStatus {
+    id
   }
 }
 
@@ -32,12 +98,6 @@ fragment LenderProperties on LenderAccount {
   numPendingWithdrawalBatches
 }
 
-
-fragment AllAuthorizedLendersViewMarketInfo on Market {
-  id
-  name
-}
-
 fragment AllAuthorizedLendersView on LenderAuthorization {
   lender
   authorized
@@ -46,14 +106,37 @@ fragment AllAuthorizedLendersView on LenderAuthorization {
   }
 }
 
-# ---------------------------------------------------------------------------- #
+fragment MinimalControllerData on Controller {
+  id
+  borrower
+  numMarkets
+  controllerFactory {
+    id
+    constraints {
+      ...ParameterConstraintsData
+    }
+    feeRecipient
+    protocolFeeBips
+    originationFeeAsset {
+      ...TokenData
+    }
+    originationFeeAmount
+  }
+  archController {
+    id
+  }
+  isRegistered
+}
+
+# ============================================================================ #
 #                                Borrower Views                                #
-# ---------------------------------------------------------------------------- #
+# ============================================================================ #
 
 fragment MarketData on Market {
   id
+  version
 
-  # --------------------------------- Config --------------------------------- #
+  # ================================= Config ================================= #
   isRegistered
   isClosed
   controller {
@@ -69,17 +152,20 @@ fragment MarketData on Market {
   delinquencyGracePeriod
   delinquencyFeeBips
   withdrawalBatchDuration
+  numCollateralContracts
 
   _asset: asset {
-    id
-    address
-    name
-    symbol
-    decimals
-    isMock
+    ...TokenData
   }
 
-  # ---------------------------------- State --------------------------------- #
+  hooksConfig {
+    ...HooksConfigDataForMarket
+  }
+  hooks {
+    ...HooksInstanceData
+  }
+
+  # ================================== State ================================= #
   maxTotalSupply
   pendingProtocolFees
   normalizedUnclaimedWithdrawals
@@ -97,7 +183,7 @@ fragment MarketData on Market {
   temporaryReserveRatioExpiry
   temporaryReserveRatioActive
 
-  # -------------------------------- Metadata -------------------------------- #
+  # ================================ Metadata ================================ #
   totalBorrowed
   totalRepaid
   totalBaseInterestAccrued
@@ -116,9 +202,22 @@ fragment AprConstraints on ParameterConstraints {
   maximumAnnualInterestBips
 }
 
-# ---------------------------------------------------------------------------- #
+fragment ParameterConstraintsData on ParameterConstraints {
+  minimumDelinquencyGracePeriod
+  maximumDelinquencyGracePeriod
+  minimumReserveRatioBips
+  maximumReserveRatioBips
+  minimumDelinquencyFeeBips
+  maximumDelinquencyFeeBips
+  minimumWithdrawalBatchDuration
+  maximumWithdrawalBatchDuration
+  minimumAnnualInterestBips
+  maximumAnnualInterestBips
+}
+
+# ============================================================================ #
 #                                    Events                                    #
-# ---------------------------------------------------------------------------- #
+# ============================================================================ #
 
 fragment DelinquencyStatusChangedData on DelinquencyStatusChanged {
   id
@@ -152,7 +251,7 @@ fragment MarketDeployedEvent on MarketDeployed {
 
 fragment MarketDataWithEvents on Market {
   ...MarketData
-  ...MarketRecords
+  ...MarketRecords @skip(if: $shouldSkipRecords)
 }
 
 fragment WithdrawalBatchPaymentProperties on WithdrawalBatchPayment {
@@ -198,6 +297,60 @@ fragment LenderWithdrawalProperties on LenderWithdrawalStatus {
   normalizedAmountWithdrawn
   totalNormalizedRequests
   isCompleted
+}
+
+fragment ForceBuyBackData on ForceBuyBack {
+  id
+  account {
+    address
+  }
+  eventIndex
+  withdrawalExpiry
+  scaledAmount
+  normalizedAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment MinimumDepositUpdatedData on MinimumDepositUpdated {
+  id
+  eventIndex
+  oldMinimumDeposit
+  newMinimumDeposit
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment ProtocolFeeBipsUpdatedData on ProtocolFeeBipsUpdated {
+  id
+  protocolFeeBipsUpdatedIndex
+  eventIndex
+  oldProtocolFeeBips
+  newProtocolFeeBips
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment DisabledForceBuyBacksData on DisabledForceBuyBacks {
+  id
+  blockNumber
+  blockTimestamp
+  transactionHash
+  eventIndex
+}
+
+fragment FixedTermUpdatedData on FixedTermUpdated {
+  id
+  oldFixedTermEndTime
+  newFixedTermEndTime
+  blockNumber
+  blockTimestamp
+  transactionHash
+  eventIndex
+  fixedTermUpdatedIndex
 }
 
 fragment LenderWithdrawalPropertiesWithEvents on LenderWithdrawalStatus {
@@ -338,4 +491,231 @@ fragment MarketClosedData on MarketClosed {
   blockNumber
   blockTimestamp
   transactionHash
+}
+
+# ========================================================================== #
+#                                 V2 Markets                                 #
+# ========================================================================== #
+
+fragment HooksConfigDataForMarket on HooksConfig {
+  id
+  # Exclude hooks, market
+  useOnDeposit
+  useOnQueueWithdrawal
+  useOnExecuteWithdrawal
+  useOnTransfer
+  useOnBorrow
+  useOnRepay
+  useOnCloseMarket
+  useOnNukeFromOrbit
+  useOnSetMaxTotalSupply
+  useOnSetAnnualInterestAndReserveRatioBips
+  useOnSetProtocolFeeBips
+
+  # Common config values
+  depositRequiresAccess
+  transferRequiresAccess
+  transfersDisabled
+  minimumDeposit
+  allowForceBuyBacks
+
+  # FixedTermHooks config values
+  queueWithdrawalRequiresAccess
+  fixedTermEndTime
+  allowClosureBeforeTerm
+  allowTermReduction
+}
+
+fragment HooksInstanceData on HooksInstance {
+  id
+  borrower
+  name
+  kind
+  numMarkets
+  hooksTemplate {
+    ...HooksTemplateData
+  }
+  providers {
+    ...RoleProviderData
+  }
+  eventIndex
+}
+
+fragment HooksTemplateData on HooksTemplate {
+  id
+  name
+  feeRecipient
+  protocolFeeBips
+  originationFeeAsset {
+    ...TokenData
+  }
+  originationFeeAmount
+  disabled
+}
+
+fragment ApprovedLiquidatorData on ApprovedLiquidator {
+  isApproved
+  liquidator
+}
+
+fragment LiquidatorApprovedData on LiquidatorApproved {
+  liquidator
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment LiquidatorRemovedData on LiquidatorRemoved {
+  liquidator
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment SimpleCollateralContractData on SimpleCollateralContract {
+  id
+  factory {
+    id
+    approvedExchanges(where: { isApproved: true }) {
+      exchange
+    }
+  }
+  market {
+    id
+    underlyingAsset: asset {
+      ...TokenData
+    }
+    isClosed
+    isDelinquent
+    timeDelinquent
+    delinquencyGracePeriod
+  }
+  collateralAsset {
+    ...TokenData
+  }
+  liquidationCooldown
+  nextLiquidationTrigger
+
+  totalDeposited
+  totalReclaimed
+  totalLiquidated
+  totalShares
+  availableCollateral
+
+  lastFullLiquidationIndex
+  depositIndex
+  eventIndex
+}
+
+fragment SimpleCollateralContractReclaimData on SimpleCollateralContractReclaim {
+  id
+  collateralContract {
+    id
+  }
+  account {
+    id
+  }
+
+  amountReclaimed
+  sharesBurned
+
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment SimpleCollateralContractDepositorData on SimpleCollateralContractDepositor {
+  id
+  collateralContract {
+    id
+  }
+
+  shares
+  totalDeposited
+  totalReclaimed
+}
+
+fragment SimpleCollateralContractLiquidationData on SimpleCollateralContractLiquidation {
+  id
+  collateralContract {
+    id
+  }
+
+  collateralLiquidated
+  underlyingReceived
+  liquidator
+
+  eventIndex
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment SimpleCollateralContractFullResetData on SimpleCollateralContractFullReset {
+  id
+  collateralContract {
+    id
+  }
+  lastFullLiquidationIndex
+
+  eventIndex
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment SimpleCollateralContractLiquidatedSharesResetData on SimpleCollateralContractLiquidatedSharesReset {
+  id
+
+  collateralContract {
+    id
+  }
+  account {
+    id
+  }
+  sharesReset
+
+  eventIndex
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment SimpleCollateralContractDepositData on SimpleCollateralContractDeposit {
+  id
+  collateralContract {
+    id
+  }
+  account {
+    id
+  }
+
+  amountDeposited
+  sharesMinted
+  lastFullLiquidationIndex
+  depositIndex
+
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
+fragment SimpleCollateralContractDataWithEvents on SimpleCollateralContract {
+  ...SimpleCollateralContractData
+
+  depositors {
+    ...SimpleCollateralContractDepositorData
+  }
+  liquidations {
+    ...SimpleCollateralContractLiquidationData
+  }
+  deposits {
+    ...SimpleCollateralContractDepositData
+  }
+  reclaims {
+    ...SimpleCollateralContractReclaimData
+  }
+  fullResets {
+    ...SimpleCollateralContractFullResetData
+  }
 }

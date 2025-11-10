@@ -24,9 +24,37 @@ function stopUpdatingLog() {
   process.stdout.write("\n");
 }
 
+let finalizePreviousMessage;
+
+/**
+ *
+ * @param {string} message
+ * @returns {[function(string): void, function(string): void]} [updateLastLine, finalizeMessage]
+ */
+function printUpdatableMessage(message) {
+  if (finalizePreviousMessage) finalizePreviousMessage();
+  process.stdout.write(message);
+
+  const updateLastLine = (newMessage) => {
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+    process.stdout.write(newMessage);
+  };
+
+  const finalizeMessage = (message) => {
+    if (message) updateLastLine(message);
+    process.stdout.write("\n");
+  };
+
+  finalizePreviousMessage = finalizeMessage;
+
+  return [updateLastLine, finalizeMessage];
+}
+
 const getProgressBar = (label, total) => {
   let lastPercentComplete = 0;
   let i = 0;
+  const [updateLog, stopUpdatingLog] = printUpdatableMessage("");
   const update = () => {
     const current = ++i;
     const percent = Math.floor((current * 100) / total);
@@ -36,6 +64,7 @@ const getProgressBar = (label, total) => {
       Array(Math.floor(percent / 2))
         .fill("=")
         .join("") + (percent < 100 ? ">" : "");
+
     const message = `${label}: ${progressBar.padEnd(50)} ${percent}%`;
     updateLog(message);
     if (percent === 100) stopUpdatingLog();
@@ -48,7 +77,8 @@ module.exports = {
   clearLastMessage,
   updateLog,
   stopUpdatingLog,
-  getProgressBar
+  getProgressBar,
+  printUpdatableMessage
 };
 
 const waitMs = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

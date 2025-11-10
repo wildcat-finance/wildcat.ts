@@ -29,13 +29,7 @@ export type TokenMetadataStruct = {
   isMock: PromiseOrValue<boolean>;
 };
 
-export type TokenMetadataStructOutput = [
-  string,
-  string,
-  string,
-  BigNumber,
-  boolean
-] & {
+export type TokenMetadataStructOutput = {
   token: string;
   name: string;
   symbol: string;
@@ -50,12 +44,7 @@ export type FeeConfigurationStruct = {
   originationFeeAmount: PromiseOrValue<BigNumberish>;
 };
 
-export type FeeConfigurationStructOutput = [
-  string,
-  number,
-  TokenMetadataStructOutput,
-  BigNumber
-] & {
+export type FeeConfigurationStructOutput = {
   feeRecipient: string;
   protocolFeeBips: number;
   originationFeeToken: TokenMetadataStructOutput;
@@ -75,18 +64,7 @@ export type MarketParameterConstraintsStruct = {
   maximumAnnualInterestBips: PromiseOrValue<BigNumberish>;
 };
 
-export type MarketParameterConstraintsStructOutput = [
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number,
-  number
-] & {
+export type MarketParameterConstraintsStructOutput = {
   minimumDelinquencyGracePeriod: number;
   maximumDelinquencyGracePeriod: number;
   minimumReserveRatioBips: number;
@@ -134,40 +112,7 @@ export type MarketDataStruct = {
   delinquentDebt: PromiseOrValue<BigNumberish>;
 };
 
-export type MarketDataStructOutput = [
-  TokenMetadataStructOutput,
-  TokenMetadataStructOutput,
-  string,
-  string,
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  boolean,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  boolean,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  boolean,
-  BigNumber,
-  BigNumber,
-  number[],
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
+export type MarketDataStructOutput = {
   marketToken: TokenMetadataStructOutput;
   underlyingToken: TokenMetadataStructOutput;
   borrower: string;
@@ -215,18 +160,7 @@ export type ControllerDataStruct = {
   borrowerOriginationFeeApproval: PromiseOrValue<BigNumberish>;
 };
 
-export type ControllerDataStructOutput = [
-  string,
-  string,
-  string,
-  boolean,
-  boolean,
-  FeeConfigurationStructOutput,
-  MarketParameterConstraintsStructOutput,
-  MarketDataStructOutput[],
-  BigNumber,
-  BigNumber
-] & {
+export type ControllerDataStructOutput = {
   borrower: string;
   controller: string;
   controllerFactory: string;
@@ -249,15 +183,7 @@ export type MarketLenderStatusStruct = {
   underlyingApproval: PromiseOrValue<BigNumberish>;
 };
 
-export type MarketLenderStatusStructOutput = [
-  string,
-  boolean,
-  number,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
+export type MarketLenderStatusStructOutput = {
   lender: string;
   isAuthorizedOnController: boolean;
   role: number;
@@ -272,10 +198,7 @@ export type MarketDataWithLenderStatusStruct = {
   lenderStatus: MarketLenderStatusStruct;
 };
 
-export type MarketDataWithLenderStatusStructOutput = [
-  MarketDataStructOutput,
-  MarketLenderStatusStructOutput
-] & {
+export type MarketDataWithLenderStatusStructOutput = {
   market: MarketDataStructOutput;
   lenderStatus: MarketLenderStatusStructOutput;
 };
@@ -292,17 +215,7 @@ export type ArchControllerDataStruct = {
   markets: PromiseOrValue<string>[];
 };
 
-export type ArchControllerDataStructOutput = [
-  string,
-  BigNumber,
-  string[],
-  BigNumber,
-  string[],
-  BigNumber,
-  string[],
-  BigNumber,
-  string[]
-] & {
+export type ArchControllerDataStructOutput = {
   archController: string;
   borrowersCount: BigNumber;
   borrowers: string[];
@@ -319,7 +232,7 @@ export type SliceParametersStruct = {
   end: PromiseOrValue<BigNumberish>;
 };
 
-export type SliceParametersStructOutput = [BigNumber, BigNumber] & {
+export type SliceParametersStructOutput = {
   start: BigNumber;
   end: BigNumber;
 };
@@ -333,14 +246,7 @@ export type WithdrawalBatchDataStruct = {
   normalizedTotalAmount: PromiseOrValue<BigNumberish>;
 };
 
-export type WithdrawalBatchDataStructOutput = [
-  number,
-  number,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
+export type WithdrawalBatchDataStructOutput = {
   expiry: number;
   status: number;
   scaledTotalAmount: BigNumber;
@@ -357,13 +263,7 @@ export type WithdrawalBatchLenderStatusStruct = {
   availableWithdrawalAmount: PromiseOrValue<BigNumberish>;
 };
 
-export type WithdrawalBatchLenderStatusStructOutput = [
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
+export type WithdrawalBatchLenderStatusStructOutput = {
   lender: string;
   scaledAmount: BigNumber;
   normalizedAmountWithdrawn: BigNumber;
@@ -376,10 +276,7 @@ export type WithdrawalBatchDataWithLenderStatusStruct = {
   lenderStatus: WithdrawalBatchLenderStatusStruct;
 };
 
-export type WithdrawalBatchDataWithLenderStatusStructOutput = [
-  WithdrawalBatchDataStructOutput,
-  WithdrawalBatchLenderStatusStructOutput
-] & {
+export type WithdrawalBatchDataWithLenderStatusStructOutput = {
   batch: WithdrawalBatchDataStructOutput;
   lenderStatus: WithdrawalBatchLenderStatusStructOutput;
 };

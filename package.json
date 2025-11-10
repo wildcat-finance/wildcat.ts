@@ -1,6 +1,6 @@
 {
   "name": "@wildcatfi/wildcat-sdk",
-  "version": "2.0.83",
+  "version": "3.0.54-beta",
   "license": "MIT",
   "files": [
     "dist"
@@ -35,7 +35,7 @@
     "hardhat": "^2.13.0",
     "mocha": "^10.4.0",
     "prettier": "^2.8.8",
-    "ts-morph": "^20.0.0",
+    "ts-morph": "^24.0.0",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.1",
     "typescript": "^5.0.4"
@@ -56,7 +56,7 @@
     "clean:typechain": "yarn clean; rm -rf src/typechain",
     "codegen": "yarn codegen:gql; yarn codegen:typechain",
     "codegen:gql": "node scripts/should-update-gql && graphql-codegen && node ./scripts/gql-type-cleanup.js && eslint src/gql/ --ext=ts --fix",
-    "codegen:typechain": "yarn clean:typechain; hardhat compile; cp -r typechain-types src/typechain; node scripts/add-typechain-exports.js",
+    "codegen:typechain": "yarn clean:typechain; hardhat compile; cp -r typechain-types src/typechain; echo 'compiled & copied'; node scripts/add-typechain-exports.js",
     "lint": "eslint src/ test/ --ext=ts",
     "lint:fix": "eslint src/ test/ --ext=ts --fix",
     "prepublishOnly": "yarn build",

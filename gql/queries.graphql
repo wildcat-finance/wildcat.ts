@@ -61,10 +61,27 @@ query getLenderAccountWithMarket(
   }
 }
 
+# Check whether a borrower is registered and has any markets
+query getBasicBorrowerData($borrower: Bytes!) {
+  registeredBorrowers(where: { borrower: $borrower }, first: 1) {
+    isRegistered
+  }
+  markets(where: { borrower: $borrower }, first: 1) {
+    id
+  }
+}
+
+# Get all markets, including lender account if lender is authorized
 query getAllMarketsForLenderView(
   $lender: Bytes
+  # markets - default order is newest first
+  $marketFilter: Market_filter = { id_not: null }
+  $numMarkets: Int = 1000
+  $skipMarkets: Int = 0
+  $orderMarkets: Market_orderBy = createdAt
+  $directionMarkets: OrderDirection = desc
   # deposits
-  $numDeposits: Int = 200
+  $numDeposits: Int = 10
   $skipDeposits: Int = 0
   $orderDeposits: Deposit_orderBy = blockTimestamp
   $directionDeposits: OrderDirection = desc
@@ -79,7 +96,13 @@ query getAllMarketsForLenderView(
   $orderRepayments: DebtRepaid_orderBy = blockTimestamp
   $directionRepayments: OrderDirection = desc
 ) {
-  markets {
+  markets(
+    where: $marketFilter
+    orderBy: $orderMarkets
+    orderDirection: $directionMarkets
+    first: $numMarkets
+    skip: $skipMarkets
+  ) {
     ...MarketData
     borrowRecords(
       first: $numBorrows
@@ -97,25 +120,8 @@ query getAllMarketsForLenderView(
     ) {
       ...RepaymentData
     }
-  }
-  lenderAccounts(
-    where: {
-      and: [
-        { address: $lender }
-        {
-          or: [
-            { role_in: [DepositAndWithdraw, WithdrawOnly] }
-            { scaledBalance_gt: 0 }
-            { controllerAuthorization_: { authorized: true } }
-            { totalDeposited_gt: 0 }
-          ]
-        }
-      ]
-    }
-  ) {
-    ...AccountDataForLenderView
-    market {
-      id
+    lenders(where: { address: $lender }, first: 1) {
+      ...AccountDataForLenderView
     }
   }
   controllerAuthorizations: lenderAuthorizations(
@@ -131,8 +137,16 @@ query getAllMarketsForLenderView(
   }
 }
 
+# Get only markets where lender is authorized or active, including lender account
 query getAccountsWhereLenderAuthorizedOrActive(
   $lender: Bytes!
+  $accountFilter: LenderAccount_filter = { address_not: null }
+  # markets - default order is newest first
+  $marketFilter: Market_filter = { id_not: null }
+  $numMarkets: Int = 1000
+  $skipMarkets: Int = 0
+  $orderMarkets: Market_orderBy = createdAt
+  $directionMarkets: OrderDirection = desc
   # deposits
   $numDeposits: Int = 200
   $skipDeposits: Int = 0
@@ -152,12 +166,15 @@ query getAccountsWhereLenderAuthorizedOrActive(
   lenderAccounts(
     where: {
       and: [
+        $accountFilter
         { address: $lender }
         {
           or: [
             { role_in: [DepositAndWithdraw, WithdrawOnly] }
             { scaledBalance_gt: 0 }
             { controllerAuthorization_: { authorized: true } }
+            { knownLenderStatus_: { id_not: null } }
+            { hooksAccess_: { lastApprovalTimestamp_gt: 0 } }
             { totalDeposited_gt: 0 }
           ]
         }
@@ -258,6 +275,11 @@ query getLenderAuthorizationByMarket($market: ID!, $lender: Bytes!) {
 query getMarketsAndLogsWhereLenderAuthorizedOrActive(
   $lender: Bytes!
   $minimumBalance: BigInt = 1
+  $accountFilter: LenderAccount_filter = { address_not: null }
+  $numAccounts: Int = 1000
+  $skipAccounts: Int = 0
+  $orderAccounts: LenderAccount_orderBy = lastUpdatedTimestamp
+  $directionAccounts: OrderDirection = desc
   # deposits
   $numDeposits: Int = 200
   $skipDeposits: Int = 0
@@ -269,13 +291,22 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
 ) {
   lenderAccounts(
     where: {
-      address: $lender
-      or: [
-        { role_in: [DepositAndWithdraw, WithdrawOnly] }
-        { scaledBalance_gt: $minimumBalance }
-        { controllerAuthorization_: { authorized: true } }
+      and: [
+        {
+          address: $lender
+          or: [
+            { role_in: [DepositAndWithdraw, WithdrawOnly] }
+            { scaledBalance_gt: $minimumBalance }
+            { controllerAuthorization_: { authorized: true } }
+          ]
+        }
+        $accountFilter
       ]
     }
+    first: $numAccounts
+    skip: $skipAccounts
+    orderBy: $orderAccounts
+    orderDirection: $directionAccounts
   ) {
     market {
       id
@@ -317,18 +348,70 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
   }
 }
 
+query getAllHooksTemplates($borrower: Bytes, $includeBorrower: Boolean!) {
+  hooksTemplates {
+    ...HooksTemplateData
+  }
+  registeredBorrowers(where: { borrower: $borrower }, first: 1) @include(if: $includeBorrower) {
+    isRegistered
+  }
+}
+
+query getHooksInstancesForBorrower($borrower: Bytes!) {
+  hooksInstances(where: { borrower: $borrower }) {
+    ...HooksInstanceData
+  }
+}
+
+query getAllHooksDataForBorrower($borrower: Bytes!) {
+  hooksTemplates {
+    ...HooksTemplateData
+  }
+  hooksInstances(where: { borrower: $borrower }) {
+    ...HooksInstanceData
+  }
+  registeredBorrowers(where: { borrower: $borrower }, first: 1) {
+    isRegistered
+  }
+  controllers(where: { borrower: $borrower }, first: 1) {
+    ...MinimalControllerData
+  }
+}
+
+# query
+
 query getMarketEvents(
   $market: ID!
   $startEventIndex: Int = 0
   $endEventIndex: Int = 100000000
   $limit: Int = 10
+  $delinquencyRecordsFilter: DelinquencyStatusChanged_filter = { id_not: null }
+  $borrowRecordsFilter: Borrow_filter = { id_not: null }
+  $depositRecordsFilter: Deposit_filter = { id_not: null }
+  $feeCollectionRecordsFilter: FeesCollected_filter = { id_not: null }
+  $repaymentRecordsFilter: DebtRepaid_filter = { id_not: null }
+  $annualInterestBipsUpdatedRecordsFilter: AnnualInterestBipsUpdated_filter = { id_not: null }
+  $maxTotalSupplyUpdatedRecordsFilter: MaxTotalSupplyUpdated_filter = { id_not: null }
+  $withdrawalRequestRecordsFilter: WithdrawalRequest_filter = { id_not: null }
+  $forceBuyBackRecordsFilter: ForceBuyBack_filter = { id_not: null }
+  $minimumDepositUpdateRecordsFilter: MinimumDepositUpdated_filter = { id_not: null }
+  $protocolFeeBipsUpdatedRecordsFilter: ProtocolFeeBipsUpdated_filter = { id_not: null }
+  $fixedTermUpdatedRecordsFilter: FixedTermUpdated_filter = { id_not: null }
 ) {
   market(id: $market) {
     marketClosedEvent {
       ...MarketClosedData
     }
+    forceBuyBackDisabledRecord {
+      ...DisabledForceBuyBacksData
+    }
     delinquencyRecords(
-      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      where: {
+        and: [
+          $delinquencyRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
       orderBy: eventIndex
       orderDirection: desc
       first: $limit
@@ -336,7 +419,12 @@ query getMarketEvents(
       ...DelinquencyStatusChangedData
     }
     borrowRecords(
-      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      where: {
+        and: [
+          $borrowRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
       orderBy: eventIndex
       orderDirection: desc
       first: $limit
@@ -344,7 +432,12 @@ query getMarketEvents(
       ...BorrowData
     }
     depositRecords(
-      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      where: {
+        and: [
+          $depositRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
       orderBy: eventIndex
       orderDirection: desc
       first: $limit
@@ -352,7 +445,12 @@ query getMarketEvents(
       ...DepositData
     }
     feeCollectionRecords(
-      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      where: {
+        and: [
+          $feeCollectionRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
       orderBy: eventIndex
       orderDirection: desc
       first: $limit
@@ -360,7 +458,12 @@ query getMarketEvents(
       ...FeesCollectedData
     }
     repaymentRecords(
-      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      where: {
+        and: [
+          $repaymentRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
       orderBy: eventIndex
       orderDirection: desc
       first: $limit
@@ -368,7 +471,12 @@ query getMarketEvents(
       ...RepaymentData
     }
     annualInterestBipsUpdatedRecords(
-      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      where: {
+        and: [
+          $annualInterestBipsUpdatedRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
       orderBy: eventIndex
       orderDirection: desc
       first: $limit
@@ -376,7 +484,12 @@ query getMarketEvents(
       ...AnnualInterestBipsUpdatedData
     }
     maxTotalSupplyUpdatedRecords(
-      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      where: {
+        and: [
+          $maxTotalSupplyUpdatedRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
       orderBy: eventIndex
       orderDirection: desc
       first: $limit
@@ -384,12 +497,69 @@ query getMarketEvents(
       ...MaxTotalSupplyUpdatedData
     }
     withdrawalRequestRecords(
-      where: { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+      where: {
+        and: [
+          $withdrawalRequestRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
       orderBy: eventIndex
       orderDirection: desc
       first: $limit
     ) {
       ...WithdrawalRequestProperties
+    }
+    forceBuyBackRecords(
+      where: {
+        and: [
+          $forceBuyBackRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
+      ...ForceBuyBackData
+    }
+    minimumDepositUpdateRecords(
+      where: {
+        and: [
+          $minimumDepositUpdateRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
+      ...MinimumDepositUpdatedData
+    }
+    protocolFeeBipsUpdatedRecords(
+      where: {
+        and: [
+          $protocolFeeBipsUpdatedRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
+      ...ProtocolFeeBipsUpdatedData
+    }
+    fixedTermUpdatedRecords(
+      where: {
+        and: [
+          $fixedTermUpdatedRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
+      ...FixedTermUpdatedData
     }
   }
 }
@@ -398,47 +568,9 @@ query getMarketEvents(
 #                                Borrower Views                                #
 # ---------------------------------------------------------------------------- #
 
-query getMarketsForBorrower(
-  $borrower: Bytes!
-  # markets - default order is newest first
-  $numMarkets: Int = 1000
-  $skipMarkets: Int = 0
-  $orderMarkets: Market_orderBy = createdAt
-  $directionMarkets: OrderDirection = desc
-  # deposits
-  $numDeposits: Int = 10
-  $skipDeposits: Int = 0
-  $orderDeposits: Deposit_orderBy = blockTimestamp
-  $directionDeposits: OrderDirection = desc
-  # borrowRecords
-  $numBorrows: Int = 10
-  $skipBorrows: Int = 0
-  $orderBorrows: Borrow_orderBy = blockTimestamp
-  $directionBorrows: OrderDirection = desc
-  # feeCollections
-  $numFeeCollections: Int = 10
-  $skipFeeCollections: Int = 0
-  $orderFeeCollections: FeesCollected_orderBy = blockTimestamp
-  $directionFeeCollections: OrderDirection = desc
-  # repaymentRecords
-  $numRepayments: Int = 10
-  $skipRepayments: Int = 0
-  $orderRepayments: DebtRepaid_orderBy = blockTimestamp
-  $directionRepayments: OrderDirection = desc
-) {
-  controllers(where: { borrower: $borrower }) {
-    markets(
-      orderBy: $orderMarkets
-      orderDirection: $directionMarkets
-      first: $numMarkets
-      skip: $skipMarkets
-    ) {
-      ...MarketDataWithEvents
-    }
-  }
-}
-
-query getMarketsForAllBorrowers(
+query getMarketsWithEvents(
+  $marketFilter: Market_filter = { id_not: null }
+  $shouldSkipRecords: Boolean = false
   # markets - default order is newest first
   $numMarkets: Int = 1000
   $skipMarkets: Int = 0
@@ -466,6 +598,7 @@ query getMarketsForAllBorrowers(
   $directionRepayments: OrderDirection = desc
 ) {
   markets(
+    where: $marketFilter
     orderBy: $orderMarkets
     orderDirection: $directionMarkets
     first: $numMarkets
@@ -477,6 +610,7 @@ query getMarketsForAllBorrowers(
 
 query getMarket(
   $market: ID!
+  $shouldSkipRecords: Boolean = false
   # deposits
   $numDeposits: Int = 10
   $skipDeposits: Int = 0
@@ -575,13 +709,196 @@ query getAuthorizedLendersByMarket($market: ID!) {
 }
 
 query getAllAuthorizedLenders($borrower: Bytes!) {
-  markets(where:{ borrower: $borrower, isClosed: false }) {
-    ...AllAuthorizedLendersViewMarketInfo
+  markets(where: { borrower: $borrower, isClosed: false }) {
+    id
+    name
 
     controller {
       authorizedLenders {
         ...AllAuthorizedLendersView
       }
+    }
+    hooks {
+      lenders {
+        ...LenderHooksAccessData
+      }
+    }
+  }
+}
+
+query getV1AuthorizedLenders(
+  $borrower: Bytes!
+  # markets - default order is newest first
+  $numMarkets: Int = 1000
+  $skipMarkets: Int = 0
+  $orderMarkets: Market_orderBy = createdAt
+  $directionMarkets: OrderDirection = desc
+) {
+  controllers(where: { borrower: $borrower }, first: 1) {
+    markets(
+      where: { borrower: $borrower, isClosed: false, version: V2 }
+      first: $numMarkets
+      skip: $skipMarkets
+      orderBy: $orderMarkets
+      orderDirection: $directionMarkets
+    ) {
+      id
+      name
+    }
+
+    authorizedLenders {
+      lender
+      authorized
+    }
+  }
+}
+
+fragment V1LenderWithActiveMarkets on LenderAuthorization {
+  lender
+  authorized
+  addedTimestamp
+  marketAccounts(first: $numMarketAccountsPerLender, skip: $skipMarketAccountsPerLender) {
+    role
+    market {
+      id
+      name
+    }
+  }
+}
+
+fragment V2LenderWithActiveMarkets on LenderHooksAccess {
+  ...LenderHooksAccessData
+
+  addedTimestamp
+  marketAccounts(first: $numMarketAccountsPerLender, skip: $skipMarketAccountsPerLender) {
+    knownLenderStatus {
+      id
+    }
+    market {
+      id
+      name
+    }
+  }
+}
+
+fragment ControllerAuthorizedLendersWithActiveMarkets on Controller {
+  authorizedLenders(first: $numLenders, skip: $skipLenders, where: $lenderAuthorizationFilter) {
+    ...V1LenderWithActiveMarkets
+  }
+}
+
+fragment HooksInstanceLendersWithActiveMarkets on HooksInstance {
+  lenders(
+    first: $numLenders
+    skip: $skipLenders
+    orderBy: $orderLenderHooksAccess
+    orderDirection: $directionLenders
+    where: $lenderHooksAccessFilter
+  ) {
+    ...V2LenderWithActiveMarkets
+  }
+}
+
+# For a given controller or hooks instance, this query should return:
+# - hooks instance details if it is a hooks instance
+# - all lenders with a credential (past or current) on said contract with:
+#   - the source of the credential for V2 markets
+#   - active markets for the lender
+query getLendersByHooksInstanceOrController(
+  $contractAddress: ID!
+  $isController: Boolean!
+  # authorized lenders
+  $lenderHooksAccessFilter: LenderHooksAccess_filter = { id_not: null } # for V2
+  $lenderAuthorizationFilter: LenderAuthorization_filter = { id_not: null } # for V1
+  $numMarketAccountsPerLender: Int = 100
+  $skipMarketAccountsPerLender: Int = 0
+  $numLenders: Int = 1000
+  $skipLenders: Int = 0
+  $orderLenderHooksAccess: LenderHooksAccess_orderBy = lastApprovalTimestamp # for V2
+  $directionLenders: OrderDirection = desc # for V1 or V2
+) {
+  hooksInstance(id: $contractAddress) @skip(if: $isController) {
+    ...HooksInstanceData
+    ...HooksInstanceLendersWithActiveMarkets
+  }
+  controller(id: $contractAddress) @include(if: $isController) {
+    ...ControllerAuthorizedLendersWithActiveMarkets
+  }
+}
+
+# For a given controller or hooks instance, this query should return:
+# - hooks instance details if it is a hooks instance
+# - all markets for the given contract
+# - all lenders with a credential (past or current) on said contract with:
+#   - the source of the credential for V2 markets
+#   - active markets for the lender
+query getMarketsAndLendersByHooksInstanceOrController(
+  $contractAddress: ID!
+  # markets
+  $marketFilter: Market_filter = { id_not: null }
+  $numMarkets: Int = 1000
+  $skipMarkets: Int = 0
+  $orderMarkets: Market_orderBy = createdAt
+  $directionMarkets: OrderDirection = desc
+  # authorized lenders
+  $lenderHooksAccessFilter: LenderHooksAccess_filter = { id_not: null } # for V2
+  $lenderAuthorizationFilter: LenderAuthorization_filter = { id_not: null } # for V1
+  $numMarketAccountsPerLender: Int = 100
+  $skipMarketAccountsPerLender: Int = 0
+  $numLenders: Int = 1000
+  $skipLenders: Int = 0
+  $orderLenderHooksAccess: LenderHooksAccess_orderBy = lastApprovalTimestamp # for V2
+  $directionLenders: OrderDirection = desc # for V1 or V2
+) {
+  hooksInstance(id: $contractAddress) {
+    ...HooksInstanceData
+    markets(
+      where: $marketFilter
+      first: $numMarkets
+      skip: $skipMarkets
+      orderBy: $orderMarkets
+      orderDirection: $directionMarkets
+    ) {
+      ...MarketData
+    }
+    ...HooksInstanceLendersWithActiveMarkets
+  }
+  controller(id: $contractAddress) {
+    ...MinimalControllerData
+    markets(
+      where: $marketFilter
+      first: $numMarkets
+      skip: $skipMarkets
+      orderBy: $orderMarkets
+      orderDirection: $directionMarkets
+    ) {
+      ...MarketData
+    }
+    ...ControllerAuthorizedLendersWithActiveMarkets
+  }
+}
+
+# For a given market, get all active lenders with their:
+# address
+# balance (and info needed to derive balance with interest)
+# v1 / v2 access level info
+query getActiveLendersByMarket(
+  $market: ID!
+  $accountFilter: LenderAccount_filter = { address_not: null }
+  $numAccounts: Int = 1000
+  $skipAccounts: Int = 0
+  $orderAccounts: LenderAccount_orderBy = lastUpdatedTimestamp
+  $directionAccounts: OrderDirection = desc
+) {
+  market(id: $market) {
+    lenders(
+      where: $accountFilter
+      first: $numAccounts
+      skip: $skipAccounts
+      orderBy: $orderAccounts
+      orderDirection: $directionAccounts
+    ) {
+      ...BasicLenderData
     }
   }
 }
@@ -630,5 +947,104 @@ query getMarketRecords(
 ) {
   market(id: $market) {
     ...MarketRecords
+  }
+}
+
+query getAllTokensWithMarkets {
+  tokens {
+    address
+    name
+    symbol
+    decimals
+  }
+}
+
+query getCollateralContractsByMarket($market: ID!) {
+  market(id: $market) {
+    collateralContracts {
+      ...SimpleCollateralContractData
+    }
+  }
+}
+
+query getCollateralContract($collateralContract: ID!) {
+  simpleCollateralContract(id: $collateralContract) {
+    ...SimpleCollateralContractData
+  }
+}
+
+query getApprovedLiquidators {
+  approvedLiquidators(where: { isApproved: true }) {
+    liquidator
+  }
+}
+
+query getCollateralContractEvents(
+  $collateralContract: ID!
+  $startEventIndex: Int = 0
+  $endEventIndex: Int = 100000000
+  $limit: Int = 10
+  $depositRecordsFilter: SimpleCollateralContractDeposit_filter = { id_not: null }
+  $includeDeposits: Boolean = true
+  $reclaimRecordsFilter: SimpleCollateralContractReclaim_filter = { id_not: null }
+  $includeReclaims: Boolean = true
+  $liquidationRecordsFilter: SimpleCollateralContractLiquidation_filter = { id_not: null }
+  $includeLiquidations: Boolean = true
+  $fullResetRecordsFilter: SimpleCollateralContractFullReset_filter = { id_not: null }
+  $includeFullResets: Boolean = true
+) {
+  simpleCollateralContract(id: $collateralContract) {
+    deposits(
+      where: {
+        and: [
+          $depositRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) @include(if: $includeDeposits) {
+      ...SimpleCollateralContractDepositData
+    } 
+    reclaims(
+      where: {
+        and: [
+          $reclaimRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) @include(if: $includeReclaims) {
+      ...SimpleCollateralContractReclaimData
+    }
+    liquidations(
+      where: {
+        and: [
+          $liquidationRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) @include(if: $includeLiquidations) {
+      ...SimpleCollateralContractLiquidationData
+    }
+    fullResets(
+      where: {
+        and: [
+          $fullResetRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) @include(if: $includeFullResets) {
+      ...SimpleCollateralContractFullResetData
+    }
   }
 }
