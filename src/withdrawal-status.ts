@@ -72,6 +72,14 @@ export class LenderWithdrawalStatus {
     return this.batch.status;
   }
 
+  get isConcluded(): boolean {
+    return this.batch.isConcluded;
+  }
+
+  get effectiveStatus(): BatchStatus {
+    return this.batch.effectiveStatus;
+  }
+
   get normalizedTotalAmount(): TokenAmount {
     return this.normalizedAmountOwed.add(this.normalizedAmountWithdrawn);
   }
@@ -82,6 +90,15 @@ export class LenderWithdrawalStatus {
       data.normalizedAmountWithdrawn
     );
     this.normalizedAmountOwed = this.market.underlyingToken.getAmount(data.normalizedAmountOwed);
+
+    // recompute isCompleted based on updated values after a wd that 
+    // subgraph may not have updated yet 
+    this.isCompleted =
+      this.batch.status === BatchStatus.Complete &&
+      this.batch.expiry < Math.floor(Date.now() / 1000) &&
+      this.batch.normalizedAmountPaid
+        .mulDiv(data.scaledAmount, this.batch.scaledTotalAmount)
+        .eq(data.normalizedAmountWithdrawn);
   }
 
   get normalizedUnpaidAmount(): TokenAmount {
