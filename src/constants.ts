@@ -87,7 +87,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
     WildcatArchController: "0xC003f20F2642c76B81e5e1620c6D8cdEE826408f",
-    WildcatMarketControllerFactory: "0xEb97C8E52d7Fdf978a64a538F28271Fd8499b864",
+    WildcatMarketControllerFactory: "0x58Ab4755221869cfcAe2A4F3EE31d591bA6AE1D0",
     WildcatSanctionsSentinel: "0xFBCE262eC835be5e6A458cE1722EeCe0E453316B",
     Chainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     OpenAccessRoleProvider: "0x9aCdE253F7A51456c48604185C0ceA4Fc9e58E3a",
