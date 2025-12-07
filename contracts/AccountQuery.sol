@@ -11,6 +11,7 @@ enum AccountKind {
 
 struct AccountDescription {
   AccountKind kind;
+  bool has7702Delegation;
   address[] owners;
   uint256 threshold;
 }
@@ -56,9 +57,25 @@ contract AccountQuery {
   function _describeAccount(
     address account
   ) internal view returns (AccountDescription memory description) {
-    if (account.code.length == 0) {
+    uint codeLength = account.code.length;
+    if (codeLength == 0) {
       description.kind = AccountKind.EOA;
       return description;
+    }
+    if (codeLength == 23) {
+      bool has7702Delegation;
+      assembly {
+        mstore(0, 0)
+        // Copy the first 3 bytes of the code to the last 3 bytes of the first word in memory
+        extcodecopy(account, 0x1d, 0, 3)
+        // EOAs with EIP-7702 delegations begin with 0xef0100
+        has7702Delegation := eq(mload(0), 0xef0100)
+      }
+      if (has7702Delegation) {
+        description.has7702Delegation = true;
+        description.kind = AccountKind.EOA;
+        return description;
+      }
     }
     address proxyAddress;
     assembly {

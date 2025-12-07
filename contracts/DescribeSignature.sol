@@ -144,10 +144,16 @@ contract DescribeSignature {
         data.kind = SignatureKind.INVALID;
       }
 
-      return data;
+      // If ECDSA fails for 7702 delegated EOAs, see if the smart wallet supports 1271
+      if (!(data.kind == SignatureKind.INVALID && data.account.has7702Delegation)) {
+        return data;
+      }
     }
     if (data.account.kind == AccountKind.Safe) {
-      messageHash = getMessageHashForSafe(ISafe(signer), abi.encodePacked(toEthSignedMessageHash(message)));
+      messageHash = getMessageHashForSafe(
+        ISafe(signer),
+        abi.encodePacked(toEthSignedMessageHash(message))
+      );
       if (check1271WithBytes(signer, message, signature)) {
         data.kind = SignatureKind.EIP1271_BYTES;
       } else if (checkOnChainGnosisSignature(signer, message)) {
@@ -159,8 +165,8 @@ contract DescribeSignature {
         data.kind = SignatureKind.EIP1271_PERSONAL_SIGNATURE;
       } else if (check1271WithBytes(signer, abi.encodePacked(messageHash), signature)) {
         data.kind = SignatureKind.EIP1271_HASH;
-      }// else if (check1271WithBytes(signer, abi.encodePacked(toEthSignedMessageHash(message)), signature)) {
-        // data.kind = SignatureKind.EIP1271_PERSONAL_SIGNATURE;
+      } // else if (check1271WithBytes(signer, abi.encodePacked(toEthSignedMessageHash(message)), signature)) {
+      // data.kind = SignatureKind.EIP1271_PERSONAL_SIGNATURE;
       //}
       // Check if the signature data is a compact array of signatures by the owners
       if (signature.length >= data.account.threshold * 65) {
@@ -409,6 +415,7 @@ enum AccountKind {
 
 struct AccountDescription {
   AccountKind kind;
+  bool has7702Delegation;
   address[] owners;
   uint256 threshold;
 }
@@ -442,9 +449,25 @@ library AccountsLib {
   function describeAccount(
     address account
   ) internal view returns (AccountDescription memory description) {
-    if (account.code.length == 0) {
+    uint codeLength = account.code.length;
+    if (codeLength == 0) {
       description.kind = AccountKind.EOA;
       return description;
+    }
+    if (codeLength == 23) {
+      bool has7702Delegation;
+      assembly {
+        mstore(0, 0)
+        // Copy the first 3 bytes of the code to the last 3 bytes of the first word in memory
+        extcodecopy(account, 0x1d, 0, 3)
+        // EOAs with EIP-7702 delegations begin with 0xef0100
+        has7702Delegation := eq(mload(0), 0xef0100)
+      }
+      if (has7702Delegation) {
+        description.has7702Delegation = true;
+        description.kind = AccountKind.EOA;
+        return description;
+      }
     }
     address proxyAddress;
     assembly {

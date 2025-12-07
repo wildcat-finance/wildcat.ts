@@ -60,18 +60,20 @@ export async function describeSignature(
     ) as [Awaited<ReturnType<DescribeSignature["describeSignature"]>>];
 
   const kind = _kind as SignatureKind;
-  const { owners, threshold, kind: _accountKind } = _account;
+  const { has7702Delegation, owners, threshold, kind: _accountKind } = _account;
   const accountKind = _accountKind as AccountKind;
 
-  const account =
-    accountKind === AccountKind.EOA || accountKind === AccountKind.UnknownContract
-      ? {
-          kind: accountKind
-        }
-      : {
-          kind: accountKind,
-          owners,
-          threshold: threshold.toNumber()
-        };
+  let account: AccountDescription;
+  switch (accountKind) {
+    case AccountKind.EOA:
+      account = { kind: AccountKind.EOA, has7702Delegation };
+      break;
+    case AccountKind.UnknownContract:
+      account = { kind: AccountKind.UnknownContract };
+      break;
+    case AccountKind.Safe:
+      account = { kind: AccountKind.Safe, owners, threshold: threshold.toNumber() };
+      break;
+  }
   return { kind, signer, subSignatures, account };
 }
