@@ -280,13 +280,13 @@ contract DescribeSignature {
       data.signer = signer;
       return data;
     }
-    // Check with full bytes (the official 1271 fn)
+    // Check with full bytes (deprecated 1271 fn)
     if (check1271WithBytes(signer, message, signature)) {
       data.kind = SignatureKind.EIP1271_BYTES;
       data.signer = signer;
       return data;
     }
-    // Check with message hash (deprecated 1271 fn)
+    // Check with message hash (the official 1271 fn)
     if (check1271WithMessageHash(signer, keccak256(message), signature)) {
       data.kind = SignatureKind.EIP1271_HASH;
       data.signer = signer;
@@ -318,7 +318,6 @@ contract DescribeSignature {
    * @dev Checks a 1271 signature with a message hash using the `isValidSignature(bytes32,bytes)` function.
    *      Gnosis Safes use this function to verify messages signed on-chain by the contract by looking up the message hash
    *      in the contract storage, with the signature data being ignored.
-   *      This is a deprecated function according to EIP-1271, but seems to still be used in some contracts.
    */
   function check1271WithMessageHash(
     address safeAddress,
