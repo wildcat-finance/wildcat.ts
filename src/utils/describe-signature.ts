@@ -38,7 +38,8 @@ export async function describeSignature(
   provider: SignerOrProvider,
   address: string,
   message: string,
-  signature: string
+  signature: string,
+  blockNumber?: number
 ): Promise<SignatureData> {
   if (!message.startsWith("0x")) {
     const bytes = toUtf8Bytes(message);
@@ -51,7 +52,7 @@ export async function describeSignature(
   const bytecode = DescribeSignature__factory.bytecode.concat(
     defaultAbiCoder.encode(["address", "bytes", "bytes"], [address, message, signature]).slice(2)
   );
-  const result = await provider.call({ data: bytecode });
+  const result = await provider.call({ data: bytecode }, blockNumber);
 
   const [{ kind: _kind, signer, subSignatures, account: _account }] =
     DescribeSignature__factory.createInterface().decodeFunctionResult(
