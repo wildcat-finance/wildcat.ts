@@ -212,13 +212,13 @@ export const getCollateralFactoryContract = (
 };
 
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: `https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/version/v2.0.19/api`,
+  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.0.22/gn`,
   [SupportedChainId.Mainnet]:
-    "https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/mainnet/version/v2.0.19/api",
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.22/gn",
   [SupportedChainId.PlasmaTestnet]:
-    "https://api.goldsky.com/api/public/project_cmfvpdktfz5v701z62hog8qhj/subgraphs/wildcat-plasma/2.0.19/gn",
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-testnet/v2.0.22/gn",
   [SupportedChainId.PlasmaMainnet]:
-    "https://api.goldsky.com/api/public/project_cmfvpdktfz5v701z62hog8qhj/subgraphs/wildcat-plasma-mainnet/2.0.19/gn"
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-mainnet/v2.0.22/gn"
 };
 
 export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
