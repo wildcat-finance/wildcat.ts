@@ -23,12 +23,13 @@ export type AccountDescription =
 
 export async function describeAccount(
   provider: SignerOrProvider,
-  address: string
+  address: string,
+  blockNumber?: number
 ): Promise<AccountDescription> {
   const bytecode = AccountQuery__factory.bytecode.concat(
     address.replace(/^0x/, "").padStart(64, "0")
   );
-  const result = await provider.call({ data: bytecode });
+  const result = await provider.call({ data: bytecode }, blockNumber);
 
   const [{ has7702Delegation, owners, threshold, kind: _kind }] =
     AccountQuery__factory.createInterface().decodeFunctionResult("describeAccount", result) as [
