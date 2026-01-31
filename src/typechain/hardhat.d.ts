@@ -77,6 +77,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SimpleMarketCollateral__factory>;
     getContractFactory(
+      name: "Wildcat4626Wrapper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Wildcat4626Wrapper__factory>;
+    getContractFactory(
+      name: "Wildcat4626WrapperFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Wildcat4626WrapperFactory__factory>;
+    getContractFactory(
       name: "WildcatArchController",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WildcatArchController__factory>;
@@ -181,6 +189,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.SimpleMarketCollateral>;
+    getContractAt(
+      name: "Wildcat4626Wrapper",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Wildcat4626Wrapper>;
+    getContractAt(
+      name: "Wildcat4626WrapperFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Wildcat4626WrapperFactory>;
     getContractAt(
       name: "WildcatArchController",
       address: string,

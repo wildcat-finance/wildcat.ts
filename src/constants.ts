@@ -7,6 +7,8 @@ import {
   WildcatMarketControllerFactory__factory,
   MockERC20Factory,
   MockERC20Factory__factory,
+  Wildcat4626WrapperFactory,
+  Wildcat4626WrapperFactory__factory,
   WildcatArchController,
   WildcatArchController__factory,
   MarketLensV2,
@@ -35,6 +37,7 @@ type NetworkDeployments = {
   Chainalysis: string;
   OpenAccessRoleProvider: string;
   WildcatCollateralFactory?: string;
+  Wildcat4626WrapperFactory?: string;
   BebopSettlementContract?: string;
   CollateralLens?: string;
 };
@@ -93,7 +96,8 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     OpenAccessRoleProvider: "0x9aCdE253F7A51456c48604185C0ceA4Fc9e58E3a",
     WildcatCollateralFactory: "0x58Ab4755221869cfcAe2A4F3EE31d591bA6AE1D0",
     BebopSettlementContract: "0x513826b6bb38fc159f152a4bf6e1ec3650a7ee46",
-    CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578"
+    CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578",
+    Wildcat4626WrapperFactory: "0xd8055D9ce9EC8F380f2029ab2359Da133074cB3E"
   },
   [SupportedChainId.PlasmaTestnet]: {
     HooksFactory: "0x5Ad00b665eA71E27628D75102B1497CC75E531FB",
@@ -207,6 +211,16 @@ export const getCollateralFactoryContract = (
 ): WildcatCollateralFactory => {
   return WildcatCollateralFactory__factory.connect(
     getDeploymentAddress(chainId, "WildcatCollateralFactory"),
+    provider
+  );
+};
+
+export const getWrapperFactoryContract = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider
+): Wildcat4626WrapperFactory => {
+  return Wildcat4626WrapperFactory__factory.connect(
+    getDeploymentAddress(chainId, "Wildcat4626WrapperFactory"),
     provider
   );
 };

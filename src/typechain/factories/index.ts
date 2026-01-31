@@ -17,6 +17,8 @@ export { MarketLensV2__factory } from "./MarketLensV2__factory";
 export { MockArchControllerOwner__factory } from "./MockArchControllerOwner__factory";
 export { MockERC20Factory__factory } from "./MockERC20Factory__factory";
 export { SimpleMarketCollateral__factory } from "./SimpleMarketCollateral__factory";
+export { Wildcat4626Wrapper__factory } from "./Wildcat4626Wrapper__factory";
+export { Wildcat4626WrapperFactory__factory } from "./Wildcat4626WrapperFactory__factory";
 export { WildcatArchController__factory } from "./WildcatArchController__factory";
 export { WildcatCollateralFactory__factory } from "./WildcatCollateralFactory__factory";
 export { WildcatMarket__factory } from "./WildcatMarket__factory";
