@@ -91,7 +91,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatSanctionsSentinel: "0xFBCE262eC835be5e6A458cE1722EeCe0E453316B",
     Chainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     OpenAccessRoleProvider: "0x9aCdE253F7A51456c48604185C0ceA4Fc9e58E3a",
-    WildcatCollateralFactory: "0xe11E41e9162ad07F1a9853c3123c33B7e9Cf59D6",
+    WildcatCollateralFactory: "0x58Ab4755221869cfcAe2A4F3EE31d591bA6AE1D0",
     BebopSettlementContract: "0x513826b6bb38fc159f152a4bf6e1ec3650a7ee46",
     CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578"
   },
@@ -212,7 +212,7 @@ export const getCollateralFactoryContract = (
 };
 
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.0.22/gn`,
+  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.0.23/gn`,
   [SupportedChainId.Mainnet]:
     "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.22/gn",
   [SupportedChainId.PlasmaTestnet]:
