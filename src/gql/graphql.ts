@@ -13825,629 +13825,6 @@ export enum SubgraphSubgraphVersion_OrderBy {
   Id = "id"
 }
 
-export type SubgraphSubscription = {
-  __typename: "Subscription";
-  /** Access to subgraph metadata */
-  _meta?: Maybe<Subgraph_Meta_>;
-  accountAccessGranted?: Maybe<SubgraphAccountAccessGranted>;
-  accountAccessGranteds: SubgraphAccountAccessGranted[];
-  accountAccessRevoked?: Maybe<SubgraphAccountAccessRevoked>;
-  accountAccessRevokeds: SubgraphAccountAccessRevoked[];
-  accountBlockedFromDeposits?: Maybe<SubgraphAccountBlockedFromDeposits>;
-  accountBlockedFromDeposits_collection: SubgraphAccountBlockedFromDeposits[];
-  accountMadeFirstDeposit?: Maybe<SubgraphAccountMadeFirstDeposit>;
-  accountMadeFirstDeposits: SubgraphAccountMadeFirstDeposit[];
-  accountUnblockedFromDeposits?: Maybe<SubgraphAccountUnblockedFromDeposits>;
-  accountUnblockedFromDeposits_collection: SubgraphAccountUnblockedFromDeposits[];
-  annualInterestBipsUpdated?: Maybe<SubgraphAnnualInterestBipsUpdated>;
-  annualInterestBipsUpdateds: SubgraphAnnualInterestBipsUpdated[];
-  approval?: Maybe<SubgraphApproval>;
-  approvals: SubgraphApproval[];
-  approvedCollateralExchange?: Maybe<SubgraphApprovedCollateralExchange>;
-  approvedCollateralExchanges: SubgraphApprovedCollateralExchange[];
-  approvedLiquidator?: Maybe<SubgraphApprovedLiquidator>;
-  approvedLiquidators: SubgraphApprovedLiquidator[];
-  archController?: Maybe<SubgraphArchController>;
-  archControllers: SubgraphArchController[];
-  borrow?: Maybe<SubgraphBorrow>;
-  borrowerRegistrationChange?: Maybe<SubgraphBorrowerRegistrationChange>;
-  borrowerRegistrationChanges: SubgraphBorrowerRegistrationChange[];
-  borrows: SubgraphBorrow[];
-  collateralExchangeApproved?: Maybe<SubgraphCollateralExchangeApproved>;
-  collateralExchangeApproveds: SubgraphCollateralExchangeApproved[];
-  collateralExchangeRemoved?: Maybe<SubgraphCollateralExchangeRemoved>;
-  collateralExchangeRemoveds: SubgraphCollateralExchangeRemoved[];
-  controller?: Maybe<SubgraphController>;
-  controllerAdded?: Maybe<SubgraphControllerAdded>;
-  controllerAddeds: SubgraphControllerAdded[];
-  controllerFactories: SubgraphControllerFactory[];
-  controllerFactory?: Maybe<SubgraphControllerFactory>;
-  controllerFactoryAdded?: Maybe<SubgraphControllerFactoryAdded>;
-  controllerFactoryAddeds: SubgraphControllerFactoryAdded[];
-  controllerFactoryRemoved?: Maybe<SubgraphControllerFactoryRemoved>;
-  controllerFactoryRemoveds: SubgraphControllerFactoryRemoved[];
-  controllerRemoved?: Maybe<SubgraphControllerRemoved>;
-  controllerRemoveds: SubgraphControllerRemoved[];
-  controllers: SubgraphController[];
-  debtRepaid?: Maybe<SubgraphDebtRepaid>;
-  debtRepaids: SubgraphDebtRepaid[];
-  delinquencyStatusChanged?: Maybe<SubgraphDelinquencyStatusChanged>;
-  delinquencyStatusChangeds: SubgraphDelinquencyStatusChanged[];
-  deposit?: Maybe<SubgraphDeposit>;
-  deposits: SubgraphDeposit[];
-  disabledForceBuyBacks?: Maybe<SubgraphDisabledForceBuyBacks>;
-  disabledForceBuyBacks_collection: SubgraphDisabledForceBuyBacks[];
-  feesCollected?: Maybe<SubgraphFeesCollected>;
-  feesCollecteds: SubgraphFeesCollected[];
-  fixedTermUpdated?: Maybe<SubgraphFixedTermUpdated>;
-  fixedTermUpdateds: SubgraphFixedTermUpdated[];
-  forceBuyBack?: Maybe<SubgraphForceBuyBack>;
-  forceBuyBacks: SubgraphForceBuyBack[];
-  hooksConfig?: Maybe<SubgraphHooksConfig>;
-  hooksConfigs: SubgraphHooksConfig[];
-  hooksFactories: SubgraphHooksFactory[];
-  hooksFactory?: Maybe<SubgraphHooksFactory>;
-  hooksInstance?: Maybe<SubgraphHooksInstance>;
-  hooksInstanceDeployed?: Maybe<SubgraphHooksInstanceDeployed>;
-  hooksInstanceDeployeds: SubgraphHooksInstanceDeployed[];
-  hooksInstances: SubgraphHooksInstance[];
-  hooksNameUpdated?: Maybe<SubgraphHooksNameUpdated>;
-  hooksNameUpdateds: SubgraphHooksNameUpdated[];
-  hooksTemplate?: Maybe<SubgraphHooksTemplate>;
-  hooksTemplateAdded?: Maybe<SubgraphHooksTemplateAdded>;
-  hooksTemplateAddeds: SubgraphHooksTemplateAdded[];
-  hooksTemplateDisabled?: Maybe<SubgraphHooksTemplateDisabled>;
-  hooksTemplateDisableds: SubgraphHooksTemplateDisabled[];
-  hooksTemplateFeesUpdated?: Maybe<SubgraphHooksTemplateFeesUpdated>;
-  hooksTemplateFeesUpdateds: SubgraphHooksTemplateFeesUpdated[];
-  hooksTemplates: SubgraphHooksTemplate[];
-  knownLenderStatus?: Maybe<SubgraphKnownLenderStatus>;
-  knownLenderStatuses: SubgraphKnownLenderStatus[];
-  lenderAccount?: Maybe<SubgraphLenderAccount>;
-  lenderAccounts: SubgraphLenderAccount[];
-  lenderAuthorization?: Maybe<SubgraphLenderAuthorization>;
-  lenderAuthorizationChange?: Maybe<SubgraphLenderAuthorizationChange>;
-  lenderAuthorizationChanges: SubgraphLenderAuthorizationChange[];
-  lenderAuthorizations: SubgraphLenderAuthorization[];
-  lenderHooksAccess?: Maybe<SubgraphLenderHooksAccess>;
-  lenderHooksAccesses: SubgraphLenderHooksAccess[];
-  lenderInterestAccrued?: Maybe<SubgraphLenderInterestAccrued>;
-  lenderInterestAccrueds: SubgraphLenderInterestAccrued[];
-  lenderWithdrawalStatus?: Maybe<SubgraphLenderWithdrawalStatus>;
-  lenderWithdrawalStatuses: SubgraphLenderWithdrawalStatus[];
-  liquidatorApproved?: Maybe<SubgraphLiquidatorApproved>;
-  liquidatorApproveds: SubgraphLiquidatorApproved[];
-  liquidatorRemoved?: Maybe<SubgraphLiquidatorRemoved>;
-  liquidatorRemoveds: SubgraphLiquidatorRemoved[];
-  market?: Maybe<SubgraphMarket>;
-  marketAdded?: Maybe<SubgraphMarketAdded>;
-  marketAddeds: SubgraphMarketAdded[];
-  marketClosed?: Maybe<SubgraphMarketClosed>;
-  marketCloseds: SubgraphMarketClosed[];
-  marketDailyStats?: Maybe<SubgraphMarketDailyStats>;
-  marketDailyStats_collection: SubgraphMarketDailyStats[];
-  marketDeployed?: Maybe<SubgraphMarketDeployed>;
-  marketDeployeds: SubgraphMarketDeployed[];
-  marketInterestAccrued?: Maybe<SubgraphMarketInterestAccrued>;
-  marketInterestAccrueds: SubgraphMarketInterestAccrued[];
-  marketRemoved?: Maybe<SubgraphMarketRemoved>;
-  marketRemoveds: SubgraphMarketRemoved[];
-  markets: SubgraphMarket[];
-  maxTotalSupplyUpdated?: Maybe<SubgraphMaxTotalSupplyUpdated>;
-  maxTotalSupplyUpdateds: SubgraphMaxTotalSupplyUpdated[];
-  minimumDepositUpdated?: Maybe<SubgraphMinimumDepositUpdated>;
-  minimumDepositUpdateds: SubgraphMinimumDepositUpdated[];
-  newController?: Maybe<SubgraphNewController>;
-  newControllers: SubgraphNewController[];
-  newSanctionsEscrow?: Maybe<SubgraphNewSanctionsEscrow>;
-  newSanctionsEscrows: SubgraphNewSanctionsEscrow[];
-  ownershipHandoverCanceled?: Maybe<SubgraphOwnershipHandoverCanceled>;
-  ownershipHandoverCanceleds: SubgraphOwnershipHandoverCanceled[];
-  ownershipHandoverRequested?: Maybe<SubgraphOwnershipHandoverRequested>;
-  ownershipHandoverRequesteds: SubgraphOwnershipHandoverRequested[];
-  ownershipTransferred?: Maybe<SubgraphOwnershipTransferred>;
-  ownershipTransferreds: SubgraphOwnershipTransferred[];
-  parameterConstraints?: Maybe<SubgraphParameterConstraints>;
-  parameterConstraints_collection: SubgraphParameterConstraints[];
-  protocolFeeBipsUpdated?: Maybe<SubgraphProtocolFeeBipsUpdated>;
-  protocolFeeBipsUpdateds: SubgraphProtocolFeeBipsUpdated[];
-  registeredBorrower?: Maybe<SubgraphRegisteredBorrower>;
-  registeredBorrowers: SubgraphRegisteredBorrower[];
-  reserveRatioBipsUpdated?: Maybe<SubgraphReserveRatioBipsUpdated>;
-  reserveRatioBipsUpdateds: SubgraphReserveRatioBipsUpdated[];
-  roleProvider?: Maybe<SubgraphRoleProvider>;
-  roleProviderAdded?: Maybe<SubgraphRoleProviderAdded>;
-  roleProviderAddeds: SubgraphRoleProviderAdded[];
-  roleProviderRemoved?: Maybe<SubgraphRoleProviderRemoved>;
-  roleProviderRemoveds: SubgraphRoleProviderRemoved[];
-  roleProviderUpdated?: Maybe<SubgraphRoleProviderUpdated>;
-  roleProviderUpdateds: SubgraphRoleProviderUpdated[];
-  roleProviders: SubgraphRoleProvider[];
-  sanctionOverride?: Maybe<SubgraphSanctionOverride>;
-  sanctionOverrideRemoved?: Maybe<SubgraphSanctionOverrideRemoved>;
-  sanctionOverrideRemoveds: SubgraphSanctionOverrideRemoved[];
-  sanctionOverrides: SubgraphSanctionOverride[];
-  sanctionedAccountAssetsQueuedForWithdrawal?: Maybe<SubgraphSanctionedAccountAssetsQueuedForWithdrawal>;
-  sanctionedAccountAssetsQueuedForWithdrawals: SubgraphSanctionedAccountAssetsQueuedForWithdrawal[];
-  sanctionedAccountAssetsSentToEscrow?: Maybe<SubgraphSanctionedAccountAssetsSentToEscrow>;
-  sanctionedAccountAssetsSentToEscrows: SubgraphSanctionedAccountAssetsSentToEscrow[];
-  sanctionedAccountWithdrawalSentToEscrow?: Maybe<SubgraphSanctionedAccountWithdrawalSentToEscrow>;
-  sanctionedAccountWithdrawalSentToEscrows: SubgraphSanctionedAccountWithdrawalSentToEscrow[];
-  simpleCollateralContract?: Maybe<SubgraphSimpleCollateralContract>;
-  simpleCollateralContractDeposit?: Maybe<SubgraphSimpleCollateralContractDeposit>;
-  simpleCollateralContractDepositor?: Maybe<SubgraphSimpleCollateralContractDepositor>;
-  simpleCollateralContractDepositors: SubgraphSimpleCollateralContractDepositor[];
-  simpleCollateralContractDeposits: SubgraphSimpleCollateralContractDeposit[];
-  simpleCollateralContractFullReset?: Maybe<SubgraphSimpleCollateralContractFullReset>;
-  simpleCollateralContractFullResets: SubgraphSimpleCollateralContractFullReset[];
-  simpleCollateralContractLiquidatedSharesReset?: Maybe<SubgraphSimpleCollateralContractLiquidatedSharesReset>;
-  simpleCollateralContractLiquidatedSharesResets: SubgraphSimpleCollateralContractLiquidatedSharesReset[];
-  simpleCollateralContractLiquidation?: Maybe<SubgraphSimpleCollateralContractLiquidation>;
-  simpleCollateralContractLiquidations: SubgraphSimpleCollateralContractLiquidation[];
-  simpleCollateralContractReclaim?: Maybe<SubgraphSimpleCollateralContractReclaim>;
-  simpleCollateralContractReclaims: SubgraphSimpleCollateralContractReclaim[];
-  simpleCollateralContracts: SubgraphSimpleCollateralContract[];
-  simpleCollateralFactories: SubgraphSimpleCollateralFactory[];
-  simpleCollateralFactory?: Maybe<SubgraphSimpleCollateralFactory>;
-  subgraphVersion?: Maybe<SubgraphSubgraphVersion>;
-  subgraphVersions: SubgraphSubgraphVersion[];
-  token?: Maybe<SubgraphToken>;
-  tokens: SubgraphToken[];
-  transfer?: Maybe<SubgraphTransfer>;
-  transfers: SubgraphTransfer[];
-  updateProtocolFeeConfiguration?: Maybe<SubgraphUpdateProtocolFeeConfiguration>;
-  updateProtocolFeeConfigurations: SubgraphUpdateProtocolFeeConfiguration[];
-  withdrawalBatch?: Maybe<SubgraphWithdrawalBatch>;
-  withdrawalBatchCreated?: Maybe<SubgraphWithdrawalBatchCreated>;
-  withdrawalBatchCreateds: SubgraphWithdrawalBatchCreated[];
-  withdrawalBatchExpired?: Maybe<SubgraphWithdrawalBatchExpired>;
-  withdrawalBatchExpireds: SubgraphWithdrawalBatchExpired[];
-  withdrawalBatchInterestAccrued?: Maybe<SubgraphWithdrawalBatchInterestAccrued>;
-  withdrawalBatchInterestAccrueds: SubgraphWithdrawalBatchInterestAccrued[];
-  withdrawalBatchPayment?: Maybe<SubgraphWithdrawalBatchPayment>;
-  withdrawalBatchPayments: SubgraphWithdrawalBatchPayment[];
-  withdrawalBatches: SubgraphWithdrawalBatch[];
-  withdrawalExecution?: Maybe<SubgraphWithdrawalExecution>;
-  withdrawalExecutions: SubgraphWithdrawalExecution[];
-  withdrawalRequest?: Maybe<SubgraphWithdrawalRequest>;
-  withdrawalRequests: SubgraphWithdrawalRequest[];
-};
-
-export type SubgraphSubscription_MetaArgs = SubgraphQuery_MetaArgs;
-
-export type SubgraphSubscriptionAccountAccessGrantedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionAccountAccessGrantedsArgs = SubgraphQueryAccountAccessGrantedsArgs;
-
-export type SubgraphSubscriptionAccountAccessRevokedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionAccountAccessRevokedsArgs = SubgraphQueryAccountAccessRevokedsArgs;
-
-export type SubgraphSubscriptionAccountBlockedFromDepositsArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionAccountBlockedFromDeposits_CollectionArgs =
-  SubgraphQueryAccountBlockedFromDeposits_CollectionArgs;
-
-export type SubgraphSubscriptionAccountMadeFirstDepositArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionAccountMadeFirstDepositsArgs =
-  SubgraphQueryAccountMadeFirstDepositsArgs;
-
-export type SubgraphSubscriptionAccountUnblockedFromDepositsArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionAccountUnblockedFromDeposits_CollectionArgs =
-  SubgraphQueryAccountUnblockedFromDeposits_CollectionArgs;
-
-export type SubgraphSubscriptionAnnualInterestBipsUpdatedArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionAnnualInterestBipsUpdatedsArgs =
-  SubgraphQueryAnnualInterestBipsUpdatedsArgs;
-
-export type SubgraphSubscriptionApprovalArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionApprovalsArgs = SubgraphQueryApprovalsArgs;
-
-export type SubgraphSubscriptionApprovedCollateralExchangeArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionApprovedCollateralExchangesArgs =
-  SubgraphQueryApprovedCollateralExchangesArgs;
-
-export type SubgraphSubscriptionApprovedLiquidatorArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionApprovedLiquidatorsArgs = SubgraphQueryApprovedLiquidatorsArgs;
-
-export type SubgraphSubscriptionArchControllerArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionArchControllersArgs = SubgraphQueryArchControllersArgs;
-
-export type SubgraphSubscriptionBorrowArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionBorrowerRegistrationChangeArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionBorrowerRegistrationChangesArgs =
-  SubgraphQueryBorrowerRegistrationChangesArgs;
-
-export type SubgraphSubscriptionBorrowsArgs = SubgraphQueryBorrowsArgs;
-
-export type SubgraphSubscriptionCollateralExchangeApprovedArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionCollateralExchangeApprovedsArgs =
-  SubgraphQueryCollateralExchangeApprovedsArgs;
-
-export type SubgraphSubscriptionCollateralExchangeRemovedArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionCollateralExchangeRemovedsArgs =
-  SubgraphQueryCollateralExchangeRemovedsArgs;
-
-export type SubgraphSubscriptionControllerArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionControllerAddedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionControllerAddedsArgs = SubgraphQueryControllerAddedsArgs;
-
-export type SubgraphSubscriptionControllerFactoriesArgs = SubgraphQueryControllerFactoriesArgs;
-
-export type SubgraphSubscriptionControllerFactoryArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionControllerFactoryAddedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionControllerFactoryAddedsArgs =
-  SubgraphQueryControllerFactoryAddedsArgs;
-
-export type SubgraphSubscriptionControllerFactoryRemovedArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionControllerFactoryRemovedsArgs =
-  SubgraphQueryControllerFactoryRemovedsArgs;
-
-export type SubgraphSubscriptionControllerRemovedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionControllerRemovedsArgs = SubgraphQueryControllerRemovedsArgs;
-
-export type SubgraphSubscriptionControllersArgs = SubgraphQueryControllersArgs;
-
-export type SubgraphSubscriptionDebtRepaidArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionDebtRepaidsArgs = SubgraphQueryDebtRepaidsArgs;
-
-export type SubgraphSubscriptionDelinquencyStatusChangedArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionDelinquencyStatusChangedsArgs =
-  SubgraphQueryDelinquencyStatusChangedsArgs;
-
-export type SubgraphSubscriptionDepositArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionDepositsArgs = SubgraphQueryDepositsArgs;
-
-export type SubgraphSubscriptionDisabledForceBuyBacksArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionDisabledForceBuyBacks_CollectionArgs =
-  SubgraphQueryDisabledForceBuyBacks_CollectionArgs;
-
-export type SubgraphSubscriptionFeesCollectedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionFeesCollectedsArgs = SubgraphQueryFeesCollectedsArgs;
-
-export type SubgraphSubscriptionFixedTermUpdatedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionFixedTermUpdatedsArgs = SubgraphQueryFixedTermUpdatedsArgs;
-
-export type SubgraphSubscriptionForceBuyBackArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionForceBuyBacksArgs = SubgraphQueryForceBuyBacksArgs;
-
-export type SubgraphSubscriptionHooksConfigArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionHooksConfigsArgs = SubgraphQueryHooksConfigsArgs;
-
-export type SubgraphSubscriptionHooksFactoriesArgs = SubgraphQueryHooksFactoriesArgs;
-
-export type SubgraphSubscriptionHooksFactoryArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionHooksInstanceArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionHooksInstanceDeployedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionHooksInstanceDeployedsArgs =
-  SubgraphQueryHooksInstanceDeployedsArgs;
-
-export type SubgraphSubscriptionHooksInstancesArgs = SubgraphQueryHooksInstancesArgs;
-
-export type SubgraphSubscriptionHooksNameUpdatedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionHooksNameUpdatedsArgs = SubgraphQueryHooksNameUpdatedsArgs;
-
-export type SubgraphSubscriptionHooksTemplateArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionHooksTemplateAddedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionHooksTemplateAddedsArgs = SubgraphQueryHooksTemplateAddedsArgs;
-
-export type SubgraphSubscriptionHooksTemplateDisabledArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionHooksTemplateDisabledsArgs =
-  SubgraphQueryHooksTemplateDisabledsArgs;
-
-export type SubgraphSubscriptionHooksTemplateFeesUpdatedArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionHooksTemplateFeesUpdatedsArgs =
-  SubgraphQueryHooksTemplateFeesUpdatedsArgs;
-
-export type SubgraphSubscriptionHooksTemplatesArgs = SubgraphQueryHooksTemplatesArgs;
-
-export type SubgraphSubscriptionKnownLenderStatusArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionKnownLenderStatusesArgs = SubgraphQueryKnownLenderStatusesArgs;
-
-export type SubgraphSubscriptionLenderAccountArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionLenderAccountsArgs = SubgraphQueryLenderAccountsArgs;
-
-export type SubgraphSubscriptionLenderAuthorizationArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionLenderAuthorizationChangeArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionLenderAuthorizationChangesArgs =
-  SubgraphQueryLenderAuthorizationChangesArgs;
-
-export type SubgraphSubscriptionLenderAuthorizationsArgs = SubgraphQueryLenderAuthorizationsArgs;
-
-export type SubgraphSubscriptionLenderHooksAccessArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionLenderHooksAccessesArgs = SubgraphQueryLenderHooksAccessesArgs;
-
-export type SubgraphSubscriptionLenderInterestAccruedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionLenderInterestAccruedsArgs =
-  SubgraphQueryLenderInterestAccruedsArgs;
-
-export type SubgraphSubscriptionLenderWithdrawalStatusArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionLenderWithdrawalStatusesArgs =
-  SubgraphQueryLenderWithdrawalStatusesArgs;
-
-export type SubgraphSubscriptionLiquidatorApprovedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionLiquidatorApprovedsArgs = SubgraphQueryLiquidatorApprovedsArgs;
-
-export type SubgraphSubscriptionLiquidatorRemovedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionLiquidatorRemovedsArgs = SubgraphQueryLiquidatorRemovedsArgs;
-
-export type SubgraphSubscriptionMarketArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionMarketAddedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionMarketAddedsArgs = SubgraphQueryMarketAddedsArgs;
-
-export type SubgraphSubscriptionMarketClosedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionMarketClosedsArgs = SubgraphQueryMarketClosedsArgs;
-
-export type SubgraphSubscriptionMarketDailyStatsArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionMarketDailyStats_CollectionArgs =
-  SubgraphQueryMarketDailyStats_CollectionArgs;
-
-export type SubgraphSubscriptionMarketDeployedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionMarketDeployedsArgs = SubgraphQueryMarketDeployedsArgs;
-
-export type SubgraphSubscriptionMarketInterestAccruedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionMarketInterestAccruedsArgs =
-  SubgraphQueryMarketInterestAccruedsArgs;
-
-export type SubgraphSubscriptionMarketRemovedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionMarketRemovedsArgs = SubgraphQueryMarketRemovedsArgs;
-
-export type SubgraphSubscriptionMarketsArgs = SubgraphQueryMarketsArgs;
-
-export type SubgraphSubscriptionMaxTotalSupplyUpdatedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionMaxTotalSupplyUpdatedsArgs =
-  SubgraphQueryMaxTotalSupplyUpdatedsArgs;
-
-export type SubgraphSubscriptionMinimumDepositUpdatedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionMinimumDepositUpdatedsArgs =
-  SubgraphQueryMinimumDepositUpdatedsArgs;
-
-export type SubgraphSubscriptionNewControllerArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionNewControllersArgs = SubgraphQueryNewControllersArgs;
-
-export type SubgraphSubscriptionNewSanctionsEscrowArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionNewSanctionsEscrowsArgs = SubgraphQueryNewSanctionsEscrowsArgs;
-
-export type SubgraphSubscriptionOwnershipHandoverCanceledArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionOwnershipHandoverCanceledsArgs =
-  SubgraphQueryOwnershipHandoverCanceledsArgs;
-
-export type SubgraphSubscriptionOwnershipHandoverRequestedArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionOwnershipHandoverRequestedsArgs =
-  SubgraphQueryOwnershipHandoverRequestedsArgs;
-
-export type SubgraphSubscriptionOwnershipTransferredArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionOwnershipTransferredsArgs = SubgraphQueryOwnershipTransferredsArgs;
-
-export type SubgraphSubscriptionParameterConstraintsArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionParameterConstraints_CollectionArgs =
-  SubgraphQueryParameterConstraints_CollectionArgs;
-
-export type SubgraphSubscriptionProtocolFeeBipsUpdatedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionProtocolFeeBipsUpdatedsArgs =
-  SubgraphQueryProtocolFeeBipsUpdatedsArgs;
-
-export type SubgraphSubscriptionRegisteredBorrowerArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionRegisteredBorrowersArgs = SubgraphQueryRegisteredBorrowersArgs;
-
-export type SubgraphSubscriptionReserveRatioBipsUpdatedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionReserveRatioBipsUpdatedsArgs =
-  SubgraphQueryReserveRatioBipsUpdatedsArgs;
-
-export type SubgraphSubscriptionRoleProviderArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionRoleProviderAddedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionRoleProviderAddedsArgs = SubgraphQueryRoleProviderAddedsArgs;
-
-export type SubgraphSubscriptionRoleProviderRemovedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionRoleProviderRemovedsArgs = SubgraphQueryRoleProviderRemovedsArgs;
-
-export type SubgraphSubscriptionRoleProviderUpdatedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionRoleProviderUpdatedsArgs = SubgraphQueryRoleProviderUpdatedsArgs;
-
-export type SubgraphSubscriptionRoleProvidersArgs = SubgraphQueryRoleProvidersArgs;
-
-export type SubgraphSubscriptionSanctionOverrideArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSanctionOverrideRemovedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSanctionOverrideRemovedsArgs =
-  SubgraphQuerySanctionOverrideRemovedsArgs;
-
-export type SubgraphSubscriptionSanctionOverridesArgs = SubgraphQuerySanctionOverridesArgs;
-
-export type SubgraphSubscriptionSanctionedAccountAssetsQueuedForWithdrawalArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSanctionedAccountAssetsQueuedForWithdrawalsArgs =
-  SubgraphQuerySanctionedAccountAssetsQueuedForWithdrawalsArgs;
-
-export type SubgraphSubscriptionSanctionedAccountAssetsSentToEscrowArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSanctionedAccountAssetsSentToEscrowsArgs =
-  SubgraphQuerySanctionedAccountAssetsSentToEscrowsArgs;
-
-export type SubgraphSubscriptionSanctionedAccountWithdrawalSentToEscrowArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSanctionedAccountWithdrawalSentToEscrowsArgs =
-  SubgraphQuerySanctionedAccountWithdrawalSentToEscrowsArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractDepositArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractDepositorArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractDepositorsArgs =
-  SubgraphQuerySimpleCollateralContractDepositorsArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractDepositsArgs =
-  SubgraphQuerySimpleCollateralContractDepositsArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractFullResetArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractFullResetsArgs =
-  SubgraphQuerySimpleCollateralContractFullResetsArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractLiquidatedSharesResetArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractLiquidatedSharesResetsArgs =
-  SubgraphQuerySimpleCollateralContractLiquidatedSharesResetsArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractLiquidationArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractLiquidationsArgs =
-  SubgraphQuerySimpleCollateralContractLiquidationsArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractReclaimArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractReclaimsArgs =
-  SubgraphQuerySimpleCollateralContractReclaimsArgs;
-
-export type SubgraphSubscriptionSimpleCollateralContractsArgs =
-  SubgraphQuerySimpleCollateralContractsArgs;
-
-export type SubgraphSubscriptionSimpleCollateralFactoriesArgs =
-  SubgraphQuerySimpleCollateralFactoriesArgs;
-
-export type SubgraphSubscriptionSimpleCollateralFactoryArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSubgraphVersionArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionSubgraphVersionsArgs = SubgraphQuerySubgraphVersionsArgs;
-
-export type SubgraphSubscriptionTokenArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionTokensArgs = SubgraphQueryTokensArgs;
-
-export type SubgraphSubscriptionTransferArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionTransfersArgs = SubgraphQueryTransfersArgs;
-
-export type SubgraphSubscriptionUpdateProtocolFeeConfigurationArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionUpdateProtocolFeeConfigurationsArgs =
-  SubgraphQueryUpdateProtocolFeeConfigurationsArgs;
-
-export type SubgraphSubscriptionWithdrawalBatchArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionWithdrawalBatchCreatedArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionWithdrawalBatchCreatedsArgs =
-  SubgraphQueryWithdrawalBatchCreatedsArgs;
-
-export type SubgraphSubscriptionWithdrawalBatchExpiredArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionWithdrawalBatchExpiredsArgs =
-  SubgraphQueryWithdrawalBatchExpiredsArgs;
-
-export type SubgraphSubscriptionWithdrawalBatchInterestAccruedArgs =
-  SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionWithdrawalBatchInterestAccruedsArgs =
-  SubgraphQueryWithdrawalBatchInterestAccruedsArgs;
-
-export type SubgraphSubscriptionWithdrawalBatchPaymentArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionWithdrawalBatchPaymentsArgs =
-  SubgraphQueryWithdrawalBatchPaymentsArgs;
-
-export type SubgraphSubscriptionWithdrawalBatchesArgs = SubgraphQueryWithdrawalBatchesArgs;
-
-export type SubgraphSubscriptionWithdrawalExecutionArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionWithdrawalExecutionsArgs = SubgraphQueryWithdrawalExecutionsArgs;
-
-export type SubgraphSubscriptionWithdrawalRequestArgs = SubgraphQueryAccountAccessGrantedArgs;
-
-export type SubgraphSubscriptionWithdrawalRequestsArgs = SubgraphQueryWithdrawalRequestsArgs;
-
 export type SubgraphToken = {
   __typename: "Token";
   address: Scalars["Bytes"]["output"];
@@ -16246,7 +15623,6 @@ export type Subgraph_Meta_ = {
    * will be null if the _meta field has a block constraint that asks for
    * a block number. It will be filled if the _meta field has no block constraint
    * and therefore asks for the latest  block
-   *
    */
   block: Subgraph_Block_;
   /** The deployment ID */
@@ -17835,6 +17211,43 @@ export type SubgraphGetCollateralContractEventsQuery = {
     reclaims?: SubgraphSimpleCollateralContractReclaimDataFragment[];
     liquidations?: SubgraphSimpleCollateralContractLiquidationDataFragment[];
     fullResets?: SubgraphSimpleCollateralContractFullResetDataFragment[];
+  } | null;
+};
+
+export type SubgraphGetMarketChartsDataQueryVariables = Exact<{
+  market: Scalars["ID"]["input"];
+  numWithdrawalBatches?: InputMaybe<Scalars["Int"]["input"]>;
+  skipWithdrawalBatches?: InputMaybe<Scalars["Int"]["input"]>;
+  orderWithdrawalBatches?: InputMaybe<SubgraphWithdrawalBatch_OrderBy>;
+  directionWithdrawalBatches?: InputMaybe<SubgraphOrderDirection>;
+  numDailyStats?: InputMaybe<Scalars["Int"]["input"]>;
+  skipDailyStats?: InputMaybe<Scalars["Int"]["input"]>;
+  orderDailyStats?: InputMaybe<SubgraphMarketDailyStats_OrderBy>;
+  directionDailyStats?: InputMaybe<SubgraphOrderDirection>;
+}>;
+
+export type SubgraphGetMarketChartsDataQuery = {
+  __typename: "Query";
+  market?: {
+    __typename: "Market";
+    withdrawalBatches: Array<{
+      __typename: "WithdrawalBatch";
+      expiry: string;
+      expiration?: {
+        __typename: "WithdrawalBatchExpired";
+        normalizedAmountPaid: string;
+        normalizedAmountOwed: string;
+      } | null;
+    }>;
+    asset: { __typename: "Token"; decimals: number; symbol: string; name: string };
+    dailyStats: Array<{
+      __typename: "MarketDailyStats";
+      totalDeposited: string;
+      totalWithdrawalsRequested: string;
+      totalBorrowed: string;
+      totalRepaid: string;
+      timestamp: number;
+    }>;
   } | null;
 };
 
@@ -19862,4 +19275,54 @@ export const GetCollateralContractEventsDocument = gql`
 export type GetCollateralContractEventsQueryResult = Apollo.QueryResult<
   SubgraphGetCollateralContractEventsQuery,
   SubgraphGetCollateralContractEventsQueryVariables
+>;
+export const GetMarketChartsDataDocument = gql`
+  query getMarketChartsData(
+    $market: ID!
+    $numWithdrawalBatches: Int = 100
+    $skipWithdrawalBatches: Int = 0
+    $orderWithdrawalBatches: WithdrawalBatch_orderBy = expiry
+    $directionWithdrawalBatches: OrderDirection = desc
+    $numDailyStats: Int = 100
+    $skipDailyStats: Int = 0
+    $orderDailyStats: MarketDailyStats_orderBy = startTimestamp
+    $directionDailyStats: OrderDirection = desc
+  ) {
+    market(id: $market) {
+      withdrawalBatches(
+        where: { expiration_: { id_not: null } }
+        first: $numWithdrawalBatches
+        skip: $skipWithdrawalBatches
+        orderBy: $orderWithdrawalBatches
+        orderDirection: $directionWithdrawalBatches
+      ) {
+        expiry
+        expiration {
+          normalizedAmountPaid
+          normalizedAmountOwed
+        }
+      }
+      asset {
+        decimals
+        symbol
+        name
+      }
+      dailyStats(
+        first: $numDailyStats
+        skip: $skipDailyStats
+        orderBy: $orderDailyStats
+        orderDirection: $directionDailyStats
+      ) {
+        timestamp: startTimestamp
+        totalDeposited
+        totalWithdrawalsRequested
+        totalBorrowed
+        totalRepaid
+      }
+    }
+  }
+`;
+export type GetMarketChartsDataQueryResult = Apollo.QueryResult<
+  SubgraphGetMarketChartsDataQuery,
+  SubgraphGetMarketChartsDataQueryVariables
 >;
