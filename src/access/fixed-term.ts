@@ -2,6 +2,7 @@ import { defaultAbiCoder } from "ethers/lib/utils";
 import {
   DefaultV2ParameterConstraints,
   getDeploymentAddress,
+  getHooksFactoryRevolvingContract,
   SupportedChainId
 } from "../constants";
 import { MarketParameters } from "../controller";
@@ -25,6 +26,7 @@ import {
   DepositAccess,
   FeeConfigurationV2,
   HooksKind,
+  MarketType,
   MarketHooksInstanceInputs,
   MarketParameterConstraints,
   PartialTransaction,
@@ -38,10 +40,12 @@ import { BigNumber, constants, ContractTransaction } from "ethers";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
-  LegacyDeployMarketPreview,
+  DeployMarketPreview,
   DeployMarketStatus,
-  readyLegacyDeployMarketPreview
+  readyLegacyDeployMarketPreview,
+  readyRevolvingDeployMarketPreview
 } from "./validation";
+import { encodeRevolvingMarketData } from "./revolving";
 import { encodeMarketHooksInstanceInputs } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -377,6 +381,8 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
   }
 
   previewDeployMarket({
+    marketType,
+    commitmentFeeBips,
     hooksAddress,
     hooksInstanceName,
     existingProviders,
@@ -394,7 +400,7 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     allowTermReduction,
     allowForceBuyBacks,
     ...otherParameters
-  }: FixedTermMarketDeploymentArgs): LegacyDeployMarketPreview {
+  }: FixedTermMarketDeploymentArgs): DeployMarketPreview {
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -453,6 +459,34 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     } as DeployMarketInputsV2Struct;
     const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0;
     const originationFeeToken = this.fees.originationFeeToken?.address ?? constants.AddressZero;
+    if (marketType === "revolving") {
+      const marketData = encodeRevolvingMarketData({ commitmentFeeBips });
+      if (hooksAddress) {
+        return readyRevolvingDeployMarketPreview({
+          fn: "deployMarket",
+          args: [parameters, hooksData, marketData, salt, originationFeeToken, originationFeeAmount]
+        });
+      } else {
+        return readyRevolvingDeployMarketPreview({
+          fn: "deployMarketAndHooks",
+          args: [
+            this.hooksTemplate,
+            encodeMarketHooksInstanceInputs({
+              existingProviders,
+              newProviderInputs,
+              hooksInstanceName,
+              roleProviderFactory
+            }),
+            parameters,
+            hooksData,
+            marketData,
+            salt,
+            originationFeeToken,
+            originationFeeAmount
+          ]
+        });
+      }
+    }
     if (hooksAddress) {
       return readyLegacyDeployMarketPreview({
         fn: "deployMarket",
@@ -484,15 +518,23 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
   }: FixedTermMarketDeploymentArgs): Promise<ContractTransaction> {
     const result = this.previewDeployMarket(otherParameters);
     assert(result.status === DeployMarketStatus.Ready, `Can not deploy market: ${result.status}`);
-    if (result.fn === "deployMarket") {
+    if (result.marketType === "legacy" && result.fn === "deployMarket") {
       return this.contract.deployMarket(...result.args);
-    } else {
+    } else if (result.marketType === "legacy") {
       return this.contract.deployMarketAndHooks(...result.args);
+    } else if (result.fn === "deployMarket") {
+      return getHooksFactoryRevolvingContract(this.chainId, this.provider).deployMarket(
+        ...result.args
+      );
+    } else {
+      return getHooksFactoryRevolvingContract(this.chainId, this.provider).deployMarketAndHooks(
+        ...result.args
+      );
     }
   }
 }
 
-export type FixedTermMarketDeploymentArgs = MarketParameters & {
+type FixedTermCommonMarketDeploymentArgs = MarketParameters & {
   /** Create2 salt to use for the market deployment */
   salt: string;
   /** Time at which the market converts to open-term */
@@ -511,4 +553,18 @@ export type FixedTermMarketDeploymentArgs = MarketParameters & {
   allowTermReduction?: boolean;
   /** Whether borrower can force buyback market tokens */
   allowForceBuyBacks?: boolean;
-} & MarketHooksInstanceInputs;
+};
+
+export type LegacyFixedTermMarketDeploymentArgs = FixedTermCommonMarketDeploymentArgs & {
+  marketType?: Extract<MarketType, "legacy">;
+  commitmentFeeBips?: undefined;
+};
+
+export type RevolvingFixedTermMarketDeploymentArgs = FixedTermCommonMarketDeploymentArgs & {
+  marketType: Extract<MarketType, "revolving">;
+  commitmentFeeBips: number;
+};
+
+export type FixedTermMarketDeploymentArgs =
+  | (LegacyFixedTermMarketDeploymentArgs & MarketHooksInstanceInputs)
+  | (RevolvingFixedTermMarketDeploymentArgs & MarketHooksInstanceInputs);
