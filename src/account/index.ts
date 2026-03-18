@@ -7,6 +7,8 @@ import {
   WildcatMarketV2__factory,
   LenderAccountDataStructOutput,
   MarketDataWithLenderStatusV2StructOutput,
+  LenderAccountDataV2_5StructOutput,
+  MarketDataWithLenderStatusV2_5StructOutput,
   IOpenTermHooks__factory,
   IFixedTermHooks__factory
 } from "../typechain";
@@ -22,9 +24,11 @@ import {
 } from "../utils";
 import {
   SupportedChainId,
+  getArchControllerContract,
   getControllerContract,
   getLensContract,
-  getLensV2Contract
+  getLatestLensContract,
+  hasDeploymentAddress
 } from "../constants";
 import {
   HooksCredential,
@@ -69,6 +73,18 @@ export enum LenderRole {
 }
 
 const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
+const hasUnifiedLatestLensForAccountReads = (chainId: SupportedChainId): boolean => {
+  return hasDeploymentAddress(chainId, "MarketLensV2_5");
+};
+
+type LatestLenderAccountDataStructOutput =
+  | LenderAccountDataStructOutput
+  | LenderAccountDataV2_5StructOutput;
+
+type MarketDataWithLenderStatusOutput =
+  | MarketDataWithLenderStatusStructOutput
+  | MarketDataWithLenderStatusV2StructOutput
+  | MarketDataWithLenderStatusV2_5StructOutput;
 
 export type MarketAccountArgs = {
   account: string;
@@ -861,14 +877,21 @@ export class MarketAccount {
   /* -------------------------------------------------------------------------- */
 
   async update(): Promise<void> {
-    const acccountMarketInfo = await getLensContract(
-      this.chainId,
-      this.market.provider
-    ).getMarketLenderStatus(this.account, this.market.address);
-    this.updateWith(acccountMarketInfo);
+    if (this.market.version === MarketVersion.V1) {
+      const acccountMarketInfo = await getLensContract(
+        this.chainId,
+        this.market.provider
+      ).getMarketLenderStatus(this.account, this.market.address);
+      this.updateWith(acccountMarketInfo);
+      return;
+    }
+    const accountMarketInfo = await getLatestLensContract(this.chainId, this.market.provider)[
+      "getLenderAccountData(address,address)"
+    ](this.account, this.market.address);
+    this.updateWith(accountMarketInfo);
   }
 
-  updateWith(info: MarketLenderStatusStructOutput | LenderAccountDataStructOutput): void {
+  updateWith(info: MarketLenderStatusStructOutput | LatestLenderAccountDataStructOutput): void {
     if ("isAuthorizedOnController" in info) {
       assert(
         this.market.version === MarketVersion.V1,
@@ -976,7 +999,10 @@ export class MarketAccount {
     });
   }
 
-  static fromLenderAccountData(market: Market, data: LenderAccountDataStructOutput): MarketAccount {
+  static fromLenderAccountData(
+    market: Market,
+    data: LatestLenderAccountDataStructOutput
+  ): MarketAccount {
     return new MarketAccount({
       account: data.lender,
       market,
@@ -1004,12 +1030,12 @@ export class MarketAccount {
     });
   }
 
-  static fromMarketDataWithLenderStatus(
+  static async fromMarketDataWithLenderStatus(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
     account: string,
-    info: MarketDataWithLenderStatusStructOutput | MarketDataWithLenderStatusV2StructOutput
-  ): MarketAccount {
+    info: MarketDataWithLenderStatusOutput
+  ): Promise<MarketAccount> {
     if ("controller" in info.market) {
       info = info as MarketDataWithLenderStatusStructOutput;
       return MarketAccount.fromMarketLenderStatus(
@@ -1017,13 +1043,30 @@ export class MarketAccount {
         info.lenderStatus,
         Market.fromMarketData(chainId, info.market, provider)
       );
-    } else {
-      info = info as MarketDataWithLenderStatusV2StructOutput;
+    }
+    if ("allowForceBuyBacks" in info.market.hooksConfig) {
+      const infoV2 = info as MarketDataWithLenderStatusV2StructOutput;
       return MarketAccount.fromLenderAccountData(
-        Market.fromMarketDataV2(chainId, provider, info.market),
-        info.lenderStatus
+        Market.fromMarketDataV2(chainId, provider, infoV2.market),
+        infoV2.lenderStatus
       );
     }
+    const infoV2_5 = info as MarketDataWithLenderStatusV2_5StructOutput;
+    const market = await Market.fromUnifiedMarketData(chainId, provider, infoV2_5.market);
+    return MarketAccount.fromLenderAccountData(market, infoV2_5.lenderStatus);
+  }
+
+  static async hydrateMarketAccounts(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider,
+    account: string,
+    infos: MarketDataWithLenderStatusOutput[]
+  ): Promise<MarketAccount[]> {
+    return Promise.all(
+      infos.map((info) =>
+        MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
+      )
+    );
   }
 
   static fromMarketDataOnly(
@@ -1053,17 +1096,28 @@ export class MarketAccount {
     account: string,
     market: Market | string
   ): Promise<MarketAccount> {
-    const lens = getLensContract(chainId, provider);
     if (market instanceof Market) {
-      return lens
-        .getMarketLenderStatus(account, market.address)
-        .then((info) => MarketAccount.fromMarketLenderStatus(account, info, market));
-    } else {
-      return lens
-        .getMarketDataWithLenderStatus(account, market)
-        .then((info) =>
-          MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
-        );
+      if (market.version === MarketVersion.V1) {
+        return getLensContract(chainId, provider)
+          .getMarketLenderStatus(account, market.address)
+          .then((info) => MarketAccount.fromMarketLenderStatus(account, info, market));
+      }
+      return getLatestLensContract(chainId, provider)
+        ["getLenderAccountData(address,address)"](account, market.address)
+        .then((info) => MarketAccount.fromLenderAccountData(market, info));
+    }
+    try {
+      const info = await getLatestLensContract(chainId, provider).getMarketDataWithLenderStatus(
+        account,
+        market
+      );
+      return MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info);
+    } catch (_) {
+      const info = await getLensContract(chainId, provider).getMarketDataWithLenderStatus(
+        account,
+        market
+      );
+      return MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info);
     }
   }
 
@@ -1077,20 +1131,16 @@ export class MarketAccount {
     account: string,
     market: Market | string
   ): Promise<MarketAccount> {
-    const lens = getLensV2Contract(chainId, provider);
     if (market instanceof Market) {
-      return lens
-        .getMarketDataWithLenderStatus(account, market.address)
-        .then((info) =>
-          MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
-        );
-    } else {
-      return lens
-        .getMarketDataWithLenderStatus(account, market)
-        .then((info) =>
-          MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
-        );
+      return getLatestLensContract(chainId, provider)
+        ["getLenderAccountData(address,address)"](account, market.address)
+        .then((info) => MarketAccount.fromLenderAccountData(market, info));
     }
+    return getLatestLensContract(chainId, provider)
+      .getMarketDataWithLenderStatus(account, market)
+      .then((info) =>
+        MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
+      );
   }
 
   /**
@@ -1104,27 +1154,64 @@ export class MarketAccount {
     account: string,
     markets: Market[] | string[]
   ): Promise<MarketAccount[]> {
-    const lens = getLensContract(chainId, provider);
     if (markets.length === 0) {
       return [];
     }
     if (isMarketInstanceArray(markets)) {
-      return lens
-        .getMarketsLenderStatus(
+      const results = new Array<MarketAccount>(markets.length);
+      const legacyIndexes: number[] = [];
+      const latestIndexes: number[] = [];
+
+      markets.forEach((market, index) => {
+        if (market.version === MarketVersion.V1) {
+          legacyIndexes.push(index);
+        } else {
+          latestIndexes.push(index);
+        }
+      });
+
+      if (legacyIndexes.length > 0) {
+        const legacyMarkets = legacyIndexes.map((index) => markets[index]);
+        const infos = await getLensContract(chainId, provider).getMarketsLenderStatus(
           account,
-          markets.map((v) => v.address)
-        )
-        .then((infos) =>
-          infos.map((info, i) => MarketAccount.fromMarketLenderStatus(account, info, markets[i]))
+          legacyMarkets.map((market) => market.address)
         );
-    } else {
-      return lens
-        .getMarketsDataWithLenderStatus(account, markets)
-        .then((infos) =>
-          infos.map((info) =>
-            MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
-          )
+        infos.forEach((info, i) => {
+          results[legacyIndexes[i]] = MarketAccount.fromMarketLenderStatus(
+            account,
+            info,
+            legacyMarkets[i]
+          );
+        });
+      }
+
+      if (latestIndexes.length > 0) {
+        const latestMarkets = latestIndexes.map((index) => markets[index]);
+        const infos = await getLatestLensContract(chainId, provider)[
+          "getLenderAccountData(address,address[])"
+        ](
+          account,
+          latestMarkets.map((market) => market.address)
         );
+        infos.forEach((info, i) => {
+          results[latestIndexes[i]] = MarketAccount.fromLenderAccountData(latestMarkets[i], info);
+        });
+      }
+
+      return results;
+    }
+    try {
+      const infos = await getLatestLensContract(chainId, provider).getMarketsDataWithLenderStatus(
+        account,
+        markets
+      );
+      return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
+    } catch (_) {
+      const infos = await getLensContract(chainId, provider).getMarketsDataWithLenderStatus(
+        account,
+        markets
+      );
+      return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
     }
   }
 
@@ -1132,19 +1219,28 @@ export class MarketAccount {
    * Get all `MarketAccount`s for a given account.
    * Fetches the market data in the same call as the account data.
    */
-  static getAllMarketAccountsForLender(
+  static async getAllMarketAccountsForLender(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
     account: string
   ): Promise<MarketAccount[]> {
-    const lens = getLensContract(chainId, provider);
-    return lens
-      .getAllMarketsDataWithLenderStatus(account)
-      .then((infos) =>
-        infos.map((info) =>
-          MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
-        )
+    if (hasUnifiedLatestLensForAccountReads(chainId)) {
+      const markets = await getArchControllerContract(chainId, provider)[
+        "getRegisteredMarkets()"
+      ]();
+      if (markets.length === 0) {
+        return [];
+      }
+      const infos = await getLatestLensContract(chainId, provider).getMarketsDataWithLenderStatus(
+        account,
+        markets
       );
+      return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
+    }
+    const infos = await getLensContract(chainId, provider).getAllMarketsDataWithLenderStatus(
+      account
+    );
+    return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
   }
 
   /**
@@ -1152,21 +1248,39 @@ export class MarketAccount {
    * Fetches the market data in the same call as the account data.
    * @note Throws an error if `start + count` exceeds the number of markets.
    */
-  static getPaginatedMarketAccounts(
+  static async getPaginatedMarketAccounts(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
     account: string,
     start = 0,
     count: number
   ): Promise<MarketAccount[]> {
-    const lens = getLensContract(chainId, provider);
-    return lens
-      .getPaginatedMarketsDataWithLenderStatus(account, start, count)
-      .then((infos) =>
-        infos.map((info) =>
-          MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
-        )
+    if (hasUnifiedLatestLensForAccountReads(chainId)) {
+      if (count <= 0) {
+        return [];
+      }
+      const archController = getArchControllerContract(chainId, provider);
+      const totalMarkets = (await archController.getRegisteredMarketsCount()).toNumber();
+      if (start >= totalMarkets) {
+        return [];
+      }
+      const end = Math.min(start + count, totalMarkets);
+      const markets = await archController["getRegisteredMarkets(uint256,uint256)"](start, end);
+      if (markets.length === 0) {
+        return [];
+      }
+      const infos = await getLatestLensContract(chainId, provider).getMarketsDataWithLenderStatus(
+        account,
+        markets
       );
+      return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
+    }
+    const infos = await getLensContract(chainId, provider).getPaginatedMarketsDataWithLenderStatus(
+      account,
+      start,
+      count
+    );
+    return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
   }
 }
 type QueueWithdrawalTransaction = {
