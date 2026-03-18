@@ -6,13 +6,19 @@ import {
   WildcatMarket,
   WildcatMarket__factory
 } from "./typechain";
-import { SupportedChainId, getLensContract, getLensV2Contract } from "./constants";
+import {
+  SupportedChainId,
+  getLensContract,
+  getLensV2Contract,
+  getMarketTypeForHooksFactory
+} from "./constants";
 import { TokenAmount, Token, toBn } from "./token";
 import {
   SignerOrProvider,
   ContractWrapper,
   PartialTransaction,
   MarketVersion,
+  MarketType,
   HooksKind,
   HooksConfig,
   OpenTermHooksConfig,
@@ -87,6 +93,8 @@ export type MarketArgs = {
   version: MarketVersion;
   marketToken: Token;
   underlyingToken: Token;
+  hooksFactory?: string;
+  marketType?: MarketType;
   hooksConfig?: HooksConfig;
   borrower: string;
   controller?: string;
@@ -666,6 +674,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
     this.lastInterestAccruedTimestamp = data.lastInterestAccruedTimestamp.toNumber();
     this.unpaidWithdrawalBatchExpiries = data.unpaidWithdrawalBatchExpiries;
     this.coverageLiquidity = this.underlyingToken.getAmount(data.coverageLiquidity);
+    if ("hooksFactory" in data) {
+      this.hooksFactory = data.hooksFactory;
+      this.marketType = getMarketTypeForHooksFactory(this.chainId, data.hooksFactory);
+    }
     if ("hooksConfig" in data) {
       assert(this.version === MarketVersion.V2, `Can not push V2 lens data to V1 market!`);
       const config = this.hooksConfig;
@@ -710,7 +722,6 @@ export class Market extends ContractWrapper<WildcatMarket> {
       assert(!!data.hooks, `V2 markets require hooks`);
       assert(!!data.hooksConfig, `V2 markets require hooksConfig`);
       const {
-        __typename: _,
         minimumDeposit: _minimumDeposit,
         depositRequiresAccess,
         transferRequiresAccess,
@@ -719,9 +730,22 @@ export class Market extends ContractWrapper<WildcatMarket> {
         allowForceBuyBacks,
         allowTermReduction,
         fixedTermEndTime,
-        transfersDisabled,
-        ...flags
+        transfersDisabled
       } = data.hooksConfig;
+      const flags = {
+        useOnDeposit: data.hooksConfig.useOnDeposit,
+        useOnQueueWithdrawal: data.hooksConfig.useOnQueueWithdrawal,
+        useOnExecuteWithdrawal: data.hooksConfig.useOnExecuteWithdrawal,
+        useOnTransfer: data.hooksConfig.useOnTransfer,
+        useOnBorrow: data.hooksConfig.useOnBorrow,
+        useOnRepay: data.hooksConfig.useOnRepay,
+        useOnCloseMarket: data.hooksConfig.useOnCloseMarket,
+        useOnNukeFromOrbit: data.hooksConfig.useOnNukeFromOrbit,
+        useOnSetMaxTotalSupply: data.hooksConfig.useOnSetMaxTotalSupply,
+        useOnSetAnnualInterestAndReserveRatioBips:
+          data.hooksConfig.useOnSetAnnualInterestAndReserveRatioBips,
+        useOnSetProtocolFeeBips: data.hooksConfig.useOnSetProtocolFeeBips
+      };
       const { id, hooksTemplate: hooksTemplateData } = data.hooks;
       const template = hooksTemplateFromSubgraph(chainId, provider, hooksTemplateData);
       const minimumDeposit = _minimumDeposit
@@ -913,6 +937,8 @@ export class Market extends ContractWrapper<WildcatMarket> {
     }
     return new Market({
       provider,
+      hooksFactory: data.hooksFactory,
+      marketType: getMarketTypeForHooksFactory(chainId, data.hooksFactory),
       hooksConfig,
       version: MarketVersion.V2,
       chainId: chainId,
