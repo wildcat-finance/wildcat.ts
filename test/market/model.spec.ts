@@ -2,7 +2,11 @@ import { expect } from "chai";
 import { BigNumber, providers } from "ethers";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { Market } from "../../src/market";
-import { MarketDataStructOutput, MarketDataV2StructOutput } from "../../src/typechain";
+import {
+  MarketDataBaseV2_5StructOutput,
+  MarketDataStructOutput,
+  MarketDataV2StructOutput
+} from "../../src/typechain";
 
 const provider = new providers.JsonRpcProvider();
 
@@ -169,6 +173,27 @@ const makeFactoryBackedMarketData = (hooksFactory: string): MarketDataV2StructOu
   };
 };
 
+const makeUnifiedMarketData = (hooksFactory: string): MarketDataBaseV2_5StructOutput => {
+  const data = makeFactoryBackedMarketData(hooksFactory);
+  const hooksConfig = {
+    hooksAddress: data.hooksConfig.hooksAddress,
+    flags: data.hooksConfig.flags,
+    kind: data.hooksConfig.kind,
+    transferRequiresAccess: data.hooksConfig.transferRequiresAccess,
+    depositRequiresAccess: data.hooksConfig.depositRequiresAccess,
+    minimumDeposit: data.hooksConfig.minimumDeposit,
+    transfersDisabled: data.hooksConfig.transfersDisabled,
+    withdrawalRequiresAccess: data.hooksConfig.withdrawalRequiresAccess,
+    fixedTermEndTime: data.hooksConfig.fixedTermEndTime,
+    allowClosureBeforeTerm: data.hooksConfig.allowClosureBeforeTerm,
+    allowTermReduction: data.hooksConfig.allowTermReduction
+  };
+  return {
+    ...data,
+    hooksConfig
+  } as MarketDataBaseV2_5StructOutput;
+};
+
 describe("Market model routing metadata", () => {
   it("leaves legacy lens markets without factory routing metadata", () => {
     const market = Market.fromMarketData(
@@ -203,6 +228,20 @@ describe("Market model routing metadata", () => {
 
     expect(market.hooksFactory).to.equal(unknownHooksFactory);
     expect(market.marketType).to.equal(undefined);
+  });
+
+  it("hydrates v2.5 market data with compatibility allowForceBuyBacks", () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory");
+    const market = Market.fromMarketDataV2_5(
+      SupportedChainId.Sepolia,
+      provider,
+      makeUnifiedMarketData(hooksFactory),
+      true
+    );
+
+    expect(market.hooksFactory).to.equal(hooksFactory);
+    expect(market.marketType).to.equal("legacy");
+    expect(market.hooksConfig?.allowForceBuyBacks).to.equal(true);
   });
 
   it("refreshes hooksFactory and marketType when v2 market data is updated", () => {
