@@ -17,9 +17,7 @@ import {
   HooksInstanceDataStructOutput,
   HooksTemplateDataStructOutput,
   IFixedTermHooks,
-  IFixedTermHooks__factory,
-  IOpenTermHooks,
-  IOpenTermHooks__factory
+  IFixedTermHooks__factory
 } from "../typechain";
 import {
   AddLenderInput,
@@ -40,8 +38,9 @@ import { BigNumber, constants, ContractTransaction } from "ethers";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
-  DeployMarketPreview,
-  DeployMarketStatus
+  LegacyDeployMarketPreview,
+  DeployMarketStatus,
+  readyLegacyDeployMarketPreview
 } from "./validation";
 import { encodeMarketHooksInstanceInputs } from "./utils";
 
@@ -395,7 +394,7 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     allowTermReduction,
     allowForceBuyBacks,
     ...otherParameters
-  }: FixedTermMarketDeploymentArgs): DeployMarketPreview {
+  }: FixedTermMarketDeploymentArgs): LegacyDeployMarketPreview {
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -455,14 +454,12 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0;
     const originationFeeToken = this.fees.originationFeeToken?.address ?? constants.AddressZero;
     if (hooksAddress) {
-      return {
-        status: DeployMarketStatus.Ready,
+      return readyLegacyDeployMarketPreview({
         fn: "deployMarket",
         args: [parameters, hooksData, salt, originationFeeToken, originationFeeAmount]
-      };
+      });
     } else {
-      return {
-        status: DeployMarketStatus.Ready,
+      return readyLegacyDeployMarketPreview({
         fn: "deployMarketAndHooks",
         args: [
           this.hooksTemplate,
@@ -478,7 +475,7 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
           originationFeeToken,
           originationFeeAmount
         ]
-      };
+      });
     }
   }
 

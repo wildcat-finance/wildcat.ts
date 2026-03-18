@@ -38,8 +38,9 @@ import { BigNumber, constants, ContractTransaction } from "ethers";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
-  DeployMarketPreview,
-  DeployMarketStatus
+  LegacyDeployMarketPreview,
+  DeployMarketStatus,
+  readyLegacyDeployMarketPreview
 } from "./validation";
 import { encodeMarketHooksInstanceInputs } from "./utils";
 
@@ -388,7 +389,7 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     salt,
     allowForceBuyBacks,
     ...otherParameters
-  }: OpenTermMarketDeploymentArgs): DeployMarketPreview {
+  }: OpenTermMarketDeploymentArgs): LegacyDeployMarketPreview {
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -435,14 +436,12 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0;
     const originationFeeToken = this.fees.originationFeeToken?.address ?? constants.AddressZero;
     if (hooksAddress) {
-      return {
-        status: DeployMarketStatus.Ready,
+      return readyLegacyDeployMarketPreview({
         fn: "deployMarket",
         args: [parameters, hooksData, salt, originationFeeToken, originationFeeAmount]
-      };
+      });
     } else {
-      return {
-        status: DeployMarketStatus.Ready,
+      return readyLegacyDeployMarketPreview({
         fn: "deployMarketAndHooks",
         args: [
           this.hooksTemplate,
@@ -458,7 +457,7 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
           originationFeeToken,
           originationFeeAmount
         ]
-      };
+      });
     }
   }
 
