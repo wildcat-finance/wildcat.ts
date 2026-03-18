@@ -1,8 +1,8 @@
 import { BigNumber } from "ethers";
 import { Market } from "./market";
 import { TokenAmount, minTokenAmount } from "./token";
-import { WithdrawalBatchDataStructOutput } from "./typechain";
-import { getLensContract, getLensV2Contract, hasDeploymentAddress } from "./constants";
+import { WithdrawalBatchDataStructOutput, WithdrawalBatchDataV2_5StructOutput } from "./typechain";
+import { getLatestLensContract, getLensContract, hasDeploymentAddress } from "./constants";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
 import {
   MakeOptional,
@@ -27,6 +27,10 @@ export enum BatchStatus {
   Unpaid = 2,
   Complete = 3
 }
+
+type WithdrawalBatchDataOutput =
+  | WithdrawalBatchDataStructOutput
+  | WithdrawalBatchDataV2_5StructOutput;
 
 export class WithdrawalBatch {
   public withdrawals: LenderWithdrawalStatus[] = [];
@@ -151,7 +155,7 @@ export class WithdrawalBatch {
     }
   }
 
-  applyLensUpdate(data: WithdrawalBatchDataStructOutput): void {
+  applyLensUpdate(data: WithdrawalBatchDataOutput): void {
     this.scaledTotalAmount = data.scaledTotalAmount;
     this.scaledAmountBurned = data.scaledAmountBurned;
     this.normalizedAmountPaid = this.market.underlyingToken.getAmount(data.normalizedAmountPaid);
@@ -181,10 +185,7 @@ export class WithdrawalBatch {
   /*                             Builders / Getters                             */
   /* -------------------------------------------------------------------------- */
 
-  static fromWithdrawalBatchData(
-    market: Market,
-    data: WithdrawalBatchDataStructOutput
-  ): WithdrawalBatch {
+  static fromWithdrawalBatchData(market: Market, data: WithdrawalBatchDataOutput): WithdrawalBatch {
     return new WithdrawalBatch(
       market,
       data.expiry,
@@ -248,10 +249,10 @@ export class WithdrawalBatch {
   }
 
   static async getWithdrawalBatch(market: Market, expiry: number): Promise<WithdrawalBatch> {
-    const useLensV2 =
+    const useLatestLens =
       market.version === MarketVersion.V2 || !hasDeploymentAddress(market.chainId, "MarketLens");
-    const lens = useLensV2
-      ? getLensV2Contract(market.chainId, market.provider)
+    const lens = useLatestLens
+      ? getLatestLensContract(market.chainId, market.provider)
       : getLensContract(market.chainId, market.provider);
     const data = await lens.getWithdrawalBatchData(market.address, expiry);
     return WithdrawalBatch.fromWithdrawalBatchData(market, data);

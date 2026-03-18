@@ -20,8 +20,14 @@ export * from "./utils";
 export * as typechain from "./typechain";
 export * from "./gql";
 
-export const { getMarket, getMarkets, getAllMarkets, getMarketsCount, getPaginatedMarkets } =
-  Market;
+export const {
+  getMarket,
+  getMarketV2,
+  getMarkets,
+  getAllMarkets,
+  getMarketsCount,
+  getPaginatedMarkets
+} = Market;
 
 export const { getWithdrawalBatch } = WithdrawalBatch;
 
@@ -29,6 +35,7 @@ export const { getWithdrawalForLender } = LenderWithdrawalStatus;
 
 export const {
   getMarketAccount,
+  getMarketAccountV2,
   getMarketAccountsForLender,
   getAllMarketAccountsForLender,
   getPaginatedMarketAccounts
