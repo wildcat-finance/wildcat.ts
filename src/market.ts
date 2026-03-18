@@ -11,6 +11,7 @@ import {
 } from "./typechain";
 import {
   SupportedChainId,
+  getArchControllerContract,
   getLensV2_5Contract,
   getLensContract,
   getLensV2Contract,
@@ -1209,13 +1210,12 @@ export class Market extends ContractWrapper<WildcatMarket> {
     chainId: SupportedChainId,
     provider: SignerOrProvider
   ): Promise<Market[]> {
-    const lens = getLensContract(chainId, provider);
-    const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
-    return lens
-      .getAllMarketsData()
-      .then((data) =>
-        data.map((market) => Market.fromMarketData(chainId, market, provider, signerAddress))
-      );
+    const archController = getArchControllerContract(chainId, provider);
+    const markets = await archController["getRegisteredMarkets()"]();
+    if (!markets.length) {
+      return [];
+    }
+    return Market.getMarkets(chainId, markets, provider);
   }
 
   /**
@@ -1227,13 +1227,20 @@ export class Market extends ContractWrapper<WildcatMarket> {
     start = 0,
     count: number
   ): Promise<Market[]> {
-    const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
-    const lens = getLensContract(chainId, provider);
-    return lens
-      .getPaginatedMarketsData(start, count)
-      .then((data) =>
-        data.map((market) => Market.fromMarketData(chainId, market, provider, signerAddress))
-      );
+    if (count <= 0) {
+      return [];
+    }
+    const archController = getArchControllerContract(chainId, provider);
+    const totalMarkets = (await archController.getRegisteredMarketsCount()).toNumber();
+    if (start >= totalMarkets) {
+      return [];
+    }
+    const end = Math.min(start + count, totalMarkets);
+    const markets = await archController["getRegisteredMarkets(uint256,uint256)"](start, end);
+    if (!markets.length) {
+      return [];
+    }
+    return Market.getMarkets(chainId, markets, provider);
   }
 
   /**
@@ -1243,7 +1250,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     chainId: SupportedChainId,
     provider: SignerOrProvider
   ): Promise<number> {
-    const lens = getLensContract(chainId, provider);
-    return lens.getMarketsCount().then((count) => count.toNumber());
+    const archController = getArchControllerContract(chainId, provider);
+    return archController.getRegisteredMarketsCount().then((count) => count.toNumber());
   }
 }
