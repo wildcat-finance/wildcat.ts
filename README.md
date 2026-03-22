@@ -1,5 +1,7 @@
 <h1 align="center">wildcat sdk</h1>
 
+[![gitcgr](https://gitcgr.com/badge/wildcat-finance/wildcat.ts.svg)](https://gitcgr.com/wildcat-finance/wildcat.ts)
+
 > TypeScript SDK for interacting with Wildcat markets, controllers, and managing our onchain state 
 
 ## Table of Contents
