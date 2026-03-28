@@ -61,7 +61,7 @@ const _abi = [
     name: "archController",
     outputs: [
       {
-        internalType: "address",
+        internalType: "contract WildcatArchController",
         name: "",
         type: "address",
       },
@@ -92,7 +92,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "market",
+        name: "",
         type: "address",
       },
     ],

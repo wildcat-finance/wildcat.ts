@@ -25,10 +25,11 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "./common";
+} from "../common";
 
 export interface Wildcat4626WrapperInterface extends utils.Interface {
   functions: {
+    "DOMAIN_SEPARATOR()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "asset()": FunctionFragment;
@@ -39,17 +40,21 @@ export interface Wildcat4626WrapperInterface extends utils.Interface {
     "decimals()": FunctionFragment;
     "deposit(uint256,address)": FunctionFragment;
     "market()": FunctionFragment;
+    "marketOwner()": FunctionFragment;
     "maxDeposit(address)": FunctionFragment;
     "maxMint(address)": FunctionFragment;
     "maxRedeem(address)": FunctionFragment;
     "maxWithdraw(address)": FunctionFragment;
     "mint(uint256,address)": FunctionFragment;
     "name()": FunctionFragment;
+    "nonces(address)": FunctionFragment;
+    "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "previewDeposit(uint256)": FunctionFragment;
     "previewMint(uint256)": FunctionFragment;
     "previewRedeem(uint256)": FunctionFragment;
     "previewWithdraw(uint256)": FunctionFragment;
     "redeem(uint256,address,address)": FunctionFragment;
+    "sanctionsSentinel()": FunctionFragment;
     "sharesPerAssetRay()": FunctionFragment;
     "sweep(address,address)": FunctionFragment;
     "symbol()": FunctionFragment;
@@ -58,10 +63,12 @@ export interface Wildcat4626WrapperInterface extends utils.Interface {
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "withdraw(uint256,address,address)": FunctionFragment;
+    "wrappedMarket()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "DOMAIN_SEPARATOR"
       | "allowance"
       | "approve"
       | "asset"
@@ -72,17 +79,21 @@ export interface Wildcat4626WrapperInterface extends utils.Interface {
       | "decimals"
       | "deposit"
       | "market"
+      | "marketOwner"
       | "maxDeposit"
       | "maxMint"
       | "maxRedeem"
       | "maxWithdraw"
       | "mint"
       | "name"
+      | "nonces"
+      | "permit"
       | "previewDeposit"
       | "previewMint"
       | "previewRedeem"
       | "previewWithdraw"
       | "redeem"
+      | "sanctionsSentinel"
       | "sharesPerAssetRay"
       | "sweep"
       | "symbol"
@@ -91,8 +102,13 @@ export interface Wildcat4626WrapperInterface extends utils.Interface {
       | "transfer"
       | "transferFrom"
       | "withdraw"
+      | "wrappedMarket"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "DOMAIN_SEPARATOR",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
@@ -125,6 +141,10 @@ export interface Wildcat4626WrapperInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "market", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "marketOwner",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "maxDeposit",
     values: [PromiseOrValue<string>]
   ): string;
@@ -145,6 +165,22 @@ export interface Wildcat4626WrapperInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "nonces",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "permit",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
   encodeFunctionData(
     functionFragment: "previewDeposit",
     values: [PromiseOrValue<BigNumberish>]
@@ -168,6 +204,10 @@ export interface Wildcat4626WrapperInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<string>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sanctionsSentinel",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "sharesPerAssetRay",
@@ -206,7 +246,15 @@ export interface Wildcat4626WrapperInterface extends utils.Interface {
       PromiseOrValue<string>
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "wrappedMarket",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "DOMAIN_SEPARATOR",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
@@ -226,6 +274,10 @@ export interface Wildcat4626WrapperInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "market", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "marketOwner",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "maxDeposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
@@ -235,6 +287,8 @@ export interface Wildcat4626WrapperInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "previewDeposit",
     data: BytesLike
@@ -252,6 +306,10 @@ export interface Wildcat4626WrapperInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "sanctionsSentinel",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "sharesPerAssetRay",
     data: BytesLike
@@ -272,6 +330,10 @@ export interface Wildcat4626WrapperInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "wrappedMarket",
+    data: BytesLike
+  ): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
@@ -301,7 +363,7 @@ export type ApprovalEvent = TypedEvent<
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 
 export interface DepositEventObject {
-  caller: string;
+  by: string;
   owner: string;
   assets: BigNumber;
   shares: BigNumber;
@@ -338,8 +400,8 @@ export type TransferEvent = TypedEvent<
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
 export interface WithdrawEventObject {
-  caller: string;
-  receiver: string;
+  by: string;
+  to: string;
   owner: string;
   assets: BigNumber;
   shares: BigNumber;
@@ -380,11 +442,15 @@ export interface Wildcat4626Wrapper extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    DOMAIN_SEPARATOR(
+      overrides?: CallOverrides
+    ): Promise<[string] & { result: string }>;
+
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { result: BigNumber }>;
 
     approve(
       spender: PromiseOrValue<string>,
@@ -397,9 +463,9 @@ export interface Wildcat4626Wrapper extends BaseContract {
     assetsPerShareRay(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     balanceOf(
-      account: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { result: BigNumber }>;
 
     convertToAssets(
       shares: PromiseOrValue<BigNumberish>,
@@ -421,6 +487,8 @@ export interface Wildcat4626Wrapper extends BaseContract {
 
     market(overrides?: CallOverrides): Promise<[string]>;
 
+    marketOwner(overrides?: CallOverrides): Promise<[string]>;
+
     maxDeposit(
       receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -432,12 +500,12 @@ export interface Wildcat4626Wrapper extends BaseContract {
     ): Promise<[BigNumber]>;
 
     maxRedeem(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     maxWithdraw(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -448,6 +516,22 @@ export interface Wildcat4626Wrapper extends BaseContract {
     ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
+
+    nonces(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { result: BigNumber }>;
+
+    permit(
+      owner: PromiseOrValue<string>,
+      spender: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      v: PromiseOrValue<BigNumberish>,
+      r: PromiseOrValue<BytesLike>,
+      s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     previewDeposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -472,9 +556,11 @@ export interface Wildcat4626Wrapper extends BaseContract {
     redeem(
       shares: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    sanctionsSentinel(overrides?: CallOverrides): Promise<[string]>;
 
     sharesPerAssetRay(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -488,17 +574,19 @@ export interface Wildcat4626Wrapper extends BaseContract {
 
     totalAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalSupply(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { result: BigNumber }>;
 
     transfer(
-      recipient: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     transferFrom(
-      sender: PromiseOrValue<string>,
-      recipient: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -506,10 +594,14 @@ export interface Wildcat4626Wrapper extends BaseContract {
     withdraw(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    wrappedMarket(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
   allowance(
     owner: PromiseOrValue<string>,
@@ -528,7 +620,7 @@ export interface Wildcat4626Wrapper extends BaseContract {
   assetsPerShareRay(overrides?: CallOverrides): Promise<BigNumber>;
 
   balanceOf(
-    account: PromiseOrValue<string>,
+    owner: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -552,6 +644,8 @@ export interface Wildcat4626Wrapper extends BaseContract {
 
   market(overrides?: CallOverrides): Promise<string>;
 
+  marketOwner(overrides?: CallOverrides): Promise<string>;
+
   maxDeposit(
     receiver: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -563,12 +657,12 @@ export interface Wildcat4626Wrapper extends BaseContract {
   ): Promise<BigNumber>;
 
   maxRedeem(
-    owner: PromiseOrValue<string>,
+    owner_: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   maxWithdraw(
-    owner: PromiseOrValue<string>,
+    owner_: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -579,6 +673,22 @@ export interface Wildcat4626Wrapper extends BaseContract {
   ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
+
+  nonces(
+    owner: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  permit(
+    owner: PromiseOrValue<string>,
+    spender: PromiseOrValue<string>,
+    value: PromiseOrValue<BigNumberish>,
+    deadline: PromiseOrValue<BigNumberish>,
+    v: PromiseOrValue<BigNumberish>,
+    r: PromiseOrValue<BytesLike>,
+    s: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   previewDeposit(
     assets: PromiseOrValue<BigNumberish>,
@@ -603,9 +713,11 @@ export interface Wildcat4626Wrapper extends BaseContract {
   redeem(
     shares: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
-    owner: PromiseOrValue<string>,
+    owner_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  sanctionsSentinel(overrides?: CallOverrides): Promise<string>;
 
   sharesPerAssetRay(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -622,14 +734,14 @@ export interface Wildcat4626Wrapper extends BaseContract {
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   transfer(
-    recipient: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   transferFrom(
-    sender: PromiseOrValue<string>,
-    recipient: PromiseOrValue<string>,
+    from: PromiseOrValue<string>,
+    to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -637,11 +749,15 @@ export interface Wildcat4626Wrapper extends BaseContract {
   withdraw(
     assets: PromiseOrValue<BigNumberish>,
     receiver: PromiseOrValue<string>,
-    owner: PromiseOrValue<string>,
+    owner_: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  wrappedMarket(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
+    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
+
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
@@ -659,7 +775,7 @@ export interface Wildcat4626Wrapper extends BaseContract {
     assetsPerShareRay(overrides?: CallOverrides): Promise<BigNumber>;
 
     balanceOf(
-      account: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -683,6 +799,8 @@ export interface Wildcat4626Wrapper extends BaseContract {
 
     market(overrides?: CallOverrides): Promise<string>;
 
+    marketOwner(overrides?: CallOverrides): Promise<string>;
+
     maxDeposit(
       receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -694,12 +812,12 @@ export interface Wildcat4626Wrapper extends BaseContract {
     ): Promise<BigNumber>;
 
     maxRedeem(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     maxWithdraw(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -710,6 +828,22 @@ export interface Wildcat4626Wrapper extends BaseContract {
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<string>;
+
+    nonces(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    permit(
+      owner: PromiseOrValue<string>,
+      spender: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      v: PromiseOrValue<BigNumberish>,
+      r: PromiseOrValue<BytesLike>,
+      s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     previewDeposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -734,9 +868,11 @@ export interface Wildcat4626Wrapper extends BaseContract {
     redeem(
       shares: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    sanctionsSentinel(overrides?: CallOverrides): Promise<string>;
 
     sharesPerAssetRay(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -753,14 +889,14 @@ export interface Wildcat4626Wrapper extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      recipient: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     transferFrom(
-      sender: PromiseOrValue<string>,
-      recipient: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -768,9 +904,11 @@ export interface Wildcat4626Wrapper extends BaseContract {
     withdraw(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    wrappedMarket(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -786,13 +924,13 @@ export interface Wildcat4626Wrapper extends BaseContract {
     ): ApprovalEventFilter;
 
     "Deposit(address,address,uint256,uint256)"(
-      caller?: PromiseOrValue<string> | null,
+      by?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
       assets?: null,
       shares?: null
     ): DepositEventFilter;
     Deposit(
-      caller?: PromiseOrValue<string> | null,
+      by?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
       assets?: null,
       shares?: null
@@ -821,15 +959,15 @@ export interface Wildcat4626Wrapper extends BaseContract {
     ): TransferEventFilter;
 
     "Withdraw(address,address,address,uint256,uint256)"(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
+      by?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
       assets?: null,
       shares?: null
     ): WithdrawEventFilter;
     Withdraw(
-      caller?: PromiseOrValue<string> | null,
-      receiver?: PromiseOrValue<string> | null,
+      by?: PromiseOrValue<string> | null,
+      to?: PromiseOrValue<string> | null,
       owner?: PromiseOrValue<string> | null,
       assets?: null,
       shares?: null
@@ -837,6 +975,8 @@ export interface Wildcat4626Wrapper extends BaseContract {
   };
 
   estimateGas: {
+    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
+
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
@@ -854,7 +994,7 @@ export interface Wildcat4626Wrapper extends BaseContract {
     assetsPerShareRay(overrides?: CallOverrides): Promise<BigNumber>;
 
     balanceOf(
-      account: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -878,6 +1018,8 @@ export interface Wildcat4626Wrapper extends BaseContract {
 
     market(overrides?: CallOverrides): Promise<BigNumber>;
 
+    marketOwner(overrides?: CallOverrides): Promise<BigNumber>;
+
     maxDeposit(
       receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -889,12 +1031,12 @@ export interface Wildcat4626Wrapper extends BaseContract {
     ): Promise<BigNumber>;
 
     maxRedeem(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     maxWithdraw(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -905,6 +1047,22 @@ export interface Wildcat4626Wrapper extends BaseContract {
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
+
+    nonces(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    permit(
+      owner: PromiseOrValue<string>,
+      spender: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      v: PromiseOrValue<BigNumberish>,
+      r: PromiseOrValue<BytesLike>,
+      s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     previewDeposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -929,9 +1087,11 @@ export interface Wildcat4626Wrapper extends BaseContract {
     redeem(
       shares: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    sanctionsSentinel(overrides?: CallOverrides): Promise<BigNumber>;
 
     sharesPerAssetRay(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -948,14 +1108,14 @@ export interface Wildcat4626Wrapper extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      recipient: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     transferFrom(
-      sender: PromiseOrValue<string>,
-      recipient: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -963,12 +1123,16 @@ export interface Wildcat4626Wrapper extends BaseContract {
     withdraw(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    wrappedMarket(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
@@ -986,7 +1150,7 @@ export interface Wildcat4626Wrapper extends BaseContract {
     assetsPerShareRay(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     balanceOf(
-      account: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1010,6 +1174,8 @@ export interface Wildcat4626Wrapper extends BaseContract {
 
     market(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    marketOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     maxDeposit(
       receiver: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1021,12 +1187,12 @@ export interface Wildcat4626Wrapper extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     maxRedeem(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     maxWithdraw(
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1037,6 +1203,22 @@ export interface Wildcat4626Wrapper extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    nonces(
+      owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    permit(
+      owner: PromiseOrValue<string>,
+      spender: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      deadline: PromiseOrValue<BigNumberish>,
+      v: PromiseOrValue<BigNumberish>,
+      r: PromiseOrValue<BytesLike>,
+      s: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     previewDeposit(
       assets: PromiseOrValue<BigNumberish>,
@@ -1061,9 +1243,11 @@ export interface Wildcat4626Wrapper extends BaseContract {
     redeem(
       shares: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    sanctionsSentinel(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     sharesPerAssetRay(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1080,14 +1264,14 @@ export interface Wildcat4626Wrapper extends BaseContract {
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transfer(
-      recipient: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     transferFrom(
-      sender: PromiseOrValue<string>,
-      recipient: PromiseOrValue<string>,
+      from: PromiseOrValue<string>,
+      to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1095,8 +1279,10 @@ export interface Wildcat4626Wrapper extends BaseContract {
     withdraw(
       assets: PromiseOrValue<BigNumberish>,
       receiver: PromiseOrValue<string>,
-      owner: PromiseOrValue<string>,
+      owner_: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    wrappedMarket(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

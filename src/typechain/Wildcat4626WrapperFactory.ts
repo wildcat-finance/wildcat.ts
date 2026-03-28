@@ -121,7 +121,7 @@ export interface Wildcat4626WrapperFactory extends BaseContract {
     ): Promise<ContractTransaction>;
 
     wrapperForMarket(
-      market: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
   };
@@ -134,7 +134,7 @@ export interface Wildcat4626WrapperFactory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   wrapperForMarket(
-    market: PromiseOrValue<string>,
+    arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -147,7 +147,7 @@ export interface Wildcat4626WrapperFactory extends BaseContract {
     ): Promise<string>;
 
     wrapperForMarket(
-      market: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
   };
@@ -172,7 +172,7 @@ export interface Wildcat4626WrapperFactory extends BaseContract {
     ): Promise<BigNumber>;
 
     wrapperForMarket(
-      market: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -186,7 +186,7 @@ export interface Wildcat4626WrapperFactory extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     wrapperForMarket(
-      market: PromiseOrValue<string>,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

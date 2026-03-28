@@ -80,7 +80,8 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     OpenAccessRoleProvider: "0x5620553d8881335F74AD19259daaCD1d9B373101",
     BebopSettlementContract: "0xbbbbbBB520d69a9775E85b458C58c648259FAD5F",
     WildcatCollateralFactory: "0xBdf64bd7Ea91A534445d06736a0f0E2a33FfA47c",
-    CollateralLens: "0x422489bA6bDdD5954C379C41B6C97Ab0E4494f90"
+    CollateralLens: "0x422489bA6bDdD5954C379C41B6C97Ab0E4494f90",
+    Wildcat4626WrapperFactory: "0xEA6DE11f8F3F83c79bD9d8Db5517fCFDf2Bb148a"
   },
   [SupportedChainId.Sepolia]: {
     HooksFactory: "0x10A64ABa0159720F8a23E1A552800CA4eb21576C",
@@ -97,7 +98,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatCollateralFactory: "0x58Ab4755221869cfcAe2A4F3EE31d591bA6AE1D0",
     BebopSettlementContract: "0x513826b6bb38fc159f152a4bf6e1ec3650a7ee46",
     CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578",
-    Wildcat4626WrapperFactory: "0xd8055D9ce9EC8F380f2029ab2359Da133074cB3E"
+    Wildcat4626WrapperFactory: "0x0566Fe57682164af689f1440cb3BCEedEe3bf843"
   },
   [SupportedChainId.PlasmaTestnet]: {
     HooksFactory: "0x5Ad00b665eA71E27628D75102B1497CC75E531FB",

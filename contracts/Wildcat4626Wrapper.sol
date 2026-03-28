@@ -1,6 +1,40 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LicenseRef-Commons-Clause-1.0
 pragma solidity ^0.8.20;
 
+interface IWildcatMarketToken {
+  function scaleFactor() external view returns (uint256);
+
+  function scaledBalanceOf(address account) external view returns (uint256);
+
+  function borrower() external view returns (address);
+
+  function maxTotalSupply() external view returns (uint256);
+
+  function sentinel() external view returns (address);
+
+  function name() external view returns (string memory);
+
+  function symbol() external view returns (string memory);
+
+  function decimals() external view returns (uint8);
+
+  function totalSupply() external view returns (uint256);
+
+  function balanceOf(address owner) external view returns (uint256);
+
+  function allowance(address owner, address spender) external view returns (uint256);
+
+  function approve(address spender, uint256 amount) external returns (bool);
+
+  function transfer(address to, uint256 amount) external returns (bool);
+
+  function transferFrom(address from, address to, uint256 amount) external returns (bool);
+}
+
+interface IWildcatSanctionsSentinel {
+  function isSanctioned(address borrower, address account) external view returns (bool);
+}
+
 interface Wildcat4626Wrapper {
   error ZeroAddress();
   error ZeroAssets();
@@ -8,15 +42,26 @@ interface Wildcat4626Wrapper {
   error CapExceeded();
   error SharesMismatch(uint256 expected, uint256 actual);
   error NotMarketOwner();
-  error CannotSweepMarketAsset();
   error SanctionedAccount(address account);
+  error AllowanceOverflow();
+  error AllowanceUnderflow();
+  error InsufficientAllowance();
+  error InsufficientBalance();
+  error TotalSupplyOverflow();
+  error InvalidPermit();
+  error PermitExpired();
+  error DepositMoreThanMax();
+  error MintMoreThanMax();
+  error WithdrawMoreThanMax();
+  error RedeemMoreThanMax();
+  error NoReentrantCalls();
 
   event Transfer(address indexed from, address indexed to, uint256 amount);
   event Approval(address indexed owner, address indexed spender, uint256 amount);
-  event Deposit(address indexed caller, address indexed owner, uint256 assets, uint256 shares);
+  event Deposit(address indexed by, address indexed owner, uint256 assets, uint256 shares);
   event Withdraw(
-    address indexed caller,
-    address indexed receiver,
+    address indexed by,
+    address indexed to,
     address indexed owner,
     uint256 assets,
     uint256 shares
@@ -29,17 +74,37 @@ interface Wildcat4626Wrapper {
 
   function decimals() external view returns (uint8);
 
-  function totalSupply() external view returns (uint256);
+  function totalSupply() external view returns (uint256 result);
 
-  function balanceOf(address account) external view returns (uint256);
+  function balanceOf(address owner) external view returns (uint256 result);
 
-  function allowance(address owner, address spender) external view returns (uint256);
+  function allowance(address owner, address spender) external view returns (uint256 result);
 
   function approve(address spender, uint256 amount) external returns (bool);
 
-  function transfer(address recipient, uint256 amount) external returns (bool);
+  function transfer(address to, uint256 amount) external returns (bool);
 
-  function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+  function transferFrom(address from, address to, uint256 amount) external returns (bool);
+
+  function DOMAIN_SEPARATOR() external view returns (bytes32 result);
+
+  function nonces(address owner) external view returns (uint256 result);
+
+  function permit(
+    address owner,
+    address spender,
+    uint256 value,
+    uint256 deadline,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) external;
+
+  function wrappedMarket() external view returns (IWildcatMarketToken);
+
+  function marketOwner() external view returns (address);
+
+  function sanctionsSentinel() external view returns (IWildcatSanctionsSentinel);
 
   function market() external view returns (address);
 
@@ -59,11 +124,11 @@ interface Wildcat4626Wrapper {
 
   function previewMint(uint256 shares) external view returns (uint256);
 
-  function maxWithdraw(address owner) external view returns (uint256);
+  function maxWithdraw(address owner_) external view returns (uint256);
 
   function previewWithdraw(uint256 assets) external view returns (uint256);
 
-  function maxRedeem(address owner) external view returns (uint256);
+  function maxRedeem(address owner_) external view returns (uint256);
 
   function previewRedeem(uint256 shares) external view returns (uint256);
 
@@ -78,13 +143,13 @@ interface Wildcat4626Wrapper {
   function withdraw(
     uint256 assets,
     address receiver,
-    address owner
+    address owner_
   ) external returns (uint256 shares);
 
   function redeem(
     uint256 shares,
     address receiver,
-    address owner
+    address owner_
   ) external returns (uint256 assets);
 
   function sweep(address token, address to) external returns (uint256 amount);

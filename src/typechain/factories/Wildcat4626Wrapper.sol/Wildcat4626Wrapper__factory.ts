@@ -7,12 +7,17 @@ import type { Provider } from "@ethersproject/providers";
 import type {
   Wildcat4626Wrapper,
   Wildcat4626WrapperInterface,
-} from "../Wildcat4626Wrapper";
+} from "../../Wildcat4626Wrapper.sol/Wildcat4626Wrapper";
 
 const _abi = [
   {
     inputs: [],
-    name: "CannotSweepMarketAsset",
+    name: "AllowanceOverflow",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "AllowanceUnderflow",
     type: "error",
   },
   {
@@ -22,7 +27,47 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "DepositMoreThanMax",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InsufficientAllowance",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InsufficientBalance",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InvalidPermit",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "MintMoreThanMax",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NoReentrantCalls",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "NotMarketOwner",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "PermitExpired",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "RedeemMoreThanMax",
     type: "error",
   },
   {
@@ -50,6 +95,16 @@ const _abi = [
       },
     ],
     name: "SharesMismatch",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "TotalSupplyOverflow",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WithdrawMoreThanMax",
     type: "error",
   },
   {
@@ -98,7 +153,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "caller",
+        name: "by",
         type: "address",
       },
       {
@@ -179,13 +234,13 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "caller",
+        name: "by",
         type: "address",
       },
       {
         indexed: true,
         internalType: "address",
-        name: "receiver",
+        name: "to",
         type: "address",
       },
       {
@@ -211,6 +266,19 @@ const _abi = [
     type: "event",
   },
   {
+    inputs: [],
+    name: "DOMAIN_SEPARATOR",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "result",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -227,7 +295,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "result",
         type: "uint256",
       },
     ],
@@ -288,7 +356,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "account",
+        name: "owner",
         type: "address",
       },
     ],
@@ -296,7 +364,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "result",
         type: "uint256",
       },
     ],
@@ -392,6 +460,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "marketOwner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -433,7 +514,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "owner",
+        name: "owner_",
         type: "address",
       },
     ],
@@ -452,7 +533,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "owner",
+        name: "owner_",
         type: "address",
       },
     ],
@@ -502,6 +583,68 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+    ],
+    name: "nonces",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "result",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "deadline",
+        type: "uint256",
+      },
+      {
+        internalType: "uint8",
+        name: "v",
+        type: "uint8",
+      },
+      {
+        internalType: "bytes32",
+        name: "r",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "s",
+        type: "bytes32",
+      },
+    ],
+    name: "permit",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -594,7 +737,7 @@ const _abi = [
       },
       {
         internalType: "address",
-        name: "owner",
+        name: "owner_",
         type: "address",
       },
     ],
@@ -607,6 +750,19 @@ const _abi = [
       },
     ],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "sanctionsSentinel",
+    outputs: [
+      {
+        internalType: "contract IWildcatSanctionsSentinel",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -678,7 +834,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "result",
         type: "uint256",
       },
     ],
@@ -689,7 +845,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "recipient",
+        name: "to",
         type: "address",
       },
       {
@@ -713,12 +869,12 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "sender",
+        name: "from",
         type: "address",
       },
       {
         internalType: "address",
-        name: "recipient",
+        name: "to",
         type: "address",
       },
       {
@@ -752,7 +908,7 @@ const _abi = [
       },
       {
         internalType: "address",
-        name: "owner",
+        name: "owner_",
         type: "address",
       },
     ],
@@ -765,6 +921,19 @@ const _abi = [
       },
     ],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "wrappedMarket",
+    outputs: [
+      {
+        internalType: "contract IWildcatMarketToken",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ] as const;
