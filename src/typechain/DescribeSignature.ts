@@ -35,12 +35,14 @@ export type SubSignatureStructOutput = {
 
 export type AccountDescriptionStruct = {
   kind: PromiseOrValue<BigNumberish>;
+  has7702Delegation: PromiseOrValue<boolean>;
   owners: PromiseOrValue<string>[];
   threshold: PromiseOrValue<BigNumberish>;
 };
 
 export type AccountDescriptionStructOutput = {
   kind: number;
+  has7702Delegation: boolean;
   owners: string[];
   threshold: BigNumber;
 };

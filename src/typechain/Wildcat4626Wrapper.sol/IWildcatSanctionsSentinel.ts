@@ -4,7 +4,6 @@
 import type {
   BaseContract,
   BigNumber,
-  BigNumberish,
   BytesLike,
   CallOverrides,
   PopulatedTransaction,
@@ -19,50 +18,36 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "./common";
+} from "../common";
 
-export type AccountDescriptionStruct = {
-  kind: PromiseOrValue<BigNumberish>;
-  has7702Delegation: PromiseOrValue<boolean>;
-  owners: PromiseOrValue<string>[];
-  threshold: PromiseOrValue<BigNumberish>;
-};
-
-export type AccountDescriptionStructOutput = {
-  kind: number;
-  has7702Delegation: boolean;
-  owners: string[];
-  threshold: BigNumber;
-};
-
-export interface AccountsQueryInterface extends utils.Interface {
+export interface IWildcatSanctionsSentinelInterface extends utils.Interface {
   functions: {
-    "describeAccounts(address[])": FunctionFragment;
+    "isSanctioned(address,address)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "describeAccounts"): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "isSanctioned"): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "describeAccounts",
-    values: [PromiseOrValue<string>[]]
+    functionFragment: "isSanctioned",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "describeAccounts",
+    functionFragment: "isSanctioned",
     data: BytesLike
   ): Result;
 
   events: {};
 }
 
-export interface AccountsQuery extends BaseContract {
-  contractName: "AccountsQuery";
+export interface IWildcatSanctionsSentinel extends BaseContract {
+  contractName: "IWildcatSanctionsSentinel";
 
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: AccountsQueryInterface;
+  interface: IWildcatSanctionsSentinelInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -84,36 +69,41 @@ export interface AccountsQuery extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    describeAccounts(
-      account: PromiseOrValue<string>[],
+    isSanctioned(
+      borrower: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[AccountDescriptionStructOutput[]]>;
+    ): Promise<[boolean]>;
   };
 
-  describeAccounts(
-    account: PromiseOrValue<string>[],
+  isSanctioned(
+    borrower: PromiseOrValue<string>,
+    account: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<AccountDescriptionStructOutput[]>;
+  ): Promise<boolean>;
 
   callStatic: {
-    describeAccounts(
-      account: PromiseOrValue<string>[],
+    isSanctioned(
+      borrower: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<AccountDescriptionStructOutput[]>;
+    ): Promise<boolean>;
   };
 
   filters: {};
 
   estimateGas: {
-    describeAccounts(
-      account: PromiseOrValue<string>[],
+    isSanctioned(
+      borrower: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    describeAccounts(
-      account: PromiseOrValue<string>[],
+    isSanctioned(
+      borrower: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

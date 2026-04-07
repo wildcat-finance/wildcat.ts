@@ -1048,3 +1048,51 @@ query getCollateralContractEvents(
     }
   }
 }
+
+query getMarketChartsData(
+  $market: ID!
+  # withdrawal batches
+  $numWithdrawalBatches: Int = 100
+  $skipWithdrawalBatches: Int = 0
+  $orderWithdrawalBatches: WithdrawalBatch_orderBy = expiry
+  $directionWithdrawalBatches: OrderDirection = desc
+  # daily stats
+  $numDailyStats: Int = 100
+  $skipDailyStats: Int = 0
+  $orderDailyStats: MarketDailyStats_orderBy = startTimestamp
+  $directionDailyStats: OrderDirection = desc
+) {
+  market(id: $market) {
+    # Only expired withdrawal batches
+    withdrawalBatches(
+      where: { expiration_: { id_not: null } }
+      first: $numWithdrawalBatches
+      skip: $skipWithdrawalBatches
+      orderBy: $orderWithdrawalBatches
+      orderDirection: $directionWithdrawalBatches
+    ) {
+      expiry
+      expiration {
+        normalizedAmountPaid
+        normalizedAmountOwed
+      }
+    }
+    asset {
+      decimals
+      symbol
+      name
+    }
+    dailyStats(
+      first: $numDailyStats
+      skip: $skipDailyStats
+      orderBy: $orderDailyStats
+      orderDirection: $directionDailyStats
+    ) {
+      timestamp: startTimestamp
+      totalDeposited
+      totalWithdrawalsRequested
+      totalBorrowed
+      totalRepaid
+    }
+  }
+}

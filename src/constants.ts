@@ -7,6 +7,8 @@ import {
   WildcatMarketControllerFactory__factory,
   MockERC20Factory,
   MockERC20Factory__factory,
+  Wildcat4626WrapperFactory,
+  Wildcat4626WrapperFactory__factory,
   WildcatArchController,
   WildcatArchController__factory,
   MarketLensV2,
@@ -35,6 +37,7 @@ type NetworkDeployments = {
   Chainalysis: string;
   OpenAccessRoleProvider: string;
   WildcatCollateralFactory?: string;
+  Wildcat4626WrapperFactory?: string;
   BebopSettlementContract?: string;
   CollateralLens?: string;
 };
@@ -77,7 +80,8 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     OpenAccessRoleProvider: "0x5620553d8881335F74AD19259daaCD1d9B373101",
     BebopSettlementContract: "0xbbbbbBB520d69a9775E85b458C58c648259FAD5F",
     WildcatCollateralFactory: "0xBdf64bd7Ea91A534445d06736a0f0E2a33FfA47c",
-    CollateralLens: "0x422489bA6bDdD5954C379C41B6C97Ab0E4494f90"
+    CollateralLens: "0x422489bA6bDdD5954C379C41B6C97Ab0E4494f90",
+    Wildcat4626WrapperFactory: "0xEA6DE11f8F3F83c79bD9d8Db5517fCFDf2Bb148a"
   },
   [SupportedChainId.Sepolia]: {
     HooksFactory: "0x10A64ABa0159720F8a23E1A552800CA4eb21576C",
@@ -91,9 +95,10 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatSanctionsSentinel: "0xFBCE262eC835be5e6A458cE1722EeCe0E453316B",
     Chainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     OpenAccessRoleProvider: "0x9aCdE253F7A51456c48604185C0ceA4Fc9e58E3a",
-    WildcatCollateralFactory: "0xe11E41e9162ad07F1a9853c3123c33B7e9Cf59D6",
+    WildcatCollateralFactory: "0x58Ab4755221869cfcAe2A4F3EE31d591bA6AE1D0",
     BebopSettlementContract: "0x513826b6bb38fc159f152a4bf6e1ec3650a7ee46",
-    CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578"
+    CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578",
+    Wildcat4626WrapperFactory: "0x0566Fe57682164af689f1440cb3BCEedEe3bf843"
   },
   [SupportedChainId.PlasmaTestnet]: {
     HooksFactory: "0x5Ad00b665eA71E27628D75102B1497CC75E531FB",
@@ -211,14 +216,24 @@ export const getCollateralFactoryContract = (
   );
 };
 
+export const getWrapperFactoryContract = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider
+): Wildcat4626WrapperFactory => {
+  return Wildcat4626WrapperFactory__factory.connect(
+    getDeploymentAddress(chainId, "Wildcat4626WrapperFactory"),
+    provider
+  );
+};
+
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: `https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/version/v2.0.19/api`,
+  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.0.23/gn`,
   [SupportedChainId.Mainnet]:
-    "https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/mainnet/version/v2.0.19/api",
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.22/gn",
   [SupportedChainId.PlasmaTestnet]:
-    "https://api.goldsky.com/api/public/project_cmfvpdktfz5v701z62hog8qhj/subgraphs/wildcat-plasma/2.0.19/gn",
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-testnet/v2.0.22/gn",
   [SupportedChainId.PlasmaMainnet]:
-    "https://api.goldsky.com/api/public/project_cmfvpdktfz5v701z62hog8qhj/subgraphs/wildcat-plasma-mainnet/2.0.19/gn"
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-mainnet/v2.0.22/gn"
 };
 
 export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
