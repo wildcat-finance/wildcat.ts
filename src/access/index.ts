@@ -5,12 +5,13 @@ import {
   SubgraphHooksTemplateDataFragment
 } from "../gql/graphql";
 import { HooksInstanceDataStructOutput, HooksTemplateDataStructOutput } from "../typechain";
-import { HooksKind, SignerOrProvider } from "../types";
+import { SignerOrProvider } from "../types";
 import { OpenTermHooks, OpenTermHooksTemplate } from "./access-control";
 import { FixedTermHooks, FixedTermHooksTemplate } from "./fixed-term";
 
 export * from "./access-control";
 export * from "./fixed-term";
+export * from "./revolving";
 export * from "./validation";
 
 export type HooksTemplate = OpenTermHooksTemplate | FixedTermHooksTemplate;

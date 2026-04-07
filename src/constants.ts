@@ -13,21 +13,27 @@ import {
   WildcatArchController__factory,
   MarketLensV2,
   MarketLensV2__factory,
+  MarketLensV2_5,
+  MarketLensV2_5__factory,
   HooksFactory__factory,
   HooksFactory,
+  HooksFactoryRevolving,
+  HooksFactoryRevolving__factory,
   WildcatCollateralFactory,
   WildcatCollateralFactory__factory,
   CollateralLens__factory,
   CollateralLens
 } from "./typechain";
-import { MarketParameterConstraints, SignerOrProvider } from "./types";
+import { MarketParameterConstraints, MarketType, SignerOrProvider } from "./types";
 import { ApolloClient, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
 import { assert } from "./utils";
 
-type NetworkDeployments = {
+export type NetworkDeployments = {
   HooksFactory: string;
+  HooksFactoryRevolving?: string;
   MarketLens?: string;
   MarketLensV2: string;
+  MarketLensV2_5?: string;
   MockArchControllerOwner?: string;
   MockChainalysis?: string;
   MockERC20Factory?: string;
@@ -40,6 +46,14 @@ type NetworkDeployments = {
   Wildcat4626WrapperFactory?: string;
   BebopSettlementContract?: string;
   CollateralLens?: string;
+};
+
+export type HooksFactoryDeploymentName = "HooksFactory" | "HooksFactoryRevolving";
+export type LatestLensDeploymentName = "MarketLensV2" | "MarketLensV2_5";
+
+const HooksFactoryDeploymentNamesByMarketType: Record<MarketType, HooksFactoryDeploymentName> = {
+  legacy: "HooksFactory",
+  revolving: "HooksFactoryRevolving"
 };
 
 export enum SupportedChainId {
@@ -131,6 +145,51 @@ export const getDeploymentAddress = (
   return address;
 };
 
+export const getHooksFactoryDeploymentName = (
+  marketType: MarketType
+): HooksFactoryDeploymentName => {
+  return HooksFactoryDeploymentNamesByMarketType[marketType];
+};
+
+export const hasHooksFactoryDeployment = (
+  chainId: SupportedChainId,
+  marketType: MarketType
+): boolean => {
+  return hasDeploymentAddress(chainId, getHooksFactoryDeploymentName(marketType));
+};
+
+export const getHooksFactoryAddressForMarketType = (
+  chainId: SupportedChainId,
+  marketType: MarketType
+): string => {
+  return getDeploymentAddress(chainId, getHooksFactoryDeploymentName(marketType));
+};
+
+export const getMarketTypeForHooksFactory = (
+  chainId: SupportedChainId,
+  hooksFactoryAddress: string
+): MarketType | undefined => {
+  const normalizedAddress = hooksFactoryAddress.toLowerCase();
+  for (const marketType of Object.keys(HooksFactoryDeploymentNamesByMarketType) as MarketType[]) {
+    const deploymentName = getHooksFactoryDeploymentName(marketType);
+    const deploymentAddress = Deployments[chainId][deploymentName];
+    if (deploymentAddress?.toLowerCase() === normalizedAddress) {
+      return marketType;
+    }
+  }
+  return undefined;
+};
+
+export const getLatestLensDeploymentName = (
+  chainId: SupportedChainId
+): LatestLensDeploymentName => {
+  return hasDeploymentAddress(chainId, "MarketLensV2_5") ? "MarketLensV2_5" : "MarketLensV2";
+};
+
+export const getLatestLensAddress = (chainId: SupportedChainId): string => {
+  return getDeploymentAddress(chainId, getLatestLensDeploymentName(chainId));
+};
+
 export const getControllerContract = (
   provider: SignerOrProvider,
   address: string
@@ -179,11 +238,50 @@ export const getHooksFactoryContract = (
   return HooksFactory__factory.connect(getDeploymentAddress(chainId, "HooksFactory"), provider);
 };
 
+export const getHooksFactoryRevolvingContract = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider
+): HooksFactoryRevolving => {
+  return HooksFactoryRevolving__factory.connect(
+    getDeploymentAddress(chainId, "HooksFactoryRevolving"),
+    provider
+  );
+};
+
+export const getHooksFactoryContractForMarketType = (
+  chainId: SupportedChainId,
+  marketType: MarketType,
+  provider: SignerOrProvider
+): HooksFactory | HooksFactoryRevolving => {
+  if (marketType === "legacy") {
+    return getHooksFactoryContract(chainId, provider);
+  }
+  return getHooksFactoryRevolvingContract(chainId, provider);
+};
+
 export const getLensV2Contract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
 ): MarketLensV2 => {
   return MarketLensV2__factory.connect(getDeploymentAddress(chainId, "MarketLensV2"), provider);
+};
+
+export const getLensV2_5Contract = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider
+): MarketLensV2_5 => {
+  return MarketLensV2_5__factory.connect(getDeploymentAddress(chainId, "MarketLensV2_5"), provider);
+};
+
+export const getLatestLensContract = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider
+): MarketLensV2 | MarketLensV2_5 => {
+  const deploymentName = getLatestLensDeploymentName(chainId);
+  if (deploymentName === "MarketLensV2_5") {
+    return MarketLensV2_5__factory.connect(getDeploymentAddress(chainId, deploymentName), provider);
+  }
+  return MarketLensV2__factory.connect(getDeploymentAddress(chainId, deploymentName), provider);
 };
 
 export const getMockERC20Factory = (

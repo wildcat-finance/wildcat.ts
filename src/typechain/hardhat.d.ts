@@ -41,6 +41,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HooksFactory__factory>;
     getContractFactory(
+      name: "HooksFactoryRevolving",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.HooksFactoryRevolving__factory>;
+    getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
@@ -60,6 +64,10 @@ declare module "hardhat/types/runtime" {
       name: "MarketLens",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MarketLens__factory>;
+    getContractFactory(
+      name: "MarketLensV2_5",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MarketLensV2_5__factory>;
     getContractFactory(
       name: "MarketLensV2",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -153,6 +161,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.HooksFactory>;
     getContractAt(
+      name: "HooksFactoryRevolving",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.HooksFactoryRevolving>;
+    getContractAt(
       name: "IERC20",
       address: string,
       signer?: ethers.Signer
@@ -177,6 +190,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.MarketLens>;
+    getContractAt(
+      name: "MarketLensV2_5",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MarketLensV2_5>;
     getContractAt(
       name: "MarketLensV2",
       address: string,

@@ -4,7 +4,17 @@ import { BaseContract } from "ethers";
 import { Token, TokenAmount } from "./token";
 import { SubgraphMarketVersion } from "./gql/graphql";
 import { HooksTemplate } from "./access";
+
+// `MarketVersion` remains the existing subgraph/protocol concept.
 export { SubgraphMarketVersion as MarketVersion };
+
+// `MarketType` is the SDK routing concept used to select the correct factory.
+export const MarketTypes = ["legacy", "revolving"] as const;
+export type MarketType = (typeof MarketTypes)[number];
+export const DefaultMarketType: MarketType = "legacy";
+export const isMarketType = (value: string): value is MarketType => {
+  return MarketTypes.includes(value as MarketType);
+};
 
 export type SignerOrProvider = Signer | Provider;
 
