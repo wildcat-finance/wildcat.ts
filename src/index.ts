@@ -19,6 +19,7 @@ export * from "./withdrawal-status";
 export * from "./utils";
 export * as typechain from "./typechain";
 export * from "./gql";
+export * from "./wrapper";
 
 export const {
   getMarket,

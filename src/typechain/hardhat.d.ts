@@ -85,6 +85,22 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SimpleMarketCollateral__factory>;
     getContractFactory(
+      name: "IWildcatMarketToken",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWildcatMarketToken__factory>;
+    getContractFactory(
+      name: "IWildcatSanctionsSentinel",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IWildcatSanctionsSentinel__factory>;
+    getContractFactory(
+      name: "Wildcat4626Wrapper",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Wildcat4626Wrapper__factory>;
+    getContractFactory(
+      name: "Wildcat4626WrapperFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Wildcat4626WrapperFactory__factory>;
+    getContractFactory(
       name: "WildcatArchController",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WildcatArchController__factory>;
@@ -199,6 +215,26 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.SimpleMarketCollateral>;
+    getContractAt(
+      name: "IWildcatMarketToken",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWildcatMarketToken>;
+    getContractAt(
+      name: "IWildcatSanctionsSentinel",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IWildcatSanctionsSentinel>;
+    getContractAt(
+      name: "Wildcat4626Wrapper",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Wildcat4626Wrapper>;
+    getContractAt(
+      name: "Wildcat4626WrapperFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Wildcat4626WrapperFactory>;
     getContractAt(
       name: "WildcatArchController",
       address: string,
