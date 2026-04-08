@@ -20,6 +20,7 @@ export * from "./utils";
 export * as typechain from "./typechain";
 export * from "./gql";
 export * from "./wrapper";
+export { getBorrowerHooksData, type BorrowerHooksDataResult } from "./access";
 
 export const {
   getMarket,
