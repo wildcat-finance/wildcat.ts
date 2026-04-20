@@ -631,6 +631,7 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -638,6 +639,7 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -650,6 +652,7 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -950,6 +953,7 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -957,6 +961,7 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -969,6 +974,7 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -1241,6 +1247,7 @@ export type SubgraphArchController = {
   borrowers: SubgraphRegisteredBorrower[];
   controllerFactories: SubgraphControllerFactory[];
   controllers: SubgraphController[];
+  hooksFactories: SubgraphHooksFactory[];
   hooksFactory?: Maybe<SubgraphHooksFactory>;
   id: Scalars["ID"]["output"];
   markets: SubgraphMarket[];
@@ -1270,6 +1277,14 @@ export type SubgraphArchControllerControllersArgs = {
   where?: InputMaybe<SubgraphController_Filter>;
 };
 
+export type SubgraphArchControllerHooksFactoriesArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphHooksFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphHooksFactory_Filter>;
+};
+
 export type SubgraphArchControllerMarketsArgs = {
   first?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<SubgraphMarket_OrderBy>;
@@ -1285,6 +1300,7 @@ export type SubgraphArchController_Filter = {
   borrowers_?: InputMaybe<SubgraphRegisteredBorrower_Filter>;
   controllerFactories_?: InputMaybe<SubgraphControllerFactory_Filter>;
   controllers_?: InputMaybe<SubgraphController_Filter>;
+  hooksFactories_?: InputMaybe<SubgraphHooksFactory_Filter>;
   hooksFactory_?: InputMaybe<SubgraphHooksFactory_Filter>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
@@ -1302,10 +1318,12 @@ export enum SubgraphArchController_OrderBy {
   Borrowers = "borrowers",
   ControllerFactories = "controllerFactories",
   Controllers = "controllers",
+  HooksFactories = "hooksFactories",
   HooksFactory = "hooksFactory",
   HooksFactoryEventIndex = "hooksFactory__eventIndex",
   HooksFactoryId = "hooksFactory__id",
   HooksFactoryIsRegistered = "hooksFactory__isRegistered",
+  HooksFactoryMarketType = "hooksFactory__marketType",
   HooksFactorySentinel = "hooksFactory__sentinel",
   Id = "id",
   Markets = "markets"
@@ -1441,6 +1459,7 @@ export enum SubgraphBorrow_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -1448,6 +1467,7 @@ export enum SubgraphBorrow_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -1460,6 +1480,7 @@ export enum SubgraphBorrow_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -2646,6 +2667,7 @@ export enum SubgraphDebtRepaid_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -2653,6 +2675,7 @@ export enum SubgraphDebtRepaid_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -2665,6 +2688,7 @@ export enum SubgraphDebtRepaid_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -2700,6 +2724,7 @@ export enum SubgraphDebtRepaid_OrderBy {
 
 export type SubgraphDelinquencyStatusChanged = {
   __typename: "DelinquencyStatusChanged";
+  blockLogIndex: Scalars["Int"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
   delinquencyStatusChangedIndex: Scalars["Int"]["output"];
@@ -2716,6 +2741,14 @@ export type SubgraphDelinquencyStatusChanged_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<SubgraphDelinquencyStatusChanged_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockLogIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   blockNumber?: InputMaybe<Scalars["Int"]["input"]>;
   blockNumber_gt?: InputMaybe<Scalars["Int"]["input"]>;
   blockNumber_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -2811,6 +2844,7 @@ export type SubgraphDelinquencyStatusChanged_Filter = {
 };
 
 export enum SubgraphDelinquencyStatusChanged_OrderBy {
+  BlockLogIndex = "blockLogIndex",
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
   DelinquencyStatusChangedIndex = "delinquencyStatusChangedIndex",
@@ -2823,6 +2857,7 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -2830,6 +2865,7 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -2842,6 +2878,7 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -3039,6 +3076,7 @@ export enum SubgraphDeposit_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -3046,6 +3084,7 @@ export enum SubgraphDeposit_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -3058,6 +3097,7 @@ export enum SubgraphDeposit_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -3221,6 +3261,7 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -3228,6 +3269,7 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -3240,6 +3282,7 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -3393,6 +3436,7 @@ export enum SubgraphFeesCollected_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -3400,6 +3444,7 @@ export enum SubgraphFeesCollected_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -3412,6 +3457,7 @@ export enum SubgraphFeesCollected_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -3602,6 +3648,7 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -3609,6 +3656,7 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -3621,6 +3669,7 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -3827,6 +3876,7 @@ export enum SubgraphForceBuyBack_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -3834,6 +3884,7 @@ export enum SubgraphForceBuyBack_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -3846,6 +3897,7 @@ export enum SubgraphForceBuyBack_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -4073,6 +4125,7 @@ export enum SubgraphHooksConfig_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -4080,6 +4133,7 @@ export enum SubgraphHooksConfig_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -4092,6 +4146,7 @@ export enum SubgraphHooksConfig_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -4147,6 +4202,7 @@ export type SubgraphHooksFactory = {
   hooksTemplates: SubgraphHooksTemplate[];
   id: Scalars["ID"]["output"];
   isRegistered: Scalars["Boolean"]["output"];
+  marketType?: Maybe<SubgraphMarketType>;
   sentinel: Scalars["Bytes"]["output"];
 };
 
@@ -4213,6 +4269,10 @@ export type SubgraphHooksFactory_Filter = {
   isRegistered_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   isRegistered_not?: InputMaybe<Scalars["Boolean"]["input"]>;
   isRegistered_not_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  marketType?: InputMaybe<SubgraphMarketType>;
+  marketType_in?: InputMaybe<SubgraphMarketType[]>;
+  marketType_not?: InputMaybe<SubgraphMarketType>;
+  marketType_not_in?: InputMaybe<SubgraphMarketType[]>;
   or?: InputMaybe<Array<InputMaybe<SubgraphHooksFactory_Filter>>>;
   sentinel?: InputMaybe<Scalars["Bytes"]["input"]>;
   sentinel_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
@@ -4234,6 +4294,7 @@ export enum SubgraphHooksFactory_OrderBy {
   HooksTemplates = "hooksTemplates",
   Id = "id",
   IsRegistered = "isRegistered",
+  MarketType = "marketType",
   Sentinel = "sentinel"
 }
 
@@ -4584,6 +4645,7 @@ export enum SubgraphHooksInstance_OrderBy {
   HooksFactoryEventIndex = "hooksFactory__eventIndex",
   HooksFactoryId = "hooksFactory__id",
   HooksFactoryIsRegistered = "hooksFactory__isRegistered",
+  HooksFactoryMarketType = "hooksFactory__marketType",
   HooksFactorySentinel = "hooksFactory__sentinel",
   HooksTemplate = "hooksTemplate",
   HooksTemplateDisabled = "hooksTemplate__disabled",
@@ -5304,6 +5366,7 @@ export enum SubgraphHooksTemplate_OrderBy {
   HooksFactoryEventIndex = "hooksFactory__eventIndex",
   HooksFactoryId = "hooksFactory__id",
   HooksFactoryIsRegistered = "hooksFactory__isRegistered",
+  HooksFactoryMarketType = "hooksFactory__marketType",
   HooksFactorySentinel = "hooksFactory__sentinel",
   Id = "id",
   Name = "name",
@@ -5430,6 +5493,7 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -5437,6 +5501,7 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -5449,6 +5514,7 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -5715,6 +5781,7 @@ export enum SubgraphLenderAccount_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -5722,6 +5789,7 @@ export enum SubgraphLenderAccount_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -5734,6 +5802,7 @@ export enum SubgraphLenderAccount_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -6303,6 +6372,7 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -6310,6 +6380,7 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -6322,6 +6393,7 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -6753,6 +6825,7 @@ export type SubgraphMarket = {
   borrowRecords: SubgraphBorrow[];
   borrower: Scalars["Bytes"]["output"];
   collateralContracts: SubgraphSimpleCollateralContract[];
+  commitmentFeeBips?: Maybe<Scalars["BigInt"]["output"]>;
   controller?: Maybe<SubgraphController>;
   createdAt: Scalars["Int"]["output"];
   dailyStats: SubgraphMarketDailyStats[];
@@ -6765,6 +6838,7 @@ export type SubgraphMarket = {
   deployedEvent: SubgraphMarketDeployed;
   depositIndex: Scalars["Int"]["output"];
   depositRecords: SubgraphDeposit[];
+  drawnAmount?: Maybe<Scalars["BigInt"]["output"]>;
   eventIndex: Scalars["Int"]["output"];
   feeCollectionRecords: SubgraphFeesCollected[];
   feeRecipient: Scalars["Bytes"]["output"];
@@ -6787,6 +6861,7 @@ export type SubgraphMarket = {
   lastInterestAccruedTimestamp: Scalars["Int"]["output"];
   lenders: SubgraphLenderAccount[];
   marketClosedEvent?: Maybe<SubgraphMarketClosed>;
+  marketType?: Maybe<SubgraphMarketType>;
   maxTotalSupply: Scalars["BigInt"]["output"];
   maxTotalSupplyUpdatedIndex: Scalars["Int"]["output"];
   maxTotalSupplyUpdatedRecords: SubgraphMaxTotalSupplyUpdated[];
@@ -7078,6 +7153,7 @@ export enum SubgraphMarketAdded_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -7085,6 +7161,7 @@ export enum SubgraphMarketAdded_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -7097,6 +7174,7 @@ export enum SubgraphMarketAdded_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -7239,6 +7317,7 @@ export enum SubgraphMarketClosed_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -7246,6 +7325,7 @@ export enum SubgraphMarketClosed_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -7258,6 +7338,7 @@ export enum SubgraphMarketClosed_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -7405,6 +7486,7 @@ export enum SubgraphMarketDailyStats_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -7412,6 +7494,7 @@ export enum SubgraphMarketDailyStats_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -7424,6 +7507,7 @@ export enum SubgraphMarketDailyStats_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -7552,6 +7636,7 @@ export enum SubgraphMarketDeployed_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -7559,6 +7644,7 @@ export enum SubgraphMarketDeployed_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -7571,6 +7657,7 @@ export enum SubgraphMarketDeployed_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -7771,6 +7858,7 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -7778,6 +7866,7 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -7790,6 +7879,7 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -7916,6 +8006,7 @@ export enum SubgraphMarketRemoved_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -7923,6 +8014,7 @@ export enum SubgraphMarketRemoved_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -7935,6 +8027,7 @@ export enum SubgraphMarketRemoved_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -7966,6 +8059,11 @@ export enum SubgraphMarketRemoved_OrderBy {
   MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
   MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
   TransactionHash = "transactionHash"
+}
+
+export enum SubgraphMarketType {
+  Legacy = "Legacy",
+  Revolving = "Revolving"
 }
 
 export enum SubgraphMarketVersion {
@@ -8057,6 +8155,14 @@ export type SubgraphMarket_Filter = {
   borrower_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   borrower_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
   collateralContracts_?: InputMaybe<SubgraphSimpleCollateralContract_Filter>;
+  commitmentFeeBips?: InputMaybe<Scalars["BigInt"]["input"]>;
+  commitmentFeeBips_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  commitmentFeeBips_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  commitmentFeeBips_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  commitmentFeeBips_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  commitmentFeeBips_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  commitmentFeeBips_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  commitmentFeeBips_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   controller?: InputMaybe<Scalars["String"]["input"]>;
   controller_?: InputMaybe<SubgraphController_Filter>;
   controller_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -8158,6 +8264,14 @@ export type SubgraphMarket_Filter = {
   depositIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
   depositIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   depositRecords_?: InputMaybe<SubgraphDeposit_Filter>;
+  drawnAmount?: InputMaybe<Scalars["BigInt"]["input"]>;
+  drawnAmount_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  drawnAmount_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  drawnAmount_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  drawnAmount_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  drawnAmount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  drawnAmount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  drawnAmount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -8290,6 +8404,10 @@ export type SubgraphMarket_Filter = {
   lastInterestAccruedTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   lenders_?: InputMaybe<SubgraphLenderAccount_Filter>;
   marketClosedEvent_?: InputMaybe<SubgraphMarketClosed_Filter>;
+  marketType?: InputMaybe<SubgraphMarketType>;
+  marketType_in?: InputMaybe<SubgraphMarketType[]>;
+  marketType_not?: InputMaybe<SubgraphMarketType>;
+  marketType_not_in?: InputMaybe<SubgraphMarketType[]>;
   maxTotalSupply?: InputMaybe<Scalars["BigInt"]["input"]>;
   maxTotalSupplyUpdatedIndex?: InputMaybe<Scalars["Int"]["input"]>;
   maxTotalSupplyUpdatedIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
@@ -8577,6 +8695,7 @@ export enum SubgraphMarket_OrderBy {
   BorrowRecords = "borrowRecords",
   Borrower = "borrower",
   CollateralContracts = "collateralContracts",
+  CommitmentFeeBips = "commitmentFeeBips",
   Controller = "controller",
   ControllerBorrower = "controller__borrower",
   ControllerId = "controller__id",
@@ -8598,6 +8717,7 @@ export enum SubgraphMarket_OrderBy {
   DeployedEventTransactionHash = "deployedEvent__transactionHash",
   DepositIndex = "depositIndex",
   DepositRecords = "depositRecords",
+  DrawnAmount = "drawnAmount",
   EventIndex = "eventIndex",
   FeeCollectionRecords = "feeCollectionRecords",
   FeeRecipient = "feeRecipient",
@@ -8640,6 +8760,7 @@ export enum SubgraphMarket_OrderBy {
   HooksFactoryEventIndex = "hooksFactory__eventIndex",
   HooksFactoryId = "hooksFactory__id",
   HooksFactoryIsRegistered = "hooksFactory__isRegistered",
+  HooksFactoryMarketType = "hooksFactory__marketType",
   HooksFactorySentinel = "hooksFactory__sentinel",
   HooksBorrower = "hooks__borrower",
   HooksEventIndex = "hooks__eventIndex",
@@ -8664,6 +8785,7 @@ export enum SubgraphMarket_OrderBy {
   MarketClosedEventId = "marketClosedEvent__id",
   MarketClosedEventTimestamp = "marketClosedEvent__timestamp",
   MarketClosedEventTransactionHash = "marketClosedEvent__transactionHash",
+  MarketType = "marketType",
   MaxTotalSupply = "maxTotalSupply",
   MaxTotalSupplyUpdatedIndex = "maxTotalSupplyUpdatedIndex",
   MaxTotalSupplyUpdatedRecords = "maxTotalSupplyUpdatedRecords",
@@ -8836,6 +8958,7 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -8843,6 +8966,7 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -8855,6 +8979,7 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -9047,6 +9172,7 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -9054,6 +9180,7 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -9066,6 +9193,7 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -9841,6 +9969,7 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -9848,6 +9977,7 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -9860,6 +9990,7 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -11378,6 +11509,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -11385,6 +11517,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -11397,6 +11530,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -13669,6 +13803,7 @@ export enum SubgraphSimpleCollateralContract_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -13676,6 +13811,7 @@ export enum SubgraphSimpleCollateralContract_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -13688,6 +13824,7 @@ export enum SubgraphSimpleCollateralContract_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -14086,6 +14223,7 @@ export enum SubgraphTransfer_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -14093,6 +14231,7 @@ export enum SubgraphTransfer_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -14105,6 +14244,7 @@ export enum SubgraphTransfer_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -14707,6 +14847,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -14714,6 +14855,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -14726,6 +14868,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -15068,6 +15211,7 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -15075,6 +15219,7 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -15087,6 +15232,7 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -15539,6 +15685,7 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
   MarketBorrowIndex = "market__borrowIndex",
   MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
   MarketCreatedAt = "market__createdAt",
   MarketDebtRepaidIndex = "market__debtRepaidIndex",
   MarketDecimals = "market__decimals",
@@ -15546,6 +15693,7 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
   MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
   MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
   MarketEventIndex = "market__eventIndex",
   MarketFeeRecipient = "market__feeRecipient",
   MarketFeesCollectedIndex = "market__feesCollectedIndex",
@@ -15558,6 +15706,7 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   MarketIsRegistered = "market__isRegistered",
   MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
   MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
   MarketMaxTotalSupply = "market__maxTotalSupply",
   MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
   MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
@@ -15768,7 +15917,9 @@ export type SubgraphMarketDataFragment = {
   isDelinquent: boolean;
   timeDelinquent: number;
   annualInterestBips: number;
+  commitmentFeeBips?: string | null;
   reserveRatioBips: number;
+  drawnAmount?: string | null;
   scaleFactor: string;
   lastInterestAccruedTimestamp: number;
   originalAnnualInterestBips: number;
@@ -15866,7 +16017,9 @@ export type SubgraphMarketDataWithEventsFragment = {
   isDelinquent: boolean;
   timeDelinquent: number;
   annualInterestBips: number;
+  commitmentFeeBips?: string | null;
   reserveRatioBips: number;
+  drawnAmount?: string | null;
   scaleFactor: string;
   lastInterestAccruedTimestamp: number;
   originalAnnualInterestBips: number;
@@ -16393,7 +16546,9 @@ export type SubgraphGetLenderAccountWithMarketQuery = {
     isDelinquent: boolean;
     timeDelinquent: number;
     annualInterestBips: number;
+    commitmentFeeBips?: string | null;
     reserveRatioBips: number;
+    drawnAmount?: string | null;
     scaleFactor: string;
     lastInterestAccruedTimestamp: number;
     originalAnnualInterestBips: number;
@@ -16477,7 +16632,9 @@ export type SubgraphGetAllMarketsForLenderViewQuery = {
     isDelinquent: boolean;
     timeDelinquent: number;
     annualInterestBips: number;
+    commitmentFeeBips?: string | null;
     reserveRatioBips: number;
+    drawnAmount?: string | null;
     scaleFactor: string;
     lastInterestAccruedTimestamp: number;
     originalAnnualInterestBips: number;
@@ -16569,7 +16726,9 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
       isDelinquent: boolean;
       timeDelinquent: number;
       annualInterestBips: number;
+      commitmentFeeBips?: string | null;
       reserveRatioBips: number;
+      drawnAmount?: string | null;
       scaleFactor: string;
       lastInterestAccruedTimestamp: number;
       originalAnnualInterestBips: number;
@@ -16628,7 +16787,9 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
         isDelinquent: boolean;
         timeDelinquent: number;
         annualInterestBips: number;
+        commitmentFeeBips?: string | null;
         reserveRatioBips: number;
+        drawnAmount?: string | null;
         scaleFactor: string;
         lastInterestAccruedTimestamp: number;
         originalAnnualInterestBips: number;
@@ -17517,7 +17678,9 @@ export const MarketDataFragmentDoc = gql`
     isDelinquent
     timeDelinquent
     annualInterestBips
+    commitmentFeeBips
     reserveRatioBips
+    drawnAmount
     scaleFactor
     lastInterestAccruedTimestamp
     originalAnnualInterestBips

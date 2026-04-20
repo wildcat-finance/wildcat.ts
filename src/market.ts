@@ -5,6 +5,7 @@ import {
   IOpenTermHooks__factory,
   MarketDataBaseV2_5StructOutput,
   MarketDataStructOutput,
+  MarketDataV2_5StructOutput,
   MarketDataV2StructOutput,
   WildcatMarket,
   WildcatMarket__factory
@@ -93,8 +94,39 @@ export type TotalDebtBreakdown =
       totalDebt: TokenAmount;
     };
 
+export type RevolvingCurrentAprMetrics = {
+  commitmentFeeBips: number;
+  drawnAmount: TokenAmount;
+  utilizationBips: number;
+  utilizationAprBips: number;
+  blendedBaseAprBips: number;
+  protocolAprBips: number;
+  penaltyAprBips: number;
+  effectiveLenderAprBips: number;
+};
+
 const hasUnifiedLatestLensForDirectReads = (chainId: SupportedChainId): boolean => {
   return hasDeploymentAddress(chainId, "MarketLensV2_5");
+};
+
+const toUnifiedMarketDataV2 = (
+  data: MarketDataBaseV2_5StructOutput | MarketDataV2_5StructOutput
+): MarketDataV2_5StructOutput => {
+  if ("market" in data) {
+    return data;
+  }
+
+  return {
+    market: data,
+    commitmentFeeBips: {
+      isPresent: false,
+      value: BigNumber.from(0)
+    },
+    drawnAmount: {
+      isPresent: false,
+      value: BigNumber.from(0)
+    }
+  };
 };
 
 export type MarketArgs = {
@@ -150,6 +182,8 @@ export type MarketArgs = {
   totalDelinquencyFeesAccrued?: TokenAmount;
   totalProtocolFeesAccrued?: TokenAmount;
   totalDeposited?: TokenAmount;
+  commitmentFeeBips?: number;
+  drawnAmount?: TokenAmount;
   deployedEvent?: SubgraphMarketDeployedEventFragment;
   eventIndex?: number;
   signerAddress?: string;
@@ -236,6 +270,59 @@ export class Market extends ContractWrapper<WildcatMarket> {
   /** @returns Maximum amount of underlying token that can be deposited */
   get maximumDeposit(): TokenAmount {
     return this.underlyingToken.getAmount(this.maxTotalSupply.satsub(this.totalSupply.raw));
+  }
+
+  get currentRevolvingAprMetrics(): RevolvingCurrentAprMetrics | undefined {
+    const commitmentFeeBips = this.commitmentFeeBips;
+    const drawnAmount = this.drawnAmount;
+    if (commitmentFeeBips == null || drawnAmount == null) {
+      return undefined;
+    }
+
+    const totalSupply = this.totalSupply.raw;
+    const drawnAmountRaw = drawnAmount.raw.gt(totalSupply) ? totalSupply : drawnAmount.raw;
+
+    const utilizationBips = totalSupply.gt(0)
+      ? drawnAmountRaw.mul(BIP).div(totalSupply).toNumber()
+      : 0;
+
+    const utilizationAprBips = totalSupply.gt(0)
+      ? drawnAmountRaw.mul(this.annualInterestBips).div(totalSupply).toNumber()
+      : 0;
+
+    const blendedBaseAprBips = commitmentFeeBips + utilizationAprBips;
+    const protocolAprBips = BigNumber.from(blendedBaseAprBips)
+      .mul(this.protocolFeeBips)
+      .div(BIP)
+      .toNumber();
+    const penaltyAprBips = this.isIncurringPenalties ? this.delinquencyFeeBips : 0;
+
+    return {
+      commitmentFeeBips,
+      drawnAmount,
+      utilizationBips,
+      utilizationAprBips,
+      blendedBaseAprBips,
+      protocolAprBips,
+      penaltyAprBips,
+      effectiveLenderAprBips: blendedBaseAprBips + penaltyAprBips
+    };
+  }
+
+  private get currentBaseLenderAprBips(): number {
+    return this.currentRevolvingAprMetrics?.blendedBaseAprBips ?? this.annualInterestBips;
+  }
+
+  private get currentBaseLenderAPR(): BigNumber {
+    return bipToRay(this.currentBaseLenderAprBips);
+  }
+
+  private get currentPenaltyAPR(): BigNumber {
+    return this.isIncurringPenalties ? bipToRay(this.delinquencyFeeBips) : BigNumber.from(0);
+  }
+
+  private get currentProtocolAPR(): BigNumber {
+    return bipMul(this.currentBaseLenderAPR, BigNumber.from(this.protocolFeeBips));
   }
 
   /** @returns Whether the borrower is in penalized delinquency */
@@ -384,12 +471,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const scaledBase = this.scaledTotalSupply;
     const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
 
-    const baseAPRRay = bipToRay(this.annualInterestBips);
-    const protocolFeeAPRRay = bipMul(baseAPRRay, BigNumber.from(this.protocolFeeBips));
-    const delinquencyFeeAPRRay =
-      this.timeDelinquent > this.delinquencyGracePeriod
-        ? bipToRay(this.delinquencyFeeBips)
-        : BigNumber.from(0);
+    const baseAPRRay = this.currentBaseLenderAPR;
+    const protocolFeeAPRRay = this.currentProtocolAPR;
+    const delinquencyFeeAPRRay = this.currentPenaltyAPR;
 
     // lender APR portion
     const lenderRequirementGrowthPerSecond = basePrincipal
@@ -418,12 +502,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const scaledBase = this.scaledTotalSupply;
 
     const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
-    const baseAPRRay = bipToRay(this.annualInterestBips);
-    const protocolFeeAPRRay = bipMul(baseAPRRay, BigNumber.from(this.protocolFeeBips));
-    const delinquencyFeeAPRRay =
-      this.timeDelinquent > this.delinquencyGracePeriod
-        ? bipToRay(this.delinquencyFeeBips)
-        : BigNumber.from(0);
+    const baseAPRRay = this.currentBaseLenderAPR;
+    const protocolFeeAPRRay = this.currentProtocolAPR;
+    const delinquencyFeeAPRRay = this.currentPenaltyAPR;
 
     const lenderRequirementGrowthPerSecond = basePrincipal
       .rayMul(baseAPRRay.add(delinquencyFeeAPRRay))
@@ -452,12 +533,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const scaledBase = this.scaledTotalSupply.sub(this.scaledPendingWithdrawals);
     if (scaledBase.lte(0)) return this.underlyingToken.getAmount(0);
     const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
-    const baseAPRRay = bipToRay(this.annualInterestBips);
-    const protocolFeeAPRRay = bipMul(baseAPRRay, BigNumber.from(this.protocolFeeBips));
-    const delinquencyFeeAPRRay =
-      this.timeDelinquent > this.delinquencyGracePeriod
-        ? bipToRay(this.delinquencyFeeBips)
-        : BigNumber.from(0);
+    const baseAPRRay = this.currentBaseLenderAPR;
+    const protocolFeeAPRRay = this.currentProtocolAPR;
+    const delinquencyFeeAPRRay = this.currentPenaltyAPR;
     const lenderRequirementGrowthPerSecond = basePrincipal
       .rayMul(baseAPRRay.add(delinquencyFeeAPRRay))
       .div(SECONDS_IN_365_DAYS)
@@ -479,11 +557,8 @@ export class Market extends ContractWrapper<WildcatMarket> {
    * @return apr paid by borrower in ray
    */
   get effectiveBorrowerAPR(): BigNumber {
-    // apr + (apr * protocolFee)
-    let apr = bipMul(bipToRay(this.annualInterestBips), BIP.add(this.protocolFeeBips));
-    if (this.timeDelinquent > this.delinquencyGracePeriod) {
-      apr = apr.add(bipToRay(this.delinquencyFeeBips));
-    }
+    let apr = bipMul(this.currentBaseLenderAPR, BIP.add(this.protocolFeeBips));
+    apr = apr.add(this.currentPenaltyAPR);
     return apr;
   }
 
@@ -494,11 +569,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
    * @return apr earned by lender in ray
    */
   get effectiveLenderAPR(): BigNumber {
-    let apr = this.annualInterestBips;
-    if (this.timeDelinquent > this.delinquencyGracePeriod) {
-      apr += this.delinquencyFeeBips;
-    }
-    return bipToRay(apr);
+    return this.currentBaseLenderAPR.add(this.currentPenaltyAPR);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -633,7 +704,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     if (this.version === MarketVersion.V2) {
       if (hasUnifiedLatestLensForDirectReads(this.chainId)) {
         try {
-          const market = await getLensV2_5Contract(this.chainId, this.provider).getMarketData(
+          const market = await getLensV2_5Contract(this.chainId, this.provider).getMarketDataV2(
             this.address
           );
           this.updateWith(market);
@@ -654,71 +725,88 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   updateWith(
-    data: MarketDataStructOutput | MarketDataV2StructOutput | MarketDataBaseV2_5StructOutput
+    data:
+      | MarketDataStructOutput
+      | MarketDataV2StructOutput
+      | MarketDataBaseV2_5StructOutput
+      | MarketDataV2_5StructOutput
   ): void {
+    const baseData = "market" in data ? data.market : data;
+
     // Note: this adds all the interest accrued to the base interest accrued, since the lens
     // doesn't give us any way to distinguish between base interest and delinquency fees.
     if (
-      this.scaledTotalSupply.eq(data.scaledTotalSupply) &&
-      data.scaleFactor.gt(this.scaleFactor) &&
+      this.scaledTotalSupply.eq(baseData.scaledTotalSupply) &&
+      baseData.scaleFactor.gt(this.scaleFactor) &&
       this.totalBaseInterestAccrued
     ) {
       const lastTotalValue = rayMul(this.scaledTotalSupply, this.scaleFactor);
-      const currentTotalValue = rayMul(this.scaledTotalSupply, data.scaleFactor);
+      const currentTotalValue = rayMul(this.scaledTotalSupply, baseData.scaleFactor);
       const baseInterestAccrued = currentTotalValue.sub(lastTotalValue);
       this.totalBaseInterestAccrued = this.totalBaseInterestAccrued.add(baseInterestAccrued);
     }
 
     if (
-      data.lastAccruedProtocolFees.gt(this.lastAccruedProtocolFees.raw) &&
+      baseData.lastAccruedProtocolFees.gt(this.lastAccruedProtocolFees.raw) &&
       this.totalProtocolFeesAccrued
     ) {
       this.totalProtocolFeesAccrued = this.totalProtocolFeesAccrued.add(
-        data.lastAccruedProtocolFees.sub(this.lastAccruedProtocolFees.raw)
+        baseData.lastAccruedProtocolFees.sub(this.lastAccruedProtocolFees.raw)
       );
     }
-    this.feeRecipient = data.feeRecipient;
-    this.protocolFeeBips = data.protocolFeeBips.toNumber();
-    this.delinquencyFeeBips = data.delinquencyFeeBips.toNumber();
-    this.delinquencyGracePeriod = data.delinquencyGracePeriod.toNumber();
-    this.withdrawalBatchDuration = data.withdrawalBatchDuration.toNumber();
-    this.reserveRatioBips = data.reserveRatioBips.toNumber();
-    this.annualInterestBips = data.annualInterestBips.toNumber();
-    this.temporaryReserveRatio = data.temporaryReserveRatio;
-    this.originalAnnualInterestBips = data.originalAnnualInterestBips.toNumber();
-    this.originalReserveRatioBips = data.originalReserveRatioBips.toNumber();
-    this.temporaryReserveRatioExpiry = data.temporaryReserveRatioExpiry.toNumber();
-    this.isClosed = data.isClosed;
-    this.scaleFactor = data.scaleFactor;
-    this.totalSupply = this.marketToken.getAmount(data.totalSupply);
-    this.maxTotalSupply = this.marketToken.getAmount(data.maxTotalSupply);
-    this.scaledTotalSupply = data.scaledTotalSupply;
-    this.totalAssets = this.underlyingToken.getAmount(data.totalAssets);
-    this.lastAccruedProtocolFees = this.underlyingToken.getAmount(data.lastAccruedProtocolFees);
+    this.feeRecipient = baseData.feeRecipient;
+    this.protocolFeeBips = baseData.protocolFeeBips.toNumber();
+    this.delinquencyFeeBips = baseData.delinquencyFeeBips.toNumber();
+    this.delinquencyGracePeriod = baseData.delinquencyGracePeriod.toNumber();
+    this.withdrawalBatchDuration = baseData.withdrawalBatchDuration.toNumber();
+    this.reserveRatioBips = baseData.reserveRatioBips.toNumber();
+    this.annualInterestBips = baseData.annualInterestBips.toNumber();
+    this.temporaryReserveRatio = baseData.temporaryReserveRatio;
+    this.originalAnnualInterestBips = baseData.originalAnnualInterestBips.toNumber();
+    this.originalReserveRatioBips = baseData.originalReserveRatioBips.toNumber();
+    this.temporaryReserveRatioExpiry = baseData.temporaryReserveRatioExpiry.toNumber();
+    this.isClosed = baseData.isClosed;
+    this.scaleFactor = baseData.scaleFactor;
+    this.totalSupply = this.marketToken.getAmount(baseData.totalSupply);
+    this.maxTotalSupply = this.marketToken.getAmount(baseData.maxTotalSupply);
+    this.scaledTotalSupply = baseData.scaledTotalSupply;
+    this.totalAssets = this.underlyingToken.getAmount(baseData.totalAssets);
+    this.lastAccruedProtocolFees = this.underlyingToken.getAmount(baseData.lastAccruedProtocolFees);
     this.normalizedUnclaimedWithdrawals = this.underlyingToken.getAmount(
-      data.normalizedUnclaimedWithdrawals
+      baseData.normalizedUnclaimedWithdrawals
     );
-    this.scaledPendingWithdrawals = data.scaledPendingWithdrawals;
-    this.pendingWithdrawalExpiry = data.pendingWithdrawalExpiry.toNumber();
-    this.isDelinquent = data.isDelinquent;
-    this.timeDelinquent = data.timeDelinquent.toNumber();
-    this.lastInterestAccruedTimestamp = data.lastInterestAccruedTimestamp.toNumber();
-    this.unpaidWithdrawalBatchExpiries = data.unpaidWithdrawalBatchExpiries;
-    this.coverageLiquidity = this.underlyingToken.getAmount(data.coverageLiquidity);
-    if ("hooksFactory" in data) {
-      this.hooksFactory = data.hooksFactory;
-      this.marketType = getMarketTypeForHooksFactory(this.chainId, data.hooksFactory);
+    this.scaledPendingWithdrawals = baseData.scaledPendingWithdrawals;
+    this.pendingWithdrawalExpiry = baseData.pendingWithdrawalExpiry.toNumber();
+    this.isDelinquent = baseData.isDelinquent;
+    this.timeDelinquent = baseData.timeDelinquent.toNumber();
+    this.lastInterestAccruedTimestamp = baseData.lastInterestAccruedTimestamp.toNumber();
+    this.unpaidWithdrawalBatchExpiries = baseData.unpaidWithdrawalBatchExpiries;
+    this.coverageLiquidity = this.underlyingToken.getAmount(baseData.coverageLiquidity);
+    if ("hooksFactory" in baseData) {
+      this.hooksFactory = baseData.hooksFactory;
+      this.marketType = getMarketTypeForHooksFactory(this.chainId, baseData.hooksFactory);
     }
-    if ("hooksConfig" in data) {
+    if ("hooksConfig" in baseData) {
       assert(this.version === MarketVersion.V2, `Can not push V2 lens data to V1 market!`);
       const config = this.hooksConfig;
       assert(config !== undefined, `V2 market has no hooksConfig!`);
-      config.minimumDeposit = this.underlyingToken.getAmount(data.hooksConfig.minimumDeposit);
+      config.minimumDeposit = this.underlyingToken.getAmount(baseData.hooksConfig.minimumDeposit);
       if (config.kind === HooksKind.FixedTerm) {
-        config.fixedTermEndTime = data.hooksConfig.fixedTermEndTime;
+        config.fixedTermEndTime = baseData.hooksConfig.fixedTermEndTime;
       }
     } else {
       assert(this.version === MarketVersion.V1, `Can not push V1 lens data to V2 market!`);
+    }
+    if ("market" in data) {
+      this.commitmentFeeBips = data.commitmentFeeBips.isPresent
+        ? data.commitmentFeeBips.value.toNumber()
+        : undefined;
+      this.drawnAmount = data.drawnAmount.isPresent
+        ? this.underlyingToken.getAmount(data.drawnAmount.value)
+        : undefined;
+    } else {
+      this.commitmentFeeBips = undefined;
+      this.drawnAmount = undefined;
     }
   }
 
@@ -849,6 +937,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
       lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp,
       unpaidWithdrawalBatchExpiries: [] /* data.unpaidWithdrawalBatchExpiries */,
       coverageLiquidity: underlyingToken.getAmount(coverageLiquidity),
+      commitmentFeeBips:
+        data.commitmentFeeBips != null ? Number(data.commitmentFeeBips) : undefined,
+      drawnAmount:
+        data.drawnAmount != null ? underlyingToken.getAmount(data.drawnAmount) : undefined,
       totalBorrowed: underlyingToken.getAmount(data.totalBorrowed),
       totalRepaid: underlyingToken.getAmount(data.totalRepaid),
       totalBaseInterestAccrued: underlyingToken.getAmount(data.totalBaseInterestAccrued),
@@ -1013,10 +1105,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
   static fromMarketDataV2_5(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    { hooks, hooksConfig: hooksConfigData, ...data }: MarketDataBaseV2_5StructOutput,
+    { market, commitmentFeeBips, drawnAmount }: MarketDataV2_5StructOutput,
     allowForceBuyBacks: boolean,
     signerAddress?: string
   ): Market {
+    const { hooks, hooksConfig: hooksConfigData, ...data } = market;
     const marketToken = Token.fromTokenMetadata(chainId, data.marketToken, provider);
     const underlyingToken = Token.fromTokenMetadata(chainId, data.underlyingToken, provider);
     const { hooksAddress } = hooks;
@@ -1090,6 +1183,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
       lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp.toNumber(),
       unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
+      commitmentFeeBips: commitmentFeeBips.isPresent ? commitmentFeeBips.value.toNumber() : undefined,
+      drawnAmount: drawnAmount.isPresent
+        ? underlyingToken.getAmount(drawnAmount.value)
+        : undefined,
       signerAddress
     });
   }
@@ -1097,18 +1194,20 @@ export class Market extends ContractWrapper<WildcatMarket> {
   static async resolveAllowForceBuyBacks(
     provider: SignerOrProvider,
     marketAddress: string,
-    data: MarketDataBaseV2_5StructOutput
+    data: MarketDataBaseV2_5StructOutput | MarketDataV2_5StructOutput
   ): Promise<boolean> {
-    if (data.hooksConfig.kind === 1) {
+    const marketData = "market" in data ? data.market : data;
+
+    if (marketData.hooksConfig.kind === 1) {
       const hookedMarket = await IOpenTermHooks__factory.connect(
-        data.hooksConfig.hooksAddress,
+        marketData.hooksConfig.hooksAddress,
         provider
       ).getHookedMarket(marketAddress);
       return hookedMarket.allowForceBuyBacks;
     }
-    if (data.hooksConfig.kind === 2) {
+    if (marketData.hooksConfig.kind === 2) {
       const hookedMarket = await IFixedTermHooks__factory.connect(
-        data.hooksConfig.hooksAddress,
+        marketData.hooksConfig.hooksAddress,
         provider
       ).getHookedMarket(marketAddress);
       return hookedMarket.allowForceBuyBacks;
@@ -1119,15 +1218,22 @@ export class Market extends ContractWrapper<WildcatMarket> {
   static async fromUnifiedMarketData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: MarketDataBaseV2_5StructOutput,
+    data: MarketDataBaseV2_5StructOutput | MarketDataV2_5StructOutput,
     signerAddress?: string
   ): Promise<Market> {
+    const marketData = toUnifiedMarketDataV2(data);
     const allowForceBuyBacks = await Market.resolveAllowForceBuyBacks(
       provider,
-      data.marketToken.token,
-      data
+      marketData.market.marketToken.token,
+      marketData
     );
-    return Market.fromMarketDataV2_5(chainId, provider, data, allowForceBuyBacks, signerAddress);
+    return Market.fromMarketDataV2_5(
+      chainId,
+      provider,
+      marketData,
+      allowForceBuyBacks,
+      signerAddress
+    );
   }
 
   /* -------------------------------------------------------------------------- */
@@ -1145,7 +1251,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
-        const data = await getLensV2_5Contract(chainId, provider).getMarketData(market);
+        const data = await getLensV2_5Contract(chainId, provider).getMarketDataV2(market);
         return Market.fromUnifiedMarketData(chainId, provider, data, signerAddress);
       } catch (_) {
         // Fall back to the legacy lens for V1 markets and pre-unified deployments.
@@ -1166,7 +1272,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
-        const data = await getLensV2_5Contract(chainId, provider).getMarketData(market);
+        const data = await getLensV2_5Contract(chainId, provider).getMarketDataV2(market);
         return Market.fromUnifiedMarketData(chainId, provider, data, signerAddress);
       } catch (_) {
         // Fall back to the pre-2.5 V2 lens for chains that have not fully migrated.
@@ -1188,7 +1294,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
-        const data = await getLensV2_5Contract(chainId, provider).getMarketsData(markets);
+        const data = await getLensV2_5Contract(chainId, provider).getMarketsDataV2(markets);
         return Promise.all(
           data.map((market) =>
             Market.fromUnifiedMarketData(chainId, provider, market, signerAddress)
