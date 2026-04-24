@@ -3,7 +3,6 @@ import {
   DefaultV2ParameterConstraints,
   getDeploymentAddress,
   getHooksFactoryAddressForMarketType,
-  getHooksFactoryRevolvingContract,
   hasHooksFactoryDeployment,
   SupportedChainId
 } from "../constants";
@@ -34,11 +33,12 @@ import {
   PartialTransaction,
   RoleProvider,
   SignerOrProvider,
+  TransactionHash,
   TransferAccess,
   WithdrawalAccess
 } from "../types";
 import { assert, encodeHooksConfig, parseFeeConfigurationV2, prepareTransaction } from "../utils";
-import { constants, ContractTransaction } from "ethers";
+import { constants } from "ethers";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
@@ -49,7 +49,8 @@ import {
 } from "./validation";
 import { encodeRevolvingMarketData } from "./revolving";
 import { encodeMarketHooksInstanceInputs } from "./utils";
-import { iOpenTermHooksAbi } from "../abi";
+import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iOpenTermHooksAbi } from "../abi";
+import { submitPreparedTransaction } from "../internal/viem-write";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface OpenTermHooks extends Omit<OpenTermHooksArgs, "roleProviders" | "constraints"> {}
@@ -134,17 +135,10 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
     });
   }
 
-  addLenders(inputs: AddLenderInput[]): Promise<ContractTransaction> {
+  addLenders(inputs: AddLenderInput[]): Promise<TransactionHash> {
     const result = this.previewAddLenders(inputs);
     assert(result.status === ChangeLenderRoleStatus.Ready, `Can not add lenders: ${result.status}`);
-
-    const lenders = inputs.map((input) => input.lender);
-    const credentialTimestamps = inputs.map(
-      (input) => input.credentialTimestamp ?? Math.floor(Date.now() / 1000)
-    );
-    return lenders.length === 1
-      ? this.contract.grantRole(lenders[0], credentialTimestamps[0])
-      : this.contract.grantRoles(lenders, credentialTimestamps);
+    return submitPreparedTransaction(this.signer, this.populateAddLenders(inputs));
   }
 
   /* ========================================================================== */
@@ -178,15 +172,13 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
     };
   }
 
-  blockLenders(lenders: string[]): Promise<ContractTransaction> {
+  blockLenders(lenders: string[]): Promise<TransactionHash> {
     const result = this.previewBlockLenders(lenders);
     assert(
       result.status === ChangeLenderRoleStatus.Ready,
       `Can not block lenders: ${result.status}`
     );
-    return lenders.length === 1
-      ? this.contract["blockFromDeposits(address)"](lenders[0])
-      : this.contract["blockFromDeposits(address[])"](lenders);
+    return submitPreparedTransaction(this.signer, this.populateBlockLenders(lenders));
   }
 
   populateUnblockLender(lender: string): PartialTransaction {
@@ -528,22 +520,18 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     }
   }
 
-  deployMarket({ ...otherParameters }: OpenTermMarketDeploymentArgs): Promise<ContractTransaction> {
+  deployMarket({ ...otherParameters }: OpenTermMarketDeploymentArgs): Promise<TransactionHash> {
     const result = this.previewDeployMarket(otherParameters);
     assert(result.status === DeployMarketStatus.Ready, `Can not deploy market: ${result.status}`);
-    if (result.marketType === "legacy" && result.fn === "deployMarket") {
-      return this.contract.deployMarket(...result.args);
-    } else if (result.marketType === "legacy") {
-      return this.contract.deployMarketAndHooks(...result.args);
-    } else if (result.fn === "deployMarket") {
-      return getHooksFactoryRevolvingContract(this.chainId, this.provider).deployMarket(
-        ...result.args
-      );
-    } else {
-      return getHooksFactoryRevolvingContract(this.chainId, this.provider).deployMarketAndHooks(
-        ...result.args
-      );
-    }
+    return submitPreparedTransaction(
+      this.signer,
+      prepareTransaction({
+        to: this.hooksFactory,
+        abi: result.marketType === "legacy" ? hooksFactoryAbi : hooksFactoryRevolvingAbi,
+        functionName: result.fn,
+        args: result.args
+      })
+    );
   }
 }
 

@@ -6,13 +6,21 @@ import { MarketController } from "../../src/controller";
 import { OpenTermHooks, OpenTermHooksTemplate } from "../../src/access";
 import { WrapperFactory } from "../../src/wrapper";
 import { prepareTransaction, toSafeTransactionInput } from "../../src/utils";
+import { submitPreparedTransaction } from "../../src/internal/viem-write";
 import {
   IERC20__factory,
   IOpenTermHooks__factory,
   Wildcat4626WrapperFactory__factory,
   WildcatMarketController__factory
 } from "../../src/typechain";
-import { FeeConfiguration, MarketParameterConstraints } from "../../src/types";
+import {
+  FeeConfiguration,
+  HooksKind,
+  MarketParameterConstraints,
+  MarketVersion
+} from "../../src/types";
+import { LenderRole, MarketAccount } from "../../src/account";
+import { Token } from "../../src/token";
 
 const provider = new providers.JsonRpcProvider();
 
@@ -156,5 +164,74 @@ describe("prepared transaction encoding", () => {
         args: [market]
       }).data
     ).to.equal(wrapperFactory.populateCreateWrapper(market).data);
+  });
+
+  it("submits prepared transactions as hashes without leaking ethers transaction objects", async () => {
+    const expectedHash = `0x${"1".padStart(64, "0")}`;
+    const tx = prepareTransaction({
+      to: makeAddress(19),
+      abi: iERC20Abi,
+      functionName: "approve",
+      args: [makeAddress(20), 123n],
+      value: 456n
+    });
+    let sentTransaction: any;
+    const signer = {
+      sendTransaction: async (transaction: any) => {
+        sentTransaction = transaction;
+        return { hash: expectedHash };
+      }
+    } as any;
+
+    const hash = await submitPreparedTransaction(signer, tx);
+
+    expect(hash).to.equal(expectedHash);
+    expect(sentTransaction).to.deep.equal({
+      to: tx.to,
+      data: tx.data,
+      value: "456"
+    });
+  });
+
+  it("targets borrower hook config writes to the hooks instance address", async () => {
+    const borrower = makeAddress(21);
+    const marketAddress = makeAddress(22);
+    const hooksAddress = makeAddress(23);
+    const token = new Token(
+      SupportedChainId.Sepolia,
+      makeAddress(24),
+      "Mock Token",
+      "MOCK",
+      18,
+      false,
+      provider
+    );
+    const account = new MarketAccount({
+      account: borrower,
+      role: LenderRole.Null,
+      market: {
+        address: marketAddress,
+        borrower,
+        version: MarketVersion.V2,
+        hooksConfig: {
+          kind: HooksKind.OpenTerm,
+          hooksAddress
+        }
+      },
+      scaledMarketBalance: 0n,
+      marketBalance: token.getAmount(0n),
+      underlyingBalance: token.getAmount(0n),
+      underlyingApproval: token.getAmount(0n)
+    } as any);
+
+    const tx = await account.populateSetMinimumDeposit(token.getAmount(1n));
+
+    expect(tx.to).to.equal(hooksAddress);
+    expect(tx.data).to.equal(
+      IOpenTermHooks__factory.createInterface().encodeFunctionData("setMinimumDeposit", [
+        marketAddress,
+        1
+      ])
+    );
   });
 });

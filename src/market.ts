@@ -1,4 +1,4 @@
-import { BigNumber, ContractTransaction } from "ethers";
+import { BigNumber } from "ethers";
 import { Signer } from "@ethersproject/abstract-signer";
 import {
   IFixedTermHooks__factory,
@@ -33,7 +33,8 @@ import {
   HooksKind,
   HooksConfig,
   OpenTermHooksConfig,
-  FixedTermHooksConfig
+  FixedTermHooksConfig,
+  TransactionHash
 } from "./types";
 import { MarketAccount } from "./account";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
@@ -66,6 +67,7 @@ import {
 } from "./utils";
 import { hooksTemplateFromSubgraph } from "./access";
 import { wildcatMarketAbi } from "./abi";
+import { submitPreparedTransaction } from "./internal/viem-write";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -590,16 +592,32 @@ export class Market extends ContractWrapper<WildcatMarket> {
   async executeWithdrawal({
     lender,
     expiry
-  }: Pick<LenderWithdrawalStatus, "lender" | "expiry">): Promise<ContractTransaction> {
-    return this.contract.executeWithdrawal(lender, expiry);
+  }: Pick<LenderWithdrawalStatus, "lender" | "expiry">): Promise<TransactionHash> {
+    return submitPreparedTransaction(
+      this.signer,
+      prepareTransaction({
+        to: this.address,
+        abi: wildcatMarketAbi,
+        functionName: "executeWithdrawal",
+        args: [lender, expiry]
+      })
+    );
   }
 
   async executeWithdrawals(
     withdrawals: Array<Pick<LenderWithdrawalStatus, "lender" | "expiry">>
-  ): Promise<ContractTransaction> {
+  ): Promise<TransactionHash> {
     const lenders = withdrawals.map((w) => w.lender);
     const expiries = withdrawals.map((w) => w.expiry);
-    return this.contract.executeWithdrawals(lenders, expiries);
+    return submitPreparedTransaction(
+      this.signer,
+      prepareTransaction({
+        to: this.address,
+        abi: wildcatMarketAbi,
+        functionName: "executeWithdrawals",
+        args: [lenders, expiries]
+      })
+    );
   }
 
   populateRepayAndProcessUnpaidWithdrawalBatches(
@@ -617,8 +635,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
   async repayAndProcessUnpaidWithdrawalBatches(
     amount: TokenAmount,
     maxBatches = 10
-  ): Promise<ContractTransaction> {
-    return this.contract.repayAndProcessUnpaidWithdrawalBatches(amount.raw, maxBatches);
+  ): Promise<TransactionHash> {
+    return submitPreparedTransaction(
+      this.signer,
+      this.populateRepayAndProcessUnpaidWithdrawalBatches(amount, maxBatches)
+    );
   }
 
   /* -------------------------------------------------------------------------- */

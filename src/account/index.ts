@@ -1,18 +1,14 @@
-import { BigNumberish, ContractReceipt, ContractTransaction } from "ethers";
-import { Token, TokenAmount, minTokenAmount, toBn, toRawAmount } from "../token";
+import { BigNumberish } from "ethers";
+import { Token, TokenAmount, minTokenAmount, toRawAmount } from "../token";
 import { Market } from "../market";
 import {
   MarketLenderStatusStructOutput,
   MarketDataWithLenderStatusStructOutput,
-  WildcatMarketV2__factory,
   LenderAccountDataStructOutput,
   MarketDataWithLenderStatusV2StructOutput,
   LenderAccountDataV2_5StructOutput,
-  MarketDataWithLenderStatusV2_5StructOutput,
-  IOpenTermHooks__factory,
-  IFixedTermHooks__factory
+  MarketDataWithLenderStatusV2_5StructOutput
 } from "../typechain";
-import { WithdrawalQueuedEvent } from "../typechain/WildcatMarket";
 import {
   assert,
   DepositRecord,
@@ -23,7 +19,7 @@ import {
   SECONDS_IN_365_DAYS,
   prepareTransaction
 } from "../utils";
-import { SupportedChainId, getControllerContract, hasDeploymentAddress } from "../constants";
+import { SupportedChainId, hasDeploymentAddress } from "../constants";
 import {
   getRegisteredMarkets,
   getRegisteredMarketsCount,
@@ -46,7 +42,9 @@ import {
   HooksKind,
   MarketVersion,
   PartialTransaction,
-  SignerOrProvider
+  SignerOrProvider,
+  SubmittedTransactionResult,
+  TransactionHash
 } from "../types";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 import {
@@ -82,6 +80,11 @@ import {
   wildcatMarketControllerAbi,
   wildcatMarketV2Abi
 } from "../abi";
+import {
+  submitPreparedTransaction,
+  submitPreparedTransactionAndWait
+} from "../internal/viem-write";
+import { parseEventLogs, type TransactionReceipt } from "viem";
 export * from "./validation";
 
 export enum LenderRole {
@@ -413,7 +416,7 @@ export class MarketAccount {
     const config = this.market.hooksConfig;
     assert(config !== undefined, `V2 market missing hooksConfig`);
     return prepareTransaction({
-      to: this.market.address,
+      to: config.hooksAddress,
       abi: iOpenTermHooksAbi,
       functionName: "setMinimumDeposit",
       args: [this.market.address, amount.raw]
@@ -426,44 +429,33 @@ export class MarketAccount {
     const config = this.market.hooksConfig;
     assert(config !== undefined, `V2 market missing hooksConfig`);
     return prepareTransaction({
-      to: this.market.address,
+      to: config.hooksAddress,
       abi: iFixedTermHooksAbi,
       functionName: "setFixedTermEndTime",
       args: [this.market.address, endTime]
     });
   }
 
-  async setMinimumDeposit(amount: TokenAmount): Promise<ContractTransaction> {
-    const { status } = this.previewSetMinimumDeposit(amount);
-    assert(status === SetMinimumDepositStatus.Ready, `Cannot set minimum deposit: ${status}`);
-    const config = this.market.hooksConfig;
-    assert(config !== undefined, `V2 market missing hooksConfig`);
-    const contract = IOpenTermHooks__factory.connect(config.hooksAddress, this.market.signer);
-    return contract.setMinimumDeposit(this.market.address, amount.raw);
+  async setMinimumDeposit(amount: TokenAmount): Promise<TransactionHash> {
+    return submitPreparedTransaction(
+      this.market.signer,
+      await this.populateSetMinimumDeposit(amount)
+    );
   }
 
-  async setFixedTermEndTime(endTime: number): Promise<ContractTransaction> {
-    const { status } = this.previewSetFixedTermEndTime(endTime);
-    assert(status === SetFixedTermEndTimeStatus.Ready, `Cannot set fixed term end time: ${status}`);
-    const config = this.market.hooksConfig;
-    assert(config !== undefined, `V2 market missing hooksConfig`);
-    const contract = IFixedTermHooks__factory.connect(config.hooksAddress, this.market.signer);
-    return contract.setFixedTermEndTime(this.market.address, endTime);
+  async setFixedTermEndTime(endTime: number): Promise<TransactionHash> {
+    return submitPreparedTransaction(
+      this.market.signer,
+      await this.populateSetFixedTermEndTime(endTime)
+    );
   }
 
   /* -------------------------------------------------------------------------- */
   /*                             Management Actions                             */
   /* -------------------------------------------------------------------------- */
 
-  async closeMarket(): Promise<ContractTransaction> {
-    const { status } = this.previewCloseMarket();
-    assert(status === CloseMarketStatus.Ready, `Cannot close market: ${status}`);
-    if (this.market.version === MarketVersion.V1) {
-      assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
-      const controller = getControllerContract(this.market.signer, this.market.controller);
-      return controller.closeMarket(this.market.address);
-    }
-    return this.market.contract.closeMarket();
+  async closeMarket(): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, this.populateCloseMarket());
   }
 
   populateCloseMarket(): PartialTransaction {
@@ -472,9 +464,8 @@ export class MarketAccount {
 
     if (this.market.version === MarketVersion.V1) {
       assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
-      const controller = getControllerContract(this.market.signer, this.market.controller);
       return prepareTransaction({
-        to: controller.address,
+        to: this.market.controller,
         abi: wildcatMarketControllerAbi,
         functionName: "closeMarket",
         args: [this.market.address]
@@ -487,19 +478,33 @@ export class MarketAccount {
     });
   }
 
-  async setMaxTotalSupply(amount: TokenAmount): Promise<ContractTransaction> {
+  async setMaxTotalSupply(amount: TokenAmount): Promise<TransactionHash> {
     const { status } = this.previewSetMaxTotalSupply(amount);
     assert(status === SetMaxTotalSupplyStatus.Ready, `Cannot close market: ${status}`);
     if (this.market.version === MarketVersion.V1) {
       assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
-      const controller = getControllerContract(this.market.signer, this.market.controller);
-      return controller.setMaxTotalSupply(this.market.address, amount.raw);
-    } else {
-      return this.market.contract.setMaxTotalSupply(amount.raw);
+      return submitPreparedTransaction(
+        this.market.signer,
+        prepareTransaction({
+          to: this.market.controller,
+          abi: wildcatMarketControllerAbi,
+          functionName: "setMaxTotalSupply",
+          args: [this.market.address, amount.raw]
+        })
+      );
     }
+    return submitPreparedTransaction(
+      this.market.signer,
+      prepareTransaction({
+        to: this.market.address,
+        abi: wildcatMarketV2Abi,
+        functionName: "setMaxTotalSupply",
+        args: [amount.raw]
+      })
+    );
   }
 
-  async setAnnualInterestBips(newAprBips: number): Promise<ContractTransaction> {
+  async setAnnualInterestBips(newAprBips: number): Promise<TransactionHash> {
     const { status } = this.previewSetAPR(newAprBips);
     assert(
       status === SetAprStatus.Ready,
@@ -507,15 +512,25 @@ export class MarketAccount {
     );
     if (this.market.version === MarketVersion.V1) {
       assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
-      const controller = getControllerContract(this.market.provider, this.market.controller);
-      return controller.setAnnualInterestBips(this.market.address, newAprBips);
-    } else {
-      const contract = WildcatMarketV2__factory.connect(this.market.address, this.market.signer);
-      return contract.setAnnualInterestAndReserveRatioBips(
-        newAprBips,
-        this.market.reserveRatioBips
+      return submitPreparedTransaction(
+        this.market.signer,
+        prepareTransaction({
+          to: this.market.controller,
+          abi: wildcatMarketControllerAbi,
+          functionName: "setAnnualInterestBips",
+          args: [this.market.address, newAprBips]
+        })
       );
     }
+    return submitPreparedTransaction(
+      this.market.signer,
+      prepareTransaction({
+        to: this.market.address,
+        abi: wildcatMarketV2Abi,
+        functionName: "setAnnualInterestAndReserveRatioBips",
+        args: [newAprBips, this.market.reserveRatioBips]
+      })
+    );
   }
 
   /* -------------------------------------------------------------------------- */
@@ -526,13 +541,8 @@ export class MarketAccount {
     return this.underlyingApproval >= amount.raw;
   }
 
-  async approveMarket(amount: TokenAmount): Promise<ContractTransaction> {
-    const token = this.market.underlyingToken;
-    const signer = await token.signer.getAddress();
-    if (signer.toLowerCase() !== this.account.toLowerCase()) {
-      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    return token.contract.approve(this.market.address, amount.raw);
+  async approveMarket(amount: TokenAmount): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, await this.populateApproveMarket(amount));
   }
 
   async populateApproveMarket(amount: TokenAmount): Promise<PartialTransaction> {
@@ -575,11 +585,8 @@ export class MarketAccount {
     };
   }
 
-  async forceBuyBack(lender: string, amount: TokenAmount): Promise<ContractTransaction> {
-    const { status } = this.previewForceBuyBack(lender, amount);
-    assert(status === ForceBuyBackStatus.Ready, `Cannot force buy back: ${status}`);
-    const contract = WildcatMarketV2__factory.connect(this.market.address, this.market.signer);
-    return await contract.forceBuyBack(lender, amount.raw);
+  async forceBuyBack(lender: string, amount: TokenAmount): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, this.populateForceBuyBack(lender, amount));
   }
 
   populateForceBuyBack(lender: string, amount: TokenAmount): PartialTransaction {
@@ -653,14 +660,8 @@ export class MarketAccount {
     });
   }
 
-  async deposit(amount: TokenAmount): Promise<ContractTransaction> {
-    const { status } = this.previewDeposit(amount);
-    assert(status === DepositStatus.Ready, `Cannot deposit: ${status}`);
-    const signer = await this.market.signer.getAddress();
-    if (signer.toLowerCase() !== this.account.toLowerCase()) {
-      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    return this.market.contract.deposit(amount.raw);
+  async deposit(amount: TokenAmount): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, await this.populateDeposit(amount));
   }
 
   /* ------ Withdrawals ------ */
@@ -674,11 +675,9 @@ export class MarketAccount {
     return { status: QueueWithdrawalStatus.Ready };
   }
 
-  async queueWithdrawal(amount: TokenAmount): Promise<{
-    withdrawal: LenderWithdrawalStatus;
-    transaction: ContractTransaction;
-    receipt: ContractReceipt;
-  }> {
+  async queueWithdrawal(
+    amount: TokenAmount
+  ): Promise<SubmittedTransactionResult<LenderWithdrawalStatus>> {
     const { status } = this.previewQueueWithdrawal(amount);
     assert(status === QueueWithdrawalStatus.Ready, `Cannot queue withdrawal: ${status}`);
 
@@ -686,32 +685,34 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    const transaction = await this.market.contract.queueWithdrawal(amount.raw);
-    const receipt = await transaction.wait();
-    const queuedWithdrawalTopic = this.market.contract.interface.getEventTopic("WithdrawalQueued");
+    const { hash, receipt } = await submitPreparedTransactionAndWait(
+      this.market.provider,
+      this.market.signer,
+      prepareTransaction({
+        to: this.market.address,
+        abi: wildcatMarketAbi,
+        functionName: "queueWithdrawal",
+        args: [amount.raw]
+      })
+    );
     const queuedWithdrawalTransaction = toQueueWithdrawalTransaction(
       this.market.underlyingToken,
-      receipt.events!.find((e) => e.topics[0] === queuedWithdrawalTopic) as WithdrawalQueuedEvent
+      receipt,
+      this.market.address
     );
-    if (!queuedWithdrawalTransaction) throw Error("No queued withdrawal event found");
-
     const withdrawal = await LenderWithdrawalStatus.getWithdrawalForLender(
       this.market,
       queuedWithdrawalTransaction.expiry,
       this.account
     );
     return {
-      withdrawal,
-      transaction,
-      receipt
+      hash,
+      receipt,
+      result: withdrawal
     };
   }
 
-  async queueFullWithdrawal(): Promise<{
-    withdrawal: LenderWithdrawalStatus;
-    transaction: ContractTransaction;
-    receipt: ContractReceipt;
-  }> {
+  async queueFullWithdrawal(): Promise<SubmittedTransactionResult<LenderWithdrawalStatus>> {
     const { status } = this.previewQueueWithdrawal(this.marketBalance);
     assert(status === QueueWithdrawalStatus.Ready, `Cannot queue withdrawal: ${status}`);
 
@@ -719,30 +720,36 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    let transaction: ContractTransaction;
-    if (this.market.version === MarketVersion.V2) {
-      const contract = WildcatMarketV2__factory.connect(this.market.address, this.market.signer);
-      transaction = await contract.queueFullWithdrawal();
-    } else {
-      transaction = await this.market.contract.queueWithdrawal(this.marketBalance.raw);
-    }
-    const receipt = await transaction.wait();
-    const queuedWithdrawalTopic = this.market.contract.interface.getEventTopic("WithdrawalQueued");
+    const { hash, receipt } = await submitPreparedTransactionAndWait(
+      this.market.provider,
+      this.market.signer,
+      this.market.version === MarketVersion.V2
+        ? prepareTransaction({
+            to: this.market.address,
+            abi: wildcatMarketV2Abi,
+            functionName: "queueFullWithdrawal"
+          })
+        : prepareTransaction({
+            to: this.market.address,
+            abi: wildcatMarketAbi,
+            functionName: "queueWithdrawal",
+            args: [this.marketBalance.raw]
+          })
+    );
     const queuedWithdrawalTransaction = toQueueWithdrawalTransaction(
       this.market.underlyingToken,
-      receipt.events!.find((e) => e.topics[0] === queuedWithdrawalTopic) as WithdrawalQueuedEvent
+      receipt,
+      this.market.address
     );
-    if (!queuedWithdrawalTransaction) throw Error("No queued withdrawal event found");
-
     const withdrawal = await LenderWithdrawalStatus.getWithdrawalForLender(
       this.market,
       queuedWithdrawalTransaction.expiry,
       this.account
     );
     return {
-      withdrawal,
-      transaction,
-      receipt
+      hash,
+      receipt,
+      result: withdrawal
     };
   }
 
@@ -784,14 +791,8 @@ export class MarketAccount {
     return { status: RepayStatus.Ready };
   }
 
-  async repay(amount: TokenAmount | bigint | BigNumberish): Promise<ContractTransaction> {
-    const signer = await this.market.signer.getAddress();
-    if (signer.toLowerCase() !== this.account.toLowerCase()) {
-      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    if (!this.isBorrower) throw Error("Only borrower can repay");
-
-    return this.market.contract.repay(toBn(amount));
+  async repay(amount: TokenAmount | bigint | BigNumberish): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, await this.populateRepay(amount));
   }
 
   async populateRepay(amount: TokenAmount | bigint | BigNumberish): Promise<PartialTransaction> {
@@ -809,17 +810,8 @@ export class MarketAccount {
     });
   }
 
-  async repayOutstandingDebt(): Promise<ContractTransaction> {
-    if (this.market.version !== MarketVersion.V1) {
-      throw Error(`Only V1 supports repayOutstandingDebt`);
-    }
-    if (!this.isBorrower) throw Error("Only borrower can repay");
-    const signer = await this.market.signer.getAddress();
-    if (signer.toLowerCase() !== this.account.toLowerCase()) {
-      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-
-    return this.market.contract.repayOutstandingDebt();
+  async repayOutstandingDebt(): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, await this.populateRepayOutstandingDebt());
   }
 
   async populateRepayOutstandingDebt(): Promise<PartialTransaction> {
@@ -839,17 +831,8 @@ export class MarketAccount {
     });
   }
 
-  async repayDelinquentDebt(): Promise<ContractTransaction> {
-    if (this.market.version !== MarketVersion.V1) {
-      throw Error(`Only V1 supports repayDelinquentDebt`);
-    }
-    if (!this.isBorrower) throw Error("Only borrower can repay");
-    const signer = await this.market.signer.getAddress();
-    if (signer.toLowerCase() !== this.account.toLowerCase()) {
-      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-
-    return this.market.contract.repayDelinquentDebt();
+  async repayDelinquentDebt(): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, await this.populateRepayDelinquentDebt());
   }
 
   async populateRepayDelinquentDebt(): Promise<PartialTransaction> {
@@ -880,7 +863,7 @@ export class MarketAccount {
     return minTokenAmount(amount, this.market.borrowableAssets);
   }
 
-  async borrow(amount: TokenAmount): Promise<ContractTransaction> {
+  async borrow(amount: TokenAmount): Promise<TransactionHash> {
     const signer = await this.market.signer.getAddress();
     if (!this.isBorrower) throw Error("Only borrower can borrow");
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
@@ -889,7 +872,15 @@ export class MarketAccount {
     if (amount.gt(this.market.borrowableAssets)) {
       throw Error("Insufficient borrowable assets");
     }
-    return this.market.contract.borrow(amount.raw);
+    return submitPreparedTransaction(
+      this.market.signer,
+      prepareTransaction({
+        to: this.market.address,
+        abi: wildcatMarketAbi,
+        functionName: "borrow",
+        args: [amount.raw]
+      })
+    );
   }
 
   /* -------------------------------------------------------------------------- */
@@ -1299,13 +1290,22 @@ type QueueWithdrawalTransaction = {
 
 const toQueueWithdrawalTransaction = (
   underlyingToken: Token,
-  log: WithdrawalQueuedEvent
-): QueueWithdrawalTransaction => ({
-  transactionHash: log.transactionHash,
-  blockNumber: log.blockNumber,
-  expiry: log.args.expiry.toNumber(),
-  lender: log.args.account,
-  market: log.address,
-  scaledAmount: toRawAmount(log.args.scaledAmount),
-  originalAmount: underlyingToken.getAmount(log.args.normalizedAmount)
-});
+  receipt: TransactionReceipt,
+  marketAddress: string
+): QueueWithdrawalTransaction => {
+  const event = parseEventLogs({
+    abi: wildcatMarketAbi,
+    eventName: "WithdrawalQueued",
+    logs: receipt.logs
+  })[0];
+  if (!event) throw Error("No queued withdrawal event found");
+  return {
+    transactionHash: receipt.transactionHash,
+    blockNumber: Number(receipt.blockNumber),
+    expiry: Number(event.args.expiry),
+    lender: event.args.account,
+    market: marketAddress,
+    scaledAmount: toRawAmount(event.args.scaledAmount),
+    originalAmount: underlyingToken.getAmount(event.args.normalizedAmount)
+  };
+};

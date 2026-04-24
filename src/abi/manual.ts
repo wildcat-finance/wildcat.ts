@@ -2,6 +2,15 @@ import type { Abi } from "viem";
 
 export const wildcat4626WrapperFactoryAbi = [
   {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "market", type: "address" },
+      { indexed: true, internalType: "address", name: "wrapper", type: "address" }
+    ],
+    name: "WrapperDeployed",
+    type: "event"
+  },
+  {
     inputs: [{ internalType: "address", name: "market", type: "address" }],
     name: "createWrapper",
     outputs: [{ internalType: "address", name: "wrapper", type: "address" }],

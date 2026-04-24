@@ -1,7 +1,7 @@
 import { Provider } from "@ethersproject/abstract-provider";
 import { Signer } from "@ethersproject/abstract-signer";
 import { BaseContract } from "ethers";
-import type { Address, Hex } from "viem";
+import type { Address, Hash, Hex, TransactionReceipt } from "viem";
 import { Token, TokenAmount } from "./token";
 import { SubgraphMarketVersion } from "./gql/graphql";
 import { HooksTemplate } from "./access";
@@ -76,6 +76,16 @@ export type SafeTransactionInput = {
 };
 
 export type PartialTransaction = PreparedTransaction;
+
+export type TransactionHash = Hash;
+
+export type SubmittedTransactionResult<T> = {
+  hash: Hash;
+  receipt: TransactionReceipt;
+  result: T;
+};
+
+export type SubmittedDeployment<T> = SubmittedTransactionResult<T>;
 
 export type FeeConfiguration = {
   feeRecipient: string;

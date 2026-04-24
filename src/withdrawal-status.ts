@@ -1,4 +1,3 @@
-import { ContractTransaction } from "ethers";
 import { Market } from "./market";
 import { TokenAmount, toRawAmount } from "./token";
 import {
@@ -19,7 +18,7 @@ import {
   parseWithdrawalRecord
 } from "./utils";
 import { WithdrawalBatch, BatchStatus } from "./withdrawal-batch";
-import { MarketVersion } from "./types";
+import { MarketVersion, TransactionHash } from "./types";
 import {
   SubgraphLenderWithdrawalPropertiesFragment,
   SubgraphWithdrawalExecution,
@@ -63,9 +62,9 @@ export class LenderWithdrawalStatus {
     return this.market.chainId;
   }
 
-  async execute(): Promise<ContractTransaction> {
+  async execute(): Promise<TransactionHash> {
     assert(this.availableWithdrawalAmount.gt(0), "No funds available to withdraw");
-    return this.market.contract.executeWithdrawal(this.lender, this.expiry);
+    return this.market.executeWithdrawal(this);
   }
 
   get expiry(): number {

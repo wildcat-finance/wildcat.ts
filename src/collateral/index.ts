@@ -1,11 +1,11 @@
-import { ContractTransaction } from "ethers";
+import { Signer } from "@ethersproject/abstract-signer";
 import { TokenAmount, toRawAmount } from "../token";
 import {
   CollateralContractDataStructOutput,
   SimpleMarketCollateral,
   SimpleMarketCollateral__factory
 } from "../typechain";
-import { ContractWrapper, PartialTransaction, SignerOrProvider } from "../types";
+import { ContractWrapper, PartialTransaction, SignerOrProvider, TransactionHash } from "../types";
 import { Token } from "../token";
 import {
   getCollateralFactoryContract,
@@ -22,6 +22,7 @@ import { Market } from "../market";
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { assert, prepareTransaction } from "../utils";
 import { simpleMarketCollateralAbi, wildcatCollateralFactoryAbi } from "../abi";
+import { submitPreparedTransaction } from "../internal/viem-write";
 
 export * from "./collateral-events";
 
@@ -65,8 +66,8 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
     return this.market.delinquentDebt.bipMul(this.maxRepaymentBips);
   }
 
-  async deposit(amount: TokenAmount): Promise<ContractTransaction> {
-    return this.contract.deposit(amount.raw);
+  async deposit(amount: TokenAmount): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateDeposit(amount));
   }
 
   populateDeposit(amount: TokenAmount): PartialTransaction {
@@ -78,8 +79,8 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
     });
   }
 
-  async reclaimCollateral(): Promise<ContractTransaction> {
-    return this.contract.reclaimCollateral();
+  async reclaimCollateral(): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateReclaimCollateral());
   }
 
   populateReclaimCollateral(): PartialTransaction {
@@ -174,9 +175,12 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
     provider: SignerOrProvider,
     market: Market,
     collateralAsset: Token
-  ): Promise<ContractTransaction> {
-    const collateralFactory = getCollateralFactoryContract(chainId, provider);
-    return collateralFactory.deployCollateralContract(market.address, collateralAsset.address);
+  ): Promise<TransactionHash> {
+    assert(Signer.isSigner(provider), "Signer is required to create collateral");
+    return submitPreparedTransaction(
+      provider,
+      MarketCollateralV1.populateCreate(chainId, provider, market, collateralAsset)
+    );
   }
 
   static populateCreate(

@@ -7,7 +7,7 @@
   {
     "exportName": "mockERC20FactoryAbi",
     "artifact": "artifacts/contracts/MockERC20Factory.sol/MockERC20Factory.json",
-    "types": ["function"]
+    "types": ["function", "event"]
   },
   {
     "exportName": "mockArchControllerOwnerAbi",
@@ -27,17 +27,17 @@
   {
     "exportName": "wildcatMarketAbi",
     "artifact": "artifacts/contracts/WildcatMarket.sol/WildcatMarket.json",
-    "types": ["function"]
+    "types": ["function", "event"]
   },
   {
     "exportName": "wildcatMarketV2Abi",
     "artifact": "artifacts/contracts/WildcatMarketV2.sol/WildcatMarketV2.json",
-    "types": ["function"]
+    "types": ["function", "event"]
   },
   {
     "exportName": "wildcatMarketControllerAbi",
     "artifact": "artifacts/contracts/WildcatMarketController.sol/WildcatMarketController.json",
-    "types": ["function"]
+    "types": ["function", "event"]
   },
   {
     "exportName": "wildcatMarketControllerFactoryAbi",

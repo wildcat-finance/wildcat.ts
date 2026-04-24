@@ -15,10 +15,11 @@ import {
   PartialTransaction,
   SignerOrProvider,
   FeeConfiguration,
-  MarketParameterConstraints
+  MarketParameterConstraints,
+  SubmittedDeployment,
+  TransactionHash
 } from "./types";
 import { Market } from "./market";
-import { ContractReceipt, ContractTransaction } from "ethers";
 import { Token, TokenAmount } from "./token";
 import {
   assert,
@@ -26,13 +27,14 @@ import {
   parseMarketParameterConstraints,
   prepareTransaction
 } from "./utils";
-import { MarketDeployedEvent } from "./typechain/WildcatMarketController";
 import { SubgraphMinimalControllerDataFragment } from "./gql";
 import {
   mockArchControllerOwnerAbi,
   wildcatMarketControllerAbi,
   wildcatMarketControllerFactoryAbi
 } from "./abi";
+import { submitPreparedTransaction, submitPreparedTransactionAndWait } from "./internal/viem-write";
+import { parseEventLogs } from "viem";
 
 export class MarketController extends ContractWrapper<WildcatMarketController> {
   readonly contractFactory = WildcatMarketController__factory;
@@ -97,8 +99,8 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     this.isDeployed = data.hasDeployedController;
   }
 
-  async authorizeLenders(lenders: string[]): Promise<ContractTransaction> {
-    return this.contract.authorizeLenders(lenders);
+  async authorizeLenders(lenders: string[]): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateAuthorizeLenders(lenders));
   }
 
   populateAuthorizeLenders(lenders: string[]): PartialTransaction {
@@ -113,8 +115,11 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   async authorizeLendersAndUpdateMarkets(
     lenders: string[],
     markets: string[] = this.markets.map((m) => m.address)
-  ): Promise<ContractTransaction> {
-    return this.contract.authorizeLendersAndUpdateMarkets(lenders, markets);
+  ): Promise<TransactionHash> {
+    return submitPreparedTransaction(
+      this.signer,
+      this.populateAuthorizeLendersAndUpdateMarkets(lenders, markets)
+    );
   }
 
   populateAuthorizeLendersAndUpdateMarkets(
@@ -129,8 +134,8 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     });
   }
 
-  async deauthorizeLenders(lenders: string[]): Promise<ContractTransaction> {
-    return this.contract.deauthorizeLenders(lenders);
+  async deauthorizeLenders(lenders: string[]): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateDeauthorizeLenders(lenders));
   }
 
   populateDeauthorizeLenders(lenders: string[]): PartialTransaction {
@@ -145,8 +150,11 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   async deauthorizeLendersAndUpdateMarkets(
     lenders: string[],
     markets: string[] = this.markets.map((m) => m.address)
-  ): Promise<ContractTransaction> {
-    return this.contract.deauthorizeLendersAndUpdateMarkets(lenders, markets);
+  ): Promise<TransactionHash> {
+    return submitPreparedTransaction(
+      this.signer,
+      this.populateDeauthorizeLendersAndUpdateMarkets(lenders, markets)
+    );
   }
 
   populateDeauthorizeLendersAndUpdateMarkets(
@@ -161,15 +169,8 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     });
   }
 
-  async registerBorrower(): Promise<ContractTransaction> {
-    assert(!this.isRegisteredBorrower, "Borrower is already registered");
-    assert(
-      hasDeploymentAddress(this.chainId, "MockArchControllerOwner"),
-      "Can only register borrower on testnet"
-    );
-
-    const archControllerOwner = await getMockArchControllerOwnerContract(this.chainId, this.signer);
-    return archControllerOwner.registerBorrower(this.address);
+  async registerBorrower(): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateRegisterBorrower());
   }
 
   populateRegisterBorrower(): PartialTransaction {
@@ -188,12 +189,19 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     });
   }
 
-  async deployController(): Promise<ContractTransaction> {
+  async deployController(): Promise<TransactionHash> {
     assert(!this.isDeployed, "Controller is already deployed");
 
-    const controllerFactory = await getControllerFactoryContract(this.chainId, this.signer);
+    const controllerFactory = getControllerFactoryContract(this.chainId, this.signer);
     assert(controllerFactory.address === this.controllerFactory, "Controller factory mismatch");
-    return controllerFactory.deployController();
+    return submitPreparedTransaction(
+      this.signer,
+      prepareTransaction({
+        to: controllerFactory.address,
+        abi: wildcatMarketControllerFactoryAbi,
+        functionName: "deployController"
+      })
+    );
   }
 
   /**
@@ -261,57 +269,31 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     });
   }
 
-  async deployMarket(params: MarketParameters): Promise<{
-    market: Market;
-    transaction: ContractTransaction;
-    receipt: ContractReceipt;
-  }> {
+  async deployMarket(params: MarketParameters): Promise<SubmittedDeployment<Market>> {
     if (this.checkParameters(params).length) {
       throw Error("Invalid parameters: " + this.checkParameters(params).join(", "));
     }
-    let transaction: ContractTransaction;
 
     if (!this.isDeployed) {
-      const factory = getControllerFactoryContract(this.chainId, this.signer);
       assert(this.isRegisteredBorrower, "Borrower is not registered");
-      transaction = await factory.deployControllerAndMarket(
-        params.namePrefix,
-        params.symbolPrefix,
-        params.asset.address,
-        params.maxTotalSupply.raw,
-        params.annualInterestBips,
-        params.delinquencyFeeBips,
-        params.withdrawalBatchDuration,
-        params.reserveRatioBips,
-        params.delinquencyGracePeriod
-      );
-    } else {
-      transaction = await this.contract.deployMarket(
-        params.asset.address,
-        params.namePrefix,
-        params.symbolPrefix,
-        params.maxTotalSupply.raw,
-        params.annualInterestBips,
-        params.delinquencyFeeBips,
-        params.withdrawalBatchDuration,
-        params.reserveRatioBips,
-        params.delinquencyGracePeriod
-      );
     }
-    const receipt = await transaction.wait();
+    const { hash, receipt } = await submitPreparedTransactionAndWait(
+      this.provider,
+      this.signer,
+      this.encodeDeployMarket(params)
+    );
 
-    const marketDeployedTopic = this.contract.interface.getEventTopic("MarketDeployed");
-    const log = receipt.logs.find((l) => l.topics[0] === marketDeployedTopic)!;
-    const event: MarketDeployedEvent["args"] = this.contract.interface.decodeEventLog(
-      "MarketDeployed",
-      log.data,
-      log.topics
-    ) as any;
-    const market = await Market.getMarket(this.chainId, event.market, this.provider);
+    const event = parseEventLogs({
+      abi: wildcatMarketControllerAbi,
+      eventName: "MarketDeployed",
+      logs: receipt.logs
+    })[0];
+    assert(event !== undefined, "No MarketDeployed event found");
+    const market = await Market.getMarket(this.chainId, event.args.market, this.provider);
     this.markets.push(market);
     this.isDeployed = true;
     this.isRegisteredBorrower = true;
-    return { market, transaction, receipt };
+    return { hash, receipt, result: market };
   }
 
   /* -------------------------------------------------------------------------- */

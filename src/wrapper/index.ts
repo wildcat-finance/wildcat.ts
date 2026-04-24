@@ -1,6 +1,13 @@
-import { ContractReceipt, ContractTransaction, constants } from "ethers";
+import { constants } from "ethers";
 import { Token, TokenAmount, toRawAmount } from "../token";
-import { ContractWrapper, PartialTransaction, Signer, SignerOrProvider } from "../types";
+import {
+  ContractWrapper,
+  PartialTransaction,
+  Signer,
+  SignerOrProvider,
+  SubmittedDeployment,
+  TransactionHash
+} from "../types";
 import { SupportedChainId, getDeploymentAddress } from "../constants";
 import { assert, prepareTransaction } from "../utils";
 import { wildcat4626WrapperAbi, wildcat4626WrapperFactoryAbi } from "../abi";
@@ -11,7 +18,11 @@ import {
   Wildcat4626WrapperFactory,
   Wildcat4626WrapperFactory__factory
 } from "../typechain";
-import { WrapperDeployedEvent } from "../typechain/Wildcat4626WrapperFactory";
+import {
+  submitPreparedTransaction,
+  submitPreparedTransactionAndWait
+} from "../internal/viem-write";
+import { parseEventLogs } from "viem";
 
 const getErc20Token = async (
   chainId: SupportedChainId,
@@ -64,7 +75,7 @@ export class WrapperFactory extends ContractWrapper<Wildcat4626WrapperFactory> {
     chainId: SupportedChainId,
     signer: Signer,
     market: string
-  ): Promise<{ wrapper: string; receipt: ContractReceipt; transaction: ContractTransaction }> {
+  ): Promise<SubmittedDeployment<string>> {
     const factory = WrapperFactory.getFactory(chainId, signer);
     return factory.createWrapper(market);
   }
@@ -82,18 +93,19 @@ export class WrapperFactory extends ContractWrapper<Wildcat4626WrapperFactory> {
     return this.contract.wrapperForMarket(market);
   }
 
-  async createWrapper(market: string): Promise<{
-    wrapper: string;
-    receipt: ContractReceipt;
-    transaction: ContractTransaction;
-  }> {
-    const transaction = await this.contract.createWrapper(market);
-    const receipt = await transaction.wait();
-    const event = receipt.events?.find((e) => e.event === "WrapperDeployed") as
-      | WrapperDeployedEvent
-      | undefined;
-    const wrapper = event?.args?.wrapper ?? (await this.contract.wrapperForMarket(market));
-    return { wrapper, receipt, transaction };
+  async createWrapper(market: string): Promise<SubmittedDeployment<string>> {
+    const { hash, receipt } = await submitPreparedTransactionAndWait(
+      this.provider,
+      this.signer,
+      this.populateCreateWrapper(market)
+    );
+    const event = parseEventLogs({
+      abi: wildcat4626WrapperFactoryAbi,
+      eventName: "WrapperDeployed",
+      logs: receipt.logs
+    })[0];
+    const wrapper = event?.args.wrapper ?? (await this.contract.wrapperForMarket(market));
+    return { hash, receipt, result: wrapper };
   }
 
   populateCreateWrapper(market: string): PartialTransaction {
@@ -183,19 +195,11 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
     chainId: SupportedChainId,
     signer: Signer,
     marketAddress: string
-  ): Promise<{
-    wrapper: TokenWrapper;
-    receipt: ContractReceipt;
-    transaction: ContractTransaction;
-  }> {
+  ): Promise<SubmittedDeployment<TokenWrapper>> {
     const factory = WrapperFactory.getFactory(chainId, signer);
-    const {
-      wrapper: wrapperAddress,
-      receipt,
-      transaction
-    } = await factory.createWrapper(marketAddress);
+    const { result: wrapperAddress, receipt, hash } = await factory.createWrapper(marketAddress);
     const wrapper = await TokenWrapper.fromAddress(chainId, signer, wrapperAddress);
-    return { wrapper, receipt, transaction };
+    return { result: wrapper, receipt, hash };
   }
 
   async totalAssets(): Promise<TokenAmount> {
@@ -261,8 +265,8 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
     return toRawAmount(await this.contract.sharesPerAssetRay());
   }
 
-  async deposit(assets: TokenAmount, receiver: string): Promise<ContractTransaction> {
-    return this.contract.deposit(assets.raw, receiver);
+  async deposit(assets: TokenAmount, receiver: string): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateDeposit(assets, receiver));
   }
 
   populateDeposit(assets: TokenAmount, receiver: string): PartialTransaction {
@@ -274,8 +278,8 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
     });
   }
 
-  async mint(shares: TokenAmount, receiver: string): Promise<ContractTransaction> {
-    return this.contract.mint(shares.raw, receiver);
+  async mint(shares: TokenAmount, receiver: string): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateMint(shares, receiver));
   }
 
   populateMint(shares: TokenAmount, receiver: string): PartialTransaction {
@@ -287,12 +291,8 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
     });
   }
 
-  async withdraw(
-    assets: TokenAmount,
-    receiver: string,
-    owner: string
-  ): Promise<ContractTransaction> {
-    return this.contract.withdraw(assets.raw, receiver, owner);
+  async withdraw(assets: TokenAmount, receiver: string, owner: string): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateWithdraw(assets, receiver, owner));
   }
 
   populateWithdraw(assets: TokenAmount, receiver: string, owner: string): PartialTransaction {
@@ -304,8 +304,8 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
     });
   }
 
-  async redeem(shares: TokenAmount, receiver: string, owner: string): Promise<ContractTransaction> {
-    return this.contract.redeem(shares.raw, receiver, owner);
+  async redeem(shares: TokenAmount, receiver: string, owner: string): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateRedeem(shares, receiver, owner));
   }
 
   populateRedeem(shares: TokenAmount, receiver: string, owner: string): PartialTransaction {
@@ -317,8 +317,8 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
     });
   }
 
-  async sweep(token: string, to: string): Promise<ContractTransaction> {
-    return this.contract.sweep(token, to);
+  async sweep(token: string, to: string): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateSweep(token, to));
   }
 
   populateSweep(token: string, to: string): PartialTransaction {

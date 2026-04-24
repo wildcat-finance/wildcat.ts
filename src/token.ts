@@ -1,13 +1,13 @@
-import { BigNumber, BigNumberish, ContractTransaction } from "ethers";
+import { BigNumber, BigNumberish } from "ethers";
 import type { Abi, Address } from "viem";
-import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "./abi";
+import { iERC20Abi, marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "./abi";
 import {
   IERC20,
   IERC20__factory,
   TokenMetadataStructOutput,
   TokenMetadataV2_5StructOutput
 } from "./typechain";
-import { ContractWrapper, SignerOrProvider } from "./types";
+import { ContractWrapper, SignerOrProvider, TransactionHash } from "./types";
 import { SupportedChainId, getDeploymentAddress, hasDeploymentAddress } from "./constants";
 import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
 import { readViemContract } from "./internal/viem-read";
@@ -16,11 +16,13 @@ import {
   formatFixedBigint,
   mulDivBigint,
   parseFixedBigint,
+  prepareTransaction,
   rayDivBigint,
   rayMulBigint,
   toBigint
 } from "./utils";
 import { SubgraphMarketDataFragment, SubgraphToken } from "./gql/graphql";
+import { submitPreparedTransaction } from "./internal/viem-write";
 
 type RhsAmount = BigNumberish | bigint | TokenAmount;
 type TokenMetadataOutput = TokenMetadataStructOutput | TokenMetadataV2_5StructOutput;
@@ -182,11 +184,18 @@ export class Token extends ContractWrapper<IERC20> {
     return this.address;
   }
 
-  async faucet(): Promise<ContractTransaction> {
+  async faucet(): Promise<TransactionHash> {
     if (!this.isMock) {
       throw Error("Can not use faucet on non-mock token");
     }
-    return IERC20__factory.connect(this.address, this.signer).faucet();
+    return submitPreparedTransaction(
+      this.signer,
+      prepareTransaction({
+        to: this.address,
+        abi: iERC20Abi,
+        functionName: "faucet"
+      })
+    );
   }
 
   getAmount(amount: RhsAmount): TokenAmount {
