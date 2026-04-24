@@ -20,7 +20,6 @@ import type {
   WithdrawalBatchDataWithLenderStatusV2_5StructOutput
 } from "../typechain";
 import type { SignerOrProvider } from "../types";
-import { toEthersCompatibleStruct } from "./ethers-compat";
 import { getViemPublicClientFromEthers } from "./ethers-viem";
 import { readViemContract } from "./viem-read";
 
@@ -32,14 +31,13 @@ const readMarketLens = async <Result>(
   functionName: string,
   args: readonly unknown[]
 ): Promise<Result> => {
-  const result = await readViemContract<unknown>(
+  return readViemContract<Result>(
     getViemPublicClientFromEthers(provider),
     getDeploymentAddress(chainId, deploymentName),
     abi,
     functionName,
     args
   );
-  return toEthersCompatibleStruct<Result>(result);
 };
 
 const getLatestLensTarget = (

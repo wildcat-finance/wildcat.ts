@@ -37,7 +37,13 @@ import {
   TransferAccess,
   WithdrawalAccess
 } from "../types";
-import { assert, encodeHooksConfig, parseFeeConfigurationV2, prepareTransaction } from "../utils";
+import {
+  assert,
+  encodeHooksConfig,
+  parseFeeConfigurationV2,
+  prepareTransaction,
+  toNumber
+} from "../utils";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
@@ -322,7 +328,7 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     this.enabled = data.enabled;
     this.index = data.index;
     this.name = data.name;
-    this.totalMarkets = data.totalMarkets.toNumber();
+    this.totalMarkets = toNumber(data.totalMarkets);
     this.signerAddress = signerAddress;
     this.isRegisteredBorrower = isRegisteredBorrower;
     this.hooksFactory = hooksFactory;
@@ -344,7 +350,7 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
       hooksFactory,
       index: data.index,
       name: data.name,
-      totalMarkets: data.totalMarkets.toNumber(),
+      totalMarkets: toNumber(data.totalMarkets),
       signerAddress,
       isRegisteredBorrower
     });

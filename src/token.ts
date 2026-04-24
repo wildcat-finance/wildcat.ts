@@ -1,4 +1,3 @@
-import { BigNumber, BigNumberish } from "ethers";
 import type { Abi, Address } from "viem";
 import { iERC20Abi, marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "./abi";
 import {
@@ -19,12 +18,14 @@ import {
   prepareTransaction,
   rayDivBigint,
   rayMulBigint,
-  toBigint
+  toBigint,
+  toNumber,
+  type BigintNumberish
 } from "./utils";
 import { SubgraphMarketDataFragment, SubgraphToken } from "./gql/graphql";
 import { submitPreparedTransaction } from "./internal/viem-write";
 
-type RhsAmount = BigNumberish | bigint | TokenAmount;
+type RhsAmount = BigintNumberish | TokenAmount;
 type TokenMetadataOutput = TokenMetadataStructOutput | TokenMetadataV2_5StructOutput;
 type ViemTokenMetadataObject = {
   token: string;
@@ -51,20 +52,7 @@ export const toRawAmount = (amount: RhsAmount): bigint => {
   if (amount instanceof TokenAmount) {
     return amount.raw;
   }
-  if (typeof amount === "bigint" || typeof amount === "number" || typeof amount === "string") {
-    return toBigint(amount);
-  }
-  if (BigNumber.isBigNumber(amount)) {
-    return BigInt(amount.toString());
-  }
-  return BigInt(BigNumber.from(amount).toString());
-};
-
-export const toBn = (amount: RhsAmount): BigNumber => {
-  if (amount instanceof TokenAmount || typeof amount === "bigint") {
-    return BigNumber.from(toRawAmount(amount).toString());
-  }
-  return BigNumber.from(amount);
+  return toBigint(amount);
 };
 
 export const maxTokenAmount = (...amounts: TokenAmount[]): TokenAmount => {
@@ -216,7 +204,7 @@ export class Token extends ContractWrapper<IERC20> {
       metadata.token,
       metadata.name,
       metadata.symbol,
-      metadata.decimals.toNumber(),
+      toNumber(metadata.decimals),
       metadata.isMock,
       provider
     );

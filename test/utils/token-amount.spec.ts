@@ -1,7 +1,7 @@
 import { expect } from "chai";
-import { BigNumber, providers } from "ethers";
+import { providers } from "ethers";
 import { SupportedChainId } from "../../src/constants";
-import { Token, toBn, toRawAmount } from "../../src/token";
+import { Token, toRawAmount } from "../../src/token";
 import { BIP_BIGINT, RAY_BIGINT } from "../../src/utils";
 
 const provider = new providers.JsonRpcProvider();
@@ -16,6 +16,10 @@ const token = new Token(
   provider
 );
 
+const legacyBigNumberLike = (value: bigint | number | string): { toString(): string } => ({
+  toString: () => value.toString()
+});
+
 describe("TokenAmount bigint model", () => {
   it("stores raw amounts as bigint while preserving parse and format ergonomics", () => {
     const amount = token.parseAmount("123.4567");
@@ -25,14 +29,14 @@ describe("TokenAmount bigint model", () => {
     expect(amount.format(2, true)).to.equal("123.45 mUSD");
   });
 
-  it("keeps arithmetic and comparisons compatible with legacy BigNumberish inputs", () => {
+  it("keeps arithmetic and comparisons compatible with bigint-ish inputs", () => {
     const amount = token.getAmount(1_000n);
 
-    expect(amount.gt(BigNumber.from(999))).to.equal(true);
+    expect(amount.gt(legacyBigNumberLike(999))).to.equal(true);
     expect(amount.gte("1000")).to.equal(true);
     expect(amount.lt(1_001)).to.equal(true);
     expect(amount.eq(token.getAmount(1_000))).to.equal(true);
-    expect(amount.add(BigNumber.from(5)).raw).to.equal(1_005n);
+    expect(amount.add(legacyBigNumberLike(5)).raw).to.equal(1_005n);
     expect(amount.sub("5").raw).to.equal(995n);
     expect(amount.mul(3).raw).to.equal(3_000n);
     expect(amount.div(4).raw).to.equal(250n);
@@ -49,10 +53,10 @@ describe("TokenAmount bigint model", () => {
     expect(amount.mulDiv(3, 2).raw).to.equal(1_500_000n);
   });
 
-  it("bridges bigint raw values back to BigNumber for transitional call sites", () => {
+  it("normalizes BigNumber-like objects structurally without ethers runtime helpers", () => {
     const amount = token.getAmount(42n);
 
-    expect(toRawAmount(BigNumber.from(42))).to.equal(42n);
-    expect(toBn(amount).eq(42)).to.equal(true);
+    expect(toRawAmount(legacyBigNumberLike(42))).to.equal(42n);
+    expect(toRawAmount(amount)).to.equal(42n);
   });
 });

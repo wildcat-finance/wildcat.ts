@@ -1,6 +1,6 @@
 import { formatUnits, parseUnits } from "viem";
 
-export type BigintNumberish = bigint | number | string;
+export type BigintNumberish = bigint | number | string | { toString(): string };
 
 export const MAX_UINT256_BIGINT = (1n << 256n) - 1n;
 export const RAY_BIGINT = 10n ** 27n;
@@ -20,7 +20,16 @@ export const toBigint = (value: BigintNumberish): bigint => {
     }
     return BigInt(value);
   }
-  return BigInt(value);
+  return BigInt(value.toString());
+};
+
+export const toNumber = (value: BigintNumberish): number => {
+  const raw = toBigint(value);
+  const result = Number(raw);
+  if (!Number.isSafeInteger(result) || BigInt(result) !== raw) {
+    throw new Error(`Can not safely convert bigint to number: ${raw}`);
+  }
+  return result;
 };
 
 const assertUint256 = (value: bigint, label: string): void => {

@@ -12,10 +12,9 @@ import {
   PartialTransaction,
   SignerOrProvider
 } from "../types";
-import { BigNumber } from "ethers";
-import type { PopulatedTransaction } from "ethers";
 import { zeroAddress, type Address, type Hex } from "viem";
 import { Token, toRawAmount } from "../token";
+import { toNumber, type BigintNumberish } from "./bigint";
 
 import {
   WithdrawalRequestRecord,
@@ -43,7 +42,7 @@ export const parseMarketParameterConstraints = (
   constraints: MarketParameterConstraintsStructOutput
 ): MarketParameterConstraints =>
   Object.fromEntries(
-    Object.entries(constraints).map(([k, v]) => [k, BigNumber.from(v).toNumber()])
+    Object.entries(constraints).map(([k, v]) => [k, toNumber(v)])
   ) as MarketParameterConstraints;
 
 export const parseFeeConfiguration = (
@@ -127,11 +126,17 @@ const test = (batch: WithdrawalBatch, records: SubgraphWithdrawalRequestProperti
   const x = records.map((r) => parseWithdrawalRecord(batch, r));
 };
 
+type PopulatedTransactionLike = {
+  to?: string;
+  data?: string;
+  value?: BigintNumberish;
+};
+
 export const removeUnusedTxFields = ({
   to,
   data,
-  value = BigNumber.from(0)
-}: PopulatedTransaction): PartialTransaction => {
+  value = 0n
+}: PopulatedTransactionLike): PartialTransaction => {
   assert(to !== undefined, "to is undefined");
   assert(data !== undefined, "data is undefined");
   return {

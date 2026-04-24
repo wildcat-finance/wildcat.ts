@@ -1,4 +1,3 @@
-import { BigNumberish } from "ethers";
 import { Token, TokenAmount, minTokenAmount, toRawAmount } from "../token";
 import { Market } from "../market";
 import {
@@ -17,7 +16,8 @@ import {
   parseSubgraphLenderHooksAccess,
   rayMulBigint,
   SECONDS_IN_365_DAYS,
-  prepareTransaction
+  prepareTransaction,
+  type BigintNumberish
 } from "../utils";
 import { SupportedChainId, hasDeploymentAddress } from "../constants";
 import {
@@ -791,11 +791,11 @@ export class MarketAccount {
     return { status: RepayStatus.Ready };
   }
 
-  async repay(amount: TokenAmount | bigint | BigNumberish): Promise<TransactionHash> {
+  async repay(amount: TokenAmount | BigintNumberish): Promise<TransactionHash> {
     return submitPreparedTransaction(this.market.signer, await this.populateRepay(amount));
   }
 
-  async populateRepay(amount: TokenAmount | bigint | BigNumberish): Promise<PartialTransaction> {
+  async populateRepay(amount: TokenAmount | BigintNumberish): Promise<PartialTransaction> {
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);

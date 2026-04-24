@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers";
 import {
   IFixedTermHooks__factory,
   IOpenTermHooks__factory,
@@ -62,7 +61,8 @@ import {
   formatFixedBigint,
   prepareTransaction,
   rayDivBigint,
-  rayMulBigint
+  rayMulBigint,
+  toNumber
 } from "./utils";
 import { hooksTemplateFromSubgraph } from "./access";
 import { wildcatMarketAbi } from "./abi";
@@ -127,13 +127,13 @@ const toUnifiedMarketDataV2 = (
     market: data,
     commitmentFeeBips: {
       isPresent: false,
-      value: BigNumber.from(0)
+      value: 0n
     },
     drawnAmount: {
       isPresent: false,
-      value: BigNumber.from(0)
+      value: 0n
     }
-  };
+  } as unknown as MarketDataV2_5StructOutput;
 };
 
 export type MarketArgs = {
@@ -782,16 +782,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
       );
     }
     this.feeRecipient = baseData.feeRecipient;
-    this.protocolFeeBips = baseData.protocolFeeBips.toNumber();
-    this.delinquencyFeeBips = baseData.delinquencyFeeBips.toNumber();
-    this.delinquencyGracePeriod = baseData.delinquencyGracePeriod.toNumber();
-    this.withdrawalBatchDuration = baseData.withdrawalBatchDuration.toNumber();
-    this.reserveRatioBips = baseData.reserveRatioBips.toNumber();
-    this.annualInterestBips = baseData.annualInterestBips.toNumber();
+    this.protocolFeeBips = toNumber(baseData.protocolFeeBips);
+    this.delinquencyFeeBips = toNumber(baseData.delinquencyFeeBips);
+    this.delinquencyGracePeriod = toNumber(baseData.delinquencyGracePeriod);
+    this.withdrawalBatchDuration = toNumber(baseData.withdrawalBatchDuration);
+    this.reserveRatioBips = toNumber(baseData.reserveRatioBips);
+    this.annualInterestBips = toNumber(baseData.annualInterestBips);
     this.temporaryReserveRatio = baseData.temporaryReserveRatio;
-    this.originalAnnualInterestBips = baseData.originalAnnualInterestBips.toNumber();
-    this.originalReserveRatioBips = baseData.originalReserveRatioBips.toNumber();
-    this.temporaryReserveRatioExpiry = baseData.temporaryReserveRatioExpiry.toNumber();
+    this.originalAnnualInterestBips = toNumber(baseData.originalAnnualInterestBips);
+    this.originalReserveRatioBips = toNumber(baseData.originalReserveRatioBips);
+    this.temporaryReserveRatioExpiry = toNumber(baseData.temporaryReserveRatioExpiry);
     this.isClosed = baseData.isClosed;
     this.scaleFactor = nextScaleFactor;
     this.totalSupply = this.marketToken.getAmount(baseData.totalSupply);
@@ -803,10 +803,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
       baseData.normalizedUnclaimedWithdrawals
     );
     this.scaledPendingWithdrawals = nextScaledPendingWithdrawals;
-    this.pendingWithdrawalExpiry = baseData.pendingWithdrawalExpiry.toNumber();
+    this.pendingWithdrawalExpiry = toNumber(baseData.pendingWithdrawalExpiry);
     this.isDelinquent = baseData.isDelinquent;
-    this.timeDelinquent = baseData.timeDelinquent.toNumber();
-    this.lastInterestAccruedTimestamp = baseData.lastInterestAccruedTimestamp.toNumber();
+    this.timeDelinquent = toNumber(baseData.timeDelinquent);
+    this.lastInterestAccruedTimestamp = toNumber(baseData.lastInterestAccruedTimestamp);
     this.unpaidWithdrawalBatchExpiries = baseData.unpaidWithdrawalBatchExpiries;
     this.coverageLiquidity = this.underlyingToken.getAmount(baseData.coverageLiquidity);
     if ("hooksFactory" in baseData) {
@@ -826,7 +826,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     }
     if ("market" in data) {
       this.commitmentFeeBips = data.commitmentFeeBips.isPresent
-        ? data.commitmentFeeBips.value.toNumber()
+        ? toNumber(data.commitmentFeeBips.value)
         : undefined;
       this.drawnAmount = data.drawnAmount.isPresent
         ? this.underlyingToken.getAmount(data.drawnAmount.value)
@@ -1002,16 +1002,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
       borrower: data.borrower,
       controller: data.controller,
       feeRecipient: data.feeRecipient,
-      protocolFeeBips: data.protocolFeeBips.toNumber(),
-      delinquencyFeeBips: data.delinquencyFeeBips.toNumber(),
-      delinquencyGracePeriod: data.delinquencyGracePeriod.toNumber(),
-      withdrawalBatchDuration: data.withdrawalBatchDuration.toNumber(), // @todo add withdrawalBatchDuration to lens output
-      reserveRatioBips: data.reserveRatioBips.toNumber(),
-      annualInterestBips: data.annualInterestBips.toNumber(),
+      protocolFeeBips: toNumber(data.protocolFeeBips),
+      delinquencyFeeBips: toNumber(data.delinquencyFeeBips),
+      delinquencyGracePeriod: toNumber(data.delinquencyGracePeriod),
+      withdrawalBatchDuration: toNumber(data.withdrawalBatchDuration), // @todo add withdrawalBatchDuration to lens output
+      reserveRatioBips: toNumber(data.reserveRatioBips),
+      annualInterestBips: toNumber(data.annualInterestBips),
       temporaryReserveRatio: data.temporaryReserveRatio,
-      originalAnnualInterestBips: data.originalAnnualInterestBips.toNumber(),
-      originalReserveRatioBips: data.originalReserveRatioBips.toNumber(),
-      temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry.toNumber(),
+      originalAnnualInterestBips: toNumber(data.originalAnnualInterestBips),
+      originalReserveRatioBips: toNumber(data.originalReserveRatioBips),
+      temporaryReserveRatioExpiry: toNumber(data.temporaryReserveRatioExpiry),
       isClosed: data.isClosed,
       scaleFactor: toRawAmount(data.scaleFactor),
       totalSupply: marketToken.getAmount(data.totalSupply),
@@ -1023,10 +1023,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
         data.normalizedUnclaimedWithdrawals
       ),
       scaledPendingWithdrawals: toRawAmount(data.scaledPendingWithdrawals),
-      pendingWithdrawalExpiry: data.pendingWithdrawalExpiry.toNumber(),
+      pendingWithdrawalExpiry: toNumber(data.pendingWithdrawalExpiry),
       isDelinquent: data.isDelinquent,
-      timeDelinquent: data.timeDelinquent.toNumber(),
-      lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp.toNumber(),
+      timeDelinquent: toNumber(data.timeDelinquent),
+      lastInterestAccruedTimestamp: toNumber(data.lastInterestAccruedTimestamp),
       unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
       totalBorrowed: undefined,
@@ -1097,16 +1097,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
       underlyingToken: underlyingToken,
       borrower: data.borrower,
       feeRecipient: data.feeRecipient,
-      protocolFeeBips: data.protocolFeeBips.toNumber(),
-      delinquencyFeeBips: data.delinquencyFeeBips.toNumber(),
-      delinquencyGracePeriod: data.delinquencyGracePeriod.toNumber(),
-      withdrawalBatchDuration: data.withdrawalBatchDuration.toNumber(), // @todo add withdrawalBatchDuration to lens output
-      reserveRatioBips: data.reserveRatioBips.toNumber(),
-      annualInterestBips: data.annualInterestBips.toNumber(),
+      protocolFeeBips: toNumber(data.protocolFeeBips),
+      delinquencyFeeBips: toNumber(data.delinquencyFeeBips),
+      delinquencyGracePeriod: toNumber(data.delinquencyGracePeriod),
+      withdrawalBatchDuration: toNumber(data.withdrawalBatchDuration), // @todo add withdrawalBatchDuration to lens output
+      reserveRatioBips: toNumber(data.reserveRatioBips),
+      annualInterestBips: toNumber(data.annualInterestBips),
       temporaryReserveRatio: data.temporaryReserveRatio,
-      originalAnnualInterestBips: data.originalAnnualInterestBips.toNumber(),
-      originalReserveRatioBips: data.originalReserveRatioBips.toNumber(),
-      temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry.toNumber(),
+      originalAnnualInterestBips: toNumber(data.originalAnnualInterestBips),
+      originalReserveRatioBips: toNumber(data.originalReserveRatioBips),
+      temporaryReserveRatioExpiry: toNumber(data.temporaryReserveRatioExpiry),
       isClosed: data.isClosed,
       scaleFactor: toRawAmount(data.scaleFactor),
       totalSupply: marketToken.getAmount(data.totalSupply),
@@ -1118,10 +1118,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
         data.normalizedUnclaimedWithdrawals
       ),
       scaledPendingWithdrawals: toRawAmount(data.scaledPendingWithdrawals),
-      pendingWithdrawalExpiry: data.pendingWithdrawalExpiry.toNumber(),
+      pendingWithdrawalExpiry: toNumber(data.pendingWithdrawalExpiry),
       isDelinquent: data.isDelinquent,
-      timeDelinquent: data.timeDelinquent.toNumber(),
-      lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp.toNumber(),
+      timeDelinquent: toNumber(data.timeDelinquent),
+      lastInterestAccruedTimestamp: toNumber(data.lastInterestAccruedTimestamp),
       unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
       signerAddress
@@ -1183,16 +1183,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
       underlyingToken,
       borrower: data.borrower,
       feeRecipient: data.feeRecipient,
-      protocolFeeBips: data.protocolFeeBips.toNumber(),
-      delinquencyFeeBips: data.delinquencyFeeBips.toNumber(),
-      delinquencyGracePeriod: data.delinquencyGracePeriod.toNumber(),
-      withdrawalBatchDuration: data.withdrawalBatchDuration.toNumber(),
-      reserveRatioBips: data.reserveRatioBips.toNumber(),
-      annualInterestBips: data.annualInterestBips.toNumber(),
+      protocolFeeBips: toNumber(data.protocolFeeBips),
+      delinquencyFeeBips: toNumber(data.delinquencyFeeBips),
+      delinquencyGracePeriod: toNumber(data.delinquencyGracePeriod),
+      withdrawalBatchDuration: toNumber(data.withdrawalBatchDuration),
+      reserveRatioBips: toNumber(data.reserveRatioBips),
+      annualInterestBips: toNumber(data.annualInterestBips),
       temporaryReserveRatio: data.temporaryReserveRatio,
-      originalAnnualInterestBips: data.originalAnnualInterestBips.toNumber(),
-      originalReserveRatioBips: data.originalReserveRatioBips.toNumber(),
-      temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry.toNumber(),
+      originalAnnualInterestBips: toNumber(data.originalAnnualInterestBips),
+      originalReserveRatioBips: toNumber(data.originalReserveRatioBips),
+      temporaryReserveRatioExpiry: toNumber(data.temporaryReserveRatioExpiry),
       isClosed: data.isClosed,
       scaleFactor: toRawAmount(data.scaleFactor),
       totalSupply: marketToken.getAmount(data.totalSupply),
@@ -1204,14 +1204,14 @@ export class Market extends ContractWrapper<WildcatMarket> {
         data.normalizedUnclaimedWithdrawals
       ),
       scaledPendingWithdrawals: toRawAmount(data.scaledPendingWithdrawals),
-      pendingWithdrawalExpiry: data.pendingWithdrawalExpiry.toNumber(),
+      pendingWithdrawalExpiry: toNumber(data.pendingWithdrawalExpiry),
       isDelinquent: data.isDelinquent,
-      timeDelinquent: data.timeDelinquent.toNumber(),
-      lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp.toNumber(),
+      timeDelinquent: toNumber(data.timeDelinquent),
+      lastInterestAccruedTimestamp: toNumber(data.lastInterestAccruedTimestamp),
       unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
       commitmentFeeBips: commitmentFeeBips.isPresent
-        ? commitmentFeeBips.value.toNumber()
+        ? toNumber(commitmentFeeBips.value)
         : undefined,
       drawnAmount: drawnAmount.isPresent ? underlyingToken.getAmount(drawnAmount.value) : undefined,
       signerAddress
