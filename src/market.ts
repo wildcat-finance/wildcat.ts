@@ -1,6 +1,4 @@
 import {
-  IFixedTermHooks__factory,
-  IOpenTermHooks__factory,
   MarketDataBaseV2_5StructOutput,
   MarketDataStructOutput,
   MarketDataV2_5StructOutput,
@@ -65,9 +63,11 @@ import {
   toNumber
 } from "./utils";
 import { hooksTemplateFromSubgraph } from "./access";
-import { wildcatMarketAbi } from "./abi";
+import { iFixedTermHooksAbi, iOpenTermHooksAbi, wildcatMarketAbi } from "./abi";
 import { submitPreparedTransaction } from "./internal/viem-write";
 import { getEthersSignerAddress } from "./internal/ethers-signer";
+import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
+import { readViemContract } from "./internal/viem-read";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -110,6 +110,20 @@ export type RevolvingCurrentAprMetrics = {
   protocolAprBips: number;
   penaltyAprBips: number;
   effectiveLenderAprBips: number;
+};
+
+type HookedMarketResult = {
+  allowForceBuyBacks?: boolean;
+};
+
+const getAllowForceBuyBacksFromHookedMarket = (
+  hookedMarket: HookedMarketResult | readonly unknown[],
+  allowForceBuyBacksIndex: number
+): boolean => {
+  return (
+    (hookedMarket as HookedMarketResult).allowForceBuyBacks ??
+    Boolean((hookedMarket as readonly unknown[])[allowForceBuyBacksIndex])
+  );
 };
 
 const hasUnifiedLatestLensForDirectReads = (chainId: SupportedChainId): boolean => {
@@ -1226,18 +1240,24 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const marketData = "market" in data ? data.market : data;
 
     if (marketData.hooksConfig.kind === 1) {
-      const hookedMarket = await IOpenTermHooks__factory.connect(
+      const hookedMarket = await readViemContract<HookedMarketResult | readonly unknown[]>(
+        getViemPublicClientFromEthers(provider),
         marketData.hooksConfig.hooksAddress,
-        provider
-      ).getHookedMarket(marketAddress);
-      return hookedMarket.allowForceBuyBacks;
+        iOpenTermHooksAbi,
+        "getHookedMarket",
+        [marketAddress]
+      );
+      return getAllowForceBuyBacksFromHookedMarket(hookedMarket, 5);
     }
     if (marketData.hooksConfig.kind === 2) {
-      const hookedMarket = await IFixedTermHooks__factory.connect(
+      const hookedMarket = await readViemContract<HookedMarketResult | readonly unknown[]>(
+        getViemPublicClientFromEthers(provider),
         marketData.hooksConfig.hooksAddress,
-        provider
-      ).getHookedMarket(marketAddress);
-      return hookedMarket.allowForceBuyBacks;
+        iFixedTermHooksAbi,
+        "getHookedMarket",
+        [marketAddress]
+      );
+      return getAllowForceBuyBacksFromHookedMarket(hookedMarket, 9);
     }
     return false;
   }

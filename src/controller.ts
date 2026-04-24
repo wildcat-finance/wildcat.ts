@@ -35,6 +35,8 @@ import {
 } from "./abi";
 import { submitPreparedTransaction, submitPreparedTransactionAndWait } from "./internal/viem-write";
 import { parseEventLogs } from "viem";
+import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
+import { readViemContract } from "./internal/viem-read";
 
 export class MarketController extends ContractWrapper<WildcatMarketController> {
   readonly contractFactory = WildcatMarketController__factory;
@@ -71,7 +73,12 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
 
   async update(): Promise<void> {
     const [lenders, data] = await Promise.all([
-      this.contract["getAuthorizedLenders()"](),
+      readViemContract<string[]>(
+        getViemPublicClientFromEthers(this.provider),
+        this.address,
+        wildcatMarketControllerAbi,
+        "getAuthorizedLenders"
+      ),
       getLegacyControllerDataForBorrower(this.chainId, this.provider, this.address)
     ]);
     this.authorizedLenders = lenders;

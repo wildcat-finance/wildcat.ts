@@ -12,6 +12,8 @@ import { assert, prepareTransaction } from "./utils";
 import { mockERC20FactoryAbi } from "./abi";
 import { submitPreparedTransactionAndWait } from "./internal/viem-write";
 import { parseEventLogs } from "viem";
+import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
+import { readViemContract } from "./internal/viem-read";
 
 export class TokenFactory extends ContractWrapper<MockERC20Factory> {
   readonly contractFactory = MockERC20Factory__factory;
@@ -100,6 +102,12 @@ export class TokenFactory extends ContractWrapper<MockERC20Factory> {
   }
 
   async getNextTokenAddress(address: string): Promise<string> {
-    return this.contract.getNextTokenAddress(address);
+    return readViemContract<string>(
+      getViemPublicClientFromEthers(this.provider),
+      this.address,
+      mockERC20FactoryAbi,
+      "getNextTokenAddress",
+      [address]
+    );
   }
 }

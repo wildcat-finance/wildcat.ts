@@ -72,7 +72,7 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
 
   populateDeposit(amount: TokenAmount): PartialTransaction {
     return prepareTransaction({
-      to: this.contract.address,
+      to: this.address,
       abi: simpleMarketCollateralAbi,
       functionName: "deposit",
       args: [amount.raw]
@@ -85,7 +85,7 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
 
   populateReclaimCollateral(): PartialTransaction {
     return prepareTransaction({
-      to: this.contract.address,
+      to: this.address,
       abi: simpleMarketCollateralAbi,
       functionName: "reclaimCollateral"
     });

@@ -8,10 +8,9 @@ import {
   TransactionHash
 } from "../types";
 import { SupportedChainId, getDeploymentAddress } from "../constants";
-import { assert, prepareTransaction } from "../utils";
-import { wildcat4626WrapperAbi, wildcat4626WrapperFactoryAbi } from "../abi";
+import { assert, prepareTransaction, toNumber } from "../utils";
+import { iERC20Abi, wildcat4626WrapperAbi, wildcat4626WrapperFactoryAbi } from "../abi";
 import {
-  IERC20__factory,
   Wildcat4626Wrapper,
   Wildcat4626Wrapper__factory,
   Wildcat4626WrapperFactory,
@@ -22,19 +21,21 @@ import {
   submitPreparedTransactionAndWait
 } from "../internal/viem-write";
 import { parseEventLogs, zeroAddress } from "viem";
+import { getViemPublicClientFromEthers } from "../internal/ethers-viem";
+import { readViemContract } from "../internal/viem-read";
 
 const getErc20Token = async (
   chainId: SupportedChainId,
   provider: SignerOrProvider,
   address: string
 ): Promise<Token> => {
-  const erc20 = IERC20__factory.connect(address, provider);
+  const publicClient = getViemPublicClientFromEthers(provider);
   const [name, symbol, decimals] = await Promise.all([
-    erc20.name(),
-    erc20.symbol(),
-    erc20.decimals()
+    readViemContract<string>(publicClient, address, iERC20Abi, "name"),
+    readViemContract<string>(publicClient, address, iERC20Abi, "symbol"),
+    readViemContract<bigint | number>(publicClient, address, iERC20Abi, "decimals")
   ]);
-  return new Token(chainId, address, name, symbol, decimals, false, provider);
+  return new Token(chainId, address, name, symbol, toNumber(decimals), false, provider);
 };
 
 export class WrapperFactory extends ContractWrapper<Wildcat4626WrapperFactory> {
@@ -89,7 +90,13 @@ export class WrapperFactory extends ContractWrapper<Wildcat4626WrapperFactory> {
   }
 
   async getWrapperForMarket(market: string): Promise<string> {
-    return this.contract.wrapperForMarket(market);
+    return readViemContract<string>(
+      getViemPublicClientFromEthers(this.provider),
+      this.address,
+      wildcat4626WrapperFactoryAbi,
+      "wrapperForMarket",
+      [market]
+    );
   }
 
   async createWrapper(market: string): Promise<SubmittedDeployment<string>> {
@@ -103,7 +110,7 @@ export class WrapperFactory extends ContractWrapper<Wildcat4626WrapperFactory> {
       eventName: "WrapperDeployed",
       logs: receipt.logs
     })[0];
-    const wrapper = event?.args.wrapper ?? (await this.contract.wrapperForMarket(market));
+    const wrapper = event?.args.wrapper ?? (await this.getWrapperForMarket(market));
     return { hash, receipt, result: wrapper };
   }
 
@@ -152,16 +159,24 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
     provider: SignerOrProvider,
     address: string
   ): Promise<TokenWrapper> {
-    const wrapper = Wildcat4626Wrapper__factory.connect(address, provider);
+    const publicClient = getViemPublicClientFromEthers(provider);
     const [marketAddress, name, symbol, decimals] = await Promise.all([
-      wrapper.market(),
-      wrapper.name(),
-      wrapper.symbol(),
-      wrapper.decimals()
+      readViemContract<string>(publicClient, address, wildcat4626WrapperAbi, "market"),
+      readViemContract<string>(publicClient, address, wildcat4626WrapperAbi, "name"),
+      readViemContract<string>(publicClient, address, wildcat4626WrapperAbi, "symbol"),
+      readViemContract<bigint | number>(publicClient, address, wildcat4626WrapperAbi, "decimals")
     ]);
 
     const [marketToken] = await Promise.all([getErc20Token(chainId, provider, marketAddress)]);
-    const shareToken = new Token(chainId, address, name, symbol, decimals, false, provider);
+    const shareToken = new Token(
+      chainId,
+      address,
+      name,
+      symbol,
+      toNumber(decimals),
+      false,
+      provider
+    );
 
     return new TokenWrapper({
       chainId,
@@ -198,67 +213,80 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
     return { result: wrapper, receipt, hash };
   }
 
+  private readWrapper<Result>(
+    functionName: string,
+    args: readonly unknown[] = []
+  ): Promise<Result> {
+    return readViemContract<Result>(
+      getViemPublicClientFromEthers(this.provider),
+      this.address,
+      wildcat4626WrapperAbi,
+      functionName,
+      args
+    );
+  }
+
   async totalAssets(): Promise<TokenAmount> {
-    const assets = await this.contract.totalAssets();
+    const assets = await this.readWrapper<bigint>("totalAssets");
     return this.marketToken.getAmount(assets);
   }
 
   async convertToShares(assets: TokenAmount): Promise<TokenAmount> {
-    const shares = await this.contract.convertToShares(assets.raw);
+    const shares = await this.readWrapper<bigint>("convertToShares", [assets.raw]);
     return this.shareToken.getAmount(shares);
   }
 
   async convertToAssets(shares: TokenAmount): Promise<TokenAmount> {
-    const assets = await this.contract.convertToAssets(shares.raw);
+    const assets = await this.readWrapper<bigint>("convertToAssets", [shares.raw]);
     return this.marketToken.getAmount(assets);
   }
 
   async maxDeposit(receiver: string): Promise<TokenAmount> {
-    const assets = await this.contract.maxDeposit(receiver);
+    const assets = await this.readWrapper<bigint>("maxDeposit", [receiver]);
     return this.marketToken.getAmount(assets);
   }
 
   async previewDeposit(assets: TokenAmount): Promise<TokenAmount> {
-    const shares = await this.contract.previewDeposit(assets.raw);
+    const shares = await this.readWrapper<bigint>("previewDeposit", [assets.raw]);
     return this.shareToken.getAmount(shares);
   }
 
   async maxMint(receiver: string): Promise<TokenAmount> {
-    const shares = await this.contract.maxMint(receiver);
+    const shares = await this.readWrapper<bigint>("maxMint", [receiver]);
     return this.shareToken.getAmount(shares);
   }
 
   async previewMint(shares: TokenAmount): Promise<TokenAmount> {
-    const assets = await this.contract.previewMint(shares.raw);
+    const assets = await this.readWrapper<bigint>("previewMint", [shares.raw]);
     return this.marketToken.getAmount(assets);
   }
 
   async maxWithdraw(owner: string): Promise<TokenAmount> {
-    const assets = await this.contract.maxWithdraw(owner);
+    const assets = await this.readWrapper<bigint>("maxWithdraw", [owner]);
     return this.marketToken.getAmount(assets);
   }
 
   async previewWithdraw(assets: TokenAmount): Promise<TokenAmount> {
-    const shares = await this.contract.previewWithdraw(assets.raw);
+    const shares = await this.readWrapper<bigint>("previewWithdraw", [assets.raw]);
     return this.shareToken.getAmount(shares);
   }
 
   async maxRedeem(owner: string): Promise<TokenAmount> {
-    const shares = await this.contract.maxRedeem(owner);
+    const shares = await this.readWrapper<bigint>("maxRedeem", [owner]);
     return this.shareToken.getAmount(shares);
   }
 
   async previewRedeem(shares: TokenAmount): Promise<TokenAmount> {
-    const assets = await this.contract.previewRedeem(shares.raw);
+    const assets = await this.readWrapper<bigint>("previewRedeem", [shares.raw]);
     return this.marketToken.getAmount(assets);
   }
 
   async assetsPerShareRay(): Promise<bigint> {
-    return toRawAmount(await this.contract.assetsPerShareRay());
+    return toRawAmount(await this.readWrapper<bigint>("assetsPerShareRay"));
   }
 
   async sharesPerAssetRay(): Promise<bigint> {
-    return toRawAmount(await this.contract.sharesPerAssetRay());
+    return toRawAmount(await this.readWrapper<bigint>("sharesPerAssetRay"));
   }
 
   async deposit(assets: TokenAmount, receiver: string): Promise<TransactionHash> {
