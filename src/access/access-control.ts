@@ -1,4 +1,4 @@
-import { defaultAbiCoder } from "ethers/lib/utils";
+import { encodeAbiParameters, zeroAddress } from "viem";
 import {
   DefaultV2ParameterConstraints,
   getDeploymentAddress,
@@ -38,7 +38,6 @@ import {
   WithdrawalAccess
 } from "../types";
 import { assert, encodeHooksConfig, parseFeeConfigurationV2, prepareTransaction } from "../utils";
-import { constants } from "ethers";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
@@ -448,16 +447,20 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
       useOnQueueWithdrawal: withdrawalAccess === WithdrawalAccess.RequiresCredential,
       useOnTransfer: transferAccess === TransferAccess.RequiresCredential
     });
-    const hooksData = defaultAbiCoder.encode(
-      this.chainId === SupportedChainId.Sepolia ? ["uint128", "bool", "bool"] : ["uint128", "bool"],
+    const hooksData =
       this.chainId === SupportedChainId.Sepolia
-        ? [
-            minimumDeposit?.raw ?? 0,
-            transferAccess === TransferAccess.Disabled,
-            allowForceBuyBacks ?? false
-          ]
-        : [minimumDeposit?.raw ?? 0, transferAccess === TransferAccess.Disabled]
-    );
+        ? encodeAbiParameters(
+            [{ type: "uint128" }, { type: "bool" }, { type: "bool" }],
+            [
+              minimumDeposit?.raw ?? 0n,
+              transferAccess === TransferAccess.Disabled,
+              allowForceBuyBacks ?? false
+            ]
+          )
+        : encodeAbiParameters(
+            [{ type: "uint128" }, { type: "bool" }],
+            [minimumDeposit?.raw ?? 0n, transferAccess === TransferAccess.Disabled]
+          );
     const parameters = {
       ...otherParameters,
       asset: asset.address,
@@ -465,7 +468,7 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
       hooks: hooksConfig
     } as DeployMarketInputsV2Struct;
     const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0;
-    const originationFeeToken = this.fees.originationFeeToken?.address ?? constants.AddressZero;
+    const originationFeeToken = this.fees.originationFeeToken?.address ?? zeroAddress;
     if (marketType === "revolving") {
       const marketData = encodeRevolvingMarketData({ commitmentFeeBips });
       if (hooksAddress) {

@@ -1,8 +1,7 @@
 import { expect } from "chai";
-import { BigNumber } from "ethers";
-import { defaultAbiCoder, formatUnits, parseUnits } from "ethers/lib/utils";
 import {
   BIP,
+  BIP_RAY_RATIO,
   bipMul,
   bipToRay,
   calculateLinearInterestFromBips,
@@ -31,38 +30,43 @@ import {
   satSubBigint
 } from "../../src/utils";
 
-const toBigintString = (value: BigNumber): string => value.toString();
-
 describe("bigint math helpers", () => {
-  it("exposes bigint protocol constants matching the existing BigNumber constants", () => {
-    expect(RAY_BIGINT.toString()).to.equal(RAY.toString());
-    expect(HALF_RAY_BIGINT.toString()).to.equal(HALF_RAY.toString());
-    expect(BIP_BIGINT.toString()).to.equal(BIP.toString());
-    expect(HALF_BIP_BIGINT.toString()).to.equal(HALF_BIP.toString());
+  it("exposes bigint protocol constants through both current and legacy names", () => {
+    expect(RAY_BIGINT).to.equal(10n ** 27n);
+    expect(HALF_RAY_BIGINT).to.equal(RAY_BIGINT / 2n);
+    expect(BIP_BIGINT).to.equal(10n ** 4n);
+    expect(HALF_BIP_BIGINT).to.equal(BIP_BIGINT / 2n);
+    expect(RAY).to.equal(RAY_BIGINT);
+    expect(HALF_RAY).to.equal(HALF_RAY_BIGINT);
+    expect(BIP).to.equal(BIP_BIGINT);
+    expect(HALF_BIP).to.equal(HALF_BIP_BIGINT);
   });
 
-  it("matches existing rounded ray and bip multiplication semantics", () => {
-    const a = BigNumber.from("123456789012345678901234567890");
-    const ray = BigNumber.from("1050000000000000000000000000");
-    const bips = BigNumber.from(1234);
+  it("uses rounded ray and bip multiplication semantics", () => {
+    const a = 123456789012345678901234567890n;
+    const ray = 1050000000000000000000000000n;
+    const bips = 1234n;
 
-    expect(rayMulBigint(a.toString(), ray.toString()).toString()).to.equal(
-      toBigintString(rayMul(a, ray))
-    );
-    expect(bipMulBigint(a.toString(), bips.toString()).toString()).to.equal(
-      toBigintString(bipMul(a, bips))
-    );
+    expect(rayMulBigint(a, ray)).to.equal((a * ray + HALF_RAY_BIGINT) / RAY_BIGINT);
+    expect(rayMul(a, ray)).to.equal(rayMulBigint(a, ray));
+    expect(bipMulBigint(a, bips)).to.equal((a * bips + HALF_BIP_BIGINT) / BIP_BIGINT);
+    expect(bipMul(a, bips)).to.equal(bipMulBigint(a, bips));
   });
 
-  it("matches existing mulDiv, satSub, and linear interest semantics", () => {
-    expect(mulDivBigint(12345n, 67890n, 111n).toString()).to.equal(
-      toBigintString(mulDiv(BigNumber.from(12345), BigNumber.from(67890), BigNumber.from(111)))
+  it("uses bigint mulDiv, satSub, and linear interest semantics", () => {
+    expect(mulDivBigint(12345n, 67890n, 111n)).to.equal((12345n * 67890n) / 111n);
+    expect(mulDiv(12345n, 67890n, 111n)).to.equal(mulDivBigint(12345n, 67890n, 111n));
+    expect(satSubBigint(5n, 7n)).to.equal(0n);
+    expect(satSub(5, 7)).to.equal(0n);
+    expect(satSubBigint(7n, 5n)).to.equal(2n);
+    expect(satSub(7, 5)).to.equal(2n);
+    expect(bipToRayBigint(345)).to.equal(BIP_RAY_RATIO * 345n);
+    expect(bipToRay(345)).to.equal(bipToRayBigint(345));
+    expect(calculateLinearInterestFromBipsBigint(345, 123456)).to.equal(
+      (bipToRayBigint(345) * 123456n) / 31_536_000n
     );
-    expect(satSubBigint(5n, 7n).toString()).to.equal(toBigintString(satSub(5, 7)));
-    expect(satSubBigint(7n, 5n).toString()).to.equal(toBigintString(satSub(7, 5)));
-    expect(bipToRayBigint(345).toString()).to.equal(toBigintString(bipToRay(345)));
-    expect(calculateLinearInterestFromBipsBigint(345, 123456).toString()).to.equal(
-      toBigintString(calculateLinearInterestFromBips(345, 123456))
+    expect(calculateLinearInterestFromBips(345, 123456)).to.equal(
+      calculateLinearInterestFromBipsBigint(345, 123456)
     );
   });
 
@@ -71,21 +75,23 @@ describe("bigint math helpers", () => {
     expect(() => rayDivBigint(1n, 0n)).to.throw("rayDiv: division by zero");
   });
 
-  it("matches ethers fixed-point parse and format behavior", () => {
+  it("parses and formats fixed-point decimal values", () => {
     const parsed = parseFixedBigint("123.4567", 6);
-    expect(parsed.toString()).to.equal(parseUnits("123.4567", 6).toString());
-    expect(formatFixedBigint(parsed, 6, 2)).to.equal(formatUnits(parseUnits("123.45", 6), 6));
+    expect(parsed).to.equal(123_456_700n);
+    expect(formatFixedBigint(parsed, 6, 2)).to.equal("123.45");
   });
 });
 
 describe("viem encoding helpers", () => {
-  it("matches ethers ABI encoding for address and uint256 values", () => {
+  it("ABI-encodes address and uint256 values", () => {
     const address = "0x0000000000000000000000000000000000000001";
     const value = 123456789n;
 
-    expect(encodeAddressViem(address)).to.equal(defaultAbiCoder.encode(["address"], [address]));
+    expect(encodeAddressViem(address)).to.equal(
+      "0x0000000000000000000000000000000000000000000000000000000000000001"
+    );
     expect(encodeUint256Viem(value)).to.equal(
-      defaultAbiCoder.encode(["uint256"], [value.toString()])
+      "0x00000000000000000000000000000000000000000000000000000000075bcd15"
     );
   });
 });

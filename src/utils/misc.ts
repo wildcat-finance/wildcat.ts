@@ -1,13 +1,12 @@
-import { BigNumber } from "ethers";
-import { formatUnits } from "ethers/lib/utils";
-import { defaultAbiCoder } from "ethers/lib/utils";
+import { encodeAbiParameters, formatUnits, type Address, type Hex } from "viem";
+import { toBigint, type BigintNumberish } from "./bigint";
 
-export const encodeAddress = (address: string): string => {
-  return defaultAbiCoder.encode(["address"], [address]);
+export const encodeAddress = (address: string): Hex => {
+  return encodeAbiParameters([{ type: "address" }], [address as Address]);
 };
 
-export const encodeUint = (expiry: number): string => {
-  return defaultAbiCoder.encode(["uint256"], [expiry]);
+export const encodeUint = (expiry: BigintNumberish): Hex => {
+  return encodeAbiParameters([{ type: "uint256" }], [toBigint(expiry)]);
 };
 
 export const unique = <T>(arr: T[]): T[] => Array.from(new Set(arr));
@@ -40,8 +39,12 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>
 
 export const stripTrailingZeroes = (str: string): string => str.replace(/((?<=\.\d+)|(\.))0+$/, "");
 
-export const formatBnFixed = (bn: BigNumber, decimals = 18, precision = decimals): string => {
-  let str = formatUnits(bn, decimals);
+export const formatBnFixed = (
+  value: BigintNumberish,
+  decimals = 18,
+  precision = decimals
+): string => {
+  let str = formatUnits(toBigint(value), decimals);
   if (str.includes(".") && precision !== decimals) {
     str = str.slice(0, str.indexOf(".") + precision + 1);
   }

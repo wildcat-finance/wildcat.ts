@@ -1,4 +1,4 @@
-import { defaultAbiCoder } from "ethers/lib/utils";
+import { encodeAbiParameters, zeroAddress } from "viem";
 import {
   DefaultV2ParameterConstraints,
   getDeploymentAddress,
@@ -38,7 +38,6 @@ import {
   WithdrawalAccess
 } from "../types";
 import { assert, encodeHooksConfig, parseFeeConfigurationV2, prepareTransaction } from "../utils";
-import { constants } from "ethers";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
@@ -454,28 +453,42 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
       useOnQueueWithdrawal: withdrawalAccess === WithdrawalAccess.RequiresCredential,
       useOnTransfer: transferAccess === TransferAccess.RequiresCredential
     });
-    const hooksData = defaultAbiCoder.encode(
+    const hooksData =
       this.chainId === SupportedChainId.Sepolia
-        ? ["uint32", "uint128", "bool", "bool", "bool", "bool"]
-        : ["uint32", "uint128", "bool", "bool", "bool"],
-
-      this.chainId === SupportedChainId.Sepolia
-        ? [
-            fixedTermEndTime,
-            minimumDeposit?.raw ?? 0,
-            transferAccess === TransferAccess.Disabled,
-            allowForceBuyBacks ?? false,
-            allowClosureBeforeTerm ?? false,
-            allowTermReduction ?? false
-          ]
-        : [
-            fixedTermEndTime,
-            minimumDeposit?.raw ?? 0,
-            transferAccess === TransferAccess.Disabled,
-            allowClosureBeforeTerm ?? false,
-            allowTermReduction ?? false
-          ]
-    );
+        ? encodeAbiParameters(
+            [
+              { type: "uint32" },
+              { type: "uint128" },
+              { type: "bool" },
+              { type: "bool" },
+              { type: "bool" },
+              { type: "bool" }
+            ],
+            [
+              fixedTermEndTime,
+              minimumDeposit?.raw ?? 0n,
+              transferAccess === TransferAccess.Disabled,
+              allowForceBuyBacks ?? false,
+              allowClosureBeforeTerm ?? false,
+              allowTermReduction ?? false
+            ]
+          )
+        : encodeAbiParameters(
+            [
+              { type: "uint32" },
+              { type: "uint128" },
+              { type: "bool" },
+              { type: "bool" },
+              { type: "bool" }
+            ],
+            [
+              fixedTermEndTime,
+              minimumDeposit?.raw ?? 0n,
+              transferAccess === TransferAccess.Disabled,
+              allowClosureBeforeTerm ?? false,
+              allowTermReduction ?? false
+            ]
+          );
     const parameters = {
       ...otherParameters,
       asset: asset.address,
@@ -483,7 +496,7 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
       hooks: hooksConfig
     } as DeployMarketInputsV2Struct;
     const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0;
-    const originationFeeToken = this.fees.originationFeeToken?.address ?? constants.AddressZero;
+    const originationFeeToken = this.fees.originationFeeToken?.address ?? zeroAddress;
     if (marketType === "revolving") {
       const marketData = encodeRevolvingMarketData({ commitmentFeeBips });
       if (hooksAddress) {
