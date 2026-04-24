@@ -7,12 +7,11 @@ import {
   WithdrawalBatchLenderStatusV2_5StructOutput,
   WithdrawalBatchDataWithLenderStatusV2_5StructOutput
 } from "./typechain";
+import { SupportedChainId, hasDeploymentAddress } from "./constants";
 import {
-  SupportedChainId,
-  getLatestLensContract,
-  getLensContract,
-  hasDeploymentAddress
-} from "./constants";
+  getLatestWithdrawalBatchDataWithLenderStatus,
+  getLegacyWithdrawalBatchDataWithLenderStatus
+} from "./internal/market-lens";
 import {
   WithdrawalExecutionRecord,
   WithdrawalRequestRecord,
@@ -153,14 +152,21 @@ export class LenderWithdrawalStatus {
   ): Promise<LenderWithdrawalStatus> {
     const useLatestLens =
       market.version === MarketVersion.V2 || !hasDeploymentAddress(market.chainId, "MarketLens");
-    const lens = useLatestLens
-      ? getLatestLensContract(market.chainId, market.provider)
-      : getLensContract(market.chainId, market.provider);
-    const batchData = await lens.getWithdrawalBatchDataWithLenderStatus(
-      market.address,
-      expiry,
-      lender
-    );
+    const batchData = useLatestLens
+      ? await getLatestWithdrawalBatchDataWithLenderStatus(
+          market.chainId,
+          market.provider,
+          market.address,
+          expiry,
+          lender
+        )
+      : await getLegacyWithdrawalBatchDataWithLenderStatus(
+          market.chainId,
+          market.provider,
+          market.address,
+          expiry,
+          lender
+        );
     const batch = WithdrawalBatch.fromWithdrawalBatchData(market, batchData.batch);
     return LenderWithdrawalStatus.fromWithdrawalBatchLenderStatus(
       market,

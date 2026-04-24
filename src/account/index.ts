@@ -22,18 +22,24 @@ import {
   rayMul,
   SECONDS_IN_365_DAYS
 } from "../utils";
-import {
-  SupportedChainId,
-  getControllerContract,
-  getLensContract,
-  getLatestLensContract,
-  hasDeploymentAddress
-} from "../constants";
+import { SupportedChainId, getControllerContract, hasDeploymentAddress } from "../constants";
 import {
   getRegisteredMarkets,
   getRegisteredMarketsCount,
   getRegisteredMarketsPage
 } from "../internal/arch-controller";
+import {
+  getLatestLenderAccountData,
+  getLatestLenderAccountsData,
+  getLatestMarketDataWithLenderStatus,
+  getLatestMarketsDataWithLenderStatus,
+  getLegacyAllMarketsDataWithLenderStatus,
+  getLegacyMarketDataWithLenderStatus,
+  getLegacyMarketLenderStatus,
+  getLegacyMarketsDataWithLenderStatus,
+  getLegacyMarketsLenderStatus,
+  getLegacyPaginatedMarketsDataWithLenderStatus
+} from "../internal/market-lens";
 import {
   HooksCredential,
   HooksKind,
@@ -882,16 +888,21 @@ export class MarketAccount {
 
   async update(): Promise<void> {
     if (this.market.version === MarketVersion.V1) {
-      const acccountMarketInfo = await getLensContract(
+      const acccountMarketInfo = await getLegacyMarketLenderStatus(
         this.chainId,
-        this.market.provider
-      ).getMarketLenderStatus(this.account, this.market.address);
+        this.market.provider,
+        this.account,
+        this.market.address
+      );
       this.updateWith(acccountMarketInfo);
       return;
     }
-    const accountMarketInfo = await getLatestLensContract(this.chainId, this.market.provider)[
-      "getLenderAccountData(address,address)"
-    ](this.account, this.market.address);
+    const accountMarketInfo = await getLatestLenderAccountData(
+      this.chainId,
+      this.market.provider,
+      this.account,
+      this.market.address
+    );
     this.updateWith(accountMarketInfo);
   }
 
@@ -1102,25 +1113,19 @@ export class MarketAccount {
   ): Promise<MarketAccount> {
     if (market instanceof Market) {
       if (market.version === MarketVersion.V1) {
-        return getLensContract(chainId, provider)
-          .getMarketLenderStatus(account, market.address)
-          .then((info) => MarketAccount.fromMarketLenderStatus(account, info, market));
+        return getLegacyMarketLenderStatus(chainId, provider, account, market.address).then(
+          (info) => MarketAccount.fromMarketLenderStatus(account, info, market)
+        );
       }
-      return getLatestLensContract(chainId, provider)
-        ["getLenderAccountData(address,address)"](account, market.address)
-        .then((info) => MarketAccount.fromLenderAccountData(market, info));
+      return getLatestLenderAccountData(chainId, provider, account, market.address).then((info) =>
+        MarketAccount.fromLenderAccountData(market, info)
+      );
     }
     try {
-      const info = await getLatestLensContract(chainId, provider).getMarketDataWithLenderStatus(
-        account,
-        market
-      );
+      const info = await getLatestMarketDataWithLenderStatus(chainId, provider, account, market);
       return MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info);
     } catch (_) {
-      const info = await getLensContract(chainId, provider).getMarketDataWithLenderStatus(
-        account,
-        market
-      );
+      const info = await getLegacyMarketDataWithLenderStatus(chainId, provider, account, market);
       return MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info);
     }
   }
@@ -1136,15 +1141,13 @@ export class MarketAccount {
     market: Market | string
   ): Promise<MarketAccount> {
     if (market instanceof Market) {
-      return getLatestLensContract(chainId, provider)
-        ["getLenderAccountData(address,address)"](account, market.address)
-        .then((info) => MarketAccount.fromLenderAccountData(market, info));
-    }
-    return getLatestLensContract(chainId, provider)
-      .getMarketDataWithLenderStatus(account, market)
-      .then((info) =>
-        MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
+      return getLatestLenderAccountData(chainId, provider, account, market.address).then((info) =>
+        MarketAccount.fromLenderAccountData(market, info)
       );
+    }
+    return getLatestMarketDataWithLenderStatus(chainId, provider, account, market).then((info) =>
+      MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
+    );
   }
 
   /**
@@ -1176,7 +1179,9 @@ export class MarketAccount {
 
       if (legacyIndexes.length > 0) {
         const legacyMarkets = legacyIndexes.map((index) => markets[index]);
-        const infos = await getLensContract(chainId, provider).getMarketsLenderStatus(
+        const infos = await getLegacyMarketsLenderStatus(
+          chainId,
+          provider,
           account,
           legacyMarkets.map((market) => market.address)
         );
@@ -1191,9 +1196,9 @@ export class MarketAccount {
 
       if (latestIndexes.length > 0) {
         const latestMarkets = latestIndexes.map((index) => markets[index]);
-        const infos = await getLatestLensContract(chainId, provider)[
-          "getLenderAccountData(address,address[])"
-        ](
+        const infos = await getLatestLenderAccountsData(
+          chainId,
+          provider,
           account,
           latestMarkets.map((market) => market.address)
         );
@@ -1205,16 +1210,10 @@ export class MarketAccount {
       return results;
     }
     try {
-      const infos = await getLatestLensContract(chainId, provider).getMarketsDataWithLenderStatus(
-        account,
-        markets
-      );
+      const infos = await getLatestMarketsDataWithLenderStatus(chainId, provider, account, markets);
       return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
     } catch (_) {
-      const infos = await getLensContract(chainId, provider).getMarketsDataWithLenderStatus(
-        account,
-        markets
-      );
+      const infos = await getLegacyMarketsDataWithLenderStatus(chainId, provider, account, markets);
       return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
     }
   }
@@ -1233,15 +1232,10 @@ export class MarketAccount {
       if (markets.length === 0) {
         return [];
       }
-      const infos = await getLatestLensContract(chainId, provider).getMarketsDataWithLenderStatus(
-        account,
-        markets
-      );
+      const infos = await getLatestMarketsDataWithLenderStatus(chainId, provider, account, markets);
       return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
     }
-    const infos = await getLensContract(chainId, provider).getAllMarketsDataWithLenderStatus(
-      account
-    );
+    const infos = await getLegacyAllMarketsDataWithLenderStatus(chainId, provider, account);
     return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
   }
 
@@ -1270,13 +1264,12 @@ export class MarketAccount {
       if (markets.length === 0) {
         return [];
       }
-      const infos = await getLatestLensContract(chainId, provider).getMarketsDataWithLenderStatus(
-        account,
-        markets
-      );
+      const infos = await getLatestMarketsDataWithLenderStatus(chainId, provider, account, markets);
       return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
     }
-    const infos = await getLensContract(chainId, provider).getPaginatedMarketsDataWithLenderStatus(
+    const infos = await getLegacyPaginatedMarketsDataWithLenderStatus(
+      chainId,
+      provider,
       account,
       start,
       count

@@ -2,7 +2,8 @@ import { BigNumber } from "ethers";
 import { Market } from "./market";
 import { TokenAmount, minTokenAmount } from "./token";
 import { WithdrawalBatchDataStructOutput, WithdrawalBatchDataV2_5StructOutput } from "./typechain";
-import { getLatestLensContract, getLensContract, hasDeploymentAddress } from "./constants";
+import { hasDeploymentAddress } from "./constants";
+import { getLatestWithdrawalBatchData, getLegacyWithdrawalBatchData } from "./internal/market-lens";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
 import {
   MakeOptional,
@@ -251,10 +252,9 @@ export class WithdrawalBatch {
   static async getWithdrawalBatch(market: Market, expiry: number): Promise<WithdrawalBatch> {
     const useLatestLens =
       market.version === MarketVersion.V2 || !hasDeploymentAddress(market.chainId, "MarketLens");
-    const lens = useLatestLens
-      ? getLatestLensContract(market.chainId, market.provider)
-      : getLensContract(market.chainId, market.provider);
-    const data = await lens.getWithdrawalBatchData(market.address, expiry);
+    const data = useLatestLens
+      ? await getLatestWithdrawalBatchData(market.chainId, market.provider, market.address, expiry)
+      : await getLegacyWithdrawalBatchData(market.chainId, market.provider, market.address, expiry);
     return WithdrawalBatch.fromWithdrawalBatchData(market, data);
   }
 }
