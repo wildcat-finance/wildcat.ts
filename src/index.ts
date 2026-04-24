@@ -7,6 +7,7 @@ import { LenderWithdrawalStatus } from "./withdrawal-status";
 import { MarketController } from "./controller";
 
 export * from "./account";
+export * from "./abi";
 export * from "./client";
 export * from "./collateral";
 export * from "./constants";

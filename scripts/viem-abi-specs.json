@@ -1,0 +1,47 @@
+[
+  {
+    "exportName": "iERC20Abi",
+    "artifact": "artifacts/contracts/IERC20.sol/IERC20.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "marketLensAbi",
+    "artifact": "artifacts/contracts/MarketLens.sol/MarketLens.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "marketLensV2Abi",
+    "artifact": "artifacts/contracts/MarketLensV2.sol/MarketLensV2.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "marketLensV2_5Abi",
+    "artifact": "artifacts/contracts/MarketLensV2_5.sol/MarketLensV2_5.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "wildcatArchControllerAbi",
+    "artifact": "artifacts/contracts/WildcatArchController.sol/WildcatArchController.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "hooksFactoryAbi",
+    "artifact": "artifacts/contracts/HooksFactory.sol/HooksFactory.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "hooksFactoryRevolvingAbi",
+    "artifact": "artifacts/contracts/HooksFactoryRevolving.sol/HooksFactoryRevolving.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "iOpenTermHooksAbi",
+    "artifact": "artifacts/contracts/IOpenTermHooks.sol/IOpenTermHooks.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "iFixedTermHooksAbi",
+    "artifact": "artifacts/contracts/IFixedTermHooks.sol/IFixedTermHooks.json",
+    "types": ["function"]
+  }
+]
