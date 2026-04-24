@@ -1,6 +1,6 @@
 import { BigNumber, BigNumberish, ContractTransaction } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
-import type { Abi, Address, PublicClient } from "viem";
+import type { Abi, Address } from "viem";
 import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "./abi";
 import {
   IERC20,
@@ -11,6 +11,7 @@ import {
 import { ContractWrapper, SignerOrProvider } from "./types";
 import { SupportedChainId, getDeploymentAddress, hasDeploymentAddress } from "./constants";
 import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
+import { readViemContract } from "./internal/viem-read";
 import { bipMul, formatBnFixed, mulDiv, rayDiv, rayMul } from "./utils";
 import { SubgraphMarketDataFragment, SubgraphToken } from "./gql/graphql";
 
@@ -35,21 +36,6 @@ const getViemTokenMetadataValue = (
 ): ViemTokenMetadataField => {
   const keyedValue = (metadata as Partial<ViemTokenMetadataObject>)[key];
   return keyedValue ?? (metadata as readonly ViemTokenMetadataField[])[index];
-};
-
-const readLensContract = async <Result>(
-  publicClient: PublicClient,
-  address: string,
-  abi: Abi,
-  functionName: string,
-  args: readonly unknown[]
-): Promise<Result> => {
-  return publicClient.readContract({
-    address: address as Address,
-    abi,
-    functionName,
-    args
-  } as Parameters<PublicClient["readContract"]>[0]) as Promise<Result>;
 };
 
 export const toBn = (amount: RhsAmount): BigNumber => {
@@ -273,7 +259,7 @@ export class Token extends ContractWrapper<IERC20> {
   ): Promise<Token> {
     const publicClient = getViemPublicClientFromEthers(provider);
     if (hasDeploymentAddress(chainId, "MarketLensV2_5")) {
-      const metadata = await readLensContract<ViemTokenMetadataOutput>(
+      const metadata = await readViemContract<ViemTokenMetadataOutput>(
         publicClient,
         getDeploymentAddress(chainId, "MarketLensV2_5"),
         marketLensV2_5Abi as Abi,
@@ -282,7 +268,7 @@ export class Token extends ContractWrapper<IERC20> {
       );
       return Token.fromViemTokenMetadata(chainId, metadata, provider);
     }
-    const metadata = await readLensContract<ViemTokenMetadataOutput>(
+    const metadata = await readViemContract<ViemTokenMetadataOutput>(
       publicClient,
       getDeploymentAddress(chainId, "MarketLensV2"),
       marketLensV2Abi as Abi,
@@ -299,7 +285,7 @@ export class Token extends ContractWrapper<IERC20> {
   ): Promise<Token[]> {
     const publicClient = getViemPublicClientFromEthers(provider);
     if (hasDeploymentAddress(chainId, "MarketLensV2_5")) {
-      const metadata = await readLensContract<readonly ViemTokenMetadataOutput[]>(
+      const metadata = await readViemContract<readonly ViemTokenMetadataOutput[]>(
         publicClient,
         getDeploymentAddress(chainId, "MarketLensV2_5"),
         marketLensV2_5Abi as Abi,
@@ -308,7 +294,7 @@ export class Token extends ContractWrapper<IERC20> {
       );
       return metadata.map((m) => Token.fromViemTokenMetadata(chainId, m, provider));
     }
-    const metadata = await readLensContract<readonly ViemTokenMetadataOutput[]>(
+    const metadata = await readViemContract<readonly ViemTokenMetadataOutput[]>(
       publicClient,
       getDeploymentAddress(chainId, "MarketLens"),
       marketLensAbi as Abi,

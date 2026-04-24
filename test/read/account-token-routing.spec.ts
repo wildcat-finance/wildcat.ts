@@ -1,7 +1,12 @@
 import { expect } from "chai";
 import { BigNumber, providers } from "ethers";
-import { encodeFunctionResult, type Abi } from "viem";
-import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi";
+import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
+import {
+  marketLensAbi,
+  marketLensV2Abi,
+  marketLensV2_5Abi,
+  wildcatArchControllerAbi
+} from "../../src/abi";
 import * as constantsModule from "../../src/constants";
 import { Market } from "../../src/market";
 import { MarketAccount } from "../../src/account";
@@ -60,6 +65,17 @@ const encodeLensResult = (abi: Abi, functionName: string, result: unknown): `0x$
     abi,
     functionName,
     result
+  });
+};
+
+const encodeArchControllerResult = (functionName: string, result: unknown): `0x${string}` => {
+  return encodeLensResult(wildcatArchControllerAbi as Abi, functionName, result);
+};
+
+const decodeArchControllerCall = (call: FakeRpcCall) => {
+  return decodeFunctionData({
+    abi: wildcatArchControllerAbi as Abi,
+    data: call.data as `0x${string}`
   });
 };
 
@@ -210,7 +226,6 @@ describe("Account and token read routing", () => {
   const originalGetLensV2Contract = constantsModule.getLensV2Contract;
   const originalGetLensV2_5Contract = constantsModule.getLensV2_5Contract;
   const originalGetLatestLensContract = constantsModule.getLatestLensContract;
-  const originalGetArchControllerContract = constantsModule.getArchControllerContract;
   const originalFromMarketDataWithLenderStatus = MarketAccount.fromMarketDataWithLenderStatus;
 
   const mutableConstants = constantsModule as typeof constantsModule & {
@@ -219,7 +234,6 @@ describe("Account and token read routing", () => {
     getLensV2Contract: typeof originalGetLensV2Contract;
     getLensV2_5Contract: typeof originalGetLensV2_5Contract;
     getLatestLensContract: typeof originalGetLatestLensContract;
-    getArchControllerContract: typeof originalGetArchControllerContract;
   };
 
   afterEach(() => {
@@ -228,7 +242,6 @@ describe("Account and token read routing", () => {
     mutableConstants.getLensV2Contract = originalGetLensV2Contract;
     mutableConstants.getLensV2_5Contract = originalGetLensV2_5Contract;
     mutableConstants.getLatestLensContract = originalGetLatestLensContract;
-    mutableConstants.getArchControllerContract = originalGetArchControllerContract;
     MarketAccount.fromMarketDataWithLenderStatus = originalFromMarketDataWithLenderStatus;
   });
 
@@ -367,9 +380,6 @@ describe("Account and token read routing", () => {
 
     mutableConstants.hasDeploymentAddress = ((_, name) =>
       name === "MarketLensV2_5") as typeof originalHasDeploymentAddress;
-    mutableConstants.getArchControllerContract = (() => ({
-      "getRegisteredMarkets()": async () => markets
-    })) as unknown as typeof originalGetArchControllerContract;
     mutableConstants.getLatestLensContract = (() => ({
       getMarketsDataWithLenderStatus: async (_account: string, addresses: string[]) => {
         seenMarkets.push(addresses);
@@ -383,13 +393,24 @@ describe("Account and token read routing", () => {
       return hydratedAccounts[hydrateIndex++];
     }) as typeof originalFromMarketDataWithLenderStatus;
 
+    const archControllerAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "WildcatArchController"
+    );
+    const viemProvider = new FakeViemProvider(() =>
+      encodeArchControllerResult("getRegisteredMarkets", markets)
+    );
+
     const accounts = await MarketAccount.getAllMarketAccountsForLender(
       constantsModule.SupportedChainId.Sepolia,
-      provider,
+      viemProvider as unknown as providers.Provider,
       account
     );
 
-    expect(seenMarkets).to.deep.equal([markets]);
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([archControllerAddress]);
+    expect(
+      seenMarkets.map((addresses) => addresses.map((address) => address.toLowerCase()))
+    ).to.deep.equal([markets]);
     expect(seenInfos).to.deep.equal([{ tag: "first" }, { tag: "second" }]);
     expect(accounts).to.deep.equal(hydratedAccounts);
   });
@@ -401,13 +422,6 @@ describe("Account and token read routing", () => {
 
     mutableConstants.hasDeploymentAddress = ((_, name) =>
       name === "MarketLensV2_5") as typeof originalHasDeploymentAddress;
-    mutableConstants.getArchControllerContract = (() => ({
-      getRegisteredMarketsCount: async () => BigNumber.from(markets.length),
-      "getRegisteredMarkets(uint256,uint256)": async (start: number, end: number) => {
-        rangeCalls.push([start, end]);
-        return markets.slice(start, end);
-      }
-    })) as unknown as typeof originalGetArchControllerContract;
     mutableConstants.getLatestLensContract = (() => ({
       getMarketsDataWithLenderStatus: async () => []
     })) as unknown as typeof originalGetLatestLensContract;
@@ -415,14 +429,32 @@ describe("Account and token read routing", () => {
       throw new Error("should not hydrate empty latest-lens responses");
     }) as typeof originalFromMarketDataWithLenderStatus;
 
+    const archControllerAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "WildcatArchController"
+    );
+    const viemProvider = new FakeViemProvider((call) => {
+      const { functionName, args } = decodeArchControllerCall(call);
+      if (functionName === "getRegisteredMarketsCount") {
+        return encodeArchControllerResult(functionName, BigInt(markets.length));
+      }
+
+      rangeCalls.push((args as [bigint, bigint]).map(Number) as [number, number]);
+      return encodeArchControllerResult(functionName, markets.slice(1, 3));
+    });
+
     const accounts = await MarketAccount.getPaginatedMarketAccounts(
       constantsModule.SupportedChainId.Sepolia,
-      provider,
+      viemProvider as unknown as providers.Provider,
       account,
       1,
       5
     );
 
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([
+      archControllerAddress,
+      archControllerAddress
+    ]);
     expect(rangeCalls).to.deep.equal([[1, 3]]);
     expect(accounts).to.deep.equal([]);
   });

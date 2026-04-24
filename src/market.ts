@@ -12,13 +12,17 @@ import {
 } from "./typechain";
 import {
   SupportedChainId,
-  getArchControllerContract,
   getLensV2_5Contract,
   getLensContract,
   getLensV2Contract,
   getMarketTypeForHooksFactory,
   hasDeploymentAddress
 } from "./constants";
+import {
+  getRegisteredMarkets,
+  getRegisteredMarketsCount,
+  getRegisteredMarketsPage
+} from "./internal/arch-controller";
 import { TokenAmount, Token, toBn } from "./token";
 import {
   SignerOrProvider,
@@ -1183,10 +1187,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
       lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp.toNumber(),
       unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
-      commitmentFeeBips: commitmentFeeBips.isPresent ? commitmentFeeBips.value.toNumber() : undefined,
-      drawnAmount: drawnAmount.isPresent
-        ? underlyingToken.getAmount(drawnAmount.value)
+      commitmentFeeBips: commitmentFeeBips.isPresent
+        ? commitmentFeeBips.value.toNumber()
         : undefined,
+      drawnAmount: drawnAmount.isPresent ? underlyingToken.getAmount(drawnAmount.value) : undefined,
       signerAddress
     });
   }
@@ -1316,8 +1320,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     chainId: SupportedChainId,
     provider: SignerOrProvider
   ): Promise<Market[]> {
-    const archController = getArchControllerContract(chainId, provider);
-    const markets = await archController["getRegisteredMarkets()"]();
+    const markets = await getRegisteredMarkets(chainId, provider);
     if (!markets.length) {
       return [];
     }
@@ -1336,13 +1339,12 @@ export class Market extends ContractWrapper<WildcatMarket> {
     if (count <= 0) {
       return [];
     }
-    const archController = getArchControllerContract(chainId, provider);
-    const totalMarkets = (await archController.getRegisteredMarketsCount()).toNumber();
+    const totalMarkets = await getRegisteredMarketsCount(chainId, provider);
     if (start >= totalMarkets) {
       return [];
     }
     const end = Math.min(start + count, totalMarkets);
-    const markets = await archController["getRegisteredMarkets(uint256,uint256)"](start, end);
+    const markets = await getRegisteredMarketsPage(chainId, provider, start, end);
     if (!markets.length) {
       return [];
     }
@@ -1356,7 +1358,6 @@ export class Market extends ContractWrapper<WildcatMarket> {
     chainId: SupportedChainId,
     provider: SignerOrProvider
   ): Promise<number> {
-    const archController = getArchControllerContract(chainId, provider);
-    return archController.getRegisteredMarketsCount().then((count) => count.toNumber());
+    return getRegisteredMarketsCount(chainId, provider);
   }
 }

@@ -24,12 +24,16 @@ import {
 } from "../utils";
 import {
   SupportedChainId,
-  getArchControllerContract,
   getControllerContract,
   getLensContract,
   getLatestLensContract,
   hasDeploymentAddress
 } from "../constants";
+import {
+  getRegisteredMarkets,
+  getRegisteredMarketsCount,
+  getRegisteredMarketsPage
+} from "../internal/arch-controller";
 import {
   HooksCredential,
   HooksKind,
@@ -1225,9 +1229,7 @@ export class MarketAccount {
     account: string
   ): Promise<MarketAccount[]> {
     if (hasUnifiedLatestLensForAccountReads(chainId)) {
-      const markets = await getArchControllerContract(chainId, provider)[
-        "getRegisteredMarkets()"
-      ]();
+      const markets = await getRegisteredMarkets(chainId, provider);
       if (markets.length === 0) {
         return [];
       }
@@ -1259,13 +1261,12 @@ export class MarketAccount {
       if (count <= 0) {
         return [];
       }
-      const archController = getArchControllerContract(chainId, provider);
-      const totalMarkets = (await archController.getRegisteredMarketsCount()).toNumber();
+      const totalMarkets = await getRegisteredMarketsCount(chainId, provider);
       if (start >= totalMarkets) {
         return [];
       }
       const end = Math.min(start + count, totalMarkets);
-      const markets = await archController["getRegisteredMarkets(uint256,uint256)"](start, end);
+      const markets = await getRegisteredMarketsPage(chainId, provider, start, end);
       if (markets.length === 0) {
         return [];
       }
