@@ -5,8 +5,9 @@ import {
   SubgraphGetAllHooksTemplatesQueryVariables
 } from "./graphql";
 import { SupportedChainId } from "../constants";
-import { Signer, SignerOrProvider } from "../types";
+import { SignerOrProvider } from "../types";
 import { HooksTemplate, hooksTemplateFromSubgraph } from "../access";
+import { getEthersSignerAddress } from "../internal/ethers-signer";
 
 export type GetAllHooksTemplatesOptions = {
   chainId: SupportedChainId;
@@ -26,8 +27,8 @@ export async function getAllHooksTemplates(
     isRegisteredBorrower
   }: GetAllHooksTemplatesOptions
 ): Promise<HooksTemplate[]> {
-  if (borrower === undefined && Signer.isSigner(signerOrProvider)) {
-    borrower = await signerOrProvider.getAddress();
+  if (borrower === undefined) {
+    borrower = await getEthersSignerAddress(signerOrProvider);
   }
   const result = await subgraphClient.query<
     SubgraphGetAllHooksTemplatesQuery,

@@ -1,7 +1,6 @@
-import { Signer } from "@ethersproject/abstract-signer";
 import type { Hash, TransactionReceipt } from "viem";
 import { getViemPublicClientFromEthers } from "./ethers-viem";
-import type { PreparedTransaction, SignerOrProvider } from "../types";
+import type { PreparedTransaction, Signer, SignerOrProvider } from "../types";
 
 export const submitPreparedTransaction = async (
   signer: Signer,

@@ -1,5 +1,5 @@
-import { Signer } from "@ethersproject/abstract-signer";
 import { createPublicClient, custom, type PublicClient } from "viem";
+import { isEthersSigner } from "./ethers-signer";
 import type { SignerOrProvider } from "../types";
 
 type RpcRequestArgs = {
@@ -49,7 +49,7 @@ const getRpcRequest = (provider: unknown): RpcRequest | undefined => {
 };
 
 export const getViemPublicClientFromEthers = (providerOrSigner: SignerOrProvider): PublicClient => {
-  const provider = Signer.isSigner(providerOrSigner) ? providerOrSigner.provider : providerOrSigner;
+  const provider = isEthersSigner(providerOrSigner) ? providerOrSigner.provider : providerOrSigner;
 
   const request = getRpcRequest(provider);
   if (!request) {

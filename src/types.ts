@@ -1,10 +1,11 @@
-import { Provider } from "@ethersproject/abstract-provider";
-import { Signer } from "@ethersproject/abstract-signer";
-import { BaseContract } from "ethers";
+import type { Provider } from "@ethersproject/abstract-provider";
+import type { Signer as EthersSigner } from "@ethersproject/abstract-signer";
+import type { BaseContract } from "ethers";
 import type { Address, Hash, Hex, TransactionReceipt } from "viem";
 import { Token, TokenAmount } from "./token";
 import { SubgraphMarketVersion } from "./gql/graphql";
 import { HooksTemplate } from "./access";
+import { isEthersSigner } from "./internal/ethers-signer";
 
 // `MarketVersion` remains the existing subgraph/protocol concept.
 export { SubgraphMarketVersion as MarketVersion };
@@ -17,9 +18,14 @@ export const isMarketType = (value: string): value is MarketType => {
   return MarketTypes.includes(value as MarketType);
 };
 
+export type Signer = EthersSigner;
 export type SignerOrProvider = Signer | Provider;
 
-export { Provider, Signer };
+export type { Provider };
+
+export const Signer = {
+  isSigner: isEthersSigner
+} as const;
 
 export abstract class ContractWrapper<Contract extends BaseContract> {
   constructor(protected _provider: SignerOrProvider) {}
@@ -33,7 +39,7 @@ export abstract class ContractWrapper<Contract extends BaseContract> {
   protected abstract _contractAddress: string;
 
   get signer(): Signer {
-    if (Signer.isSigner(this._provider)) {
+    if (isEthersSigner(this._provider)) {
       return this._provider;
     }
     throw new Error("Provider is not a signer");

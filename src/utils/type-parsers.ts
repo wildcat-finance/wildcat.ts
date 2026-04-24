@@ -12,8 +12,9 @@ import {
   PartialTransaction,
   SignerOrProvider
 } from "../types";
-import { BigNumber, PopulatedTransaction, constants } from "ethers";
-import type { Address, Hex } from "viem";
+import { BigNumber } from "ethers";
+import type { PopulatedTransaction } from "ethers";
+import { zeroAddress, type Address, type Hex } from "viem";
 import { Token, toRawAmount } from "../token";
 
 import {
@@ -51,7 +52,7 @@ export const parseFeeConfiguration = (
   feeConfiguration: FeeConfigurationStructOutput
 ): FeeConfiguration => {
   const originationFeeToken =
-    feeConfiguration.originationFeeToken.token === constants.AddressZero
+    feeConfiguration.originationFeeToken.token === zeroAddress
       ? undefined
       : Token.fromTokenMetadata(chainId, feeConfiguration.originationFeeToken, provider);
   const originationFeeAmount =
@@ -80,7 +81,7 @@ export const parseFeeConfigurationV2 = (
     feeRecipient: feeRecipient,
     protocolFeeBips: protocolFeeBips
   };
-  if (originationFeeToken.token === constants.AddressZero) return fees;
+  if (originationFeeToken.token === zeroAddress) return fees;
   const token = Token.fromTokenMetadata(chainId, originationFeeToken, provider);
 
   return {
@@ -213,7 +214,7 @@ const Bit_Enabled_SetAnnualInterestAndReserveRatioBips = 86n;
 const Bit_Enabled_SetProtocolFeeBips = 85n;
 
 export function encodeHooksConfig({
-  hooksAddress = constants.AddressZero,
+  hooksAddress = zeroAddress,
   useOnDeposit = false,
   useOnQueueWithdrawal = false,
   useOnExecuteWithdrawal = false,

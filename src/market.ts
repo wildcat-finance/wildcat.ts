@@ -1,5 +1,4 @@
 import { BigNumber } from "ethers";
-import { Signer } from "@ethersproject/abstract-signer";
 import {
   IFixedTermHooks__factory,
   IOpenTermHooks__factory,
@@ -68,6 +67,7 @@ import {
 import { hooksTemplateFromSubgraph } from "./access";
 import { wildcatMarketAbi } from "./abi";
 import { submitPreparedTransaction } from "./internal/viem-write";
+import { getEthersSignerAddress } from "./internal/ethers-signer";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -1275,7 +1275,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     market: string,
     provider: SignerOrProvider
   ): Promise<Market> {
-    const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
+    const signerAddress = await getEthersSignerAddress(provider);
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
         const data = await getUnifiedMarketDataV2(chainId, provider, market);
@@ -1295,7 +1295,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     market: string,
     provider: SignerOrProvider
   ): Promise<Market> {
-    const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
+    const signerAddress = await getEthersSignerAddress(provider);
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
         const data = await getUnifiedMarketDataV2(chainId, provider, market);
@@ -1316,7 +1316,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     markets: string[],
     provider: SignerOrProvider
   ): Promise<Market[]> {
-    const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
+    const signerAddress = await getEthersSignerAddress(provider);
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
         const data = await getUnifiedMarketsDataV2(chainId, provider, markets);

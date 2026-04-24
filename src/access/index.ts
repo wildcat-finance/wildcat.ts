@@ -14,7 +14,8 @@ import {
   getV2HooksDataForBorrower,
   getV2_5FactoryScopedHooksDataForBorrower
 } from "../internal/market-lens";
-import { MarketTypes, Signer, SignerOrProvider } from "../types";
+import { MarketTypes, SignerOrProvider } from "../types";
+import { getEthersSignerAddress } from "../internal/ethers-signer";
 import { OpenTermHooks, OpenTermHooksTemplate } from "./access-control";
 import { FixedTermHooks, FixedTermHooksTemplate } from "./fixed-term";
 
@@ -38,8 +39,8 @@ export async function getBorrowerHooksData(
   provider: SignerOrProvider,
   borrower?: string
 ): Promise<BorrowerHooksDataResult> {
-  if (borrower === undefined && Signer.isSigner(provider)) {
-    borrower = await provider.getAddress();
+  if (borrower === undefined) {
+    borrower = await getEthersSignerAddress(provider);
   }
   if (borrower === undefined) {
     throw Error("Borrower address is required");

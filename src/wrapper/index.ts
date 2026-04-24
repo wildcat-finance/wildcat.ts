@@ -1,4 +1,3 @@
-import { constants } from "ethers";
 import { Token, TokenAmount, toRawAmount } from "../token";
 import {
   ContractWrapper,
@@ -22,7 +21,7 @@ import {
   submitPreparedTransaction,
   submitPreparedTransactionAndWait
 } from "../internal/viem-write";
-import { parseEventLogs } from "viem";
+import { parseEventLogs, zeroAddress } from "viem";
 
 const getErc20Token = async (
   chainId: SupportedChainId,
@@ -184,10 +183,7 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
       provider,
       marketAddress
     );
-    assert(
-      wrapperAddress !== constants.AddressZero,
-      `No wrapper deployed for market ${marketAddress}`
-    );
+    assert(wrapperAddress !== zeroAddress, `No wrapper deployed for market ${marketAddress}`);
     return TokenWrapper.fromAddress(chainId, provider, wrapperAddress);
   }
 

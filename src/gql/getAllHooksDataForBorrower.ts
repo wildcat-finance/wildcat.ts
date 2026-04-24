@@ -6,7 +6,7 @@ import {
   SubgraphHooksKind
 } from "./graphql";
 import { SupportedChainId } from "../constants";
-import { Signer, SignerOrProvider } from "../types";
+import { SignerOrProvider } from "../types";
 import {
   HooksInstance,
   HooksTemplate,
@@ -14,6 +14,7 @@ import {
   hooksTemplateFromSubgraph
 } from "../access";
 import { MarketController } from "../controller";
+import { getEthersSignerAddress } from "../internal/ethers-signer";
 
 export type GetAllHooksDataForBorrowerOptions = {
   chainId: SupportedChainId;
@@ -33,8 +34,11 @@ export async function getAllHooksDataForBorrower(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   { chainId, fetchPolicy, signerOrProvider, borrower }: GetAllHooksDataForBorrowerOptions
 ): Promise<GetAllHooksDataForBorrowerResult> {
-  if (borrower === undefined && Signer.isSigner(signerOrProvider)) {
-    borrower = await signerOrProvider.getAddress();
+  if (borrower === undefined) {
+    const signerAddress = await getEthersSignerAddress(signerOrProvider);
+    if (signerAddress !== undefined) {
+      borrower = signerAddress;
+    }
   }
   const result = await subgraphClient.query<
     SubgraphGetAllHooksDataForBorrowerQuery,

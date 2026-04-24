@@ -1,4 +1,3 @@
-import { Signer } from "@ethersproject/abstract-signer";
 import { TokenAmount, toRawAmount } from "../token";
 import {
   CollateralContractDataStructOutput,
@@ -23,6 +22,7 @@ import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { assert, prepareTransaction } from "../utils";
 import { simpleMarketCollateralAbi, wildcatCollateralFactoryAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
+import { isEthersSigner } from "../internal/ethers-signer";
 
 export * from "./collateral-events";
 
@@ -176,7 +176,7 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
     market: Market,
     collateralAsset: Token
   ): Promise<TransactionHash> {
-    assert(Signer.isSigner(provider), "Signer is required to create collateral");
+    assert(isEthersSigner(provider), "Signer is required to create collateral");
     return submitPreparedTransaction(
       provider,
       MarketCollateralV1.populateCreate(chainId, provider, market, collateralAsset)
