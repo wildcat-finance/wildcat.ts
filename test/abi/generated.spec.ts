@@ -6,7 +6,7 @@ import * as generatedAbis from "../../src/abi";
 import { marketLensV2_5Abi, wildcatArchControllerAbi } from "../../src/abi";
 
 type AbiSpec = {
-  exportName: keyof typeof generatedAbis;
+  exportName?: keyof typeof generatedAbis;
   artifact: string;
   types?: string[];
   names?: string[];
@@ -34,6 +34,7 @@ const getArtifactAbi = (artifactPath: string): any[] => {
 describe("generated viem ABIs", () => {
   it("match the configured Hardhat artifact ABI slices", () => {
     for (const spec of specs) {
+      if (!spec.exportName) continue;
       expect(generatedAbis[spec.exportName]).to.deep.equal(
         filterAbi(getArtifactAbi(spec.artifact), spec)
       );
