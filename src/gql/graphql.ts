@@ -3316,6 +3316,210 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   TransactionHash = "transactionHash"
 }
 
+export type SubgraphFactoryHooksTemplate = {
+  __typename: "FactoryHooksTemplate";
+  deployedInstances: SubgraphHooksInstanceDeployed[];
+  disabled: Scalars["Boolean"]["output"];
+  feeRecipient: Scalars["Bytes"]["output"];
+  hooksFactory: SubgraphHooksFactory;
+  hooksInstances: SubgraphHooksInstance[];
+  hooksTemplate: SubgraphHooksTemplate;
+  id: Scalars["ID"]["output"];
+  name: Scalars["String"]["output"];
+  originationFeeAmount: Scalars["BigInt"]["output"];
+  originationFeeAsset?: Maybe<SubgraphToken>;
+  protocolFeeBips: Scalars["Int"]["output"];
+  templateAddress: Scalars["Bytes"]["output"];
+};
+
+export type SubgraphFactoryHooksTemplateDeployedInstancesArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphHooksInstanceDeployed_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphHooksInstanceDeployed_Filter>;
+};
+
+export type SubgraphFactoryHooksTemplateHooksInstancesArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphHooksInstance_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphHooksInstance_Filter>;
+};
+
+export type SubgraphFactoryHooksTemplate_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphFactoryHooksTemplate_Filter>>>;
+  deployedInstances_?: InputMaybe<SubgraphHooksInstanceDeployed_Filter>;
+  disabled?: InputMaybe<Scalars["Boolean"]["input"]>;
+  disabled_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  disabled_not?: InputMaybe<Scalars["Boolean"]["input"]>;
+  disabled_not_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  feeRecipient?: InputMaybe<Scalars["Bytes"]["input"]>;
+  feeRecipient_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  feeRecipient_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  feeRecipient_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  feeRecipient_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  feeRecipient_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  feeRecipient_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  feeRecipient_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  feeRecipient_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  feeRecipient_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hooksFactory?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_?: InputMaybe<SubgraphHooksFactory_Filter>;
+  hooksFactory_contains?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_gt?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_gte?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  hooksFactory_lt?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_lte?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_not?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  hooksFactory_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooksFactory_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooksInstances_?: InputMaybe<SubgraphHooksInstance_Filter>;
+  hooksTemplate?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_?: InputMaybe<SubgraphHooksTemplate_Filter>;
+  hooksTemplate_contains?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_gt?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_gte?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  hooksTemplate_lt?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_lte?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_not?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  hooksTemplate_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  hooksTemplate_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  id_lt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_lte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  name?: InputMaybe<Scalars["String"]["input"]>;
+  name_contains?: InputMaybe<Scalars["String"]["input"]>;
+  name_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  name_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  name_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  name_gt?: InputMaybe<Scalars["String"]["input"]>;
+  name_gte?: InputMaybe<Scalars["String"]["input"]>;
+  name_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  name_lt?: InputMaybe<Scalars["String"]["input"]>;
+  name_lte?: InputMaybe<Scalars["String"]["input"]>;
+  name_not?: InputMaybe<Scalars["String"]["input"]>;
+  name_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  name_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  name_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  name_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  name_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  name_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  name_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  name_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  name_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphFactoryHooksTemplate_Filter>>>;
+  originationFeeAmount?: InputMaybe<Scalars["BigInt"]["input"]>;
+  originationFeeAmount_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  originationFeeAmount_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  originationFeeAmount_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  originationFeeAmount_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  originationFeeAmount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  originationFeeAmount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  originationFeeAmount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  originationFeeAsset?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_?: InputMaybe<SubgraphToken_Filter>;
+  originationFeeAsset_contains?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_gt?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_gte?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  originationFeeAsset_lt?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_lte?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_not?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  originationFeeAsset_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  originationFeeAsset_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  protocolFeeBips?: InputMaybe<Scalars["Int"]["input"]>;
+  protocolFeeBips_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  protocolFeeBips_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  protocolFeeBips_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  protocolFeeBips_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  protocolFeeBips_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  protocolFeeBips_not?: InputMaybe<Scalars["Int"]["input"]>;
+  protocolFeeBips_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  templateAddress?: InputMaybe<Scalars["Bytes"]["input"]>;
+  templateAddress_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  templateAddress_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  templateAddress_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  templateAddress_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  templateAddress_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  templateAddress_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  templateAddress_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  templateAddress_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  templateAddress_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+};
+
+export enum SubgraphFactoryHooksTemplate_OrderBy {
+  DeployedInstances = "deployedInstances",
+  Disabled = "disabled",
+  FeeRecipient = "feeRecipient",
+  HooksFactory = "hooksFactory",
+  HooksFactoryEventIndex = "hooksFactory__eventIndex",
+  HooksFactoryId = "hooksFactory__id",
+  HooksFactoryIsRegistered = "hooksFactory__isRegistered",
+  HooksFactoryMarketType = "hooksFactory__marketType",
+  HooksFactorySentinel = "hooksFactory__sentinel",
+  HooksInstances = "hooksInstances",
+  HooksTemplate = "hooksTemplate",
+  HooksTemplateDisabled = "hooksTemplate__disabled",
+  HooksTemplateFeeRecipient = "hooksTemplate__feeRecipient",
+  HooksTemplateId = "hooksTemplate__id",
+  HooksTemplateName = "hooksTemplate__name",
+  HooksTemplateOriginationFeeAmount = "hooksTemplate__originationFeeAmount",
+  HooksTemplateProtocolFeeBips = "hooksTemplate__protocolFeeBips",
+  Id = "id",
+  Name = "name",
+  OriginationFeeAmount = "originationFeeAmount",
+  OriginationFeeAsset = "originationFeeAsset",
+  OriginationFeeAssetAddress = "originationFeeAsset__address",
+  OriginationFeeAssetDecimals = "originationFeeAsset__decimals",
+  OriginationFeeAssetId = "originationFeeAsset__id",
+  OriginationFeeAssetIsMock = "originationFeeAsset__isMock",
+  OriginationFeeAssetName = "originationFeeAsset__name",
+  OriginationFeeAssetSymbol = "originationFeeAsset__symbol",
+  ProtocolFeeBips = "protocolFeeBips",
+  TemplateAddress = "templateAddress"
+}
+
 export type SubgraphFeesCollected = {
   __typename: "FeesCollected";
   blockLogIndex: Scalars["Int"]["output"];
@@ -4198,6 +4402,7 @@ export type SubgraphHooksFactory = {
   __typename: "HooksFactory";
   archController: SubgraphArchController;
   eventIndex: Scalars["Int"]["output"];
+  factoryHooksTemplates: SubgraphFactoryHooksTemplate[];
   hooksInstances: SubgraphHooksInstance[];
   hooksTemplates: SubgraphHooksTemplate[];
   id: Scalars["ID"]["output"];
@@ -4206,13 +4411,15 @@ export type SubgraphHooksFactory = {
   sentinel: Scalars["Bytes"]["output"];
 };
 
-export type SubgraphHooksFactoryHooksInstancesArgs = {
+export type SubgraphHooksFactoryFactoryHooksTemplatesArgs = {
   first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<SubgraphHooksInstance_OrderBy>;
+  orderBy?: InputMaybe<SubgraphFactoryHooksTemplate_OrderBy>;
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars["Int"]["input"]>;
-  where?: InputMaybe<SubgraphHooksInstance_Filter>;
+  where?: InputMaybe<SubgraphFactoryHooksTemplate_Filter>;
 };
+
+export type SubgraphHooksFactoryHooksInstancesArgs = SubgraphFactoryHooksTemplateHooksInstancesArgs;
 
 export type SubgraphHooksFactoryHooksTemplatesArgs = {
   first?: InputMaybe<Scalars["Int"]["input"]>;
@@ -4255,6 +4462,7 @@ export type SubgraphHooksFactory_Filter = {
   eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  factoryHooksTemplates_?: InputMaybe<SubgraphFactoryHooksTemplate_Filter>;
   hooksInstances_?: InputMaybe<SubgraphHooksInstance_Filter>;
   hooksTemplates_?: InputMaybe<SubgraphHooksTemplate_Filter>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
@@ -4290,6 +4498,7 @@ export enum SubgraphHooksFactory_OrderBy {
   ArchController = "archController",
   ArchControllerId = "archController__id",
   EventIndex = "eventIndex",
+  FactoryHooksTemplates = "factoryHooksTemplates",
   HooksInstances = "hooksInstances",
   HooksTemplates = "hooksTemplates",
   Id = "id",
@@ -4305,6 +4514,7 @@ export type SubgraphHooksInstance = {
   accountUnblockFromDepositsRecords: SubgraphAccountUnblockedFromDeposits[];
   borrower: Scalars["Bytes"]["output"];
   eventIndex: Scalars["Int"]["output"];
+  factoryHooksTemplate: SubgraphFactoryHooksTemplate;
   hooksFactory: SubgraphHooksFactory;
   hooksTemplate: SubgraphHooksTemplate;
   id: Scalars["ID"]["output"];
@@ -4399,6 +4609,7 @@ export type SubgraphHooksInstanceDeployed = {
   blockLogIndex: Scalars["Int"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
+  factoryHooksTemplate: SubgraphFactoryHooksTemplate;
   hooks: SubgraphHooksInstance;
   hooksTemplate: SubgraphHooksTemplate;
   id: Scalars["ID"]["output"];
@@ -4433,6 +4644,27 @@ export type SubgraphHooksInstanceDeployed_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  factoryHooksTemplate?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_?: InputMaybe<SubgraphFactoryHooksTemplate_Filter>;
+  factoryHooksTemplate_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_gt?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_gte?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factoryHooksTemplate_lt?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_lte?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factoryHooksTemplate_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   hooks?: InputMaybe<Scalars["String"]["input"]>;
   hooksTemplate?: InputMaybe<Scalars["String"]["input"]>;
   hooksTemplate_?: InputMaybe<SubgraphHooksTemplate_Filter>;
@@ -4500,6 +4732,14 @@ export enum SubgraphHooksInstanceDeployed_OrderBy {
   BlockLogIndex = "blockLogIndex",
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
+  FactoryHooksTemplate = "factoryHooksTemplate",
+  FactoryHooksTemplateDisabled = "factoryHooksTemplate__disabled",
+  FactoryHooksTemplateFeeRecipient = "factoryHooksTemplate__feeRecipient",
+  FactoryHooksTemplateId = "factoryHooksTemplate__id",
+  FactoryHooksTemplateName = "factoryHooksTemplate__name",
+  FactoryHooksTemplateOriginationFeeAmount = "factoryHooksTemplate__originationFeeAmount",
+  FactoryHooksTemplateProtocolFeeBips = "factoryHooksTemplate__protocolFeeBips",
+  FactoryHooksTemplateTemplateAddress = "factoryHooksTemplate__templateAddress",
   Hooks = "hooks",
   HooksTemplate = "hooksTemplate",
   HooksTemplateDisabled = "hooksTemplate__disabled",
@@ -4543,6 +4783,27 @@ export type SubgraphHooksInstance_Filter = {
   eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
   eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  factoryHooksTemplate?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_?: InputMaybe<SubgraphFactoryHooksTemplate_Filter>;
+  factoryHooksTemplate_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_gt?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_gte?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factoryHooksTemplate_lt?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_lte?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factoryHooksTemplate_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   hooksFactory?: InputMaybe<Scalars["String"]["input"]>;
   hooksFactory_?: InputMaybe<SubgraphHooksFactory_Filter>;
   hooksFactory_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -4641,6 +4902,14 @@ export enum SubgraphHooksInstance_OrderBy {
   AccountUnblockFromDepositsRecords = "accountUnblockFromDepositsRecords",
   Borrower = "borrower",
   EventIndex = "eventIndex",
+  FactoryHooksTemplate = "factoryHooksTemplate",
+  FactoryHooksTemplateDisabled = "factoryHooksTemplate__disabled",
+  FactoryHooksTemplateFeeRecipient = "factoryHooksTemplate__feeRecipient",
+  FactoryHooksTemplateId = "factoryHooksTemplate__id",
+  FactoryHooksTemplateName = "factoryHooksTemplate__name",
+  FactoryHooksTemplateOriginationFeeAmount = "factoryHooksTemplate__originationFeeAmount",
+  FactoryHooksTemplateProtocolFeeBips = "factoryHooksTemplate__protocolFeeBips",
+  FactoryHooksTemplateTemplateAddress = "factoryHooksTemplate__templateAddress",
   HooksFactory = "hooksFactory",
   HooksFactoryEventIndex = "hooksFactory__eventIndex",
   HooksFactoryId = "hooksFactory__id",
@@ -4826,6 +5095,7 @@ export type SubgraphHooksTemplate = {
   __typename: "HooksTemplate";
   deployedInstances: SubgraphHooksInstanceDeployed[];
   disabled: Scalars["Boolean"]["output"];
+  factoryHooksTemplates: SubgraphFactoryHooksTemplate[];
   feeRecipient: Scalars["Bytes"]["output"];
   hooksFactory: SubgraphHooksFactory;
   id: Scalars["ID"]["output"];
@@ -4835,19 +5105,18 @@ export type SubgraphHooksTemplate = {
   protocolFeeBips: Scalars["Int"]["output"];
 };
 
-export type SubgraphHooksTemplateDeployedInstancesArgs = {
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<SubgraphHooksInstanceDeployed_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  where?: InputMaybe<SubgraphHooksInstanceDeployed_Filter>;
-};
+export type SubgraphHooksTemplateDeployedInstancesArgs =
+  SubgraphFactoryHooksTemplateDeployedInstancesArgs;
+
+export type SubgraphHooksTemplateFactoryHooksTemplatesArgs =
+  SubgraphHooksFactoryFactoryHooksTemplatesArgs;
 
 export type SubgraphHooksTemplateAdded = {
   __typename: "HooksTemplateAdded";
   blockLogIndex: Scalars["Int"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
+  factoryHooksTemplate: SubgraphFactoryHooksTemplate;
   feeRecipient: Scalars["Bytes"]["output"];
   hooksTemplate: SubgraphHooksTemplate;
   id: Scalars["ID"]["output"];
@@ -4885,6 +5154,27 @@ export type SubgraphHooksTemplateAdded_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  factoryHooksTemplate?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_?: InputMaybe<SubgraphFactoryHooksTemplate_Filter>;
+  factoryHooksTemplate_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_gt?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_gte?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factoryHooksTemplate_lt?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_lte?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factoryHooksTemplate_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   feeRecipient?: InputMaybe<Scalars["Bytes"]["input"]>;
   feeRecipient_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   feeRecipient_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
@@ -4978,6 +5268,14 @@ export enum SubgraphHooksTemplateAdded_OrderBy {
   BlockLogIndex = "blockLogIndex",
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
+  FactoryHooksTemplate = "factoryHooksTemplate",
+  FactoryHooksTemplateDisabled = "factoryHooksTemplate__disabled",
+  FactoryHooksTemplateFeeRecipient = "factoryHooksTemplate__feeRecipient",
+  FactoryHooksTemplateId = "factoryHooksTemplate__id",
+  FactoryHooksTemplateName = "factoryHooksTemplate__name",
+  FactoryHooksTemplateOriginationFeeAmount = "factoryHooksTemplate__originationFeeAmount",
+  FactoryHooksTemplateProtocolFeeBips = "factoryHooksTemplate__protocolFeeBips",
+  FactoryHooksTemplateTemplateAddress = "factoryHooksTemplate__templateAddress",
   FeeRecipient = "feeRecipient",
   HooksTemplate = "hooksTemplate",
   HooksTemplateDisabled = "hooksTemplate__disabled",
@@ -5004,6 +5302,7 @@ export type SubgraphHooksTemplateDisabled = {
   blockLogIndex: Scalars["Int"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
+  factoryHooksTemplate: SubgraphFactoryHooksTemplate;
   hooksTemplate: SubgraphHooksTemplate;
   id: Scalars["ID"]["output"];
   transactionHash: Scalars["Bytes"]["output"];
@@ -5037,6 +5336,27 @@ export type SubgraphHooksTemplateDisabled_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  factoryHooksTemplate?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_?: InputMaybe<SubgraphFactoryHooksTemplate_Filter>;
+  factoryHooksTemplate_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_gt?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_gte?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factoryHooksTemplate_lt?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_lte?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factoryHooksTemplate_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   hooksTemplate?: InputMaybe<Scalars["String"]["input"]>;
   hooksTemplate_?: InputMaybe<SubgraphHooksTemplate_Filter>;
   hooksTemplate_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -5083,6 +5403,14 @@ export enum SubgraphHooksTemplateDisabled_OrderBy {
   BlockLogIndex = "blockLogIndex",
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
+  FactoryHooksTemplate = "factoryHooksTemplate",
+  FactoryHooksTemplateDisabled = "factoryHooksTemplate__disabled",
+  FactoryHooksTemplateFeeRecipient = "factoryHooksTemplate__feeRecipient",
+  FactoryHooksTemplateId = "factoryHooksTemplate__id",
+  FactoryHooksTemplateName = "factoryHooksTemplate__name",
+  FactoryHooksTemplateOriginationFeeAmount = "factoryHooksTemplate__originationFeeAmount",
+  FactoryHooksTemplateProtocolFeeBips = "factoryHooksTemplate__protocolFeeBips",
+  FactoryHooksTemplateTemplateAddress = "factoryHooksTemplate__templateAddress",
   HooksTemplate = "hooksTemplate",
   HooksTemplateDisabled = "hooksTemplate__disabled",
   HooksTemplateFeeRecipient = "hooksTemplate__feeRecipient",
@@ -5099,6 +5427,7 @@ export type SubgraphHooksTemplateFeesUpdated = {
   blockLogIndex: Scalars["Int"]["output"];
   blockNumber: Scalars["Int"]["output"];
   blockTimestamp: Scalars["Int"]["output"];
+  factoryHooksTemplate: SubgraphFactoryHooksTemplate;
   feeRecipient: Scalars["Bytes"]["output"];
   hooksTemplate: SubgraphHooksTemplate;
   id: Scalars["ID"]["output"];
@@ -5136,6 +5465,27 @@ export type SubgraphHooksTemplateFeesUpdated_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  factoryHooksTemplate?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_?: InputMaybe<SubgraphFactoryHooksTemplate_Filter>;
+  factoryHooksTemplate_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_gt?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_gte?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factoryHooksTemplate_lt?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_lte?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factoryHooksTemplate_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factoryHooksTemplate_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   feeRecipient?: InputMaybe<Scalars["Bytes"]["input"]>;
   feeRecipient_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   feeRecipient_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
@@ -5229,6 +5579,14 @@ export enum SubgraphHooksTemplateFeesUpdated_OrderBy {
   BlockLogIndex = "blockLogIndex",
   BlockNumber = "blockNumber",
   BlockTimestamp = "blockTimestamp",
+  FactoryHooksTemplate = "factoryHooksTemplate",
+  FactoryHooksTemplateDisabled = "factoryHooksTemplate__disabled",
+  FactoryHooksTemplateFeeRecipient = "factoryHooksTemplate__feeRecipient",
+  FactoryHooksTemplateId = "factoryHooksTemplate__id",
+  FactoryHooksTemplateName = "factoryHooksTemplate__name",
+  FactoryHooksTemplateOriginationFeeAmount = "factoryHooksTemplate__originationFeeAmount",
+  FactoryHooksTemplateProtocolFeeBips = "factoryHooksTemplate__protocolFeeBips",
+  FactoryHooksTemplateTemplateAddress = "factoryHooksTemplate__templateAddress",
   FeeRecipient = "feeRecipient",
   HooksTemplate = "hooksTemplate",
   HooksTemplateDisabled = "hooksTemplate__disabled",
@@ -5259,6 +5617,7 @@ export type SubgraphHooksTemplate_Filter = {
   disabled_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   disabled_not?: InputMaybe<Scalars["Boolean"]["input"]>;
   disabled_not_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  factoryHooksTemplates_?: InputMaybe<SubgraphFactoryHooksTemplate_Filter>;
   feeRecipient?: InputMaybe<Scalars["Bytes"]["input"]>;
   feeRecipient_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   feeRecipient_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
@@ -5361,6 +5720,7 @@ export type SubgraphHooksTemplate_Filter = {
 export enum SubgraphHooksTemplate_OrderBy {
   DeployedInstances = "deployedInstances",
   Disabled = "disabled",
+  FactoryHooksTemplates = "factoryHooksTemplates",
   FeeRecipient = "feeRecipient",
   HooksFactory = "hooksFactory",
   HooksFactoryEventIndex = "hooksFactory__eventIndex",
@@ -10079,6 +10439,8 @@ export type SubgraphQuery = {
   deposits: SubgraphDeposit[];
   disabledForceBuyBacks?: Maybe<SubgraphDisabledForceBuyBacks>;
   disabledForceBuyBacks_collection: SubgraphDisabledForceBuyBacks[];
+  factoryHooksTemplate?: Maybe<SubgraphFactoryHooksTemplate>;
+  factoryHooksTemplates: SubgraphFactoryHooksTemplate[];
   feesCollected?: Maybe<SubgraphFeesCollected>;
   feesCollecteds: SubgraphFeesCollected[];
   fixedTermUpdated?: Maybe<SubgraphFixedTermUpdated>;
@@ -10509,6 +10871,18 @@ export type SubgraphQueryDisabledForceBuyBacks_CollectionArgs = {
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
   where?: InputMaybe<SubgraphDisabledForceBuyBacks_Filter>;
+};
+
+export type SubgraphQueryFactoryHooksTemplateArgs = SubgraphQueryAccountAccessGrantedArgs;
+
+export type SubgraphQueryFactoryHooksTemplatesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphFactoryHooksTemplate_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphFactoryHooksTemplate_Filter>;
 };
 
 export type SubgraphQueryFeesCollectedArgs = SubgraphQueryAccountAccessGrantedArgs;

@@ -12,3 +12,9 @@ Replaced duplicate type literals: 17283ms
 Found functions to repair: 23ms
 Repaired return types: 1ms
 Saved file: 3ms
+Gathered unique type definitions: 3ms
+Mapped type literals: 31ms
+Replaced duplicate type literals: 14254ms
+Found functions to repair: 26ms
+Repaired return types: 0ms
+Saved file: 3ms
