@@ -166,6 +166,26 @@ describe("prepared transaction encoding", () => {
     ).to.equal(wrapperFactory.populateCreateWrapper(market).data);
   });
 
+  it("uses viem encoding through token approval helpers", () => {
+    const token = new Token(
+      SupportedChainId.Sepolia,
+      makeAddress(19),
+      "Mock Token",
+      "MOCK",
+      18,
+      false,
+      provider
+    );
+    const spender = makeAddress(20);
+    const tx = token.populateApprove(spender, token.getAmount(123n));
+
+    expect(tx).to.deep.equal({
+      to: token.address,
+      data: IERC20__factory.createInterface().encodeFunctionData("approve", [spender, 123]),
+      value: 0n
+    });
+  });
+
   it("submits prepared transactions as hashes without leaking ethers transaction objects", async () => {
     const expectedHash = `0x${"1".padStart(64, "0")}`;
     const tx = prepareTransaction({

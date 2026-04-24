@@ -2,9 +2,7 @@ import {
   MarketDataBaseV2_5StructOutput,
   MarketDataStructOutput,
   MarketDataV2_5StructOutput,
-  MarketDataV2StructOutput,
-  WildcatMarket,
-  WildcatMarket__factory
+  MarketDataV2StructOutput
 } from "./typechain";
 import { SupportedChainId, getMarketTypeForHooksFactory, hasDeploymentAddress } from "./constants";
 import {
@@ -226,15 +224,11 @@ export interface Market
   decimals: number;
 }
 
-export class Market extends ContractWrapper<WildcatMarket> {
+export class Market extends ContractWrapper {
   public depositRecords: DepositRecord[];
   public repaymentRecords: RepaymentRecord[];
   public borrowRecords: BorrowRecord[];
   public feeCollectionRecords: FeeCollectionRecord[];
-
-  protected get _contractAddress(): string {
-    return this.address;
-  }
 
   constructor({ provider, ...args }: MarketArgs & { hooksConfig?: HooksConfig }) {
     super(provider);
@@ -263,8 +257,6 @@ export class Market extends ContractWrapper<WildcatMarket> {
       })
     );
   }
-
-  readonly contractFactory = WildcatMarket__factory;
 
   /* -------------------------------------------------------------------------- */
   /*                              Property Getters                              */

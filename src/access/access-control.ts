@@ -14,12 +14,8 @@ import {
 import { Token, TokenAmount } from "../token";
 import {
   DeployMarketInputsV2Struct,
-  HooksFactory,
-  HooksFactory__factory,
   HooksInstanceDataStructOutput,
-  HooksTemplateDataStructOutput,
-  IOpenTermHooks,
-  IOpenTermHooks__factory
+  HooksTemplateDataStructOutput
 } from "../typechain";
 import {
   AddLenderInput,
@@ -61,15 +57,10 @@ import { submitPreparedTransaction } from "../internal/viem-write";
 export interface OpenTermHooks extends Omit<OpenTermHooksArgs, "roleProviders" | "constraints"> {}
 const NullProviderIndex = 2 ** 24 - 1;
 
-export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
+export class OpenTermHooks extends ContractWrapper {
   readonly kind: HooksKind.OpenTerm = HooksKind.OpenTerm;
-  readonly contractFactory = IOpenTermHooks__factory;
   public roleProviders: RoleProvider[];
   public constraints: MarketParameterConstraints;
-
-  protected get _contractAddress(): string {
-    return this.address;
-  }
 
   constructor({
     provider,
@@ -302,10 +293,8 @@ export interface OpenTermHooksTemplate extends OpenTermHooksTemplateArgs {
   hooksFactory: string;
 }
 
-export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
+export class OpenTermHooksTemplate extends ContractWrapper {
   readonly kind: HooksKind.OpenTerm = HooksKind.OpenTerm;
-  readonly contractFactory = HooksFactory__factory;
-  protected _contractAddress: string;
 
   constructor(
     public chainId: SupportedChainId,
@@ -315,7 +304,6 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     super(provider);
     const hooksFactory = args.hooksFactory ?? getDeploymentAddress(chainId, "HooksFactory");
     Object.assign(this, { ...args, hooksFactory });
-    this._contractAddress = hooksFactory;
   }
 
   updateWith(
@@ -332,7 +320,6 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     this.signerAddress = signerAddress;
     this.isRegisteredBorrower = isRegisteredBorrower;
     this.hooksFactory = hooksFactory;
-    this._contractAddress = hooksFactory;
   }
 
   static fromLensData(

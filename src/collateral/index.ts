@@ -1,9 +1,5 @@
 import { TokenAmount, toRawAmount } from "../token";
-import {
-  CollateralContractDataStructOutput,
-  SimpleMarketCollateral,
-  SimpleMarketCollateral__factory
-} from "../typechain";
+import { CollateralContractDataStructOutput } from "../typechain";
 import { ContractWrapper, PartialTransaction, SignerOrProvider, TransactionHash } from "../types";
 import { Token } from "../token";
 import {
@@ -50,14 +46,11 @@ export interface CollateralV1Args {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MarketCollateralV1 extends CollateralV1Args {}
 
-export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> {
-  readonly contractFactory = SimpleMarketCollateral__factory;
-  protected readonly _contractAddress: string;
+export class MarketCollateralV1 extends ContractWrapper {
   public address: string;
 
   constructor({ provider, address, ...args }: CollateralV1Args) {
     super(provider);
-    this._contractAddress = address;
     this.address = address;
     Object.assign(this, args);
   }

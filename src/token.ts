@@ -1,12 +1,7 @@
 import type { Abi, Address } from "viem";
 import { iERC20Abi, marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "./abi";
-import {
-  IERC20,
-  IERC20__factory,
-  TokenMetadataStructOutput,
-  TokenMetadataV2_5StructOutput
-} from "./typechain";
-import { ContractWrapper, SignerOrProvider, TransactionHash } from "./types";
+import { TokenMetadataStructOutput, TokenMetadataV2_5StructOutput } from "./typechain";
+import { ContractWrapper, PartialTransaction, SignerOrProvider, TransactionHash } from "./types";
 import { SupportedChainId, getDeploymentAddress, hasDeploymentAddress } from "./constants";
 import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
 import { readViemContract } from "./internal/viem-read";
@@ -153,9 +148,7 @@ export class TokenAmount {
   }
 }
 
-export class Token extends ContractWrapper<IERC20> {
-  readonly contractFactory = IERC20__factory;
-
+export class Token extends ContractWrapper {
   constructor(
     public chainId: SupportedChainId,
     public address: string,
@@ -166,10 +159,6 @@ export class Token extends ContractWrapper<IERC20> {
     provider: SignerOrProvider
   ) {
     super(provider);
-  }
-
-  protected get _contractAddress(): string {
-    return this.address;
   }
 
   async faucet(): Promise<TransactionHash> {
@@ -184,6 +173,44 @@ export class Token extends ContractWrapper<IERC20> {
         functionName: "faucet"
       })
     );
+  }
+
+  private readToken<Result>(functionName: string, args: readonly unknown[] = []): Promise<Result> {
+    return readViemContract<Result>(
+      getViemPublicClientFromEthers(this.provider),
+      this.address,
+      iERC20Abi,
+      functionName,
+      args
+    );
+  }
+
+  async balanceOf(account: string): Promise<TokenAmount> {
+    const balance = await this.readToken<bigint>("balanceOf", [account]);
+    return this.getAmount(balance);
+  }
+
+  async totalSupply(): Promise<TokenAmount> {
+    const totalSupply = await this.readToken<bigint>("totalSupply");
+    return this.getAmount(totalSupply);
+  }
+
+  async allowance(owner: string, spender: string): Promise<TokenAmount> {
+    const allowance = await this.readToken<bigint>("allowance", [owner, spender]);
+    return this.getAmount(allowance);
+  }
+
+  populateApprove(spender: string, amount: RhsAmount): PartialTransaction {
+    return prepareTransaction({
+      to: this.address,
+      abi: iERC20Abi,
+      functionName: "approve",
+      args: [spender, toRawAmount(amount)]
+    });
+  }
+
+  async approve(spender: string, amount: RhsAmount): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateApprove(spender, amount));
   }
 
   getAmount(amount: RhsAmount): TokenAmount {

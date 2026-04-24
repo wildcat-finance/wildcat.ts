@@ -1,8 +1,4 @@
-import {
-  ControllerDataStructOutput,
-  WildcatMarketController,
-  WildcatMarketController__factory
-} from "./typechain";
+import { ControllerDataStructOutput } from "./typechain";
 import {
   SupportedChainId,
   getControllerFactoryContract,
@@ -38,13 +34,8 @@ import { parseEventLogs } from "viem";
 import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
 import { readViemContract } from "./internal/viem-read";
 
-export class MarketController extends ContractWrapper<WildcatMarketController> {
-  readonly contractFactory = WildcatMarketController__factory;
+export class MarketController extends ContractWrapper {
   public authorizedLenders: string[] = [];
-
-  protected get _contractAddress(): string {
-    return this.address;
-  }
 
   constructor(
     public chainId: SupportedChainId,

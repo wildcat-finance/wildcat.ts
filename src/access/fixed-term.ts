@@ -14,12 +14,8 @@ import {
 import { Token, TokenAmount } from "../token";
 import {
   DeployMarketInputsV2Struct,
-  HooksFactory,
-  HooksFactory__factory,
   HooksInstanceDataStructOutput,
-  HooksTemplateDataStructOutput,
-  IFixedTermHooks,
-  IFixedTermHooks__factory
+  HooksTemplateDataStructOutput
 } from "../typechain";
 import {
   AddLenderInput,
@@ -62,15 +58,10 @@ export interface FixedTermHooks extends Omit<FixedTermHooksArgs, "roleProviders"
 
 const NullProviderIndex = 2 ** 24 - 1;
 
-export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
+export class FixedTermHooks extends ContractWrapper {
   readonly kind: HooksKind.FixedTerm = HooksKind.FixedTerm;
-  readonly contractFactory = IFixedTermHooks__factory;
   public roleProviders: RoleProvider[];
   public constraints: MarketParameterConstraints;
-
-  protected get _contractAddress(): string {
-    return this.address;
-  }
 
   constructor({
     provider,
@@ -303,10 +294,8 @@ export interface FixedTermHooksTemplate extends FixedTermHooksTemplateArgs {
   hooksFactory: string;
 }
 
-export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
+export class FixedTermHooksTemplate extends ContractWrapper {
   readonly kind: HooksKind.FixedTerm = HooksKind.FixedTerm;
-  readonly contractFactory = HooksFactory__factory;
-  protected _contractAddress: string;
 
   constructor(
     public chainId: SupportedChainId,
@@ -316,7 +305,6 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     super(provider);
     const hooksFactory = args.hooksFactory ?? getDeploymentAddress(chainId, "HooksFactory");
     Object.assign(this, { ...args, hooksFactory });
-    this._contractAddress = hooksFactory;
   }
 
   updateWith(
@@ -333,7 +321,6 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     this.signerAddress = signerAddress;
     this.isRegisteredBorrower = isRegisteredBorrower;
     this.hooksFactory = hooksFactory;
-    this._contractAddress = hooksFactory;
   }
 
   static fromLensData(

@@ -1,6 +1,5 @@
 import type { Provider } from "@ethersproject/abstract-provider";
 import type { Signer as EthersSigner } from "@ethersproject/abstract-signer";
-import type { BaseContract } from "ethers";
 import type { Address, Hash, Hex, TransactionReceipt } from "viem";
 import { Token, TokenAmount } from "./token";
 import { SubgraphMarketVersion } from "./gql/graphql";
@@ -27,16 +26,8 @@ export const Signer = {
   isSigner: isEthersSigner
 } as const;
 
-export abstract class ContractWrapper<Contract extends BaseContract> {
+export abstract class ContractWrapper {
   constructor(protected _provider: SignerOrProvider) {}
-
-  protected _contract?: Contract;
-
-  abstract readonly contractFactory: {
-    connect(address: string, signerOrProvider: Signer | Provider): Contract;
-  };
-
-  protected abstract _contractAddress: string;
 
   get signer(): Signer {
     if (isEthersSigner(this._provider)) {
@@ -51,21 +42,11 @@ export abstract class ContractWrapper<Contract extends BaseContract> {
 
   set provider(provider: SignerOrProvider) {
     this._provider = provider;
-    if (this._contract) {
-      this._contract = this.contractFactory.connect(this._contractAddress, this.provider);
-    }
     for (const property of Object.values(this)) {
       if (property instanceof ContractWrapper) {
         property.provider = provider;
       }
     }
-  }
-
-  get contract(): Contract {
-    if (!this._contract) {
-      this._contract = this.contractFactory.connect(this._contractAddress, this.provider);
-    }
-    return this._contract;
   }
 }
 

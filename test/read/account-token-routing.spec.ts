@@ -2,6 +2,7 @@ import { expect } from "chai";
 import { BigNumber, providers } from "ethers";
 import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
 import {
+  iERC20Abi,
   marketLensAbi,
   marketLensV2Abi,
   marketLensV2_5Abi,
@@ -378,6 +379,55 @@ describe("Account and token read routing", () => {
     expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
     expect(tokens.map((token) => token.address)).to.deep.equal([metadata.token]);
     expect(tokens[0].symbol).to.equal("LGCY");
+  });
+
+  it("reads direct ERC20 balances, allowance, and total supply through viem", async () => {
+    const tokenAddress = makeAddress(34);
+    const owner = makeAddress(35);
+    const spender = makeAddress(36);
+    const viemProvider = new FakeViemProvider((call) => {
+      const { functionName, args } = decodeFunctionData({
+        abi: iERC20Abi as Abi,
+        data: call.data as `0x${string}`
+      });
+
+      if (functionName === "balanceOf") {
+        expect(args).to.deep.equal([owner]);
+        return encodeLensResult(iERC20Abi as Abi, functionName, 123n);
+      }
+      if (functionName === "allowance") {
+        expect(args).to.deep.equal([owner, spender]);
+        return encodeLensResult(iERC20Abi as Abi, functionName, 456n);
+      }
+      if (functionName === "totalSupply") {
+        return encodeLensResult(iERC20Abi as Abi, functionName, 789n);
+      }
+      throw new Error(`Unexpected ERC20 read: ${functionName}`);
+    });
+    const token = new Token(
+      constantsModule.SupportedChainId.Sepolia,
+      tokenAddress,
+      "Mock Token",
+      "MOCK",
+      18,
+      false,
+      viemProvider as unknown as providers.Provider
+    );
+
+    const [balance, allowance, totalSupply] = await Promise.all([
+      token.balanceOf(owner),
+      token.allowance(owner, spender),
+      token.totalSupply()
+    ]);
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([
+      tokenAddress,
+      tokenAddress,
+      tokenAddress
+    ]);
+    expect(balance.raw).to.equal(123n);
+    expect(allowance.raw).to.equal(456n);
+    expect(totalSupply.raw).to.equal(789n);
   });
 
   it("uses the latest lender-account data path for V2 market instances", async () => {

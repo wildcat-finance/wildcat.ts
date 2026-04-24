@@ -5,7 +5,6 @@ import {
   SignerOrProvider,
   SubmittedDeployment
 } from "./types";
-import { MockERC20Factory, MockERC20Factory__factory } from "./typechain";
 import { Token } from "./token";
 import { SupportedChainId, getDeploymentAddress } from "./constants";
 import { assert, prepareTransaction } from "./utils";
@@ -15,11 +14,7 @@ import { parseEventLogs } from "viem";
 import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
 import { readViemContract } from "./internal/viem-read";
 
-export class TokenFactory extends ContractWrapper<MockERC20Factory> {
-  readonly contractFactory = MockERC20Factory__factory;
-  protected get _contractAddress(): string {
-    return this.address;
-  }
+export class TokenFactory extends ContractWrapper {
   constructor(
     public chainId: SupportedChainId,
     public address: string,

@@ -11,12 +11,6 @@ import { SupportedChainId, getDeploymentAddress } from "../constants";
 import { assert, prepareTransaction, toNumber } from "../utils";
 import { iERC20Abi, wildcat4626WrapperAbi, wildcat4626WrapperFactoryAbi } from "../abi";
 import {
-  Wildcat4626Wrapper,
-  Wildcat4626Wrapper__factory,
-  Wildcat4626WrapperFactory,
-  Wildcat4626WrapperFactory__factory
-} from "../typechain";
-import {
   submitPreparedTransaction,
   submitPreparedTransactionAndWait
 } from "../internal/viem-write";
@@ -38,13 +32,7 @@ const getErc20Token = async (
   return new Token(chainId, address, name, symbol, toNumber(decimals), false, provider);
 };
 
-export class WrapperFactory extends ContractWrapper<Wildcat4626WrapperFactory> {
-  readonly contractFactory = Wildcat4626WrapperFactory__factory;
-
-  protected get _contractAddress(): string {
-    return this.address;
-  }
-
+export class WrapperFactory extends ContractWrapper {
   constructor(
     public chainId: SupportedChainId,
     public address: string,
@@ -136,15 +124,10 @@ export type TokenWrapperArgs = {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface TokenWrapper extends Omit<TokenWrapperArgs, "provider"> {}
 
-export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
-  readonly contractFactory = Wildcat4626Wrapper__factory;
+export class TokenWrapper extends ContractWrapper {
   public name: string;
   public symbol: string;
   public decimals: number;
-
-  protected get _contractAddress(): string {
-    return this.address;
-  }
 
   constructor({ provider, ...args }: TokenWrapperArgs) {
     super(provider);
