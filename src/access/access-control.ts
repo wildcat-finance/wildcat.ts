@@ -2,7 +2,9 @@ import { defaultAbiCoder } from "ethers/lib/utils";
 import {
   DefaultV2ParameterConstraints,
   getDeploymentAddress,
+  getHooksFactoryAddressForMarketType,
   getHooksFactoryRevolvingContract,
+  hasHooksFactoryDeployment,
   SupportedChainId
 } from "../constants";
 import { MarketParameters } from "../controller";
@@ -77,9 +79,15 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
   updateWith(
     data: HooksInstanceDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): void {
-    this.hooksTemplate.updateWith(data.hooksTemplate, signerAddress, isRegisteredBorrower);
+    this.hooksTemplate.updateWith(
+      data.hooksTemplate,
+      signerAddress,
+      isRegisteredBorrower,
+      hooksFactory ?? this.hooksFactory
+    );
     this.name = data.name;
     this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => ({
       isApproved: true,
@@ -90,6 +98,10 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
       pushProviderIndex: p.pushProviderIndex,
       timeToLive: p.timeToLive
     }));
+  }
+
+  get hooksFactory(): string {
+    return this.hooksTemplate.hooksFactory;
   }
 
   /* ========================================================================== */
@@ -200,7 +212,8 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
     provider: SignerOrProvider,
     data: HooksInstanceDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): OpenTermHooks {
     return new OpenTermHooks({
       chainId,
@@ -213,7 +226,8 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
         provider,
         data.hooksTemplate,
         signerAddress,
-        isRegisteredBorrower
+        isRegisteredBorrower,
+        hooksFactory
       ),
       borrower: data.borrower,
       constraints: data.constraints,
@@ -234,7 +248,8 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
     provider: SignerOrProvider,
     data: SubgraphHooksInstanceDataFragment,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): OpenTermHooks {
     return new OpenTermHooks({
       chainId,
@@ -247,7 +262,8 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
         provider,
         data.hooksTemplate,
         signerAddress,
-        isRegisteredBorrower
+        isRegisteredBorrower,
+        hooksFactory
       ),
       name: data.name,
       roleProviders: data.providers.map((p) => ({
@@ -278,6 +294,7 @@ export type OpenTermHooksArgs = {
 };
 
 export type OpenTermHooksTemplateArgs = {
+  hooksFactory?: string;
   signerAddress?: string;
   isRegisteredBorrower?: boolean;
   hooksTemplate: string;
@@ -289,7 +306,9 @@ export type OpenTermHooksTemplateArgs = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface OpenTermHooksTemplate extends OpenTermHooksTemplateArgs {}
+export interface OpenTermHooksTemplate extends OpenTermHooksTemplateArgs {
+  hooksFactory: string;
+}
 
 export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
   readonly kind: HooksKind.OpenTerm = HooksKind.OpenTerm;
@@ -302,14 +321,16 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     args: OpenTermHooksTemplateArgs
   ) {
     super(provider);
-    Object.assign(this, args);
-    this._contractAddress = getDeploymentAddress(chainId, "HooksFactory");
+    const hooksFactory = args.hooksFactory ?? getDeploymentAddress(chainId, "HooksFactory");
+    Object.assign(this, { ...args, hooksFactory });
+    this._contractAddress = hooksFactory;
   }
 
   updateWith(
     data: HooksTemplateDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory: string = this.hooksFactory
   ): void {
     this.fees = parseFeeConfigurationV2(this.chainId, this.provider, data.fees);
     this.enabled = data.enabled;
@@ -318,6 +339,8 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     this.totalMarkets = data.totalMarkets.toNumber();
     this.signerAddress = signerAddress;
     this.isRegisteredBorrower = isRegisteredBorrower;
+    this.hooksFactory = hooksFactory;
+    this._contractAddress = hooksFactory;
   }
 
   static fromLensData(
@@ -325,12 +348,14 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     provider: SignerOrProvider,
     data: HooksTemplateDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): OpenTermHooksTemplate {
     return new OpenTermHooksTemplate(chainId, provider, {
       enabled: data.enabled,
       fees: parseFeeConfigurationV2(chainId, provider, data.fees),
       hooksTemplate: data.hooksTemplate,
+      hooksFactory,
       index: data.index,
       name: data.name,
       totalMarkets: data.totalMarkets.toNumber(),
@@ -352,13 +377,15 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
       originationFeeAmount
     }: SubgraphHooksTemplateDataFragment,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): OpenTermHooksTemplate {
     const originationFeeToken = originationFeeAsset
       ? Token.fromSubgraphToken(chainId, originationFeeAsset, provider)
       : undefined;
     return new OpenTermHooksTemplate(chainId, provider, {
       hooksTemplate: id,
+      hooksFactory,
       fees: {
         feeRecipient,
         protocolFeeBips,
@@ -396,6 +423,7 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     allowForceBuyBacks,
     ...otherParameters
   }: OpenTermMarketDeploymentArgs): DeployMarketPreview {
+    const targetMarketType = marketType ?? "legacy";
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -416,6 +444,16 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     }
     if (!hooksAddress && !roleProviderFactory && newProviderInputs?.length) {
       return { status: DeployMarketStatus.CreateProviderInputsWithoutFactory };
+    }
+    if (!hasHooksFactoryDeployment(this.chainId, targetMarketType)) {
+      return { status: DeployMarketStatus.WrongHooksFactory };
+    }
+    const expectedHooksFactory = getHooksFactoryAddressForMarketType(
+      this.chainId,
+      targetMarketType
+    );
+    if (this.hooksFactory.toLowerCase() !== expectedHooksFactory.toLowerCase()) {
+      return { status: DeployMarketStatus.WrongHooksFactory };
     }
     const hooksConfig = encodeHooksConfig({
       hooksAddress: hooksAddress,

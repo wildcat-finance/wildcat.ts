@@ -5,7 +5,8 @@ export enum DeployMarketStatus {
   InsufficientBalance = "InsufficientBalance",
   InsufficientAllowance = "InsufficientAllowance",
   NotRegisteredBorrower = "NotRegisteredBorrower",
-  CreateProviderInputsWithoutFactory = "CreateProviderInputsWithoutFactory"
+  CreateProviderInputsWithoutFactory = "CreateProviderInputsWithoutFactory",
+  WrongHooksFactory = "WrongHooksFactory"
 }
 
 type LegacyDeployMarketCallPreview =

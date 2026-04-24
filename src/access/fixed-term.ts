@@ -2,7 +2,9 @@ import { defaultAbiCoder } from "ethers/lib/utils";
 import {
   DefaultV2ParameterConstraints,
   getDeploymentAddress,
+  getHooksFactoryAddressForMarketType,
   getHooksFactoryRevolvingContract,
+  hasHooksFactoryDeployment,
   SupportedChainId
 } from "../constants";
 import { MarketParameters } from "../controller";
@@ -78,9 +80,15 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
   updateWith(
     data: HooksInstanceDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): void {
-    this.hooksTemplate.updateWith(data.hooksTemplate, signerAddress, isRegisteredBorrower);
+    this.hooksTemplate.updateWith(
+      data.hooksTemplate,
+      signerAddress,
+      isRegisteredBorrower,
+      hooksFactory ?? this.hooksFactory
+    );
     this.name = data.name;
     this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => ({
       isApproved: true,
@@ -91,6 +99,10 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
       pushProviderIndex: p.pushProviderIndex,
       timeToLive: p.timeToLive
     }));
+  }
+
+  get hooksFactory(): string {
+    return this.hooksTemplate.hooksFactory;
   }
 
   /* ========================================================================== */
@@ -201,7 +213,8 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
     provider: SignerOrProvider,
     data: HooksInstanceDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): FixedTermHooks {
     return new FixedTermHooks({
       chainId,
@@ -214,7 +227,8 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
         provider,
         data.hooksTemplate,
         signerAddress,
-        isRegisteredBorrower
+        isRegisteredBorrower,
+        hooksFactory
       ),
       borrower: data.borrower,
       constraints: data.constraints,
@@ -235,7 +249,8 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
     provider: SignerOrProvider,
     data: SubgraphHooksInstanceDataFragment,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): FixedTermHooks {
     return new FixedTermHooks({
       chainId,
@@ -247,7 +262,8 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
         provider,
         data.hooksTemplate,
         signerAddress,
-        isRegisteredBorrower
+        isRegisteredBorrower,
+        hooksFactory
       ),
       signerAddress,
       name: data.name,
@@ -279,6 +295,7 @@ export type FixedTermHooksArgs = {
 };
 
 export type FixedTermHooksTemplateArgs = {
+  hooksFactory?: string;
   signerAddress?: string;
   isRegisteredBorrower?: boolean;
   hooksTemplate: string;
@@ -290,7 +307,9 @@ export type FixedTermHooksTemplateArgs = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface FixedTermHooksTemplate extends FixedTermHooksTemplateArgs {}
+export interface FixedTermHooksTemplate extends FixedTermHooksTemplateArgs {
+  hooksFactory: string;
+}
 
 export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
   readonly kind: HooksKind.FixedTerm = HooksKind.FixedTerm;
@@ -303,14 +322,16 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     args: FixedTermHooksTemplateArgs
   ) {
     super(provider);
-    Object.assign(this, args);
-    this._contractAddress = getDeploymentAddress(chainId, "HooksFactory");
+    const hooksFactory = args.hooksFactory ?? getDeploymentAddress(chainId, "HooksFactory");
+    Object.assign(this, { ...args, hooksFactory });
+    this._contractAddress = hooksFactory;
   }
 
   updateWith(
     data: HooksTemplateDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory: string = this.hooksFactory
   ): void {
     this.fees = parseFeeConfigurationV2(this.chainId, this.provider, data.fees);
     this.enabled = data.enabled;
@@ -319,6 +340,8 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     this.totalMarkets = data.totalMarkets.toNumber();
     this.signerAddress = signerAddress;
     this.isRegisteredBorrower = isRegisteredBorrower;
+    this.hooksFactory = hooksFactory;
+    this._contractAddress = hooksFactory;
   }
 
   static fromLensData(
@@ -326,12 +349,14 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     provider: SignerOrProvider,
     data: HooksTemplateDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): FixedTermHooksTemplate {
     return new FixedTermHooksTemplate(chainId, provider, {
       enabled: data.enabled,
       fees: parseFeeConfigurationV2(chainId, provider, data.fees),
       hooksTemplate: data.hooksTemplate,
+      hooksFactory,
       index: data.index,
       name: data.name,
       totalMarkets: data.totalMarkets.toNumber(),
@@ -353,7 +378,8 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
       originationFeeAmount
     }: SubgraphHooksTemplateDataFragment,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): FixedTermHooksTemplate {
     const originationFeeToken = originationFeeAsset
       ? Token.fromSubgraphToken(chainId, originationFeeAsset, provider)
@@ -361,6 +387,7 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
 
     return new FixedTermHooksTemplate(chainId, provider, {
       hooksTemplate: id,
+      hooksFactory,
       fees: {
         feeRecipient,
         protocolFeeBips,
@@ -401,6 +428,7 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     allowForceBuyBacks,
     ...otherParameters
   }: FixedTermMarketDeploymentArgs): DeployMarketPreview {
+    const targetMarketType = marketType ?? "legacy";
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -421,6 +449,16 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     }
     if (!hooksAddress && !roleProviderFactory && newProviderInputs?.length) {
       return { status: DeployMarketStatus.CreateProviderInputsWithoutFactory };
+    }
+    if (!hasHooksFactoryDeployment(this.chainId, targetMarketType)) {
+      return { status: DeployMarketStatus.WrongHooksFactory };
+    }
+    const expectedHooksFactory = getHooksFactoryAddressForMarketType(
+      this.chainId,
+      targetMarketType
+    );
+    if (this.hooksFactory.toLowerCase() !== expectedHooksFactory.toLowerCase()) {
+      return { status: DeployMarketStatus.WrongHooksFactory };
     }
 
     const hooksConfig = encodeHooksConfig({

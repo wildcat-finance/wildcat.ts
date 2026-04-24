@@ -11,7 +11,7 @@ import {
   LegacyReadyDeployMarketPreview,
   encodeRevolvingMarketData
 } from "../../src/access";
-import { SupportedChainId } from "../../src/constants";
+import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { MarketParameters } from "../../src/controller";
 import { Token } from "../../src/token";
 import {
@@ -60,9 +60,12 @@ const makeMarketParameters = (asset: Token): MarketParameters => {
   };
 };
 
-const makeOpenTermTemplate = (): OpenTermHooksTemplate => {
+const makeOpenTermTemplate = (
+  hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory")
+): OpenTermHooksTemplate => {
   return new OpenTermHooksTemplate(SupportedChainId.Sepolia, provider, {
     hooksTemplate: makeAddress(12),
+    hooksFactory,
     fees: makeFees(),
     enabled: true,
     index: 0,
@@ -72,9 +75,12 @@ const makeOpenTermTemplate = (): OpenTermHooksTemplate => {
   });
 };
 
-const makeFixedTermTemplate = (): FixedTermHooksTemplate => {
+const makeFixedTermTemplate = (
+  hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory")
+): FixedTermHooksTemplate => {
   return new FixedTermHooksTemplate(SupportedChainId.Sepolia, provider, {
     hooksTemplate: makeAddress(13),
+    hooksFactory,
     fees: makeFees(),
     enabled: true,
     index: 0,
@@ -182,7 +188,9 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
 
   it("returns the revolving direct deploy preview when explicitly requested", () => {
     const asset = makeToken();
-    const template = makeOpenTermTemplate();
+    const template = makeOpenTermTemplate(
+      getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving")
+    );
 
     const preview = expectReadyRevolvingPreview(
       template.previewDeployMarket({
@@ -211,9 +219,31 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
     expect(expectDecodedNumber(commitmentFeeBips)).to.equal(175);
   });
 
-  it("throws on invalid revolving commitment fee input", () => {
+  it("rejects revolving deploy previews from a legacy-scoped template", () => {
     const asset = makeToken();
     const template = makeOpenTermTemplate();
+
+    const preview = template.previewDeployMarket({
+      ...makeMarketParameters(asset),
+      marketType: "revolving",
+      commitmentFeeBips: 175,
+      hooksAddress: makeAddress(21),
+      salt: constants.HashZero,
+      minimumDeposit: asset.parseAmount("25"),
+      transferAccess: TransferAccess.Open,
+      depositAccess: DepositAccess.Open,
+      withdrawalAccess: WithdrawalAccess.Open,
+      allowForceBuyBacks: false
+    });
+
+    expect(preview.status).to.equal(DeployMarketStatus.WrongHooksFactory);
+  });
+
+  it("throws on invalid revolving commitment fee input", () => {
+    const asset = makeToken();
+    const template = makeOpenTermTemplate(
+      getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving")
+    );
 
     expect(() =>
       template.previewDeployMarket({
@@ -283,7 +313,9 @@ describe("FixedTermHooksTemplate.previewDeployMarket", () => {
 
   it("returns the revolving deploy-and-hooks preview when explicitly requested", () => {
     const asset = makeToken();
-    const template = makeFixedTermTemplate();
+    const template = makeFixedTermTemplate(
+      getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving")
+    );
 
     const preview = expectReadyRevolvingPreview(
       template.previewDeployMarket({
