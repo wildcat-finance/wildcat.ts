@@ -16,7 +16,6 @@ import {
   WithdrawalExecutionRecord,
   WithdrawalRequestRecord,
   assert,
-  mulDiv,
   parseWithdrawalRecord
 } from "./utils";
 import { WithdrawalBatch, BatchStatus } from "./withdrawal-batch";
@@ -127,11 +126,9 @@ export class LenderWithdrawalStatus {
     const normalizedAmountWithdrawn = market.underlyingToken.getAmount(
       status.normalizedAmountWithdrawn
     );
-    const normalizedAmountOwed = market.underlyingToken.getAmount(
-      mulDiv(batch.normalizedTotalAmount.raw, scaledAmount, batch.scaledTotalAmount).sub(
-        normalizedAmountWithdrawn.raw
-      )
-    );
+    const normalizedAmountOwed = batch.normalizedTotalAmount
+      .mulDiv(scaledAmount, batch.scaledTotalAmount)
+      .sub(normalizedAmountWithdrawn);
 
     return new LenderWithdrawalStatus(
       batch,

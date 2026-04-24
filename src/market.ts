@@ -58,11 +58,13 @@ import {
   mulDiv,
   rayDiv,
   rayMul,
-  RAY,
   bipToRay,
   BIP,
+  BIP_BIGINT,
+  RAY_BIGINT,
   SECONDS_IN_365_DAYS,
-  assert
+  assert,
+  formatFixedBigint
 } from "./utils";
 import { hooksTemplateFromSubgraph } from "./access";
 
@@ -284,21 +286,20 @@ export class Market extends ContractWrapper<WildcatMarket> {
     }
 
     const totalSupply = this.totalSupply.raw;
-    const drawnAmountRaw = drawnAmount.raw.gt(totalSupply) ? totalSupply : drawnAmount.raw;
+    const drawnAmountRaw = drawnAmount.raw > totalSupply ? totalSupply : drawnAmount.raw;
 
-    const utilizationBips = totalSupply.gt(0)
-      ? drawnAmountRaw.mul(BIP).div(totalSupply).toNumber()
-      : 0;
+    const utilizationBips =
+      totalSupply > 0n ? Number((drawnAmountRaw * BIP_BIGINT) / totalSupply) : 0;
 
-    const utilizationAprBips = totalSupply.gt(0)
-      ? drawnAmountRaw.mul(this.annualInterestBips).div(totalSupply).toNumber()
-      : 0;
+    const utilizationAprBips =
+      totalSupply > 0n
+        ? Number((drawnAmountRaw * BigInt(this.annualInterestBips)) / totalSupply)
+        : 0;
 
     const blendedBaseAprBips = commitmentFeeBips + utilizationAprBips;
-    const protocolAprBips = BigNumber.from(blendedBaseAprBips)
-      .mul(this.protocolFeeBips)
-      .div(BIP)
-      .toNumber();
+    const protocolAprBips = Number(
+      (BigInt(blendedBaseAprBips) * BigInt(this.protocolFeeBips)) / BIP_BIGINT
+    );
     const penaltyAprBips = this.isIncurringPenalties ? this.delinquencyFeeBips : 0;
 
     return {
@@ -384,7 +385,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
     const actualRatio = this.totalSupply.eq(0)
       ? 100
-      : +formatUnits(this.totalAssets.raw.mul(RAY).div(this.totalSupply.raw), 25);
+      : +formatFixedBigint((this.totalAssets.raw * RAY_BIGINT) / this.totalSupply.raw, 25, 25);
     if (this.temporaryReserveRatio) {
       return {
         targetRatio,
@@ -417,9 +418,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   get minimumReserves(): TokenAmount {
-    return this.underlyingToken.getAmount(
-      bipMul(this.outstandingTotalSupply.raw, BigNumber.from(this.reserveRatioBips))
-    );
+    return this.outstandingTotalSupply.bipMul(this.reserveRatioBips);
   }
 
   get borrowableAssets(): TokenAmount {
@@ -494,11 +493,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
       protocolRequirementGrowthPerSecond.raw
     );
     // essentially if  apr=0 and rr=0 then bips alone wont move us to delinquency
-    if (totalRequirementGrowthPerSecond.raw.isZero()) return Number.MAX_SAFE_INTEGER;
+    if (totalRequirementGrowthPerSecond.raw === 0n) return Number.MAX_SAFE_INTEGER;
 
     const buffer = this.liquidReserves.sub(this.minimumReserves);
-    if (buffer.raw.lte(0)) return 0; // we are delinquent
-    return buffer.div(totalRequirementGrowthPerSecond, true).raw.toNumber(); // seconds until the party
+    if (buffer.raw <= 0n) return 0; // we are delinquent
+    return Number(buffer.div(totalRequirementGrowthPerSecond, true).raw); // seconds until the party
   }
 
   getSecondsBeforeDelinquencyForBorrowedAmount(borrowAmount: TokenAmount): number {
@@ -522,11 +521,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const totalRequirementGrowthPerSecond = lenderRequirementGrowthPerSecond.add(
       protocolRequirementGrowthPerSecond.raw
     );
-    if (totalRequirementGrowthPerSecond.raw.isZero()) return Number.MAX_SAFE_INTEGER;
+    if (totalRequirementGrowthPerSecond.raw === 0n) return Number.MAX_SAFE_INTEGER;
 
     const postBorrowBuffer = this.liquidReserves.sub(this.minimumReserves).sub(borrowAmount);
-    if (postBorrowBuffer.raw.lte(0)) return 0;
-    return postBorrowBuffer.div(totalRequirementGrowthPerSecond, true).raw.toNumber();
+    if (postBorrowBuffer.raw <= 0n) return 0;
+    return Number(postBorrowBuffer.div(totalRequirementGrowthPerSecond, true).raw);
   }
   /**
    * @dev Calculate token amount to be repayed by borrower for a given duration

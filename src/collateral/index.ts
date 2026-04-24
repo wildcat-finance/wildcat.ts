@@ -1,5 +1,5 @@
-import { BigNumber, ContractTransaction, Overrides } from "ethers";
-import { maxTokenAmount, TokenAmount } from "../token";
+import { BigNumber, ContractTransaction } from "ethers";
+import { TokenAmount } from "../token";
 import {
   CollateralContractDataStructOutput,
   SimpleMarketCollateral,
@@ -157,10 +157,7 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
     return new MarketCollateralV1({
       provider: market.provider,
       address: data.collateralContract,
-      availableCollateral: new TokenAmount(
-        BigNumber.from(data.availableCollateral),
-        collateralAsset
-      ),
+      availableCollateral: collateralAsset.getAmount(data.availableCollateral),
       totalShares: BigNumber.from(data.totalShares),
       underlyingAsset,
       collateralAsset,

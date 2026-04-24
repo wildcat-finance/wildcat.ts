@@ -1,5 +1,4 @@
 import { BigNumber, BigNumberish, ContractTransaction } from "ethers";
-import { parseUnits } from "ethers/lib/utils";
 import type { Abi, Address } from "viem";
 import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "./abi";
 import {
@@ -12,10 +11,18 @@ import { ContractWrapper, SignerOrProvider } from "./types";
 import { SupportedChainId, getDeploymentAddress, hasDeploymentAddress } from "./constants";
 import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
 import { readViemContract } from "./internal/viem-read";
-import { bipMul, formatBnFixed, mulDiv, rayDiv, rayMul } from "./utils";
+import {
+  bipMulBigint,
+  formatFixedBigint,
+  mulDivBigint,
+  parseFixedBigint,
+  rayDivBigint,
+  rayMulBigint,
+  toBigint
+} from "./utils";
 import { SubgraphMarketDataFragment, SubgraphToken } from "./gql/graphql";
 
-type RhsAmount = BigNumberish | TokenAmount;
+type RhsAmount = BigNumberish | bigint | TokenAmount;
 type TokenMetadataOutput = TokenMetadataStructOutput | TokenMetadataV2_5StructOutput;
 type ViemTokenMetadataObject = {
   token: string;
@@ -38,9 +45,22 @@ const getViemTokenMetadataValue = (
   return keyedValue ?? (metadata as readonly ViemTokenMetadataField[])[index];
 };
 
-export const toBn = (amount: RhsAmount): BigNumber => {
+export const toRawAmount = (amount: RhsAmount): bigint => {
   if (amount instanceof TokenAmount) {
     return amount.raw;
+  }
+  if (typeof amount === "bigint" || typeof amount === "number" || typeof amount === "string") {
+    return toBigint(amount);
+  }
+  if (BigNumber.isBigNumber(amount)) {
+    return BigInt(amount.toString());
+  }
+  return BigInt(BigNumber.from(amount).toString());
+};
+
+export const toBn = (amount: RhsAmount): BigNumber => {
+  if (amount instanceof TokenAmount || typeof amount === "bigint") {
+    return BigNumber.from(toRawAmount(amount).toString());
   }
   return BigNumber.from(amount);
 };
@@ -62,7 +82,7 @@ export const minTokenAmount = (...amounts: TokenAmount[]): TokenAmount => {
 };
 
 export class TokenAmount {
-  constructor(public raw: BigNumber, public token: Token) {}
+  constructor(public raw: bigint, public token: Token) {}
 
   get name(): string {
     return this.token.name;
@@ -77,7 +97,7 @@ export class TokenAmount {
   }
 
   toFixed(digits = this.decimals): string {
-    return formatBnFixed(this.raw, this.decimals, digits);
+    return formatFixedBigint(this.raw, this.decimals, digits);
   }
 
   format(digits = this.decimals, withSymbol?: boolean): string {
@@ -85,78 +105,61 @@ export class TokenAmount {
   }
 
   gt(amount: RhsAmount): boolean {
-    amount = toBn(amount);
-    return this.raw.gt(amount);
+    return this.raw > toRawAmount(amount);
   }
 
   lt(amount: RhsAmount): boolean {
-    amount = toBn(amount);
-    return this.raw.lt(amount);
+    return this.raw < toRawAmount(amount);
   }
 
   lte(amount: RhsAmount): boolean {
-    amount = toBn(amount);
-    return this.raw.lte(amount);
+    return this.raw <= toRawAmount(amount);
   }
 
   gte(amount: RhsAmount): boolean {
-    amount = toBn(amount);
-    return this.raw.gte(amount);
+    return this.raw >= toRawAmount(amount);
   }
 
   eq(amount: RhsAmount): boolean {
-    amount = toBn(amount);
-    return this.raw.eq(amount);
+    return this.raw === toRawAmount(amount);
   }
 
   add(amount: RhsAmount): TokenAmount {
-    amount = toBn(amount);
-    return this.token.getAmount(this.raw.add(amount));
+    return this.token.getAmount(this.raw + toRawAmount(amount));
   }
 
   sub(amount: RhsAmount): TokenAmount {
-    amount = toBn(amount);
-    return this.token.getAmount(this.raw.sub(amount));
+    return this.token.getAmount(this.raw - toRawAmount(amount));
   }
 
   mul(amount: RhsAmount): TokenAmount {
-    amount = toBn(amount);
-    return this.token.getAmount(this.raw.mul(amount));
+    return this.token.getAmount(this.raw * toRawAmount(amount));
   }
 
   div(amount: RhsAmount, allowDivideByZero = false): TokenAmount {
-    amount = toBn(amount);
-    return this.token.getAmount(
-      allowDivideByZero && amount.isZero() ? BigNumber.from(0) : this.raw.div(amount)
-    );
+    const divisor = toRawAmount(amount);
+    return this.token.getAmount(allowDivideByZero && divisor === 0n ? 0n : this.raw / divisor);
   }
 
   mulDiv(numer: RhsAmount, denom: RhsAmount): TokenAmount {
-    numer = toBn(numer);
-    denom = toBn(denom);
-    return this.token.getAmount(mulDiv(this.raw, numer, denom));
+    return this.token.getAmount(mulDivBigint(this.raw, toRawAmount(numer), toRawAmount(denom)));
   }
 
   bipMul(amount: RhsAmount): TokenAmount {
-    return this.token.getAmount(bipMul(this.raw, toBn(amount)));
+    return this.token.getAmount(bipMulBigint(this.raw, toRawAmount(amount)));
   }
 
   rayMul(amount: RhsAmount): TokenAmount {
-    return this.token.getAmount(rayMul(this.raw, toBn(amount)));
+    return this.token.getAmount(rayMulBigint(this.raw, toRawAmount(amount)));
   }
 
   rayDiv(amount: RhsAmount): TokenAmount {
-    return this.token.getAmount(rayDiv(this.raw, toBn(amount)));
+    return this.token.getAmount(rayDivBigint(this.raw, toRawAmount(amount)));
   }
 
   satsub(amount: RhsAmount): TokenAmount {
-    amount = toBn(amount);
-    const a = this.raw;
-    const b = amount;
-    if (a.lt(b)) {
-      return this.token.getAmount(BigNumber.from(0));
-    }
-    return this.token.getAmount(a.sub(b));
+    const b = toRawAmount(amount);
+    return this.token.getAmount(this.raw < b ? 0n : this.raw - b);
   }
 }
 
@@ -187,12 +190,11 @@ export class Token extends ContractWrapper<IERC20> {
   }
 
   getAmount(amount: RhsAmount): TokenAmount {
-    return new TokenAmount(toBn(amount), this);
+    return new TokenAmount(toRawAmount(amount), this);
   }
 
   parseAmount(amount: number | string): TokenAmount {
-    const bnAmount = parseUnits(amount.toString(), this.decimals);
-    return this.getAmount(bnAmount);
+    return this.getAmount(parseFixedBigint(amount, this.decimals));
   }
 
   static fromTokenMetadata(

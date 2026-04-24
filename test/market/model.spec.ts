@@ -417,7 +417,7 @@ describe("Market direct read routing", () => {
     expect(market.hooksFactory).to.equal(hooksFactory);
     expect(market.marketType).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
-    expect(market.drawnAmount?.raw.eq(250)).to.equal(true);
+    expect(market.drawnAmount?.raw).to.equal(250n);
     expect(market.hooksConfig?.allowForceBuyBacks).to.equal(true);
   });
 
@@ -554,7 +554,7 @@ describe("Market direct read routing", () => {
 
     expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
     expect(market.commitmentFeeBips).to.equal(200);
-    expect(market.drawnAmount?.raw.eq(300)).to.equal(true);
+    expect(market.drawnAmount?.raw).to.equal(300n);
   });
 });
 
@@ -623,7 +623,7 @@ describe("Market model routing metadata", () => {
     expect(market.hooksFactory).to.equal(hooksFactory);
     expect(market.marketType).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
-    expect(market.drawnAmount?.raw.eq(250)).to.equal(true);
+    expect(market.drawnAmount?.raw).to.equal(250n);
   });
 
   it("refreshes hooksFactory and marketType when v2 market data is updated", () => {
@@ -716,7 +716,7 @@ describe("Market model routing metadata", () => {
     );
 
     expect(market.commitmentFeeBips).to.equal(200);
-    expect(market.drawnAmount?.raw.eq(300)).to.equal(true);
+    expect(market.drawnAmount?.raw).to.equal(300n);
   });
 
   it("hydrates subgraph-backed markets with raw revolving fields when present", () => {
@@ -728,7 +728,7 @@ describe("Market model routing metadata", () => {
 
     expect(market.marketType).to.equal(undefined);
     expect(market.commitmentFeeBips).to.equal(175);
-    expect(market.drawnAmount?.raw.eq(250)).to.equal(true);
+    expect(market.drawnAmount?.raw).to.equal(250n);
   });
 });
 
@@ -754,7 +754,7 @@ describe("Market revolving APR helpers", () => {
       penaltyAprBips: 0,
       effectiveLenderAprBips: 475
     });
-    expect(market.currentRevolvingAprMetrics?.drawnAmount.raw.eq(250)).to.equal(true);
+    expect(market.currentRevolvingAprMetrics?.drawnAmount.raw).to.equal(250n);
   });
 
   it("clamps revolving utilization math to total supply and includes penalties", () => {
@@ -780,7 +780,7 @@ describe("Market revolving APR helpers", () => {
       penaltyAprBips: 100,
       effectiveLenderAprBips: 1475
     });
-    expect(market.currentRevolvingAprMetrics?.drawnAmount.raw.eq(2_000)).to.equal(true);
+    expect(market.currentRevolvingAprMetrics?.drawnAmount.raw).to.equal(2_000n);
   });
 
   it("returns no revolving APR metrics when raw revolving state is absent", () => {
@@ -860,9 +860,8 @@ describe("Market revolving APR helpers", () => {
       )
     );
     expect(
-      revolvingMarket
-        .repayRequiredForDuration(SECONDS_IN_365_DAYS)
-        .raw.gt(legacySemanticsMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw)
+      revolvingMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw >
+        legacySemanticsMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw
     ).to.equal(true);
   });
 });
