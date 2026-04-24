@@ -22,5 +22,6 @@ describe("SDK public surface smoke", () => {
     expect(typeof sdk.requireWildcatWriteClient).to.equal("function");
     expect(Array.isArray(sdk.marketLensV2_5Abi)).to.equal(true);
     expect(Array.isArray(sdk.wildcatArchControllerAbi)).to.equal(true);
+    expect("typechain" in sdk).to.equal(false);
   });
 });
