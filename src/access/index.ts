@@ -2,8 +2,6 @@ import {
   SupportedChainId,
   getHooksFactoryAddressForMarketType,
   getLatestLensDeploymentName,
-  getLensV2Contract,
-  getLensV2_5Contract,
   hasHooksFactoryDeployment
 } from "../constants";
 import {
@@ -12,6 +10,10 @@ import {
   SubgraphHooksTemplateDataFragment
 } from "../gql/graphql";
 import { HooksInstanceDataStructOutput, HooksTemplateDataStructOutput } from "../typechain";
+import {
+  getV2HooksDataForBorrower,
+  getV2_5FactoryScopedHooksDataForBorrower
+} from "../internal/market-lens";
 import { MarketTypes, Signer, SignerOrProvider } from "../types";
 import { OpenTermHooks, OpenTermHooksTemplate } from "./access-control";
 import { FixedTermHooks, FixedTermHooksTemplate } from "./fixed-term";
@@ -45,12 +47,13 @@ export async function getBorrowerHooksData(
   const borrowerAddress = borrower;
 
   if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
-    const lens = getLensV2_5Contract(chainId, provider);
     const factoryScopedResults = await Promise.all(
       MarketTypes.filter((marketType) => hasHooksFactoryDeployment(chainId, marketType)).map(
         async (marketType) => {
           const hooksFactory = getHooksFactoryAddressForMarketType(chainId, marketType);
-          const data = await lens["getHooksDataForBorrower(address,address)"](
+          const data = await getV2_5FactoryScopedHooksDataForBorrower(
+            chainId,
+            provider,
             hooksFactory,
             borrowerAddress
           );
@@ -106,9 +109,7 @@ export async function getBorrowerHooksData(
     };
   }
 
-  const result = await getLensV2Contract(chainId, provider).getHooksDataForBorrower(
-    borrowerAddress
-  );
+  const result = await getV2HooksDataForBorrower(chainId, provider, borrowerAddress);
 
   const hooksTemplateDataByAddress = new Map(
     result.hooksTemplates.map((template) => [template.hooksTemplate.toLowerCase(), template])

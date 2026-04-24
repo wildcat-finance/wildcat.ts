@@ -6,10 +6,10 @@ import {
 import {
   SupportedChainId,
   getControllerFactoryContract,
-  getLensContract,
   getMockArchControllerOwnerContract,
   hasDeploymentAddress
 } from "./constants";
+import { getLegacyControllerDataForBorrower } from "./internal/market-lens";
 import {
   ContractWrapper,
   PartialTransaction,
@@ -20,12 +20,7 @@ import {
 import { Market } from "./market";
 import { ContractReceipt, ContractTransaction } from "ethers";
 import { Token, TokenAmount } from "./token";
-import {
-  assert,
-  parseFeeConfiguration,
-  parseFeeConfigurationV2,
-  parseMarketParameterConstraints
-} from "./utils";
+import { assert, parseFeeConfiguration, parseMarketParameterConstraints } from "./utils";
 import { MarketDeployedEvent } from "./typechain/WildcatMarketController";
 import { SubgraphMinimalControllerDataFragment } from "./gql";
 
@@ -65,7 +60,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   async update(): Promise<void> {
     const [lenders, data] = await Promise.all([
       this.contract["getAuthorizedLenders()"](),
-      getLensContract(this.chainId, this.provider).getControllerDataForBorrower(this.address)
+      getLegacyControllerDataForBorrower(this.chainId, this.provider, this.address)
     ]);
     this.authorizedLenders = lenders;
     this.updateWith(data);
@@ -395,8 +390,7 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     provider: SignerOrProvider,
     borrower: string
   ): Promise<MarketController> {
-    const lens = getLensContract(chainId, provider);
-    const data = await lens.getControllerDataForBorrower(borrower);
+    const data = await getLegacyControllerDataForBorrower(chainId, provider, borrower);
 
     return MarketController.fromControllerData(chainId, provider, data);
   }

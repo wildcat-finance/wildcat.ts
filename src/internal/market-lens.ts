@@ -2,6 +2,9 @@ import type { Abi, Address } from "viem";
 import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../abi";
 import { getDeploymentAddress, getLatestLensDeploymentName, SupportedChainId } from "../constants";
 import type {
+  ControllerDataStructOutput,
+  HooksDataForBorrowerStructOutput,
+  HooksDataForBorrowerV2_5StructOutput,
   LenderAccountDataStructOutput,
   LenderAccountDataV2_5StructOutput,
   MarketDataStructOutput,
@@ -89,6 +92,21 @@ export const getLegacyMarketsData = (
   );
 };
 
+export const getLegacyControllerDataForBorrower = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  borrower: string
+): Promise<ControllerDataStructOutput> => {
+  return readMarketLens<ControllerDataStructOutput>(
+    chainId,
+    provider,
+    "MarketLens",
+    marketLensAbi as Abi,
+    "getControllerDataForBorrower",
+    [borrower as Address]
+  );
+};
+
 export const getV2MarketData = (
   chainId: SupportedChainId,
   provider: SignerOrProvider,
@@ -131,6 +149,37 @@ export const getUnifiedMarketsDataV2 = (
     marketLensV2_5Abi as Abi,
     "getMarketsDataV2",
     [markets as Address[]]
+  );
+};
+
+export const getV2HooksDataForBorrower = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  borrower: string
+): Promise<HooksDataForBorrowerStructOutput> => {
+  return readMarketLens<HooksDataForBorrowerStructOutput>(
+    chainId,
+    provider,
+    "MarketLensV2",
+    marketLensV2Abi as Abi,
+    "getHooksDataForBorrower",
+    [borrower as Address]
+  );
+};
+
+export const getV2_5FactoryScopedHooksDataForBorrower = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  hooksFactory: string,
+  borrower: string
+): Promise<HooksDataForBorrowerV2_5StructOutput> => {
+  return readMarketLens<HooksDataForBorrowerV2_5StructOutput>(
+    chainId,
+    provider,
+    "MarketLensV2_5",
+    marketLensV2_5Abi as Abi,
+    "getHooksDataForBorrower",
+    [hooksFactory as Address, borrower as Address]
   );
 };
 
