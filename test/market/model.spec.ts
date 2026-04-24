@@ -4,7 +4,7 @@ import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
 import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { Market } from "../../src/market";
-import { Token } from "../../src/token";
+import { Token, toRawAmount } from "../../src/token";
 import { MarketVersion } from "../../src/types";
 import {
   SubgraphHooksKind,
@@ -17,7 +17,7 @@ import {
   MarketDataStructOutput,
   MarketDataV2StructOutput
 } from "../../src/typechain";
-import { bipMul, bipToRay, BIP, SECONDS_IN_365_DAYS } from "../../src/utils";
+import { BIP_BIGINT, SECONDS_IN_365_DAYS, bipMulBigint, bipToRayBigint } from "../../src/utils";
 
 const provider = new providers.JsonRpcProvider();
 
@@ -675,16 +675,16 @@ describe("Market model routing metadata", () => {
       originalReserveRatioBips: data.originalReserveRatioBips.toNumber(),
       temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry.toNumber(),
       isClosed: data.isClosed,
-      scaleFactor: data.scaleFactor,
+      scaleFactor: toRawAmount(data.scaleFactor),
       totalSupply: marketToken.getAmount(data.totalSupply),
       maxTotalSupply: marketToken.getAmount(data.maxTotalSupply),
-      scaledTotalSupply: data.scaledTotalSupply,
+      scaledTotalSupply: toRawAmount(data.scaledTotalSupply),
       totalAssets: underlyingToken.getAmount(data.totalAssets),
       lastAccruedProtocolFees: underlyingToken.getAmount(data.lastAccruedProtocolFees),
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
         data.normalizedUnclaimedWithdrawals
       ),
-      scaledPendingWithdrawals: data.scaledPendingWithdrawals,
+      scaledPendingWithdrawals: toRawAmount(data.scaledPendingWithdrawals),
       pendingWithdrawalExpiry: data.pendingWithdrawalExpiry.toNumber(),
       isDelinquent: data.isDelinquent,
       timeDelinquent: data.timeDelinquent.toNumber(),
@@ -807,12 +807,12 @@ describe("Market revolving APR helpers", () => {
       true
     );
 
-    const blendedBaseAprRay = bipToRay(475);
+    const blendedBaseAprRay = bipToRayBigint(475);
 
-    expect(market.effectiveLenderAPR.eq(blendedBaseAprRay)).to.equal(true);
-    expect(
-      market.effectiveBorrowerAPR.eq(bipMul(blendedBaseAprRay, BIP.add(market.protocolFeeBips)))
-    ).to.equal(true);
+    expect(market.effectiveLenderAPR).to.equal(blendedBaseAprRay);
+    expect(market.effectiveBorrowerAPR).to.equal(
+      bipMulBigint(blendedBaseAprRay, BIP_BIGINT + BigInt(market.protocolFeeBips))
+    );
   });
 
   it("normalizes delinquency timing helpers for revolving markets", () => {
@@ -833,9 +833,9 @@ describe("Market revolving APR helpers", () => {
       true
     );
 
-    const rawScale = BigNumber.from(10).pow(18);
-    const scaledSupply = rawScale.mul(1_000);
-    const stressedAssets = rawScale.mul(150);
+    const rawScale = 10n ** 18n;
+    const scaledSupply = rawScale * 1_000n;
+    const stressedAssets = rawScale * 150n;
 
     revolvingMarket.totalSupply = revolvingMarket.marketToken.getAmount(scaledSupply);
     revolvingMarket.scaledTotalSupply = scaledSupply;

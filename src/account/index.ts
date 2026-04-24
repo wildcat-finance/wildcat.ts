@@ -1,5 +1,5 @@
-import { BigNumber, ContractReceipt, ContractTransaction } from "ethers";
-import { Token, TokenAmount, minTokenAmount } from "../token";
+import { BigNumberish, ContractReceipt, ContractTransaction } from "ethers";
+import { Token, TokenAmount, minTokenAmount, toBn, toRawAmount } from "../token";
 import { Market } from "../market";
 import {
   MarketLenderStatusStructOutput,
@@ -19,7 +19,7 @@ import {
   parseMarketRecord,
   parseSubgraphLenderStatus,
   parseSubgraphLenderHooksAccess,
-  rayMul,
+  rayMulBigint,
   SECONDS_IN_365_DAYS
 } from "../utils";
 import { SupportedChainId, getControllerContract, hasDeploymentAddress } from "../constants";
@@ -82,7 +82,7 @@ export enum LenderRole {
   DepositAndWithdraw = 3
 }
 
-const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
+const NullProviderIndex = 2 ** 24 - 1;
 const hasUnifiedLatestLensForAccountReads = (chainId: SupportedChainId): boolean => {
   return hasDeploymentAddress(chainId, "MarketLensV2_5");
 };
@@ -106,14 +106,14 @@ export type MarketAccountArgs = {
   isKnownLender?: boolean;
   /** For V1 markets - access level enum */
   role: LenderRole;
-  scaledMarketBalance: BigNumber;
+  scaledMarketBalance: bigint;
   marketBalance: TokenAmount;
   underlyingBalance: TokenAmount;
-  underlyingApproval: BigNumber;
+  underlyingApproval: bigint;
   market: Market;
   deposits?: SubgraphDepositDataFragment[];
   totalDeposited?: TokenAmount;
-  lastScaleFactor?: BigNumber;
+  lastScaleFactor?: bigint;
   lastUpdatedTimestamp?: number;
   totalInterestEarned?: TokenAmount;
   numPendingWithdrawalBatches?: number;
@@ -513,7 +513,7 @@ export class MarketAccount {
   /* -------------------------------------------------------------------------- */
 
   isApprovedFor(amount: TokenAmount): boolean {
-    return this.underlyingApproval.gte(amount.raw);
+    return this.underlyingApproval >= amount.raw;
   }
 
   async approveMarket(amount: TokenAmount): Promise<ContractTransaction> {
@@ -775,17 +775,17 @@ export class MarketAccount {
     return { status: RepayStatus.Ready };
   }
 
-  async repay(amount: BigNumber): Promise<ContractTransaction> {
+  async repay(amount: TokenAmount | bigint | BigNumberish): Promise<ContractTransaction> {
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     if (!this.isBorrower) throw Error("Only borrower can repay");
 
-    return this.market.contract.repay(amount);
+    return this.market.contract.repay(toBn(amount));
   }
 
-  async populateRepay(amount: BigNumber): Promise<PartialTransaction> {
+  async populateRepay(amount: TokenAmount | bigint | BigNumberish): Promise<PartialTransaction> {
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
@@ -794,7 +794,7 @@ export class MarketAccount {
 
     return {
       to: this.market.address,
-      data: this.market.contract.interface.encodeFunctionData("repay", [amount]),
+      data: this.market.contract.interface.encodeFunctionData("repay", [toBn(amount)]),
       value: "0"
     };
   }
@@ -935,26 +935,26 @@ export class MarketAccount {
       };
       this.isKnownLender = info.isKnownLender;
     }
-    this.scaledMarketBalance = info.scaledBalance;
+    this.scaledMarketBalance = toRawAmount(info.scaledBalance);
     this.marketBalance = this.market.marketToken.getAmount(info.normalizedBalance);
     this.underlyingBalance = this.market.underlyingToken.getAmount(info.underlyingBalance);
-    this.underlyingApproval = info.underlyingApproval;
+    this.underlyingApproval = toRawAmount(info.underlyingApproval);
     this.processInterestAccrued();
   }
 
-  private calculateInterestEarned(): BigNumber {
-    if (!this.lastScaleFactor) return BigNumber.from(0);
-    if (this.scaledMarketBalance.eq(0) || this.lastScaleFactor?.eq(this.market.scaleFactor)) {
-      return BigNumber.from(0);
+  private calculateInterestEarned(): bigint {
+    if (!this.lastScaleFactor) return 0n;
+    if (this.scaledMarketBalance === 0n || this.lastScaleFactor === this.market.scaleFactor) {
+      return 0n;
     }
-    const lastBalance = rayMul(this.scaledMarketBalance, this.lastScaleFactor);
-    const currentBalance = rayMul(this.scaledMarketBalance, this.market.scaleFactor);
-    return currentBalance.sub(lastBalance);
+    const lastBalance = rayMulBigint(this.scaledMarketBalance, this.lastScaleFactor);
+    const currentBalance = rayMulBigint(this.scaledMarketBalance, this.market.scaleFactor);
+    return currentBalance - lastBalance;
   }
 
   processInterestAccrued(): void {
     if (!this.lastScaleFactor || !this.totalInterestEarned) return;
-    if (!this.lastScaleFactor.eq(this.market.scaleFactor)) {
+    if (this.lastScaleFactor !== this.market.scaleFactor) {
       const interestEarned = this.calculateInterestEarned();
       this.lastScaleFactor = this.market.scaleFactor;
       this.totalInterestEarned = this.totalInterestEarned.add(interestEarned);
@@ -972,20 +972,20 @@ export class MarketAccount {
     market: Market,
     data: SubgraphAccountDataForLenderViewFragment
   ): MarketAccount {
-    const scaledBalance = BigNumber.from(data.scaledBalance);
+    const scaledBalance = toRawAmount(data.scaledBalance);
 
     const account = new MarketAccount({
       account: data.address,
       isAuthorizedOnController: data.controllerAuthorization?.authorized ?? false,
       role: parseSubgraphLenderStatus(data.role),
       scaledMarketBalance: scaledBalance,
-      marketBalance: market.marketToken.getAmount(rayMul(scaledBalance, market.scaleFactor)),
+      marketBalance: market.marketToken.getAmount(rayMulBigint(scaledBalance, market.scaleFactor)),
       underlyingBalance: market.underlyingToken.getAmount(0),
-      underlyingApproval: BigNumber.from(0),
+      underlyingApproval: 0n,
       market,
       deposits: data.deposits,
       totalDeposited: market.underlyingToken.getAmount(data.totalDeposited),
-      lastScaleFactor: BigNumber.from(data.lastScaleFactor),
+      lastScaleFactor: toRawAmount(data.lastScaleFactor),
       lastUpdatedTimestamp: data.lastUpdatedTimestamp,
       totalInterestEarned: market.underlyingToken.getAmount(data.totalInterestEarned),
       numPendingWithdrawalBatches: data.numPendingWithdrawalBatches,
@@ -1006,10 +1006,10 @@ export class MarketAccount {
       account,
       isAuthorizedOnController: info.isAuthorizedOnController,
       role: info.role as LenderRole,
-      scaledMarketBalance: info.scaledBalance,
+      scaledMarketBalance: toRawAmount(info.scaledBalance),
       marketBalance: market.marketToken.getAmount(info.normalizedBalance),
       underlyingBalance: market.underlyingToken.getAmount(info.underlyingBalance),
-      underlyingApproval: info.underlyingApproval,
+      underlyingApproval: toRawAmount(info.underlyingApproval),
       market
     });
   }
@@ -1023,8 +1023,8 @@ export class MarketAccount {
       market,
       role: LenderRole.Null,
       marketBalance: market.marketToken.getAmount(data.normalizedBalance),
-      scaledMarketBalance: data.scaledBalance,
-      underlyingApproval: data.underlyingApproval,
+      scaledMarketBalance: toRawAmount(data.scaledBalance),
+      underlyingApproval: toRawAmount(data.underlyingApproval),
       underlyingBalance: market.underlyingToken.getAmount(data.underlyingBalance),
       isAuthorizedOnController: false,
       isKnownLender: data.isKnownLender,
@@ -1093,10 +1093,10 @@ export class MarketAccount {
       account,
       isAuthorizedOnController,
       role: LenderRole.Null,
-      scaledMarketBalance: BigNumber.from(0),
+      scaledMarketBalance: 0n,
       marketBalance: market.marketToken.getAmount(0),
       underlyingBalance: market.underlyingToken.getAmount(0),
-      underlyingApproval: BigNumber.from(0),
+      underlyingApproval: 0n,
       market
     });
   }
@@ -1281,7 +1281,7 @@ type QueueWithdrawalTransaction = {
   expiry: number;
   lender: string;
   market: string;
-  scaledAmount: BigNumber;
+  scaledAmount: bigint;
   originalAmount: TokenAmount;
   transactionHash: string;
   blockNumber: number;
@@ -1296,6 +1296,6 @@ const toQueueWithdrawalTransaction = (
   expiry: log.args.expiry.toNumber(),
   lender: log.args.account,
   market: log.address,
-  scaledAmount: log.args.scaledAmount,
+  scaledAmount: toRawAmount(log.args.scaledAmount),
   originalAmount: underlyingToken.getAmount(log.args.normalizedAmount)
 });

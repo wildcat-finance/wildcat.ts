@@ -38,7 +38,7 @@ import {
   WithdrawalAccess
 } from "../types";
 import { assert, encodeHooksConfig, parseFeeConfigurationV2 } from "../utils";
-import { BigNumber, constants, ContractTransaction } from "ethers";
+import { constants, ContractTransaction } from "ethers";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
@@ -52,7 +52,7 @@ import { encodeMarketHooksInstanceInputs } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface OpenTermHooks extends Omit<OpenTermHooksArgs, "roleProviders" | "constraints"> {}
-const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
+const NullProviderIndex = 2 ** 24 - 1;
 
 export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
   readonly kind: HooksKind.OpenTerm = HooksKind.OpenTerm;

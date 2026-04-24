@@ -23,7 +23,7 @@ import {
   getUnifiedMarketsDataV2,
   getV2MarketData
 } from "./internal/market-lens";
-import { TokenAmount, Token, toBn } from "./token";
+import { TokenAmount, Token, toRawAmount } from "./token";
 import {
   SignerOrProvider,
   ContractWrapper,
@@ -35,7 +35,6 @@ import {
   OpenTermHooksConfig,
   FixedTermHooksConfig
 } from "./types";
-import { formatUnits } from "ethers/lib/utils";
 import { MarketAccount } from "./account";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
 
@@ -54,17 +53,15 @@ import {
   MakeOptional,
   RepaymentRecord,
   parseMarketRecord,
-  bipMul,
-  mulDiv,
-  rayDiv,
-  rayMul,
-  bipToRay,
-  BIP,
   BIP_BIGINT,
   RAY_BIGINT,
   SECONDS_IN_365_DAYS,
   assert,
-  formatFixedBigint
+  bipMulBigint,
+  bipToRayBigint,
+  formatFixedBigint,
+  rayDivBigint,
+  rayMulBigint
 } from "./utils";
 import { hooksTemplateFromSubgraph } from "./access";
 
@@ -159,17 +156,17 @@ export type MarketArgs = {
   originalReserveRatioBips: number;
   temporaryReserveRatioExpiry: number;
   isClosed: boolean;
-  scaleFactor: BigNumber;
+  scaleFactor: bigint;
   // Total amount of market tokens in existence
   totalSupply: TokenAmount;
   // Maximum amount of market tokens that can be minted
   maxTotalSupply: TokenAmount;
-  scaledTotalSupply: BigNumber;
+  scaledTotalSupply: bigint;
   // Total amount of underlying assets held in the market
   totalAssets: TokenAmount;
   lastAccruedProtocolFees: TokenAmount;
   normalizedUnclaimedWithdrawals: TokenAmount;
-  scaledPendingWithdrawals: BigNumber;
+  scaledPendingWithdrawals: bigint;
   pendingWithdrawalExpiry: number;
   // Whether the market is delinquent
   isDelinquent: boolean;
@@ -270,7 +267,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   /** @returns Percentage growth of the market since it was created */
   get allTimeGrowth(): number {
     // 27 - 2 to convert to percentage
-    return +formatUnits(this.scaleFactor, 25);
+    return +formatFixedBigint(this.scaleFactor, 25, 25);
   }
 
   /** @returns Maximum amount of underlying token that can be deposited */
@@ -318,16 +315,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
     return this.currentRevolvingAprMetrics?.blendedBaseAprBips ?? this.annualInterestBips;
   }
 
-  private get currentBaseLenderAPR(): BigNumber {
-    return bipToRay(this.currentBaseLenderAprBips);
+  private get currentBaseLenderAPR(): bigint {
+    return bipToRayBigint(this.currentBaseLenderAprBips);
   }
 
-  private get currentPenaltyAPR(): BigNumber {
-    return this.isIncurringPenalties ? bipToRay(this.delinquencyFeeBips) : BigNumber.from(0);
+  private get currentPenaltyAPR(): bigint {
+    return this.isIncurringPenalties ? bipToRayBigint(this.delinquencyFeeBips) : 0n;
   }
 
-  private get currentProtocolAPR(): BigNumber {
-    return bipMul(this.currentBaseLenderAPR, BigNumber.from(this.protocolFeeBips));
+  private get currentProtocolAPR(): bigint {
+    return bipMulBigint(this.currentBaseLenderAPR, this.protocolFeeBips);
   }
 
   /** @returns Whether the borrower is in penalized delinquency */
@@ -399,7 +396,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   get normalizedPendingWithdrawals(): TokenAmount {
-    return this.underlyingToken.getAmount(rayMul(this.scaledPendingWithdrawals, this.scaleFactor));
+    return this.underlyingToken.getAmount(
+      rayMulBigint(this.scaledPendingWithdrawals, this.scaleFactor)
+    );
   }
 
   /** @returns Whether the borrower can change the APR */
@@ -460,19 +459,21 @@ export class Market extends ContractWrapper<WildcatMarket> {
     };
   }
 
-  normalizeAmount(amount: BigNumber): BigNumber {
-    return rayMul(amount, this.scaleFactor);
+  normalizeAmount(amount: bigint): bigint {
+    return rayMulBigint(amount, this.scaleFactor);
   }
 
-  scaleAmount(amount: BigNumber): BigNumber {
-    return rayDiv(amount, this.scaleFactor);
+  scaleAmount(amount: bigint): bigint {
+    return rayDivBigint(amount, this.scaleFactor);
   }
 
   get secondsBeforeDelinquency(): number {
     if (this.willBeDelinquent || this.totalDebts.eq(0)) return 0;
 
     const scaledBase = this.scaledTotalSupply;
-    const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
+    const basePrincipal = this.underlyingToken.getAmount(
+      rayMulBigint(scaledBase, this.scaleFactor)
+    );
 
     const baseAPRRay = this.currentBaseLenderAPR;
     const protocolFeeAPRRay = this.currentProtocolAPR;
@@ -480,7 +481,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
     // lender APR portion
     const lenderRequirementGrowthPerSecond = basePrincipal
-      .rayMul(baseAPRRay.add(delinquencyFeeAPRRay))
+      .rayMul(baseAPRRay + delinquencyFeeAPRRay)
       .div(SECONDS_IN_365_DAYS)
       .bipMul(this.reserveRatioBips);
 
@@ -504,13 +505,15 @@ export class Market extends ContractWrapper<WildcatMarket> {
     if (this.isDelinquent || this.totalDebts.eq(0)) return 0;
     const scaledBase = this.scaledTotalSupply;
 
-    const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
+    const basePrincipal = this.underlyingToken.getAmount(
+      rayMulBigint(scaledBase, this.scaleFactor)
+    );
     const baseAPRRay = this.currentBaseLenderAPR;
     const protocolFeeAPRRay = this.currentProtocolAPR;
     const delinquencyFeeAPRRay = this.currentPenaltyAPR;
 
     const lenderRequirementGrowthPerSecond = basePrincipal
-      .rayMul(baseAPRRay.add(delinquencyFeeAPRRay))
+      .rayMul(baseAPRRay + delinquencyFeeAPRRay)
       .div(SECONDS_IN_365_DAYS)
       .bipMul(this.reserveRatioBips);
 
@@ -533,14 +536,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
    * @return token amount to be repayed
    **/
   repayRequiredForDuration(timeToPayInSeconds: number): TokenAmount {
-    const scaledBase = this.scaledTotalSupply.sub(this.scaledPendingWithdrawals);
-    if (scaledBase.lte(0)) return this.underlyingToken.getAmount(0);
-    const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
+    const scaledBase = this.scaledTotalSupply - this.scaledPendingWithdrawals;
+    if (scaledBase <= 0n) return this.underlyingToken.getAmount(0);
+    const basePrincipal = this.underlyingToken.getAmount(
+      rayMulBigint(scaledBase, this.scaleFactor)
+    );
     const baseAPRRay = this.currentBaseLenderAPR;
     const protocolFeeAPRRay = this.currentProtocolAPR;
     const delinquencyFeeAPRRay = this.currentPenaltyAPR;
     const lenderRequirementGrowthPerSecond = basePrincipal
-      .rayMul(baseAPRRay.add(delinquencyFeeAPRRay))
+      .rayMul(baseAPRRay + delinquencyFeeAPRRay)
       .div(SECONDS_IN_365_DAYS)
       .bipMul(this.reserveRatioBips);
     const protocolRequirementGrowthPerSecond = basePrincipal
@@ -559,10 +564,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
    *
    * @return apr paid by borrower in ray
    */
-  get effectiveBorrowerAPR(): BigNumber {
-    let apr = bipMul(this.currentBaseLenderAPR, BIP.add(this.protocolFeeBips));
-    apr = apr.add(this.currentPenaltyAPR);
-    return apr;
+  get effectiveBorrowerAPR(): bigint {
+    return (
+      bipMulBigint(this.currentBaseLenderAPR, BIP_BIGINT + BigInt(this.protocolFeeBips)) +
+      this.currentPenaltyAPR
+    );
   }
 
   /**
@@ -571,8 +577,8 @@ export class Market extends ContractWrapper<WildcatMarket> {
    *
    * @return apr earned by lender in ray
    */
-  get effectiveLenderAPR(): BigNumber {
-    return this.currentBaseLenderAPR.add(this.currentPenaltyAPR);
+  get effectiveLenderAPR(): bigint {
+    return this.currentBaseLenderAPR + this.currentPenaltyAPR;
   }
 
   /* -------------------------------------------------------------------------- */
@@ -632,22 +638,20 @@ export class Market extends ContractWrapper<WildcatMarket> {
     if (annualInterestBips < originalAnnualInterestBips) {
       let doubleRelativeDiff: number;
       if (this.version === MarketVersion.V2) {
-        const relativeDiff = mulDiv(
-          toBn(10_000),
-          toBn(originalAnnualInterestBips - annualInterestBips),
-          toBn(originalAnnualInterestBips)
-        ).toNumber();
+        const relativeDiff = Number(
+          (10_000n * BigInt(originalAnnualInterestBips - annualInterestBips)) /
+            BigInt(originalAnnualInterestBips)
+        );
         if (relativeDiff <= 2_500) {
           // In v2, if the relative diff is 25% or less, the reserve ratio is not changed
           return originalReserveRatioBips;
         }
         doubleRelativeDiff = 2 * relativeDiff;
       } else {
-        doubleRelativeDiff = mulDiv(
-          toBn(20_000),
-          toBn(originalAnnualInterestBips - annualInterestBips),
-          toBn(originalAnnualInterestBips)
-        ).toNumber();
+        doubleRelativeDiff = Number(
+          (20_000n * BigInt(originalAnnualInterestBips - annualInterestBips)) /
+            BigInt(originalAnnualInterestBips)
+        );
       }
 
       const boundRelativeDiff = Math.min(10000, doubleRelativeDiff);
@@ -660,14 +664,13 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   calculateLiquidityCoverageForReserveRatio(reserveRatio: number): TokenAmount {
-    const scaledRequiredReserves = bipMul(
-      this.scaledTotalSupply.sub(this.scaledPendingWithdrawals),
-      toBn(reserveRatio)
-    ).add(this.scaledPendingWithdrawals);
+    const scaledRequiredReserves =
+      bipMulBigint(this.scaledTotalSupply - this.scaledPendingWithdrawals, reserveRatio) +
+      this.scaledPendingWithdrawals;
     return this.underlyingToken.getAmount(
-      rayMul(scaledRequiredReserves, this.scaleFactor)
-        .add(this.lastAccruedProtocolFees.raw)
-        .add(this.normalizedUnclaimedWithdrawals.raw)
+      rayMulBigint(scaledRequiredReserves, this.scaleFactor) +
+        this.lastAccruedProtocolFees.raw +
+        this.normalizedUnclaimedWithdrawals.raw
     );
   }
 
@@ -731,26 +734,30 @@ export class Market extends ContractWrapper<WildcatMarket> {
       | MarketDataV2_5StructOutput
   ): void {
     const baseData = "market" in data ? data.market : data;
+    const nextScaleFactor = toRawAmount(baseData.scaleFactor);
+    const nextScaledTotalSupply = toRawAmount(baseData.scaledTotalSupply);
+    const nextScaledPendingWithdrawals = toRawAmount(baseData.scaledPendingWithdrawals);
+    const nextLastAccruedProtocolFees = toRawAmount(baseData.lastAccruedProtocolFees);
 
     // Note: this adds all the interest accrued to the base interest accrued, since the lens
     // doesn't give us any way to distinguish between base interest and delinquency fees.
     if (
-      this.scaledTotalSupply.eq(baseData.scaledTotalSupply) &&
-      baseData.scaleFactor.gt(this.scaleFactor) &&
+      this.scaledTotalSupply === nextScaledTotalSupply &&
+      nextScaleFactor > this.scaleFactor &&
       this.totalBaseInterestAccrued
     ) {
-      const lastTotalValue = rayMul(this.scaledTotalSupply, this.scaleFactor);
-      const currentTotalValue = rayMul(this.scaledTotalSupply, baseData.scaleFactor);
-      const baseInterestAccrued = currentTotalValue.sub(lastTotalValue);
+      const lastTotalValue = rayMulBigint(this.scaledTotalSupply, this.scaleFactor);
+      const currentTotalValue = rayMulBigint(this.scaledTotalSupply, nextScaleFactor);
+      const baseInterestAccrued = currentTotalValue - lastTotalValue;
       this.totalBaseInterestAccrued = this.totalBaseInterestAccrued.add(baseInterestAccrued);
     }
 
     if (
-      baseData.lastAccruedProtocolFees.gt(this.lastAccruedProtocolFees.raw) &&
+      nextLastAccruedProtocolFees > this.lastAccruedProtocolFees.raw &&
       this.totalProtocolFeesAccrued
     ) {
       this.totalProtocolFeesAccrued = this.totalProtocolFeesAccrued.add(
-        baseData.lastAccruedProtocolFees.sub(this.lastAccruedProtocolFees.raw)
+        nextLastAccruedProtocolFees - this.lastAccruedProtocolFees.raw
       );
     }
     this.feeRecipient = baseData.feeRecipient;
@@ -765,16 +772,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
     this.originalReserveRatioBips = baseData.originalReserveRatioBips.toNumber();
     this.temporaryReserveRatioExpiry = baseData.temporaryReserveRatioExpiry.toNumber();
     this.isClosed = baseData.isClosed;
-    this.scaleFactor = baseData.scaleFactor;
+    this.scaleFactor = nextScaleFactor;
     this.totalSupply = this.marketToken.getAmount(baseData.totalSupply);
     this.maxTotalSupply = this.marketToken.getAmount(baseData.maxTotalSupply);
-    this.scaledTotalSupply = baseData.scaledTotalSupply;
+    this.scaledTotalSupply = nextScaledTotalSupply;
     this.totalAssets = this.underlyingToken.getAmount(baseData.totalAssets);
     this.lastAccruedProtocolFees = this.underlyingToken.getAmount(baseData.lastAccruedProtocolFees);
     this.normalizedUnclaimedWithdrawals = this.underlyingToken.getAmount(
       baseData.normalizedUnclaimedWithdrawals
     );
-    this.scaledPendingWithdrawals = baseData.scaledPendingWithdrawals;
+    this.scaledPendingWithdrawals = nextScaledPendingWithdrawals;
     this.pendingWithdrawalExpiry = baseData.pendingWithdrawalExpiry.toNumber();
     this.isDelinquent = baseData.isDelinquent;
     this.timeDelinquent = baseData.timeDelinquent.toNumber();
@@ -824,16 +831,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
   ): Market {
     const underlyingToken = Token.fromSubgraphToken(chainId, data._asset, provider);
     const marketToken = Token.fromSubgraphMarketData(chainId, data, provider);
-    const scaledTotalSupply = BigNumber.from(data.scaledTotalSupply);
-    const scaleFactor = BigNumber.from(data.scaleFactor);
-    const scaledWithdrawals = BigNumber.from(data.scaledPendingWithdrawals);
-    const scaledRequiredReserves = bipMul(
-      scaledTotalSupply.sub(scaledWithdrawals),
-      BigNumber.from(data.reserveRatioBips)
-    ).add(scaledWithdrawals);
-    const coverageLiquidity = rayMul(scaledRequiredReserves, scaleFactor)
-      .add(data.pendingProtocolFees)
-      .add(data.normalizedUnclaimedWithdrawals);
+    const scaledTotalSupply = toRawAmount(data.scaledTotalSupply);
+    const scaleFactor = toRawAmount(data.scaleFactor);
+    const scaledWithdrawals = toRawAmount(data.scaledPendingWithdrawals);
+    const scaledRequiredReserves =
+      bipMulBigint(scaledTotalSupply - scaledWithdrawals, data.reserveRatioBips) +
+      scaledWithdrawals;
+    const coverageLiquidity =
+      rayMulBigint(scaledRequiredReserves, scaleFactor) +
+      toRawAmount(data.pendingProtocolFees) +
+      toRawAmount(data.normalizedUnclaimedWithdrawals);
 
     let hooksConfig: HooksConfig | undefined;
     if (data.version === MarketVersion.V2) {
@@ -920,8 +927,8 @@ export class Market extends ContractWrapper<WildcatMarket> {
       originalReserveRatioBips: data.originalReserveRatioBips,
       temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry,
       isClosed: data.isClosed,
-      scaleFactor: BigNumber.from(data.scaleFactor),
-      totalSupply: marketToken.getAmount(rayMul(scaledTotalSupply, scaleFactor)),
+      scaleFactor,
+      totalSupply: marketToken.getAmount(rayMulBigint(scaledTotalSupply, scaleFactor)),
       maxTotalSupply: marketToken.getAmount(data.maxTotalSupply),
       scaledTotalSupply: scaledTotalSupply,
       totalAssets: underlyingToken.getAmount(0), // @todo maybe update subgraph to query this per update?
@@ -929,7 +936,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
         data.normalizedUnclaimedWithdrawals
       ),
-      scaledPendingWithdrawals: BigNumber.from(data.scaledPendingWithdrawals),
+      scaledPendingWithdrawals: scaledWithdrawals,
       pendingWithdrawalExpiry: +data.pendingWithdrawalExpiry,
       isDelinquent: data.isDelinquent,
       timeDelinquent: data.timeDelinquent,
@@ -985,16 +992,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
       originalReserveRatioBips: data.originalReserveRatioBips.toNumber(),
       temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry.toNumber(),
       isClosed: data.isClosed,
-      scaleFactor: data.scaleFactor,
+      scaleFactor: toRawAmount(data.scaleFactor),
       totalSupply: marketToken.getAmount(data.totalSupply),
       maxTotalSupply: marketToken.getAmount(data.maxTotalSupply),
-      scaledTotalSupply: data.scaledTotalSupply,
+      scaledTotalSupply: toRawAmount(data.scaledTotalSupply),
       totalAssets: underlyingToken.getAmount(data.totalAssets),
       lastAccruedProtocolFees: underlyingToken.getAmount(data.lastAccruedProtocolFees),
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
         data.normalizedUnclaimedWithdrawals
       ),
-      scaledPendingWithdrawals: data.scaledPendingWithdrawals,
+      scaledPendingWithdrawals: toRawAmount(data.scaledPendingWithdrawals),
       pendingWithdrawalExpiry: data.pendingWithdrawalExpiry.toNumber(),
       isDelinquent: data.isDelinquent,
       timeDelinquent: data.timeDelinquent.toNumber(),
@@ -1080,16 +1087,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
       originalReserveRatioBips: data.originalReserveRatioBips.toNumber(),
       temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry.toNumber(),
       isClosed: data.isClosed,
-      scaleFactor: data.scaleFactor,
+      scaleFactor: toRawAmount(data.scaleFactor),
       totalSupply: marketToken.getAmount(data.totalSupply),
       maxTotalSupply: marketToken.getAmount(data.maxTotalSupply),
-      scaledTotalSupply: data.scaledTotalSupply,
+      scaledTotalSupply: toRawAmount(data.scaledTotalSupply),
       totalAssets: underlyingToken.getAmount(data.totalAssets),
       lastAccruedProtocolFees: underlyingToken.getAmount(data.lastAccruedProtocolFees),
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
         data.normalizedUnclaimedWithdrawals
       ),
-      scaledPendingWithdrawals: data.scaledPendingWithdrawals,
+      scaledPendingWithdrawals: toRawAmount(data.scaledPendingWithdrawals),
       pendingWithdrawalExpiry: data.pendingWithdrawalExpiry.toNumber(),
       isDelinquent: data.isDelinquent,
       timeDelinquent: data.timeDelinquent.toNumber(),
@@ -1166,16 +1173,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
       originalReserveRatioBips: data.originalReserveRatioBips.toNumber(),
       temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry.toNumber(),
       isClosed: data.isClosed,
-      scaleFactor: data.scaleFactor,
+      scaleFactor: toRawAmount(data.scaleFactor),
       totalSupply: marketToken.getAmount(data.totalSupply),
       maxTotalSupply: marketToken.getAmount(data.maxTotalSupply),
-      scaledTotalSupply: data.scaledTotalSupply,
+      scaledTotalSupply: toRawAmount(data.scaledTotalSupply),
       totalAssets: underlyingToken.getAmount(data.totalAssets),
       lastAccruedProtocolFees: underlyingToken.getAmount(data.lastAccruedProtocolFees),
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
         data.normalizedUnclaimedWithdrawals
       ),
-      scaledPendingWithdrawals: data.scaledPendingWithdrawals,
+      scaledPendingWithdrawals: toRawAmount(data.scaledPendingWithdrawals),
       pendingWithdrawalExpiry: data.pendingWithdrawalExpiry.toNumber(),
       isDelinquent: data.isDelinquent,
       timeDelinquent: data.timeDelinquent.toNumber(),

@@ -13,7 +13,7 @@ import {
   SignerOrProvider
 } from "../types";
 import { BigNumber, PopulatedTransaction, constants } from "ethers";
-import { Token } from "../token";
+import { Token, toRawAmount } from "../token";
 
 import {
   WithdrawalRequestRecord,
@@ -168,7 +168,7 @@ const marketRecordParsers: MarketRecordParserMap = {
   }),
   FixedTermUpdated: (_, log) => ({ ...log }),
   ForceBuyBack: (token, { scaledAmount, normalizedAmount, ...rest }) => ({
-    scaledAmount: BigNumber.from(scaledAmount),
+    scaledAmount: toRawAmount(scaledAmount),
     normalizedAmount: token.getAmount(normalizedAmount),
     ...rest
   }),
@@ -186,7 +186,7 @@ const marketRecordParsers: MarketRecordParserMap = {
   ProtocolFeeBipsUpdated: (_, log) => ({ ...log }),
   WithdrawalRequest: (token, { scaledAmount, normalizedAmount, account, ...rest }) => ({
     address: account.address,
-    scaledAmount: BigNumber.from(scaledAmount),
+    scaledAmount: toRawAmount(scaledAmount),
     normalizedAmount: token.getAmount(normalizedAmount),
     ...rest
   })

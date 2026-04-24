@@ -1,5 +1,5 @@
-import { BigNumber, ContractTransaction } from "ethers";
-import { TokenAmount } from "../token";
+import { ContractTransaction } from "ethers";
+import { TokenAmount, toRawAmount } from "../token";
 import {
   CollateralContractDataStructOutput,
   SimpleMarketCollateral,
@@ -32,7 +32,7 @@ export interface CollateralV1Args {
   liquidationCooldown: number;
   maxRepaymentBips: number;
   fullLiquidationIndex: number;
-  totalShares: BigNumber;
+  totalShares: bigint;
   availableCollateral: TokenAmount;
   nextLiquidationTrigger: number;
   eventIndex?: number;
@@ -107,7 +107,7 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
       provider,
       address: data.id,
       availableCollateral: collateralAsset.getAmount(data.availableCollateral),
-      totalShares: BigNumber.from(data.totalShares),
+      totalShares: toRawAmount(data.totalShares),
 
       totalDeposited: collateralAsset.getAmount(data.totalDeposited),
       totalReclaimed: collateralAsset.getAmount(data.totalReclaimed),
@@ -131,10 +131,10 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
       this.totalDeposited = this.collateralAsset.getAmount(data.totalDeposited);
       this.totalReclaimed = this.collateralAsset.getAmount(data.totalReclaimed);
       this.totalLiquidated = this.collateralAsset.getAmount(data.totalLiquidated);
-      this.totalShares = BigNumber.from(data.totalShares);
+      this.totalShares = toRawAmount(data.totalShares);
       this.fullLiquidationIndex = data.lastFullLiquidationIndex;
     } else {
-      this.totalShares = data.totalShares;
+      this.totalShares = toRawAmount(data.totalShares);
       this.fullLiquidationIndex = data.fullLiquidationIndex;
     }
     this.nextLiquidationTrigger = data.nextLiquidationTrigger;
@@ -158,7 +158,7 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
       provider: market.provider,
       address: data.collateralContract,
       availableCollateral: collateralAsset.getAmount(data.availableCollateral),
-      totalShares: BigNumber.from(data.totalShares),
+      totalShares: toRawAmount(data.totalShares),
       underlyingAsset,
       collateralAsset,
       fullLiquidationIndex: data.fullLiquidationIndex,

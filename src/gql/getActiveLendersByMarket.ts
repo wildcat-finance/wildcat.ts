@@ -7,12 +7,11 @@ import {
 import { Market } from "../market";
 import { LenderRole } from "../account";
 import { HooksCredential, HooksKind, MarketVersion } from "../types";
-import { BigNumber } from "ethers";
-import { TokenAmount } from "../token";
+import { TokenAmount, toRawAmount } from "../token";
 import { assert, parseSubgraphLenderHooksAccess, parseSubgraphLenderStatus } from "../utils";
 import { LenderAccountDataStructOutput } from "../typechain";
 
-const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
+const NullProviderIndex = 2 ** 24 - 1;
 
 export type GetActiveLendersByMarketOptions = SubgraphGetActiveLendersByMarketQueryVariables & {
   fetchPolicy?: FetchPolicy;
@@ -22,7 +21,7 @@ export type GetActiveLendersByMarketOptions = SubgraphGetActiveLendersByMarketQu
 type BasicLenderArgs = {
   market: Market;
   address: string;
-  scaledBalance: BigNumber;
+  scaledBalance: bigint;
   addedTimestamp: number;
   isKnownLender?: boolean;
   /** For V2 markets - credentials on market hooks instance */
@@ -127,7 +126,7 @@ export class BasicLenderData {
   }
 
   updateWith(data: LenderAccountDataStructOutput): void {
-    this.scaledBalance = data.scaledBalance;
+    this.scaledBalance = toRawAmount(data.scaledBalance);
     this.isKnownLender = data.isKnownLender;
     this.credential = {
       canRefresh: data.canRefresh,
@@ -179,7 +178,7 @@ export async function getActiveLendersByMarket(
         addedTimestamp:
           controllerAuthorization?.addedTimestamp ?? hooksAccess?.addedTimestamp ?? addedTimestamp,
         market,
-        scaledBalance: BigNumber.from(scaledBalance),
+        scaledBalance: toRawAmount(scaledBalance),
         credential: hooksAccess ? parseSubgraphLenderHooksAccess(hooksAccess) : undefined,
         isAuthorizedOnController: controllerAuthorization?.authorized,
         isKnownLender: !!knownLenderStatus?.id,
