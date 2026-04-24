@@ -57,8 +57,13 @@ export const getViemPublicClientFromEthers = (providerOrSigner: SignerOrProvider
   }
 
   return createPublicClient({
-    transport: custom({
-      request
-    })
+    transport: custom(
+      {
+        request
+      },
+      {
+        retryCount: 0
+      }
+    )
   });
 };

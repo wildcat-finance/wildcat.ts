@@ -10,19 +10,19 @@ import {
   WildcatMarket,
   WildcatMarket__factory
 } from "./typechain";
-import {
-  SupportedChainId,
-  getLensV2_5Contract,
-  getLensContract,
-  getLensV2Contract,
-  getMarketTypeForHooksFactory,
-  hasDeploymentAddress
-} from "./constants";
+import { SupportedChainId, getMarketTypeForHooksFactory, hasDeploymentAddress } from "./constants";
 import {
   getRegisteredMarkets,
   getRegisteredMarketsCount,
   getRegisteredMarketsPage
 } from "./internal/arch-controller";
+import {
+  getLegacyMarketData,
+  getLegacyMarketsData,
+  getUnifiedMarketDataV2,
+  getUnifiedMarketsDataV2,
+  getV2MarketData
+} from "./internal/market-lens";
 import { TokenAmount, Token, toBn } from "./token";
 import {
   SignerOrProvider,
@@ -708,23 +708,19 @@ export class Market extends ContractWrapper<WildcatMarket> {
     if (this.version === MarketVersion.V2) {
       if (hasUnifiedLatestLensForDirectReads(this.chainId)) {
         try {
-          const market = await getLensV2_5Contract(this.chainId, this.provider).getMarketDataV2(
-            this.address
-          );
+          const market = await getUnifiedMarketDataV2(this.chainId, this.provider, this.address);
           this.updateWith(market);
           return;
         } catch (_) {
           // Fall back to the pre-2.5 V2 lens until unified lens deployment is reliable.
         }
       }
-      const market = await getLensV2Contract(this.chainId, this.provider).getMarketData(
-        this.address
-      );
+      const market = await getV2MarketData(this.chainId, this.provider, this.address);
       this.updateWith(market);
       return;
     }
 
-    const market = await getLensContract(this.chainId, this.provider).getMarketData(this.address);
+    const market = await getLegacyMarketData(this.chainId, this.provider, this.address);
     this.updateWith(market);
   }
 
@@ -1255,14 +1251,13 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
-        const data = await getLensV2_5Contract(chainId, provider).getMarketDataV2(market);
+        const data = await getUnifiedMarketDataV2(chainId, provider, market);
         return Market.fromUnifiedMarketData(chainId, provider, data, signerAddress);
       } catch (_) {
         // Fall back to the legacy lens for V1 markets and pre-unified deployments.
       }
     }
-    const lens = getLensContract(chainId, provider);
-    const data = await lens.getMarketData(market);
+    const data = await getLegacyMarketData(chainId, provider, market);
     return Market.fromMarketData(chainId, data, provider, signerAddress);
   }
   /**
@@ -1276,14 +1271,13 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
-        const data = await getLensV2_5Contract(chainId, provider).getMarketDataV2(market);
+        const data = await getUnifiedMarketDataV2(chainId, provider, market);
         return Market.fromUnifiedMarketData(chainId, provider, data, signerAddress);
       } catch (_) {
         // Fall back to the pre-2.5 V2 lens for chains that have not fully migrated.
       }
     }
-    const lens = getLensV2Contract(chainId, provider);
-    const data = await lens.getMarketData(market);
+    const data = await getV2MarketData(chainId, provider, market);
     return Market.fromMarketDataV2(chainId, provider, data, signerAddress);
   }
 
@@ -1298,7 +1292,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
-        const data = await getLensV2_5Contract(chainId, provider).getMarketsDataV2(markets);
+        const data = await getUnifiedMarketsDataV2(chainId, provider, markets);
         return Promise.all(
           data.map((market) =>
             Market.fromUnifiedMarketData(chainId, provider, market, signerAddress)
@@ -1308,8 +1302,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
         return Promise.all(markets.map((market) => Market.getMarket(chainId, market, provider)));
       }
     }
-    const lens = getLensContract(chainId, provider);
-    const data = await lens.getMarketsData(markets);
+    const data = await getLegacyMarketsData(chainId, provider, markets);
     return data.map((market) => Market.fromMarketData(chainId, market, provider, signerAddress));
   }
 

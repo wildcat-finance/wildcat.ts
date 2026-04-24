@@ -1,5 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, providers } from "ethers";
+import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
+import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { Market } from "../../src/market";
 import { Token } from "../../src/token";
@@ -21,6 +23,60 @@ const provider = new providers.JsonRpcProvider();
 
 const makeAddress = (suffix: number): string => {
   return `0x${suffix.toString(16).padStart(40, "0")}`;
+};
+
+type FakeRpcCall = {
+  to?: string;
+  data?: string;
+};
+
+class FakeViemProvider {
+  calls: FakeRpcCall[] = [];
+
+  constructor(private readonly getResponse: (call: FakeRpcCall) => string) {}
+
+  async send(method: string, params: unknown[] = []): Promise<unknown> {
+    if (method === "eth_chainId") {
+      return "0xaa36a7";
+    }
+    if (method !== "eth_call") {
+      throw new Error(`Unexpected RPC method: ${method}`);
+    }
+
+    const call = params[0] as FakeRpcCall;
+    this.calls.push(call);
+    return this.getResponse(call);
+  }
+}
+
+const toViemResult = (value: unknown): unknown => {
+  if (BigNumber.isBigNumber(value)) {
+    return BigInt(value.toString());
+  }
+  if (Array.isArray(value)) {
+    return value.map(toViemResult);
+  }
+  if (value !== null && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, toViemResult(entry)])
+    );
+  }
+  return value;
+};
+
+const encodeLensResult = (abi: Abi, functionName: string, result: unknown): `0x${string}` => {
+  return encodeFunctionResult({
+    abi,
+    functionName,
+    result: toViemResult(result)
+  });
+};
+
+const decodeLensCall = (abi: Abi, call: FakeRpcCall) => {
+  return decodeFunctionData({
+    abi,
+    data: call.data as `0x${string}`
+  });
 };
 
 const makeTokenMetadata = (suffix: number, name: string, symbol: string) => {
@@ -325,6 +381,183 @@ const makeSubgraphMarketData = (): Omit<
   }
 });
 
+describe("Market direct read routing", () => {
+  const originalResolveAllowForceBuyBacks = Market.resolveAllowForceBuyBacks;
+
+  afterEach(() => {
+    Market.resolveAllowForceBuyBacks = originalResolveAllowForceBuyBacks;
+  });
+
+  it("hydrates v2.5 market reads through viem and preserves revolving fields", async () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
+    const marketAddress = makeAddress(101);
+    const data = makeUnifiedMarketDataV2(hooksFactory, {
+      commitmentFeeBips: { isPresent: true, value: BigNumber.from(175) },
+      drawnAmount: { isPresent: true, value: BigNumber.from(250) }
+    });
+    const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getMarketDataV2");
+      expect((decoded.args?.[0] as string).toLowerCase()).to.equal(marketAddress);
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketDataV2", data);
+    });
+
+    Market.resolveAllowForceBuyBacks = (async () =>
+      true) as typeof Market.resolveAllowForceBuyBacks;
+
+    const market = await Market.getMarketV2(
+      SupportedChainId.Sepolia,
+      marketAddress,
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
+    expect(market.hooksFactory).to.equal(hooksFactory);
+    expect(market.marketType).to.equal("revolving");
+    expect(market.commitmentFeeBips).to.equal(175);
+    expect(market.drawnAmount?.raw.eq(250)).to.equal(true);
+    expect(market.hooksConfig?.allowForceBuyBacks).to.equal(true);
+  });
+
+  it("hydrates v2.5 batch market reads through viem", async () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
+    const markets = [makeAddress(102), makeAddress(103)];
+    const data = [
+      makeUnifiedMarketDataV2(hooksFactory, {
+        commitmentFeeBips: { isPresent: true, value: BigNumber.from(175) },
+        drawnAmount: { isPresent: true, value: BigNumber.from(250) }
+      }),
+      makeUnifiedMarketDataV2(hooksFactory, {
+        commitmentFeeBips: { isPresent: true, value: BigNumber.from(200) },
+        drawnAmount: { isPresent: true, value: BigNumber.from(300) }
+      })
+    ];
+    const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getMarketsDataV2");
+      expect((decoded.args?.[0] as string[]).map((address) => address.toLowerCase())).to.deep.equal(
+        markets
+      );
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketsDataV2", data);
+    });
+
+    Market.resolveAllowForceBuyBacks = (async () =>
+      true) as typeof Market.resolveAllowForceBuyBacks;
+
+    const hydratedMarkets = await Market.getMarkets(
+      SupportedChainId.Sepolia,
+      markets,
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
+    expect(hydratedMarkets.map((market) => market.commitmentFeeBips)).to.deep.equal([175, 200]);
+    expect(hydratedMarkets.map((market) => market.drawnAmount?.raw.toString())).to.deep.equal([
+      "250",
+      "300"
+    ]);
+  });
+
+  it("falls back from unified reads to the legacy lens through viem", async () => {
+    const marketAddress = makeAddress(104);
+    const data = makeLegacyMarketData();
+    const unifiedLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const legacyLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLens");
+    const viemProvider = new FakeViemProvider((call) => {
+      if (call.to === unifiedLensAddress) {
+        throw new Error("NotV2Market");
+      }
+
+      const decoded = decodeLensCall(marketLensAbi as Abi, call);
+      expect(call.to).to.equal(legacyLensAddress);
+      expect(decoded.functionName).to.equal("getMarketData");
+      expect((decoded.args?.[0] as string).toLowerCase()).to.equal(marketAddress);
+      return encodeLensResult(marketLensAbi as Abi, "getMarketData", data);
+    });
+
+    const market = await Market.getMarket(
+      SupportedChainId.Sepolia,
+      marketAddress,
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([
+      unifiedLensAddress,
+      legacyLensAddress
+    ]);
+    expect(market.version).to.equal(MarketVersion.V1);
+    expect(market.hooksFactory).to.equal(undefined);
+  });
+
+  it("falls back from unified reads to the V2 lens through viem", async () => {
+    const marketAddress = makeAddress(105);
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory");
+    const data = makeFactoryBackedMarketData(hooksFactory);
+    const unifiedLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const v2LensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2");
+    const viemProvider = new FakeViemProvider((call) => {
+      if (call.to === unifiedLensAddress) {
+        throw new Error("NotV2Market");
+      }
+
+      const decoded = decodeLensCall(marketLensV2Abi as Abi, call);
+      expect(call.to).to.equal(v2LensAddress);
+      expect(decoded.functionName).to.equal("getMarketData");
+      expect((decoded.args?.[0] as string).toLowerCase()).to.equal(marketAddress);
+      return encodeLensResult(marketLensV2Abi as Abi, "getMarketData", data);
+    });
+
+    const market = await Market.getMarketV2(
+      SupportedChainId.Sepolia,
+      marketAddress,
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([
+      unifiedLensAddress,
+      v2LensAddress
+    ]);
+    expect(market.version).to.equal(MarketVersion.V2);
+    expect(market.hooksFactory).to.equal(hooksFactory);
+    expect(market.marketType).to.equal("legacy");
+  });
+
+  it("updates v2.5 market data through viem", async () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
+    const initialData = makeUnifiedMarketDataV2(hooksFactory, {
+      commitmentFeeBips: { isPresent: true, value: BigNumber.from(175) },
+      drawnAmount: { isPresent: true, value: BigNumber.from(250) }
+    });
+    const updatedData = makeUnifiedMarketDataV2(hooksFactory, {
+      commitmentFeeBips: { isPresent: true, value: BigNumber.from(200) },
+      drawnAmount: { isPresent: true, value: BigNumber.from(300) }
+    });
+    const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getMarketDataV2");
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketDataV2", updatedData);
+    });
+    const market = Market.fromMarketDataV2_5(
+      SupportedChainId.Sepolia,
+      viemProvider as unknown as providers.Provider,
+      initialData,
+      true
+    );
+
+    await market.update();
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
+    expect(market.commitmentFeeBips).to.equal(200);
+    expect(market.drawnAmount?.raw.eq(300)).to.equal(true);
+  });
+});
+
 describe("Market model routing metadata", () => {
   it("leaves legacy lens markets without factory routing metadata", () => {
     const market = Market.fromMarketData(
@@ -376,10 +609,7 @@ describe("Market model routing metadata", () => {
   });
 
   it("hydrates unified v2.5 revolving optional fields when present", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -470,10 +700,7 @@ describe("Market model routing metadata", () => {
   });
 
   it("updates unified v2.5 revolving optional fields when present", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -507,10 +734,7 @@ describe("Market model routing metadata", () => {
 
 describe("Market revolving APR helpers", () => {
   it("computes exact-current revolving APR metrics from raw SDK state", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -534,10 +758,7 @@ describe("Market revolving APR helpers", () => {
   });
 
   it("clamps revolving utilization math to total supply and includes penalties", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -563,10 +784,7 @@ describe("Market revolving APR helpers", () => {
   });
 
   it("returns no revolving APR metrics when raw revolving state is absent", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -578,10 +796,7 @@ describe("Market revolving APR helpers", () => {
   });
 
   it("normalizes generic effective APR getters for revolving markets", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -596,17 +811,12 @@ describe("Market revolving APR helpers", () => {
 
     expect(market.effectiveLenderAPR.eq(blendedBaseAprRay)).to.equal(true);
     expect(
-      market.effectiveBorrowerAPR.eq(
-        bipMul(blendedBaseAprRay, BIP.add(market.protocolFeeBips))
-      )
+      market.effectiveBorrowerAPR.eq(bipMul(blendedBaseAprRay, BIP.add(market.protocolFeeBips)))
     ).to.equal(true);
   });
 
   it("normalizes delinquency timing helpers for revolving markets", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const revolvingMarket = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -650,9 +860,9 @@ describe("Market revolving APR helpers", () => {
       )
     );
     expect(
-      revolvingMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw.gt(
-        legacySemanticsMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw
-      )
+      revolvingMarket
+        .repayRequiredForDuration(SECONDS_IN_365_DAYS)
+        .raw.gt(legacySemanticsMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw)
     ).to.equal(true);
   });
 });
