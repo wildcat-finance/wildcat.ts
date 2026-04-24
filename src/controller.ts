@@ -20,9 +20,19 @@ import {
 import { Market } from "./market";
 import { ContractReceipt, ContractTransaction } from "ethers";
 import { Token, TokenAmount } from "./token";
-import { assert, parseFeeConfiguration, parseMarketParameterConstraints } from "./utils";
+import {
+  assert,
+  parseFeeConfiguration,
+  parseMarketParameterConstraints,
+  prepareTransaction
+} from "./utils";
 import { MarketDeployedEvent } from "./typechain/WildcatMarketController";
 import { SubgraphMinimalControllerDataFragment } from "./gql";
+import {
+  mockArchControllerOwnerAbi,
+  wildcatMarketControllerAbi,
+  wildcatMarketControllerFactoryAbi
+} from "./abi";
 
 export class MarketController extends ContractWrapper<WildcatMarketController> {
   readonly contractFactory = WildcatMarketController__factory;
@@ -92,11 +102,12 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   }
 
   populateAuthorizeLenders(lenders: string[]): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("authorizeLenders", [lenders]),
-      value: "0"
-    };
+      abi: wildcatMarketControllerAbi,
+      functionName: "authorizeLenders",
+      args: [lenders]
+    });
   }
 
   async authorizeLendersAndUpdateMarkets(
@@ -110,14 +121,12 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     lenders: string[],
     markets: string[] = this.markets.map((m) => m.address)
   ): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("authorizeLendersAndUpdateMarkets", [
-        lenders,
-        markets
-      ]),
-      value: "0"
-    };
+      abi: wildcatMarketControllerAbi,
+      functionName: "authorizeLendersAndUpdateMarkets",
+      args: [lenders, markets]
+    });
   }
 
   async deauthorizeLenders(lenders: string[]): Promise<ContractTransaction> {
@@ -125,11 +134,12 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
   }
 
   populateDeauthorizeLenders(lenders: string[]): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("deauthorizeLenders", [lenders]),
-      value: "0"
-    };
+      abi: wildcatMarketControllerAbi,
+      functionName: "deauthorizeLenders",
+      args: [lenders]
+    });
   }
 
   async deauthorizeLendersAndUpdateMarkets(
@@ -143,14 +153,12 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     lenders: string[],
     markets: string[] = this.markets.map((m) => m.address)
   ): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("deauthorizeLendersAndUpdateMarkets", [
-        lenders,
-        markets
-      ]),
-      value: "0"
-    };
+      abi: wildcatMarketControllerAbi,
+      functionName: "deauthorizeLendersAndUpdateMarkets",
+      args: [lenders, markets]
+    });
   }
 
   async registerBorrower(): Promise<ContractTransaction> {
@@ -172,11 +180,12 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     );
 
     const archControllerOwner = getMockArchControllerOwnerContract(this.chainId, this.signer);
-    return {
+    return prepareTransaction({
       to: archControllerOwner.address,
-      data: archControllerOwner.interface.encodeFunctionData("registerBorrower", [this.address]),
-      value: "0"
-    };
+      abi: mockArchControllerOwnerAbi,
+      functionName: "registerBorrower",
+      args: [this.address]
+    });
   }
 
   async deployController(): Promise<ContractTransaction> {
@@ -217,9 +226,11 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
     }
     if (!this.isDeployed) {
       const factory = getControllerFactoryContract(this.chainId, this.signer);
-      return {
+      return prepareTransaction({
         to: factory.address,
-        data: factory.interface.encodeFunctionData("deployControllerAndMarket", [
+        abi: wildcatMarketControllerFactoryAbi,
+        functionName: "deployControllerAndMarket",
+        args: [
           params.namePrefix,
           params.symbolPrefix,
           params.asset.address,
@@ -229,13 +240,14 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
           params.withdrawalBatchDuration,
           params.reserveRatioBips,
           params.delinquencyGracePeriod
-        ]),
-        value: "0"
-      };
+        ]
+      });
     }
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("deployMarket", [
+      abi: wildcatMarketControllerAbi,
+      functionName: "deployMarket",
+      args: [
         params.asset.address,
         params.namePrefix,
         params.symbolPrefix,
@@ -245,9 +257,8 @@ export class MarketController extends ContractWrapper<WildcatMarketController> {
         params.withdrawalBatchDuration,
         params.reserveRatioBips,
         params.delinquencyGracePeriod
-      ]),
-      value: "0"
-    };
+      ]
+    });
   }
 
   async deployMarket(params: MarketParameters): Promise<{

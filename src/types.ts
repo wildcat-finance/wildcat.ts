@@ -1,6 +1,7 @@
 import { Provider } from "@ethersproject/abstract-provider";
 import { Signer } from "@ethersproject/abstract-signer";
 import { BaseContract } from "ethers";
+import type { Address, Hex } from "viem";
 import { Token, TokenAmount } from "./token";
 import { SubgraphMarketVersion } from "./gql/graphql";
 import { HooksTemplate } from "./access";
@@ -62,14 +63,19 @@ export abstract class ContractWrapper<Contract extends BaseContract> {
   }
 }
 
-// Use class to give build error if `removeUnusedTxFields` is not called,
-// so that we don't accidentally fill fields we want to be derived at the
-// time of execution.
-export type PartialTransaction = {
+export type PreparedTransaction = {
+  to: Address;
+  data: Hex;
+  value?: bigint;
+};
+
+export type SafeTransactionInput = {
   to: string;
   data: string;
   value: string;
 };
+
+export type PartialTransaction = PreparedTransaction;
 
 export type FeeConfiguration = {
   feeRecipient: string;

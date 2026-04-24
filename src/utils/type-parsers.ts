@@ -13,6 +13,7 @@ import {
   SignerOrProvider
 } from "../types";
 import { BigNumber, PopulatedTransaction, constants } from "ethers";
+import type { Address, Hex } from "viem";
 import { Token, toRawAmount } from "../token";
 
 import {
@@ -133,9 +134,9 @@ export const removeUnusedTxFields = ({
   assert(to !== undefined, "to is undefined");
   assert(data !== undefined, "data is undefined");
   return {
-    to,
-    data,
-    value: value.toHexString()
+    to: to as Address,
+    data: data as Hex,
+    value: toRawAmount(value)
   };
 };
 

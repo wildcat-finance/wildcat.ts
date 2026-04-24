@@ -37,7 +37,7 @@ import {
   TransferAccess,
   WithdrawalAccess
 } from "../types";
-import { assert, encodeHooksConfig, parseFeeConfigurationV2 } from "../utils";
+import { assert, encodeHooksConfig, parseFeeConfigurationV2, prepareTransaction } from "../utils";
 import { constants, ContractTransaction } from "ethers";
 import {
   ChangeLenderRolePreview,
@@ -49,6 +49,7 @@ import {
 } from "./validation";
 import { encodeRevolvingMarketData } from "./revolving";
 import { encodeMarketHooksInstanceInputs } from "./utils";
+import { iOpenTermHooksAbi } from "../abi";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface OpenTermHooks extends Omit<OpenTermHooksArgs, "roleProviders" | "constraints"> {}
@@ -122,20 +123,15 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
     const credentialTimestamps = inputs.map(
       (input) => input.credentialTimestamp ?? Math.floor(Date.now() / 1000)
     );
-    return {
+    return prepareTransaction({
       to: this.address,
-      data:
+      abi: iOpenTermHooksAbi,
+      functionName: inputs.length === 1 ? "grantRole" : "grantRoles",
+      args:
         inputs.length === 1
-          ? this.contract.interface.encodeFunctionData("grantRole", [
-              lenders[0],
-              credentialTimestamps[0]
-            ])
-          : this.contract.interface.encodeFunctionData("grantRoles", [
-              lenders,
-              credentialTimestamps
-            ]),
-      value: "0"
-    };
+          ? [lenders[0], credentialTimestamps[0]]
+          : [lenders, credentialTimestamps]
+    });
   }
 
   addLenders(inputs: AddLenderInput[]): Promise<ContractTransaction> {
@@ -165,14 +161,12 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
   }
 
   populateBlockLenders(lenders: string[]): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data:
-        lenders.length === 1
-          ? this.contract.interface.encodeFunctionData("blockFromDeposits(address)", [lenders[0]])
-          : this.contract.interface.encodeFunctionData("blockFromDeposits(address[])", [lenders]),
-      value: "0"
-    };
+      abi: iOpenTermHooksAbi,
+      functionName: "blockFromDeposits",
+      args: lenders.length === 1 ? [lenders[0]] : [lenders]
+    });
   }
 
   previewUnblockLender(): ChangeLenderRolePreview {
@@ -196,11 +190,12 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
   }
 
   populateUnblockLender(lender: string): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("unblockFromDeposits", [lender]),
-      value: "0"
-    };
+      abi: iOpenTermHooksAbi,
+      functionName: "unblockFromDeposits",
+      args: [lender]
+    });
   }
 
   /* ========================================================================== */

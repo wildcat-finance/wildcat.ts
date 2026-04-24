@@ -1,10 +1,11 @@
-import { ContractWrapper, PartialTransaction, Provider, Signer, SignerOrProvider } from "./types";
+import { ContractWrapper, PartialTransaction, Signer, SignerOrProvider } from "./types";
 import { MockERC20Factory, MockERC20Factory__factory } from "./typechain";
 import { NewTokenDeployedEvent } from "./typechain/MockERC20Factory";
 import { Token } from "./token";
 import { SupportedChainId, getDeploymentAddress } from "./constants";
-import { assert, removeUnusedTxFields } from "./utils";
+import { assert, prepareTransaction } from "./utils";
 import { ContractReceipt, ContractTransaction } from "ethers";
+import { mockERC20FactoryAbi } from "./abi";
 
 export class TokenFactory extends ContractWrapper<MockERC20Factory> {
   readonly contractFactory = MockERC20Factory__factory;
@@ -85,11 +86,12 @@ export class TokenFactory extends ContractWrapper<MockERC20Factory> {
   }
 
   populateDeployToken(name: string, symbol: string): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("deployMockERC20", [name, symbol]),
-      value: "0"
-    };
+      abi: mockERC20FactoryAbi,
+      functionName: "deployMockERC20",
+      args: [name, symbol]
+    });
   }
 
   async getNextTokenAddress(address: string): Promise<string> {

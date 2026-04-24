@@ -5,6 +5,46 @@
     "types": ["function"]
   },
   {
+    "exportName": "mockERC20FactoryAbi",
+    "artifact": "artifacts/contracts/MockERC20Factory.sol/MockERC20Factory.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "mockArchControllerOwnerAbi",
+    "artifact": "artifacts/contracts/MockArchControllerOwner.sol/MockArchControllerOwner.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "wildcatCollateralFactoryAbi",
+    "artifact": "artifacts/contracts/WildcatCollateralFactory.sol/WildcatCollateralFactory.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "simpleMarketCollateralAbi",
+    "artifact": "artifacts/contracts/SimpleMarketCollateral.sol/SimpleMarketCollateral.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "wildcatMarketAbi",
+    "artifact": "artifacts/contracts/WildcatMarket.sol/WildcatMarket.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "wildcatMarketV2Abi",
+    "artifact": "artifacts/contracts/WildcatMarketV2.sol/WildcatMarketV2.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "wildcatMarketControllerAbi",
+    "artifact": "artifacts/contracts/WildcatMarketController.sol/WildcatMarketController.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "wildcatMarketControllerFactoryAbi",
+    "artifact": "artifacts/contracts/WildcatMarketControllerFactory.sol/WildcatMarketControllerFactory.json",
+    "types": ["function"]
+  },
+  {
     "exportName": "marketLensAbi",
     "artifact": "artifacts/contracts/MarketLens.sol/MarketLens.json",
     "types": ["function"]

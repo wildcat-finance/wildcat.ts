@@ -20,7 +20,8 @@ import {
 } from "../gql/graphql";
 import { Market } from "../market";
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
-import { assert } from "../utils";
+import { assert, prepareTransaction } from "../utils";
+import { simpleMarketCollateralAbi, wildcatCollateralFactoryAbi } from "../abi";
 
 export * from "./collateral-events";
 
@@ -69,12 +70,12 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
   }
 
   populateDeposit(amount: TokenAmount): PartialTransaction {
-    const data = this.contract.interface.encodeFunctionData("deposit", [amount.raw]);
-    return {
+    return prepareTransaction({
       to: this.contract.address,
-      data,
-      value: "0"
-    };
+      abi: simpleMarketCollateralAbi,
+      functionName: "deposit",
+      args: [amount.raw]
+    });
   }
 
   async reclaimCollateral(): Promise<ContractTransaction> {
@@ -82,12 +83,11 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
   }
 
   populateReclaimCollateral(): PartialTransaction {
-    const data = this.contract.interface.encodeFunctionData("reclaimCollateral");
-    return {
+    return prepareTransaction({
       to: this.contract.address,
-      data,
-      value: "0"
-    };
+      abi: simpleMarketCollateralAbi,
+      functionName: "reclaimCollateral"
+    });
   }
 
   static fromSubgraphData(
@@ -186,11 +186,12 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
     collateralAsset: Token
   ): PartialTransaction {
     const collateralFactory = getCollateralFactoryContract(chainId, provider);
-    const data = collateralFactory.interface.encodeFunctionData("deployCollateralContract", [
-      market.address,
-      collateralAsset.address
-    ]);
-    return { to: collateralFactory.address, data, value: "0" };
+    return prepareTransaction({
+      to: collateralFactory.address,
+      abi: wildcatCollateralFactoryAbi,
+      functionName: "deployCollateralContract",
+      args: [market.address, collateralAsset.address]
+    });
   }
 }
 

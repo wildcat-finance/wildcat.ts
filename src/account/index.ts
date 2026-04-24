@@ -20,7 +20,8 @@ import {
   parseSubgraphLenderStatus,
   parseSubgraphLenderHooksAccess,
   rayMulBigint,
-  SECONDS_IN_365_DAYS
+  SECONDS_IN_365_DAYS,
+  prepareTransaction
 } from "../utils";
 import { SupportedChainId, getControllerContract, hasDeploymentAddress } from "../constants";
 import {
@@ -73,6 +74,14 @@ import {
   SetFixedTermEndTimeStatus,
   SetFixedTermEndTimePreview
 } from "./validation";
+import {
+  iERC20Abi,
+  iFixedTermHooksAbi,
+  iOpenTermHooksAbi,
+  wildcatMarketAbi,
+  wildcatMarketControllerAbi,
+  wildcatMarketV2Abi
+} from "../abi";
 export * from "./validation";
 
 export enum LenderRole {
@@ -403,12 +412,12 @@ export class MarketAccount {
     assert(status === SetMinimumDepositStatus.Ready, `Cannot set minimum deposit: ${status}`);
     const config = this.market.hooksConfig;
     assert(config !== undefined, `V2 market missing hooksConfig`);
-    const iface = IOpenTermHooks__factory.createInterface();
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: iface.encodeFunctionData("setMinimumDeposit", [this.market.address, amount.raw]),
-      value: "0"
-    };
+      abi: iOpenTermHooksAbi,
+      functionName: "setMinimumDeposit",
+      args: [this.market.address, amount.raw]
+    });
   }
 
   async populateSetFixedTermEndTime(endTime: number): Promise<PartialTransaction> {
@@ -416,12 +425,12 @@ export class MarketAccount {
     assert(status === SetFixedTermEndTimeStatus.Ready, `Cannot set fixed term end time: ${status}`);
     const config = this.market.hooksConfig;
     assert(config !== undefined, `V2 market missing hooksConfig`);
-    const iface = IFixedTermHooks__factory.createInterface();
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: iface.encodeFunctionData("setFixedTermEndTime", [this.market.address, endTime]),
-      value: "0"
-    };
+      abi: iFixedTermHooksAbi,
+      functionName: "setFixedTermEndTime",
+      args: [this.market.address, endTime]
+    });
   }
 
   async setMinimumDeposit(amount: TokenAmount): Promise<ContractTransaction> {
@@ -464,17 +473,18 @@ export class MarketAccount {
     if (this.market.version === MarketVersion.V1) {
       assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
       const controller = getControllerContract(this.market.signer, this.market.controller);
-      return {
+      return prepareTransaction({
         to: controller.address,
-        data: controller.interface.encodeFunctionData("closeMarket", [this.market.address]),
-        value: "0"
-      };
+        abi: wildcatMarketControllerAbi,
+        functionName: "closeMarket",
+        args: [this.market.address]
+      });
     }
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: this.market.contract.interface.encodeFunctionData("closeMarket"),
-      value: "0"
-    };
+      abi: wildcatMarketV2Abi,
+      functionName: "closeMarket"
+    });
   }
 
   async setMaxTotalSupply(amount: TokenAmount): Promise<ContractTransaction> {
@@ -531,14 +541,12 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    return {
+    return prepareTransaction({
       to: token.address,
-      data: token.contract.interface.encodeFunctionData("approve", [
-        this.market.address,
-        amount.raw
-      ]),
-      value: "0"
-    };
+      abi: iERC20Abi,
+      functionName: "approve",
+      args: [this.market.address, amount.raw]
+    });
   }
 
   /* -------------------------------------------------------------------------- */
@@ -578,12 +586,12 @@ export class MarketAccount {
     const { status } = this.previewForceBuyBack(lender, amount);
     assert(status === ForceBuyBackStatus.Ready, `Cannot force buy back: ${status}`);
 
-    const contract = WildcatMarketV2__factory.connect(this.market.address, this.market.signer);
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: contract.interface.encodeFunctionData("forceBuyBack", [lender, amount.raw]),
-      value: "0"
-    };
+      abi: wildcatMarketV2Abi,
+      functionName: "forceBuyBack",
+      args: [lender, amount.raw]
+    });
   }
 
   /* -------------------------------------------------------------------------- */
@@ -637,11 +645,12 @@ export class MarketAccount {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
 
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: this.market.contract.interface.encodeFunctionData("deposit", [amount.raw]),
-      value: "0"
-    };
+      abi: wildcatMarketAbi,
+      functionName: "deposit",
+      args: [amount.raw]
+    });
   }
 
   async deposit(amount: TokenAmount): Promise<ContractTransaction> {
@@ -792,11 +801,12 @@ export class MarketAccount {
     }
     if (!this.isBorrower) throw Error("Only borrower can repay");
 
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: this.market.contract.interface.encodeFunctionData("repay", [toBn(amount)]),
-      value: "0"
-    };
+      abi: wildcatMarketAbi,
+      functionName: "repay",
+      args: [toRawAmount(amount)]
+    });
   }
 
   async repayOutstandingDebt(): Promise<ContractTransaction> {
@@ -822,11 +832,11 @@ export class MarketAccount {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
 
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: this.market.contract.interface.encodeFunctionData("repayOutstandingDebt"),
-      value: "0"
-    };
+      abi: wildcatMarketAbi,
+      functionName: "repayOutstandingDebt"
+    });
   }
 
   async repayDelinquentDebt(): Promise<ContractTransaction> {
@@ -852,11 +862,11 @@ export class MarketAccount {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
 
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: this.market.contract.interface.encodeFunctionData("repayDelinquentDebt"),
-      value: "0"
-    };
+      abi: wildcatMarketAbi,
+      functionName: "repayDelinquentDebt"
+    });
   }
 
   /* -------------------------------------------------------------------------- */

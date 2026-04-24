@@ -60,10 +60,12 @@ import {
   bipMulBigint,
   bipToRayBigint,
   formatFixedBigint,
+  prepareTransaction,
   rayDivBigint,
   rayMulBigint
 } from "./utils";
 import { hooksTemplateFromSubgraph } from "./access";
+import { wildcatMarketAbi } from "./abi";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -604,14 +606,12 @@ export class Market extends ContractWrapper<WildcatMarket> {
     amount: TokenAmount,
     maxBatches = 10
   ): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("repayAndProcessUnpaidWithdrawalBatches", [
-        amount.raw,
-        maxBatches
-      ]),
-      value: "0"
-    };
+      abi: wildcatMarketAbi,
+      functionName: "repayAndProcessUnpaidWithdrawalBatches",
+      args: [amount.raw, maxBatches]
+    });
   }
 
   async repayAndProcessUnpaidWithdrawalBatches(

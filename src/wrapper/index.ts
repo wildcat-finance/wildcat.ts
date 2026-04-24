@@ -2,7 +2,8 @@ import { ContractReceipt, ContractTransaction, constants } from "ethers";
 import { Token, TokenAmount, toRawAmount } from "../token";
 import { ContractWrapper, PartialTransaction, Signer, SignerOrProvider } from "../types";
 import { SupportedChainId, getDeploymentAddress } from "../constants";
-import { assert } from "../utils";
+import { assert, prepareTransaction } from "../utils";
+import { wildcat4626WrapperAbi, wildcat4626WrapperFactoryAbi } from "../abi";
 import {
   IERC20__factory,
   Wildcat4626Wrapper,
@@ -96,11 +97,12 @@ export class WrapperFactory extends ContractWrapper<Wildcat4626WrapperFactory> {
   }
 
   populateCreateWrapper(market: string): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("createWrapper", [market]),
-      value: "0"
-    };
+      abi: wildcat4626WrapperFactoryAbi,
+      functionName: "createWrapper",
+      args: [market]
+    });
   }
 }
 
@@ -264,11 +266,12 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
   }
 
   populateDeposit(assets: TokenAmount, receiver: string): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("deposit", [assets.raw, receiver]),
-      value: "0"
-    };
+      abi: wildcat4626WrapperAbi,
+      functionName: "deposit",
+      args: [assets.raw, receiver]
+    });
   }
 
   async mint(shares: TokenAmount, receiver: string): Promise<ContractTransaction> {
@@ -276,11 +279,12 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
   }
 
   populateMint(shares: TokenAmount, receiver: string): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("mint", [shares.raw, receiver]),
-      value: "0"
-    };
+      abi: wildcat4626WrapperAbi,
+      functionName: "mint",
+      args: [shares.raw, receiver]
+    });
   }
 
   async withdraw(
@@ -292,11 +296,12 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
   }
 
   populateWithdraw(assets: TokenAmount, receiver: string, owner: string): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("withdraw", [assets.raw, receiver, owner]),
-      value: "0"
-    };
+      abi: wildcat4626WrapperAbi,
+      functionName: "withdraw",
+      args: [assets.raw, receiver, owner]
+    });
   }
 
   async redeem(shares: TokenAmount, receiver: string, owner: string): Promise<ContractTransaction> {
@@ -304,11 +309,12 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
   }
 
   populateRedeem(shares: TokenAmount, receiver: string, owner: string): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("redeem", [shares.raw, receiver, owner]),
-      value: "0"
-    };
+      abi: wildcat4626WrapperAbi,
+      functionName: "redeem",
+      args: [shares.raw, receiver, owner]
+    });
   }
 
   async sweep(token: string, to: string): Promise<ContractTransaction> {
@@ -316,10 +322,11 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
   }
 
   populateSweep(token: string, to: string): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("sweep", [token, to]),
-      value: "0"
-    };
+      abi: wildcat4626WrapperAbi,
+      functionName: "sweep",
+      args: [token, to]
+    });
   }
 }
