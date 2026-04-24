@@ -18,5 +18,7 @@ describe("SDK public surface smoke", () => {
     expect(typeof sdk.getTokensData).to.equal("function");
     expect(typeof sdk.getWithdrawalBatch).to.equal("function");
     expect(typeof sdk.getWithdrawalForLender).to.equal("function");
+    expect(typeof sdk.normalizeWildcatClient).to.equal("function");
+    expect(typeof sdk.requireWildcatWriteClient).to.equal("function");
   });
 });

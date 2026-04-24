@@ -48,7 +48,8 @@
     "graphql": "^16.8.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "viem": "^2.9.3"
   },
   "scripts": {
     "build": "npm run clean && tsc -p ./tsconfig.prod.json",
@@ -63,6 +64,7 @@
     "test": "react-scripts test",
     "mocha": "NODE_OPTIONS='--max-old-space-size=2048' mocha",
     "test:access-preview": "NODE_OPTIONS='--max-old-space-size=2048' mocha --no-config --timeout 0 --require ts-node/register \"./test/access/**/*.spec.ts\"",
+    "test:client": "NODE_OPTIONS='--max-old-space-size=2048' mocha --no-config --timeout 0 --require ts-node/register \"./test/client/**/*.spec.ts\"",
     "test:market-model": "NODE_OPTIONS='--max-old-space-size=2048' mocha --no-config --timeout 0 --require ts-node/register \"./test/market/**/*.spec.ts\"",
     "test:read-routing": "NODE_OPTIONS='--max-old-space-size=2048' mocha --no-config --timeout 0 --require ts-node/register \"./test/read/**/*.spec.ts\"",
     "test:smoke": "NODE_OPTIONS='--max-old-space-size=2048' mocha --no-config --timeout 0 --require ts-node/register \"./test/smoke/**/*.spec.ts\""
