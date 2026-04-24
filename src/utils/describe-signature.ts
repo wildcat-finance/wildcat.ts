@@ -98,6 +98,9 @@ export async function describeSignature(
       [address as Address, messageBytes, signature as Hex]
     ).slice(2)
   );
+  if (typeof provider.call !== "function") {
+    throw new Error("Provider call support is required");
+  }
   const result = await provider.call({ data: bytecode }, blockNumber);
 
   const {

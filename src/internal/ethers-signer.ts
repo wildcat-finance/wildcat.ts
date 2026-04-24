@@ -1,4 +1,4 @@
-import type { Signer } from "@ethersproject/abstract-signer";
+import type { Signer } from "../types";
 
 type EthersSignerLike = {
   _isSigner?: unknown;

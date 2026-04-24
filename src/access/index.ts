@@ -9,7 +9,7 @@ import {
   SubgraphHooksKind,
   SubgraphHooksTemplateDataFragment
 } from "../gql/graphql";
-import { HooksInstanceDataStructOutput, HooksTemplateDataStructOutput } from "../typechain";
+import type { HooksInstanceDataStructOutput, HooksTemplateDataStructOutput } from "../lens-types";
 import {
   getV2HooksDataForBorrower,
   getV2_5FactoryScopedHooksDataForBorrower

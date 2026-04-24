@@ -8,8 +8,13 @@ import { Market } from "../market";
 import { LenderRole } from "../account";
 import { HooksCredential, HooksKind, MarketVersion } from "../types";
 import { TokenAmount, toRawAmount } from "../token";
-import { assert, parseSubgraphLenderHooksAccess, parseSubgraphLenderStatus } from "../utils";
-import { LenderAccountDataStructOutput } from "../typechain";
+import {
+  assert,
+  parseSubgraphLenderHooksAccess,
+  parseSubgraphLenderStatus,
+  toNumber
+} from "../utils";
+import type { LenderAccountDataStructOutput } from "../lens-types";
 
 const NullProviderIndex = 2 ** 24 - 1;
 
@@ -131,15 +136,15 @@ export class BasicLenderData {
     this.credential = {
       canRefresh: data.canRefresh,
       isBlockedFromDeposits: data.isBlockedFromDeposits,
-      lastApprovalTimestamp: data.lastApprovalTimestamp,
+      lastApprovalTimestamp: toNumber(data.lastApprovalTimestamp),
       lastProvider: {
         isApproved: true,
         providerAddress: data.lastProvider.providerAddress,
-        isPullProvider: data.lastProvider.pullProviderIndex !== NullProviderIndex,
-        pullProviderIndex: data.lastProvider.pullProviderIndex,
-        isPushProvider: data.lastProvider.pushProviderIndex !== NullProviderIndex,
-        pushProviderIndex: data.lastProvider.pushProviderIndex,
-        timeToLive: data.lastProvider.timeToLive
+        isPullProvider: toNumber(data.lastProvider.pullProviderIndex) !== NullProviderIndex,
+        pullProviderIndex: toNumber(data.lastProvider.pullProviderIndex),
+        isPushProvider: toNumber(data.lastProvider.pushProviderIndex) !== NullProviderIndex,
+        pushProviderIndex: toNumber(data.lastProvider.pushProviderIndex),
+        timeToLive: toNumber(data.lastProvider.timeToLive)
       }
     };
   }

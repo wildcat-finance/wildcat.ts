@@ -2,7 +2,7 @@ import {
   FeeConfigurationStructOutput,
   FeeConfigurationV2StructOutput,
   MarketParameterConstraintsStructOutput
-} from "../typechain";
+} from "../lens-types";
 import {
   FeeConfiguration,
   FeeConfigurationV2,
@@ -58,7 +58,7 @@ export const parseFeeConfiguration = (
     originationFeeToken && originationFeeToken.getAmount(feeConfiguration.originationFeeAmount);
   return {
     feeRecipient: feeConfiguration.feeRecipient,
-    protocolFeeBips: feeConfiguration.protocolFeeBips,
+    protocolFeeBips: toNumber(feeConfiguration.protocolFeeBips),
     originationFeeToken,
     originationFeeAmount
   };
@@ -78,7 +78,7 @@ export const parseFeeConfigurationV2 = (
 ): FeeConfigurationV2 => {
   const fees: FeeConfigurationV2 = {
     feeRecipient: feeRecipient,
-    protocolFeeBips: protocolFeeBips
+    protocolFeeBips: toNumber(protocolFeeBips)
   };
   if (originationFeeToken.token === zeroAddress) return fees;
   const token = Token.fromTokenMetadata(chainId, originationFeeToken, provider);

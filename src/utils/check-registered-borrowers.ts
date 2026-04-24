@@ -14,6 +14,9 @@ export async function checkRegisteredBorrowers(
       [Deployments[chainId].WildcatArchController as Address, borrowers as Address[]]
     ).slice(2)
   );
+  if (typeof provider.call !== "function") {
+    throw new Error("Provider call support is required");
+  }
   const result = await provider.call({ data: bytecode });
   return [...decodeAbiParameters([{ type: "bool[]" }], result as Hex)[0]];
 }

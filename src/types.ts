@@ -1,5 +1,3 @@
-import type { Provider } from "@ethersproject/abstract-provider";
-import type { Signer as EthersSigner } from "@ethersproject/abstract-signer";
 import type { Address, Hash, Hex, TransactionReceipt } from "viem";
 import { Token, TokenAmount } from "./token";
 import { SubgraphMarketVersion } from "./gql/graphql";
@@ -17,10 +15,38 @@ export const isMarketType = (value: string): value is MarketType => {
   return MarketTypes.includes(value as MarketType);
 };
 
-export type Signer = EthersSigner;
-export type SignerOrProvider = Signer | Provider;
+export type RpcRequestArgs = {
+  method: string;
+  params?: unknown;
+};
 
-export type { Provider };
+export type Provider = {
+  // Keep provider values structurally compatible with ethers-based downstream code
+  // while the SDK runtime no longer imports ethers.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+  request?: (args: RpcRequestArgs) => Promise<unknown>;
+  send?: (method: string, params: unknown[]) => Promise<unknown>;
+  call?: (transaction: { to?: string; data?: string }, blockNumber?: number) => Promise<string>;
+  getCode?: (address: string) => Promise<string>;
+  provider?: unknown;
+};
+
+export type Signer = {
+  _isSigner?: boolean;
+  provider?: Provider;
+  chainId?: number;
+  call?: (transaction: { to?: string; data?: string }, blockNumber?: number) => Promise<string>;
+  getCode?: (address: string) => Promise<string>;
+  getAddress: () => Promise<string>;
+  sendTransaction: (transaction: {
+    to?: string;
+    data?: string;
+    value?: string;
+  }) => Promise<{ hash: string; wait?: () => Promise<unknown> }>;
+};
+
+export type SignerOrProvider = Signer | Provider;
 
 export const Signer = {
   isSigner: isEthersSigner

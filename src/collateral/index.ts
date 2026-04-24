@@ -1,5 +1,5 @@
 import { TokenAmount, toRawAmount } from "../token";
-import { CollateralContractDataStructOutput } from "../typechain";
+import type { CollateralContractDataStructOutput } from "../lens-types";
 import { ContractWrapper, PartialTransaction, SignerOrProvider, TransactionHash } from "../types";
 import { Token } from "../token";
 import {
@@ -15,7 +15,7 @@ import {
 } from "../gql/graphql";
 import { Market } from "../market";
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
-import { assert, prepareTransaction } from "../utils";
+import { assert, prepareTransaction, toNumber } from "../utils";
 import { simpleMarketCollateralAbi, wildcatCollateralFactoryAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
 import { isEthersSigner } from "../internal/ethers-signer";
@@ -126,12 +126,12 @@ export class MarketCollateralV1 extends ContractWrapper {
       this.totalReclaimed = this.collateralAsset.getAmount(data.totalReclaimed);
       this.totalLiquidated = this.collateralAsset.getAmount(data.totalLiquidated);
       this.totalShares = toRawAmount(data.totalShares);
-      this.fullLiquidationIndex = data.lastFullLiquidationIndex;
+      this.fullLiquidationIndex = toNumber(data.lastFullLiquidationIndex);
     } else {
       this.totalShares = toRawAmount(data.totalShares);
-      this.fullLiquidationIndex = data.fullLiquidationIndex;
+      this.fullLiquidationIndex = toNumber(data.fullLiquidationIndex);
     }
-    this.nextLiquidationTrigger = data.nextLiquidationTrigger;
+    this.nextLiquidationTrigger = toNumber(data.nextLiquidationTrigger);
   }
 
   static fromLensData(
@@ -155,10 +155,10 @@ export class MarketCollateralV1 extends ContractWrapper {
       totalShares: toRawAmount(data.totalShares),
       underlyingAsset,
       collateralAsset,
-      fullLiquidationIndex: data.fullLiquidationIndex,
-      liquidationCooldown: data.liquidationCooldown,
-      maxRepaymentBips: data.maxRepaymentBips,
-      nextLiquidationTrigger: data.nextLiquidationTrigger,
+      fullLiquidationIndex: toNumber(data.fullLiquidationIndex),
+      liquidationCooldown: toNumber(data.liquidationCooldown),
+      maxRepaymentBips: toNumber(data.maxRepaymentBips),
+      nextLiquidationTrigger: toNumber(data.nextLiquidationTrigger),
       market
     });
   }

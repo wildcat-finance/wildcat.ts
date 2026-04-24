@@ -7,7 +7,7 @@ import {
   MarketDataWithLenderStatusV2StructOutput,
   LenderAccountDataV2_5StructOutput,
   MarketDataWithLenderStatusV2_5StructOutput
-} from "../typechain";
+} from "../lens-types";
 import {
   assert,
   DepositRecord,
@@ -17,6 +17,7 @@ import {
   rayMulBigint,
   SECONDS_IN_365_DAYS,
   prepareTransaction,
+  toNumber,
   type BigintNumberish
 } from "../utils";
 import { SupportedChainId, hasDeploymentAddress } from "../constants";
@@ -914,7 +915,7 @@ export class MarketAccount {
         "V2 market can not be updated with V1 lens data"
       );
       this.isAuthorizedOnController = info.isAuthorizedOnController;
-      this.role = info.role;
+      this.role = toNumber(info.role) as LenderRole;
     } else {
       assert(
         this.market.version === MarketVersion.V2,
@@ -923,15 +924,15 @@ export class MarketAccount {
       this.credential = {
         canRefresh: info.canRefresh,
         isBlockedFromDeposits: info.isBlockedFromDeposits,
-        lastApprovalTimestamp: info.lastApprovalTimestamp,
+        lastApprovalTimestamp: toNumber(info.lastApprovalTimestamp),
         lastProvider: {
           isApproved: true,
           providerAddress: info.lastProvider.providerAddress,
-          isPullProvider: info.lastProvider.pullProviderIndex !== NullProviderIndex,
-          isPushProvider: info.lastProvider.pushProviderIndex !== NullProviderIndex,
-          pullProviderIndex: info.lastProvider.pullProviderIndex,
-          pushProviderIndex: info.lastProvider.pushProviderIndex,
-          timeToLive: info.lastProvider.timeToLive
+          isPullProvider: toNumber(info.lastProvider.pullProviderIndex) !== NullProviderIndex,
+          isPushProvider: toNumber(info.lastProvider.pushProviderIndex) !== NullProviderIndex,
+          pullProviderIndex: toNumber(info.lastProvider.pullProviderIndex),
+          pushProviderIndex: toNumber(info.lastProvider.pushProviderIndex),
+          timeToLive: toNumber(info.lastProvider.timeToLive)
         }
       };
       this.isKnownLender = info.isKnownLender;
@@ -1032,15 +1033,15 @@ export class MarketAccount {
       credential: {
         canRefresh: data.canRefresh,
         isBlockedFromDeposits: data.isBlockedFromDeposits,
-        lastApprovalTimestamp: data.lastApprovalTimestamp,
+        lastApprovalTimestamp: toNumber(data.lastApprovalTimestamp),
         lastProvider: {
           isApproved: true,
           providerAddress: data.lastProvider.providerAddress,
-          isPullProvider: data.lastProvider.pullProviderIndex !== NullProviderIndex,
-          pullProviderIndex: data.lastProvider.pullProviderIndex,
-          isPushProvider: data.lastProvider.pushProviderIndex !== NullProviderIndex,
-          pushProviderIndex: data.lastProvider.pushProviderIndex,
-          timeToLive: data.lastProvider.timeToLive
+          isPullProvider: toNumber(data.lastProvider.pullProviderIndex) !== NullProviderIndex,
+          pullProviderIndex: toNumber(data.lastProvider.pullProviderIndex),
+          isPushProvider: toNumber(data.lastProvider.pushProviderIndex) !== NullProviderIndex,
+          pushProviderIndex: toNumber(data.lastProvider.pushProviderIndex),
+          timeToLive: toNumber(data.lastProvider.timeToLive)
         }
       }
     });

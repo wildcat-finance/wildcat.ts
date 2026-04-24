@@ -16,7 +16,7 @@ import {
   MarketDataStructOutput,
   MarketDataV2StructOutput,
   MarketLenderStatusStructOutput
-} from "../../src/typechain";
+} from "../../src/lens-types";
 
 const provider = new providers.JsonRpcProvider();
 const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();

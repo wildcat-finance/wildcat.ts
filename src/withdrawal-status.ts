@@ -5,7 +5,7 @@ import {
   WithdrawalBatchDataWithLenderStatusStructOutput,
   WithdrawalBatchLenderStatusV2_5StructOutput,
   WithdrawalBatchDataWithLenderStatusV2_5StructOutput
-} from "./typechain";
+} from "./lens-types";
 import { SupportedChainId, hasDeploymentAddress } from "./constants";
 import {
   getLatestWithdrawalBatchDataWithLenderStatus,

@@ -60,6 +60,11 @@
     "types": ["function"]
   },
   {
+    "exportName": "collateralLensAbi",
+    "artifact": "artifacts/contracts/CollateralLens.sol/CollateralLens.json",
+    "types": ["function"]
+  },
+  {
     "exportName": "wildcatArchControllerAbi",
     "artifact": "artifacts/contracts/WildcatArchController.sol/WildcatArchController.json",
     "types": ["function"]

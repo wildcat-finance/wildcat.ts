@@ -1,18 +1,18 @@
 import { expect } from "chai";
 import { providers } from "ethers";
-import { iERC20Abi, iOpenTermHooksAbi, wildcat4626WrapperFactoryAbi } from "../../src/abi";
+import { encodeFunctionData, type Address } from "viem";
+import {
+  iERC20Abi,
+  iOpenTermHooksAbi,
+  wildcat4626WrapperFactoryAbi,
+  wildcatMarketControllerAbi
+} from "../../src/abi";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { MarketController } from "../../src/controller";
 import { OpenTermHooks, OpenTermHooksTemplate } from "../../src/access";
 import { WrapperFactory } from "../../src/wrapper";
 import { prepareTransaction, toSafeTransactionInput } from "../../src/utils";
 import { submitPreparedTransaction } from "../../src/internal/viem-write";
-import {
-  IERC20__factory,
-  IOpenTermHooks__factory,
-  Wildcat4626WrapperFactory__factory,
-  WildcatMarketController__factory
-} from "../../src/typechain";
 import {
   FeeConfiguration,
   HooksKind,
@@ -24,8 +24,8 @@ import { Token } from "../../src/token";
 
 const provider = new providers.JsonRpcProvider();
 
-const makeAddress = (suffix: number): string => {
-  return `0x${suffix.toString(16).padStart(40, "0")}`;
+const makeAddress = (suffix: number): Address => {
+  return `0x${suffix.toString(16).padStart(40, "0")}` as Address;
 };
 
 const constraints: MarketParameterConstraints = {
@@ -61,7 +61,7 @@ describe("prepared transaction encoding", () => {
 
     expect(tx.to).to.equal(token);
     expect(tx.data).to.equal(
-      IERC20__factory.createInterface().encodeFunctionData("approve", [spender, 123])
+      encodeFunctionData({ abi: iERC20Abi, functionName: "approve", args: [spender, 123n] })
     );
     expect(tx.value).to.equal(0n);
     expect(toSafeTransactionInput(tx)).to.deep.equal({
@@ -89,10 +89,19 @@ describe("prepared transaction encoding", () => {
       args: [lenders]
     });
 
-    const iface = IOpenTermHooks__factory.createInterface();
-    expect(single.data).to.equal(iface.encodeFunctionData("blockFromDeposits(address)", [lender]));
+    expect(single.data).to.equal(
+      encodeFunctionData({
+        abi: iOpenTermHooksAbi,
+        functionName: "blockFromDeposits",
+        args: [lender]
+      })
+    );
     expect(batch.data).to.equal(
-      iface.encodeFunctionData("blockFromDeposits(address[])", [lenders])
+      encodeFunctionData({
+        abi: iOpenTermHooksAbi,
+        functionName: "blockFromDeposits",
+        args: [lenders]
+      })
     );
   });
 
@@ -114,10 +123,11 @@ describe("prepared transaction encoding", () => {
 
     expect(tx).to.deep.equal({
       to: controller.address,
-      data: WildcatMarketController__factory.createInterface().encodeFunctionData(
-        "authorizeLenders",
-        [lenders]
-      ),
+      data: encodeFunctionData({
+        abi: wildcatMarketControllerAbi,
+        functionName: "authorizeLenders",
+        args: [lenders]
+      }),
       value: 0n
     });
   });
@@ -147,14 +157,18 @@ describe("prepared transaction encoding", () => {
     const market = makeAddress(17);
 
     expect(hooks.populateUnblockLender(makeAddress(18)).data).to.equal(
-      IOpenTermHooks__factory.createInterface().encodeFunctionData("unblockFromDeposits", [
-        makeAddress(18)
-      ])
+      encodeFunctionData({
+        abi: iOpenTermHooksAbi,
+        functionName: "unblockFromDeposits",
+        args: [makeAddress(18)]
+      })
     );
     expect(wrapperFactory.populateCreateWrapper(market).data).to.equal(
-      Wildcat4626WrapperFactory__factory.createInterface().encodeFunctionData("createWrapper", [
-        market
-      ])
+      encodeFunctionData({
+        abi: wildcat4626WrapperFactoryAbi,
+        functionName: "createWrapper",
+        args: [market]
+      })
     );
     expect(
       prepareTransaction({
@@ -181,7 +195,7 @@ describe("prepared transaction encoding", () => {
 
     expect(tx).to.deep.equal({
       to: token.address,
-      data: IERC20__factory.createInterface().encodeFunctionData("approve", [spender, 123]),
+      data: encodeFunctionData({ abi: iERC20Abi, functionName: "approve", args: [spender, 123n] }),
       value: 0n
     });
   });
@@ -248,10 +262,11 @@ describe("prepared transaction encoding", () => {
 
     expect(tx.to).to.equal(hooksAddress);
     expect(tx.data).to.equal(
-      IOpenTermHooks__factory.createInterface().encodeFunctionData("setMinimumDeposit", [
-        marketAddress,
-        1
-      ])
+      encodeFunctionData({
+        abi: iOpenTermHooksAbi,
+        functionName: "setMinimumDeposit",
+        args: [marketAddress, 1n]
+      })
     );
   });
 });

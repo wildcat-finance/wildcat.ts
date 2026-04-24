@@ -6,7 +6,7 @@ import * as constantsModule from "../../src/constants";
 import { Market } from "../../src/market";
 import { WithdrawalBatch, BatchStatus } from "../../src/withdrawal-batch";
 import { LenderWithdrawalStatus } from "../../src/withdrawal-status";
-import { MarketDataV2StructOutput } from "../../src/typechain";
+import { MarketDataV2StructOutput } from "../../src/lens-types";
 
 const makeAddress = (suffix: number): string => {
   return `0x${suffix.toString(16).padStart(40, "0")}`;

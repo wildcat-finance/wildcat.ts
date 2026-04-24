@@ -3,7 +3,7 @@ import {
   MarketDataStructOutput,
   MarketDataV2_5StructOutput,
   MarketDataV2StructOutput
-} from "./typechain";
+} from "./lens-types";
 import { SupportedChainId, getMarketTypeForHooksFactory, hasDeploymentAddress } from "./constants";
 import {
   getRegisteredMarkets,
@@ -813,7 +813,7 @@ export class Market extends ContractWrapper {
     this.isDelinquent = baseData.isDelinquent;
     this.timeDelinquent = toNumber(baseData.timeDelinquent);
     this.lastInterestAccruedTimestamp = toNumber(baseData.lastInterestAccruedTimestamp);
-    this.unpaidWithdrawalBatchExpiries = baseData.unpaidWithdrawalBatchExpiries;
+    this.unpaidWithdrawalBatchExpiries = baseData.unpaidWithdrawalBatchExpiries.map(toNumber);
     this.coverageLiquidity = this.underlyingToken.getAmount(baseData.coverageLiquidity);
     if ("hooksFactory" in baseData) {
       this.hooksFactory = baseData.hooksFactory;
@@ -825,7 +825,7 @@ export class Market extends ContractWrapper {
       assert(config !== undefined, `V2 market has no hooksConfig!`);
       config.minimumDeposit = this.underlyingToken.getAmount(baseData.hooksConfig.minimumDeposit);
       if (config.kind === HooksKind.FixedTerm) {
-        config.fixedTermEndTime = baseData.hooksConfig.fixedTermEndTime;
+        config.fixedTermEndTime = toNumber(baseData.hooksConfig.fixedTermEndTime);
       }
     } else {
       assert(this.version === MarketVersion.V1, `Can not push V1 lens data to V2 market!`);
@@ -1033,7 +1033,7 @@ export class Market extends ContractWrapper {
       isDelinquent: data.isDelinquent,
       timeDelinquent: toNumber(data.timeDelinquent),
       lastInterestAccruedTimestamp: toNumber(data.lastInterestAccruedTimestamp),
-      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
+      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries.map(toNumber),
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
       totalBorrowed: undefined,
       totalRepaid: undefined,
@@ -1061,7 +1061,8 @@ export class Market extends ContractWrapper {
     const underlyingToken = Token.fromTokenMetadata(chainId, data.underlyingToken, provider);
     const { hooksAddress } = hooks;
     let hooksConfig: HooksConfig;
-    if (hooksConfigData.kind === 1) {
+    const hooksKind = toNumber(hooksConfigData.kind);
+    if (hooksKind === 1) {
       hooksConfig = {
         kind: HooksKind.OpenTerm,
         hooksAddress: hooksAddress,
@@ -1072,7 +1073,7 @@ export class Market extends ContractWrapper {
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
         allowForceBuyBacks: hooksConfigData.allowForceBuyBacks
       } as OpenTermHooksConfig;
-    } else if (hooksConfigData.kind === 2) {
+    } else if (hooksKind === 2) {
       hooksConfig = {
         kind: HooksKind.FixedTerm,
         hooksAddress: hooksAddress,
@@ -1081,16 +1082,14 @@ export class Market extends ContractWrapper {
         transferRequiresAccess: hooksConfigData.transferRequiresAccess,
         transfersDisabled: hooksConfigData.transfersDisabled,
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
-        fixedTermEndTime: hooksConfigData.fixedTermEndTime,
+        fixedTermEndTime: toNumber(hooksConfigData.fixedTermEndTime),
         queueWithdrawalRequiresAccess: hooksConfigData.withdrawalRequiresAccess,
         allowTermReduction: hooksConfigData.allowTermReduction,
         allowClosureBeforeTerm: hooksConfigData.allowClosureBeforeTerm,
         allowForceBuyBacks: hooksConfigData.allowForceBuyBacks
       } as FixedTermHooksConfig;
     } else {
-      throw Error(
-        `Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksConfigData.kind}`
-      );
+      throw Error(`Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksKind}`);
     }
     return new Market({
       provider,
@@ -1128,7 +1127,7 @@ export class Market extends ContractWrapper {
       isDelinquent: data.isDelinquent,
       timeDelinquent: toNumber(data.timeDelinquent),
       lastInterestAccruedTimestamp: toNumber(data.lastInterestAccruedTimestamp),
-      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
+      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries.map(toNumber),
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
       signerAddress
       // borrowableAssets: underlyingToken.getAmount(data.borrowableAssets)
@@ -1147,7 +1146,8 @@ export class Market extends ContractWrapper {
     const underlyingToken = Token.fromTokenMetadata(chainId, data.underlyingToken, provider);
     const { hooksAddress } = hooks;
     let hooksConfig: HooksConfig;
-    if (hooksConfigData.kind === 1) {
+    const hooksKind = toNumber(hooksConfigData.kind);
+    if (hooksKind === 1) {
       hooksConfig = {
         kind: HooksKind.OpenTerm,
         hooksAddress,
@@ -1158,7 +1158,7 @@ export class Market extends ContractWrapper {
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
         allowForceBuyBacks
       } as OpenTermHooksConfig;
-    } else if (hooksConfigData.kind === 2) {
+    } else if (hooksKind === 2) {
       hooksConfig = {
         kind: HooksKind.FixedTerm,
         hooksAddress,
@@ -1167,16 +1167,14 @@ export class Market extends ContractWrapper {
         transferRequiresAccess: hooksConfigData.transferRequiresAccess,
         transfersDisabled: hooksConfigData.transfersDisabled,
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
-        fixedTermEndTime: hooksConfigData.fixedTermEndTime,
+        fixedTermEndTime: toNumber(hooksConfigData.fixedTermEndTime),
         queueWithdrawalRequiresAccess: hooksConfigData.withdrawalRequiresAccess,
         allowTermReduction: hooksConfigData.allowTermReduction,
         allowClosureBeforeTerm: hooksConfigData.allowClosureBeforeTerm,
         allowForceBuyBacks
       } as FixedTermHooksConfig;
     } else {
-      throw Error(
-        `Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksConfigData.kind}`
-      );
+      throw Error(`Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksKind}`);
     }
     return new Market({
       provider,
@@ -1214,7 +1212,7 @@ export class Market extends ContractWrapper {
       isDelinquent: data.isDelinquent,
       timeDelinquent: toNumber(data.timeDelinquent),
       lastInterestAccruedTimestamp: toNumber(data.lastInterestAccruedTimestamp),
-      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
+      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries.map(toNumber),
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
       commitmentFeeBips: commitmentFeeBips.isPresent
         ? toNumber(commitmentFeeBips.value)

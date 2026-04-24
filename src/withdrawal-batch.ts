@@ -1,6 +1,9 @@
 import { Market } from "./market";
 import { TokenAmount, minTokenAmount, toRawAmount } from "./token";
-import { WithdrawalBatchDataStructOutput, WithdrawalBatchDataV2_5StructOutput } from "./typechain";
+import type {
+  WithdrawalBatchDataStructOutput,
+  WithdrawalBatchDataV2_5StructOutput
+} from "./lens-types";
 import { hasDeploymentAddress } from "./constants";
 import { getLatestWithdrawalBatchData, getLegacyWithdrawalBatchData } from "./internal/market-lens";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
@@ -17,7 +20,8 @@ import {
   WithdrawalPaymentRecord,
   WithdrawalRequestRecord,
   parseWithdrawalRecord,
-  rayMulBigint
+  rayMulBigint,
+  toNumber
 } from "./utils";
 import { MarketVersion } from "./types";
 
@@ -186,8 +190,8 @@ export class WithdrawalBatch {
   static fromWithdrawalBatchData(market: Market, data: WithdrawalBatchDataOutput): WithdrawalBatch {
     return new WithdrawalBatch(
       market,
-      data.expiry,
-      data.status,
+      toNumber(data.expiry),
+      toNumber(data.status),
       toRawAmount(data.scaledTotalAmount),
       toRawAmount(data.scaledAmountBurned),
       market.underlyingToken.getAmount(data.normalizedAmountPaid),

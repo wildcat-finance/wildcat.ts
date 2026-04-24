@@ -16,8 +16,14 @@ import {
   MarketDataV2_5StructOutput,
   MarketDataStructOutput,
   MarketDataV2StructOutput
-} from "../../src/typechain";
-import { BIP_BIGINT, SECONDS_IN_365_DAYS, bipMulBigint, bipToRayBigint } from "../../src/utils";
+} from "../../src/lens-types";
+import {
+  BIP_BIGINT,
+  SECONDS_IN_365_DAYS,
+  bipMulBigint,
+  bipToRayBigint,
+  toNumber
+} from "../../src/utils";
 
 const provider = new providers.JsonRpcProvider();
 
@@ -664,16 +670,16 @@ describe("Market model routing metadata", () => {
       borrower: data.borrower,
       controller: data.controller,
       feeRecipient: data.feeRecipient,
-      protocolFeeBips: data.protocolFeeBips.toNumber(),
-      delinquencyFeeBips: data.delinquencyFeeBips.toNumber(),
-      delinquencyGracePeriod: data.delinquencyGracePeriod.toNumber(),
-      withdrawalBatchDuration: data.withdrawalBatchDuration.toNumber(),
-      reserveRatioBips: data.reserveRatioBips.toNumber(),
-      annualInterestBips: data.annualInterestBips.toNumber(),
+      protocolFeeBips: toNumber(data.protocolFeeBips),
+      delinquencyFeeBips: toNumber(data.delinquencyFeeBips),
+      delinquencyGracePeriod: toNumber(data.delinquencyGracePeriod),
+      withdrawalBatchDuration: toNumber(data.withdrawalBatchDuration),
+      reserveRatioBips: toNumber(data.reserveRatioBips),
+      annualInterestBips: toNumber(data.annualInterestBips),
       temporaryReserveRatio: data.temporaryReserveRatio,
-      originalAnnualInterestBips: data.originalAnnualInterestBips.toNumber(),
-      originalReserveRatioBips: data.originalReserveRatioBips.toNumber(),
-      temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry.toNumber(),
+      originalAnnualInterestBips: toNumber(data.originalAnnualInterestBips),
+      originalReserveRatioBips: toNumber(data.originalReserveRatioBips),
+      temporaryReserveRatioExpiry: toNumber(data.temporaryReserveRatioExpiry),
       isClosed: data.isClosed,
       scaleFactor: toRawAmount(data.scaleFactor),
       totalSupply: marketToken.getAmount(data.totalSupply),
@@ -685,11 +691,11 @@ describe("Market model routing metadata", () => {
         data.normalizedUnclaimedWithdrawals
       ),
       scaledPendingWithdrawals: toRawAmount(data.scaledPendingWithdrawals),
-      pendingWithdrawalExpiry: data.pendingWithdrawalExpiry.toNumber(),
+      pendingWithdrawalExpiry: toNumber(data.pendingWithdrawalExpiry),
       isDelinquent: data.isDelinquent,
-      timeDelinquent: data.timeDelinquent.toNumber(),
-      lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp.toNumber(),
-      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
+      timeDelinquent: toNumber(data.timeDelinquent),
+      lastInterestAccruedTimestamp: toNumber(data.lastInterestAccruedTimestamp),
+      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries.map(toNumber),
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
       commitmentFeeBips: 175,
       drawnAmount

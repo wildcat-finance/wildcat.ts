@@ -1,6 +1,6 @@
 import type { Abi, Address } from "viem";
 import { iERC20Abi, marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "./abi";
-import { TokenMetadataStructOutput, TokenMetadataV2_5StructOutput } from "./typechain";
+import type { TokenMetadataStructOutput, TokenMetadataV2_5StructOutput } from "./lens-types";
 import { ContractWrapper, PartialTransaction, SignerOrProvider, TransactionHash } from "./types";
 import { SupportedChainId, getDeploymentAddress, hasDeploymentAddress } from "./constants";
 import { getViemPublicClientFromEthers } from "./internal/ethers-viem";

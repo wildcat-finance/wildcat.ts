@@ -1,4 +1,4 @@
-import { ControllerDataStructOutput } from "./typechain";
+import type { ControllerDataStructOutput } from "./lens-types";
 import {
   SupportedChainId,
   getControllerFactoryContract,

@@ -16,7 +16,7 @@ import {
   DeployMarketInputsV2Struct,
   HooksInstanceDataStructOutput,
   HooksTemplateDataStructOutput
-} from "../typechain";
+} from "../lens-types";
 import {
   AddLenderInput,
   ContractWrapper,
@@ -37,6 +37,7 @@ import {
   assert,
   encodeHooksConfig,
   parseFeeConfigurationV2,
+  parseMarketParameterConstraints,
   prepareTransaction,
   toNumber
 } from "../utils";
@@ -87,15 +88,19 @@ export class OpenTermHooks extends ContractWrapper {
       hooksFactory ?? this.hooksFactory
     );
     this.name = data.name;
-    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => ({
-      isApproved: true,
-      providerAddress: p.providerAddress,
-      isPullProvider: p.pullProviderIndex !== NullProviderIndex,
-      pullProviderIndex: p.pullProviderIndex,
-      isPushProvider: p.pushProviderIndex !== NullProviderIndex,
-      pushProviderIndex: p.pushProviderIndex,
-      timeToLive: p.timeToLive
-    }));
+    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => {
+      const pullProviderIndex = toNumber(p.pullProviderIndex);
+      const pushProviderIndex = toNumber(p.pushProviderIndex);
+      return {
+        isApproved: true,
+        providerAddress: p.providerAddress,
+        isPullProvider: pullProviderIndex !== NullProviderIndex,
+        pullProviderIndex,
+        isPushProvider: pushProviderIndex !== NullProviderIndex,
+        pushProviderIndex,
+        timeToLive: toNumber(p.timeToLive)
+      };
+    });
   }
 
   get hooksFactory(): string {
@@ -213,16 +218,20 @@ export class OpenTermHooks extends ContractWrapper {
         hooksFactory
       ),
       borrower: data.borrower,
-      constraints: data.constraints,
-      roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => ({
-        isApproved: true,
-        providerAddress: p.providerAddress,
-        isPullProvider: p.pullProviderIndex !== NullProviderIndex,
-        pullProviderIndex: p.pullProviderIndex,
-        isPushProvider: p.pushProviderIndex !== NullProviderIndex,
-        pushProviderIndex: p.pushProviderIndex,
-        timeToLive: p.timeToLive
-      }))
+      constraints: parseMarketParameterConstraints(data.constraints),
+      roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => {
+        const pullProviderIndex = toNumber(p.pullProviderIndex);
+        const pushProviderIndex = toNumber(p.pushProviderIndex);
+        return {
+          isApproved: true,
+          providerAddress: p.providerAddress,
+          isPullProvider: pullProviderIndex !== NullProviderIndex,
+          pullProviderIndex,
+          isPushProvider: pushProviderIndex !== NullProviderIndex,
+          pushProviderIndex,
+          timeToLive: toNumber(p.timeToLive)
+        };
+      })
     });
   }
 
@@ -314,7 +323,7 @@ export class OpenTermHooksTemplate extends ContractWrapper {
   ): void {
     this.fees = parseFeeConfigurationV2(this.chainId, this.provider, data.fees);
     this.enabled = data.enabled;
-    this.index = data.index;
+    this.index = toNumber(data.index);
     this.name = data.name;
     this.totalMarkets = toNumber(data.totalMarkets);
     this.signerAddress = signerAddress;
@@ -335,7 +344,7 @@ export class OpenTermHooksTemplate extends ContractWrapper {
       fees: parseFeeConfigurationV2(chainId, provider, data.fees),
       hooksTemplate: data.hooksTemplate,
       hooksFactory,
-      index: data.index,
+      index: toNumber(data.index),
       name: data.name,
       totalMarkets: toNumber(data.totalMarkets),
       signerAddress,

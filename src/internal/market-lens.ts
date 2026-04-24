@@ -18,7 +18,7 @@ import type {
   WithdrawalBatchDataV2_5StructOutput,
   WithdrawalBatchDataWithLenderStatusStructOutput,
   WithdrawalBatchDataWithLenderStatusV2_5StructOutput
-} from "../typechain";
+} from "../lens-types";
 import type { SignerOrProvider } from "../types";
 import { getViemPublicClientFromEthers } from "./ethers-viem";
 import { readViemContract } from "./viem-read";

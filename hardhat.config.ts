@@ -1,5 +1,4 @@
 import type { HardhatUserConfig } from "hardhat/config";
-import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
 import "@nomicfoundation/hardhat-chai-matchers";
 import "dotenv/config";
@@ -22,11 +21,6 @@ const config: HardhatUserConfig = {
         url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`
       }
     }
-  },
-  typechain: {
-    discriminateTypes: true,
-    outDir: "typechain-types",
-    target: "ethers-v5"
   }
 };
 

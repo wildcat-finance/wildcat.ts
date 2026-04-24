@@ -1,32 +1,45 @@
+import { encodeFunctionData, type Abi, type Address, type Hex } from "viem";
 import {
-  MarketLens,
-  MarketLens__factory,
-  WildcatMarketController,
-  WildcatMarketController__factory,
-  WildcatMarketControllerFactory,
-  WildcatMarketControllerFactory__factory,
-  MockERC20Factory,
-  MockERC20Factory__factory,
-  Wildcat4626WrapperFactory,
-  Wildcat4626WrapperFactory__factory,
-  WildcatArchController,
-  WildcatArchController__factory,
-  MarketLensV2,
-  MarketLensV2__factory,
-  MarketLensV2_5,
-  MarketLensV2_5__factory,
-  HooksFactory__factory,
-  HooksFactory,
-  HooksFactoryRevolving,
-  HooksFactoryRevolving__factory,
-  WildcatCollateralFactory,
-  WildcatCollateralFactory__factory,
-  CollateralLens__factory,
-  CollateralLens
-} from "./typechain";
+  collateralLensAbi,
+  hooksFactoryAbi,
+  hooksFactoryRevolvingAbi,
+  marketLensAbi,
+  marketLensV2Abi,
+  marketLensV2_5Abi,
+  mockArchControllerOwnerAbi,
+  mockERC20FactoryAbi,
+  wildcat4626WrapperFactoryAbi,
+  wildcatArchControllerAbi,
+  wildcatCollateralFactoryAbi,
+  wildcatMarketControllerAbi,
+  wildcatMarketControllerFactoryAbi
+} from "./abi";
+import type {
+  CollateralContractDataStructOutput,
+  LenderAccountDataStructOutput,
+  LenderAccountDataV2_5StructOutput,
+  LegacyDeployMarketAndHooksArgs,
+  LegacyDeployMarketArgs,
+  MarketDataStructOutput,
+  MarketDataV2StructOutput,
+  MarketDataBaseV2_5StructOutput,
+  MarketDataWithLenderStatusStructOutput,
+  MarketDataWithLenderStatusV2StructOutput,
+  MarketDataWithLenderStatusV2_5StructOutput,
+  RevolvingDeployMarketAndHooksArgs,
+  RevolvingDeployMarketArgs,
+  TokenMetadataStructOutput,
+  WithdrawalBatchDataStructOutput,
+  WithdrawalBatchDataWithLenderStatusStructOutput,
+  WithdrawalBatchDataWithLenderStatusV2_5StructOutput
+} from "./lens-types";
+import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
+import { isEthersSigner } from "./internal/ethers-signer";
+import { readViemContract } from "./internal/viem-read";
 import { MarketParameterConstraints, MarketType, SignerOrProvider } from "./types";
 import { ApolloClient, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
-import { assert } from "./utils";
+import { assert } from "./utils/assert";
+import { prepareTransaction } from "./utils/viem-encoding";
 
 export type NetworkDeployments = {
   HooksFactory: string;
@@ -192,138 +205,409 @@ export const getLatestLensAddress = (chainId: SupportedChainId): string => {
   return getDeploymentAddress(chainId, getLatestLensDeploymentName(chainId));
 };
 
+type TransactionReceiptLogLike = {
+  address?: string;
+  data: Hex;
+  topics: readonly Hex[];
+};
+
+type TransactionReceiptLike = {
+  logs: readonly TransactionReceiptLogLike[];
+};
+
+type TransactionResponseLike = {
+  hash: string;
+  wait: () => Promise<TransactionReceiptLike>;
+};
+
+type AddressOnlyContract = {
+  address: string;
+};
+
+type ArchControllerContract = AddressOnlyContract & {
+  isRegisteredBorrower: (borrower: string) => Promise<boolean>;
+};
+
+type EncodingInterface = {
+  encodeFunctionData: (functionName: string, args?: readonly unknown[]) => Hex;
+};
+
+type LegacyLensContract = AddressOnlyContract & {
+  getMarketData: (market: string) => Promise<MarketDataStructOutput>;
+  getMarketsData: (markets: string[]) => Promise<MarketDataStructOutput[]>;
+  getMarketsDataWithLenderStatus: (
+    lender: string,
+    markets: string[]
+  ) => Promise<MarketDataWithLenderStatusStructOutput[]>;
+};
+
+type LatestLensContract = AddressOnlyContract & {
+  getMarketData: (
+    market: string
+  ) => Promise<MarketDataV2StructOutput | MarketDataBaseV2_5StructOutput>;
+  getMarketsData: (
+    markets: string[]
+  ) => Promise<Array<MarketDataV2StructOutput | MarketDataBaseV2_5StructOutput>>;
+  getMarketsDataWithLenderStatus: (
+    lender: string,
+    markets: string[]
+  ) => Promise<
+    Array<MarketDataWithLenderStatusV2StructOutput | MarketDataWithLenderStatusV2_5StructOutput>
+  >;
+  getLenderAccountsData: (
+    market: string,
+    lenders: string[]
+  ) => Promise<Array<LenderAccountDataStructOutput | LenderAccountDataV2_5StructOutput>>;
+  getTokenInfo: (token: string) => Promise<TokenMetadataStructOutput>;
+  getWithdrawalBatchesData: (
+    market: string,
+    expiries: readonly number[]
+  ) => Promise<WithdrawalBatchDataStructOutput[]>;
+  getWithdrawalBatchesDataWithLenderStatus: (
+    market: string,
+    expiries: readonly number[],
+    lender: string
+  ) => Promise<
+    | WithdrawalBatchDataWithLenderStatusStructOutput[]
+    | WithdrawalBatchDataWithLenderStatusV2_5StructOutput[]
+  >;
+};
+
+type HooksFactoryContract = AddressOnlyContract & {
+  interface: EncodingInterface;
+  computeMarketAddress: (salt: string) => Promise<string>;
+  deployMarket: (...args: LegacyDeployMarketArgs) => Promise<TransactionResponseLike>;
+  deployMarketAndHooks: (
+    ...args: LegacyDeployMarketAndHooksArgs
+  ) => Promise<TransactionResponseLike>;
+};
+
+type HooksFactoryRevolvingContract = AddressOnlyContract & {
+  interface: EncodingInterface;
+  computeMarketAddress: (salt: string) => Promise<string>;
+  deployMarket: (...args: RevolvingDeployMarketArgs) => Promise<TransactionResponseLike>;
+  deployMarketAndHooks: (
+    ...args: RevolvingDeployMarketAndHooksArgs
+  ) => Promise<TransactionResponseLike>;
+};
+
+type MockArchControllerOwnerContract = AddressOnlyContract & {
+  interface: EncodingInterface;
+  registerBorrower: (borrower: string) => Promise<TransactionResponseLike>;
+};
+
+type CollateralLensContract = AddressOnlyContract & {
+  "getCollateralContractsForMarket(address)": (
+    market: string
+  ) => Promise<CollateralContractDataStructOutput[]>;
+};
+
+const getViemClient = (provider: SignerOrProvider) => getViemPublicClientFromEthers(provider);
+
+const encodeWithAbi = (abi: Abi): EncodingInterface => ({
+  encodeFunctionData: (functionName, args = []) =>
+    encodeFunctionData({
+      abi,
+      functionName,
+      args
+    } as Parameters<typeof encodeFunctionData>[0])
+});
+
+const sendPreparedTransaction = async (
+  provider: SignerOrProvider,
+  transaction: ReturnType<typeof prepareTransaction>
+): Promise<TransactionResponseLike> => {
+  assert(isEthersSigner(provider), "Signer is required");
+  return provider.sendTransaction({
+    to: transaction.to,
+    data: transaction.data,
+    value: transaction.value === undefined ? undefined : transaction.value.toString()
+  }) as Promise<TransactionResponseLike>;
+};
+
 export const getControllerContract = (
   provider: SignerOrProvider,
   address: string
-): WildcatMarketController => {
-  return WildcatMarketController__factory.connect(address, provider);
+): AddressOnlyContract => {
+  void provider;
+  void wildcatMarketControllerAbi;
+  return { address };
 };
 
 export const getControllerFactoryContract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): WildcatMarketControllerFactory => {
-  return WildcatMarketControllerFactory__factory.connect(
-    getDeploymentAddress(chainId, "WildcatMarketControllerFactory"),
-    provider
-  );
+): AddressOnlyContract => {
+  void provider;
+  void wildcatMarketControllerFactoryAbi;
+  return { address: getDeploymentAddress(chainId, "WildcatMarketControllerFactory") };
 };
 
 export const getArchControllerContract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): WildcatArchController => {
-  return WildcatArchController__factory.connect(
-    getDeploymentAddress(chainId, "WildcatArchController"),
-    provider
-  );
+): ArchControllerContract => {
+  const address = getDeploymentAddress(chainId, "WildcatArchController");
+  return {
+    address,
+    isRegisteredBorrower: (borrower) =>
+      readViemContract(
+        getViemClient(provider),
+        address,
+        wildcatArchControllerAbi as Abi,
+        "isRegisteredBorrower",
+        [borrower as Address]
+      )
+  };
 };
 
 export const getLensContract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): MarketLens => {
-  return MarketLens__factory.connect(getDeploymentAddress(chainId, "MarketLens"), provider);
+): LegacyLensContract => {
+  const address = getDeploymentAddress(chainId, "MarketLens");
+  return {
+    address,
+    getMarketData: (market) =>
+      readViemContract(getViemClient(provider), address, marketLensAbi as Abi, "getMarketData", [
+        market as Address
+      ]),
+    getMarketsData: (markets) =>
+      readViemContract(getViemClient(provider), address, marketLensAbi as Abi, "getMarketsData", [
+        markets as Address[]
+      ]),
+    getMarketsDataWithLenderStatus: (lender, markets) =>
+      readViemContract(
+        getViemClient(provider),
+        address,
+        marketLensAbi as Abi,
+        "getMarketsDataWithLenderStatus",
+        [lender as Address, markets as Address[]]
+      )
+  };
 };
 
 export const getCollateralLensContract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): CollateralLens => {
-  return CollateralLens__factory.connect(getDeploymentAddress(chainId, "CollateralLens"), provider);
+): CollateralLensContract => {
+  const address = getDeploymentAddress(chainId, "CollateralLens");
+  return {
+    address,
+    "getCollateralContractsForMarket(address)": (market) =>
+      readViemContract(
+        getViemClient(provider),
+        address,
+        collateralLensAbi as Abi,
+        "getCollateralContractsForMarket",
+        [market as Address]
+      )
+  };
 };
 
 export const getHooksFactoryContract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): HooksFactory => {
-  return HooksFactory__factory.connect(getDeploymentAddress(chainId, "HooksFactory"), provider);
+): HooksFactoryContract => {
+  const address = getDeploymentAddress(chainId, "HooksFactory");
+  return {
+    address,
+    interface: encodeWithAbi(hooksFactoryAbi as Abi),
+    computeMarketAddress: (salt) =>
+      readViemContract(
+        getViemClient(provider),
+        address,
+        hooksFactoryAbi as Abi,
+        "computeMarketAddress",
+        [salt as Hex]
+      ),
+    deployMarket: (...args) =>
+      sendPreparedTransaction(
+        provider,
+        prepareTransaction({
+          to: address,
+          abi: hooksFactoryAbi,
+          functionName: "deployMarket",
+          args
+        })
+      ),
+    deployMarketAndHooks: (...args) =>
+      sendPreparedTransaction(
+        provider,
+        prepareTransaction({
+          to: address,
+          abi: hooksFactoryAbi,
+          functionName: "deployMarketAndHooks",
+          args
+        })
+      )
+  };
 };
 
 export const getHooksFactoryRevolvingContract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): HooksFactoryRevolving => {
-  return HooksFactoryRevolving__factory.connect(
-    getDeploymentAddress(chainId, "HooksFactoryRevolving"),
-    provider
-  );
+): HooksFactoryRevolvingContract => {
+  const address = getDeploymentAddress(chainId, "HooksFactoryRevolving");
+  return {
+    address,
+    interface: encodeWithAbi(hooksFactoryRevolvingAbi as Abi),
+    computeMarketAddress: (salt) =>
+      readViemContract(
+        getViemClient(provider),
+        address,
+        hooksFactoryRevolvingAbi as Abi,
+        "computeMarketAddress",
+        [salt as Hex]
+      ),
+    deployMarket: (...args) =>
+      sendPreparedTransaction(
+        provider,
+        prepareTransaction({
+          to: address,
+          abi: hooksFactoryRevolvingAbi,
+          functionName: "deployMarket",
+          args
+        })
+      ),
+    deployMarketAndHooks: (...args) =>
+      sendPreparedTransaction(
+        provider,
+        prepareTransaction({
+          to: address,
+          abi: hooksFactoryRevolvingAbi,
+          functionName: "deployMarketAndHooks",
+          args
+        })
+      )
+  };
 };
 
 export const getHooksFactoryContractForMarketType = (
   chainId: SupportedChainId,
   marketType: MarketType,
   provider: SignerOrProvider
-): HooksFactory | HooksFactoryRevolving => {
+): HooksFactoryContract | HooksFactoryRevolvingContract => {
   if (marketType === "legacy") {
     return getHooksFactoryContract(chainId, provider);
   }
   return getHooksFactoryRevolvingContract(chainId, provider);
 };
 
+const getLatestLensLikeContract = (
+  provider: SignerOrProvider,
+  address: string,
+  abi: Abi
+): LatestLensContract => ({
+  address,
+  getMarketData: (market) =>
+    readViemContract(getViemClient(provider), address, abi, "getMarketData", [market as Address]),
+  getMarketsData: (markets) =>
+    readViemContract(getViemClient(provider), address, abi, "getMarketsData", [
+      markets as Address[]
+    ]),
+  getMarketsDataWithLenderStatus: (lender, markets) =>
+    readViemContract(getViemClient(provider), address, abi, "getMarketsDataWithLenderStatus", [
+      lender as Address,
+      markets as Address[]
+    ]),
+  getLenderAccountsData: (market, lenders) =>
+    readViemContract(getViemClient(provider), address, abi, "getLenderAccountsData", [
+      market as Address,
+      lenders as Address[]
+    ]),
+  getTokenInfo: (token) =>
+    readViemContract(getViemClient(provider), address, abi, "getTokenInfo", [token as Address]),
+  getWithdrawalBatchesData: (market, expiries) =>
+    readViemContract(getViemClient(provider), address, abi, "getWithdrawalBatchesData", [
+      market as Address,
+      expiries
+    ]),
+  getWithdrawalBatchesDataWithLenderStatus: (market, expiries, lender) =>
+    readViemContract(
+      getViemClient(provider),
+      address,
+      abi,
+      "getWithdrawalBatchesDataWithLenderStatus",
+      [market as Address, expiries, lender as Address]
+    )
+});
+
 export const getLensV2Contract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): MarketLensV2 => {
-  return MarketLensV2__factory.connect(getDeploymentAddress(chainId, "MarketLensV2"), provider);
+): LatestLensContract => {
+  const address = getDeploymentAddress(chainId, "MarketLensV2");
+  return getLatestLensLikeContract(provider, address, marketLensV2Abi as Abi);
 };
 
 export const getLensV2_5Contract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): MarketLensV2_5 => {
-  return MarketLensV2_5__factory.connect(getDeploymentAddress(chainId, "MarketLensV2_5"), provider);
+): LatestLensContract => {
+  const address = getDeploymentAddress(chainId, "MarketLensV2_5");
+  return getLatestLensLikeContract(provider, address, marketLensV2_5Abi as Abi);
 };
 
 export const getLatestLensContract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): MarketLensV2 | MarketLensV2_5 => {
+): LatestLensContract => {
   const deploymentName = getLatestLensDeploymentName(chainId);
-  if (deploymentName === "MarketLensV2_5") {
-    return MarketLensV2_5__factory.connect(getDeploymentAddress(chainId, deploymentName), provider);
-  }
-  return MarketLensV2__factory.connect(getDeploymentAddress(chainId, deploymentName), provider);
+  const abi = deploymentName === "MarketLensV2_5" ? marketLensV2_5Abi : marketLensV2Abi;
+  return getLatestLensLikeContract(
+    provider,
+    getDeploymentAddress(chainId, deploymentName),
+    abi as Abi
+  );
 };
 
 export const getMockERC20Factory = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): MockERC20Factory => {
-  return MockERC20Factory__factory.connect(
-    getDeploymentAddress(chainId, "MockERC20Factory"),
-    provider
-  );
+): AddressOnlyContract => {
+  void provider;
+  void mockERC20FactoryAbi;
+  return { address: getDeploymentAddress(chainId, "MockERC20Factory") };
 };
 
 export const getMockArchControllerOwnerContract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): WildcatArchController => {
-  return WildcatArchController__factory.connect(
-    getDeploymentAddress(chainId, "MockArchControllerOwner"),
-    provider
-  );
+): MockArchControllerOwnerContract => {
+  const address = getDeploymentAddress(chainId, "MockArchControllerOwner");
+  return {
+    address,
+    interface: encodeWithAbi(mockArchControllerOwnerAbi as Abi),
+    registerBorrower: (borrower) =>
+      sendPreparedTransaction(
+        provider,
+        prepareTransaction({
+          to: address,
+          abi: mockArchControllerOwnerAbi,
+          functionName: "registerBorrower",
+          args: [borrower as Address]
+        })
+      )
+  };
 };
 
 export const getCollateralFactoryContract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): WildcatCollateralFactory => {
-  return WildcatCollateralFactory__factory.connect(
-    getDeploymentAddress(chainId, "WildcatCollateralFactory"),
-    provider
-  );
+): AddressOnlyContract => {
+  void provider;
+  void wildcatCollateralFactoryAbi;
+  return { address: getDeploymentAddress(chainId, "WildcatCollateralFactory") };
 };
 
 export const getWrapperFactoryContract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): Wildcat4626WrapperFactory => {
-  return Wildcat4626WrapperFactory__factory.connect(
-    getDeploymentAddress(chainId, "Wildcat4626WrapperFactory"),
-    provider
-  );
+): AddressOnlyContract => {
+  void provider;
+  void wildcat4626WrapperFactoryAbi;
+  return { address: getDeploymentAddress(chainId, "Wildcat4626WrapperFactory") };
 };
 
 export const SubgraphUrls = {

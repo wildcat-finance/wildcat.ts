@@ -52,6 +52,9 @@ export async function describeAccount(
   const bytecode = accountQueryBytecode.concat(
     encodeAbiParameters([{ type: "address" }], [address as Address]).slice(2)
   );
+  if (typeof provider.call !== "function") {
+    throw new Error("Provider call support is required");
+  }
   const result = await provider.call({ data: bytecode }, blockNumber);
 
   const {
