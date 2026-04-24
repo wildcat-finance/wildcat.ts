@@ -1,6 +1,11 @@
-import { defaultAbiCoder, hexlify, toUtf8Bytes } from "ethers/lib/utils";
+import {
+  decodeFunctionResult,
+  encodeAbiParameters,
+  stringToHex,
+  type Address,
+  type Hex
+} from "viem";
 import { DescribeSignature__factory } from "../typechain";
-import { DescribeSignature } from "../typechain";
 import { SignerOrProvider } from "../types";
 import { AccountDescription, AccountKind } from "./describe-account";
 
@@ -34,6 +39,51 @@ export type SubSignature = {
   signature: string;
 };
 
+const describeSignatureAbi = [
+  {
+    inputs: [
+      { internalType: "address", name: "signer", type: "address" },
+      { internalType: "bytes", name: "message", type: "bytes" },
+      { internalType: "bytes", name: "signature", type: "bytes" }
+    ],
+    name: "describeSignature",
+    outputs: [
+      {
+        components: [
+          { internalType: "enum SignatureKind", name: "kind", type: "uint8" },
+          { internalType: "address", name: "signer", type: "address" },
+          {
+            components: [
+              { internalType: "enum SubSignatureKind", name: "kind", type: "uint8" },
+              { internalType: "address", name: "signer", type: "address" },
+              { internalType: "bytes", name: "signature", type: "bytes" }
+            ],
+            internalType: "struct SubSignature[]",
+            name: "subSignatures",
+            type: "tuple[]"
+          },
+          {
+            components: [
+              { internalType: "enum AccountKind", name: "kind", type: "uint8" },
+              { internalType: "bool", name: "has7702Delegation", type: "bool" },
+              { internalType: "address[]", name: "owners", type: "address[]" },
+              { internalType: "uint256", name: "threshold", type: "uint256" }
+            ],
+            internalType: "struct AccountDescription",
+            name: "account",
+            type: "tuple"
+          }
+        ],
+        internalType: "struct SignatureData",
+        name: "data",
+        type: "tuple"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  }
+] as const;
+
 export async function describeSignature(
   provider: SignerOrProvider,
   address: string,
@@ -41,24 +91,25 @@ export async function describeSignature(
   signature: string,
   blockNumber?: number
 ): Promise<SignatureData> {
-  if (!message.startsWith("0x")) {
-    const bytes = toUtf8Bytes(message);
-    if (typeof bytes === "string") {
-      message = bytes;
-    } else {
-      message = hexlify(bytes);
-    }
-  }
+  const messageBytes = message.startsWith("0x") ? (message as Hex) : stringToHex(message);
   const bytecode = DescribeSignature__factory.bytecode.concat(
-    defaultAbiCoder.encode(["address", "bytes", "bytes"], [address, message, signature]).slice(2)
+    encodeAbiParameters(
+      [{ type: "address" }, { type: "bytes" }, { type: "bytes" }],
+      [address as Address, messageBytes, signature as Hex]
+    ).slice(2)
   );
   const result = await provider.call({ data: bytecode }, blockNumber);
 
-  const [{ kind: _kind, signer, subSignatures, account: _account }] =
-    DescribeSignature__factory.createInterface().decodeFunctionResult(
-      "describeSignature",
-      result
-    ) as [Awaited<ReturnType<DescribeSignature["describeSignature"]>>];
+  const {
+    kind: _kind,
+    signer,
+    subSignatures,
+    account: _account
+  } = decodeFunctionResult({
+    abi: describeSignatureAbi,
+    functionName: "describeSignature",
+    data: result as Hex
+  });
 
   const kind = _kind as SignatureKind;
   const { has7702Delegation, owners, threshold, kind: _accountKind } = _account;
@@ -73,8 +124,17 @@ export async function describeSignature(
       account = { kind: AccountKind.UnknownContract };
       break;
     case AccountKind.Safe:
-      account = { kind: AccountKind.Safe, owners, threshold: threshold.toNumber() };
+      account = { kind: AccountKind.Safe, owners: [...owners], threshold: Number(threshold) };
       break;
   }
-  return { kind, signer, subSignatures, account };
+  return {
+    kind,
+    signer,
+    subSignatures: subSignatures.map((subSignature) => ({
+      kind: subSignature.kind as SubSignatureKind,
+      signer: subSignature.signer,
+      signature: subSignature.signature
+    })),
+    account
+  };
 }

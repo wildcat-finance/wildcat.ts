@@ -1,4 +1,5 @@
-import { AccountQuery, AccountQuery__factory } from "../typechain";
+import { decodeFunctionResult, encodeAbiParameters, type Address, type Hex } from "viem";
+import { AccountQuery__factory } from "../typechain";
 import { SignerOrProvider } from "../types";
 
 export enum AccountKind {
@@ -21,22 +22,50 @@ export type AccountDescription =
       threshold: number;
     };
 
+const accountQueryAbi = [
+  {
+    inputs: [{ internalType: "address", name: "account", type: "address" }],
+    name: "describeAccount",
+    outputs: [
+      {
+        components: [
+          { internalType: "enum AccountKind", name: "kind", type: "uint8" },
+          { internalType: "bool", name: "has7702Delegation", type: "bool" },
+          { internalType: "address[]", name: "owners", type: "address[]" },
+          { internalType: "uint256", name: "threshold", type: "uint256" }
+        ],
+        internalType: "struct AccountDescription",
+        name: "",
+        type: "tuple"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  }
+] as const;
+
 export async function describeAccount(
   provider: SignerOrProvider,
   address: string,
   blockNumber?: number
 ): Promise<AccountDescription> {
   const bytecode = AccountQuery__factory.bytecode.concat(
-    address.replace(/^0x/, "").padStart(64, "0")
+    encodeAbiParameters([{ type: "address" }], [address as Address]).slice(2)
   );
   const result = await provider.call({ data: bytecode }, blockNumber);
 
-  const [{ has7702Delegation, owners, threshold, kind: _kind }] =
-    AccountQuery__factory.createInterface().decodeFunctionResult("describeAccount", result) as [
-      Awaited<ReturnType<AccountQuery["describeAccount"]>>
-    ];
+  const {
+    has7702Delegation,
+    owners,
+    threshold,
+    kind: _kind
+  } = decodeFunctionResult({
+    abi: accountQueryAbi,
+    functionName: "describeAccount",
+    data: result as Hex
+  });
   const kind = _kind as AccountKind;
   if (kind === AccountKind.EOA) return { kind, has7702Delegation };
   if (kind === AccountKind.UnknownContract) return { kind };
-  return { kind, owners, threshold: threshold.toNumber() };
+  return { kind, owners: [...owners], threshold: Number(threshold) };
 }

@@ -1,4 +1,4 @@
-import { defaultAbiCoder } from "ethers/lib/utils";
+import { decodeAbiParameters, encodeAbiParameters, type Address, type Hex } from "viem";
 import { CheckBorrowersRegistered__factory } from "../typechain";
 import { SignerOrProvider } from "../types";
 import { Deployments, SupportedChainId } from "../constants";
@@ -9,10 +9,11 @@ export async function checkRegisteredBorrowers(
   borrowers: string[]
 ): Promise<boolean[]> {
   const bytecode = CheckBorrowersRegistered__factory.bytecode.concat(
-    defaultAbiCoder
-      .encode(["address", "address[]"], [Deployments[chainId].WildcatArchController, borrowers])
-      .slice(2)
+    encodeAbiParameters(
+      [{ type: "address" }, { type: "address[]" }],
+      [Deployments[chainId].WildcatArchController as Address, borrowers as Address[]]
+    ).slice(2)
   );
   const result = await provider.call({ data: bytecode });
-  return defaultAbiCoder.decode(["bool[]"], result)[0];
+  return [...decodeAbiParameters([{ type: "bool[]" }], result as Hex)[0]];
 }
