@@ -83,5 +83,17 @@
     "exportName": "iFixedTermHooksAbi",
     "artifact": "artifacts/contracts/IFixedTermHooks.sol/IFixedTermHooks.json",
     "types": ["function"]
+  },
+  {
+    "bytecodeExportName": "checkBorrowersRegisteredBytecode",
+    "artifact": "artifacts/contracts/CheckBorrowersRegistered.sol/CheckBorrowersRegistered.json"
+  },
+  {
+    "bytecodeExportName": "accountQueryBytecode",
+    "artifact": "artifacts/contracts/AccountQuery.sol/AccountQuery.json"
+  },
+  {
+    "bytecodeExportName": "describeSignatureBytecode",
+    "artifact": "artifacts/contracts/DescribeSignature.sol/DescribeSignature.json"
   }
 ]

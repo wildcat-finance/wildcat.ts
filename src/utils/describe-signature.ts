@@ -5,7 +5,7 @@ import {
   type Address,
   type Hex
 } from "viem";
-import { DescribeSignature__factory } from "../typechain";
+import { describeSignatureBytecode } from "../abi";
 import { SignerOrProvider } from "../types";
 import { AccountDescription, AccountKind } from "./describe-account";
 
@@ -92,7 +92,7 @@ export async function describeSignature(
   blockNumber?: number
 ): Promise<SignatureData> {
   const messageBytes = message.startsWith("0x") ? (message as Hex) : stringToHex(message);
-  const bytecode = DescribeSignature__factory.bytecode.concat(
+  const bytecode = describeSignatureBytecode.concat(
     encodeAbiParameters(
       [{ type: "address" }, { type: "bytes" }, { type: "bytes" }],
       [address as Address, messageBytes, signature as Hex]

@@ -1,5 +1,5 @@
 import { decodeAbiParameters, encodeAbiParameters, type Address, type Hex } from "viem";
-import { CheckBorrowersRegistered__factory } from "../typechain";
+import { checkBorrowersRegisteredBytecode } from "../abi";
 import { SignerOrProvider } from "../types";
 import { Deployments, SupportedChainId } from "../constants";
 
@@ -8,7 +8,7 @@ export async function checkRegisteredBorrowers(
   chainId: SupportedChainId,
   borrowers: string[]
 ): Promise<boolean[]> {
-  const bytecode = CheckBorrowersRegistered__factory.bytecode.concat(
+  const bytecode = checkBorrowersRegisteredBytecode.concat(
     encodeAbiParameters(
       [{ type: "address" }, { type: "address[]" }],
       [Deployments[chainId].WildcatArchController as Address, borrowers as Address[]]

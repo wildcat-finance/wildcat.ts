@@ -1,5 +1,5 @@
 import { decodeFunctionResult, encodeAbiParameters, type Address, type Hex } from "viem";
-import { AccountQuery__factory } from "../typechain";
+import { accountQueryBytecode } from "../abi";
 import { SignerOrProvider } from "../types";
 
 export enum AccountKind {
@@ -49,7 +49,7 @@ export async function describeAccount(
   address: string,
   blockNumber?: number
 ): Promise<AccountDescription> {
-  const bytecode = AccountQuery__factory.bytecode.concat(
+  const bytecode = accountQueryBytecode.concat(
     encodeAbiParameters([{ type: "address" }], [address as Address]).slice(2)
   );
   const result = await provider.call({ data: bytecode }, blockNumber);
