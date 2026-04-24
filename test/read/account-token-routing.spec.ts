@@ -1,5 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, providers } from "ethers";
+import { encodeFunctionResult, type Abi } from "viem";
+import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi";
 import * as constantsModule from "../../src/constants";
 import { Market } from "../../src/market";
 import { MarketAccount } from "../../src/account";
@@ -20,6 +22,60 @@ const makeTokenMetadata = (suffix: number, name: string, symbol: string) => ({
   decimals: BigNumber.from(18),
   isMock: false
 });
+
+const makeViemTokenMetadata = (suffix: number, name: string, symbol: string) => ({
+  token: makeAddress(suffix),
+  name,
+  symbol,
+  decimals: 18n,
+  isMock: false
+});
+
+type FakeRpcCall = {
+  to?: string;
+  data?: string;
+};
+
+class FakeViemProvider {
+  calls: FakeRpcCall[] = [];
+
+  constructor(private readonly getResponse: (call: FakeRpcCall) => string) {}
+
+  async send(method: string, params: unknown[] = []): Promise<unknown> {
+    if (method === "eth_chainId") {
+      return "0xaa36a7";
+    }
+    if (method !== "eth_call") {
+      throw new Error(`Unexpected RPC method: ${method}`);
+    }
+
+    const call = params[0] as FakeRpcCall;
+    this.calls.push(call);
+    return this.getResponse(call);
+  }
+}
+
+const encodeLensResult = (abi: Abi, functionName: string, result: unknown): `0x${string}` => {
+  return encodeFunctionResult({
+    abi,
+    functionName,
+    result
+  });
+};
+
+const getMainnetTokenInfoTarget = (): { address: string; abi: Abi } => {
+  const chainId = constantsModule.SupportedChainId.Mainnet;
+  if (constantsModule.hasDeploymentAddress(chainId, "MarketLensV2_5")) {
+    return {
+      address: constantsModule.getDeploymentAddress(chainId, "MarketLensV2_5"),
+      abi: marketLensV2_5Abi as Abi
+    };
+  }
+  return {
+    address: constantsModule.getDeploymentAddress(chainId, "MarketLensV2"),
+    abi: marketLensV2Abi as Abi
+  };
+};
 
 const makeHooksFlags = () => ({
   useOnDeposit: false,
@@ -177,48 +233,61 @@ describe("Account and token read routing", () => {
   });
 
   it("uses MarketLensV2_5 for token reads when deployed", async () => {
-    const metadata = makeTokenMetadata(31, "Unified Token", "UNIT");
-
-    mutableConstants.hasDeploymentAddress = ((_, name) =>
-      name === "MarketLensV2_5") as typeof originalHasDeploymentAddress;
-    mutableConstants.getLensV2_5Contract = (() => ({
-      getTokenInfo: async () => metadata
-    })) as unknown as typeof originalGetLensV2_5Contract;
-    mutableConstants.getLensV2Contract = (() => ({
-      getTokenInfo: async () => {
-        throw new Error("should not read token data from MarketLensV2");
-      }
-    })) as unknown as typeof originalGetLensV2Contract;
+    const metadata = makeViemTokenMetadata(31, "Unified Token", "UNIT");
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLensV2_5"
+    );
+    const viemProvider = new FakeViemProvider(() =>
+      encodeLensResult(marketLensV2_5Abi as Abi, "getTokenInfo", metadata)
+    );
 
     const token = await Token.getTokenData(
       constantsModule.SupportedChainId.Sepolia,
       metadata.token,
-      provider
+      viemProvider as unknown as providers.Provider
     );
 
-    expect(token.address).to.equal(metadata.token);
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
+    expect(token.address.toLowerCase()).to.equal(metadata.token);
     expect(token.symbol).to.equal("UNIT");
   });
 
-  it("falls back to the legacy lens for batch token reads before the unified lens is deployed", async () => {
-    const metadata = makeTokenMetadata(32, "Legacy Token", "LGCY");
-
-    mutableConstants.hasDeploymentAddress = (() => false) as typeof originalHasDeploymentAddress;
-    mutableConstants.getLensContract = (() => ({
-      getTokensInfo: async () => [metadata]
-    })) as unknown as typeof originalGetLensContract;
-    mutableConstants.getLensV2_5Contract = (() => ({
-      getTokensInfo: async () => {
-        throw new Error("should not read tokens from MarketLensV2_5");
-      }
-    })) as unknown as typeof originalGetLensV2_5Contract;
-
-    const tokens = await Token.getTokensData(
-      constantsModule.SupportedChainId.Sepolia,
-      [metadata.token],
-      provider
+  it("routes mainnet token reads from deployment configuration", async () => {
+    const metadata = makeViemTokenMetadata(33, "Mainnet Token", "MAIN");
+    const target = getMainnetTokenInfoTarget();
+    const viemProvider = new FakeViemProvider(() =>
+      encodeLensResult(target.abi, "getTokenInfo", metadata)
     );
 
+    const token = await Token.getTokenData(
+      constantsModule.SupportedChainId.Mainnet,
+      metadata.token,
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([target.address]);
+    expect(token.address.toLowerCase()).to.equal(metadata.token);
+    expect(token.symbol).to.equal("MAIN");
+  });
+
+  it("falls back to the legacy lens for batch token reads before the unified lens is deployed", async () => {
+    const metadata = makeViemTokenMetadata(32, "Legacy Token", "LGCY");
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Mainnet,
+      "MarketLens"
+    );
+    const viemProvider = new FakeViemProvider(() =>
+      encodeLensResult(marketLensAbi as Abi, "getTokensInfo", [metadata])
+    );
+
+    const tokens = await Token.getTokensData(
+      constantsModule.SupportedChainId.Mainnet,
+      [metadata.token],
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
     expect(tokens.map((token) => token.address)).to.deep.equal([metadata.token]);
     expect(tokens[0].symbol).to.equal("LGCY");
   });
