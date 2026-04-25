@@ -2,7 +2,11 @@ import { expect } from "chai";
 import { BigNumber, providers } from "ethers";
 import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
 import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi";
-import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
+import {
+  getDeploymentAddress,
+  getMarketTypeForHooksFactory,
+  SupportedChainId
+} from "../../src/constants";
 import { Market } from "../../src/market";
 import { Token, toRawAmount } from "../../src/token";
 import { MarketVersion } from "../../src/types";
@@ -26,6 +30,7 @@ import {
 } from "../../src/utils";
 
 const provider = new providers.JsonRpcProvider();
+const historicalSepoliaRevolvingFactory = "0xF4564015E524cf5629828E61F45ed339D998D85f";
 
 const makeAddress = (suffix: number): string => {
   return `0x${suffix.toString(16).padStart(40, "0")}`;
@@ -598,6 +603,19 @@ describe("Market model routing metadata", () => {
 
     expect(market.hooksFactory).to.equal(unknownHooksFactory);
     expect(market.marketType).to.equal(undefined);
+  });
+
+  it("derives marketType from an indexed non-canonical hooks factory address", () => {
+    const market = Market.fromMarketDataV2(
+      SupportedChainId.Sepolia,
+      provider,
+      makeFactoryBackedMarketData(historicalSepoliaRevolvingFactory)
+    );
+
+    expect(getMarketTypeForHooksFactory(SupportedChainId.Sepolia, historicalSepoliaRevolvingFactory))
+      .to.equal("revolving");
+    expect(market.hooksFactory).to.equal(historicalSepoliaRevolvingFactory);
+    expect(market.marketType).to.equal("revolving");
   });
 
   it("hydrates v2.5 market data with compatibility allowForceBuyBacks", () => {

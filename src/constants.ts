@@ -150,6 +150,16 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
   }
 };
 
+const NonCanonicalHooksFactoryMarketTypesByChainId: Partial<
+  Record<SupportedChainId, Record<string, MarketType>>
+> = {
+  [SupportedChainId.Sepolia]: {
+    // Indexed historical RCF factory. It must remain readable, but must not be
+    // used as the deploy target for new revolving markets.
+    "0xf4564015e524cf5629828e61f45ed339d998d85f": "revolving"
+  }
+};
+
 export const getDeploymentAddress = (
   chainId: SupportedChainId,
   name: keyof NetworkDeployments
@@ -185,6 +195,11 @@ export const getMarketTypeForHooksFactory = (
   hooksFactoryAddress: string
 ): MarketType | undefined => {
   const normalizedAddress = hooksFactoryAddress.toLowerCase();
+  const nonCanonicalMarketType =
+    NonCanonicalHooksFactoryMarketTypesByChainId[chainId]?.[normalizedAddress];
+  if (nonCanonicalMarketType) {
+    return nonCanonicalMarketType;
+  }
   for (const marketType of Object.keys(HooksFactoryDeploymentNamesByMarketType) as MarketType[]) {
     const deploymentName = getHooksFactoryDeploymentName(marketType);
     const deploymentAddress = Deployments[chainId][deploymentName];
