@@ -128,7 +128,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     HooksFactoryRevolving: "0xb899ba2a5F5b609898A2bABe445Aa31dDf0277e5",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
     MarketLensV2: "0x5D8cEacEe19c06C3b4108b8Ae5B881eb0240B9c7",
-    MarketLensV2_5: "0x8425A3F9a4C6B1B54206C4AeB8271d854351E839",
+    MarketLensV2_5: "0x96EFd2A3fC5fa5a21AdB38722d1F5F1908FddE0a",
     MockArchControllerOwner: "0xa476920af80B587f696734430227869795E2Ea78",
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
@@ -724,7 +724,7 @@ export const getWrapperFactoryContract = (
 };
 
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.0.31/gn`,
+  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.0.32/gn`,
   [SupportedChainId.Mainnet]:
     "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.22/gn",
   [SupportedChainId.PlasmaTestnet]:
