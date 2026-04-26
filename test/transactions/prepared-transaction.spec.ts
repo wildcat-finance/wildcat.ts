@@ -19,7 +19,7 @@ import {
   MarketParameterConstraints,
   MarketVersion
 } from "../../src/types";
-import { LenderRole, MarketAccount } from "../../src/account";
+import { ForceBuyBackStatus, LenderRole, MarketAccount } from "../../src/account";
 import { Token } from "../../src/token";
 
 const provider = new providers.JsonRpcProvider();
@@ -267,6 +267,46 @@ describe("prepared transaction encoding", () => {
         functionName: "setMinimumDeposit",
         args: [marketAddress, 1n]
       })
+    );
+  });
+
+  it("prevents force-buyback transaction population for unsupported hooks", () => {
+    const borrower = makeAddress(25);
+    const marketAddress = makeAddress(26);
+    const token = new Token(
+      SupportedChainId.Sepolia,
+      makeAddress(27),
+      "Mock Token",
+      "MOCK",
+      18,
+      false,
+      provider
+    );
+    const account = new MarketAccount({
+      account: borrower,
+      role: LenderRole.Null,
+      market: {
+        address: marketAddress,
+        borrower,
+        chainId: SupportedChainId.Sepolia,
+        version: MarketVersion.V2,
+        hooksConfig: {
+          kind: HooksKind.OpenTerm,
+          hooksAddress: makeAddress(28),
+          allowForceBuyBacks: false
+        }
+      },
+      scaledMarketBalance: 0n,
+      marketBalance: token.getAmount(0n),
+      underlyingBalance: token.getAmount(10n),
+      underlyingApproval: token.getAmount(0n)
+    } as any);
+
+    expect(account.previewForceBuyBack(makeAddress(29), token.getAmount(1n)).status).to.equal(
+      ForceBuyBackStatus.HooksNotSupported
+    );
+    expect(() => account.populateForceBuyBack(makeAddress(29), token.getAmount(1n))).to.throw(
+      "Cannot force buy back: HooksNotSupported"
     );
   });
 });

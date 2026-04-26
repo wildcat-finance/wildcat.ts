@@ -3,7 +3,12 @@ import { BigNumber, constants, providers } from "ethers";
 import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
 import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi";
 import { getBorrowerHooksData } from "../../src/access";
-import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
+import {
+  getDeploymentAddress,
+  getIndexedHooksFactories,
+  getMarketTypeForHooksFactory,
+  SupportedChainId
+} from "../../src/constants";
 import { MarketController } from "../../src/controller";
 
 type FakeRpcCall = {
@@ -164,11 +169,11 @@ describe("Hooks and controller read routing", () => {
   it("uses factory-scoped MarketLensV2_5 hooks reads when the unified lens is deployed", async () => {
     const borrower = makeAddress(20);
     const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
-    const legacyFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory");
     const revolvingFactory = getDeploymentAddress(
       SupportedChainId.Sepolia,
       "HooksFactoryRevolving"
     );
+    const indexedFactories = getIndexedHooksFactories(SupportedChainId.Sepolia);
     const seenCalls: Array<[string, string]> = [];
 
     const viemProvider = new FakeViemProvider((call) => {
@@ -179,10 +184,12 @@ describe("Hooks and controller read routing", () => {
       const [hooksFactory, argBorrower] = decoded.args as [string, string];
       seenCalls.push([hooksFactory.toLowerCase(), argBorrower.toLowerCase()]);
 
-      const data =
-        hooksFactory.toLowerCase() === revolvingFactory.toLowerCase()
-          ? makeHooksDataForBorrower(borrower, makeAddress(31), true)
-          : makeHooksDataForBorrower(borrower, makeAddress(30));
+      const isRevolving =
+        getMarketTypeForHooksFactory(SupportedChainId.Sepolia, hooksFactory) === "revolving";
+      const isCanonicalRevolving = hooksFactory.toLowerCase() === revolvingFactory.toLowerCase();
+      const data = isRevolving
+        ? makeHooksDataForBorrower(borrower, makeAddress(31), isCanonicalRevolving)
+        : makeHooksDataForBorrower(borrower, makeAddress(30));
 
       return encodeLensResult(marketLensV2_5Abi as Abi, "getHooksDataForBorrower", data);
     });
@@ -193,14 +200,13 @@ describe("Hooks and controller read routing", () => {
       borrower
     );
 
-    expect(seenCalls).to.deep.equal([
-      [legacyFactory.toLowerCase(), borrower],
-      [revolvingFactory.toLowerCase(), borrower]
-    ]);
+    expect(seenCalls).to.deep.equal(
+      indexedFactories.map(({ address }) => [address.toLowerCase(), borrower])
+    );
     expect(result.isRegisteredBorrower).to.equal(true);
     expect(
       result.hooksTemplates.map((template) => template.hooksFactory.toLowerCase())
-    ).to.deep.equal([legacyFactory.toLowerCase(), revolvingFactory.toLowerCase()]);
+    ).to.deep.equal(indexedFactories.map(({ address }) => address.toLowerCase()));
     expect(result.hooksInstances).to.have.lengthOf(1);
     expect(result.hooksInstances[0].hooksFactory.toLowerCase()).to.equal(
       revolvingFactory.toLowerCase()

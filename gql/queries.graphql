@@ -349,8 +349,8 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
 }
 
 query getAllHooksTemplates($borrower: Bytes, $includeBorrower: Boolean!) {
-  hooksTemplates {
-    ...HooksTemplateData
+  factoryHooksTemplates {
+    ...FactoryHooksTemplateData
   }
   registeredBorrowers(where: { borrower: $borrower }, first: 1) @include(if: $includeBorrower) {
     isRegistered
@@ -364,8 +364,8 @@ query getHooksInstancesForBorrower($borrower: Bytes!) {
 }
 
 query getAllHooksDataForBorrower($borrower: Bytes!) {
-  hooksTemplates {
-    ...HooksTemplateData
+  factoryHooksTemplates {
+    ...FactoryHooksTemplateData
   }
   hooksInstances(where: { borrower: $borrower }) {
     ...HooksInstanceData

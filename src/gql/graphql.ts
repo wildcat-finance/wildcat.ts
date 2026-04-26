@@ -16686,6 +16686,7 @@ export type SubgraphHooksInstanceDataFragment = {
   numMarkets: number;
   eventIndex: number;
   hooksTemplate: SubgraphHooksTemplateDataFragment;
+  factoryHooksTemplate: SubgraphFactoryHooksTemplateDataFragment;
   providers: SubgraphRoleProviderDataFragment[];
 };
 
@@ -16698,6 +16699,24 @@ export type SubgraphHooksTemplateDataFragment = {
   originationFeeAmount: string;
   disabled: boolean;
   originationFeeAsset?: SubgraphTokenDataFragment | null;
+};
+
+export type SubgraphFactoryHooksTemplateDataFragment = {
+  __typename: "FactoryHooksTemplate";
+  id: string;
+  templateAddress: string;
+  name: string;
+  feeRecipient: string;
+  protocolFeeBips: number;
+  originationFeeAmount: string;
+  disabled: boolean;
+  originationFeeAsset?: SubgraphTokenDataFragment | null;
+  hooksFactory: {
+    __typename: "HooksFactory";
+    id: string;
+    marketType?: SubgraphMarketType | null;
+    isRegistered: boolean;
+  };
 };
 
 export type SubgraphApprovedLiquidatorDataFragment = {
@@ -17267,7 +17286,7 @@ export type SubgraphGetAllHooksTemplatesQueryVariables = Exact<{
 
 export type SubgraphGetAllHooksTemplatesQuery = {
   __typename: "Query";
-  hooksTemplates: SubgraphHooksTemplateDataFragment[];
+  factoryHooksTemplates: SubgraphFactoryHooksTemplateDataFragment[];
   registeredBorrowers?: Array<{ __typename: "RegisteredBorrower"; isRegistered: boolean }>;
 };
 
@@ -17286,7 +17305,7 @@ export type SubgraphGetAllHooksDataForBorrowerQueryVariables = Exact<{
 
 export type SubgraphGetAllHooksDataForBorrowerQuery = {
   __typename: "Query";
-  hooksTemplates: SubgraphHooksTemplateDataFragment[];
+  factoryHooksTemplates: SubgraphFactoryHooksTemplateDataFragment[];
   hooksInstances: SubgraphHooksInstanceDataFragment[];
   registeredBorrowers: Array<{ __typename: "RegisteredBorrower"; isRegistered: boolean }>;
   controllers: SubgraphMinimalControllerDataFragment[];
@@ -17556,6 +17575,7 @@ export type SubgraphGetLendersByHooksInstanceOrControllerQuery = {
     numMarkets: number;
     eventIndex: number;
     hooksTemplate: SubgraphHooksTemplateDataFragment;
+    factoryHooksTemplate: SubgraphFactoryHooksTemplateDataFragment;
     providers: SubgraphRoleProviderDataFragment[];
     lenders: SubgraphV2LenderWithActiveMarketsFragment[];
   } | null;
@@ -17591,6 +17611,7 @@ export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery = {
     eventIndex: number;
     markets: SubgraphMarketDataFragment[];
     hooksTemplate: SubgraphHooksTemplateDataFragment;
+    factoryHooksTemplate: SubgraphFactoryHooksTemplateDataFragment;
     providers: SubgraphRoleProviderDataFragment[];
     lenders: SubgraphV2LenderWithActiveMarketsFragment[];
   } | null;
@@ -17991,6 +18012,25 @@ export const HooksTemplateDataFragmentDoc = gql`
     disabled
   }
 `;
+export const FactoryHooksTemplateDataFragmentDoc = gql`
+  fragment FactoryHooksTemplateData on FactoryHooksTemplate {
+    id
+    templateAddress
+    name
+    feeRecipient
+    protocolFeeBips
+    originationFeeAsset {
+      ...TokenData
+    }
+    originationFeeAmount
+    disabled
+    hooksFactory {
+      id
+      marketType
+      isRegistered
+    }
+  }
+`;
 export const HooksInstanceDataFragmentDoc = gql`
   fragment HooksInstanceData on HooksInstance {
     id
@@ -18000,6 +18040,9 @@ export const HooksInstanceDataFragmentDoc = gql`
     numMarkets
     hooksTemplate {
       ...HooksTemplateData
+    }
+    factoryHooksTemplate {
+      ...FactoryHooksTemplateData
     }
     providers {
       ...RoleProviderData
@@ -18624,6 +18667,7 @@ export const GetLenderAccountWithMarketDocument = gql`
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${BorrowDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
@@ -18712,6 +18756,7 @@ export const GetAllMarketsForLenderViewDocument = gql`
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${BorrowDataFragmentDoc}
@@ -18824,6 +18869,7 @@ export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${BorrowDataFragmentDoc}
   ${RepaymentDataFragmentDoc}
@@ -18966,14 +19012,14 @@ export type GetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryResult = Apollo.Q
 >;
 export const GetAllHooksTemplatesDocument = gql`
   query getAllHooksTemplates($borrower: Bytes, $includeBorrower: Boolean!) {
-    hooksTemplates {
-      ...HooksTemplateData
+    factoryHooksTemplates {
+      ...FactoryHooksTemplateData
     }
     registeredBorrowers(where: { borrower: $borrower }, first: 1) @include(if: $includeBorrower) {
       isRegistered
     }
   }
-  ${HooksTemplateDataFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
   ${TokenDataFragmentDoc}
 `;
 export type GetAllHooksTemplatesQueryResult = Apollo.QueryResult<
@@ -18989,6 +19035,7 @@ export const GetHooksInstancesForBorrowerDocument = gql`
   ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
   ${TokenDataFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
 `;
 export type GetHooksInstancesForBorrowerQueryResult = Apollo.QueryResult<
@@ -18997,8 +19044,8 @@ export type GetHooksInstancesForBorrowerQueryResult = Apollo.QueryResult<
 >;
 export const GetAllHooksDataForBorrowerDocument = gql`
   query getAllHooksDataForBorrower($borrower: Bytes!) {
-    hooksTemplates {
-      ...HooksTemplateData
+    factoryHooksTemplates {
+      ...FactoryHooksTemplateData
     }
     hooksInstances(where: { borrower: $borrower }) {
       ...HooksInstanceData
@@ -19010,9 +19057,10 @@ export const GetAllHooksDataForBorrowerDocument = gql`
       ...MinimalControllerData
     }
   }
-  ${HooksTemplateDataFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
   ${TokenDataFragmentDoc}
   ${HooksInstanceDataFragmentDoc}
+  ${HooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MinimalControllerDataFragmentDoc}
   ${ParameterConstraintsDataFragmentDoc}
@@ -19265,6 +19313,7 @@ export const GetMarketsWithEventsDocument = gql`
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${MarketRecordsFragmentDoc}
@@ -19308,6 +19357,7 @@ export const GetMarketDocument = gql`
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
   ${MarketRecordsFragmentDoc}
@@ -19405,6 +19455,7 @@ export const GetAllMarketsDocument = gql`
   ${HooksConfigDataForMarketFragmentDoc}
   ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDeployedEventFragmentDoc}
 `;
@@ -19515,6 +19566,7 @@ export const GetLendersByHooksInstanceOrControllerDocument = gql`
   ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
   ${TokenDataFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${HooksInstanceLendersWithActiveMarketsFragmentDoc}
   ${V2LenderWithActiveMarketsFragmentDoc}
@@ -19573,6 +19625,7 @@ export const GetMarketsAndLendersByHooksInstanceOrControllerDocument = gql`
   ${HooksInstanceDataFragmentDoc}
   ${HooksTemplateDataFragmentDoc}
   ${TokenDataFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
   ${RoleProviderDataFragmentDoc}
   ${MarketDataFragmentDoc}
   ${HooksConfigDataForMarketFragmentDoc}

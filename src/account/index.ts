@@ -572,6 +572,9 @@ export class MarketAccount {
     if (this.market.chainId !== SupportedChainId.Sepolia) {
       return { status: ForceBuyBackStatus.MainnetNotSupported };
     }
+    if (!this.market.hooksConfig?.allowForceBuyBacks) {
+      return { status: ForceBuyBackStatus.HooksNotSupported };
+    }
     if (amount.gt(this.underlyingBalance)) {
       return { status: ForceBuyBackStatus.InsufficientBalance };
     }

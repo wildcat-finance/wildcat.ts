@@ -4,7 +4,7 @@ import {
   SubgraphGetAllHooksTemplatesQuery,
   SubgraphGetAllHooksTemplatesQueryVariables
 } from "./graphql";
-import { SupportedChainId } from "../constants";
+import { isIndexedHooksFactory, SupportedChainId } from "../constants";
 import { SignerOrProvider } from "../types";
 import { HooksTemplate, hooksTemplateFromSubgraph } from "../access";
 import { getEthersSignerAddress } from "../internal/ethers-signer";
@@ -41,7 +41,8 @@ export async function getAllHooksTemplates(
       includeBorrower: !!borrower
     }
   });
-  return result.data.hooksTemplates
+  return result.data.factoryHooksTemplates
+    .filter((t) => isIndexedHooksFactory(chainId, t.hooksFactory.id))
     .filter((t) => t.name === "OpenTermHooks" || t.name === "FixedTermHooks")
     .map((template) =>
       hooksTemplateFromSubgraph(

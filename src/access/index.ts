@@ -1,23 +1,19 @@
 import {
   SupportedChainId,
-  getHooksFactoryAddressForMarketType,
-  getLatestLensDeploymentName,
-  hasHooksFactoryDeployment
+  getIndexedHooksFactories,
+  getLatestLensDeploymentName
 } from "../constants";
-import {
-  SubgraphHooksInstanceDataFragment,
-  SubgraphHooksKind,
-  SubgraphHooksTemplateDataFragment
-} from "../gql/graphql";
+import { SubgraphHooksInstanceDataFragment, SubgraphHooksKind } from "../gql/graphql";
 import type { HooksInstanceDataStructOutput, HooksTemplateDataStructOutput } from "../lens-types";
 import {
   getV2HooksDataForBorrower,
   getV2_5FactoryScopedHooksDataForBorrower
 } from "../internal/market-lens";
-import { MarketTypes, SignerOrProvider } from "../types";
+import { SignerOrProvider } from "../types";
 import { getEthersSignerAddress } from "../internal/ethers-signer";
 import { OpenTermHooks, OpenTermHooksTemplate } from "./access-control";
 import { FixedTermHooks, FixedTermHooksTemplate } from "./fixed-term";
+import { SubgraphHooksTemplateLike } from "./subgraph-template";
 
 export * from "./access-control";
 export * from "./fixed-term";
@@ -49,18 +45,15 @@ export async function getBorrowerHooksData(
 
   if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
     const factoryScopedResults = await Promise.all(
-      MarketTypes.filter((marketType) => hasHooksFactoryDeployment(chainId, marketType)).map(
-        async (marketType) => {
-          const hooksFactory = getHooksFactoryAddressForMarketType(chainId, marketType);
-          const data = await getV2_5FactoryScopedHooksDataForBorrower(
-            chainId,
-            provider,
-            hooksFactory,
-            borrowerAddress
-          );
-          return { data, hooksFactory };
-        }
-      )
+      getIndexedHooksFactories(chainId).map(async ({ address: hooksFactory }) => {
+        const data = await getV2_5FactoryScopedHooksDataForBorrower(
+          chainId,
+          provider,
+          hooksFactory,
+          borrowerAddress
+        );
+        return { data, hooksFactory };
+      })
     );
 
     const hooksInstancesByAddress = new Map<string, HooksInstance>();
@@ -154,7 +147,7 @@ export async function getBorrowerHooksData(
 export function hooksTemplateFromSubgraph(
   chainId: SupportedChainId,
   provider: SignerOrProvider,
-  data: SubgraphHooksTemplateDataFragment,
+  data: SubgraphHooksTemplateLike,
   signerAddress?: string,
   isRegisteredBorrower?: boolean
 ): HooksTemplate {
@@ -175,7 +168,7 @@ export function hooksTemplateFromSubgraph(
       isRegisteredBorrower
     );
   } else {
-    throw Error(`Unknown hooks template: ${name}`);
+    throw Error(`Unknown hooks template: ${data.name}`);
   }
 }
 
@@ -206,7 +199,7 @@ export function hooksTemplateFromLens(
       hooksFactory
     );
   } else {
-    throw Error(`Unknown hooks template: ${name}`);
+    throw Error(`Unknown hooks template: ${data.name}`);
   }
 }
 

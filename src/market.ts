@@ -61,11 +61,9 @@ import {
   toNumber
 } from "./utils";
 import { hooksTemplateFromSubgraph } from "./access";
-import { iFixedTermHooksAbi, iOpenTermHooksAbi, wildcatMarketAbi } from "./abi";
+import { wildcatMarketAbi } from "./abi";
 import { submitPreparedTransaction } from "./internal/viem-write";
 import { getEthersSignerAddress } from "./internal/ethers-signer";
-import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
-import { readViemContract } from "./internal/viem-read";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -110,18 +108,20 @@ export type RevolvingCurrentAprMetrics = {
   effectiveLenderAprBips: number;
 };
 
-type HookedMarketResult = {
-  allowForceBuyBacks?: boolean;
-};
-
-const getAllowForceBuyBacksFromHookedMarket = (
-  hookedMarket: HookedMarketResult | readonly unknown[],
-  allowForceBuyBacksIndex: number
-): boolean => {
-  return (
-    (hookedMarket as HookedMarketResult).allowForceBuyBacks ??
-    Boolean((hookedMarket as readonly unknown[])[allowForceBuyBacksIndex])
-  );
+export type MarketAprDisplayBips = {
+  isRevolving: boolean;
+  marketType?: MarketType;
+  configuredAprKind: "annualInterest" | "utilization";
+  configuredAprBips: number;
+  configuredAnnualInterestBips: number;
+  configuredUtilizationAprBips?: number;
+  commitmentAprBips?: number;
+  utilizationBips?: number;
+  currentUtilizationAprBips?: number;
+  currentBaseLenderAprBips: number;
+  currentProtocolAprBips: number;
+  currentPenaltyAprBips: number;
+  currentEffectiveLenderAprBips: number;
 };
 
 const hasUnifiedLatestLensForDirectReads = (chainId: SupportedChainId): boolean => {
@@ -323,6 +323,44 @@ export class Market extends ContractWrapper {
 
   private get currentBaseLenderAprBips(): number {
     return this.currentRevolvingAprMetrics?.blendedBaseAprBips ?? this.annualInterestBips;
+  }
+
+  get currentAprDisplayBips(): MarketAprDisplayBips {
+    const revolvingMetrics = this.currentRevolvingAprMetrics;
+    if (revolvingMetrics) {
+      return {
+        isRevolving: true,
+        marketType: this.marketType,
+        configuredAprKind: "utilization",
+        configuredAprBips: this.annualInterestBips,
+        configuredAnnualInterestBips: this.annualInterestBips,
+        configuredUtilizationAprBips: this.annualInterestBips,
+        commitmentAprBips: revolvingMetrics.commitmentFeeBips,
+        utilizationBips: revolvingMetrics.utilizationBips,
+        currentUtilizationAprBips: revolvingMetrics.utilizationAprBips,
+        currentBaseLenderAprBips: revolvingMetrics.blendedBaseAprBips,
+        currentProtocolAprBips: revolvingMetrics.protocolAprBips,
+        currentPenaltyAprBips: revolvingMetrics.penaltyAprBips,
+        currentEffectiveLenderAprBips: revolvingMetrics.effectiveLenderAprBips
+      };
+    }
+
+    const currentProtocolAprBips = Number(
+      (BigInt(this.annualInterestBips) * BigInt(this.protocolFeeBips)) / BIP_BIGINT
+    );
+    const currentPenaltyAprBips = this.isIncurringPenalties ? this.delinquencyFeeBips : 0;
+
+    return {
+      isRevolving: false,
+      marketType: this.marketType,
+      configuredAprKind: "annualInterest",
+      configuredAprBips: this.annualInterestBips,
+      configuredAnnualInterestBips: this.annualInterestBips,
+      currentBaseLenderAprBips: this.annualInterestBips,
+      currentProtocolAprBips,
+      currentPenaltyAprBips,
+      currentEffectiveLenderAprBips: this.annualInterestBips + currentPenaltyAprBips
+    };
   }
 
   private get currentBaseLenderAPR(): bigint {
@@ -870,6 +908,7 @@ export class Market extends ContractWrapper {
       toRawAmount(data.normalizedUnclaimedWithdrawals);
 
     let hooksConfig: HooksConfig | undefined;
+    let hooksFactory: string | undefined;
     if (data.version === MarketVersion.V2) {
       assert(!!data.hooks, `V2 markets require hooks`);
       assert(!!data.hooksConfig, `V2 markets require hooksConfig`);
@@ -879,7 +918,6 @@ export class Market extends ContractWrapper {
         transferRequiresAccess,
         queueWithdrawalRequiresAccess,
         allowClosureBeforeTerm,
-        allowForceBuyBacks,
         allowTermReduction,
         fixedTermEndTime,
         transfersDisabled
@@ -898,8 +936,13 @@ export class Market extends ContractWrapper {
           data.hooksConfig.useOnSetAnnualInterestAndReserveRatioBips,
         useOnSetProtocolFeeBips: data.hooksConfig.useOnSetProtocolFeeBips
       };
-      const { id, hooksTemplate: hooksTemplateData } = data.hooks;
-      const template = hooksTemplateFromSubgraph(chainId, provider, hooksTemplateData);
+      const { id } = data.hooks;
+      const template = hooksTemplateFromSubgraph(
+        chainId,
+        provider,
+        data.hooks.factoryHooksTemplate
+      );
+      hooksFactory = template.hooksFactory;
       const minimumDeposit = _minimumDeposit
         ? underlyingToken.getAmount(_minimumDeposit)
         : undefined;
@@ -912,7 +955,7 @@ export class Market extends ContractWrapper {
           minimumDeposit,
           transferRequiresAccess,
           depositRequiresAccess,
-          allowForceBuyBacks,
+          allowForceBuyBacks: false,
           transfersDisabled
         };
       } else if (template.kind === HooksKind.FixedTerm) {
@@ -926,7 +969,7 @@ export class Market extends ContractWrapper {
           depositRequiresAccess,
           queueWithdrawalRequiresAccess,
           allowClosureBeforeTerm,
-          allowForceBuyBacks,
+          allowForceBuyBacks: false,
           allowTermReduction,
           fixedTermEndTime,
           transfersDisabled
@@ -937,6 +980,8 @@ export class Market extends ContractWrapper {
       chainId,
       provider,
       version: data.version,
+      hooksFactory,
+      marketType: hooksFactory ? getMarketTypeForHooksFactory(chainId, hooksFactory) : undefined,
       hooksConfig,
       marketToken,
       underlyingToken,
@@ -1071,7 +1116,7 @@ export class Market extends ContractWrapper {
         transferRequiresAccess: hooksConfigData.transferRequiresAccess,
         transfersDisabled: hooksConfigData.transfersDisabled,
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
-        allowForceBuyBacks: hooksConfigData.allowForceBuyBacks
+        allowForceBuyBacks: false
       } as OpenTermHooksConfig;
     } else if (hooksKind === 2) {
       hooksConfig = {
@@ -1086,7 +1131,7 @@ export class Market extends ContractWrapper {
         queueWithdrawalRequiresAccess: hooksConfigData.withdrawalRequiresAccess,
         allowTermReduction: hooksConfigData.allowTermReduction,
         allowClosureBeforeTerm: hooksConfigData.allowClosureBeforeTerm,
-        allowForceBuyBacks: hooksConfigData.allowForceBuyBacks
+        allowForceBuyBacks: false
       } as FixedTermHooksConfig;
     } else {
       throw Error(`Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksKind}`);
@@ -1141,6 +1186,7 @@ export class Market extends ContractWrapper {
     allowForceBuyBacks: boolean,
     signerAddress?: string
   ): Market {
+    void allowForceBuyBacks;
     const { hooks, hooksConfig: hooksConfigData, ...data } = market;
     const marketToken = Token.fromTokenMetadata(chainId, data.marketToken, provider);
     const underlyingToken = Token.fromTokenMetadata(chainId, data.underlyingToken, provider);
@@ -1156,7 +1202,7 @@ export class Market extends ContractWrapper {
         transferRequiresAccess: hooksConfigData.transferRequiresAccess,
         transfersDisabled: hooksConfigData.transfersDisabled,
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
-        allowForceBuyBacks
+        allowForceBuyBacks: false
       } as OpenTermHooksConfig;
     } else if (hooksKind === 2) {
       hooksConfig = {
@@ -1171,7 +1217,7 @@ export class Market extends ContractWrapper {
         queueWithdrawalRequiresAccess: hooksConfigData.withdrawalRequiresAccess,
         allowTermReduction: hooksConfigData.allowTermReduction,
         allowClosureBeforeTerm: hooksConfigData.allowClosureBeforeTerm,
-        allowForceBuyBacks
+        allowForceBuyBacks: false
       } as FixedTermHooksConfig;
     } else {
       throw Error(`Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksKind}`);
@@ -1222,36 +1268,6 @@ export class Market extends ContractWrapper {
     });
   }
 
-  static async resolveAllowForceBuyBacks(
-    provider: SignerOrProvider,
-    marketAddress: string,
-    data: MarketDataBaseV2_5StructOutput | MarketDataV2_5StructOutput
-  ): Promise<boolean> {
-    const marketData = "market" in data ? data.market : data;
-
-    if (marketData.hooksConfig.kind === 1) {
-      const hookedMarket = await readViemContract<HookedMarketResult | readonly unknown[]>(
-        getViemPublicClientFromEthers(provider),
-        marketData.hooksConfig.hooksAddress,
-        iOpenTermHooksAbi,
-        "getHookedMarket",
-        [marketAddress]
-      );
-      return getAllowForceBuyBacksFromHookedMarket(hookedMarket, 5);
-    }
-    if (marketData.hooksConfig.kind === 2) {
-      const hookedMarket = await readViemContract<HookedMarketResult | readonly unknown[]>(
-        getViemPublicClientFromEthers(provider),
-        marketData.hooksConfig.hooksAddress,
-        iFixedTermHooksAbi,
-        "getHookedMarket",
-        [marketAddress]
-      );
-      return getAllowForceBuyBacksFromHookedMarket(hookedMarket, 9);
-    }
-    return false;
-  }
-
   static async fromUnifiedMarketData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
@@ -1259,18 +1275,7 @@ export class Market extends ContractWrapper {
     signerAddress?: string
   ): Promise<Market> {
     const marketData = toUnifiedMarketDataV2(data);
-    const allowForceBuyBacks = await Market.resolveAllowForceBuyBacks(
-      provider,
-      marketData.market.marketToken.token,
-      marketData
-    );
-    return Market.fromMarketDataV2_5(
-      chainId,
-      provider,
-      marketData,
-      allowForceBuyBacks,
-      signerAddress
-    );
+    return Market.fromMarketDataV2_5(chainId, provider, marketData, false, signerAddress);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -1316,6 +1321,36 @@ export class Market extends ContractWrapper {
     }
     const data = await getV2MarketData(chainId, provider, market);
     return Market.fromMarketDataV2(chainId, provider, data, signerAddress);
+  }
+
+  /**
+   * @returns V2 `Market` instances for `markets`, preserving V2.5/RCF fields
+   *          when the current lens exposes them.
+   */
+  static async getMarketsV2(
+    chainId: SupportedChainId,
+    markets: string[],
+    provider: SignerOrProvider
+  ): Promise<Market[]> {
+    const signerAddress = await getEthersSignerAddress(provider);
+    if (hasUnifiedLatestLensForDirectReads(chainId)) {
+      try {
+        const data = await getUnifiedMarketsDataV2(chainId, provider, markets);
+        return Promise.all(
+          data.map((market) =>
+            Market.fromUnifiedMarketData(chainId, provider, market, signerAddress)
+          )
+        );
+      } catch (_) {
+        // Fall back to the pre-2.5 V2 lens for chains that have not fully migrated.
+      }
+    }
+    return Promise.all(
+      markets.map(async (market) => {
+        const data = await getV2MarketData(chainId, provider, market);
+        return Market.fromMarketDataV2(chainId, provider, data, signerAddress);
+      })
+    );
   }
 
   /**

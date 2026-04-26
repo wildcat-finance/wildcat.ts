@@ -64,6 +64,17 @@ export type NetworkDeployments = {
 export type HooksFactoryDeploymentName = "HooksFactory" | "HooksFactoryRevolving";
 export type LatestLensDeploymentName = "MarketLensV2" | "MarketLensV2_5";
 
+export type HooksFactoryCapabilities = {
+  address: string;
+  marketType: MarketType;
+  canonical: boolean;
+  indexed: boolean;
+  deploymentName?: HooksFactoryDeploymentName;
+  label?: string;
+};
+
+type HooksFactoryCapabilityOverrides = Partial<Pick<HooksFactoryCapabilities, "indexed" | "label">>;
+
 const HooksFactoryDeploymentNamesByMarketType: Record<MarketType, HooksFactoryDeploymentName> = {
   legacy: "HooksFactory",
   revolving: "HooksFactoryRevolving"
@@ -150,13 +161,33 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
   }
 };
 
-const NonCanonicalHooksFactoryMarketTypesByChainId: Partial<
-  Record<SupportedChainId, Record<string, MarketType>>
+const CanonicalHooksFactoryCapabilityOverridesByChainId: Partial<
+  Record<
+    SupportedChainId,
+    Partial<Record<HooksFactoryDeploymentName, HooksFactoryCapabilityOverrides>>
+  >
+> = {
+  [SupportedChainId.Sepolia]: {
+    HooksFactory: {
+      label: "Sepolia legacy hooks factory"
+    }
+  }
+};
+
+const NonCanonicalHooksFactoryCapabilitiesByChainId: Partial<
+  Record<
+    SupportedChainId,
+    Record<string, Omit<HooksFactoryCapabilities, "address" | "canonical" | "deploymentName">>
+  >
 > = {
   [SupportedChainId.Sepolia]: {
     // Indexed historical RCF factory. It must remain readable, but must not be
     // used as the deploy target for new revolving markets.
-    "0xf4564015e524cf5629828e61f45ed339d998d85f": "revolving"
+    "0xf4564015e524cf5629828e61f45ed339d998d85f": {
+      marketType: "revolving",
+      indexed: true,
+      label: "Sepolia historical revolving hooks factory"
+    }
   }
 };
 
@@ -190,24 +221,72 @@ export const getHooksFactoryAddressForMarketType = (
   return getDeploymentAddress(chainId, getHooksFactoryDeploymentName(marketType));
 };
 
+const getCanonicalHooksFactoryCapabilities = (
+  chainId: SupportedChainId
+): HooksFactoryCapabilities[] => {
+  return (Object.keys(HooksFactoryDeploymentNamesByMarketType) as MarketType[]).reduce<
+    HooksFactoryCapabilities[]
+  >((capabilities, marketType) => {
+    const deploymentName = getHooksFactoryDeploymentName(marketType);
+    const address = Deployments[chainId][deploymentName];
+    if (!address) {
+      return capabilities;
+    }
+    const overrides =
+      CanonicalHooksFactoryCapabilityOverridesByChainId[chainId]?.[deploymentName] ?? {};
+    capabilities.push({
+      address,
+      marketType,
+      canonical: true,
+      indexed: true,
+      deploymentName,
+      ...overrides
+    });
+    return capabilities;
+  }, []);
+};
+
+export const getIndexedHooksFactories = (chainId: SupportedChainId): HooksFactoryCapabilities[] => {
+  const canonical = getCanonicalHooksFactoryCapabilities(chainId);
+  const nonCanonical = Object.entries(
+    NonCanonicalHooksFactoryCapabilitiesByChainId[chainId] ?? {}
+  ).map(([address, capabilities]) => ({
+    address,
+    canonical: false,
+    ...capabilities
+  }));
+
+  const byAddress = new Map<string, HooksFactoryCapabilities>();
+  for (const capabilities of [...canonical, ...nonCanonical]) {
+    if (capabilities.indexed) {
+      byAddress.set(capabilities.address.toLowerCase(), capabilities);
+    }
+  }
+  return [...byAddress.values()];
+};
+
+export const getHooksFactoryCapabilities = (
+  chainId: SupportedChainId,
+  hooksFactoryAddress: string
+): HooksFactoryCapabilities | undefined => {
+  const normalizedAddress = hooksFactoryAddress.toLowerCase();
+  return getIndexedHooksFactories(chainId).find(
+    (capabilities) => capabilities.address.toLowerCase() === normalizedAddress
+  );
+};
+
+export const isIndexedHooksFactory = (
+  chainId: SupportedChainId,
+  hooksFactoryAddress: string
+): boolean => {
+  return getHooksFactoryCapabilities(chainId, hooksFactoryAddress)?.indexed ?? false;
+};
+
 export const getMarketTypeForHooksFactory = (
   chainId: SupportedChainId,
   hooksFactoryAddress: string
 ): MarketType | undefined => {
-  const normalizedAddress = hooksFactoryAddress.toLowerCase();
-  const nonCanonicalMarketType =
-    NonCanonicalHooksFactoryMarketTypesByChainId[chainId]?.[normalizedAddress];
-  if (nonCanonicalMarketType) {
-    return nonCanonicalMarketType;
-  }
-  for (const marketType of Object.keys(HooksFactoryDeploymentNamesByMarketType) as MarketType[]) {
-    const deploymentName = getHooksFactoryDeploymentName(marketType);
-    const deploymentAddress = Deployments[chainId][deploymentName];
-    if (deploymentAddress?.toLowerCase() === normalizedAddress) {
-      return marketType;
-    }
-  }
-  return undefined;
+  return getHooksFactoryCapabilities(chainId, hooksFactoryAddress)?.marketType;
 };
 
 export const getLatestLensDeploymentName = (

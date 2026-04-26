@@ -537,6 +537,9 @@ fragment HooksInstanceData on HooksInstance {
   hooksTemplate {
     ...HooksTemplateData
   }
+  factoryHooksTemplate {
+    ...FactoryHooksTemplateData
+  }
   providers {
     ...RoleProviderData
   }
@@ -553,6 +556,24 @@ fragment HooksTemplateData on HooksTemplate {
   }
   originationFeeAmount
   disabled
+}
+
+fragment FactoryHooksTemplateData on FactoryHooksTemplate {
+  id
+  templateAddress
+  name
+  feeRecipient
+  protocolFeeBips
+  originationFeeAsset {
+    ...TokenData
+  }
+  originationFeeAmount
+  disabled
+  hooksFactory {
+    id
+    marketType
+    isRegistered
+  }
 }
 
 fragment ApprovedLiquidatorData on ApprovedLiquidator {

@@ -1,4 +1,4 @@
-schema: 'https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.0.30/gn'
+schema: 'https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.0.31/gn'
 overwrite: true
 documents:
   - './gql/queries.graphql'

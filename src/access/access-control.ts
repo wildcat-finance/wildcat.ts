@@ -7,10 +7,7 @@ import {
   SupportedChainId
 } from "../constants";
 import { MarketParameters } from "../controller";
-import {
-  SubgraphHooksInstanceDataFragment,
-  SubgraphHooksTemplateDataFragment
-} from "../gql/graphql";
+import { SubgraphHooksInstanceDataFragment } from "../gql/graphql";
 import { Token, TokenAmount } from "../token";
 import {
   DeployMarketInputsV2Struct,
@@ -50,6 +47,7 @@ import {
   readyRevolvingDeployMarketPreview
 } from "./validation";
 import { encodeRevolvingMarketData } from "./revolving";
+import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
 import { encodeMarketHooksInstanceInputs } from "./utils";
 import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iOpenTermHooksAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
@@ -252,7 +250,7 @@ export class OpenTermHooks extends ContractWrapper {
       hooksTemplate: OpenTermHooksTemplate.fromSubgraphData(
         chainId,
         provider,
-        data.hooksTemplate,
+        data.factoryHooksTemplate,
         signerAddress,
         isRegisteredBorrower,
         hooksFactory
@@ -355,25 +353,28 @@ export class OpenTermHooksTemplate extends ContractWrapper {
   static fromSubgraphData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    {
-      feeRecipient,
-      protocolFeeBips,
-      disabled,
-      id,
-      name,
-      originationFeeAsset,
-      originationFeeAmount
-    }: SubgraphHooksTemplateDataFragment,
+    data: SubgraphHooksTemplateLike,
     signerAddress?: string,
     isRegisteredBorrower?: boolean,
     hooksFactory?: string
   ): OpenTermHooksTemplate {
+    const normalizedTemplate = normalizeSubgraphHooksTemplateData(data);
+    const {
+      feeRecipient,
+      protocolFeeBips,
+      disabled,
+      hooksTemplate,
+      name,
+      originationFeeAsset,
+      originationFeeAmount
+    } = normalizedTemplate;
+    const scopedHooksFactory = hooksFactory ?? normalizedTemplate.hooksFactory;
     const originationFeeToken = originationFeeAsset
       ? Token.fromSubgraphToken(chainId, originationFeeAsset, provider)
       : undefined;
     return new OpenTermHooksTemplate(chainId, provider, {
-      hooksTemplate: id,
-      hooksFactory,
+      hooksTemplate,
+      hooksFactory: scopedHooksFactory,
       fees: {
         feeRecipient,
         protocolFeeBips,
@@ -408,7 +409,6 @@ export class OpenTermHooksTemplate extends ContractWrapper {
     asset,
     maxTotalSupply,
     salt,
-    allowForceBuyBacks,
     ...otherParameters
   }: OpenTermMarketDeploymentArgs): DeployMarketPreview {
     const targetMarketType = marketType ?? "legacy";
@@ -449,20 +449,10 @@ export class OpenTermHooksTemplate extends ContractWrapper {
       useOnQueueWithdrawal: withdrawalAccess === WithdrawalAccess.RequiresCredential,
       useOnTransfer: transferAccess === TransferAccess.RequiresCredential
     });
-    const hooksData =
-      this.chainId === SupportedChainId.Sepolia
-        ? encodeAbiParameters(
-            [{ type: "uint128" }, { type: "bool" }, { type: "bool" }],
-            [
-              minimumDeposit?.raw ?? 0n,
-              transferAccess === TransferAccess.Disabled,
-              allowForceBuyBacks ?? false
-            ]
-          )
-        : encodeAbiParameters(
-            [{ type: "uint128" }, { type: "bool" }],
-            [minimumDeposit?.raw ?? 0n, transferAccess === TransferAccess.Disabled]
-          );
+    const hooksData = encodeAbiParameters(
+      [{ type: "uint128" }, { type: "bool" }],
+      [minimumDeposit?.raw ?? 0n, transferAccess === TransferAccess.Disabled]
+    );
     const parameters = {
       ...otherParameters,
       asset: asset.address,

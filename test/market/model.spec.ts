@@ -12,6 +12,7 @@ import { Token, toRawAmount } from "../../src/token";
 import { MarketVersion } from "../../src/types";
 import {
   SubgraphHooksKind,
+  SubgraphMarketType,
   SubgraphMarketDataWithEventsFragment,
   SubgraphMarketVersion
 } from "../../src/gql/graphql";
@@ -382,6 +383,25 @@ const makeSubgraphMarketData = (): Omit<
       disabled: false,
       originationFeeAsset: null
     },
+    factoryHooksTemplate: {
+      __typename: "FactoryHooksTemplate",
+      id: `${getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving")}-${makeAddress(
+        77
+      )}`,
+      templateAddress: makeAddress(77),
+      name: "OpenTermHooks",
+      feeRecipient: makeAddress(73),
+      protocolFeeBips: 25,
+      originationFeeAmount: "0",
+      disabled: false,
+      originationFeeAsset: null,
+      hooksFactory: {
+        __typename: "HooksFactory",
+        id: getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving"),
+        marketType: SubgraphMarketType.Revolving,
+        isRegistered: true
+      }
+    },
     providers: []
   },
   deployedEvent: {
@@ -393,12 +413,6 @@ const makeSubgraphMarketData = (): Omit<
 });
 
 describe("Market direct read routing", () => {
-  const originalResolveAllowForceBuyBacks = Market.resolveAllowForceBuyBacks;
-
-  afterEach(() => {
-    Market.resolveAllowForceBuyBacks = originalResolveAllowForceBuyBacks;
-  });
-
   it("hydrates v2.5 market reads through viem and preserves revolving fields", async () => {
     const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const marketAddress = makeAddress(101);
@@ -415,9 +429,6 @@ describe("Market direct read routing", () => {
       return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketDataV2", data);
     });
 
-    Market.resolveAllowForceBuyBacks = (async () =>
-      true) as typeof Market.resolveAllowForceBuyBacks;
-
     const market = await Market.getMarketV2(
       SupportedChainId.Sepolia,
       marketAddress,
@@ -429,7 +440,7 @@ describe("Market direct read routing", () => {
     expect(market.marketType).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
     expect(market.drawnAmount?.raw).to.equal(250n);
-    expect(market.hooksConfig?.allowForceBuyBacks).to.equal(true);
+    expect(market.hooksConfig?.allowForceBuyBacks).to.equal(false);
   });
 
   it("hydrates v2.5 batch market reads through viem", async () => {
@@ -455,9 +466,6 @@ describe("Market direct read routing", () => {
       );
       return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketsDataV2", data);
     });
-
-    Market.resolveAllowForceBuyBacks = (async () =>
-      true) as typeof Market.resolveAllowForceBuyBacks;
 
     const hydratedMarkets = await Market.getMarkets(
       SupportedChainId.Sepolia,
@@ -612,13 +620,14 @@ describe("Market model routing metadata", () => {
       makeFactoryBackedMarketData(historicalSepoliaRevolvingFactory)
     );
 
-    expect(getMarketTypeForHooksFactory(SupportedChainId.Sepolia, historicalSepoliaRevolvingFactory))
-      .to.equal("revolving");
+    expect(
+      getMarketTypeForHooksFactory(SupportedChainId.Sepolia, historicalSepoliaRevolvingFactory)
+    ).to.equal("revolving");
     expect(market.hooksFactory).to.equal(historicalSepoliaRevolvingFactory);
     expect(market.marketType).to.equal("revolving");
   });
 
-  it("hydrates v2.5 market data with compatibility allowForceBuyBacks", () => {
+  it("drops stale force-buyback compatibility for legacy factory market data", () => {
     const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
@@ -629,7 +638,19 @@ describe("Market model routing metadata", () => {
 
     expect(market.hooksFactory).to.equal(hooksFactory);
     expect(market.marketType).to.equal("legacy");
-    expect(market.hooksConfig?.allowForceBuyBacks).to.equal(true);
+    expect(market.hooksConfig?.allowForceBuyBacks).to.equal(false);
+  });
+
+  it("drops stale force-buyback compatibility for unsupported factories", () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
+    const data = makeFactoryBackedMarketData(hooksFactory);
+    data.hooksConfig.allowForceBuyBacks = true;
+
+    const market = Market.fromMarketDataV2(SupportedChainId.Sepolia, provider, data);
+
+    expect(market.hooksFactory).to.equal(hooksFactory);
+    expect(market.marketType).to.equal("revolving");
+    expect(market.hooksConfig?.allowForceBuyBacks).to.equal(false);
   });
 
   it("hydrates unified v2.5 revolving optional fields when present", () => {
@@ -648,6 +669,7 @@ describe("Market model routing metadata", () => {
     expect(market.marketType).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
     expect(market.drawnAmount?.raw).to.equal(250n);
+    expect(market.hooksConfig?.allowForceBuyBacks).to.equal(false);
   });
 
   it("refreshes hooksFactory and marketType when v2 market data is updated", () => {
@@ -750,7 +772,7 @@ describe("Market model routing metadata", () => {
       makeSubgraphMarketData()
     );
 
-    expect(market.marketType).to.equal(undefined);
+    expect(market.marketType).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
     expect(market.drawnAmount?.raw).to.equal(250n);
   });
@@ -779,6 +801,20 @@ describe("Market revolving APR helpers", () => {
       effectiveLenderAprBips: 475
     });
     expect(market.currentRevolvingAprMetrics?.drawnAmount.raw).to.equal(250n);
+    expect(market.currentAprDisplayBips).to.deep.include({
+      isRevolving: true,
+      configuredAprKind: "utilization",
+      configuredAprBips: 1200,
+      configuredAnnualInterestBips: 1200,
+      configuredUtilizationAprBips: 1200,
+      commitmentAprBips: 175,
+      utilizationBips: 2500,
+      currentUtilizationAprBips: 300,
+      currentBaseLenderAprBips: 475,
+      currentProtocolAprBips: 1,
+      currentPenaltyAprBips: 0,
+      currentEffectiveLenderAprBips: 475
+    });
   });
 
   it("clamps revolving utilization math to total supply and includes penalties", () => {
@@ -817,6 +853,16 @@ describe("Market revolving APR helpers", () => {
     );
 
     expect(market.currentRevolvingAprMetrics).to.equal(undefined);
+    expect(market.currentAprDisplayBips).to.deep.include({
+      isRevolving: false,
+      configuredAprKind: "annualInterest",
+      configuredAprBips: 1200,
+      configuredAnnualInterestBips: 1200,
+      currentBaseLenderAprBips: 1200,
+      currentProtocolAprBips: 3,
+      currentPenaltyAprBips: 0,
+      currentEffectiveLenderAprBips: 1200
+    });
   });
 
   it("normalizes generic effective APR getters for revolving markets", () => {

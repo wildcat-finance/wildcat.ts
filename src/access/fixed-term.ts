@@ -7,10 +7,7 @@ import {
   SupportedChainId
 } from "../constants";
 import { MarketParameters } from "../controller";
-import {
-  SubgraphHooksInstanceDataFragment,
-  SubgraphHooksTemplateDataFragment
-} from "../gql/graphql";
+import { SubgraphHooksInstanceDataFragment } from "../gql/graphql";
 import { Token, TokenAmount } from "../token";
 import {
   DeployMarketInputsV2Struct,
@@ -50,6 +47,7 @@ import {
   readyRevolvingDeployMarketPreview
 } from "./validation";
 import { encodeRevolvingMarketData } from "./revolving";
+import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
 import { encodeMarketHooksInstanceInputs } from "./utils";
 import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iFixedTermHooksAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
@@ -252,7 +250,7 @@ export class FixedTermHooks extends ContractWrapper {
       hooksTemplate: FixedTermHooksTemplate.fromSubgraphData(
         chainId,
         provider,
-        data.hooksTemplate,
+        data.factoryHooksTemplate,
         signerAddress,
         isRegisteredBorrower,
         hooksFactory
@@ -356,26 +354,29 @@ export class FixedTermHooksTemplate extends ContractWrapper {
   static fromSubgraphData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    {
-      feeRecipient,
-      protocolFeeBips,
-      disabled,
-      id,
-      name,
-      originationFeeAsset,
-      originationFeeAmount
-    }: SubgraphHooksTemplateDataFragment,
+    data: SubgraphHooksTemplateLike,
     signerAddress?: string,
     isRegisteredBorrower?: boolean,
     hooksFactory?: string
   ): FixedTermHooksTemplate {
+    const normalizedTemplate = normalizeSubgraphHooksTemplateData(data);
+    const {
+      feeRecipient,
+      protocolFeeBips,
+      disabled,
+      hooksTemplate,
+      name,
+      originationFeeAsset,
+      originationFeeAmount
+    } = normalizedTemplate;
+    const scopedHooksFactory = hooksFactory ?? normalizedTemplate.hooksFactory;
     const originationFeeToken = originationFeeAsset
       ? Token.fromSubgraphToken(chainId, originationFeeAsset, provider)
       : undefined;
 
     return new FixedTermHooksTemplate(chainId, provider, {
-      hooksTemplate: id,
-      hooksFactory,
+      hooksTemplate,
+      hooksFactory: scopedHooksFactory,
       fees: {
         feeRecipient,
         protocolFeeBips,
@@ -413,7 +414,6 @@ export class FixedTermHooksTemplate extends ContractWrapper {
     fixedTermEndTime,
     allowClosureBeforeTerm,
     allowTermReduction,
-    allowForceBuyBacks,
     ...otherParameters
   }: FixedTermMarketDeploymentArgs): DeployMarketPreview {
     const targetMarketType = marketType ?? "legacy";
@@ -455,42 +455,22 @@ export class FixedTermHooksTemplate extends ContractWrapper {
       useOnQueueWithdrawal: withdrawalAccess === WithdrawalAccess.RequiresCredential,
       useOnTransfer: transferAccess === TransferAccess.RequiresCredential
     });
-    const hooksData =
-      this.chainId === SupportedChainId.Sepolia
-        ? encodeAbiParameters(
-            [
-              { type: "uint32" },
-              { type: "uint128" },
-              { type: "bool" },
-              { type: "bool" },
-              { type: "bool" },
-              { type: "bool" }
-            ],
-            [
-              fixedTermEndTime,
-              minimumDeposit?.raw ?? 0n,
-              transferAccess === TransferAccess.Disabled,
-              allowForceBuyBacks ?? false,
-              allowClosureBeforeTerm ?? false,
-              allowTermReduction ?? false
-            ]
-          )
-        : encodeAbiParameters(
-            [
-              { type: "uint32" },
-              { type: "uint128" },
-              { type: "bool" },
-              { type: "bool" },
-              { type: "bool" }
-            ],
-            [
-              fixedTermEndTime,
-              minimumDeposit?.raw ?? 0n,
-              transferAccess === TransferAccess.Disabled,
-              allowClosureBeforeTerm ?? false,
-              allowTermReduction ?? false
-            ]
-          );
+    const hooksData = encodeAbiParameters(
+      [
+        { type: "uint32" },
+        { type: "uint128" },
+        { type: "bool" },
+        { type: "bool" },
+        { type: "bool" }
+      ],
+      [
+        fixedTermEndTime,
+        minimumDeposit?.raw ?? 0n,
+        transferAccess === TransferAccess.Disabled,
+        allowClosureBeforeTerm ?? false,
+        allowTermReduction ?? false
+      ]
+    );
     const parameters = {
       ...otherParameters,
       asset: asset.address,
