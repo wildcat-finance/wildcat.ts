@@ -50,6 +50,7 @@ import {
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 import {
   SubgraphAccountDataForLenderViewFragment,
+  SubgraphAccountDataForLenderListViewFragment,
   SubgraphDepositDataFragment
 } from "../gql/graphql";
 import {
@@ -975,7 +976,7 @@ export class MarketAccount {
 
   static fromSubgraphAccountData(
     market: Market,
-    data: SubgraphAccountDataForLenderViewFragment
+    data: SubgraphAccountDataForLenderViewFragment | SubgraphAccountDataForLenderListViewFragment
   ): MarketAccount {
     const scaledBalance = toRawAmount(data.scaledBalance);
 
@@ -988,7 +989,7 @@ export class MarketAccount {
       underlyingBalance: market.underlyingToken.getAmount(0),
       underlyingApproval: 0n,
       market,
-      deposits: data.deposits,
+      deposits: "deposits" in data ? data.deposits : undefined,
       totalDeposited: market.underlyingToken.getAmount(data.totalDeposited),
       lastScaleFactor: toRawAmount(data.lastScaleFactor),
       lastUpdatedTimestamp: data.lastUpdatedTimestamp,

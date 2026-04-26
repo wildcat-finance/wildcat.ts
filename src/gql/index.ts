@@ -8,6 +8,7 @@ export * from "./getBasicBorrowerData";
 export * from "./getLenderAccountForMarket";
 export * from "./getLenderAccountsForAllMarkets";
 export * from "./getMarket";
+export * from "./getMarketList";
 export * from "./getMarketChartsData";
 export * from "./getMarketRecords";
 export * from "./getMarketsForBorrower";

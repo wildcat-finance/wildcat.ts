@@ -16211,6 +16211,22 @@ export type SubgraphAccountDataForLenderViewFragment = {
   deposits: SubgraphDepositDataFragment[];
 };
 
+export type SubgraphAccountDataForLenderListViewFragment = {
+  __typename: "LenderAccount";
+  id: string;
+  address: string;
+  scaledBalance: string;
+  role: SubgraphLenderStatus;
+  totalDeposited: string;
+  lastScaleFactor: string;
+  lastUpdatedTimestamp: number;
+  totalInterestEarned: string;
+  numPendingWithdrawalBatches: number;
+  controllerAuthorization?: { __typename: "LenderAuthorization"; authorized: boolean } | null;
+  hooksAccess?: SubgraphLenderHooksAccessDataFragment | null;
+  knownLenderStatus?: { __typename: "KnownLenderStatus"; id: string } | null;
+};
+
 export type SubgraphBasicLenderDataFragment = {
   __typename: "LenderAccount";
   id: string;
@@ -16416,6 +16432,52 @@ export type SubgraphMarketDataWithEventsFragment = {
   borrowRecords: SubgraphBorrowDataFragment[];
   feeCollectionRecords: SubgraphFeesCollectedDataFragment[];
   repaymentRecords: SubgraphRepaymentDataFragment[];
+};
+
+export type SubgraphMarketListDataFragment = {
+  __typename: "Market";
+  id: string;
+  version: SubgraphMarketVersion;
+  isRegistered: boolean;
+  isClosed: boolean;
+  borrower: string;
+  feeRecipient: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  protocolFeeBips: number;
+  delinquencyGracePeriod: number;
+  delinquencyFeeBips: number;
+  withdrawalBatchDuration: number;
+  numCollateralContracts: number;
+  annualInterestBips: number;
+  commitmentFeeBips?: string | null;
+  reserveRatioBips: number;
+  drawnAmount?: string | null;
+  maxTotalSupply: string;
+  pendingProtocolFees: string;
+  normalizedUnclaimedWithdrawals: string;
+  scaledTotalSupply: string;
+  scaledPendingWithdrawals: string;
+  pendingWithdrawalExpiry: string;
+  isDelinquent: boolean;
+  timeDelinquent: number;
+  scaleFactor: string;
+  lastInterestAccruedTimestamp: number;
+  originalAnnualInterestBips: number;
+  originalReserveRatioBips: number;
+  temporaryReserveRatioExpiry: number;
+  temporaryReserveRatioActive: boolean;
+  eventIndex: number;
+  controller?: { __typename: "Controller"; id: string } | null;
+  _asset: SubgraphTokenDataFragment;
+  hooksConfig?: SubgraphHooksConfigDataForMarketFragment | null;
+  hooks?: {
+    __typename: "HooksInstance";
+    id: string;
+    factoryHooksTemplate: SubgraphFactoryHooksTemplateDataFragment;
+  } | null;
+  deployedEvent: SubgraphMarketDeployedEventFragment;
 };
 
 export type SubgraphWithdrawalBatchPaymentPropertiesFragment = {
@@ -17058,6 +17120,71 @@ export type SubgraphGetAllMarketsForLenderViewQuery = {
   }>;
 };
 
+export type SubgraphGetAllMarketsForLenderListViewQueryVariables = Exact<{
+  lender?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketFilter?: InputMaybe<SubgraphMarket_Filter>;
+  numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  skipMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  orderMarkets?: InputMaybe<SubgraphMarket_OrderBy>;
+  directionMarkets?: InputMaybe<SubgraphOrderDirection>;
+}>;
+
+export type SubgraphGetAllMarketsForLenderListViewQuery = {
+  __typename: "Query";
+  markets: Array<{
+    __typename: "Market";
+    id: string;
+    version: SubgraphMarketVersion;
+    isRegistered: boolean;
+    isClosed: boolean;
+    borrower: string;
+    feeRecipient: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    protocolFeeBips: number;
+    delinquencyGracePeriod: number;
+    delinquencyFeeBips: number;
+    withdrawalBatchDuration: number;
+    numCollateralContracts: number;
+    annualInterestBips: number;
+    commitmentFeeBips?: string | null;
+    reserveRatioBips: number;
+    drawnAmount?: string | null;
+    maxTotalSupply: string;
+    pendingProtocolFees: string;
+    normalizedUnclaimedWithdrawals: string;
+    scaledTotalSupply: string;
+    scaledPendingWithdrawals: string;
+    pendingWithdrawalExpiry: string;
+    isDelinquent: boolean;
+    timeDelinquent: number;
+    scaleFactor: string;
+    lastInterestAccruedTimestamp: number;
+    originalAnnualInterestBips: number;
+    originalReserveRatioBips: number;
+    temporaryReserveRatioExpiry: number;
+    temporaryReserveRatioActive: boolean;
+    eventIndex: number;
+    lenders: SubgraphAccountDataForLenderListViewFragment[];
+    controller?: { __typename: "Controller"; id: string } | null;
+    _asset: SubgraphTokenDataFragment;
+    hooksConfig?: SubgraphHooksConfigDataForMarketFragment | null;
+    hooks?: {
+      __typename: "HooksInstance";
+      id: string;
+      factoryHooksTemplate: SubgraphFactoryHooksTemplateDataFragment;
+    } | null;
+    deployedEvent: SubgraphMarketDeployedEventFragment;
+  }>;
+  controllerAuthorizations: Array<{
+    __typename: "LenderAuthorization";
+    lender: string;
+    authorized: boolean;
+    controller: { __typename: "Controller"; markets: Array<{ __typename: "Market"; id: string }> };
+  }>;
+};
+
 export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables = Exact<{
   lender: Scalars["Bytes"]["input"];
   accountFilter?: InputMaybe<SubgraphLenderAccount_Filter>;
@@ -17448,6 +17575,19 @@ export type SubgraphGetAllMarketsQueryVariables = Exact<{ [key: string]: never }
 export type SubgraphGetAllMarketsQuery = {
   __typename: "Query";
   markets: SubgraphMarketDataFragment[];
+};
+
+export type SubgraphGetMarketListQueryVariables = Exact<{
+  marketFilter?: InputMaybe<SubgraphMarket_Filter>;
+  numMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  skipMarkets?: InputMaybe<Scalars["Int"]["input"]>;
+  orderMarkets?: InputMaybe<SubgraphMarket_OrderBy>;
+  directionMarkets?: InputMaybe<SubgraphOrderDirection>;
+}>;
+
+export type SubgraphGetMarketListQuery = {
+  __typename: "Query";
+  markets: SubgraphMarketListDataFragment[];
 };
 
 export type SubgraphGetAuthorizedLendersByMarketQueryVariables = Exact<{
@@ -17881,6 +18021,20 @@ export const AccountDataForLenderViewFragmentDoc = gql`
     }
   }
 `;
+export const AccountDataForLenderListViewFragmentDoc = gql`
+  fragment AccountDataForLenderListView on LenderAccount {
+    ...LenderProperties
+    controllerAuthorization {
+      authorized
+    }
+    hooksAccess {
+      ...LenderHooksAccessData
+    }
+    knownLenderStatus {
+      id
+    }
+  }
+`;
 export const BasicLenderDataFragmentDoc = gql`
   fragment BasicLenderData on LenderAccount {
     id
@@ -18184,6 +18338,61 @@ export const MarketDataWithEventsFragmentDoc = gql`
   fragment MarketDataWithEvents on Market {
     ...MarketData
     ...MarketRecords @skip(if: $shouldSkipRecords)
+  }
+`;
+export const MarketListDataFragmentDoc = gql`
+  fragment MarketListData on Market {
+    id
+    version
+    isRegistered
+    isClosed
+    controller {
+      id
+    }
+    borrower
+    feeRecipient
+    name
+    symbol
+    decimals
+    protocolFeeBips
+    delinquencyGracePeriod
+    delinquencyFeeBips
+    withdrawalBatchDuration
+    numCollateralContracts
+    annualInterestBips
+    commitmentFeeBips
+    reserveRatioBips
+    drawnAmount
+    maxTotalSupply
+    pendingProtocolFees
+    normalizedUnclaimedWithdrawals
+    scaledTotalSupply
+    scaledPendingWithdrawals
+    pendingWithdrawalExpiry
+    isDelinquent
+    timeDelinquent
+    scaleFactor
+    lastInterestAccruedTimestamp
+    originalAnnualInterestBips
+    originalReserveRatioBips
+    temporaryReserveRatioExpiry
+    temporaryReserveRatioActive
+    eventIndex
+    _asset: asset {
+      ...TokenData
+    }
+    hooksConfig {
+      ...HooksConfigDataForMarket
+    }
+    hooks {
+      id
+      factoryHooksTemplate {
+        ...FactoryHooksTemplateData
+      }
+    }
+    deployedEvent {
+      ...MarketDeployedEvent
+    }
   }
 `;
 export const ForceBuyBackDataFragmentDoc = gql`
@@ -18769,6 +18978,53 @@ export const GetAllMarketsForLenderViewDocument = gql`
 export type GetAllMarketsForLenderViewQueryResult = Apollo.QueryResult<
   SubgraphGetAllMarketsForLenderViewQuery,
   SubgraphGetAllMarketsForLenderViewQueryVariables
+>;
+export const GetAllMarketsForLenderListViewDocument = gql`
+  query getAllMarketsForLenderListView(
+    $lender: Bytes
+    $marketFilter: Market_filter = { id_not: null }
+    $numMarkets: Int = 1000
+    $skipMarkets: Int = 0
+    $orderMarkets: Market_orderBy = createdAt
+    $directionMarkets: OrderDirection = desc
+  ) {
+    markets(
+      where: $marketFilter
+      orderBy: $orderMarkets
+      orderDirection: $directionMarkets
+      first: $numMarkets
+      skip: $skipMarkets
+    ) {
+      ...MarketListData
+      lenders(where: { address: $lender }, first: 1) {
+        ...AccountDataForLenderListView
+      }
+    }
+    controllerAuthorizations: lenderAuthorizations(
+      where: { and: [{ lender: $lender }, { authorized: true }] }
+    ) {
+      lender
+      authorized
+      controller {
+        markets {
+          id
+        }
+      }
+    }
+  }
+  ${MarketListDataFragmentDoc}
+  ${TokenDataFragmentDoc}
+  ${HooksConfigDataForMarketFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
+  ${MarketDeployedEventFragmentDoc}
+  ${AccountDataForLenderListViewFragmentDoc}
+  ${LenderPropertiesFragmentDoc}
+  ${LenderHooksAccessDataFragmentDoc}
+  ${RoleProviderDataFragmentDoc}
+`;
+export type GetAllMarketsForLenderListViewQueryResult = Apollo.QueryResult<
+  SubgraphGetAllMarketsForLenderListViewQuery,
+  SubgraphGetAllMarketsForLenderListViewQueryVariables
 >;
 export const GetAccountsWhereLenderAuthorizedOrActiveDocument = gql`
   query getAccountsWhereLenderAuthorizedOrActive(
@@ -19462,6 +19718,34 @@ export const GetAllMarketsDocument = gql`
 export type GetAllMarketsQueryResult = Apollo.QueryResult<
   SubgraphGetAllMarketsQuery,
   SubgraphGetAllMarketsQueryVariables
+>;
+export const GetMarketListDocument = gql`
+  query getMarketList(
+    $marketFilter: Market_filter = { id_not: null }
+    $numMarkets: Int = 1000
+    $skipMarkets: Int = 0
+    $orderMarkets: Market_orderBy = createdAt
+    $directionMarkets: OrderDirection = desc
+  ) {
+    markets(
+      where: $marketFilter
+      orderBy: $orderMarkets
+      orderDirection: $directionMarkets
+      first: $numMarkets
+      skip: $skipMarkets
+    ) {
+      ...MarketListData
+    }
+  }
+  ${MarketListDataFragmentDoc}
+  ${TokenDataFragmentDoc}
+  ${HooksConfigDataForMarketFragmentDoc}
+  ${FactoryHooksTemplateDataFragmentDoc}
+  ${MarketDeployedEventFragmentDoc}
+`;
+export type GetMarketListQueryResult = Apollo.QueryResult<
+  SubgraphGetMarketListQuery,
+  SubgraphGetMarketListQueryVariables
 >;
 export const GetAuthorizedLendersByMarketDocument = gql`
   query getAuthorizedLendersByMarket($market: ID!) {

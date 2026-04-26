@@ -39,6 +39,7 @@ import {
   SubgraphFeesCollectedDataFragment,
   SubgraphMarketDataWithEventsFragment,
   SubgraphMarketDeployedEventFragment,
+  SubgraphMarketListDataFragment,
   SubgraphRepaymentDataFragment
 } from "./gql/graphql";
 import {
@@ -147,6 +148,24 @@ const toUnifiedMarketDataV2 = (
     }
   } as unknown as MarketDataV2_5StructOutput;
 };
+
+type SubgraphMarketHydrationData =
+  | MakeOptional<
+      SubgraphMarketDataWithEventsFragment,
+      "depositRecords" | "repaymentRecords" | "borrowRecords" | "feeCollectionRecords"
+    >
+  | SubgraphMarketListDataFragment;
+
+const hasSubgraphMarketTotals = (
+  data: SubgraphMarketHydrationData
+): data is MakeOptional<
+  SubgraphMarketDataWithEventsFragment,
+  "depositRecords" | "repaymentRecords" | "borrowRecords" | "feeCollectionRecords"
+> => "totalBorrowed" in data;
+
+const hasSubgraphMarketRecords = (
+  data: SubgraphMarketHydrationData
+): data is SubgraphMarketDataWithEventsFragment => "depositRecords" in data;
 
 export type MarketArgs = {
   provider: SignerOrProvider;
@@ -888,14 +907,21 @@ export class Market extends ContractWrapper {
   static fromSubgraphMarketData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: MakeOptional<
-      SubgraphMarketDataWithEventsFragment,
-      "depositRecords" | "repaymentRecords" | "borrowRecords" | "feeCollectionRecords"
-    >,
+    data: SubgraphMarketHydrationData,
     signerAddress?: string
   ): Market {
     const underlyingToken = Token.fromSubgraphToken(chainId, data._asset, provider);
-    const marketToken = Token.fromSubgraphMarketData(chainId, data, provider);
+    const marketToken = new Token(
+      chainId,
+      data.id,
+      data.name,
+      data.symbol,
+      data.decimals,
+      false,
+      provider
+    );
+    const hasTotals = hasSubgraphMarketTotals(data);
+    const hasRecords = hasSubgraphMarketRecords(data);
     const scaledTotalSupply = toRawAmount(data.scaledTotalSupply);
     const scaleFactor = toRawAmount(data.scaleFactor);
     const scaledWithdrawals = toRawAmount(data.scaledPendingWithdrawals);
@@ -1019,16 +1045,22 @@ export class Market extends ContractWrapper {
         data.commitmentFeeBips != null ? Number(data.commitmentFeeBips) : undefined,
       drawnAmount:
         data.drawnAmount != null ? underlyingToken.getAmount(data.drawnAmount) : undefined,
-      totalBorrowed: underlyingToken.getAmount(data.totalBorrowed),
-      totalRepaid: underlyingToken.getAmount(data.totalRepaid),
-      totalBaseInterestAccrued: underlyingToken.getAmount(data.totalBaseInterestAccrued),
-      totalDelinquencyFeesAccrued: underlyingToken.getAmount(data.totalDelinquencyFeesAccrued),
-      totalProtocolFeesAccrued: underlyingToken.getAmount(data.totalProtocolFeesAccrued),
-      totalDeposited: underlyingToken.getAmount(data.totalDeposited),
-      depositRecords: data.depositRecords,
-      repaymentRecords: data.repaymentRecords,
-      borrowRecords: data.borrowRecords,
-      feeCollectionRecords: data.feeCollectionRecords,
+      totalBorrowed: underlyingToken.getAmount(hasTotals ? data.totalBorrowed : 0),
+      totalRepaid: underlyingToken.getAmount(hasTotals ? data.totalRepaid : 0),
+      totalBaseInterestAccrued: underlyingToken.getAmount(
+        hasTotals ? data.totalBaseInterestAccrued : 0
+      ),
+      totalDelinquencyFeesAccrued: underlyingToken.getAmount(
+        hasTotals ? data.totalDelinquencyFeesAccrued : 0
+      ),
+      totalProtocolFeesAccrued: underlyingToken.getAmount(
+        hasTotals ? data.totalProtocolFeesAccrued : 0
+      ),
+      totalDeposited: underlyingToken.getAmount(hasTotals ? data.totalDeposited : 0),
+      depositRecords: hasRecords ? data.depositRecords : undefined,
+      repaymentRecords: hasRecords ? data.repaymentRecords : undefined,
+      borrowRecords: hasRecords ? data.borrowRecords : undefined,
+      feeCollectionRecords: hasRecords ? data.feeCollectionRecords : undefined,
       deployedEvent: data.deployedEvent,
       eventIndex: data.eventIndex,
       numCollateralContracts: data.numCollateralContracts,

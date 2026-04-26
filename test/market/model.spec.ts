@@ -14,6 +14,7 @@ import {
   SubgraphHooksKind,
   SubgraphMarketType,
   SubgraphMarketDataWithEventsFragment,
+  SubgraphMarketListDataFragment,
   SubgraphMarketVersion
 } from "../../src/gql/graphql";
 import {
@@ -412,6 +413,29 @@ const makeSubgraphMarketData = (): Omit<
   }
 });
 
+const makeSubgraphMarketListData = (): SubgraphMarketListDataFragment => {
+  const market = { ...makeSubgraphMarketData() };
+  const { hooks } = market;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).sentinel;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).totalBorrowed;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).totalRepaid;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).totalBaseInterestAccrued;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).totalDelinquencyFeesAccrued;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).totalProtocolFeesAccrued;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).totalDeposited;
+
+  return {
+    ...market,
+    hooks: hooks
+      ? {
+          __typename: "HooksInstance",
+          id: hooks.id,
+          factoryHooksTemplate: hooks.factoryHooksTemplate
+        }
+      : null
+  };
+};
+
 describe("Market direct read routing", () => {
   it("hydrates v2.5 market reads through viem and preserves revolving fields", async () => {
     const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
@@ -775,6 +799,20 @@ describe("Market model routing metadata", () => {
     expect(market.marketType).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
     expect(market.drawnAmount?.raw).to.equal(250n);
+  });
+
+  it("hydrates subgraph list markets without record and aggregate payloads", () => {
+    const market = Market.fromSubgraphMarketData(
+      SupportedChainId.Sepolia,
+      provider,
+      makeSubgraphMarketListData()
+    );
+
+    expect(market.marketType).to.equal("revolving");
+    expect(market.commitmentFeeBips).to.equal(175);
+    expect(market.drawnAmount?.raw).to.equal(250n);
+    expect(market.totalBorrowed?.raw).to.equal(0n);
+    expect(market.depositRecords).to.deep.equal([]);
   });
 });
 

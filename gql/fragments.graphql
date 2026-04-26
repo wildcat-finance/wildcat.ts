@@ -61,6 +61,22 @@ fragment AccountDataForLenderView on LenderAccount {
   }
 }
 
+fragment AccountDataForLenderListView on LenderAccount {
+  ...LenderProperties
+
+  controllerAuthorization {
+    authorized
+  }
+
+  hooksAccess {
+    ...LenderHooksAccessData
+  }
+
+  knownLenderStatus {
+    id
+  }
+}
+
 # Lender data with:
 # address
 # balance
@@ -254,6 +270,60 @@ fragment MarketDeployedEvent on MarketDeployed {
 fragment MarketDataWithEvents on Market {
   ...MarketData
   ...MarketRecords @skip(if: $shouldSkipRecords)
+}
+
+fragment MarketListData on Market {
+  id
+  version
+  isRegistered
+  isClosed
+  controller {
+    id
+  }
+  borrower
+  feeRecipient
+  name
+  symbol
+  decimals
+  protocolFeeBips
+  delinquencyGracePeriod
+  delinquencyFeeBips
+  withdrawalBatchDuration
+  numCollateralContracts
+  annualInterestBips
+  commitmentFeeBips
+  reserveRatioBips
+  drawnAmount
+  maxTotalSupply
+  pendingProtocolFees
+  normalizedUnclaimedWithdrawals
+  scaledTotalSupply
+  scaledPendingWithdrawals
+  pendingWithdrawalExpiry
+  isDelinquent
+  timeDelinquent
+  scaleFactor
+  lastInterestAccruedTimestamp
+  originalAnnualInterestBips
+  originalReserveRatioBips
+  temporaryReserveRatioExpiry
+  temporaryReserveRatioActive
+  eventIndex
+  _asset: asset {
+    ...TokenData
+  }
+  hooksConfig {
+    ...HooksConfigDataForMarket
+  }
+  hooks {
+    id
+    factoryHooksTemplate {
+      ...FactoryHooksTemplateData
+    }
+  }
+  deployedEvent {
+    ...MarketDeployedEvent
+  }
 }
 
 fragment WithdrawalBatchPaymentProperties on WithdrawalBatchPayment {

@@ -714,11 +714,22 @@ export const SubgraphUrls = {
     "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-mainnet/v2.0.22/gn"
 };
 
-export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
-  new ApolloClient({
+const subgraphClients = new Map<SupportedChainId, ApolloClient<NormalizedCacheObject>>();
+
+export const getSubgraphClient = (
+  chainId: SupportedChainId
+): ApolloClient<NormalizedCacheObject> => {
+  const cachedClient = subgraphClients.get(chainId);
+  if (cachedClient) {
+    return cachedClient;
+  }
+  const client = new ApolloClient({
     cache: new InMemoryCache(),
     uri: SubgraphUrls[chainId]
   });
+  subgraphClients.set(chainId, client);
+  return client;
+};
 
 const day = 86_400;
 
