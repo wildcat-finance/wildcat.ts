@@ -2,7 +2,8 @@ import {
   MarketDataBaseV2_5StructOutput,
   MarketDataStructOutput,
   MarketDataV2_5StructOutput,
-  MarketDataV2StructOutput
+  MarketDataV2StructOutput,
+  MarketLiveDataV2_5StructOutput
 } from "./lens-types";
 import { SupportedChainId, getMarketTypeForHooksFactory, hasDeploymentAddress } from "./constants";
 import {
@@ -15,6 +16,7 @@ import {
   getLegacyMarketsData,
   getUnifiedMarketDataV2,
   getUnifiedMarketsDataV2,
+  getUnifiedMarketsLiveDataV2,
   getV2MarketData
 } from "./internal/market-lens";
 import { TokenAmount, Token, toRawAmount } from "./token";
@@ -900,6 +902,65 @@ export class Market extends ContractWrapper {
     }
   }
 
+  updateWithLiveData(data: MarketLiveDataV2_5StructOutput): void {
+    assert(
+      data.market.toLowerCase() === this.address.toLowerCase(),
+      `Live market data address mismatch`
+    );
+
+    const nextScaleFactor = toRawAmount(data.scaleFactor);
+    const nextScaledTotalSupply = toRawAmount(data.scaledTotalSupply);
+    const nextScaledPendingWithdrawals = toRawAmount(data.scaledPendingWithdrawals);
+    const nextLastAccruedProtocolFees = toRawAmount(data.lastAccruedProtocolFees);
+
+    if (
+      this.scaledTotalSupply === nextScaledTotalSupply &&
+      nextScaleFactor > this.scaleFactor &&
+      this.totalBaseInterestAccrued
+    ) {
+      const lastTotalValue = rayMulBigint(this.scaledTotalSupply, this.scaleFactor);
+      const currentTotalValue = rayMulBigint(this.scaledTotalSupply, nextScaleFactor);
+      this.totalBaseInterestAccrued = this.totalBaseInterestAccrued.add(
+        currentTotalValue - lastTotalValue
+      );
+    }
+
+    if (
+      nextLastAccruedProtocolFees > this.lastAccruedProtocolFees.raw &&
+      this.totalProtocolFeesAccrued
+    ) {
+      this.totalProtocolFeesAccrued = this.totalProtocolFeesAccrued.add(
+        nextLastAccruedProtocolFees - this.lastAccruedProtocolFees.raw
+      );
+    }
+
+    this.protocolFeeBips = toNumber(data.protocolFeeBips);
+    this.reserveRatioBips = toNumber(data.reserveRatioBips);
+    this.annualInterestBips = toNumber(data.annualInterestBips);
+    this.isClosed = data.isClosed;
+    this.scaleFactor = nextScaleFactor;
+    this.totalSupply = this.marketToken.getAmount(data.totalSupply);
+    this.maxTotalSupply = this.marketToken.getAmount(data.maxTotalSupply);
+    this.scaledTotalSupply = nextScaledTotalSupply;
+    this.totalAssets = this.underlyingToken.getAmount(data.totalAssets);
+    this.lastAccruedProtocolFees = this.underlyingToken.getAmount(data.lastAccruedProtocolFees);
+    this.normalizedUnclaimedWithdrawals = this.underlyingToken.getAmount(
+      data.normalizedUnclaimedWithdrawals
+    );
+    this.scaledPendingWithdrawals = nextScaledPendingWithdrawals;
+    this.pendingWithdrawalExpiry = toNumber(data.pendingWithdrawalExpiry);
+    this.isDelinquent = data.isDelinquent;
+    this.timeDelinquent = toNumber(data.timeDelinquent);
+    this.lastInterestAccruedTimestamp = toNumber(data.lastInterestAccruedTimestamp);
+    this.coverageLiquidity = this.underlyingToken.getAmount(data.coverageLiquidity);
+    this.commitmentFeeBips = data.commitmentFeeBips.isPresent
+      ? toNumber(data.commitmentFeeBips.value)
+      : undefined;
+    this.drawnAmount = data.drawnAmount.isPresent
+      ? this.underlyingToken.getAmount(data.drawnAmount.value)
+      : undefined;
+  }
+
   /* -------------------------------------------------------------------------- */
   /*                            Class Builder Methods                           */
   /* -------------------------------------------------------------------------- */
@@ -1383,6 +1444,39 @@ export class Market extends ContractWrapper {
         return Market.fromMarketDataV2(chainId, provider, data, signerAddress);
       })
     );
+  }
+
+  /**
+   * Refresh existing V2 market instances with the focused live lens surface when available.
+   * Falls back to broad V2 market reads so callers can use this as a route-intent API.
+   */
+  static async refreshMarketsV2LiveData(
+    chainId: SupportedChainId,
+    markets: Market[],
+    provider: SignerOrProvider
+  ): Promise<Market[]> {
+    if (markets.length === 0) {
+      return markets;
+    }
+
+    const marketAddresses = markets.map((market) => market.address);
+    if (hasUnifiedLatestLensForDirectReads(chainId)) {
+      try {
+        const updates = await getUnifiedMarketsLiveDataV2(chainId, provider, marketAddresses);
+        updates.forEach((update, i) => {
+          markets[i].updateWithLiveData(update);
+        });
+        return markets;
+      } catch (_) {
+        // Fall back to broad reads for older unified lens deployments.
+      }
+    }
+
+    const refreshedMarkets = await Market.getMarketsV2(chainId, marketAddresses, provider);
+    refreshedMarkets.forEach((market, i) => {
+      Object.assign(markets[i], market);
+    });
+    return markets;
   }
 
   /**

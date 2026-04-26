@@ -212,6 +212,34 @@ export type MarketDataWithLenderStatusV2_5StructOutput = {
   lenderStatus: LenderAccountDataV2_5StructOutput;
 };
 
+export type MarketLiveDataV2_5StructOutput = {
+  market: string;
+  isClosed: boolean;
+  protocolFeeBips: Numeric;
+  reserveRatioBips: Numeric;
+  annualInterestBips: Numeric;
+  scaleFactor: Numeric;
+  totalSupply: Numeric;
+  maxTotalSupply: Numeric;
+  scaledTotalSupply: Numeric;
+  totalAssets: Numeric;
+  lastAccruedProtocolFees: Numeric;
+  normalizedUnclaimedWithdrawals: Numeric;
+  scaledPendingWithdrawals: Numeric;
+  pendingWithdrawalExpiry: Numeric;
+  isDelinquent: boolean;
+  timeDelinquent: Numeric;
+  lastInterestAccruedTimestamp: Numeric;
+  coverageLiquidity: Numeric;
+  commitmentFeeBips: OptionalUintDataV2_5StructOutput;
+  drawnAmount: OptionalUintDataV2_5StructOutput;
+};
+
+export type MarketLiveDataWithLenderStatusV2_5StructOutput = {
+  market: MarketLiveDataV2_5StructOutput;
+  lenderStatus: LenderAccountDataV2_5StructOutput;
+};
+
 export type HooksDataForBorrowerStructOutput = {
   borrower: string;
   isRegisteredBorrower: boolean;

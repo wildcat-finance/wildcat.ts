@@ -26,6 +26,8 @@ import type {
   MarketDataWithLenderStatusStructOutput,
   MarketDataWithLenderStatusV2StructOutput,
   MarketDataWithLenderStatusV2_5StructOutput,
+  MarketLiveDataV2_5StructOutput,
+  MarketLiveDataWithLenderStatusV2_5StructOutput,
   RevolvingDeployMarketAndHooksArgs,
   RevolvingDeployMarketArgs,
   TokenMetadataStructOutput,
@@ -348,6 +350,11 @@ type LatestLensContract = AddressOnlyContract & {
   ) => Promise<
     Array<MarketDataWithLenderStatusV2StructOutput | MarketDataWithLenderStatusV2_5StructOutput>
   >;
+  getMarketsLiveDataV2: (markets: string[]) => Promise<MarketLiveDataV2_5StructOutput[]>;
+  getMarketsLiveDataWithLenderStatusV2: (
+    lender: string,
+    markets: string[]
+  ) => Promise<MarketLiveDataWithLenderStatusV2_5StructOutput[]>;
   getLenderAccountsData: (
     market: string,
     lenders: string[]
@@ -605,6 +612,18 @@ const getLatestLensLikeContract = (
       lender as Address,
       markets as Address[]
     ]),
+  getMarketsLiveDataV2: (markets) =>
+    readViemContract(getViemClient(provider), address, abi, "getMarketsLiveDataV2", [
+      markets as Address[]
+    ]),
+  getMarketsLiveDataWithLenderStatusV2: (lender, markets) =>
+    readViemContract(
+      getViemClient(provider),
+      address,
+      abi,
+      "getMarketsLiveDataWithLenderStatusV2",
+      [lender as Address, markets as Address[]]
+    ),
   getLenderAccountsData: (market, lenders) =>
     readViemContract(getViemClient(provider), address, abi, "getLenderAccountsData", [
       market as Address,

@@ -31321,6 +31321,387 @@ export const marketLensV2_5Abi = [
   {
     "inputs": [
       {
+        "internalType": "address[]",
+        "name": "markets",
+        "type": "address[]"
+      }
+    ],
+    "name": "getMarketsLiveDataV2",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "market",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "protocolFeeBips",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "reserveRatioBips",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "annualInterestBips",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "scaleFactor",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxTotalSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "scaledTotalSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalAssets",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastAccruedProtocolFees",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "normalizedUnclaimedWithdrawals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "scaledPendingWithdrawals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pendingWithdrawalExpiry",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isDelinquent",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timeDelinquent",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastInterestAccruedTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "coverageLiquidity",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OptionalUintDataV2_5",
+            "name": "commitmentFeeBips",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OptionalUintDataV2_5",
+            "name": "drawnAmount",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct MarketLiveDataV2_5[]",
+        "name": "data",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lender",
+        "type": "address"
+      },
+      {
+        "internalType": "address[]",
+        "name": "markets",
+        "type": "address[]"
+      }
+    ],
+    "name": "getMarketsLiveDataWithLenderStatusV2",
+    "outputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "market",
+                "type": "address"
+              },
+              {
+                "internalType": "bool",
+                "name": "isClosed",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "protocolFeeBips",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "reserveRatioBips",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "annualInterestBips",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "scaleFactor",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "totalSupply",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "maxTotalSupply",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "scaledTotalSupply",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "totalAssets",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "lastAccruedProtocolFees",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "normalizedUnclaimedWithdrawals",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "scaledPendingWithdrawals",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "pendingWithdrawalExpiry",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "isDelinquent",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "timeDelinquent",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "lastInterestAccruedTimestamp",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "coverageLiquidity",
+                "type": "uint256"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "value",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OptionalUintDataV2_5",
+                "name": "commitmentFeeBips",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "value",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct OptionalUintDataV2_5",
+                "name": "drawnAmount",
+                "type": "tuple"
+              }
+            ],
+            "internalType": "struct MarketLiveDataV2_5",
+            "name": "market",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "lender",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "scaledBalance",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "normalizedBalance",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "underlyingBalance",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "underlyingApproval",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "isBlockedFromDeposits",
+                "type": "bool"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "timeToLive",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "providerAddress",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint24",
+                    "name": "pullProviderIndex",
+                    "type": "uint24"
+                  },
+                  {
+                    "internalType": "uint24",
+                    "name": "pushProviderIndex",
+                    "type": "uint24"
+                  }
+                ],
+                "internalType": "struct RoleProviderDataV2_5",
+                "name": "lastProvider",
+                "type": "tuple"
+              },
+              {
+                "internalType": "bool",
+                "name": "canRefresh",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint32",
+                "name": "lastApprovalTimestamp",
+                "type": "uint32"
+              },
+              {
+                "internalType": "bool",
+                "name": "isKnownLender",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct LenderAccountDataV2_5",
+            "name": "lenderStatus",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct MarketLiveDataWithLenderStatusV2_5[]",
+        "name": "data",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "hooksFactoryAddress",
         "type": "address"

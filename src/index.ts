@@ -29,7 +29,8 @@ export const {
   getMarkets,
   getAllMarkets,
   getMarketsCount,
-  getPaginatedMarkets
+  getPaginatedMarkets,
+  refreshMarketsV2LiveData
 } = Market;
 
 export const { getWithdrawalBatch } = WithdrawalBatch;
@@ -41,7 +42,8 @@ export const {
   getMarketAccountV2,
   getMarketAccountsForLender,
   getAllMarketAccountsForLender,
-  getPaginatedMarketAccounts
+  getPaginatedMarketAccounts,
+  refreshMarketAccountsV2LiveData
 } = MarketAccount;
 
 export const { getTokenData, getTokensData } = Token;

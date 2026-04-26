@@ -15,6 +15,7 @@ import { Token } from "../../src/token";
 import {
   MarketDataStructOutput,
   MarketDataV2StructOutput,
+  MarketLiveDataV2_5StructOutput,
   MarketLenderStatusStructOutput
 } from "../../src/lens-types";
 
@@ -280,6 +281,41 @@ const makeUnifiedMarketData = (hooksFactory: string) => {
   };
 };
 
+const makeMarketLiveData = (
+  hooksFactory: string,
+  {
+    commitmentFeeBips = { isPresent: false, value: BigNumber.from(0) },
+    drawnAmount = { isPresent: false, value: BigNumber.from(0) }
+  }: {
+    commitmentFeeBips?: { isPresent: boolean; value: BigNumber };
+    drawnAmount?: { isPresent: boolean; value: BigNumber };
+  } = {}
+): MarketLiveDataV2_5StructOutput => {
+  const data = makeFactoryBackedMarketData(hooksFactory);
+  return {
+    market: data.marketToken.token,
+    isClosed: data.isClosed,
+    protocolFeeBips: data.protocolFeeBips,
+    reserveRatioBips: data.reserveRatioBips,
+    annualInterestBips: data.annualInterestBips,
+    scaleFactor: data.scaleFactor,
+    totalSupply: data.totalSupply,
+    maxTotalSupply: data.maxTotalSupply,
+    scaledTotalSupply: data.scaledTotalSupply,
+    totalAssets: data.totalAssets,
+    lastAccruedProtocolFees: data.lastAccruedProtocolFees,
+    normalizedUnclaimedWithdrawals: data.normalizedUnclaimedWithdrawals,
+    scaledPendingWithdrawals: data.scaledPendingWithdrawals,
+    pendingWithdrawalExpiry: data.pendingWithdrawalExpiry,
+    isDelinquent: data.isDelinquent,
+    timeDelinquent: data.timeDelinquent,
+    lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp,
+    coverageLiquidity: data.coverageLiquidity,
+    commitmentFeeBips,
+    drawnAmount
+  };
+};
+
 const makeMarketLenderStatus = (lender: string): MarketLenderStatusStructOutput => ({
   lender,
   isAuthorizedOnController: true,
@@ -473,6 +509,59 @@ describe("Account and token read routing", () => {
     expect(marketAccount.account).to.equal(account);
     expect(marketAccount.marketBalance.raw.toString()).to.equal("50");
     expect(marketAccount.isKnownLender).to.equal(true);
+  });
+
+  it("refreshes V2 lender market accounts through the live list endpoint", async () => {
+    const account = makeAddress(43);
+    const hooksFactory = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "HooksFactoryRevolving"
+    );
+    const market = Market.fromMarketDataV2(
+      constantsModule.SupportedChainId.Sepolia,
+      provider,
+      makeFactoryBackedMarketData(hooksFactory)
+    );
+    const marketAccount = MarketAccount.fromLenderAccountData(
+      market,
+      makeLenderAccountData(account)
+    );
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLensV2_5"
+    );
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getMarketsLiveDataWithLenderStatusV2");
+      expect((decoded.args as [string, string[]])[0].toLowerCase()).to.equal(account);
+      expect(
+        (decoded.args as [string, string[]])[1].map((address) => address.toLowerCase())
+      ).to.deep.equal([market.address.toLowerCase()]);
+
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketsLiveDataWithLenderStatusV2", [
+        {
+          market: makeMarketLiveData(hooksFactory, {
+            commitmentFeeBips: { isPresent: true, value: BigNumber.from(200) },
+            drawnAmount: { isPresent: true, value: BigNumber.from(300) }
+          }),
+          lenderStatus: makeLenderAccountData(account)
+        }
+      ]);
+    });
+
+    const result = await MarketAccount.refreshMarketAccountsV2LiveData(
+      constantsModule.SupportedChainId.Sepolia,
+      viemProvider as unknown as providers.Provider,
+      account,
+      [marketAccount]
+    );
+
+    expect(result[0]).to.equal(marketAccount);
+    expect(marketAccount.market.commitmentFeeBips).to.equal(200);
+    expect(marketAccount.market.drawnAmount?.raw).to.equal(300n);
+    expect(marketAccount.marketBalance.raw.toString()).to.equal("50");
   });
 
   it("falls back to the legacy lens for direct account reads when the latest lens rejects the market", async () => {

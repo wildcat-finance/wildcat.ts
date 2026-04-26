@@ -6,7 +6,8 @@ import {
   LenderAccountDataStructOutput,
   MarketDataWithLenderStatusV2StructOutput,
   LenderAccountDataV2_5StructOutput,
-  MarketDataWithLenderStatusV2_5StructOutput
+  MarketDataWithLenderStatusV2_5StructOutput,
+  MarketLiveDataWithLenderStatusV2_5StructOutput
 } from "../lens-types";
 import {
   assert,
@@ -31,6 +32,7 @@ import {
   getLatestLenderAccountsData,
   getLatestMarketDataWithLenderStatus,
   getLatestMarketsDataWithLenderStatus,
+  getUnifiedMarketsLiveDataWithLenderStatusV2,
   getLegacyAllMarketsDataWithLenderStatus,
   getLegacyMarketDataWithLenderStatus,
   getLegacyMarketLenderStatus,
@@ -97,6 +99,8 @@ export enum LenderRole {
 }
 
 const NullProviderIndex = 2 ** 24 - 1;
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
 const hasUnifiedLatestLensForAccountReads = (chainId: SupportedChainId): boolean => {
   return hasDeploymentAddress(chainId, "MarketLensV2_5");
 };
@@ -109,6 +113,16 @@ type MarketDataWithLenderStatusOutput =
   | MarketDataWithLenderStatusStructOutput
   | MarketDataWithLenderStatusV2StructOutput
   | MarketDataWithLenderStatusV2_5StructOutput;
+
+const zeroLenderBalances = (
+  info: LatestLenderAccountDataStructOutput
+): LatestLenderAccountDataStructOutput => ({
+  ...info,
+  scaledBalance: 0n,
+  normalizedBalance: 0n,
+  underlyingBalance: 0n,
+  underlyingApproval: 0n
+});
 
 export type MarketAccountArgs = {
   account: string;
@@ -1222,6 +1236,58 @@ export class MarketAccount {
       const infos = await getLegacyMarketsDataWithLenderStatus(chainId, provider, account, markets);
       return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
     }
+  }
+
+  /**
+   * Refresh existing V2 lender market accounts using the focused live lens surface when available.
+   * Falls back to existing broad V2 market reads plus lender-account reads.
+   */
+  static async refreshMarketAccountsV2LiveData(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider,
+    account: string | undefined,
+    marketAccounts: MarketAccount[]
+  ): Promise<MarketAccount[]> {
+    if (marketAccounts.length === 0) {
+      return marketAccounts;
+    }
+
+    const lender = account ?? ZERO_ADDRESS;
+    const shouldZeroBalances = !account;
+    const marketAddresses = marketAccounts.map((marketAccount) => marketAccount.market.address);
+
+    if (hasUnifiedLatestLensForAccountReads(chainId)) {
+      try {
+        const updates = await getUnifiedMarketsLiveDataWithLenderStatusV2(
+          chainId,
+          provider,
+          lender,
+          marketAddresses
+        );
+        updates.forEach((update: MarketLiveDataWithLenderStatusV2_5StructOutput, i) => {
+          marketAccounts[i].market.updateWithLiveData(update.market);
+          marketAccounts[i].updateWith(
+            shouldZeroBalances ? zeroLenderBalances(update.lenderStatus) : update.lenderStatus
+          );
+        });
+        return marketAccounts;
+      } catch (_) {
+        // Fall back to existing reads for older unified lens deployments.
+      }
+    }
+
+    const [refreshedMarkets, lenderStatuses] = await Promise.all([
+      Market.getMarketsV2(chainId, marketAddresses, provider),
+      getLatestLenderAccountsData(chainId, provider, lender, marketAddresses)
+    ]);
+
+    marketAccounts.forEach((marketAccount, i) => {
+      Object.assign(marketAccount.market, refreshedMarkets[i]);
+      marketAccount.updateWith(
+        shouldZeroBalances ? zeroLenderBalances(lenderStatuses[i]) : lenderStatuses[i]
+      );
+    });
+    return marketAccounts;
   }
 
   /**

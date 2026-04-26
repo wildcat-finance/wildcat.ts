@@ -21,7 +21,8 @@ import {
   MarketDataBaseV2_5StructOutput,
   MarketDataV2_5StructOutput,
   MarketDataStructOutput,
-  MarketDataV2StructOutput
+  MarketDataV2StructOutput,
+  MarketLiveDataV2_5StructOutput
 } from "../../src/lens-types";
 import {
   BIP_BIGINT,
@@ -285,6 +286,31 @@ const makeUnifiedMarketDataV2 = (
   market: makeUnifiedMarketData(hooksFactory),
   commitmentFeeBips,
   drawnAmount
+});
+
+const makeMarketLiveDataV2 = (
+  data: MarketDataV2_5StructOutput
+): MarketLiveDataV2_5StructOutput => ({
+  market: data.market.marketToken.token,
+  isClosed: data.market.isClosed,
+  protocolFeeBips: data.market.protocolFeeBips,
+  reserveRatioBips: data.market.reserveRatioBips,
+  annualInterestBips: data.market.annualInterestBips,
+  scaleFactor: data.market.scaleFactor,
+  totalSupply: data.market.totalSupply,
+  maxTotalSupply: data.market.maxTotalSupply,
+  scaledTotalSupply: data.market.scaledTotalSupply,
+  totalAssets: data.market.totalAssets,
+  lastAccruedProtocolFees: data.market.lastAccruedProtocolFees,
+  normalizedUnclaimedWithdrawals: data.market.normalizedUnclaimedWithdrawals,
+  scaledPendingWithdrawals: data.market.scaledPendingWithdrawals,
+  pendingWithdrawalExpiry: data.market.pendingWithdrawalExpiry,
+  isDelinquent: data.market.isDelinquent,
+  timeDelinquent: data.market.timeDelinquent,
+  lastInterestAccruedTimestamp: data.market.lastInterestAccruedTimestamp,
+  coverageLiquidity: data.market.coverageLiquidity,
+  commitmentFeeBips: data.commitmentFeeBips,
+  drawnAmount: data.drawnAmount
 });
 
 const makeSubgraphMarketData = (): Omit<
@@ -595,6 +621,48 @@ describe("Market direct read routing", () => {
 
     await market.update();
 
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
+    expect(market.commitmentFeeBips).to.equal(200);
+    expect(market.drawnAmount?.raw).to.equal(300n);
+  });
+
+  it("refreshes existing v2.5 markets through the live list endpoint", async () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
+    const initialData = makeUnifiedMarketDataV2(hooksFactory, {
+      commitmentFeeBips: { isPresent: true, value: BigNumber.from(175) },
+      drawnAmount: { isPresent: true, value: BigNumber.from(250) }
+    });
+    const updatedData = makeUnifiedMarketDataV2(hooksFactory, {
+      commitmentFeeBips: { isPresent: true, value: BigNumber.from(200) },
+      drawnAmount: { isPresent: true, value: BigNumber.from(300) }
+    });
+    const marketAddress = initialData.market.marketToken.token.toLowerCase();
+    const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getMarketsLiveDataV2");
+      expect((decoded.args?.[0] as string[]).map((address) => address.toLowerCase())).to.deep.equal(
+        [marketAddress]
+      );
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketsLiveDataV2", [
+        makeMarketLiveDataV2(updatedData)
+      ]);
+    });
+    const market = Market.fromMarketDataV2_5(
+      SupportedChainId.Sepolia,
+      viemProvider as unknown as providers.Provider,
+      initialData,
+      true
+    );
+
+    const result = await Market.refreshMarketsV2LiveData(
+      SupportedChainId.Sepolia,
+      [market],
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(result[0]).to.equal(market);
     expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
     expect(market.commitmentFeeBips).to.equal(200);
     expect(market.drawnAmount?.raw).to.equal(300n);

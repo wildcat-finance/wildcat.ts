@@ -13,6 +13,8 @@ import type {
   MarketDataWithLenderStatusStructOutput,
   MarketDataWithLenderStatusV2_5StructOutput,
   MarketDataWithLenderStatusV2StructOutput,
+  MarketLiveDataV2_5StructOutput,
+  MarketLiveDataWithLenderStatusV2_5StructOutput,
   MarketLenderStatusStructOutput,
   WithdrawalBatchDataStructOutput,
   WithdrawalBatchDataV2_5StructOutput,
@@ -147,6 +149,37 @@ export const getUnifiedMarketsDataV2 = (
     marketLensV2_5Abi as Abi,
     "getMarketsDataV2",
     [markets as Address[]]
+  );
+};
+
+export const getUnifiedMarketsLiveDataV2 = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  markets: string[]
+): Promise<MarketLiveDataV2_5StructOutput[]> => {
+  return readMarketLens<MarketLiveDataV2_5StructOutput[]>(
+    chainId,
+    provider,
+    "MarketLensV2_5",
+    marketLensV2_5Abi as Abi,
+    "getMarketsLiveDataV2",
+    [markets as Address[]]
+  );
+};
+
+export const getUnifiedMarketsLiveDataWithLenderStatusV2 = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  account: string,
+  markets: string[]
+): Promise<MarketLiveDataWithLenderStatusV2_5StructOutput[]> => {
+  return readMarketLens<MarketLiveDataWithLenderStatusV2_5StructOutput[]>(
+    chainId,
+    provider,
+    "MarketLensV2_5",
+    marketLensV2_5Abi as Abi,
+    "getMarketsLiveDataWithLenderStatusV2",
+    [account as Address, markets as Address[]]
   );
 };
 
