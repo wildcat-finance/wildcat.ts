@@ -1024,11 +1024,15 @@ export class Market extends ContractWrapper {
         useOnSetProtocolFeeBips: data.hooksConfig.useOnSetProtocolFeeBips
       };
       const { id } = data.hooks;
-      const template = hooksTemplateFromSubgraph(
-        chainId,
-        provider,
-        data.hooks.factoryHooksTemplate
-      );
+      const templateData = data.hooks.factoryHooksTemplate.name
+        ? data.hooks.factoryHooksTemplate
+        : {
+            ...data.hooks.factoryHooksTemplate,
+            // Older subgraph deployments can contain placeholder factory-template rows
+            // created before HooksTemplateAdded populated the template name.
+            name: fixedTermEndTime > 0 ? "FixedTermHooks" : "OpenTermHooks"
+          };
+      const template = hooksTemplateFromSubgraph(chainId, provider, templateData);
       hooksFactory = template.hooksFactory;
       const minimumDeposit = _minimumDeposit
         ? underlyingToken.getAmount(_minimumDeposit)

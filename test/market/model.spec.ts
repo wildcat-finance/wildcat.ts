@@ -9,7 +9,7 @@ import {
 } from "../../src/constants";
 import { Market } from "../../src/market";
 import { Token, toRawAmount } from "../../src/token";
-import { MarketVersion } from "../../src/types";
+import { HooksKind, MarketVersion } from "../../src/types";
 import {
   SubgraphHooksKind,
   SubgraphMarketType,
@@ -881,6 +881,17 @@ describe("Market model routing metadata", () => {
     expect(market.drawnAmount?.raw).to.equal(250n);
     expect(market.totalBorrowed?.raw).to.equal(0n);
     expect(market.depositRecords).to.deep.equal([]);
+  });
+
+  it("hydrates subgraph list markets with placeholder factory template names", () => {
+    const data = makeSubgraphMarketListData();
+    data.hooks!.factoryHooksTemplate.name = "";
+
+    const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+
+    expect(market.marketType).to.equal("revolving");
+    expect(market.hooksConfig?.kind).to.equal(HooksKind.OpenTerm);
+    expect(market.hooksConfig?.template?.name).to.equal("OpenTermHooks");
   });
 });
 
