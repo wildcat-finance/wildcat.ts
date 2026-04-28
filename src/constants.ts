@@ -183,6 +183,13 @@ const NonCanonicalHooksFactoryCapabilitiesByChainId: Partial<
   >
 > = {
   [SupportedChainId.Sepolia]: {
+    // Indexed historical legacy factory from the pre-RCF Sepolia subgraph.
+    // It must remain readable, but must not be used as the deploy target.
+    "0x10a64aba0159720f8a23e1a552800ca4eb21576c": {
+      marketType: "legacy",
+      indexed: true,
+      label: "Sepolia historical legacy hooks factory"
+    },
     // Indexed historical RCF factory. It must remain readable, but must not be
     // used as the deploy target for new revolving markets.
     "0xf4564015e524cf5629828e61f45ed339d998d85f": {
@@ -724,7 +731,7 @@ export const getWrapperFactoryContract = (
 };
 
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.0.33/gn`,
+  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.0.34/gn`,
   [SupportedChainId.Mainnet]:
     "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.22/gn",
   [SupportedChainId.PlasmaTestnet]:
