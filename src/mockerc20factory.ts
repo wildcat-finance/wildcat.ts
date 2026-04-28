@@ -61,7 +61,10 @@ export class TokenFactory extends ContractWrapper {
     return factory.populateDeployToken(name, symbol);
   }
 
-  async deployToken(name: string, symbol: string): Promise<SubmittedDeployment<Token> & { token: Token }> {
+  async deployToken(
+    name: string,
+    symbol: string
+  ): Promise<SubmittedDeployment<Token> & { token: Token }> {
     const { hash, receipt, transaction } = await submitPreparedTransactionAndWait(
       this.provider,
       this.signer,

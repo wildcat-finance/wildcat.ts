@@ -357,7 +357,9 @@ type LatestLensContract = AddressOnlyContract & {
   getMarketDataWithLenderStatus: (
     lender: string,
     market: string
-  ) => Promise<MarketDataWithLenderStatusV2StructOutput | MarketDataWithLenderStatusV2_5StructOutput>;
+  ) => Promise<
+    MarketDataWithLenderStatusV2StructOutput | MarketDataWithLenderStatusV2_5StructOutput
+  >;
   getMarketsData: (
     markets: string[]
   ) => Promise<Array<MarketDataV2StructOutput | MarketDataBaseV2_5StructOutput>>;

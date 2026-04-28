@@ -1,5 +1,4 @@
 import type { Result } from "@ethersproject/abi";
-
 export type MarketDeployedEvent = {
   args: Result & {
     hooksTemplate: string;
@@ -16,4 +15,3 @@ export type MarketDeployedEvent = {
     hooks: unknown;
   };
 };
-

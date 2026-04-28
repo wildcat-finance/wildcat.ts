@@ -98,7 +98,7 @@ const marketAbi = wildcatMarketAbi as unknown as any[];
 class LegacyDeploylessFactory {
   static abi: any[];
 
-  static createInterface() {
+  static createInterface(): utils.Interface {
     return new utils.Interface(this.abi);
   }
 
@@ -115,7 +115,7 @@ export class CheckBorrowersRegistered__factory extends ContractFactory {
     super(checkBorrowersRegisteredAbi, checkBorrowersRegisteredBytecode, signer);
   }
 
-  static createInterface() {
+  static createInterface(): utils.Interface {
     return new utils.Interface(checkBorrowersRegisteredAbi);
   }
 
@@ -132,7 +132,7 @@ export class CheckSafeSignature__factory extends ContractFactory {
     super(checkSafeSignatureAbi, checkSafeSignatureBytecode, signer);
   }
 
-  static createInterface() {
+  static createInterface(): utils.Interface {
     return new utils.Interface(checkSafeSignatureAbi);
   }
 

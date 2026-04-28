@@ -34,6 +34,18 @@ type ViemTokenMetadataField = ViemTokenMetadataObject[keyof ViemTokenMetadataObj
 type ViemTokenMetadataOutput =
   | ViemTokenMetadataObject
   | readonly [string, string, string, bigint | number, boolean];
+type BigIntCompatibilityMethodName =
+  | "isZero"
+  | "gt"
+  | "gte"
+  | "lt"
+  | "lte"
+  | "eq"
+  | "add"
+  | "sub"
+  | "mul"
+  | "div"
+  | "toNumber";
 
 declare global {
   interface BigInt {
@@ -59,10 +71,7 @@ const toCompatBigInt = (value: BigIntCompatNumberish): bigint => {
 };
 
 const installBigIntCompatibilityMethod = (
-  name: keyof Pick<
-    BigInt,
-    "isZero" | "gt" | "gte" | "lt" | "lte" | "eq" | "add" | "sub" | "mul" | "div" | "toNumber"
-  >,
+  name: BigIntCompatibilityMethodName,
   value: (this: bigint, value?: BigIntCompatNumberish) => bigint | boolean | number
 ) => {
   if (typeof BigInt.prototype[name] === "function") return;
