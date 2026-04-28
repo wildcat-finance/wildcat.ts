@@ -10,6 +10,7 @@ import { HooksCredential, HooksKind, MarketVersion } from "../types";
 import { TokenAmount, toRawAmount } from "../token";
 import {
   assert,
+  BigintNumberish,
   parseSubgraphLenderHooksAccess,
   parseSubgraphLenderStatus,
   toNumber
@@ -26,7 +27,7 @@ export type GetActiveLendersByMarketOptions = SubgraphGetActiveLendersByMarketQu
 type BasicLenderArgs = {
   market: Market;
   address: string;
-  scaledBalance: bigint;
+  scaledBalance: BigintNumberish;
   addedTimestamp: number;
   isKnownLender?: boolean;
   /** For V2 markets - credentials on market hooks instance */
@@ -37,12 +38,14 @@ type BasicLenderArgs = {
   role?: LenderRole;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface BasicLenderData extends BasicLenderArgs {}
+export interface BasicLenderData extends Omit<BasicLenderArgs, "scaledBalance"> {
+  scaledBalance: bigint;
+}
 
 export class BasicLenderData {
   constructor(args: BasicLenderArgs) {
     Object.assign(this, args);
+    this.scaledBalance = toRawAmount(args.scaledBalance);
   }
 
   get marketBalance(): TokenAmount {

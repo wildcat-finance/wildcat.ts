@@ -1,4 +1,4 @@
-import type { Abi, Address } from "viem";
+import { encodeFunctionData, type Abi, type Address } from "viem";
 import { iERC20Abi, marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "./abi";
 import type { TokenMetadataStructOutput, TokenMetadataV2_5StructOutput } from "./lens-types";
 import { ContractWrapper, PartialTransaction, SignerOrProvider, TransactionHash } from "./types";
@@ -21,6 +21,7 @@ import { SubgraphMarketDataFragment, SubgraphToken } from "./gql/graphql";
 import { submitPreparedTransaction } from "./internal/viem-write";
 
 type RhsAmount = BigintNumberish | TokenAmount;
+type BigIntCompatNumberish = bigint | number | string | { toString(): string };
 type TokenMetadataOutput = TokenMetadataStructOutput | TokenMetadataV2_5StructOutput;
 type ViemTokenMetadataObject = {
   token: string;
@@ -33,6 +34,77 @@ type ViemTokenMetadataField = ViemTokenMetadataObject[keyof ViemTokenMetadataObj
 type ViemTokenMetadataOutput =
   | ViemTokenMetadataObject
   | readonly [string, string, string, bigint | number, boolean];
+
+declare global {
+  interface BigInt {
+    isZero(): boolean;
+    gt(value: BigIntCompatNumberish): boolean;
+    gte(value: BigIntCompatNumberish): boolean;
+    lt(value: BigIntCompatNumberish): boolean;
+    lte(value: BigIntCompatNumberish): boolean;
+    eq(value: BigIntCompatNumberish): boolean;
+    add(value: BigIntCompatNumberish): bigint;
+    sub(value: BigIntCompatNumberish): bigint;
+    mul(value: BigIntCompatNumberish): bigint;
+    div(value: BigIntCompatNumberish): bigint;
+    toNumber(): number;
+  }
+}
+
+const toCompatBigInt = (value: BigIntCompatNumberish): bigint => {
+  if (typeof value === "bigint") return value;
+  if (typeof value === "number") return BigInt(value);
+  if (typeof value === "string") return BigInt(value);
+  return BigInt(value.toString());
+};
+
+const installBigIntCompatibilityMethod = (
+  name: keyof Pick<
+    BigInt,
+    "isZero" | "gt" | "gte" | "lt" | "lte" | "eq" | "add" | "sub" | "mul" | "div" | "toNumber"
+  >,
+  value: (this: bigint, value?: BigIntCompatNumberish) => bigint | boolean | number
+) => {
+  if (typeof BigInt.prototype[name] === "function") return;
+  Object.defineProperty(BigInt.prototype, name, {
+    value,
+    configurable: true
+  });
+};
+
+installBigIntCompatibilityMethod("isZero", function isZero(this: bigint) {
+  return this.valueOf() === 0n;
+});
+installBigIntCompatibilityMethod("gt", function gt(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() > toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("gte", function gte(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() >= toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("lt", function lt(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() < toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("lte", function lte(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() <= toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("eq", function eq(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() === toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("add", function add(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() + toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("sub", function sub(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() - toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("mul", function mul(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() * toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("div", function div(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() / toCompatBigInt(value ?? 1n);
+});
+installBigIntCompatibilityMethod("toNumber", function toNumberCompat(this: bigint) {
+  return Number(this.valueOf());
+});
 
 const getViemTokenMetadataValue = (
   metadata: ViemTokenMetadataOutput,
@@ -67,7 +139,11 @@ export const minTokenAmount = (...amounts: TokenAmount[]): TokenAmount => {
 };
 
 export class TokenAmount {
-  constructor(public raw: bigint, public token: Token) {}
+  public raw: bigint;
+
+  constructor(raw: RhsAmount, public token: Token) {
+    this.raw = toRawAmount(raw);
+  }
 
   get name(): string {
     return this.token.name;
@@ -149,6 +225,17 @@ export class TokenAmount {
 }
 
 export class Token extends ContractWrapper {
+  public contract: {
+    address: string;
+    interface: {
+      encodeFunctionData: (functionName: string, args?: readonly unknown[]) => string;
+    };
+    allowance: (owner: string, spender: string) => Promise<bigint>;
+    balanceOf: (account: string) => Promise<bigint>;
+    totalSupply: () => Promise<bigint>;
+    approve: (spender: string, amount: RhsAmount) => Promise<TransactionHash>;
+  };
+
   constructor(
     public chainId: SupportedChainId,
     public address: string,
@@ -159,6 +246,21 @@ export class Token extends ContractWrapper {
     provider: SignerOrProvider
   ) {
     super(provider);
+    this.contract = {
+      address,
+      interface: {
+        encodeFunctionData: (functionName, args = []) =>
+          encodeFunctionData({
+            abi: iERC20Abi,
+            functionName,
+            args
+          } as Parameters<typeof encodeFunctionData>[0])
+      },
+      allowance: async (owner, spender) => (await this.allowance(owner, spender)).raw,
+      balanceOf: async (account) => (await this.balanceOf(account)).raw,
+      totalSupply: async () => (await this.totalSupply()).raw,
+      approve: (spender, amount) => this.approve(spender, amount)
+    };
   }
 
   async faucet(): Promise<TransactionHash> {

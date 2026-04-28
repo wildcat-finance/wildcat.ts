@@ -65,7 +65,7 @@ export class WrapperFactory extends ContractWrapper {
     chainId: SupportedChainId,
     signer: Signer,
     market: string
-  ): Promise<SubmittedDeployment<string>> {
+  ): Promise<SubmittedDeployment<string> & { wrapper: string }> {
     const factory = WrapperFactory.getFactory(chainId, signer);
     return factory.createWrapper(market);
   }
@@ -89,8 +89,8 @@ export class WrapperFactory extends ContractWrapper {
     );
   }
 
-  async createWrapper(market: string): Promise<SubmittedDeployment<string>> {
-    const { hash, receipt } = await submitPreparedTransactionAndWait(
+  async createWrapper(market: string): Promise<SubmittedDeployment<string> & { wrapper: string }> {
+    const { hash, receipt, transaction } = await submitPreparedTransactionAndWait(
       this.provider,
       this.signer,
       this.populateCreateWrapper(market)
@@ -101,7 +101,7 @@ export class WrapperFactory extends ContractWrapper {
       logs: receipt.logs
     })[0];
     const wrapper = event?.args.wrapper ?? (await this.getWrapperForMarket(market));
-    return { hash, receipt, result: wrapper };
+    return { hash, receipt, transaction, result: wrapper, wrapper };
   }
 
   populateCreateWrapper(market: string): PartialTransaction {
@@ -335,11 +335,16 @@ export class TokenWrapper extends ContractWrapper {
     chainId: SupportedChainId,
     signer: Signer,
     marketAddress: string
-  ): Promise<SubmittedDeployment<TokenWrapper>> {
+  ): Promise<SubmittedDeployment<TokenWrapper> & { wrapper: TokenWrapper }> {
     const factory = WrapperFactory.getFactory(chainId, signer);
-    const { result: wrapperAddress, receipt, hash } = await factory.createWrapper(marketAddress);
+    const {
+      result: wrapperAddress,
+      receipt,
+      hash,
+      transaction
+    } = await factory.createWrapper(marketAddress);
     const wrapper = await TokenWrapper.fromAddress(chainId, signer, wrapperAddress);
-    return { result: wrapper, receipt, hash };
+    return { result: wrapper, receipt, hash, transaction, wrapper };
   }
 
   private readWrapper<Result>(

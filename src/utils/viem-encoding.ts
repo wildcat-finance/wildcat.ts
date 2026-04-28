@@ -38,9 +38,9 @@ export const prepareTransaction = ({
     args
   } as EncodeFunctionDataParameters);
   return {
-    to: to as Address,
+    to,
     data,
-    value: toBigint(value)
+    value: toBigint(value).toString()
   };
 };
 
@@ -51,5 +51,5 @@ export const toSafeTransactionInput = ({
 }: PreparedTransaction): SafeTransactionInput => ({
   to,
   data,
-  value: (value ?? 0n).toString()
+  value
 });

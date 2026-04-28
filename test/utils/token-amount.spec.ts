@@ -25,6 +25,11 @@ describe("TokenAmount bigint model", () => {
     const amount = token.parseAmount("123.4567");
 
     expect(amount.raw).to.equal(123_456_700n);
+    expect(amount.raw.isZero()).to.equal(false);
+    expect(amount.raw.gt(123_456_699n)).to.equal(true);
+    expect(amount.raw.lt(123_456_701n)).to.equal(true);
+    expect(amount.raw.mul(2).div(2).eq(amount.raw)).to.equal(true);
+    expect(amount.raw.toNumber()).to.equal(123_456_700);
     expect(amount.toFixed(2)).to.equal("123.45");
     expect(amount.format(2, true)).to.equal("123.45 mUSD");
   });

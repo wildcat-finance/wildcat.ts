@@ -1,6 +1,81 @@
-import { encodeAbiParameters, zeroAddress, type Address, type Hex } from "viem";
+import {
+  decodeEventLog,
+  encodeAbiParameters,
+  toEventSelector,
+  zeroAddress,
+  type AbiEvent,
+  type Address,
+  type Hex
+} from "viem";
 import { MarketHooksInstanceInputs } from "../types";
 import { assert } from "../utils";
+
+const marketDeployedEventAbi = {
+  anonymous: false,
+  inputs: [
+    { indexed: true, internalType: "address", name: "hooksTemplate", type: "address" },
+    { indexed: true, internalType: "address", name: "market", type: "address" },
+    { indexed: false, internalType: "string", name: "name", type: "string" },
+    { indexed: false, internalType: "string", name: "symbol", type: "string" },
+    { indexed: false, internalType: "address", name: "asset", type: "address" },
+    { indexed: false, internalType: "uint256", name: "maxTotalSupply", type: "uint256" },
+    { indexed: false, internalType: "uint256", name: "annualInterestBips", type: "uint256" },
+    { indexed: false, internalType: "uint256", name: "delinquencyFeeBips", type: "uint256" },
+    { indexed: false, internalType: "uint256", name: "withdrawalBatchDuration", type: "uint256" },
+    { indexed: false, internalType: "uint256", name: "reserveRatioBips", type: "uint256" },
+    { indexed: false, internalType: "uint256", name: "delinquencyGracePeriod", type: "uint256" },
+    { indexed: false, internalType: "uint256", name: "hooks", type: "uint256" }
+  ],
+  name: "MarketDeployed",
+  type: "event"
+} as const satisfies AbiEvent;
+
+const hooksFactoryEventAbiByName = {
+  MarketDeployed: marketDeployedEventAbi
+} as const;
+
+type HooksFactoryEventName = keyof typeof hooksFactoryEventAbiByName;
+
+function getHooksFactoryEventAbi(eventName: string): AbiEvent {
+  if (eventName in hooksFactoryEventAbiByName) {
+    return hooksFactoryEventAbiByName[eventName as HooksFactoryEventName];
+  }
+  throw new Error(`Unsupported hooks factory event: ${eventName}`);
+}
+
+export type LegacyEventResult = Record<string, unknown>;
+
+export type LegacyHooksFactoryContractFacade = {
+  address: string;
+  interface: {
+    getEventTopic: (eventName: string) => string;
+    decodeEventLog: (
+      eventName: string,
+      data: string,
+      topics?: readonly string[]
+    ) => LegacyEventResult;
+  };
+};
+
+export function createLegacyHooksFactoryContractFacade(
+  address: string
+): LegacyHooksFactoryContractFacade {
+  return {
+    address,
+    interface: {
+      getEventTopic: (eventName) => toEventSelector(getHooksFactoryEventAbi(eventName)),
+      decodeEventLog: (eventName, data, topics) => {
+        const eventTopics = topics as [Hex, ...Hex[]] | undefined;
+        const decoded = decodeEventLog({
+          abi: [getHooksFactoryEventAbi(eventName)],
+          data: data as Hex,
+          topics: eventTopics ?? []
+        });
+        return decoded.args as LegacyEventResult;
+      }
+    }
+  };
+}
 
 export function encodeMarketHooksInstanceInputs(args: MarketHooksInstanceInputs): Hex {
   assert(

@@ -18,6 +18,7 @@ import type {
   CollateralContractDataStructOutput,
   LenderAccountDataStructOutput,
   LenderAccountDataV2_5StructOutput,
+  HooksDataForBorrowerStructOutput,
   LegacyDeployMarketAndHooksArgs,
   LegacyDeployMarketArgs,
   MarketDataStructOutput,
@@ -337,6 +338,10 @@ type EncodingInterface = {
 
 type LegacyLensContract = AddressOnlyContract & {
   getMarketData: (market: string) => Promise<MarketDataStructOutput>;
+  getMarketDataWithLenderStatus: (
+    lender: string,
+    market: string
+  ) => Promise<MarketDataWithLenderStatusStructOutput>;
   getMarketsData: (markets: string[]) => Promise<MarketDataStructOutput[]>;
   getMarketsDataWithLenderStatus: (
     lender: string,
@@ -345,9 +350,14 @@ type LegacyLensContract = AddressOnlyContract & {
 };
 
 type LatestLensContract = AddressOnlyContract & {
+  getHooksDataForBorrower: (borrower: string) => Promise<HooksDataForBorrowerStructOutput>;
   getMarketData: (
     market: string
   ) => Promise<MarketDataV2StructOutput | MarketDataBaseV2_5StructOutput>;
+  getMarketDataWithLenderStatus: (
+    lender: string,
+    market: string
+  ) => Promise<MarketDataWithLenderStatusV2StructOutput | MarketDataWithLenderStatusV2_5StructOutput>;
   getMarketsData: (
     markets: string[]
   ) => Promise<Array<MarketDataV2StructOutput | MarketDataBaseV2_5StructOutput>>;
@@ -480,6 +490,14 @@ export const getLensContract = (
       readViemContract(getViemClient(provider), address, marketLensAbi as Abi, "getMarketData", [
         market as Address
       ]),
+    getMarketDataWithLenderStatus: (lender, market) =>
+      readViemContract(
+        getViemClient(provider),
+        address,
+        marketLensAbi as Abi,
+        "getMarketDataWithLenderStatus",
+        [lender as Address, market as Address]
+      ),
     getMarketsData: (markets) =>
       readViemContract(getViemClient(provider), address, marketLensAbi as Abi, "getMarketsData", [
         markets as Address[]
@@ -608,8 +626,17 @@ const getLatestLensLikeContract = (
   abi: Abi
 ): LatestLensContract => ({
   address,
+  getHooksDataForBorrower: (borrower) =>
+    readViemContract(getViemClient(provider), address, abi, "getHooksDataForBorrower", [
+      borrower as Address
+    ]),
   getMarketData: (market) =>
     readViemContract(getViemClient(provider), address, abi, "getMarketData", [market as Address]),
+  getMarketDataWithLenderStatus: (lender, market) =>
+    readViemContract(getViemClient(provider), address, abi, "getMarketDataWithLenderStatus", [
+      lender as Address,
+      market as Address
+    ]),
   getMarketsData: (markets) =>
     readViemContract(getViemClient(provider), address, abi, "getMarketsData", [
       markets as Address[]

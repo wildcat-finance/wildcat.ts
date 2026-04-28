@@ -12,7 +12,7 @@ import {
   PartialTransaction,
   SignerOrProvider
 } from "../types";
-import { zeroAddress, type Address, type Hex } from "viem";
+import { zeroAddress } from "viem";
 import { Token, toRawAmount } from "../token";
 import { toNumber, type BigintNumberish } from "./bigint";
 
@@ -140,9 +140,9 @@ export const removeUnusedTxFields = ({
   assert(to !== undefined, "to is undefined");
   assert(data !== undefined, "data is undefined");
   return {
-    to: to as Address,
-    data: data as Hex,
-    value: toRawAmount(value)
+    to,
+    data,
+    value: toRawAmount(value).toString()
   };
 };
 

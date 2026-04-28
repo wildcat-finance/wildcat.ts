@@ -704,7 +704,7 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    const { hash, receipt } = await submitPreparedTransactionAndWait(
+    const { hash, receipt, transaction } = await submitPreparedTransactionAndWait(
       this.market.provider,
       this.market.signer,
       prepareTransaction({
@@ -727,6 +727,7 @@ export class MarketAccount {
     return {
       hash,
       receipt,
+      transaction,
       result: withdrawal
     };
   }
@@ -739,7 +740,7 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    const { hash, receipt } = await submitPreparedTransactionAndWait(
+    const { hash, receipt, transaction } = await submitPreparedTransactionAndWait(
       this.market.provider,
       this.market.signer,
       this.market.version === MarketVersion.V2
@@ -768,6 +769,7 @@ export class MarketAccount {
     return {
       hash,
       receipt,
+      transaction,
       result: withdrawal
     };
   }

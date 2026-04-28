@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import * as sdk from "../../src";
+import * as typechain from "../../src/typechain";
 
 describe("SDK public surface smoke", () => {
   it("exports the canonical read helpers and explicit V2 compatibility wrappers", () => {
@@ -24,5 +25,13 @@ describe("SDK public surface smoke", () => {
     expect(Array.isArray(sdk.marketLensV2_5Abi)).to.equal(true);
     expect(Array.isArray(sdk.wildcatArchControllerAbi)).to.equal(true);
     expect("typechain" in sdk).to.equal(false);
+  });
+
+  it("keeps the legacy dist/typechain subpath available for existing app code", () => {
+    expect(typeof typechain.CheckBorrowersRegistered__factory.bytecode).to.equal("string");
+    expect(typeof typechain.CheckSafeSignature__factory.bytecode).to.equal("string");
+    expect(typeof typechain.ISafe__factory.connect).to.equal("function");
+    expect(typeof typechain.WildcatMarket__factory.connect).to.equal("function");
+    expect(typeof typechain.WildcatMarketV2__factory.connect).to.equal("function");
   });
 });

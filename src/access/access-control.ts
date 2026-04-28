@@ -43,12 +43,18 @@ import {
   ChangeLenderRoleStatus,
   DeployMarketPreview,
   DeployMarketStatus,
+  LegacyDeployMarketPreview,
   readyLegacyDeployMarketPreview,
-  readyRevolvingDeployMarketPreview
+  readyRevolvingDeployMarketPreview,
+  RevolvingDeployMarketPreview
 } from "./validation";
 import { encodeRevolvingMarketData } from "./revolving";
 import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
-import { encodeMarketHooksInstanceInputs } from "./utils";
+import {
+  createLegacyHooksFactoryContractFacade,
+  encodeMarketHooksInstanceInputs,
+  LegacyHooksFactoryContractFacade
+} from "./utils";
 import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iOpenTermHooksAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
 
@@ -69,6 +75,7 @@ export class OpenTermHooks extends ContractWrapper {
   }: OpenTermHooksArgs) {
     super(provider);
     Object.assign(this, args);
+    this.contract = { address: this.address };
     this.roleProviders = roleProviders;
     this.constraints = constraints;
   }
@@ -298,6 +305,7 @@ export type OpenTermHooksTemplateArgs = {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface OpenTermHooksTemplate extends OpenTermHooksTemplateArgs {
   hooksFactory: string;
+  contract: LegacyHooksFactoryContractFacade;
 }
 
 export class OpenTermHooksTemplate extends ContractWrapper {
@@ -310,7 +318,11 @@ export class OpenTermHooksTemplate extends ContractWrapper {
   ) {
     super(provider);
     const hooksFactory = args.hooksFactory ?? getDeploymentAddress(chainId, "HooksFactory");
-    Object.assign(this, { ...args, hooksFactory });
+    Object.assign(this, {
+      ...args,
+      hooksFactory,
+      contract: createLegacyHooksFactoryContractFacade(hooksFactory)
+    });
   }
 
   updateWith(
@@ -327,6 +339,7 @@ export class OpenTermHooksTemplate extends ContractWrapper {
     this.signerAddress = signerAddress;
     this.isRegisteredBorrower = isRegisteredBorrower;
     this.hooksFactory = hooksFactory;
+    this.contract = createLegacyHooksFactoryContractFacade(hooksFactory);
   }
 
   static fromLensData(
@@ -394,6 +407,13 @@ export class OpenTermHooksTemplate extends ContractWrapper {
     });
   }
 
+  previewDeployMarket(
+    args: LegacyOpenTermMarketDeploymentArgs & MarketHooksInstanceInputs
+  ): LegacyDeployMarketPreview;
+  previewDeployMarket(
+    args: RevolvingOpenTermMarketDeploymentArgs & MarketHooksInstanceInputs
+  ): RevolvingDeployMarketPreview;
+  previewDeployMarket(args: OpenTermMarketDeploymentArgs): DeployMarketPreview;
   previewDeployMarket({
     marketType,
     commitmentFeeBips,

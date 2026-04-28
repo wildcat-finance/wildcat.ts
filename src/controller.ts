@@ -53,6 +53,7 @@ export class MarketController extends ContractWrapper {
     public numMarkets: number = 0
   ) {
     super(provider);
+    this.contract = { address };
     if (markets.length > numMarkets) {
       this.numMarkets = markets.length;
     }
@@ -275,7 +276,7 @@ export class MarketController extends ContractWrapper {
     if (!this.isDeployed) {
       assert(this.isRegisteredBorrower, "Borrower is not registered");
     }
-    const { hash, receipt } = await submitPreparedTransactionAndWait(
+    const { hash, receipt, transaction } = await submitPreparedTransactionAndWait(
       this.provider,
       this.signer,
       this.encodeDeployMarket(params)
@@ -291,7 +292,7 @@ export class MarketController extends ContractWrapper {
     this.markets.push(market);
     this.isDeployed = true;
     this.isRegisteredBorrower = true;
-    return { hash, receipt, result: market };
+    return { hash, receipt, transaction, result: market };
   }
 
   /* -------------------------------------------------------------------------- */

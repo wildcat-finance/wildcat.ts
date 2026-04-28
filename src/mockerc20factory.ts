@@ -46,7 +46,7 @@ export class TokenFactory extends ContractWrapper {
     signer: Signer,
     name: string,
     symbol: string
-  ): Promise<SubmittedDeployment<Token>> {
+  ): Promise<SubmittedDeployment<Token> & { token: Token }> {
     const factory = TokenFactory.getFactory(chainId, signer);
     return factory.deployToken(name, symbol);
   }
@@ -61,8 +61,8 @@ export class TokenFactory extends ContractWrapper {
     return factory.populateDeployToken(name, symbol);
   }
 
-  async deployToken(name: string, symbol: string): Promise<SubmittedDeployment<Token>> {
-    const { hash, receipt } = await submitPreparedTransactionAndWait(
+  async deployToken(name: string, symbol: string): Promise<SubmittedDeployment<Token> & { token: Token }> {
+    const { hash, receipt, transaction } = await submitPreparedTransactionAndWait(
       this.provider,
       this.signer,
       this.populateDeployToken(name, symbol)
@@ -84,7 +84,7 @@ export class TokenFactory extends ContractWrapper {
       true,
       this.provider
     );
-    return { hash, receipt, result: token };
+    return { hash, receipt, transaction, result: token, token };
   }
 
   populateDeployToken(name: string, symbol: string): PartialTransaction {

@@ -1,3 +1,4 @@
+import { encodeFunctionData } from "viem";
 import {
   MarketDataBaseV2_5StructOutput,
   MarketDataStructOutput,
@@ -246,6 +247,13 @@ export interface Market
 }
 
 export class Market extends ContractWrapper {
+  public contract!: {
+    address: string;
+    interface: {
+      encodeFunctionData: (functionName: string, args?: readonly unknown[]) => string;
+    };
+  };
+
   public depositRecords: DepositRecord[];
   public repaymentRecords: RepaymentRecord[];
   public borrowRecords: BorrowRecord[];
@@ -258,7 +266,18 @@ export class Market extends ContractWrapper {
       address,
       name,
       symbol,
-      decimals
+      decimals,
+      contract: {
+        address,
+        interface: {
+          encodeFunctionData: (functionName: string, args: readonly unknown[] = []) =>
+            encodeFunctionData({
+              abi: wildcatMarketAbi,
+              functionName,
+              args
+            } as Parameters<typeof encodeFunctionData>[0])
+        }
+      }
     });
     Object.assign(this, args);
     this.depositRecords = (args.depositRecords ?? []).map((log) =>
@@ -633,7 +652,10 @@ export class Market extends ContractWrapper {
    *
    * @return apr paid by borrower in ray
    */
-  get effectiveBorrowerAPR(): bigint {
+  // Preserve ethers-era consumers whose formatting helpers typed APR rays as BigNumber.
+  // Runtime remains bigint, with BigInt compatibility methods installed by token.ts.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get effectiveBorrowerAPR(): any {
     return (
       bipMulBigint(this.currentBaseLenderAPR, BIP_BIGINT + BigInt(this.protocolFeeBips)) +
       this.currentPenaltyAPR
@@ -646,7 +668,8 @@ export class Market extends ContractWrapper {
    *
    * @return apr earned by lender in ray
    */
-  get effectiveLenderAPR(): bigint {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get effectiveLenderAPR(): any {
     return this.currentBaseLenderAPR + this.currentPenaltyAPR;
   }
 

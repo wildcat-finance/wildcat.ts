@@ -27,7 +27,7 @@ export type Provider = {
   [key: string]: any;
   request?: (args: RpcRequestArgs) => Promise<unknown>;
   send?: (method: string, params: unknown[]) => Promise<unknown>;
-  call?: (transaction: { to?: string; data?: string }, blockNumber?: number) => Promise<string>;
+  call: (transaction: { to?: string; data?: string }, blockNumber?: number) => Promise<string>;
   getCode?: (address: string) => Promise<string>;
   provider?: unknown;
 };
@@ -36,7 +36,7 @@ export type Signer = {
   _isSigner?: boolean;
   provider?: Provider;
   chainId?: number;
-  call?: (transaction: { to?: string; data?: string }, blockNumber?: number) => Promise<string>;
+  call: (transaction: { to?: string; data?: string }, blockNumber?: number) => Promise<string>;
   getCode?: (address: string) => Promise<string>;
   getAddress: () => Promise<string>;
   sendTransaction: (transaction: {
@@ -53,6 +53,8 @@ export const Signer = {
 } as const;
 
 export abstract class ContractWrapper {
+  public contract: { address: string } = { address: "" };
+
   constructor(protected _provider: SignerOrProvider) {}
 
   get signer(): Signer {
@@ -77,9 +79,9 @@ export abstract class ContractWrapper {
 }
 
 export type PreparedTransaction = {
-  to: Address;
-  data: Hex;
-  value?: bigint;
+  to: string;
+  data: string;
+  value: string;
 };
 
 export type SafeTransactionInput = {
@@ -90,11 +92,34 @@ export type SafeTransactionInput = {
 
 export type PartialTransaction = PreparedTransaction;
 
-export type TransactionHash = Hash;
+export type SubmittedTransaction = {
+  hash: Hash;
+  wait: () => Promise<TransactionReceipt>;
+};
+
+export type TransactionHashLike =
+  | string
+  | {
+      hash: string;
+    };
+
+export type TransactionHash = SubmittedTransaction & {
+  toString: () => Hash;
+  valueOf: () => Hash;
+  [Symbol.toPrimitive]: () => Hash;
+};
+
+export const toTransactionHashString = (transaction: TransactionHashLike): Hash => {
+  if (typeof transaction === "string") {
+    return transaction as Hash;
+  }
+  return transaction.hash as Hash;
+};
 
 export type SubmittedTransactionResult<T> = {
   hash: Hash;
   receipt: TransactionReceipt;
+  transaction: SubmittedTransaction;
   result: T;
 };
 

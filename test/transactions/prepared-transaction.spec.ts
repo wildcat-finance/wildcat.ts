@@ -63,7 +63,7 @@ describe("prepared transaction encoding", () => {
     expect(tx.data).to.equal(
       encodeFunctionData({ abi: iERC20Abi, functionName: "approve", args: [spender, 123n] })
     );
-    expect(tx.value).to.equal(0n);
+    expect(tx.value).to.equal("0");
     expect(toSafeTransactionInput(tx)).to.deep.equal({
       to: token,
       data: tx.data,
@@ -128,7 +128,7 @@ describe("prepared transaction encoding", () => {
         functionName: "authorizeLenders",
         args: [lenders]
       }),
-      value: 0n
+      value: "0"
     });
   });
 
@@ -196,7 +196,7 @@ describe("prepared transaction encoding", () => {
     expect(tx).to.deep.equal({
       to: token.address,
       data: encodeFunctionData({ abi: iERC20Abi, functionName: "approve", args: [spender, 123n] }),
-      value: 0n
+      value: "0"
     });
   });
 
@@ -219,7 +219,8 @@ describe("prepared transaction encoding", () => {
 
     const hash = await submitPreparedTransaction(signer, tx);
 
-    expect(hash).to.equal(expectedHash);
+    expect(String(hash)).to.equal(expectedHash);
+    expect(hash.hash).to.equal(expectedHash);
     expect(sentTransaction).to.deep.equal({
       to: tx.to,
       data: tx.data,
