@@ -1,3 +1,4 @@
+import { ApolloClient, FetchPolicy, gql, NormalizedCacheObject } from "@apollo/client";
 import { Token, TokenAmount, toRawAmount } from "../token";
 import {
   ContractWrapper,
@@ -7,7 +8,7 @@ import {
   SubmittedDeployment,
   TransactionHash
 } from "../types";
-import { SupportedChainId, getDeploymentAddress } from "../constants";
+import { SupportedChainId, getDeploymentAddress, hasDeploymentAddress } from "../constants";
 import { assert, prepareTransaction, toNumber } from "../utils";
 import { iERC20Abi, wildcat4626WrapperAbi, wildcat4626WrapperFactoryAbi } from "../abi";
 import {
@@ -17,6 +18,7 @@ import {
 import { parseEventLogs, zeroAddress } from "viem";
 import { getViemPublicClientFromEthers } from "../internal/ethers-viem";
 import { readViemContract } from "../internal/viem-read";
+import { SubgraphTokenDataFragment } from "../gql/graphql";
 
 const getErc20Token = async (
   chainId: SupportedChainId,
@@ -121,6 +123,99 @@ export type TokenWrapperArgs = {
   shareToken: Token;
 };
 
+export type SubgraphTokenWrapperData = {
+  id: string;
+  address: string;
+  marketAddress: string;
+  marketToken: SubgraphTokenDataFragment;
+  token: SubgraphTokenDataFragment;
+  factory: {
+    id: string;
+    address: string;
+  };
+  deployedEvent?: {
+    blockNumber: number;
+    blockTimestamp: number;
+    transactionHash: string;
+  } | null;
+};
+
+type GetTokenWrapperForMarketQuery = {
+  market?: {
+    tokenWrapper?: SubgraphTokenWrapperData | null;
+  } | null;
+};
+
+type GetTokenWrapperForMarketQueryVariables = {
+  market: string;
+};
+
+export type GetTokenWrapperForMarketOptions = {
+  chainId: SupportedChainId;
+  signerOrProvider: SignerOrProvider;
+  market: string;
+  fetchPolicy?: FetchPolicy;
+  fallbackToFactory?: boolean;
+};
+
+export const GetTokenWrapperForMarketDocument = gql`
+  query getTokenWrapperForMarket($market: ID!) {
+    market(id: $market) {
+      tokenWrapper {
+        id
+        address
+        marketAddress
+        marketToken {
+          __typename
+          id
+          address
+          name
+          symbol
+          decimals
+          isMock
+        }
+        token {
+          __typename
+          id
+          address
+          name
+          symbol
+          decimals
+          isMock
+        }
+        factory {
+          id
+          address
+        }
+        deployedEvent {
+          blockNumber
+          blockTimestamp
+          transactionHash
+        }
+      }
+    }
+  }
+`;
+
+export async function getTokenWrapperDataForMarket(
+  subgraphClient: ApolloClient<NormalizedCacheObject>,
+  market: string,
+  fetchPolicy: FetchPolicy = "cache-first"
+): Promise<SubgraphTokenWrapperData | undefined> {
+  const result = await subgraphClient.query<
+    GetTokenWrapperForMarketQuery,
+    GetTokenWrapperForMarketQueryVariables
+  >({
+    query: GetTokenWrapperForMarketDocument,
+    variables: {
+      market: market.toLowerCase()
+    },
+    fetchPolicy
+  });
+
+  return result.data.market?.tokenWrapper ?? undefined;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface TokenWrapper extends Omit<TokenWrapperArgs, "provider"> {}
 
@@ -135,6 +230,21 @@ export class TokenWrapper extends ContractWrapper {
     this.name = this.shareToken.name;
     this.symbol = this.shareToken.symbol;
     this.decimals = this.shareToken.decimals;
+  }
+
+  static fromSubgraphData(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider,
+    data: SubgraphTokenWrapperData
+  ): TokenWrapper {
+    return new TokenWrapper({
+      chainId,
+      provider,
+      address: data.address,
+      marketAddress: data.marketAddress,
+      marketToken: Token.fromSubgraphToken(chainId, data.marketToken, provider),
+      shareToken: Token.fromSubgraphToken(chainId, data.token, provider)
+    });
   }
 
   static async fromAddress(
@@ -183,6 +293,42 @@ export class TokenWrapper extends ContractWrapper {
     );
     assert(wrapperAddress !== zeroAddress, `No wrapper deployed for market ${marketAddress}`);
     return TokenWrapper.fromAddress(chainId, provider, wrapperAddress);
+  }
+
+  static async fromMarketWithSubgraph(
+    subgraphClient: ApolloClient<NormalizedCacheObject>,
+    {
+      chainId,
+      signerOrProvider,
+      market,
+      fetchPolicy = "cache-first",
+      fallbackToFactory = true
+    }: GetTokenWrapperForMarketOptions
+  ): Promise<TokenWrapper | undefined> {
+    try {
+      const wrapper = await getTokenWrapperDataForMarket(subgraphClient, market, fetchPolicy);
+      if (wrapper) {
+        return TokenWrapper.fromSubgraphData(chainId, signerOrProvider, wrapper);
+      }
+    } catch (error) {
+      if (!fallbackToFactory) {
+        throw error;
+      }
+    }
+
+    if (!fallbackToFactory || !hasDeploymentAddress(chainId, "Wildcat4626WrapperFactory")) {
+      return undefined;
+    }
+
+    const wrapperAddress = await WrapperFactory.getWrapperForMarket(
+      chainId,
+      signerOrProvider,
+      market
+    );
+    if (!wrapperAddress || wrapperAddress === zeroAddress) {
+      return undefined;
+    }
+    return TokenWrapper.fromAddress(chainId, signerOrProvider, wrapperAddress);
   }
 
   static async create(

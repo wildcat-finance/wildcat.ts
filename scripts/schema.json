@@ -3564,6 +3564,11 @@
             },
             {
               "__typename": "__Field",
+              "name": "tokenWrapper",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
               "name": "numCollateralContracts",
               "description": null
             },
@@ -5223,6 +5228,36 @@
             {
               "__typename": "__Field",
               "name": "tokens",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "wildcat4626WrapperFactory",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "wildcat4626WrapperFactories",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "wildcat4626Wrapper",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "wildcat4626Wrappers",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "wildcat4626WrapperDeployed",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "wildcat4626WrapperDeployeds",
               "description": null
             },
             {
@@ -7163,6 +7198,212 @@
         {
           "__typename": "__Type",
           "name": "UpdateProtocolFeeConfiguration_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "Wildcat4626Wrapper",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "address",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "factory",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "market",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "marketAddress",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "marketToken",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "token",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "deployedEvent",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockNumber",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "transactionHash",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockLogIndex",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "Wildcat4626WrapperDeployed",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "factory",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "market",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "marketAddress",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "wrapper",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "wrapperAddress",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockNumber",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "transactionHash",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockLogIndex",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "Wildcat4626WrapperDeployed_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "Wildcat4626WrapperDeployed_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "Wildcat4626WrapperFactory",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "address",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "archController",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "eventIndex",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "wrappers",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "deployedEvents",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "Wildcat4626WrapperFactory_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "Wildcat4626WrapperFactory_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "Wildcat4626Wrapper_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "Wildcat4626Wrapper_orderBy",
           "description": null,
           "kind": "ENUM",
           "fields": null

@@ -7249,6 +7249,7 @@ export type SubgraphMarket = {
   temporaryReserveRatioActive: Scalars["Boolean"]["output"];
   temporaryReserveRatioExpiry: Scalars["Int"]["output"];
   timeDelinquent: Scalars["Int"]["output"];
+  tokenWrapper?: Maybe<SubgraphWildcat4626Wrapper>;
   totalBaseInterestAccrued: Scalars["BigInt"]["output"];
   totalBorrowed: Scalars["BigInt"]["output"];
   totalDelinquencyFeesAccrued: Scalars["BigInt"]["output"];
@@ -8965,6 +8966,27 @@ export type SubgraphMarket_Filter = {
   timeDelinquent_lte?: InputMaybe<Scalars["Int"]["input"]>;
   timeDelinquent_not?: InputMaybe<Scalars["Int"]["input"]>;
   timeDelinquent_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  tokenWrapper?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
+  tokenWrapper_contains?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_gt?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_gte?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  tokenWrapper_lt?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_lte?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_not?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  tokenWrapper_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  tokenWrapper_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   totalBaseInterestAccrued?: InputMaybe<Scalars["BigInt"]["input"]>;
   totalBaseInterestAccrued_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   totalBaseInterestAccrued_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -9178,6 +9200,14 @@ export enum SubgraphMarket_OrderBy {
   TemporaryReserveRatioActive = "temporaryReserveRatioActive",
   TemporaryReserveRatioExpiry = "temporaryReserveRatioExpiry",
   TimeDelinquent = "timeDelinquent",
+  TokenWrapper = "tokenWrapper",
+  TokenWrapperAddress = "tokenWrapper__address",
+  TokenWrapperBlockLogIndex = "tokenWrapper__blockLogIndex",
+  TokenWrapperBlockNumber = "tokenWrapper__blockNumber",
+  TokenWrapperBlockTimestamp = "tokenWrapper__blockTimestamp",
+  TokenWrapperId = "tokenWrapper__id",
+  TokenWrapperMarketAddress = "tokenWrapper__marketAddress",
+  TokenWrapperTransactionHash = "tokenWrapper__transactionHash",
   TotalBaseInterestAccrued = "totalBaseInterestAccrued",
   TotalBorrowed = "totalBorrowed",
   TotalDelinquencyFeesAccrued = "totalDelinquencyFeesAccrued",
@@ -10561,6 +10591,12 @@ export type SubgraphQuery = {
   transfers: SubgraphTransfer[];
   updateProtocolFeeConfiguration?: Maybe<SubgraphUpdateProtocolFeeConfiguration>;
   updateProtocolFeeConfigurations: SubgraphUpdateProtocolFeeConfiguration[];
+  wildcat4626Wrapper?: Maybe<SubgraphWildcat4626Wrapper>;
+  wildcat4626WrapperDeployed?: Maybe<SubgraphWildcat4626WrapperDeployed>;
+  wildcat4626WrapperDeployeds: SubgraphWildcat4626WrapperDeployed[];
+  wildcat4626WrapperFactories: SubgraphWildcat4626WrapperFactory[];
+  wildcat4626WrapperFactory?: Maybe<SubgraphWildcat4626WrapperFactory>;
+  wildcat4626Wrappers: SubgraphWildcat4626Wrapper[];
   withdrawalBatch?: Maybe<SubgraphWithdrawalBatch>;
   withdrawalBatchCreated?: Maybe<SubgraphWithdrawalBatchCreated>;
   withdrawalBatchCreateds: SubgraphWithdrawalBatchCreated[];
@@ -11612,6 +11648,42 @@ export type SubgraphQueryUpdateProtocolFeeConfigurationsArgs = {
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
   where?: InputMaybe<SubgraphUpdateProtocolFeeConfiguration_Filter>;
+};
+
+export type SubgraphQueryWildcat4626WrapperArgs = SubgraphQueryAccountAccessGrantedArgs;
+
+export type SubgraphQueryWildcat4626WrapperDeployedArgs = SubgraphQueryAccountAccessGrantedArgs;
+
+export type SubgraphQueryWildcat4626WrapperDeployedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphWildcat4626WrapperDeployed_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWildcat4626WrapperDeployed_Filter>;
+};
+
+export type SubgraphQueryWildcat4626WrapperFactoriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphWildcat4626WrapperFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWildcat4626WrapperFactory_Filter>;
+};
+
+export type SubgraphQueryWildcat4626WrapperFactoryArgs = SubgraphQueryAccountAccessGrantedArgs;
+
+export type SubgraphQueryWildcat4626WrappersArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphWildcat4626Wrapper_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
 };
 
 export type SubgraphQueryWithdrawalBatchArgs = SubgraphQueryAccountAccessGrantedArgs;
@@ -14789,6 +14861,586 @@ export enum SubgraphUpdateProtocolFeeConfiguration_OrderBy {
   OriginationFeeAssetName = "originationFeeAsset__name",
   OriginationFeeAssetSymbol = "originationFeeAsset__symbol",
   ProtocolFeeBips = "protocolFeeBips",
+  TransactionHash = "transactionHash"
+}
+
+export type SubgraphWildcat4626Wrapper = {
+  __typename: "Wildcat4626Wrapper";
+  address: Scalars["Bytes"]["output"];
+  blockLogIndex: Scalars["Int"]["output"];
+  blockNumber: Scalars["Int"]["output"];
+  blockTimestamp: Scalars["Int"]["output"];
+  deployedEvent?: Maybe<SubgraphWildcat4626WrapperDeployed>;
+  factory: SubgraphWildcat4626WrapperFactory;
+  id: Scalars["ID"]["output"];
+  market?: Maybe<SubgraphMarket>;
+  marketAddress: Scalars["Bytes"]["output"];
+  marketToken: SubgraphToken;
+  token: SubgraphToken;
+  transactionHash: Scalars["Bytes"]["output"];
+};
+
+export type SubgraphWildcat4626WrapperDeployed = {
+  __typename: "Wildcat4626WrapperDeployed";
+  blockLogIndex: Scalars["Int"]["output"];
+  blockNumber: Scalars["Int"]["output"];
+  blockTimestamp: Scalars["Int"]["output"];
+  factory: SubgraphWildcat4626WrapperFactory;
+  id: Scalars["ID"]["output"];
+  market?: Maybe<SubgraphMarket>;
+  marketAddress: Scalars["Bytes"]["output"];
+  transactionHash: Scalars["Bytes"]["output"];
+  wrapper: SubgraphWildcat4626Wrapper;
+  wrapperAddress: Scalars["Bytes"]["output"];
+};
+
+export type SubgraphWildcat4626WrapperDeployed_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperDeployed_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockLogIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockNumber?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockNumber_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockTimestamp?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockTimestamp_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  factory?: InputMaybe<Scalars["String"]["input"]>;
+  factory_?: InputMaybe<SubgraphWildcat4626WrapperFactory_Filter>;
+  factory_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factory_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_gt?: InputMaybe<Scalars["String"]["input"]>;
+  factory_gte?: InputMaybe<Scalars["String"]["input"]>;
+  factory_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factory_lt?: InputMaybe<Scalars["String"]["input"]>;
+  factory_lte?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factory_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  id_lt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_lte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  market?: InputMaybe<Scalars["String"]["input"]>;
+  marketAddress?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  marketAddress_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars["String"]["input"]>;
+  market_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_gt?: InputMaybe<Scalars["String"]["input"]>;
+  market_gte?: InputMaybe<Scalars["String"]["input"]>;
+  market_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  market_lt?: InputMaybe<Scalars["String"]["input"]>;
+  market_lte?: InputMaybe<Scalars["String"]["input"]>;
+  market_not?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  market_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperDeployed_Filter>>>;
+  transactionHash?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  transactionHash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  wrapper?: InputMaybe<Scalars["String"]["input"]>;
+  wrapperAddress?: InputMaybe<Scalars["Bytes"]["input"]>;
+  wrapperAddress_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  wrapperAddress_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  wrapperAddress_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  wrapperAddress_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  wrapperAddress_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  wrapperAddress_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  wrapperAddress_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  wrapperAddress_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  wrapperAddress_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  wrapper_?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
+  wrapper_contains?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_gt?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_gte?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  wrapper_lt?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_lte?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_not?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  wrapper_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  wrapper_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export enum SubgraphWildcat4626WrapperDeployed_OrderBy {
+  BlockLogIndex = "blockLogIndex",
+  BlockNumber = "blockNumber",
+  BlockTimestamp = "blockTimestamp",
+  Factory = "factory",
+  FactoryAddress = "factory__address",
+  FactoryEventIndex = "factory__eventIndex",
+  FactoryId = "factory__id",
+  Id = "id",
+  Market = "market",
+  MarketAddress = "marketAddress",
+  MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
+  MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
+  MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
+  MarketDecimals = "market__decimals",
+  MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
+  MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
+  MarketEventIndex = "market__eventIndex",
+  MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
+  MarketFixedTermUpdatedIndex = "market__fixedTermUpdatedIndex",
+  MarketForceBuyBackIndex = "market__forceBuyBackIndex",
+  MarketId = "market__id",
+  MarketIsClosed = "market__isClosed",
+  MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
+  MarketIsRegistered = "market__isRegistered",
+  MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
+  MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
+  MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
+  MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
+  MarketName = "market__name",
+  MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketNumCollateralContracts = "market__numCollateralContracts",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
+  MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
+  MarketPendingProtocolFees = "market__pendingProtocolFees",
+  MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
+  MarketProtocolFeeBips = "market__protocolFeeBips",
+  MarketProtocolFeeBipsUpdatedIndex = "market__protocolFeeBipsUpdatedIndex",
+  MarketReserveRatioBips = "market__reserveRatioBips",
+  MarketScaleFactor = "market__scaleFactor",
+  MarketScaledPendingWithdrawals = "market__scaledPendingWithdrawals",
+  MarketScaledTotalSupply = "market__scaledTotalSupply",
+  MarketSentinel = "market__sentinel",
+  MarketSymbol = "market__symbol",
+  MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
+  MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
+  MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
+  MarketTotalBorrowed = "market__totalBorrowed",
+  MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
+  MarketTotalDeposited = "market__totalDeposited",
+  MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
+  MarketTotalRepaid = "market__totalRepaid",
+  MarketVersion = "market__version",
+  MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
+  TransactionHash = "transactionHash",
+  Wrapper = "wrapper",
+  WrapperAddress = "wrapperAddress",
+  WrapperNestedAddress = "wrapper__address",
+  WrapperBlockLogIndex = "wrapper__blockLogIndex",
+  WrapperBlockNumber = "wrapper__blockNumber",
+  WrapperBlockTimestamp = "wrapper__blockTimestamp",
+  WrapperId = "wrapper__id",
+  WrapperMarketAddress = "wrapper__marketAddress",
+  WrapperTransactionHash = "wrapper__transactionHash"
+}
+
+export type SubgraphWildcat4626WrapperFactory = {
+  __typename: "Wildcat4626WrapperFactory";
+  address: Scalars["Bytes"]["output"];
+  archController: SubgraphArchController;
+  deployedEvents: SubgraphWildcat4626WrapperDeployed[];
+  eventIndex: Scalars["Int"]["output"];
+  id: Scalars["ID"]["output"];
+  wrappers: SubgraphWildcat4626Wrapper[];
+};
+
+export type SubgraphWildcat4626WrapperFactoryDeployedEventsArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphWildcat4626WrapperDeployed_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphWildcat4626WrapperDeployed_Filter>;
+};
+
+export type SubgraphWildcat4626WrapperFactoryWrappersArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<SubgraphWildcat4626Wrapper_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
+};
+
+export type SubgraphWildcat4626WrapperFactory_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  address?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  address_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperFactory_Filter>>>;
+  archController?: InputMaybe<Scalars["String"]["input"]>;
+  archController_?: InputMaybe<SubgraphArchController_Filter>;
+  archController_contains?: InputMaybe<Scalars["String"]["input"]>;
+  archController_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  archController_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  archController_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  archController_gt?: InputMaybe<Scalars["String"]["input"]>;
+  archController_gte?: InputMaybe<Scalars["String"]["input"]>;
+  archController_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  archController_lt?: InputMaybe<Scalars["String"]["input"]>;
+  archController_lte?: InputMaybe<Scalars["String"]["input"]>;
+  archController_not?: InputMaybe<Scalars["String"]["input"]>;
+  archController_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  archController_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  archController_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  archController_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  archController_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  archController_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  archController_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  archController_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  archController_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  deployedEvents_?: InputMaybe<SubgraphWildcat4626WrapperDeployed_Filter>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  id_lt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_lte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperFactory_Filter>>>;
+  wrappers_?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
+};
+
+export enum SubgraphWildcat4626WrapperFactory_OrderBy {
+  Address = "address",
+  ArchController = "archController",
+  ArchControllerId = "archController__id",
+  DeployedEvents = "deployedEvents",
+  EventIndex = "eventIndex",
+  Id = "id",
+  Wrappers = "wrappers"
+}
+
+export type SubgraphWildcat4626Wrapper_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  address?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  address_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626Wrapper_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockLogIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockNumber?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockNumber_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockTimestamp?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  blockTimestamp_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  deployedEvent_?: InputMaybe<SubgraphWildcat4626WrapperDeployed_Filter>;
+  factory?: InputMaybe<Scalars["String"]["input"]>;
+  factory_?: InputMaybe<SubgraphWildcat4626WrapperFactory_Filter>;
+  factory_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factory_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_gt?: InputMaybe<Scalars["String"]["input"]>;
+  factory_gte?: InputMaybe<Scalars["String"]["input"]>;
+  factory_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factory_lt?: InputMaybe<Scalars["String"]["input"]>;
+  factory_lte?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  factory_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  factory_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  factory_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_gte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  id_lt?: InputMaybe<Scalars["ID"]["input"]>;
+  id_lte?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  market?: InputMaybe<Scalars["String"]["input"]>;
+  marketAddress?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  marketAddress_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  marketAddress_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  marketToken?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_?: InputMaybe<SubgraphToken_Filter>;
+  marketToken_contains?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_gt?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_gte?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  marketToken_lt?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_lte?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_not?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  marketToken_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  marketToken_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars["String"]["input"]>;
+  market_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_gt?: InputMaybe<Scalars["String"]["input"]>;
+  market_gte?: InputMaybe<Scalars["String"]["input"]>;
+  market_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  market_lt?: InputMaybe<Scalars["String"]["input"]>;
+  market_lte?: InputMaybe<Scalars["String"]["input"]>;
+  market_not?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  market_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  market_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  market_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626Wrapper_Filter>>>;
+  token?: InputMaybe<Scalars["String"]["input"]>;
+  token_?: InputMaybe<SubgraphToken_Filter>;
+  token_contains?: InputMaybe<Scalars["String"]["input"]>;
+  token_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_gt?: InputMaybe<Scalars["String"]["input"]>;
+  token_gte?: InputMaybe<Scalars["String"]["input"]>;
+  token_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  token_lt?: InputMaybe<Scalars["String"]["input"]>;
+  token_lte?: InputMaybe<Scalars["String"]["input"]>;
+  token_not?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  token_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  transactionHash?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  transactionHash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+};
+
+export enum SubgraphWildcat4626Wrapper_OrderBy {
+  Address = "address",
+  BlockLogIndex = "blockLogIndex",
+  BlockNumber = "blockNumber",
+  BlockTimestamp = "blockTimestamp",
+  DeployedEvent = "deployedEvent",
+  DeployedEventBlockLogIndex = "deployedEvent__blockLogIndex",
+  DeployedEventBlockNumber = "deployedEvent__blockNumber",
+  DeployedEventBlockTimestamp = "deployedEvent__blockTimestamp",
+  DeployedEventId = "deployedEvent__id",
+  DeployedEventMarketAddress = "deployedEvent__marketAddress",
+  DeployedEventTransactionHash = "deployedEvent__transactionHash",
+  DeployedEventWrapperAddress = "deployedEvent__wrapperAddress",
+  Factory = "factory",
+  FactoryAddress = "factory__address",
+  FactoryEventIndex = "factory__eventIndex",
+  FactoryId = "factory__id",
+  Id = "id",
+  Market = "market",
+  MarketAddress = "marketAddress",
+  MarketToken = "marketToken",
+  MarketTokenAddress = "marketToken__address",
+  MarketTokenDecimals = "marketToken__decimals",
+  MarketTokenId = "marketToken__id",
+  MarketTokenIsMock = "marketToken__isMock",
+  MarketTokenName = "marketToken__name",
+  MarketTokenSymbol = "marketToken__symbol",
+  MarketAnnualInterestBips = "market__annualInterestBips",
+  MarketAnnualInterestBipsUpdatedIndex = "market__annualInterestBipsUpdatedIndex",
+  MarketBorrowIndex = "market__borrowIndex",
+  MarketBorrower = "market__borrower",
+  MarketCommitmentFeeBips = "market__commitmentFeeBips",
+  MarketCreatedAt = "market__createdAt",
+  MarketDebtRepaidIndex = "market__debtRepaidIndex",
+  MarketDecimals = "market__decimals",
+  MarketDelinquencyFeeBips = "market__delinquencyFeeBips",
+  MarketDelinquencyGracePeriod = "market__delinquencyGracePeriod",
+  MarketDelinquencyStatusChangedIndex = "market__delinquencyStatusChangedIndex",
+  MarketDepositIndex = "market__depositIndex",
+  MarketDrawnAmount = "market__drawnAmount",
+  MarketEventIndex = "market__eventIndex",
+  MarketFeeRecipient = "market__feeRecipient",
+  MarketFeesCollectedIndex = "market__feesCollectedIndex",
+  MarketFixedTermUpdatedIndex = "market__fixedTermUpdatedIndex",
+  MarketForceBuyBackIndex = "market__forceBuyBackIndex",
+  MarketId = "market__id",
+  MarketIsClosed = "market__isClosed",
+  MarketIsDelinquent = "market__isDelinquent",
+  MarketIsIncurringPenalties = "market__isIncurringPenalties",
+  MarketIsRegistered = "market__isRegistered",
+  MarketLastInterestAccruedBlockNumber = "market__lastInterestAccruedBlockNumber",
+  MarketLastInterestAccruedTimestamp = "market__lastInterestAccruedTimestamp",
+  MarketMarketType = "market__marketType",
+  MarketMaxTotalSupply = "market__maxTotalSupply",
+  MarketMaxTotalSupplyUpdatedIndex = "market__maxTotalSupplyUpdatedIndex",
+  MarketMinimumDepositUpdatedIndex = "market__minimumDepositUpdatedIndex",
+  MarketName = "market__name",
+  MarketNormalizedUnclaimedWithdrawals = "market__normalizedUnclaimedWithdrawals",
+  MarketNumCollateralContracts = "market__numCollateralContracts",
+  MarketOriginalAnnualInterestBips = "market__originalAnnualInterestBips",
+  MarketOriginalReserveRatioBips = "market__originalReserveRatioBips",
+  MarketPendingProtocolFees = "market__pendingProtocolFees",
+  MarketPendingWithdrawalExpiry = "market__pendingWithdrawalExpiry",
+  MarketProtocolFeeBips = "market__protocolFeeBips",
+  MarketProtocolFeeBipsUpdatedIndex = "market__protocolFeeBipsUpdatedIndex",
+  MarketReserveRatioBips = "market__reserveRatioBips",
+  MarketScaleFactor = "market__scaleFactor",
+  MarketScaledPendingWithdrawals = "market__scaledPendingWithdrawals",
+  MarketScaledTotalSupply = "market__scaledTotalSupply",
+  MarketSentinel = "market__sentinel",
+  MarketSymbol = "market__symbol",
+  MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
+  MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
+  MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
+  MarketTotalBorrowed = "market__totalBorrowed",
+  MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
+  MarketTotalDeposited = "market__totalDeposited",
+  MarketTotalProtocolFeesAccrued = "market__totalProtocolFeesAccrued",
+  MarketTotalRepaid = "market__totalRepaid",
+  MarketVersion = "market__version",
+  MarketWithdrawalBatchDuration = "market__withdrawalBatchDuration",
+  MarketWithdrawalRequestsIndex = "market__withdrawalRequestsIndex",
+  Token = "token",
+  TokenAddress = "token__address",
+  TokenDecimals = "token__decimals",
+  TokenId = "token__id",
+  TokenIsMock = "token__isMock",
+  TokenName = "token__name",
+  TokenSymbol = "token__symbol",
   TransactionHash = "transactionHash"
 }
 
