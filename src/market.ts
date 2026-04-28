@@ -298,6 +298,32 @@ export class Market extends ContractWrapper {
     );
   }
 
+  toJSON(): {
+    type: "Market";
+    chainId: SupportedChainId;
+    address: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    version: MarketVersion;
+    marketType?: MarketType;
+    hooksFactory?: string;
+    borrower: string;
+  } {
+    return {
+      type: "Market",
+      chainId: this.chainId,
+      address: this.address,
+      name: this.name,
+      symbol: this.symbol,
+      decimals: this.decimals,
+      version: this.version,
+      marketType: this.marketType,
+      hooksFactory: this.hooksFactory,
+      borrower: this.borrower
+    };
+  }
+
   /* -------------------------------------------------------------------------- */
   /*                              Property Getters                              */
   /* -------------------------------------------------------------------------- */

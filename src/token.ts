@@ -45,7 +45,8 @@ type BigIntCompatibilityMethodName =
   | "sub"
   | "mul"
   | "div"
-  | "toNumber";
+  | "toNumber"
+  | "toJSON";
 
 declare global {
   interface BigInt {
@@ -60,6 +61,7 @@ declare global {
     mul(value: BigIntCompatNumberish): bigint;
     div(value: BigIntCompatNumberish): bigint;
     toNumber(): number;
+    toJSON(): string;
   }
 }
 
@@ -72,7 +74,7 @@ const toCompatBigInt = (value: BigIntCompatNumberish): bigint => {
 
 const installBigIntCompatibilityMethod = (
   name: BigIntCompatibilityMethodName,
-  value: (this: bigint, value?: BigIntCompatNumberish) => bigint | boolean | number
+  value: (this: bigint, value?: BigIntCompatNumberish) => bigint | boolean | number | string
 ) => {
   if (typeof BigInt.prototype[name] === "function") return;
   Object.defineProperty(BigInt.prototype, name, {
@@ -113,6 +115,9 @@ installBigIntCompatibilityMethod("div", function div(this: bigint, value?: BigIn
 });
 installBigIntCompatibilityMethod("toNumber", function toNumberCompat(this: bigint) {
   return Number(this.valueOf());
+});
+installBigIntCompatibilityMethod("toJSON", function toJSONCompat(this: bigint) {
+  return this.toString();
 });
 
 const getViemTokenMetadataValue = (
@@ -231,6 +236,13 @@ export class TokenAmount {
     const b = toRawAmount(amount);
     return this.token.getAmount(this.raw < b ? 0n : this.raw - b);
   }
+
+  toJSON(): { raw: string; token: ReturnType<Token["toJSON"]> } {
+    return {
+      raw: this.raw.toString(),
+      token: this.token.toJSON()
+    };
+  }
 }
 
 export class Token extends ContractWrapper {
@@ -326,6 +338,24 @@ export class Token extends ContractWrapper {
 
   getAmount(amount: RhsAmount): TokenAmount {
     return new TokenAmount(toRawAmount(amount), this);
+  }
+
+  toJSON(): {
+    chainId: SupportedChainId;
+    address: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    isMock: boolean;
+  } {
+    return {
+      chainId: this.chainId,
+      address: this.address,
+      name: this.name,
+      symbol: this.symbol,
+      decimals: this.decimals,
+      isMock: this.isMock
+    };
   }
 
   parseAmount(amount: number | string): TokenAmount {
