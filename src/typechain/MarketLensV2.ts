@@ -111,11 +111,14 @@ export type MarketHooksDataStruct = {
   depositRequiresAccess: PromiseOrValue<boolean>;
   minimumDeposit: PromiseOrValue<BigNumberish>;
   transfersDisabled: PromiseOrValue<boolean>;
-  allowForceBuyBacks: PromiseOrValue<boolean>;
   withdrawalRequiresAccess: PromiseOrValue<boolean>;
   fixedTermEndTime: PromiseOrValue<BigNumberish>;
   allowClosureBeforeTerm: PromiseOrValue<boolean>;
   allowTermReduction: PromiseOrValue<boolean>;
+  firstWithdrawalWindowStart: PromiseOrValue<BigNumberish>;
+  periodDuration: PromiseOrValue<BigNumberish>;
+  withdrawalWindowDuration: PromiseOrValue<BigNumberish>;
+  periodicTermClosed: PromiseOrValue<boolean>;
 };
 
 export type MarketHooksDataStructOutput = {
@@ -126,11 +129,14 @@ export type MarketHooksDataStructOutput = {
   depositRequiresAccess: boolean;
   minimumDeposit: BigNumber;
   transfersDisabled: boolean;
-  allowForceBuyBacks: boolean;
   withdrawalRequiresAccess: boolean;
   fixedTermEndTime: number;
   allowClosureBeforeTerm: boolean;
   allowTermReduction: boolean;
+  firstWithdrawalWindowStart: number;
+  periodDuration: number;
+  withdrawalWindowDuration: number;
+  periodicTermClosed: boolean;
 };
 
 export type MarketParameterConstraintsStruct = {

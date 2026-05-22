@@ -140,6 +140,7 @@ export const removeUnusedTxFields = ({
 };
 
 const marketRecordParsers: MarketRecordParserMap = {
+  AnnualInterestBipsReductionProposed: (_, log) => ({ ...log }),
   AnnualInterestBipsUpdated: (_, log) => log,
   Borrow: (token, { assetAmount, ...rest }) => ({
     amount: token.getAmount(assetAmount),
@@ -183,6 +184,7 @@ const marketRecordParsers: MarketRecordParserMap = {
     newMinimumDeposit: token.getAmount(newMinimumDeposit),
     ...rest
   }),
+  PeriodicTermClosed: (_, log) => ({ ...log }),
   ProtocolFeeBipsUpdated: (_, log) => ({ ...log }),
   WithdrawalRequest: (token, { scaledAmount, normalizedAmount, account, ...rest }) => ({
     address: account.address,

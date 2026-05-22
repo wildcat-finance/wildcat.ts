@@ -11,6 +11,7 @@ export type { HooksFactory } from "./HooksFactory";
 export type { IERC20 } from "./IERC20";
 export type { IFixedTermHooks } from "./IFixedTermHooks";
 export type { IOpenTermHooks } from "./IOpenTermHooks";
+export type { IPeriodicTermHooks } from "./IPeriodicTermHooks";
 export type { ISafe } from "./ISafe";
 export type { MarketLens } from "./MarketLens";
 export type { MarketLensV2 } from "./MarketLensV2";
@@ -34,6 +35,7 @@ export { HooksFactory__factory } from "./factories/HooksFactory__factory";
 export { IERC20__factory } from "./factories/IERC20__factory";
 export { IFixedTermHooks__factory } from "./factories/IFixedTermHooks__factory";
 export { IOpenTermHooks__factory } from "./factories/IOpenTermHooks__factory";
+export { IPeriodicTermHooks__factory } from "./factories/IPeriodicTermHooks__factory";
 export { ISafe__factory } from "./factories/ISafe__factory";
 export { MarketLens__factory } from "./factories/MarketLens__factory";
 export { MarketLensV2__factory } from "./factories/MarketLensV2__factory";
@@ -58,6 +60,8 @@ export type { DeployMarketInputsV2Struct, DeployMarketInputsV2StructOutput, Hook
 export type { FixedTermHookedMarketStruct, FixedTermHookedMarketStructOutput, LenderStatusStruct, LenderStatusStructOutput, MarketParameterConstraintsStruct, MarketParameterConstraintsStructOutput, MarketStateV2Struct, MarketStateV2StructOutput } from "./IFixedTermHooks";
 
 export type { HookedMarketStruct, HookedMarketStructOutput } from "./IOpenTermHooks";
+
+export type { PeriodicTermHookedMarketStruct, PeriodicTermHookedMarketStructOutput, PendingAprChangeStruct, PendingAprChangeStructOutput } from "./IPeriodicTermHooks";
 
 export type { FeeConfigurationStruct, FeeConfigurationStructOutput, MarketDataStruct, MarketDataStructOutput, ControllerDataStruct, ControllerDataStructOutput, MarketLenderStatusStruct, MarketLenderStatusStructOutput, MarketDataWithLenderStatusStruct, MarketDataWithLenderStatusStructOutput, ArchControllerDataStruct, ArchControllerDataStructOutput, SliceParametersStruct, SliceParametersStructOutput, WithdrawalBatchDataStruct, WithdrawalBatchDataStructOutput, WithdrawalBatchLenderStatusStruct, WithdrawalBatchLenderStatusStructOutput, WithdrawalBatchDataWithLenderStatusStruct, WithdrawalBatchDataWithLenderStatusStructOutput } from "./MarketLens";
 

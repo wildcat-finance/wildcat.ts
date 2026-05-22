@@ -53,6 +53,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IOpenTermHooks__factory>;
     getContractFactory(
+      name: "IPeriodicTermHooks",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPeriodicTermHooks__factory>;
+    getContractFactory(
       name: "ISafe",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISafe__factory>;
@@ -151,6 +155,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IOpenTermHooks>;
+    getContractAt(
+      name: "IPeriodicTermHooks",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPeriodicTermHooks>;
     getContractAt(
       name: "ISafe",
       address: string,

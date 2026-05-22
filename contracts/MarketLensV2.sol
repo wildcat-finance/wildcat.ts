@@ -5,8 +5,9 @@ import { BatchStatus, MarketParameterConstraints, TokenMetadata, WithdrawalBatch
 
 enum HooksInstanceKind {
   Unknown,
-  AccessControl,
-  FixedTermLoan
+  OpenTerm,
+  FixedTermLoan,
+  PeriodicTerm
 }
 
 struct FeeConfigurationV2 {
@@ -61,11 +62,14 @@ struct MarketHooksData {
   bool depositRequiresAccess;
   uint128 minimumDeposit;
   bool transfersDisabled;
-  bool allowForceBuyBacks;
   bool withdrawalRequiresAccess;
   uint32 fixedTermEndTime;
   bool allowClosureBeforeTerm;
   bool allowTermReduction;
+  uint32 firstWithdrawalWindowStart;
+  uint32 periodDuration;
+  uint32 withdrawalWindowDuration;
+  bool periodicTermClosed;
 }
 
 struct HooksConfigData {

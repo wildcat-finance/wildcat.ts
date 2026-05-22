@@ -3443,6 +3443,86 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   TransactionHash = "transactionHash"
 }
 
+export type SubgraphPeriodicTermClosed = {
+  __typename: "PeriodicTermClosed";
+  blockNumber: Scalars["Int"]["output"];
+  blockTimestamp: Scalars["Int"]["output"];
+  eventIndex: Scalars["Int"]["output"];
+  hooks: SubgraphHooksInstance;
+  id: Scalars["ID"]["output"];
+  market: SubgraphMarket;
+  transactionHash: Scalars["Bytes"]["output"];
+};
+
+export type SubgraphPeriodicTermClosed_Filter = {
+  and?: InputMaybe<Array<InputMaybe<SubgraphPeriodicTermClosed_Filter>>>;
+  blockNumber?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  hooks?: InputMaybe<Scalars["String"]["input"]>;
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not?: InputMaybe<Scalars["ID"]["input"]>;
+  market?: InputMaybe<Scalars["String"]["input"]>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphPeriodicTermClosed_Filter>>>;
+  transactionHash?: InputMaybe<Scalars["Bytes"]["input"]>;
+};
+
+export type SubgraphAnnualInterestBipsReductionProposed = {
+  __typename: "AnnualInterestBipsReductionProposed";
+  annualInterestBips: Scalars["Int"]["output"];
+  blockNumber: Scalars["Int"]["output"];
+  blockTimestamp: Scalars["Int"]["output"];
+  eventIndex: Scalars["Int"]["output"];
+  hooks: SubgraphHooksInstance;
+  id: Scalars["ID"]["output"];
+  market: SubgraphMarket;
+  proposalTimestamp: Scalars["Int"]["output"];
+  responseWindowEnd: Scalars["Int"]["output"];
+  responseWindowStart: Scalars["Int"]["output"];
+  transactionHash: Scalars["Bytes"]["output"];
+};
+
+export type SubgraphAnnualInterestBipsReductionProposed_Filter = {
+  and?: InputMaybe<Array<InputMaybe<SubgraphAnnualInterestBipsReductionProposed_Filter>>>;
+  annualInterestBips?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockNumber_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  blockTimestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_gte?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lt?: InputMaybe<Scalars["Int"]["input"]>;
+  eventIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
+  hooks?: InputMaybe<Scalars["String"]["input"]>;
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  id_not?: InputMaybe<Scalars["ID"]["input"]>;
+  market?: InputMaybe<Scalars["String"]["input"]>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphAnnualInterestBipsReductionProposed_Filter>>>;
+  proposalTimestamp?: InputMaybe<Scalars["Int"]["input"]>;
+  responseWindowEnd?: InputMaybe<Scalars["Int"]["input"]>;
+  responseWindowStart?: InputMaybe<Scalars["Int"]["input"]>;
+  transactionHash?: InputMaybe<Scalars["Bytes"]["input"]>;
+};
+
 export type SubgraphForceBuyBack = {
   __typename: "ForceBuyBack";
   account: SubgraphLenderAccount;
@@ -3664,10 +3744,17 @@ export type SubgraphHooksConfig = {
   allowTermReduction: Scalars["Boolean"]["output"];
   depositRequiresAccess: Scalars["Boolean"]["output"];
   fixedTermEndTime: Scalars["Int"]["output"];
+  firstWithdrawalWindowStart: Scalars["Int"]["output"];
   hooks: SubgraphHooksInstance;
   id: Scalars["ID"]["output"];
   market: SubgraphMarket;
   minimumDeposit?: Maybe<Scalars["BigInt"]["output"]>;
+  pendingAnnualInterestBips: Scalars["Int"]["output"];
+  pendingAnnualInterestProposalTimestamp: Scalars["Int"]["output"];
+  pendingAnnualInterestResponseWindowEnd: Scalars["Int"]["output"];
+  pendingAnnualInterestResponseWindowStart: Scalars["Int"]["output"];
+  periodDuration: Scalars["Int"]["output"];
+  periodicTermClosed: Scalars["Boolean"]["output"];
   queueWithdrawalRequiresAccess: Scalars["Boolean"]["output"];
   transferRequiresAccess: Scalars["Boolean"]["output"];
   transfersDisabled: Scalars["Boolean"]["output"];
@@ -4372,6 +4459,7 @@ export enum SubgraphHooksInstance_OrderBy {
 export enum SubgraphHooksKind {
   FixedTerm = "FixedTerm",
   OpenTerm = "OpenTerm",
+  PeriodicTerm = "PeriodicTerm",
   Unknown = "Unknown"
 }
 
@@ -15724,6 +15812,28 @@ export type SubgraphFixedTermUpdatedDataFragment = {
   fixedTermUpdatedIndex: number;
 };
 
+export type SubgraphPeriodicTermClosedDataFragment = {
+  __typename: "PeriodicTermClosed";
+  id: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+  eventIndex: number;
+};
+
+export type SubgraphAnnualInterestBipsReductionProposedDataFragment = {
+  __typename: "AnnualInterestBipsReductionProposed";
+  id: string;
+  annualInterestBips: number;
+  proposalTimestamp: number;
+  responseWindowStart: number;
+  responseWindowEnd: number;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+  eventIndex: number;
+};
+
 export type SubgraphLenderWithdrawalPropertiesWithEventsFragment = {
   __typename: "LenderWithdrawalStatus";
   id: string;
@@ -15879,6 +15989,14 @@ export type SubgraphHooksConfigDataForMarketFragment = {
   fixedTermEndTime: number;
   allowClosureBeforeTerm: boolean;
   allowTermReduction: boolean;
+  firstWithdrawalWindowStart: number;
+  periodDuration: number;
+  withdrawalWindowDuration: number;
+  periodicTermClosed: boolean;
+  pendingAnnualInterestBips: number;
+  pendingAnnualInterestProposalTimestamp: number;
+  pendingAnnualInterestResponseWindowStart: number;
+  pendingAnnualInterestResponseWindowEnd: number;
 };
 
 export type SubgraphHooksInstanceDataFragment = {
@@ -16505,6 +16623,8 @@ export type SubgraphGetMarketEventsQueryVariables = Exact<{
   minimumDepositUpdateRecordsFilter?: InputMaybe<SubgraphMinimumDepositUpdated_Filter>;
   protocolFeeBipsUpdatedRecordsFilter?: InputMaybe<SubgraphProtocolFeeBipsUpdated_Filter>;
   fixedTermUpdatedRecordsFilter?: InputMaybe<SubgraphFixedTermUpdated_Filter>;
+  periodicTermClosedRecordsFilter?: InputMaybe<SubgraphPeriodicTermClosed_Filter>;
+  annualInterestBipsReductionProposedRecordsFilter?: InputMaybe<SubgraphAnnualInterestBipsReductionProposed_Filter>;
 }>;
 
 export type SubgraphGetMarketEventsQuery = {
@@ -16525,6 +16645,8 @@ export type SubgraphGetMarketEventsQuery = {
     minimumDepositUpdateRecords: SubgraphMinimumDepositUpdatedDataFragment[];
     protocolFeeBipsUpdatedRecords: SubgraphProtocolFeeBipsUpdatedDataFragment[];
     fixedTermUpdatedRecords: SubgraphFixedTermUpdatedDataFragment[];
+    periodicTermClosedRecords: SubgraphPeriodicTermClosedDataFragment[];
+    annualInterestBipsReductionProposedRecords: SubgraphAnnualInterestBipsReductionProposedDataFragment[];
   } | null;
 };
 
@@ -17135,6 +17257,14 @@ export const HooksConfigDataForMarketFragmentDoc = gql`
     fixedTermEndTime
     allowClosureBeforeTerm
     allowTermReduction
+    firstWithdrawalWindowStart
+    periodDuration
+    withdrawalWindowDuration
+    periodicTermClosed
+    pendingAnnualInterestBips
+    pendingAnnualInterestProposalTimestamp
+    pendingAnnualInterestResponseWindowStart
+    pendingAnnualInterestResponseWindowEnd
   }
 `;
 export const HooksTemplateDataFragmentDoc = gql`
@@ -17357,6 +17487,28 @@ export const FixedTermUpdatedDataFragmentDoc = gql`
     transactionHash
     eventIndex
     fixedTermUpdatedIndex
+  }
+`;
+export const PeriodicTermClosedDataFragmentDoc = gql`
+  fragment PeriodicTermClosedData on PeriodicTermClosed {
+    id
+    blockNumber
+    blockTimestamp
+    transactionHash
+    eventIndex
+  }
+`;
+export const AnnualInterestBipsReductionProposedDataFragmentDoc = gql`
+  fragment AnnualInterestBipsReductionProposedData on AnnualInterestBipsReductionProposed {
+    id
+    annualInterestBips
+    proposalTimestamp
+    responseWindowStart
+    responseWindowEnd
+    blockNumber
+    blockTimestamp
+    transactionHash
+    eventIndex
   }
 `;
 export const LenderWithdrawalPropertiesFragmentDoc = gql`
@@ -18196,6 +18348,10 @@ export const GetMarketEventsDocument = gql`
     $minimumDepositUpdateRecordsFilter: MinimumDepositUpdated_filter = { id_not: null }
     $protocolFeeBipsUpdatedRecordsFilter: ProtocolFeeBipsUpdated_filter = { id_not: null }
     $fixedTermUpdatedRecordsFilter: FixedTermUpdated_filter = { id_not: null }
+    $periodicTermClosedRecordsFilter: PeriodicTermClosed_filter = { id_not: null }
+    $annualInterestBipsReductionProposedRecordsFilter: AnnualInterestBipsReductionProposed_filter = {
+      id_not: null
+    }
   ) {
     market(id: $market) {
       marketClosedEvent {
@@ -18360,6 +18516,32 @@ export const GetMarketEventsDocument = gql`
       ) {
         ...FixedTermUpdatedData
       }
+      periodicTermClosedRecords(
+        where: {
+          and: [
+            $periodicTermClosedRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
+        orderBy: eventIndex
+        orderDirection: desc
+        first: $limit
+      ) {
+        ...PeriodicTermClosedData
+      }
+      annualInterestBipsReductionProposedRecords(
+        where: {
+          and: [
+            $annualInterestBipsReductionProposedRecordsFilter
+            { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+          ]
+        }
+        orderBy: eventIndex
+        orderDirection: desc
+        first: $limit
+      ) {
+        ...AnnualInterestBipsReductionProposedData
+      }
     }
   }
   ${MarketClosedDataFragmentDoc}
@@ -18376,6 +18558,8 @@ export const GetMarketEventsDocument = gql`
   ${MinimumDepositUpdatedDataFragmentDoc}
   ${ProtocolFeeBipsUpdatedDataFragmentDoc}
   ${FixedTermUpdatedDataFragmentDoc}
+  ${PeriodicTermClosedDataFragmentDoc}
+  ${AnnualInterestBipsReductionProposedDataFragmentDoc}
 `;
 export type GetMarketEventsQueryResult = Apollo.QueryResult<
   SubgraphGetMarketEventsQuery,

@@ -11,6 +11,7 @@ export { HooksFactory__factory } from "./HooksFactory__factory";
 export { IERC20__factory } from "./IERC20__factory";
 export { IFixedTermHooks__factory } from "./IFixedTermHooks__factory";
 export { IOpenTermHooks__factory } from "./IOpenTermHooks__factory";
+export { IPeriodicTermHooks__factory } from "./IPeriodicTermHooks__factory";
 export { ISafe__factory } from "./ISafe__factory";
 export { MarketLens__factory } from "./MarketLens__factory";
 export { MarketLensV2__factory } from "./MarketLensV2__factory";

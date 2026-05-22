@@ -322,11 +322,6 @@ const _abi = [
               },
               {
                 internalType: "bool",
-                name: "allowForceBuyBacks",
-                type: "bool",
-              },
-              {
-                internalType: "bool",
                 name: "withdrawalRequiresAccess",
                 type: "bool",
               },
@@ -343,6 +338,26 @@ const _abi = [
               {
                 internalType: "bool",
                 name: "allowTermReduction",
+                type: "bool",
+              },
+              {
+                internalType: "uint32",
+                name: "firstWithdrawalWindowStart",
+                type: "uint32",
+              },
+              {
+                internalType: "uint32",
+                name: "periodDuration",
+                type: "uint32",
+              },
+              {
+                internalType: "uint32",
+                name: "withdrawalWindowDuration",
+                type: "uint32",
+              },
+              {
+                internalType: "bool",
+                name: "periodicTermClosed",
                 type: "bool",
               },
             ],
@@ -2476,11 +2491,6 @@ const _abi = [
               },
               {
                 internalType: "bool",
-                name: "allowForceBuyBacks",
-                type: "bool",
-              },
-              {
-                internalType: "bool",
                 name: "withdrawalRequiresAccess",
                 type: "bool",
               },
@@ -2497,6 +2507,26 @@ const _abi = [
               {
                 internalType: "bool",
                 name: "allowTermReduction",
+                type: "bool",
+              },
+              {
+                internalType: "uint32",
+                name: "firstWithdrawalWindowStart",
+                type: "uint32",
+              },
+              {
+                internalType: "uint32",
+                name: "periodDuration",
+                type: "uint32",
+              },
+              {
+                internalType: "uint32",
+                name: "withdrawalWindowDuration",
+                type: "uint32",
+              },
+              {
+                internalType: "bool",
+                name: "periodicTermClosed",
                 type: "bool",
               },
             ],
@@ -3207,11 +3237,6 @@ const _abi = [
                   },
                   {
                     internalType: "bool",
-                    name: "allowForceBuyBacks",
-                    type: "bool",
-                  },
-                  {
-                    internalType: "bool",
                     name: "withdrawalRequiresAccess",
                     type: "bool",
                   },
@@ -3228,6 +3253,26 @@ const _abi = [
                   {
                     internalType: "bool",
                     name: "allowTermReduction",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "uint32",
+                    name: "firstWithdrawalWindowStart",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "uint32",
+                    name: "periodDuration",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "uint32",
+                    name: "withdrawalWindowDuration",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "periodicTermClosed",
                     type: "bool",
                   },
                 ],
@@ -4015,11 +4060,6 @@ const _abi = [
               },
               {
                 internalType: "bool",
-                name: "allowForceBuyBacks",
-                type: "bool",
-              },
-              {
-                internalType: "bool",
                 name: "withdrawalRequiresAccess",
                 type: "bool",
               },
@@ -4036,6 +4076,26 @@ const _abi = [
               {
                 internalType: "bool",
                 name: "allowTermReduction",
+                type: "bool",
+              },
+              {
+                internalType: "uint32",
+                name: "firstWithdrawalWindowStart",
+                type: "uint32",
+              },
+              {
+                internalType: "uint32",
+                name: "periodDuration",
+                type: "uint32",
+              },
+              {
+                internalType: "uint32",
+                name: "withdrawalWindowDuration",
+                type: "uint32",
+              },
+              {
+                internalType: "bool",
+                name: "periodicTermClosed",
                 type: "bool",
               },
             ],
@@ -4746,11 +4806,6 @@ const _abi = [
                   },
                   {
                     internalType: "bool",
-                    name: "allowForceBuyBacks",
-                    type: "bool",
-                  },
-                  {
-                    internalType: "bool",
                     name: "withdrawalRequiresAccess",
                     type: "bool",
                   },
@@ -4767,6 +4822,26 @@ const _abi = [
                   {
                     internalType: "bool",
                     name: "allowTermReduction",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "uint32",
+                    name: "firstWithdrawalWindowStart",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "uint32",
+                    name: "periodDuration",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "uint32",
+                    name: "withdrawalWindowDuration",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "periodicTermClosed",
                     type: "bool",
                   },
                 ],
@@ -5583,11 +5658,6 @@ const _abi = [
               },
               {
                 internalType: "bool",
-                name: "allowForceBuyBacks",
-                type: "bool",
-              },
-              {
-                internalType: "bool",
                 name: "withdrawalRequiresAccess",
                 type: "bool",
               },
@@ -5604,6 +5674,26 @@ const _abi = [
               {
                 internalType: "bool",
                 name: "allowTermReduction",
+                type: "bool",
+              },
+              {
+                internalType: "uint32",
+                name: "firstWithdrawalWindowStart",
+                type: "uint32",
+              },
+              {
+                internalType: "uint32",
+                name: "periodDuration",
+                type: "uint32",
+              },
+              {
+                internalType: "uint32",
+                name: "withdrawalWindowDuration",
+                type: "uint32",
+              },
+              {
+                internalType: "bool",
+                name: "periodicTermClosed",
                 type: "bool",
               },
             ],
@@ -6836,11 +6926,6 @@ const _abi = [
                   },
                   {
                     internalType: "bool",
-                    name: "allowForceBuyBacks",
-                    type: "bool",
-                  },
-                  {
-                    internalType: "bool",
                     name: "withdrawalRequiresAccess",
                     type: "bool",
                   },
@@ -6857,6 +6942,26 @@ const _abi = [
                   {
                     internalType: "bool",
                     name: "allowTermReduction",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "uint32",
+                    name: "firstWithdrawalWindowStart",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "uint32",
+                    name: "periodDuration",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "uint32",
+                    name: "withdrawalWindowDuration",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "periodicTermClosed",
                     type: "bool",
                   },
                 ],
@@ -7739,11 +7844,6 @@ const _abi = [
                   },
                   {
                     internalType: "bool",
-                    name: "allowForceBuyBacks",
-                    type: "bool",
-                  },
-                  {
-                    internalType: "bool",
                     name: "withdrawalRequiresAccess",
                     type: "bool",
                   },
@@ -7760,6 +7860,26 @@ const _abi = [
                   {
                     internalType: "bool",
                     name: "allowTermReduction",
+                    type: "bool",
+                  },
+                  {
+                    internalType: "uint32",
+                    name: "firstWithdrawalWindowStart",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "uint32",
+                    name: "periodDuration",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "uint32",
+                    name: "withdrawalWindowDuration",
+                    type: "uint32",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "periodicTermClosed",
                     type: "bool",
                   },
                 ],
