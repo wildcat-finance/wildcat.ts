@@ -1,15 +1,8 @@
-const { createHash } = require("crypto");
-const { writeFileSync, readFileSync, existsSync } = require("fs");
+const { writeFileSync, readFileSync } = require("fs");
 const path = require("path");
 const { Project, SyntaxKind } = require("ts-morph");
 const { getProgressBar } = require("./logs");
 const GRAPHQL_TS_PATH = path.join(__dirname, "../src/gql/graphql.ts");
-
-const CODEGEN_YML_PATH = path.join(__dirname, "../codegen.yml");
-const SCHEMA_JSON_PATH = path.join(__dirname, "schema.json");
-const GQL_CACHE_PATH = path.join(__dirname, ".gql-cache");
-const GQL_FRAGMENTS_PATH = path.join(__dirname, "../gql/fragments.graphql");
-const GQL_QUERIES_PATH = path.join(__dirname, "../gql/queries.graphql");
 
 /* ========================================================================== */
 /*                           WHAT THIS SCRIPT DOES:                           */
@@ -75,7 +68,7 @@ const timer = () => {
   return resetAndLogTimeElapsed;
 };
 
-const checkpoint = timer();
+const checkpoint = DEBUG ? timer() : () => {};
 
 // Gather unique type definitions (by text) in all type aliases
 typeAliases.forEach((alias) => {
@@ -180,21 +173,4 @@ checkpoint("Repaired return types");
 console.log(`Repaired return types for ${functionsToRepair.length} hooks.`);
 console.log(`Saving ${relativePath}...`);
 sourceFile.saveSync();
-
-function generateFileChecksum(filePath) {
-  return createHash("md5").update(readFileSync(filePath), "utf8").digest("hex");
-}
-
-function updateChecksums() {
-  const currentChecksums = [
-    generateFileChecksum(CODEGEN_YML_PATH),
-    generateFileChecksum(SCHEMA_JSON_PATH),
-    generateFileChecksum(GQL_FRAGMENTS_PATH),
-    generateFileChecksum(GQL_QUERIES_PATH),
-    generateFileChecksum(GRAPHQL_TS_PATH)
-  ].join("\n");
-  writeFileSync(GQL_CACHE_PATH, currentChecksums);
-  checkpoint("Saved file");
-}
-
-updateChecksums();
+checkpoint("Saved file");

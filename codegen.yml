@@ -1,4 +1,4 @@
-schema: 'https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/version/v2.0.19/api'
+schema: 'https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.1.1/gn'
 overwrite: true
 documents:
   - './gql/queries.graphql'

@@ -5,5 +5,7 @@ typechain-types
 .env
 dist/
 .idea
+scripts/schema.json
+scripts/time-elapsed.txt
 
 *.tgz

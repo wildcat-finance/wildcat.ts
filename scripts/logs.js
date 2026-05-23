@@ -1,4 +1,11 @@
+const canUpdateStdout =
+  process.stdout.isTTY &&
+  typeof process.stdout.moveCursor === "function" &&
+  typeof process.stdout.clearLine === "function" &&
+  typeof process.stdout.cursorTo === "function";
+
 function clearLines(n) {
+  if (!canUpdateStdout) return;
   for (let i = 0; i < n; i++) {
     process.stdout.moveCursor(0, i === 0 ? 0 : -1);
     process.stdout.clearLine(1);
@@ -32,6 +39,11 @@ let finalizePreviousMessage;
  * @returns {[function(string): void, function(string): void]} [updateLastLine, finalizeMessage]
  */
 function printUpdatableMessage(message) {
+  if (!canUpdateStdout) {
+    if (message) process.stdout.write(`${message}\n`);
+    return [() => {}, (message) => message && process.stdout.write(`${message}\n`)];
+  }
+
   if (finalizePreviousMessage) finalizePreviousMessage();
   process.stdout.write(message);
 
@@ -52,6 +64,8 @@ function printUpdatableMessage(message) {
 }
 
 const getProgressBar = (label, total) => {
+  if (total === 0) return () => {};
+
   let lastPercentComplete = 0;
   let i = 0;
   const [updateLog, stopUpdatingLog] = printUpdatableMessage("");

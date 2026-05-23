@@ -9,8 +9,6 @@ const GQL_CACHE_PATH = path.join(__dirname, ".gql-cache");
 const GQL_FRAGMENTS_PATH = path.join(__dirname, "../gql/fragments.graphql");
 const GQL_QUERIES_PATH = path.join(__dirname, "../gql/queries.graphql");
 
-if (process.env.FORCE) process.exit(0);
-
 async function getSchema() {
   const schemaUrl = readFileSync(CODEGEN_YML_PATH, "utf8")
     .split("\n")
@@ -27,19 +25,21 @@ async function getSchema() {
   writeFileSync(SCHEMA_JSON_PATH, JSON.stringify(schema, null, 2));
 }
 
-if (!existsSync(GQL_CACHE_PATH)) {
-  console.log(`cache does not exist`);
-  process.exit(0);
-}
-
-const previousChecksums = readFileSync(GQL_CACHE_PATH, "utf8");
-
 function generateFileChecksum(filePath) {
   return crypto.createHash("md5").update(readFileSync(filePath), "utf8").digest("hex");
 }
 
 async function compareChecksums() {
   await getSchema();
+
+  if (process.env.FORCE) process.exit(0);
+
+  if (!existsSync(GQL_CACHE_PATH)) {
+    console.log(`cache does not exist`);
+    process.exit(0);
+  }
+
+  const previousChecksums = readFileSync(GQL_CACHE_PATH, "utf8");
   const currentChecksums = [
     generateFileChecksum(SCHEMA_JSON_PATH),
     generateFileChecksum(CODEGEN_YML_PATH),
@@ -54,7 +54,10 @@ async function compareChecksums() {
   }
 
   console.log(`No GQL changes, skipping codegen`);
-  process.exit(1);
+  process.exit(2);
 }
 
-compareChecksums();
+compareChecksums().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
