@@ -13,6 +13,8 @@ import {
   WildcatArchController__factory,
   MarketLensV2,
   MarketLensV2__factory,
+  MarketLensV21,
+  MarketLensV21__factory,
   HooksFactory__factory,
   HooksFactory,
   WildcatCollateralFactory,
@@ -86,7 +88,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
   [SupportedChainId.Sepolia]: {
     HooksFactory: "0x10A64ABa0159720F8a23E1A552800CA4eb21576C",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
-    MarketLensV2: "0x5D8cEacEe19c06C3b4108b8Ae5B881eb0240B9c7",
+    MarketLensV2: "0x860dCC10Dfc6B9f0Ef4f1aa3C0ff6FB034Fd5eb6",
     MockArchControllerOwner: "0xa476920af80B587f696734430227869795E2Ea78",
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
@@ -179,10 +181,15 @@ export const getHooksFactoryContract = (
   return HooksFactory__factory.connect(getDeploymentAddress(chainId, "HooksFactory"), provider);
 };
 
+export type MarketLensV2Like = MarketLensV2 | MarketLensV21;
+
 export const getLensV2Contract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): MarketLensV2 => {
+): MarketLensV2Like => {
+  if (chainId === SupportedChainId.Sepolia) {
+    return MarketLensV21__factory.connect(getDeploymentAddress(chainId, "MarketLensV2"), provider);
+  }
   return MarketLensV2__factory.connect(getDeploymentAddress(chainId, "MarketLensV2"), provider);
 };
 
@@ -227,7 +234,7 @@ export const getWrapperFactoryContract = (
 };
 
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.0.23/gn`,
+  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.1.2/gn`,
   [SupportedChainId.Mainnet]:
     "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.22/gn",
   [SupportedChainId.PlasmaTestnet]:

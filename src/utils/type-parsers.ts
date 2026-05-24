@@ -30,11 +30,7 @@ import {
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { SupportedChainId } from "../constants";
 import { assert } from "./assert";
-import {
-  SubgraphLenderHooksAccessDataFragment,
-  SubgraphLenderStatus,
-  SubgraphWithdrawalRequestPropertiesFragment
-} from "../gql/graphql";
+import { SubgraphLenderHooksAccessDataFragment, SubgraphLenderStatus } from "../gql/graphql";
 import { LenderRole } from "../account";
 
 export const parseMarketParameterConstraints = (
@@ -121,10 +117,6 @@ const getTypeName: ParseFn = function <K extends WithdrawalRecordKind>(
   return log.__typename;
 }; */
 
-const test = (batch: WithdrawalBatch, records: SubgraphWithdrawalRequestPropertiesFragment[]) => {
-  const x = records.map((r) => parseWithdrawalRecord(batch, r));
-};
-
 export const removeUnusedTxFields = ({
   to,
   data,
@@ -141,6 +133,7 @@ export const removeUnusedTxFields = ({
 
 const marketRecordParsers: MarketRecordParserMap = {
   AnnualInterestBipsUpdated: (_, log) => log,
+  AnnualInterestBipsReductionProposed: (_, log) => log,
   Borrow: (token, { assetAmount, ...rest }) => ({
     amount: token.getAmount(assetAmount),
     ...rest
@@ -183,6 +176,8 @@ const marketRecordParsers: MarketRecordParserMap = {
     newMinimumDeposit: token.getAmount(newMinimumDeposit),
     ...rest
   }),
+  PeriodicTermClosed: (_, log) => log,
+  PeriodicTermUpdated: (_, log) => log,
   ProtocolFeeBipsUpdated: (_, log) => ({ ...log }),
   WithdrawalRequest: (token, { scaledAmount, normalizedAmount, account, ...rest }) => ({
     address: account.address,

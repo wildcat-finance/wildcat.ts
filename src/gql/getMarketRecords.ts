@@ -14,6 +14,8 @@ import {
   SubgraphMinimumDepositUpdated_Filter,
   SubgraphProtocolFeeBipsUpdated_Filter,
   SubgraphFixedTermUpdated_Filter,
+  SubgraphPeriodicTermUpdated_Filter,
+  SubgraphAnnualInterestBipsReductionProposed_Filter,
   SubgraphGetMarketEventsQuery,
   SubgraphGetMarketEventsQueryVariables
 } from "./graphql";
@@ -49,7 +51,9 @@ type FilterUnion =
   | SubgraphForceBuyBack_Filter
   | SubgraphMinimumDepositUpdated_Filter
   | SubgraphProtocolFeeBipsUpdated_Filter
-  | SubgraphFixedTermUpdated_Filter;
+  | SubgraphFixedTermUpdated_Filter
+  | SubgraphPeriodicTermUpdated_Filter
+  | SubgraphAnnualInterestBipsReductionProposed_Filter;
 
 type Common<T> = Pick<T, CommonKeys<T>>;
 
@@ -94,7 +98,9 @@ export async function getMarketRecords(
       forceBuyBackRecordsFilter: additionalFilter,
       minimumDepositUpdateRecordsFilter: additionalFilter,
       protocolFeeBipsUpdatedRecordsFilter: additionalFilter,
-      fixedTermUpdatedRecordsFilter: additionalFilter
+      fixedTermUpdatedRecordsFilter: additionalFilter,
+      periodicTermUpdatedRecordsFilter: additionalFilter,
+      annualInterestBipsReductionProposalRecordsFilter: additionalFilter
     },
     fetchPolicy
   });
@@ -110,6 +116,9 @@ export async function getMarketRecords(
     forceBuyBackDisabledRecord: disabledForceBuyBacksRecord,
     feeCollectionRecords: feesCollectedRecords,
     fixedTermUpdatedRecords,
+    periodicTermUpdatedRecords,
+    periodicTermClosedRecord,
+    annualInterestBipsReductionProposalRecords,
     forceBuyBackRecords,
     maxTotalSupplyUpdatedRecords,
     withdrawalRequestRecords,
@@ -143,6 +152,13 @@ export async function getMarketRecords(
     ),
     ...feesCollectedRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
     ...fixedTermUpdatedRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
+    ...periodicTermUpdatedRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
+    ...handleSingleton(periodicTermClosedRecord).map((r) =>
+      parseMarketRecord(market.underlyingToken, r)
+    ),
+    ...annualInterestBipsReductionProposalRecords.map((r) =>
+      parseMarketRecord(market.underlyingToken, r)
+    ),
     ...forceBuyBackRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
     ...handleSingleton(marketClosedEvent).map((r) => parseMarketRecord(market.underlyingToken, r)),
     ...maxTotalSupplyUpdatedRecords.map((r) => parseMarketRecord(market.marketToken, r)),

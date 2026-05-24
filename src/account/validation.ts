@@ -63,12 +63,22 @@ export enum SetAprStatus {
   InvalidApr = "InvalidApr",
   Ready = "Ready",
   InsufficientReserves = "InsufficientReserves",
-  DecreaseDuringFixedTerm = "DecreaseDuringFixedTerm"
+  DecreaseDuringFixedTerm = "DecreaseDuringFixedTerm",
+  AprReductionNotProposed = "AprReductionNotProposed",
+  AprChangeDoesNotMatchProposal = "AprChangeDoesNotMatchProposal",
+  AprChangeNotReady = "AprChangeNotReady",
+  UnpaidWithdrawalsExist = "UnpaidWithdrawalsExist"
 }
 
 export type SetAprPreview =
   | {
-      status: SetAprStatus.NotBorrower | SetAprStatus.InvalidApr;
+      status:
+        | SetAprStatus.NotBorrower
+        | SetAprStatus.InvalidApr
+        | SetAprStatus.AprReductionNotProposed
+        | SetAprStatus.AprChangeDoesNotMatchProposal
+        | SetAprStatus.AprChangeNotReady
+        | SetAprStatus.UnpaidWithdrawalsExist;
     }
   | {
       status: SetAprStatus.Ready;
@@ -102,6 +112,7 @@ export enum QueueWithdrawalStatus {
   InsufficientBalance = "InsufficientBalance",
   InsufficientRole = "InsufficientRole",
   MarketInClosedTerm = "MarketInClosedTerm",
+  WithdrawalWindowClosed = "WithdrawalWindowClosed",
   RequiresAccess = "RequiresAccess"
 }
 
@@ -158,6 +169,18 @@ export enum SetMinimumDepositStatus {
 }
 
 export type SetMinimumDepositPreview = { status: SetMinimumDepositStatus };
+
+export enum ProposeAnnualInterestBipsStatus {
+  Ready = "Ready",
+  NotBorrower = "NotBorrower",
+  NotV2Market = "NotV2Market",
+  NotPeriodicTermMarket = "NotPeriodicTermMarket",
+  InvalidApr = "InvalidApr",
+  NotReduction = "NotReduction",
+  WithdrawalWindowOpen = "WithdrawalWindowOpen"
+}
+
+export type ProposeAnnualInterestBipsPreview = { status: ProposeAnnualInterestBipsStatus };
 
 export enum SetFixedTermEndTimeStatus {
   Ready = "Ready",
