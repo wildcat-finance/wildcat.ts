@@ -190,22 +190,6 @@ export type PeriodicTermHooksConfig = {
 
 export type HooksConfig = OpenTermHooksConfig | FixedTermHooksConfig | PeriodicTermHooksConfig;
 
-/* export type HooksConfig = {
-  hooksAddress: string;
-  hooksKind: HooksKind;
-  flags: HooksFlags;
-  transferRequiresAccess?: boolean;
-  depositRequiresAccess?: boolean;
-  minimumDeposit?: TokenAmount;
-  transfersDisabled?: boolean;
-  allowForceBuyBacks?: boolean;
-  queueWithdrawalRequiresAccess?: boolean;
-  fixedTermEndTime?: number;
-  allowClosureBeforeTerm?: boolean;
-  allowTermReduction?: boolean;
-  template?: HooksTemplate;
-}; */
-
 export enum HooksKind {
   Unknown = "Unknown",
   OpenTerm = "OpenTerm",

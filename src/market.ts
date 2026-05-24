@@ -16,8 +16,6 @@ import {
   MarketVersion,
   HooksKind,
   HooksConfig,
-  OpenTermHooksConfig,
-  FixedTermHooksConfig,
   PeriodicTermHooksConfig
 } from "./types";
 import { formatUnits } from "ethers/lib/utils";
@@ -205,10 +203,8 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   get isInFixedTerm(): boolean {
     if (this.version !== MarketVersion.V2) return false;
-    const config = this.hooksConfig!;
-    if (config.kind !== HooksKind.FixedTerm) return false;
-    const fixedTermEndTime = config.fixedTermEndTime;
-    return fixedTermEndTime >= Date.now() / 1_000;
+    const config = this.hooksConfig;
+    return config?.kind === HooksKind.FixedTerm && config.fixedTermEndTime >= Date.now() / 1_000;
   }
 
   get periodicHooksConfig(): PeriodicTermHooksConfig | undefined {
@@ -222,7 +218,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   get isPeriodicWithdrawalWindowOpen(): boolean {
     const config = this.periodicHooksConfig;
-    if (!config) return true;
+    if (!config) return false;
     if (this.isClosed || config.periodicTermClosed) return true;
     if (config.periodDuration === 0) return false;
 
@@ -982,18 +978,18 @@ export class Market extends ContractWrapper<WildcatMarket> {
     if (hooksConfigData.kind === 1) {
       hooksConfig = {
         kind: HooksKind.OpenTerm,
-        hooksAddress: hooksAddress,
+        hooksAddress,
         flags: { ...hooksConfigData.flags },
         depositRequiresAccess: hooksConfigData.depositRequiresAccess,
         transferRequiresAccess: hooksConfigData.transferRequiresAccess,
         transfersDisabled: hooksConfigData.transfersDisabled,
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
         allowForceBuyBacks
-      } as OpenTermHooksConfig;
+      };
     } else if (hooksConfigData.kind === 2) {
       hooksConfig = {
         kind: HooksKind.FixedTerm,
-        hooksAddress: hooksAddress,
+        hooksAddress,
         flags: { ...hooksConfigData.flags },
         depositRequiresAccess: hooksConfigData.depositRequiresAccess,
         transferRequiresAccess: hooksConfigData.transferRequiresAccess,
@@ -1004,7 +1000,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
         allowTermReduction: hooksConfigData.allowTermReduction,
         allowClosureBeforeTerm: hooksConfigData.allowClosureBeforeTerm,
         allowForceBuyBacks
-      } as FixedTermHooksConfig;
+      };
     } else if (hooksConfigData.kind === 3 && "periodDuration" in hooksConfigData) {
       hooksConfig = {
         kind: HooksKind.PeriodicTerm,
@@ -1023,7 +1019,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
         pendingAprChangeProposalTimestamp: 0,
         pendingAprChangeResponseWindowStart: 0,
         pendingAprChangeResponseWindowEnd: 0
-      } as PeriodicTermHooksConfig;
+      };
     } else {
       throw Error(
         `Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksConfigData.kind}`
