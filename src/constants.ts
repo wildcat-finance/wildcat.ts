@@ -243,6 +243,24 @@ export const SubgraphUrls = {
     "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-mainnet/v2.0.22/gn"
 };
 
+export const SubgraphFeatures = {
+  [SupportedChainId.Sepolia]: {
+    periodicTermHooks: true
+  },
+  [SupportedChainId.Mainnet]: {
+    periodicTermHooks: false
+  },
+  [SupportedChainId.PlasmaTestnet]: {
+    periodicTermHooks: false
+  },
+  [SupportedChainId.PlasmaMainnet]: {
+    periodicTermHooks: false
+  }
+};
+
+export const supportsPeriodicTermHooks = (chainId: SupportedChainId): boolean =>
+  SubgraphFeatures[chainId]?.periodicTermHooks === true;
+
 export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
   new ApolloClient({
     cache: new InMemoryCache(),

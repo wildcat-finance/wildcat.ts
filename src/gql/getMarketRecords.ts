@@ -1,7 +1,6 @@
 import { Market } from "../market";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import {
-  GetMarketEventsDocument,
   SubgraphDelinquencyStatusChanged_Filter,
   SubgraphBorrow_Filter,
   SubgraphDeposit_Filter,
@@ -19,6 +18,7 @@ import {
   SubgraphGetMarketEventsQuery,
   SubgraphGetMarketEventsQueryVariables
 } from "./graphql";
+import { supportsPeriodicTermHooks } from "../constants";
 import {
   MarketDataFragment,
   MarketRecord,
@@ -26,6 +26,7 @@ import {
   assert,
   parseMarketRecord
 } from "../utils";
+import { getMarketEventsDocumentForChain } from "./document-selectors";
 
 export type GetMarketRecordsOptions = {
   market: Market;
@@ -77,31 +78,35 @@ export async function getMarketRecords(
     endEventIndex = market.eventIndex;
   }
   const startEventIndex = endEventIndex ? Math.max(0, endEventIndex - limit) : 0;
+  const supportsPeriodicRecords = supportsPeriodicTermHooks(market.chainId);
+  const variables: SubgraphGetMarketEventsQueryVariables = {
+    market: marketAddress,
+    endEventIndex,
+    limit,
+    delinquencyRecordsFilter: additionalFilter,
+    borrowRecordsFilter: additionalFilter,
+    depositRecordsFilter: additionalFilter,
+    feeCollectionRecordsFilter: additionalFilter,
+    repaymentRecordsFilter: additionalFilter,
+    annualInterestBipsUpdatedRecordsFilter: additionalFilter,
+    maxTotalSupplyUpdatedRecordsFilter: additionalFilter,
+    withdrawalRequestRecordsFilter: additionalFilter,
+    forceBuyBackRecordsFilter: additionalFilter,
+    minimumDepositUpdateRecordsFilter: additionalFilter,
+    protocolFeeBipsUpdatedRecordsFilter: additionalFilter,
+    fixedTermUpdatedRecordsFilter: additionalFilter
+  };
+  if (supportsPeriodicRecords) {
+    variables.periodicTermUpdatedRecordsFilter = additionalFilter;
+    variables.annualInterestBipsReductionProposalRecordsFilter = additionalFilter;
+  }
 
   const result = await subgraphClient.query<
     SubgraphGetMarketEventsQuery,
     SubgraphGetMarketEventsQueryVariables
   >({
-    query: GetMarketEventsDocument,
-    variables: {
-      market: marketAddress,
-      endEventIndex,
-      limit,
-      delinquencyRecordsFilter: additionalFilter,
-      borrowRecordsFilter: additionalFilter,
-      depositRecordsFilter: additionalFilter,
-      feeCollectionRecordsFilter: additionalFilter,
-      repaymentRecordsFilter: additionalFilter,
-      annualInterestBipsUpdatedRecordsFilter: additionalFilter,
-      maxTotalSupplyUpdatedRecordsFilter: additionalFilter,
-      withdrawalRequestRecordsFilter: additionalFilter,
-      forceBuyBackRecordsFilter: additionalFilter,
-      minimumDepositUpdateRecordsFilter: additionalFilter,
-      protocolFeeBipsUpdatedRecordsFilter: additionalFilter,
-      fixedTermUpdatedRecordsFilter: additionalFilter,
-      periodicTermUpdatedRecordsFilter: additionalFilter,
-      annualInterestBipsReductionProposalRecordsFilter: additionalFilter
-    },
+    query: getMarketEventsDocumentForChain(market.chainId),
+    variables,
     fetchPolicy
   });
 
@@ -116,9 +121,9 @@ export async function getMarketRecords(
     forceBuyBackDisabledRecord: disabledForceBuyBacksRecord,
     feeCollectionRecords: feesCollectedRecords,
     fixedTermUpdatedRecords,
-    periodicTermUpdatedRecords,
+    periodicTermUpdatedRecords = [],
     periodicTermClosedRecord,
-    annualInterestBipsReductionProposalRecords,
+    annualInterestBipsReductionProposalRecords = [],
     forceBuyBackRecords,
     maxTotalSupplyUpdatedRecords,
     withdrawalRequestRecords,
