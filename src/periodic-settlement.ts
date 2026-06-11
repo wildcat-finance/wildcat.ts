@@ -198,10 +198,7 @@ export async function getPeriodicAprReductionSettlementQuote(
   if (now < responseWindowEnd) {
     return { ...base, status: PeriodicAprSettlementStatus.ResponseWindowNotElapsed };
   }
-  if (
-    now >=
-    responseWindowEnd + config.periodDuration * APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS
-  ) {
+  if (now >= responseWindowEnd + config.periodDuration * APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS) {
     return { ...base, status: PeriodicAprSettlementStatus.ProposalExpired };
   }
 
@@ -254,8 +251,7 @@ export async function populatePeriodicAprReductionPlan(
   existingQuote?: PeriodicAprSettlementQuote
 ): Promise<PeriodicAprReductionPlan> {
   const quote =
-    existingQuote ??
-    (await getPeriodicAprReductionSettlementQuote(marketAccount, proposedAprBips));
+    existingQuote ?? (await getPeriodicAprReductionSettlementQuote(marketAccount, proposedAprBips));
   const market = marketAccount.market;
   const transactions: PlannedPeriodicAprTransaction[] = [];
 
