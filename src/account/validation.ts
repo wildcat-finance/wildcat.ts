@@ -67,6 +67,7 @@ export enum SetAprStatus {
   AprReductionNotProposed = "AprReductionNotProposed",
   AprChangeDoesNotMatchProposal = "AprChangeDoesNotMatchProposal",
   AprChangeNotReady = "AprChangeNotReady",
+  AprChangeExpired = "AprChangeExpired",
   UnpaidWithdrawalsExist = "UnpaidWithdrawalsExist"
 }
 
@@ -78,6 +79,7 @@ export type SetAprPreview =
         | SetAprStatus.AprReductionNotProposed
         | SetAprStatus.AprChangeDoesNotMatchProposal
         | SetAprStatus.AprChangeNotReady
+        | SetAprStatus.AprChangeExpired
         | SetAprStatus.UnpaidWithdrawalsExist;
     }
   | {
@@ -90,12 +92,18 @@ export type SetAprPreview =
       // Whether the change to the reserve ratio will be caused by an old temporary
       // reserve ratio resetting.
       changeCausedByReset: boolean;
+      // On a periodic market, an APR increase deletes any pending reduction proposal
+      // (silently, on-chain). Set so the UI can warn the borrower before submitting.
+      willCancelPendingProposal?: boolean;
     }
   | {
       // This status indicates the change will not affect the reserve ratio,
       // i.e. the relative reduction is <= 1/2 of the reserve ratio.
       status: SetAprStatus.Ready;
       willChangeReserveRatio: false;
+      // On a periodic market, an APR increase deletes any pending reduction proposal
+      // (silently, on-chain). Set so the UI can warn the borrower before submitting.
+      willCancelPendingProposal?: boolean;
     }
   | {
       // This status indicates the new reserve ratio required to set the new APR

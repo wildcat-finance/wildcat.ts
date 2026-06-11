@@ -261,6 +261,15 @@ export const SubgraphFeatures = {
 export const supportsPeriodicTermHooks = (chainId: SupportedChainId): boolean =>
   SubgraphFeatures[chainId]?.periodicTermHooks === true;
 
+/**
+ * Number of full periods after the response window ends during which a
+ * proposed periodic APR reduction remains executable. Must match
+ * `PeriodicTermHooks.AprReductionProposalValidityPeriods` (template v2+).
+ * Note: first-generation periodic hooks instances do not enforce expiry
+ * on-chain; the SDK applies it uniformly, which is conservative for them.
+ */
+export const APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS = 2;
+
 export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
   new ApolloClient({
     cache: new InMemoryCache(),

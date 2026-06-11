@@ -13,6 +13,7 @@ export * from "./constants";
 export * from "./controller";
 export * from "./market";
 export * from "./mockerc20factory";
+export * from "./periodic-settlement";
 export * from "./token";
 export * from "./types";
 export * from "./withdrawal-batch";
