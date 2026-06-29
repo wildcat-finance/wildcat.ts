@@ -2,6 +2,9 @@ import { defaultAbiCoder } from "ethers/lib/utils";
 import {
   DefaultV2ParameterConstraints,
   getDeploymentAddress,
+  getHooksFactoryAddressForMarketType,
+  getHooksFactoryRevolvingContract,
+  hasHooksFactoryDeployment,
   SupportedChainId
 } from "../constants";
 import { MarketParameters } from "../controller";
@@ -23,6 +26,7 @@ import {
   AddLenderInput,
   ContractWrapper,
   DepositAccess,
+  MarketType,
   FeeConfigurationV2,
   HooksKind,
   MarketHooksInstanceInputs,
@@ -39,8 +43,11 @@ import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
   DeployMarketPreview,
-  DeployMarketStatus
+  DeployMarketStatus,
+  readyLegacyDeployMarketPreview,
+  readyRevolvingDeployMarketPreview
 } from "./validation";
+import { encodeRevolvingMarketData } from "./revolving";
 import { encodeMarketHooksInstanceInputs } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -72,9 +79,15 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
   updateWith(
     data: HooksInstanceDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): void {
-    this.hooksTemplate.updateWith(data.hooksTemplate, signerAddress, isRegisteredBorrower);
+    this.hooksTemplate.updateWith(
+      data.hooksTemplate,
+      signerAddress,
+      isRegisteredBorrower,
+      hooksFactory ?? this.hooksFactory
+    );
     this.name = data.name;
     this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => ({
       isApproved: true,
@@ -85,6 +98,10 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
       pushProviderIndex: p.pushProviderIndex,
       timeToLive: p.timeToLive
     }));
+  }
+
+  get hooksFactory(): string {
+    return this.hooksTemplate.hooksFactory;
   }
 
   /* ========================================================================== */
@@ -195,7 +212,8 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
     provider: SignerOrProvider,
     data: HooksInstanceDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): OpenTermHooks {
     return new OpenTermHooks({
       chainId,
@@ -208,7 +226,8 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
         provider,
         data.hooksTemplate,
         signerAddress,
-        isRegisteredBorrower
+        isRegisteredBorrower,
+        hooksFactory
       ),
       borrower: data.borrower,
       constraints: data.constraints,
@@ -229,7 +248,8 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
     provider: SignerOrProvider,
     data: SubgraphHooksInstanceDataFragment,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): OpenTermHooks {
     return new OpenTermHooks({
       chainId,
@@ -242,7 +262,8 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
         provider,
         data.hooksTemplate,
         signerAddress,
-        isRegisteredBorrower
+        isRegisteredBorrower,
+        hooksFactory
       ),
       name: data.name,
       roleProviders: data.providers.map((p) => ({
@@ -273,6 +294,7 @@ export type OpenTermHooksArgs = {
 };
 
 export type OpenTermHooksTemplateArgs = {
+  hooksFactory?: string;
   signerAddress?: string;
   isRegisteredBorrower?: boolean;
   hooksTemplate: string;
@@ -284,7 +306,9 @@ export type OpenTermHooksTemplateArgs = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface OpenTermHooksTemplate extends OpenTermHooksTemplateArgs {}
+export interface OpenTermHooksTemplate extends OpenTermHooksTemplateArgs {
+  hooksFactory: string;
+}
 
 export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
   readonly kind: HooksKind.OpenTerm = HooksKind.OpenTerm;
@@ -297,14 +321,16 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     args: OpenTermHooksTemplateArgs
   ) {
     super(provider);
-    Object.assign(this, args);
-    this._contractAddress = getDeploymentAddress(chainId, "HooksFactory");
+    const hooksFactory = args.hooksFactory ?? getDeploymentAddress(chainId, "HooksFactory");
+    Object.assign(this, { ...args, hooksFactory });
+    this._contractAddress = hooksFactory;
   }
 
   updateWith(
     data: HooksTemplateDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory: string = this.hooksFactory
   ): void {
     this.fees = parseFeeConfigurationV2(this.chainId, this.provider, data.fees);
     this.enabled = data.enabled;
@@ -313,6 +339,8 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     this.totalMarkets = data.totalMarkets.toNumber();
     this.signerAddress = signerAddress;
     this.isRegisteredBorrower = isRegisteredBorrower;
+    this.hooksFactory = hooksFactory;
+    this._contractAddress = hooksFactory;
   }
 
   static fromLensData(
@@ -320,12 +348,14 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     provider: SignerOrProvider,
     data: HooksTemplateDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): OpenTermHooksTemplate {
     return new OpenTermHooksTemplate(chainId, provider, {
       enabled: data.enabled,
       fees: parseFeeConfigurationV2(chainId, provider, data.fees),
       hooksTemplate: data.hooksTemplate,
+      hooksFactory,
       index: data.index,
       name: data.name,
       totalMarkets: data.totalMarkets.toNumber(),
@@ -347,13 +377,15 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
       originationFeeAmount
     }: SubgraphHooksTemplateDataFragment,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): OpenTermHooksTemplate {
     const originationFeeToken = originationFeeAsset
       ? Token.fromSubgraphToken(chainId, originationFeeAsset, provider)
       : undefined;
     return new OpenTermHooksTemplate(chainId, provider, {
       hooksTemplate: id,
+      hooksFactory,
       fees: {
         feeRecipient,
         protocolFeeBips,
@@ -374,6 +406,8 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
   }
 
   previewDeployMarket({
+    marketType,
+    commitmentFeeBips,
     hooksAddress,
     hooksInstanceName,
     existingProviders,
@@ -389,6 +423,7 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     allowForceBuyBacks,
     ...otherParameters
   }: OpenTermMarketDeploymentArgs): DeployMarketPreview {
+    const targetMarketType = marketType ?? "legacy";
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -409,6 +444,16 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     }
     if (!hooksAddress && !roleProviderFactory && newProviderInputs?.length) {
       return { status: DeployMarketStatus.CreateProviderInputsWithoutFactory };
+    }
+    if (!hasHooksFactoryDeployment(this.chainId, targetMarketType)) {
+      return { status: DeployMarketStatus.WrongHooksFactory };
+    }
+    const expectedHooksFactory = getHooksFactoryAddressForMarketType(
+      this.chainId,
+      targetMarketType
+    );
+    if (this.hooksFactory.toLowerCase() !== expectedHooksFactory.toLowerCase()) {
+      return { status: DeployMarketStatus.WrongHooksFactory };
     }
     const hooksConfig = encodeHooksConfig({
       hooksAddress: hooksAddress,
@@ -434,15 +479,41 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
     } as DeployMarketInputsV2Struct;
     const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0;
     const originationFeeToken = this.fees.originationFeeToken?.address ?? constants.AddressZero;
+    if (marketType === "revolving") {
+      const marketData = encodeRevolvingMarketData({ commitmentFeeBips });
+      if (hooksAddress) {
+        return readyRevolvingDeployMarketPreview({
+          fn: "deployMarket",
+          args: [parameters, hooksData, marketData, salt, originationFeeToken, originationFeeAmount]
+        });
+      } else {
+        return readyRevolvingDeployMarketPreview({
+          fn: "deployMarketAndHooks",
+          args: [
+            this.hooksTemplate,
+            encodeMarketHooksInstanceInputs({
+              existingProviders,
+              newProviderInputs,
+              hooksInstanceName,
+              roleProviderFactory
+            }),
+            parameters,
+            hooksData,
+            marketData,
+            salt,
+            originationFeeToken,
+            originationFeeAmount
+          ]
+        });
+      }
+    }
     if (hooksAddress) {
-      return {
-        status: DeployMarketStatus.Ready,
+      return readyLegacyDeployMarketPreview({
         fn: "deployMarket",
         args: [parameters, hooksData, salt, originationFeeToken, originationFeeAmount]
-      };
+      });
     } else {
-      return {
-        status: DeployMarketStatus.Ready,
+      return readyLegacyDeployMarketPreview({
         fn: "deployMarketAndHooks",
         args: [
           this.hooksTemplate,
@@ -458,22 +529,30 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
           originationFeeToken,
           originationFeeAmount
         ]
-      };
+      });
     }
   }
 
   deployMarket({ ...otherParameters }: OpenTermMarketDeploymentArgs): Promise<ContractTransaction> {
     const result = this.previewDeployMarket(otherParameters);
     assert(result.status === DeployMarketStatus.Ready, `Can not deploy market: ${result.status}`);
-    if (result.fn === "deployMarket") {
+    if (result.marketType === "legacy" && result.fn === "deployMarket") {
       return this.contract.deployMarket(...result.args);
-    } else {
+    } else if (result.marketType === "legacy") {
       return this.contract.deployMarketAndHooks(...result.args);
+    } else if (result.fn === "deployMarket") {
+      return getHooksFactoryRevolvingContract(this.chainId, this.provider).deployMarket(
+        ...result.args
+      );
+    } else {
+      return getHooksFactoryRevolvingContract(this.chainId, this.provider).deployMarketAndHooks(
+        ...result.args
+      );
     }
   }
 }
 
-export type OpenTermMarketDeploymentArgs = MarketParameters & {
+type OpenTermCommonMarketDeploymentArgs = MarketParameters & {
   /** Create2 salt to use for the market deployment */
   salt: string;
 
@@ -487,4 +566,18 @@ export type OpenTermMarketDeploymentArgs = MarketParameters & {
   withdrawalAccess: WithdrawalAccess;
   /** Whether borrower can force buyback market tokens */
   allowForceBuyBacks?: boolean;
-} & MarketHooksInstanceInputs;
+};
+
+export type LegacyOpenTermMarketDeploymentArgs = OpenTermCommonMarketDeploymentArgs & {
+  marketType?: Extract<MarketType, "legacy">;
+  commitmentFeeBips?: undefined;
+};
+
+export type RevolvingOpenTermMarketDeploymentArgs = OpenTermCommonMarketDeploymentArgs & {
+  marketType: Extract<MarketType, "revolving">;
+  commitmentFeeBips: number;
+};
+
+export type OpenTermMarketDeploymentArgs =
+  | (LegacyOpenTermMarketDeploymentArgs & MarketHooksInstanceInputs)
+  | (RevolvingOpenTermMarketDeploymentArgs & MarketHooksInstanceInputs);

@@ -40,8 +40,9 @@ import { BigNumber, constants, ContractTransaction } from "ethers";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
-  DeployMarketPreview,
-  DeployMarketStatus
+  DeployMarketStatus,
+  LegacyDeployMarketPreview,
+  readyLegacyDeployMarketPreview
 } from "./validation";
 import { encodeMarketHooksInstanceInputs } from "./utils";
 
@@ -380,7 +381,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
     periodDuration,
     withdrawalWindowDuration,
     ...otherParameters
-  }: PeriodicTermMarketDeploymentArgs): DeployMarketPreview {
+  }: PeriodicTermMarketDeploymentArgs): LegacyDeployMarketPreview {
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -425,17 +426,15 @@ export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
       maxTotalSupply: maxTotalSupply.raw,
       hooks: hooksConfig
     } as DeployMarketInputsV2Struct;
-    const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0;
+    const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? BigNumber.from(0);
     const originationFeeToken = this.fees.originationFeeToken?.address ?? constants.AddressZero;
     if (hooksAddress) {
-      return {
-        status: DeployMarketStatus.Ready,
+      return readyLegacyDeployMarketPreview({
         fn: "deployMarket",
         args: [parameters, hooksData, salt, originationFeeToken, originationFeeAmount]
-      };
+      });
     }
-    return {
-      status: DeployMarketStatus.Ready,
+    return readyLegacyDeployMarketPreview({
       fn: "deployMarketAndHooks",
       args: [
         this.hooksTemplate,
@@ -451,7 +450,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
         originationFeeToken,
         originationFeeAmount
       ]
-    };
+    });
   }
 
   deployMarket({

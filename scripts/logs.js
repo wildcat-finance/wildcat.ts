@@ -1,10 +1,17 @@
-const canUpdateStdout =
-  typeof process.stdout.moveCursor === "function" &&
-  typeof process.stdout.clearLine === "function" &&
-  typeof process.stdout.cursorTo === "function";
+function hasInteractiveStdout() {
+  return (
+    !!process.stdout &&
+    process.stdout.isTTY === true &&
+    typeof process.stdout.clearLine === "function" &&
+    typeof process.stdout.cursorTo === "function" &&
+    typeof process.stdout.moveCursor === "function"
+  );
+}
 
 function clearLines(n) {
-  if (!canUpdateStdout) return;
+  if (!hasInteractiveStdout()) {
+    return;
+  }
   for (let i = 0; i < n; i++) {
     process.stdout.moveCursor(0, i === 0 ? 0 : -1);
     process.stdout.clearLine(1);
@@ -42,7 +49,10 @@ function printUpdatableMessage(message) {
   process.stdout.write(message);
 
   const updateLastLine = (newMessage) => {
-    if (!canUpdateStdout) return;
+    if (!hasInteractiveStdout()) {
+      process.stdout.write(`\n${newMessage}`);
+      return;
+    }
     process.stdout.clearLine(0);
     process.stdout.cursorTo(0);
     process.stdout.write(newMessage);

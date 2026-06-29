@@ -675,6 +675,11 @@
             },
             {
               "__typename": "__Field",
+              "name": "hooksFactories",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
               "name": "hooksFactory",
               "description": null
             }
@@ -2062,6 +2067,11 @@
             },
             {
               "__typename": "__Field",
+              "name": "marketType",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
               "name": "isRegistered",
               "description": null
             },
@@ -3271,6 +3281,11 @@
             },
             {
               "__typename": "__Field",
+              "name": "marketType",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
               "name": "controller",
               "description": null
             },
@@ -3401,7 +3416,17 @@
             },
             {
               "__typename": "__Field",
+              "name": "commitmentFeeBips",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
               "name": "reserveRatioBips",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "drawnAmount",
               "description": null
             },
             {
@@ -4054,6 +4079,13 @@
         {
           "__typename": "__Type",
           "name": "MarketRemoved_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "MarketType",
           "description": null,
           "kind": "ENUM",
           "fields": null

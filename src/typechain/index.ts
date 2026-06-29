@@ -10,6 +10,7 @@ export type { CheckSafeSignature } from "./CheckSafeSignature";
 export type { CollateralLens } from "./CollateralLens";
 export type { DescribeSignature } from "./DescribeSignature";
 export type { HooksFactory } from "./HooksFactory";
+export type { HooksFactoryRevolving } from "./HooksFactoryRevolving";
 export type { IERC20 } from "./IERC20";
 export type { IFixedTermHooks } from "./IFixedTermHooks";
 export type { IOpenTermHooks } from "./IOpenTermHooks";
@@ -18,6 +19,7 @@ export type { ISafe } from "./ISafe";
 export type { MarketLens } from "./MarketLens";
 export type { MarketLensV2 } from "./MarketLensV2";
 export type { MarketLensV21 } from "./MarketLensV21";
+export type { MarketLensV2_5 } from "./MarketLensV2_5";
 export type { MockArchControllerOwner } from "./MockArchControllerOwner";
 export type { MockERC20Factory } from "./MockERC20Factory";
 export type { SimpleMarketCollateral } from "./SimpleMarketCollateral";
@@ -36,12 +38,14 @@ export { CheckSafeSignature__factory } from "./factories/CheckSafeSignature__fac
 export { CollateralLens__factory } from "./factories/CollateralLens__factory";
 export { DescribeSignature__factory } from "./factories/DescribeSignature__factory";
 export { HooksFactory__factory } from "./factories/HooksFactory__factory";
+export { HooksFactoryRevolving__factory } from "./factories/HooksFactoryRevolving__factory";
 export { IERC20__factory } from "./factories/IERC20__factory";
 export { IFixedTermHooks__factory } from "./factories/IFixedTermHooks__factory";
 export { IOpenTermHooks__factory } from "./factories/IOpenTermHooks__factory";
 export { IPeriodicTermHooks__factory } from "./factories/IPeriodicTermHooks__factory";
 export { ISafe__factory } from "./factories/ISafe__factory";
 export { MarketLens__factory } from "./factories/MarketLens__factory";
+export { MarketLensV2_5__factory } from "./factories/MarketLensV2_5__factory";
 export { MarketLensV2__factory } from "./factories/MarketLensV2__factory";
 export { MarketLensV21__factory } from "./factories/MarketLensV21__factory";
 export { MockArchControllerOwner__factory } from "./factories/MockArchControllerOwner__factory";
@@ -78,8 +82,8 @@ export type { PeriodicTermHookedMarketStruct, PeriodicTermHookedMarketStructOutp
 export type { FeeConfigurationStruct, FeeConfigurationStructOutput, MarketDataStruct, MarketDataStructOutput, ControllerDataStruct, ControllerDataStructOutput, MarketLenderStatusStruct, MarketLenderStatusStructOutput, MarketDataWithLenderStatusStruct, MarketDataWithLenderStatusStructOutput, ArchControllerDataStruct, ArchControllerDataStructOutput, SliceParametersStruct, SliceParametersStructOutput, WithdrawalBatchDataStruct, WithdrawalBatchDataStructOutput, WithdrawalBatchLenderStatusStruct, WithdrawalBatchLenderStatusStructOutput, WithdrawalBatchDataWithLenderStatusStruct, WithdrawalBatchDataWithLenderStatusStructOutput } from "./MarketLens";
 
 export type { FeeConfigurationV2Struct, FeeConfigurationV2StructOutput, HooksTemplateDataStruct, HooksTemplateDataStructOutput, HooksConfigDataStruct, HooksConfigDataStructOutput, MarketHooksDataStruct, MarketHooksDataStructOutput, HooksDeploymentFlagsStruct, HooksDeploymentFlagsStructOutput, RoleProviderDataStruct, RoleProviderDataStructOutput, HooksInstanceDataStruct, HooksInstanceDataStructOutput, MarketDataV2Struct, MarketDataV2StructOutput, HooksDataForBorrowerStruct, HooksDataForBorrowerStructOutput, LenderAccountDataStruct, LenderAccountDataStructOutput, MarketDataWithLenderStatusV2Struct, MarketDataWithLenderStatusV2StructOutput, LenderAccountQueryStruct, LenderAccountQueryStructOutput, LenderAccountQueryResultStruct, LenderAccountQueryResultStructOutput } from "./MarketLensV2";
-
 export type { FeeConfigurationV21Struct, FeeConfigurationV21StructOutput, HooksTemplateDataV21Struct, HooksTemplateDataV21StructOutput, HooksConfigDataV21Struct, HooksConfigDataV21StructOutput, MarketHooksDataV21Struct, MarketHooksDataV21StructOutput, HooksDeploymentFlagsV21Struct, HooksDeploymentFlagsV21StructOutput, RoleProviderDataV21Struct, RoleProviderDataV21StructOutput, HooksInstanceDataV21Struct, HooksInstanceDataV21StructOutput, MarketDataV21Struct, MarketDataV21StructOutput, HooksDataForBorrowerV21Struct, HooksDataForBorrowerV21StructOutput, LenderAccountDataV21Struct, LenderAccountDataV21StructOutput, MarketDataWithLenderStatusV21Struct, MarketDataWithLenderStatusV21StructOutput, WithdrawalBatchDataWithLenderStatusV21Struct, WithdrawalBatchDataWithLenderStatusV21StructOutput, LenderAccountQueryV21Struct, LenderAccountQueryV21StructOutput, LenderAccountQueryResultV21Struct, LenderAccountQueryResultV21StructOutput } from "./MarketLensV21";
+export type { TokenMetadataV2_5Struct, TokenMetadataV2_5StructOutput, FeeConfigurationV2_5Struct, FeeConfigurationV2_5StructOutput, HooksTemplateDataV2_5Struct, HooksTemplateDataV2_5StructOutput, HooksConfigDataV2_5Struct, HooksConfigDataV2_5StructOutput, MarketHooksDataV2_5Struct, MarketHooksDataV2_5StructOutput, MarketParameterConstraintsV2_5Struct, MarketParameterConstraintsV2_5StructOutput, HooksDeploymentFlagsV2_5Struct, HooksDeploymentFlagsV2_5StructOutput, RoleProviderDataV2_5Struct, RoleProviderDataV2_5StructOutput, HooksInstanceDataV2_5Struct, HooksInstanceDataV2_5StructOutput, MarketDataBaseV2_5Struct, MarketDataBaseV2_5StructOutput, OptionalUintDataV2_5Struct, OptionalUintDataV2_5StructOutput, MarketDataV2_5Struct, MarketDataV2_5StructOutput, HooksDataForBorrowerV2_5Struct, HooksDataForBorrowerV2_5StructOutput, FactoryScopedHooksTemplateDataV2_5Struct, FactoryScopedHooksTemplateDataV2_5StructOutput, LenderAccountDataV2_5Struct, LenderAccountDataV2_5StructOutput, MarketDataWithLenderStatusV2_5Struct, MarketDataWithLenderStatusV2_5StructOutput, WithdrawalBatchDataV2_5Struct, WithdrawalBatchDataV2_5StructOutput, WithdrawalBatchLenderStatusV2_5Struct, WithdrawalBatchLenderStatusV2_5StructOutput, WithdrawalBatchDataWithLenderStatusV2_5Struct, WithdrawalBatchDataWithLenderStatusV2_5StructOutput, LenderAccountQueryV2_5Struct, LenderAccountQueryV2_5StructOutput, LenderAccountQueryResultV2_5Struct, LenderAccountQueryResultV2_5StructOutput } from "./MarketLensV2_5";
 
 export type { DepositorStruct, DepositorStructOutput } from "./SimpleMarketCollateral";
 

@@ -4,3 +4,11 @@ Replaced duplicate type literals: 62577ms
 Found functions to repair: 70ms
 Repaired return types: 1ms
 Saved file: 8ms
+Gathered unique type definitions: 5ms
+Mapped type literals: 34ms
+Gathered unique type definitions: 5ms
+Mapped type literals: 34ms
+Replaced duplicate type literals: 17283ms
+Found functions to repair: 23ms
+Repaired return types: 1ms
+Saved file: 3ms

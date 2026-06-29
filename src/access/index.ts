@@ -1,11 +1,18 @@
-import { SupportedChainId } from "../constants";
+import {
+  SupportedChainId,
+  getHooksFactoryAddressForMarketType,
+  getLatestLensDeploymentName,
+  getLensV2Contract,
+  getLensV2_5Contract,
+  hasHooksFactoryDeployment
+} from "../constants";
 import {
   SubgraphHooksInstanceDataFragment,
   SubgraphHooksKind,
   SubgraphHooksTemplateDataFragment
 } from "../gql/graphql";
 import { HooksInstanceDataStructOutput, HooksTemplateDataStructOutput } from "../typechain";
-import { SignerOrProvider } from "../types";
+import { MarketTypes, Signer, SignerOrProvider } from "../types";
 import { OpenTermHooks, OpenTermHooksTemplate } from "./access-control";
 import { FixedTermHooks, FixedTermHooksTemplate } from "./fixed-term";
 import { PeriodicTermHooks, PeriodicTermHooksTemplate } from "./periodic-term";
@@ -13,6 +20,7 @@ import { PeriodicTermHooks, PeriodicTermHooksTemplate } from "./periodic-term";
 export * from "./access-control";
 export * from "./fixed-term";
 export * from "./periodic-term";
+export * from "./revolving";
 export * from "./validation";
 
 export type HooksTemplate =
@@ -21,6 +29,130 @@ export type HooksTemplate =
   | PeriodicTermHooksTemplate;
 
 export type HooksInstance = OpenTermHooks | FixedTermHooks | PeriodicTermHooks;
+
+export type BorrowerHooksDataResult = {
+  hooksTemplates: HooksTemplate[];
+  hooksInstances: HooksInstance[];
+  isRegisteredBorrower: boolean;
+};
+
+export async function getBorrowerHooksData(
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  borrower?: string
+): Promise<BorrowerHooksDataResult> {
+  if (borrower === undefined && Signer.isSigner(provider)) {
+    borrower = await provider.getAddress();
+  }
+  if (borrower === undefined) {
+    throw Error("Borrower address is required");
+  }
+  const borrowerAddress = borrower;
+
+  if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
+    const lens = getLensV2_5Contract(chainId, provider);
+    const factoryScopedResults = await Promise.all(
+      MarketTypes.filter((marketType) => hasHooksFactoryDeployment(chainId, marketType)).map(
+        async (marketType) => {
+          const hooksFactory = getHooksFactoryAddressForMarketType(chainId, marketType);
+          const data = await lens["getHooksDataForBorrower(address,address)"](
+            hooksFactory,
+            borrowerAddress
+          );
+          return { data, hooksFactory };
+        }
+      )
+    );
+
+    const hooksInstancesByAddress = new Map<string, HooksInstance>();
+    for (const { data, hooksFactory } of factoryScopedResults) {
+      const hooksTemplateDataByAddress = new Map(
+        data.hooksTemplates.map((template) => [template.hooksTemplate.toLowerCase(), template])
+      );
+      for (const instance of data.hooksInstances) {
+        const hooksInstance = hooksInstanceFromLens(
+          chainId,
+          provider,
+          instance,
+          borrowerAddress,
+          data.isRegisteredBorrower,
+          hooksFactory
+        );
+        const hooksTemplateData = hooksTemplateDataByAddress.get(
+          hooksInstance.hooksTemplate.hooksTemplate.toLowerCase()
+        );
+        if (hooksTemplateData) {
+          hooksInstance.hooksTemplate.updateWith(
+            hooksTemplateData,
+            borrowerAddress,
+            data.isRegisteredBorrower,
+            hooksFactory
+          );
+        }
+        hooksInstancesByAddress.set(hooksInstance.address.toLowerCase(), hooksInstance);
+      }
+    }
+
+    return {
+      hooksTemplates: factoryScopedResults.flatMap(({ data, hooksFactory }) =>
+        data.hooksTemplates.map((template) =>
+          hooksTemplateFromLens(
+            chainId,
+            provider,
+            template,
+            borrowerAddress,
+            data.isRegisteredBorrower,
+            hooksFactory
+          )
+        )
+      ),
+      hooksInstances: Array.from(hooksInstancesByAddress.values()),
+      isRegisteredBorrower: factoryScopedResults.some(({ data }) => data.isRegisteredBorrower)
+    };
+  }
+
+  const result = await getLensV2Contract(chainId, provider).getHooksDataForBorrower(
+    borrowerAddress
+  );
+
+  const hooksTemplateDataByAddress = new Map(
+    result.hooksTemplates.map((template) => [template.hooksTemplate.toLowerCase(), template])
+  );
+  const hooksInstances = result.hooksInstances.map((instance) => {
+    const hooksInstance = hooksInstanceFromLens(
+      chainId,
+      provider,
+      instance,
+      borrowerAddress,
+      result.isRegisteredBorrower
+    );
+    const hooksTemplateData = hooksTemplateDataByAddress.get(
+      hooksInstance.hooksTemplate.hooksTemplate.toLowerCase()
+    );
+    if (hooksTemplateData) {
+      hooksInstance.hooksTemplate.updateWith(
+        hooksTemplateData,
+        borrowerAddress,
+        result.isRegisteredBorrower
+      );
+    }
+    return hooksInstance;
+  });
+
+  return {
+    hooksTemplates: result.hooksTemplates.map((template) =>
+      hooksTemplateFromLens(
+        chainId,
+        provider,
+        template,
+        borrowerAddress,
+        result.isRegisteredBorrower
+      )
+    ),
+    hooksInstances,
+    isRegisteredBorrower: result.isRegisteredBorrower
+  };
+}
 
 export function hooksTemplateFromSubgraph(
   chainId: SupportedChainId,
@@ -63,7 +195,8 @@ export function hooksTemplateFromLens(
   provider: SignerOrProvider,
   data: HooksTemplateDataStructOutput,
   signerAddress?: string,
-  isRegisteredBorrower?: boolean
+  isRegisteredBorrower?: boolean,
+  hooksFactory?: string
 ): HooksTemplate {
   if (data.name === "OpenTermHooks") {
     return OpenTermHooksTemplate.fromLensData(
@@ -71,7 +204,8 @@ export function hooksTemplateFromLens(
       provider,
       data,
       signerAddress,
-      isRegisteredBorrower
+      isRegisteredBorrower,
+      hooksFactory
     );
   } else if (data.name === "FixedTermHooks") {
     return FixedTermHooksTemplate.fromLensData(
@@ -79,7 +213,8 @@ export function hooksTemplateFromLens(
       provider,
       data,
       signerAddress,
-      isRegisteredBorrower
+      isRegisteredBorrower,
+      hooksFactory
     );
   } else if (data.name === "PeriodicTermHooks") {
     return PeriodicTermHooksTemplate.fromLensData(
@@ -135,17 +270,26 @@ export function hooksInstanceFromLens(
   provider: SignerOrProvider,
   data: HooksInstanceDataStructOutput,
   signerAddress?: string,
-  isRegisteredBorrower?: boolean
+  isRegisteredBorrower?: boolean,
+  hooksFactory?: string
 ): HooksInstance {
   if (data.kind === 1) {
-    return OpenTermHooks.fromLensData(chainId, provider, data, signerAddress, isRegisteredBorrower);
+    return OpenTermHooks.fromLensData(
+      chainId,
+      provider,
+      data,
+      signerAddress,
+      isRegisteredBorrower,
+      hooksFactory
+    );
   } else if (data.kind === 2) {
     return FixedTermHooks.fromLensData(
       chainId,
       provider,
       data,
       signerAddress,
-      isRegisteredBorrower
+      isRegisteredBorrower,
+      hooksFactory
     );
   } else if (data.kind === 3) {
     return PeriodicTermHooks.fromLensData(

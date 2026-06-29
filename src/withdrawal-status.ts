@@ -3,12 +3,14 @@ import { Market } from "./market";
 import { TokenAmount } from "./token";
 import {
   WithdrawalBatchLenderStatusStructOutput,
-  WithdrawalBatchDataWithLenderStatusStructOutput
+  WithdrawalBatchDataWithLenderStatusStructOutput,
+  WithdrawalBatchLenderStatusV2_5StructOutput,
+  WithdrawalBatchDataWithLenderStatusV2_5StructOutput
 } from "./typechain";
 import {
   SupportedChainId,
+  getLatestLensContract,
   getLensContract,
-  getLensV2Contract,
   hasDeploymentAddress
 } from "./constants";
 import {
@@ -27,6 +29,14 @@ import {
   SubgraphWithdrawalRequest,
   SubgraphWithdrawalRequestPropertiesFragment
 } from "./gql/graphql";
+
+type WithdrawalBatchLenderStatusOutput =
+  | WithdrawalBatchLenderStatusStructOutput
+  | WithdrawalBatchLenderStatusV2_5StructOutput;
+
+type WithdrawalBatchDataWithLenderStatusOutput =
+  | WithdrawalBatchDataWithLenderStatusStructOutput
+  | WithdrawalBatchDataWithLenderStatusV2_5StructOutput;
 
 export class LenderWithdrawalStatus {
   public executions: WithdrawalExecutionRecord[] = [];
@@ -141,10 +151,10 @@ export class LenderWithdrawalStatus {
     expiry: number,
     lender: string
   ): Promise<LenderWithdrawalStatus> {
-    const useLensV2 =
+    const useLatestLens =
       market.version === MarketVersion.V2 || !hasDeploymentAddress(market.chainId, "MarketLens");
-    const lens = useLensV2
-      ? getLensV2Contract(market.chainId, market.provider)
+    const lens = useLatestLens
+      ? getLatestLensContract(market.chainId, market.provider)
       : getLensContract(market.chainId, market.provider);
     const batchData = await lens.getWithdrawalBatchDataWithLenderStatus(
       market.address,
@@ -162,7 +172,7 @@ export class LenderWithdrawalStatus {
   static fromWithdrawalBatchLenderStatus(
     market: Market,
     batch: WithdrawalBatch,
-    data: WithdrawalBatchLenderStatusStructOutput
+    data: WithdrawalBatchLenderStatusOutput
   ): LenderWithdrawalStatus {
     const isCompleted =
       batch.status === BatchStatus.Complete &&
@@ -182,7 +192,7 @@ export class LenderWithdrawalStatus {
 
   static fromWithdrawalBatchDataWithLenderStatus(
     market: Market,
-    data: WithdrawalBatchDataWithLenderStatusStructOutput
+    data: WithdrawalBatchDataWithLenderStatusOutput
   ): LenderWithdrawalStatus {
     return LenderWithdrawalStatus.fromWithdrawalBatchLenderStatus(
       market,

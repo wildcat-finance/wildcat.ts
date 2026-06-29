@@ -1,12 +1,25 @@
 import { BigNumber, BigNumberish, ContractTransaction } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
-import { IERC20, IERC20__factory, TokenMetadataStructOutput } from "./typechain";
+import {
+  IERC20,
+  IERC20__factory,
+  TokenMetadataStructOutput,
+  TokenMetadataV2_5StructOutput
+} from "./typechain";
 import { ContractWrapper, SignerOrProvider } from "./types";
-import { SupportedChainId, getLensContract, getLensV2Contract } from "./constants";
+import {
+  SupportedChainId,
+  getLensContract,
+  getLensV2Contract,
+  getLensV2_5Contract,
+  hasDeploymentAddress
+} from "./constants";
 import { bipMul, formatBnFixed, mulDiv, rayDiv, rayMul } from "./utils";
 import { SubgraphMarketDataFragment, SubgraphToken } from "./gql/graphql";
 
 type RhsAmount = BigNumberish | TokenAmount;
+type TokenMetadataOutput = TokenMetadataStructOutput | TokenMetadataV2_5StructOutput;
+
 export const toBn = (amount: RhsAmount): BigNumber => {
   if (amount instanceof TokenAmount) {
     return amount.raw;
@@ -166,7 +179,7 @@ export class Token extends ContractWrapper<IERC20> {
 
   static fromTokenMetadata(
     chainId: SupportedChainId,
-    metadata: TokenMetadataStructOutput,
+    metadata: TokenMetadataOutput,
     provider: SignerOrProvider
   ): Token {
     return new Token(
@@ -209,6 +222,10 @@ export class Token extends ContractWrapper<IERC20> {
     token: string,
     provider: SignerOrProvider
   ): Promise<Token> {
+    if (hasDeploymentAddress(chainId, "MarketLensV2_5")) {
+      const metadata = await getLensV2_5Contract(chainId, provider).getTokenInfo(token);
+      return Token.fromTokenMetadata(chainId, metadata, provider);
+    }
     const lens = getLensV2Contract(chainId, provider);
     const metadata = await lens.getTokenInfo(token);
     return Token.fromTokenMetadata(chainId, metadata, provider);
@@ -219,6 +236,11 @@ export class Token extends ContractWrapper<IERC20> {
     tokens: string[],
     provider: SignerOrProvider
   ): Promise<Token[]> {
+    if (hasDeploymentAddress(chainId, "MarketLensV2_5")) {
+      return getLensV2_5Contract(chainId, provider)
+        .getTokensInfo(tokens)
+        .then((metadata) => metadata.map((m) => Token.fromTokenMetadata(chainId, m, provider)));
+    }
     const lens = getLensContract(chainId, provider);
     return lens
       .getTokensInfo(tokens)
