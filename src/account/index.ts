@@ -7,8 +7,11 @@ import {
   WildcatMarketV2__factory,
   LenderAccountDataStructOutput,
   MarketDataWithLenderStatusV2StructOutput,
+  LenderAccountDataV21StructOutput,
+  MarketDataWithLenderStatusV21StructOutput,
   IOpenTermHooks__factory,
-  IFixedTermHooks__factory
+  IFixedTermHooks__factory,
+  IPeriodicTermHooks__factory
 } from "../typechain";
 import { WithdrawalQueuedEvent } from "../typechain/WildcatMarket";
 import {
@@ -21,6 +24,7 @@ import {
   SECONDS_IN_365_DAYS
 } from "../utils";
 import {
+  APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS,
   SupportedChainId,
   getControllerContract,
   getLensContract,
@@ -57,7 +61,9 @@ import {
   SetMinimumDepositPreview,
   SetMinimumDepositStatus,
   SetFixedTermEndTimeStatus,
-  SetFixedTermEndTimePreview
+  SetFixedTermEndTimePreview,
+  ProposeAnnualInterestBipsPreview,
+  ProposeAnnualInterestBipsStatus
 } from "./validation";
 export * from "./validation";
 
@@ -216,6 +222,9 @@ export class MarketAccount {
       if (!config.flags!.useOnQueueWithdrawal) return QueueWithdrawalStatus.Ready;
       // Can not withdraw if market in fixed term
       if (this.market.isInFixedTerm) return QueueWithdrawalStatus.MarketInClosedTerm;
+      if (config.kind === HooksKind.PeriodicTerm && !this.market.isPeriodicWithdrawalWindowOpen) {
+        return QueueWithdrawalStatus.WithdrawalWindowClosed;
+      }
       // Can not withdraw if market requires access and lender has no credential and is not a known lender
       if (
         config.flags.useOnQueueWithdrawal &&
@@ -290,9 +299,61 @@ export class MarketAccount {
     return { status: CloseMarketStatus.Ready };
   }
 
-  previewSetAPR(apr: number): SetAprPreview {
+  previewSetAPR(apr: number, timestampSec?: number): SetAprPreview {
     if (!this.isBorrower) return { status: SetAprStatus.NotBorrower };
     if (!(apr > 0 && apr <= 10000)) return { status: SetAprStatus.InvalidApr };
+
+    const now = timestampSec ?? Math.floor(Date.now() / 1_000);
+    const config = this.market.hooksConfig;
+    if (config?.kind === HooksKind.PeriodicTerm && apr < this.market.annualInterestBips) {
+      if (config.pendingAprChangeProposalTimestamp === 0) {
+        return { status: SetAprStatus.AprReductionNotProposed };
+      }
+      if (config.pendingAprChangeAnnualInterestBips !== apr) {
+        return { status: SetAprStatus.AprChangeDoesNotMatchProposal };
+      }
+      if (now < config.pendingAprChangeResponseWindowEnd) {
+        return { status: SetAprStatus.AprChangeNotReady };
+      }
+      // Template v2+ hooks reject executions more than
+      // APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS periods past the response
+      // window. Applied uniformly here (conservative for v1 instances,
+      // which do not enforce expiry on-chain).
+      if (
+        now >=
+        config.pendingAprChangeResponseWindowEnd +
+          config.periodDuration * APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS
+      ) {
+        return { status: SetAprStatus.AprChangeExpired };
+      }
+      if (!this.market.scaledPendingWithdrawals.isZero()) {
+        return { status: SetAprStatus.UnpaidWithdrawalsExist };
+      }
+      // The hook keeps the reserve ratio unchanged for proposed reductions, so the
+      // market-level check in setAnnualInterestAndReserveRatioBips takes the
+      // `reserveRatio <= initial` branch and reverts with
+      // InsufficientReservesForOldLiquidityRatio if the market is delinquent.
+      if (this.market.totalAssets.lt(this.market.coverageLiquidity)) {
+        return {
+          status: SetAprStatus.InsufficientReserves,
+          newReserveRatio: this.market.reserveRatioBips,
+          newCoverageLiquidity: this.market.coverageLiquidity,
+          missingReserves: this.market.delinquentDebt,
+          changeCausedByReset: false
+        };
+      }
+      return {
+        status: SetAprStatus.Ready,
+        willChangeReserveRatio: false
+      };
+    }
+
+    // On a periodic market, executing any APR increase deletes a pending reduction
+    // proposal on-chain without an event. Surface it so the UI can warn first.
+    const willCancelPendingProposal =
+      config?.kind === HooksKind.PeriodicTerm &&
+      config.pendingAprChangeProposalTimestamp !== 0 &&
+      apr > this.market.annualInterestBips;
 
     const [originalReserveRatioBips, originalAnnualInterestBips] =
       this.market.originalReserveRatioAndAnnualInterestBips;
@@ -328,15 +389,39 @@ export class MarketAccount {
           willChangeReserveRatio: true,
           newCoverageLiquidity,
           newReserveRatio: newReserveRatioBips,
-          changeCausedByReset
+          changeCausedByReset,
+          willCancelPendingProposal
         };
       }
     } else {
       return {
         status: SetAprStatus.Ready,
-        willChangeReserveRatio: false
+        willChangeReserveRatio: false,
+        willCancelPendingProposal
       };
     }
+  }
+
+  previewProposeAnnualInterestBips(apr: number): ProposeAnnualInterestBipsPreview {
+    if (this.market.version !== MarketVersion.V2) {
+      return { status: ProposeAnnualInterestBipsStatus.NotV2Market };
+    }
+    if (!this.isBorrower) return { status: ProposeAnnualInterestBipsStatus.NotBorrower };
+    if (!(apr > 0 && apr <= 10000)) {
+      return { status: ProposeAnnualInterestBipsStatus.InvalidApr };
+    }
+
+    const config = this.market.hooksConfig;
+    if (config?.kind !== HooksKind.PeriodicTerm) {
+      return { status: ProposeAnnualInterestBipsStatus.NotPeriodicTermMarket };
+    }
+    if (apr >= this.market.annualInterestBips) {
+      return { status: ProposeAnnualInterestBipsStatus.NotReduction };
+    }
+    if (this.market.isPeriodicWithdrawalWindowOpen) {
+      return { status: ProposeAnnualInterestBipsStatus.WithdrawalWindowOpen };
+    }
+    return { status: ProposeAnnualInterestBipsStatus.Ready };
   }
 
   previewSetMaxTotalSupply(amount: TokenAmount): SetMaxTotalSupplyPreview {
@@ -379,7 +464,7 @@ export class MarketAccount {
     assert(config !== undefined, `V2 market missing hooksConfig`);
     const iface = IOpenTermHooks__factory.createInterface();
     return {
-      to: this.market.address,
+      to: config.hooksAddress,
       data: iface.encodeFunctionData("setMinimumDeposit", [this.market.address, amount.raw]),
       value: "0"
     };
@@ -392,7 +477,7 @@ export class MarketAccount {
     assert(config !== undefined, `V2 market missing hooksConfig`);
     const iface = IFixedTermHooks__factory.createInterface();
     return {
-      to: this.market.address,
+      to: config.hooksAddress,
       data: iface.encodeFunctionData("setFixedTermEndTime", [this.market.address, endTime]),
       value: "0"
     };
@@ -414,6 +499,34 @@ export class MarketAccount {
     assert(config !== undefined, `V2 market missing hooksConfig`);
     const contract = IFixedTermHooks__factory.connect(config.hooksAddress, this.market.signer);
     return contract.setFixedTermEndTime(this.market.address, endTime);
+  }
+
+  populateProposeAnnualInterestBips(apr: number): PartialTransaction {
+    const { status } = this.previewProposeAnnualInterestBips(apr);
+    assert(
+      status === ProposeAnnualInterestBipsStatus.Ready,
+      `Cannot propose annual interest bips: ${status}`
+    );
+    const config = this.market.hooksConfig;
+    assert(config?.kind === HooksKind.PeriodicTerm, `Market is not periodic term`);
+    const iface = IPeriodicTermHooks__factory.createInterface();
+    return {
+      to: config.hooksAddress,
+      data: iface.encodeFunctionData("proposeAnnualInterestBips", [this.market.address, apr]),
+      value: "0"
+    };
+  }
+
+  async proposeAnnualInterestBips(apr: number): Promise<ContractTransaction> {
+    const { status } = this.previewProposeAnnualInterestBips(apr);
+    assert(
+      status === ProposeAnnualInterestBipsStatus.Ready,
+      `Cannot propose annual interest bips: ${status}`
+    );
+    const config = this.market.hooksConfig;
+    assert(config?.kind === HooksKind.PeriodicTerm, `Market is not periodic term`);
+    const contract = IPeriodicTermHooks__factory.connect(config.hooksAddress, this.market.signer);
+    return contract.proposeAnnualInterestBips(this.market.address, apr);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -868,7 +981,12 @@ export class MarketAccount {
     this.updateWith(acccountMarketInfo);
   }
 
-  updateWith(info: MarketLenderStatusStructOutput | LenderAccountDataStructOutput): void {
+  updateWith(
+    info:
+      | MarketLenderStatusStructOutput
+      | LenderAccountDataStructOutput
+      | LenderAccountDataV21StructOutput
+  ): void {
     if ("isAuthorizedOnController" in info) {
       assert(
         this.market.version === MarketVersion.V1,
@@ -976,7 +1094,10 @@ export class MarketAccount {
     });
   }
 
-  static fromLenderAccountData(market: Market, data: LenderAccountDataStructOutput): MarketAccount {
+  static fromLenderAccountData(
+    market: Market,
+    data: LenderAccountDataStructOutput | LenderAccountDataV21StructOutput
+  ): MarketAccount {
     return new MarketAccount({
       account: data.lender,
       market,
@@ -1008,7 +1129,10 @@ export class MarketAccount {
     chainId: SupportedChainId,
     provider: SignerOrProvider,
     account: string,
-    info: MarketDataWithLenderStatusStructOutput | MarketDataWithLenderStatusV2StructOutput
+    info:
+      | MarketDataWithLenderStatusStructOutput
+      | MarketDataWithLenderStatusV2StructOutput
+      | MarketDataWithLenderStatusV21StructOutput
   ): MarketAccount {
     if ("controller" in info.market) {
       info = info as MarketDataWithLenderStatusStructOutput;
@@ -1018,7 +1142,9 @@ export class MarketAccount {
         Market.fromMarketData(chainId, info.market, provider)
       );
     } else {
-      info = info as MarketDataWithLenderStatusV2StructOutput;
+      info = info as
+        | MarketDataWithLenderStatusV2StructOutput
+        | MarketDataWithLenderStatusV21StructOutput;
       return MarketAccount.fromLenderAccountData(
         Market.fromMarketDataV2(chainId, provider, info.market),
         info.lenderStatus

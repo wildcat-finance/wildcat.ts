@@ -91,8 +91,8 @@ export class LenderWithdrawalStatus {
     );
     this.normalizedAmountOwed = this.market.underlyingToken.getAmount(data.normalizedAmountOwed);
 
-    // recompute isCompleted based on updated values after a wd that 
-    // subgraph may not have updated yet 
+    // recompute isCompleted based on updated values after a wd that
+    // subgraph may not have updated yet
     this.isCompleted =
       this.batch.status === BatchStatus.Complete &&
       this.batch.expiry < Math.floor(Date.now() / 1000) &&

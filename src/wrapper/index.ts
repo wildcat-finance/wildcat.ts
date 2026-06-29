@@ -147,9 +147,7 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
       wrapper.decimals()
     ]);
 
-    const [marketToken] = await Promise.all([
-      getErc20Token(chainId, provider, marketAddress)
-    ]);
+    const [marketToken] = await Promise.all([getErc20Token(chainId, provider, marketAddress)]);
     const shareToken = new Token(chainId, address, name, symbol, decimals, false, provider);
 
     return new TokenWrapper({
@@ -183,11 +181,17 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
     chainId: SupportedChainId,
     signer: Signer,
     marketAddress: string
-  ): Promise<{ wrapper: TokenWrapper; receipt: ContractReceipt; transaction: ContractTransaction }> {
+  ): Promise<{
+    wrapper: TokenWrapper;
+    receipt: ContractReceipt;
+    transaction: ContractTransaction;
+  }> {
     const factory = WrapperFactory.getFactory(chainId, signer);
-    const { wrapper: wrapperAddress, receipt, transaction } = await factory.createWrapper(
-      marketAddress
-    );
+    const {
+      wrapper: wrapperAddress,
+      receipt,
+      transaction
+    } = await factory.createWrapper(marketAddress);
     const wrapper = await TokenWrapper.fromAddress(chainId, signer, wrapperAddress);
     return { wrapper, receipt, transaction };
   }
@@ -290,31 +294,19 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
   populateWithdraw(assets: TokenAmount, receiver: string, owner: string): PartialTransaction {
     return {
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("withdraw", [
-        assets.raw,
-        receiver,
-        owner
-      ]),
+      data: this.contract.interface.encodeFunctionData("withdraw", [assets.raw, receiver, owner]),
       value: "0"
     };
   }
 
-  async redeem(
-    shares: TokenAmount,
-    receiver: string,
-    owner: string
-  ): Promise<ContractTransaction> {
+  async redeem(shares: TokenAmount, receiver: string, owner: string): Promise<ContractTransaction> {
     return this.contract.redeem(shares.raw, receiver, owner);
   }
 
   populateRedeem(shares: TokenAmount, receiver: string, owner: string): PartialTransaction {
     return {
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("redeem", [
-        shares.raw,
-        receiver,
-        owner
-      ]),
+      data: this.contract.interface.encodeFunctionData("redeem", [shares.raw, receiver, owner]),
       value: "0"
     };
   }

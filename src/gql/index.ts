@@ -15,5 +15,6 @@ export * from "./getMarketsWithEvents";
 export * from "./getPolicyLenders";
 export * from "./getPolicyMarketsAndLenders";
 export * from "./graphql";
+export * from "./document-selectors";
 
 export { MakeOptional } from "../utils/misc";

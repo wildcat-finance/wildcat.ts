@@ -397,10 +397,15 @@ query getMarketEvents(
   $minimumDepositUpdateRecordsFilter: MinimumDepositUpdated_filter = { id_not: null }
   $protocolFeeBipsUpdatedRecordsFilter: ProtocolFeeBipsUpdated_filter = { id_not: null }
   $fixedTermUpdatedRecordsFilter: FixedTermUpdated_filter = { id_not: null }
+  $periodicTermUpdatedRecordsFilter: PeriodicTermUpdated_filter = { id_not: null }
+  $annualInterestBipsReductionProposalRecordsFilter: AnnualInterestBipsReductionProposed_filter = { id_not: null }
 ) {
   market(id: $market) {
     marketClosedEvent {
       ...MarketClosedData
+    }
+    periodicTermClosedRecord {
+      ...PeriodicTermClosedData
     }
     forceBuyBackDisabledRecord {
       ...DisabledForceBuyBacksData
@@ -560,6 +565,32 @@ query getMarketEvents(
       first: $limit
     ) {
       ...FixedTermUpdatedData
+    }
+    periodicTermUpdatedRecords(
+      where: {
+        and: [
+          $periodicTermUpdatedRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
+      ...PeriodicTermUpdatedData
+    }
+    annualInterestBipsReductionProposalRecords(
+      where: {
+        and: [
+          $annualInterestBipsReductionProposalRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
+      ...AnnualInterestBipsReductionProposedData
     }
   }
 }

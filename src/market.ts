@@ -3,6 +3,7 @@ import { Signer } from "@ethersproject/abstract-signer";
 import {
   MarketDataStructOutput,
   MarketDataV2StructOutput,
+  MarketDataV21StructOutput,
   WildcatMarket,
   WildcatMarket__factory
 } from "./typechain";
@@ -15,8 +16,7 @@ import {
   MarketVersion,
   HooksKind,
   HooksConfig,
-  OpenTermHooksConfig,
-  FixedTermHooksConfig
+  PeriodicTermHooksConfig
 } from "./types";
 import { formatUnits } from "ethers/lib/utils";
 import { MarketAccount } from "./account";
@@ -203,10 +203,46 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   get isInFixedTerm(): boolean {
     if (this.version !== MarketVersion.V2) return false;
-    const config = this.hooksConfig!;
-    if (config.kind !== HooksKind.FixedTerm) return false;
-    const fixedTermEndTime = config.fixedTermEndTime;
-    return fixedTermEndTime >= Date.now() / 1_000;
+    const config = this.hooksConfig;
+    return config?.kind === HooksKind.FixedTerm && config.fixedTermEndTime >= Date.now() / 1_000;
+  }
+
+  get periodicHooksConfig(): PeriodicTermHooksConfig | undefined {
+    const config = this.hooksConfig;
+    return config?.kind === HooksKind.PeriodicTerm ? config : undefined;
+  }
+
+  get isPeriodicTermClosed(): boolean {
+    return !!this.periodicHooksConfig?.periodicTermClosed;
+  }
+
+  get isPeriodicWithdrawalWindowOpen(): boolean {
+    const config = this.periodicHooksConfig;
+    if (!config) return false;
+    if (this.isClosed || config.periodicTermClosed) return true;
+    if (config.periodDuration === 0) return false;
+
+    const now = Math.floor(Date.now() / 1_000);
+    if (now < config.firstWithdrawalWindowStart) return false;
+
+    const timeInPeriod = (now - config.firstWithdrawalWindowStart) % config.periodDuration;
+    return timeInPeriod < config.withdrawalWindowDuration;
+  }
+
+  get nextPeriodicWithdrawalWindowStart(): number | undefined {
+    const config = this.periodicHooksConfig;
+    if (!config || this.isClosed || config.periodicTermClosed || config.periodDuration === 0) {
+      return undefined;
+    }
+
+    const now = Math.floor(Date.now() / 1_000);
+    if (now < config.firstWithdrawalWindowStart) return config.firstWithdrawalWindowStart;
+
+    const timeInPeriod = (now - config.firstWithdrawalWindowStart) % config.periodDuration;
+    const currentWindowStart = now - timeInPeriod;
+    return timeInPeriod < config.withdrawalWindowDuration
+      ? currentWindowStart
+      : currentWindowStart + config.periodDuration;
   }
 
   /** @returns Percentage growth of the market since it was created */
@@ -616,7 +652,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
     this.updateWith(market);
   }
 
-  updateWith(data: MarketDataStructOutput | MarketDataV2StructOutput): void {
+  updateWith(
+    data: MarketDataStructOutput | MarketDataV2StructOutput | MarketDataV21StructOutput
+  ): void {
     // Note: this adds all the interest accrued to the base interest accrued, since the lens
     // doesn't give us any way to distinguish between base interest and delinquency fees.
     if (
@@ -673,6 +711,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
       config.minimumDeposit = this.underlyingToken.getAmount(data.hooksConfig.minimumDeposit);
       if (config.kind === HooksKind.FixedTerm) {
         config.fixedTermEndTime = data.hooksConfig.fixedTermEndTime;
+      } else if (config.kind === HooksKind.PeriodicTerm && "periodDuration" in data.hooksConfig) {
+        config.firstWithdrawalWindowStart = data.hooksConfig.firstWithdrawalWindowStart;
+        config.periodDuration = data.hooksConfig.periodDuration;
+        config.withdrawalWindowDuration = data.hooksConfig.withdrawalWindowDuration;
+        config.periodicTermClosed = data.hooksConfig.periodicTermClosed;
       }
     } else {
       assert(this.version === MarketVersion.V1, `Can not push V1 lens data to V2 market!`);
@@ -688,7 +731,13 @@ export class Market extends ContractWrapper<WildcatMarket> {
     provider: SignerOrProvider,
     data: MakeOptional<
       SubgraphMarketDataWithEventsFragment,
-      "depositRecords" | "repaymentRecords" | "borrowRecords" | "feeCollectionRecords"
+      | "depositRecords"
+      | "repaymentRecords"
+      | "borrowRecords"
+      | "feeCollectionRecords"
+      | "periodicTermUpdatedRecords"
+      | "periodicTermClosedRecord"
+      | "annualInterestBipsReductionProposalRecords"
     >,
     signerAddress?: string
   ): Market {
@@ -710,7 +759,6 @@ export class Market extends ContractWrapper<WildcatMarket> {
       assert(!!data.hooks, `V2 markets require hooks`);
       assert(!!data.hooksConfig, `V2 markets require hooksConfig`);
       const {
-        __typename: _,
         minimumDeposit: _minimumDeposit,
         depositRequiresAccess,
         transferRequiresAccess,
@@ -719,9 +767,30 @@ export class Market extends ContractWrapper<WildcatMarket> {
         allowForceBuyBacks,
         allowTermReduction,
         fixedTermEndTime,
-        transfersDisabled,
-        ...flags
+        firstWithdrawalWindowStart,
+        periodDuration,
+        withdrawalWindowDuration,
+        periodicTermClosed,
+        pendingAprChangeAnnualInterestBips,
+        pendingAprChangeProposalTimestamp,
+        pendingAprChangeResponseWindowStart,
+        pendingAprChangeResponseWindowEnd,
+        transfersDisabled
       } = data.hooksConfig;
+      const flags = {
+        useOnDeposit: data.hooksConfig.useOnDeposit,
+        useOnQueueWithdrawal: data.hooksConfig.useOnQueueWithdrawal,
+        useOnExecuteWithdrawal: data.hooksConfig.useOnExecuteWithdrawal,
+        useOnTransfer: data.hooksConfig.useOnTransfer,
+        useOnBorrow: data.hooksConfig.useOnBorrow,
+        useOnRepay: data.hooksConfig.useOnRepay,
+        useOnCloseMarket: data.hooksConfig.useOnCloseMarket,
+        useOnNukeFromOrbit: data.hooksConfig.useOnNukeFromOrbit,
+        useOnSetMaxTotalSupply: data.hooksConfig.useOnSetMaxTotalSupply,
+        useOnSetAnnualInterestAndReserveRatioBips:
+          data.hooksConfig.useOnSetAnnualInterestAndReserveRatioBips,
+        useOnSetProtocolFeeBips: data.hooksConfig.useOnSetProtocolFeeBips
+      };
       const { id, hooksTemplate: hooksTemplateData } = data.hooks;
       const template = hooksTemplateFromSubgraph(chainId, provider, hooksTemplateData);
       const minimumDeposit = _minimumDeposit
@@ -753,6 +822,26 @@ export class Market extends ContractWrapper<WildcatMarket> {
           allowForceBuyBacks,
           allowTermReduction,
           fixedTermEndTime,
+          transfersDisabled
+        };
+      } else if (template.kind === HooksKind.PeriodicTerm) {
+        hooksConfig = {
+          kind: HooksKind.PeriodicTerm,
+          hooksAddress: id,
+          template,
+          flags,
+          minimumDeposit,
+          transferRequiresAccess,
+          depositRequiresAccess,
+          queueWithdrawalRequiresAccess,
+          firstWithdrawalWindowStart,
+          periodDuration,
+          withdrawalWindowDuration,
+          periodicTermClosed,
+          pendingAprChangeAnnualInterestBips,
+          pendingAprChangeProposalTimestamp,
+          pendingAprChangeResponseWindowStart,
+          pendingAprChangeResponseWindowEnd,
           transfersDisabled
         };
       }
@@ -874,27 +963,33 @@ export class Market extends ContractWrapper<WildcatMarket> {
   static fromMarketDataV2(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    { hooks, hooksConfig: hooksConfigData, ...data }: MarketDataV2StructOutput
+    {
+      hooks,
+      hooksConfig: hooksConfigData,
+      ...data
+    }: MarketDataV2StructOutput | MarketDataV21StructOutput
   ): Market {
     const marketToken = Token.fromTokenMetadata(chainId, data.marketToken, provider);
     const underlyingToken = Token.fromTokenMetadata(chainId, data.underlyingToken, provider);
     const { hooksAddress } = hooks;
     let hooksConfig: HooksConfig;
+    const allowForceBuyBacks =
+      "allowForceBuyBacks" in hooksConfigData ? hooksConfigData.allowForceBuyBacks : false;
     if (hooksConfigData.kind === 1) {
       hooksConfig = {
         kind: HooksKind.OpenTerm,
-        hooksAddress: hooksAddress,
+        hooksAddress,
         flags: { ...hooksConfigData.flags },
         depositRequiresAccess: hooksConfigData.depositRequiresAccess,
         transferRequiresAccess: hooksConfigData.transferRequiresAccess,
         transfersDisabled: hooksConfigData.transfersDisabled,
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
-        allowForceBuyBacks: hooksConfigData.allowForceBuyBacks
-      } as OpenTermHooksConfig;
+        allowForceBuyBacks
+      };
     } else if (hooksConfigData.kind === 2) {
       hooksConfig = {
         kind: HooksKind.FixedTerm,
-        hooksAddress: hooksAddress,
+        hooksAddress,
         flags: { ...hooksConfigData.flags },
         depositRequiresAccess: hooksConfigData.depositRequiresAccess,
         transferRequiresAccess: hooksConfigData.transferRequiresAccess,
@@ -904,8 +999,27 @@ export class Market extends ContractWrapper<WildcatMarket> {
         queueWithdrawalRequiresAccess: hooksConfigData.withdrawalRequiresAccess,
         allowTermReduction: hooksConfigData.allowTermReduction,
         allowClosureBeforeTerm: hooksConfigData.allowClosureBeforeTerm,
-        allowForceBuyBacks: hooksConfigData.allowForceBuyBacks
-      } as FixedTermHooksConfig;
+        allowForceBuyBacks
+      };
+    } else if (hooksConfigData.kind === 3 && "periodDuration" in hooksConfigData) {
+      hooksConfig = {
+        kind: HooksKind.PeriodicTerm,
+        hooksAddress,
+        flags: { ...hooksConfigData.flags },
+        depositRequiresAccess: hooksConfigData.depositRequiresAccess,
+        transferRequiresAccess: hooksConfigData.transferRequiresAccess,
+        transfersDisabled: hooksConfigData.transfersDisabled,
+        minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
+        queueWithdrawalRequiresAccess: hooksConfigData.withdrawalRequiresAccess,
+        firstWithdrawalWindowStart: hooksConfigData.firstWithdrawalWindowStart,
+        periodDuration: hooksConfigData.periodDuration,
+        withdrawalWindowDuration: hooksConfigData.withdrawalWindowDuration,
+        periodicTermClosed: hooksConfigData.periodicTermClosed,
+        pendingAprChangeAnnualInterestBips: 0,
+        pendingAprChangeProposalTimestamp: 0,
+        pendingAprChangeResponseWindowStart: 0,
+        pendingAprChangeResponseWindowEnd: 0
+      };
     } else {
       throw Error(
         `Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksConfigData.kind}`

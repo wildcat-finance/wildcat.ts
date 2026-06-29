@@ -1,12 +1,12 @@
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import { Market } from "../market";
 import {
-  GetMarketsWithEventsDocument,
   SubgraphGetMarketsWithEventsQuery,
   SubgraphGetMarketsWithEventsQueryVariables
 } from "./graphql";
 import { SupportedChainId } from "../constants";
 import { SignerOrProvider } from "../types";
+import { getMarketsWithEventsDocumentForChain } from "./document-selectors";
 
 type GetMarketsWithEventsOptions = SubgraphGetMarketsWithEventsQueryVariables & {
   chainId: SupportedChainId;
@@ -22,7 +22,7 @@ export async function getMarketsWithEvents(
     SubgraphGetMarketsWithEventsQuery,
     SubgraphGetMarketsWithEventsQueryVariables
   >({
-    query: GetMarketsWithEventsDocument,
+    query: getMarketsWithEventsDocumentForChain(chainId),
     variables: { ...variables },
     fetchPolicy
   });

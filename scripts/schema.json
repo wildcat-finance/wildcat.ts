@@ -330,7 +330,96 @@
         },
         {
           "__typename": "__Type",
+          "name": "Aggregation_current",
+          "description": "Indicates whether the current, partially filled bucket should be included in the response. Defaults to `exclude`",
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
           "name": "Aggregation_interval",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "AnnualInterestBipsReductionProposed",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "hooks",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "market",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "annualInterestBips",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "proposalTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "responseWindowStart",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "responseWindowEnd",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockNumber",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "transactionHash",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockLogIndex",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "eventIndex",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "AnnualInterestBipsReductionProposed_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "AnnualInterestBipsReductionProposed_orderBy",
           "description": null,
           "kind": "ENUM",
           "fields": null
@@ -1374,6 +1463,11 @@
               "__typename": "__Field",
               "name": "transactionHash",
               "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockLogIndex",
+              "description": null
             }
           ]
         },
@@ -1882,6 +1976,46 @@
             {
               "__typename": "__Field",
               "name": "allowTermReduction",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "firstWithdrawalWindowStart",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "periodDuration",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "withdrawalWindowDuration",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "periodicTermClosed",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "pendingAprChangeAnnualInterestBips",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "pendingAprChangeProposalTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "pendingAprChangeResponseWindowStart",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "pendingAprChangeResponseWindowEnd",
               "description": null
             }
           ]
@@ -3512,6 +3646,21 @@
             },
             {
               "__typename": "__Field",
+              "name": "periodicTermUpdatedRecords",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "periodicTermClosedRecord",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "annualInterestBipsReductionProposalRecords",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
               "name": "minimumDepositUpdateRecords",
               "description": null
             },
@@ -4455,6 +4604,160 @@
         },
         {
           "__typename": "__Type",
+          "name": "PeriodicTermClosed",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "hooks",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "market",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockNumber",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "transactionHash",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockLogIndex",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "eventIndex",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "PeriodicTermClosed_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "PeriodicTermClosed_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "PeriodicTermUpdated",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "hooks",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "market",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "oldFirstWithdrawalWindowStart",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "oldPeriodDuration",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "oldWithdrawalWindowDuration",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "newFirstWithdrawalWindowStart",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "newPeriodDuration",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "newWithdrawalWindowDuration",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockNumber",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "transactionHash",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "blockLogIndex",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "eventIndex",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "PeriodicTermUpdated_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "PeriodicTermUpdated_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
           "name": "ProtocolFeeBipsUpdated",
           "description": null,
           "kind": "OBJECT",
@@ -4789,6 +5092,36 @@
             {
               "__typename": "__Field",
               "name": "fixedTermUpdateds",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "periodicTermUpdated",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "periodicTermUpdateds",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "periodicTermClosed",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "periodicTermCloseds",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "annualInterestBipsReductionProposed",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "annualInterestBipsReductionProposeds",
               "description": null
             },
             {

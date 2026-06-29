@@ -1,13 +1,13 @@
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import { Market } from "../market";
 import {
-  GetAllMarketsForLenderViewDocument,
   SubgraphGetAllMarketsForLenderViewQuery,
   SubgraphGetAllMarketsForLenderViewQueryVariables
 } from "./graphql";
 import { MarketAccount } from "../account";
 import { SupportedChainId } from "../constants";
 import { SignerOrProvider } from "../types";
+import { getAllMarketsForLenderViewDocumentForChain } from "./document-selectors";
 
 type GetLenderAccountsForAllMarketsOptions = SubgraphGetAllMarketsForLenderViewQueryVariables & {
   lender: string;
@@ -32,7 +32,7 @@ export async function getLenderAccountsForAllMarkets(
     SubgraphGetAllMarketsForLenderViewQuery,
     SubgraphGetAllMarketsForLenderViewQueryVariables
   >({
-    query: GetAllMarketsForLenderViewDocument,
+    query: getAllMarketsForLenderViewDocumentForChain(chainId),
     variables: {
       lender: lender.toLowerCase(),
       ...variables

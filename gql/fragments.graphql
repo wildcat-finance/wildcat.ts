@@ -353,6 +353,40 @@ fragment FixedTermUpdatedData on FixedTermUpdated {
   fixedTermUpdatedIndex
 }
 
+fragment PeriodicTermUpdatedData on PeriodicTermUpdated {
+  id
+  oldFirstWithdrawalWindowStart
+  oldPeriodDuration
+  oldWithdrawalWindowDuration
+  newFirstWithdrawalWindowStart
+  newPeriodDuration
+  newWithdrawalWindowDuration
+  blockNumber
+  blockTimestamp
+  transactionHash
+  eventIndex
+}
+
+fragment PeriodicTermClosedData on PeriodicTermClosed {
+  id
+  blockNumber
+  blockTimestamp
+  transactionHash
+  eventIndex
+}
+
+fragment AnnualInterestBipsReductionProposedData on AnnualInterestBipsReductionProposed {
+  id
+  annualInterestBips
+  proposalTimestamp
+  responseWindowStart
+  responseWindowEnd
+  blockNumber
+  blockTimestamp
+  transactionHash
+  eventIndex
+}
+
 fragment LenderWithdrawalPropertiesWithEvents on LenderWithdrawalStatus {
   ...LenderWithdrawalProperties
 
@@ -441,6 +475,15 @@ fragment MarketRecords on Market {
   ) {
     ...RepaymentData
   }
+  periodicTermUpdatedRecords {
+    ...PeriodicTermUpdatedData
+  }
+  periodicTermClosedRecord {
+    ...PeriodicTermClosedData
+  }
+  annualInterestBipsReductionProposalRecords {
+    ...AnnualInterestBipsReductionProposedData
+  }
 }
 
 fragment BorrowData on Borrow {
@@ -524,6 +567,16 @@ fragment HooksConfigDataForMarket on HooksConfig {
   fixedTermEndTime
   allowClosureBeforeTerm
   allowTermReduction
+
+  # PeriodicTermHooks config values
+  firstWithdrawalWindowStart
+  periodDuration
+  withdrawalWindowDuration
+  periodicTermClosed
+  pendingAprChangeAnnualInterestBips
+  pendingAprChangeProposalTimestamp
+  pendingAprChangeResponseWindowStart
+  pendingAprChangeResponseWindowEnd
 }
 
 fragment HooksInstanceData on HooksInstance {
