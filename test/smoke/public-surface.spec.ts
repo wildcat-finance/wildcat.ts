@@ -34,4 +34,12 @@ describe("SDK public surface smoke", () => {
     expect(typeof typechain.WildcatMarket__factory.connect).to.equal("function");
     expect(typeof typechain.WildcatMarketV2__factory.connect).to.equal("function");
   });
+
+  it("exports periodic term hooks and APR settlement helpers", () => {
+    expect(typeof sdk.PeriodicTermHooks).to.equal("function");
+    expect(typeof sdk.PeriodicTermHooksTemplate).to.equal("function");
+    expect(sdk.PeriodicAprSettlementStatus.Ready).to.equal("Ready");
+    expect(typeof sdk.getPeriodicAprReductionSettlementQuote).to.equal("function");
+    expect(typeof sdk.populatePeriodicAprReductionPlan).to.equal("function");
+  });
 });

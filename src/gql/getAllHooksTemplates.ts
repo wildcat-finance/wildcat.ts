@@ -43,7 +43,10 @@ export async function getAllHooksTemplates(
   });
   return result.data.factoryHooksTemplates
     .filter((t) => isIndexedHooksFactory(chainId, t.hooksFactory.id))
-    .filter((t) => t.name === "OpenTermHooks" || t.name === "FixedTermHooks")
+    .filter(
+      (t) =>
+        t.name === "OpenTermHooks" || t.name === "FixedTermHooks" || t.name === "PeriodicTermHooks"
+    )
     .map((template) =>
       hooksTemplateFromSubgraph(
         chainId,
