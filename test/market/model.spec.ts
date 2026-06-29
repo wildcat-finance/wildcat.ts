@@ -1,26 +1,99 @@
 import { expect } from "chai";
 import { BigNumber, providers } from "ethers";
-import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
+import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
+import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi";
+import {
+  getDeploymentAddress,
+  getMarketTypeForHooksFactory,
+  SupportedChainId
+} from "../../src/constants";
 import { Market } from "../../src/market";
-import { Token } from "../../src/token";
+import { Token, toRawAmount } from "../../src/token";
 import { HooksKind, MarketVersion } from "../../src/types";
 import {
   SubgraphHooksKind,
+  SubgraphMarketType,
   SubgraphMarketDataWithEventsFragment,
+  SubgraphMarketListDataFragment,
   SubgraphMarketVersion
 } from "../../src/gql/graphql";
 import {
   MarketDataBaseV2_5StructOutput,
   MarketDataV2_5StructOutput,
   MarketDataStructOutput,
-  MarketDataV2StructOutput
-} from "../../src/typechain";
-import { bipMul, bipToRay, BIP, SECONDS_IN_365_DAYS } from "../../src/utils";
+  MarketDataV2StructOutput,
+  MarketLiveDataV2_5StructOutput
+} from "../../src/lens-types";
+import {
+  BIP_BIGINT,
+  SECONDS_IN_365_DAYS,
+  bipMulBigint,
+  bipToRayBigint,
+  toNumber
+} from "../../src/utils";
 
 const provider = new providers.JsonRpcProvider();
+const historicalSepoliaRevolvingFactory = "0xF4564015E524cf5629828E61F45ed339D998D85f";
 
 const makeAddress = (suffix: number): string => {
   return `0x${suffix.toString(16).padStart(40, "0")}`;
+};
+
+type FakeRpcCall = {
+  to?: string;
+  data?: string;
+};
+
+class FakeViemProvider {
+  calls: FakeRpcCall[] = [];
+  private readonly getResponse: (call: FakeRpcCall) => string;
+
+  constructor(getResponse: (call: FakeRpcCall) => string) {
+    this.getResponse = getResponse;
+  }
+
+  async send(method: string, params: unknown[] = []): Promise<unknown> {
+    if (method === "eth_chainId") {
+      return "0xaa36a7";
+    }
+    if (method !== "eth_call") {
+      throw new Error(`Unexpected RPC method: ${method}`);
+    }
+
+    const call = params[0] as FakeRpcCall;
+    this.calls.push(call);
+    return this.getResponse(call);
+  }
+}
+
+const toViemResult = (value: unknown): unknown => {
+  if (BigNumber.isBigNumber(value)) {
+    return BigInt(value.toString());
+  }
+  if (Array.isArray(value)) {
+    return value.map(toViemResult);
+  }
+  if (value !== null && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, toViemResult(entry)])
+    );
+  }
+  return value;
+};
+
+const encodeLensResult = (abi: Abi, functionName: string, result: unknown): `0x${string}` => {
+  return encodeFunctionResult({
+    abi,
+    functionName,
+    result: toViemResult(result)
+  });
+};
+
+const decodeLensCall = (abi: Abi, call: FakeRpcCall) => {
+  return decodeFunctionData({
+    abi,
+    data: call.data as `0x${string}`
+  });
 };
 
 const makeTokenMetadata = (suffix: number, name: string, symbol: string) => {
@@ -110,7 +183,11 @@ const makeFactoryBackedMarketData = (hooksFactory: string): MarketDataV2StructOu
       withdrawalRequiresAccess: false,
       fixedTermEndTime: 0,
       allowClosureBeforeTerm: false,
-      allowTermReduction: false
+      allowTermReduction: false,
+      firstWithdrawalWindowStart: 0,
+      periodDuration: 0,
+      withdrawalWindowDuration: 0,
+      periodicTermClosed: false
     },
     withdrawalBatchDuration: BigNumber.from(86_400),
     feeRecipient: makeAddress(11),
@@ -185,17 +262,7 @@ const makeFactoryBackedMarketData = (hooksFactory: string): MarketDataV2StructOu
 const makeUnifiedMarketData = (hooksFactory: string): MarketDataBaseV2_5StructOutput => {
   const data = makeFactoryBackedMarketData(hooksFactory);
   const hooksConfig = {
-    hooksAddress: data.hooksConfig.hooksAddress,
-    flags: data.hooksConfig.flags,
-    kind: data.hooksConfig.kind,
-    transferRequiresAccess: data.hooksConfig.transferRequiresAccess,
-    depositRequiresAccess: data.hooksConfig.depositRequiresAccess,
-    minimumDeposit: data.hooksConfig.minimumDeposit,
-    transfersDisabled: data.hooksConfig.transfersDisabled,
-    withdrawalRequiresAccess: data.hooksConfig.withdrawalRequiresAccess,
-    fixedTermEndTime: data.hooksConfig.fixedTermEndTime,
-    allowClosureBeforeTerm: data.hooksConfig.allowClosureBeforeTerm,
-    allowTermReduction: data.hooksConfig.allowTermReduction
+    ...data.hooksConfig
   };
   return {
     ...data,
@@ -216,6 +283,31 @@ const makeUnifiedMarketDataV2 = (
   market: makeUnifiedMarketData(hooksFactory),
   commitmentFeeBips,
   drawnAmount
+});
+
+const makeMarketLiveDataV2 = (
+  data: MarketDataV2_5StructOutput
+): MarketLiveDataV2_5StructOutput => ({
+  market: data.market.marketToken.token,
+  isClosed: data.market.isClosed,
+  protocolFeeBips: data.market.protocolFeeBips,
+  reserveRatioBips: data.market.reserveRatioBips,
+  annualInterestBips: data.market.annualInterestBips,
+  scaleFactor: data.market.scaleFactor,
+  totalSupply: data.market.totalSupply,
+  maxTotalSupply: data.market.maxTotalSupply,
+  scaledTotalSupply: data.market.scaledTotalSupply,
+  totalAssets: data.market.totalAssets,
+  lastAccruedProtocolFees: data.market.lastAccruedProtocolFees,
+  normalizedUnclaimedWithdrawals: data.market.normalizedUnclaimedWithdrawals,
+  scaledPendingWithdrawals: data.market.scaledPendingWithdrawals,
+  pendingWithdrawalExpiry: data.market.pendingWithdrawalExpiry,
+  isDelinquent: data.market.isDelinquent,
+  timeDelinquent: data.market.timeDelinquent,
+  lastInterestAccruedTimestamp: data.market.lastInterestAccruedTimestamp,
+  coverageLiquidity: data.market.coverageLiquidity,
+  commitmentFeeBips: data.commitmentFeeBips,
+  drawnAmount: data.drawnAmount
 });
 
 const makeSubgraphMarketData = (): Omit<
@@ -323,6 +415,25 @@ const makeSubgraphMarketData = (): Omit<
       disabled: false,
       originationFeeAsset: null
     },
+    factoryHooksTemplate: {
+      __typename: "FactoryHooksTemplate",
+      id: `${getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving")}-${makeAddress(
+        77
+      )}`,
+      templateAddress: makeAddress(77),
+      name: "OpenTermHooks",
+      feeRecipient: makeAddress(73),
+      protocolFeeBips: 25,
+      originationFeeAmount: "0",
+      disabled: false,
+      originationFeeAsset: null,
+      hooksFactory: {
+        __typename: "HooksFactory",
+        id: getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving"),
+        marketType: SubgraphMarketType.Revolving,
+        isRegistered: true
+      }
+    },
     providers: []
   },
   deployedEvent: {
@@ -334,6 +445,243 @@ const makeSubgraphMarketData = (): Omit<
   periodicTermUpdatedRecords: [],
   periodicTermClosedRecord: null,
   annualInterestBipsReductionProposalRecords: []
+});
+
+const makeSubgraphMarketListData = (): SubgraphMarketListDataFragment => {
+  const market = { ...makeSubgraphMarketData() };
+  const { hooks } = market;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).sentinel;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).totalBorrowed;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).totalRepaid;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).totalBaseInterestAccrued;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).totalDelinquencyFeesAccrued;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).totalProtocolFeesAccrued;
+  delete (market as Partial<SubgraphMarketDataWithEventsFragment>).totalDeposited;
+
+  return {
+    ...market,
+    hooks: hooks
+      ? {
+          __typename: "HooksInstance",
+          id: hooks.id,
+          factoryHooksTemplate: hooks.factoryHooksTemplate
+        }
+      : null
+  };
+};
+
+const expectAllowForceBuyBacks = (market: Market, expected: boolean): void => {
+  if (!market.hooksConfig || market.hooksConfig.kind === HooksKind.PeriodicTerm) {
+    throw new Error("Expected force-buyback-capable hooks config");
+  }
+  expect(market.hooksConfig.allowForceBuyBacks).to.equal(expected);
+};
+
+describe("Market direct read routing", () => {
+  it("hydrates v2.5 market reads through viem and preserves revolving fields", async () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
+    const marketAddress = makeAddress(101);
+    const data = makeUnifiedMarketDataV2(hooksFactory, {
+      commitmentFeeBips: { isPresent: true, value: BigNumber.from(175) },
+      drawnAmount: { isPresent: true, value: BigNumber.from(250) }
+    });
+    const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getMarketDataV2");
+      expect((decoded.args?.[0] as string).toLowerCase()).to.equal(marketAddress);
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketDataV2", data);
+    });
+
+    const market = await Market.getMarketV2(
+      SupportedChainId.Sepolia,
+      marketAddress,
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
+    expect(market.hooksFactory).to.equal(hooksFactory);
+    expect(market.marketType).to.equal("revolving");
+    expect(market.commitmentFeeBips).to.equal(175);
+    expect(market.drawnAmount?.raw).to.equal(250n);
+    expectAllowForceBuyBacks(market, false);
+  });
+
+  it("hydrates v2.5 batch market reads through viem", async () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
+    const markets = [makeAddress(102), makeAddress(103)];
+    const data = [
+      makeUnifiedMarketDataV2(hooksFactory, {
+        commitmentFeeBips: { isPresent: true, value: BigNumber.from(175) },
+        drawnAmount: { isPresent: true, value: BigNumber.from(250) }
+      }),
+      makeUnifiedMarketDataV2(hooksFactory, {
+        commitmentFeeBips: { isPresent: true, value: BigNumber.from(200) },
+        drawnAmount: { isPresent: true, value: BigNumber.from(300) }
+      })
+    ];
+    const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getMarketsDataV2");
+      expect((decoded.args?.[0] as string[]).map((address) => address.toLowerCase())).to.deep.equal(
+        markets
+      );
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketsDataV2", data);
+    });
+
+    const hydratedMarkets = await Market.getMarkets(
+      SupportedChainId.Sepolia,
+      markets,
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
+    expect(hydratedMarkets.map((market) => market.commitmentFeeBips)).to.deep.equal([175, 200]);
+    expect(hydratedMarkets.map((market) => market.drawnAmount?.raw.toString())).to.deep.equal([
+      "250",
+      "300"
+    ]);
+  });
+
+  it("falls back from unified reads to the legacy lens through viem", async () => {
+    const marketAddress = makeAddress(104);
+    const data = makeLegacyMarketData();
+    const unifiedLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const legacyLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLens");
+    const viemProvider = new FakeViemProvider((call) => {
+      if (call.to === unifiedLensAddress) {
+        throw new Error("NotV2Market");
+      }
+
+      const decoded = decodeLensCall(marketLensAbi as Abi, call);
+      expect(call.to).to.equal(legacyLensAddress);
+      expect(decoded.functionName).to.equal("getMarketData");
+      expect((decoded.args?.[0] as string).toLowerCase()).to.equal(marketAddress);
+      return encodeLensResult(marketLensAbi as Abi, "getMarketData", data);
+    });
+
+    const market = await Market.getMarket(
+      SupportedChainId.Sepolia,
+      marketAddress,
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([
+      unifiedLensAddress,
+      legacyLensAddress
+    ]);
+    expect(market.version).to.equal(MarketVersion.V1);
+    expect(market.hooksFactory).to.equal(undefined);
+  });
+
+  it("falls back from unified reads to the V2 lens through viem", async () => {
+    const marketAddress = makeAddress(105);
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory");
+    const data = makeFactoryBackedMarketData(hooksFactory);
+    const unifiedLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const v2LensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2");
+    const viemProvider = new FakeViemProvider((call) => {
+      if (call.to === unifiedLensAddress) {
+        throw new Error("NotV2Market");
+      }
+
+      const decoded = decodeLensCall(marketLensV2Abi as Abi, call);
+      expect(call.to).to.equal(v2LensAddress);
+      expect(decoded.functionName).to.equal("getMarketData");
+      expect((decoded.args?.[0] as string).toLowerCase()).to.equal(marketAddress);
+      return encodeLensResult(marketLensV2Abi as Abi, "getMarketData", data);
+    });
+
+    const market = await Market.getMarketV2(
+      SupportedChainId.Sepolia,
+      marketAddress,
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([
+      unifiedLensAddress,
+      v2LensAddress
+    ]);
+    expect(market.version).to.equal(MarketVersion.V2);
+    expect(market.hooksFactory).to.equal(hooksFactory);
+    expect(market.marketType).to.equal("legacy");
+  });
+
+  it("updates v2.5 market data through viem", async () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
+    const initialData = makeUnifiedMarketDataV2(hooksFactory, {
+      commitmentFeeBips: { isPresent: true, value: BigNumber.from(175) },
+      drawnAmount: { isPresent: true, value: BigNumber.from(250) }
+    });
+    const updatedData = makeUnifiedMarketDataV2(hooksFactory, {
+      commitmentFeeBips: { isPresent: true, value: BigNumber.from(200) },
+      drawnAmount: { isPresent: true, value: BigNumber.from(300) }
+    });
+    const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getMarketDataV2");
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketDataV2", updatedData);
+    });
+    const market = Market.fromMarketDataV2_5(
+      SupportedChainId.Sepolia,
+      viemProvider as unknown as providers.Provider,
+      initialData,
+      true
+    );
+
+    await market.update();
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
+    expect(market.commitmentFeeBips).to.equal(200);
+    expect(market.drawnAmount?.raw).to.equal(300n);
+  });
+
+  it("refreshes existing v2.5 markets through the live list endpoint", async () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
+    const initialData = makeUnifiedMarketDataV2(hooksFactory, {
+      commitmentFeeBips: { isPresent: true, value: BigNumber.from(175) },
+      drawnAmount: { isPresent: true, value: BigNumber.from(250) }
+    });
+    const updatedData = makeUnifiedMarketDataV2(hooksFactory, {
+      commitmentFeeBips: { isPresent: true, value: BigNumber.from(200) },
+      drawnAmount: { isPresent: true, value: BigNumber.from(300) }
+    });
+    const marketAddress = initialData.market.marketToken.token.toLowerCase();
+    const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getMarketsLiveDataV2");
+      expect((decoded.args?.[0] as string[]).map((address) => address.toLowerCase())).to.deep.equal(
+        [marketAddress]
+      );
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketsLiveDataV2", [
+        makeMarketLiveDataV2(updatedData)
+      ]);
+    });
+    const market = Market.fromMarketDataV2_5(
+      SupportedChainId.Sepolia,
+      viemProvider as unknown as providers.Provider,
+      initialData,
+      true
+    );
+
+    const result = await Market.refreshMarketsV2LiveData(
+      SupportedChainId.Sepolia,
+      [market],
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(result[0]).to.equal(market);
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
+    expect(market.commitmentFeeBips).to.equal(200);
+    expect(market.drawnAmount?.raw).to.equal(300n);
+  });
 });
 
 describe("Market model routing metadata", () => {
@@ -372,7 +720,21 @@ describe("Market model routing metadata", () => {
     expect(market.marketType).to.equal(undefined);
   });
 
-  it("hydrates v2.5 market data with compatibility allowForceBuyBacks", () => {
+  it("derives marketType from an indexed non-canonical hooks factory address", () => {
+    const market = Market.fromMarketDataV2(
+      SupportedChainId.Sepolia,
+      provider,
+      makeFactoryBackedMarketData(historicalSepoliaRevolvingFactory)
+    );
+
+    expect(
+      getMarketTypeForHooksFactory(SupportedChainId.Sepolia, historicalSepoliaRevolvingFactory)
+    ).to.equal("revolving");
+    expect(market.hooksFactory).to.equal(historicalSepoliaRevolvingFactory);
+    expect(market.marketType).to.equal("revolving");
+  });
+
+  it("drops stale force-buyback compatibility for legacy factory market data", () => {
     const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
@@ -383,17 +745,23 @@ describe("Market model routing metadata", () => {
 
     expect(market.hooksFactory).to.equal(hooksFactory);
     expect(market.marketType).to.equal("legacy");
-    if (!market.hooksConfig || market.hooksConfig.kind !== HooksKind.OpenTerm) {
-      throw new Error("Expected open-term hooks config");
-    }
-    expect(market.hooksConfig?.allowForceBuyBacks).to.equal(true);
+    expectAllowForceBuyBacks(market, false);
+  });
+
+  it("drops stale force-buyback compatibility for unsupported factories", () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
+    const data = makeFactoryBackedMarketData(hooksFactory);
+    data.hooksConfig.allowForceBuyBacks = true;
+
+    const market = Market.fromMarketDataV2(SupportedChainId.Sepolia, provider, data);
+
+    expect(market.hooksFactory).to.equal(hooksFactory);
+    expect(market.marketType).to.equal("revolving");
+    expectAllowForceBuyBacks(market, false);
   });
 
   it("hydrates unified v2.5 revolving optional fields when present", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -407,7 +775,8 @@ describe("Market model routing metadata", () => {
     expect(market.hooksFactory).to.equal(hooksFactory);
     expect(market.marketType).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
-    expect(market.drawnAmount?.raw.eq(250)).to.equal(true);
+    expect(market.drawnAmount?.raw).to.equal(250n);
+    expectAllowForceBuyBacks(market, false);
   });
 
   it("refreshes hooksFactory and marketType when v2 market data is updated", () => {
@@ -448,32 +817,32 @@ describe("Market model routing metadata", () => {
       borrower: data.borrower,
       controller: data.controller,
       feeRecipient: data.feeRecipient,
-      protocolFeeBips: data.protocolFeeBips.toNumber(),
-      delinquencyFeeBips: data.delinquencyFeeBips.toNumber(),
-      delinquencyGracePeriod: data.delinquencyGracePeriod.toNumber(),
-      withdrawalBatchDuration: data.withdrawalBatchDuration.toNumber(),
-      reserveRatioBips: data.reserveRatioBips.toNumber(),
-      annualInterestBips: data.annualInterestBips.toNumber(),
+      protocolFeeBips: toNumber(data.protocolFeeBips),
+      delinquencyFeeBips: toNumber(data.delinquencyFeeBips),
+      delinquencyGracePeriod: toNumber(data.delinquencyGracePeriod),
+      withdrawalBatchDuration: toNumber(data.withdrawalBatchDuration),
+      reserveRatioBips: toNumber(data.reserveRatioBips),
+      annualInterestBips: toNumber(data.annualInterestBips),
       temporaryReserveRatio: data.temporaryReserveRatio,
-      originalAnnualInterestBips: data.originalAnnualInterestBips.toNumber(),
-      originalReserveRatioBips: data.originalReserveRatioBips.toNumber(),
-      temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry.toNumber(),
+      originalAnnualInterestBips: toNumber(data.originalAnnualInterestBips),
+      originalReserveRatioBips: toNumber(data.originalReserveRatioBips),
+      temporaryReserveRatioExpiry: toNumber(data.temporaryReserveRatioExpiry),
       isClosed: data.isClosed,
-      scaleFactor: data.scaleFactor,
+      scaleFactor: toRawAmount(data.scaleFactor),
       totalSupply: marketToken.getAmount(data.totalSupply),
       maxTotalSupply: marketToken.getAmount(data.maxTotalSupply),
-      scaledTotalSupply: data.scaledTotalSupply,
+      scaledTotalSupply: toRawAmount(data.scaledTotalSupply),
       totalAssets: underlyingToken.getAmount(data.totalAssets),
       lastAccruedProtocolFees: underlyingToken.getAmount(data.lastAccruedProtocolFees),
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
         data.normalizedUnclaimedWithdrawals
       ),
-      scaledPendingWithdrawals: data.scaledPendingWithdrawals,
-      pendingWithdrawalExpiry: data.pendingWithdrawalExpiry.toNumber(),
+      scaledPendingWithdrawals: toRawAmount(data.scaledPendingWithdrawals),
+      pendingWithdrawalExpiry: toNumber(data.pendingWithdrawalExpiry),
       isDelinquent: data.isDelinquent,
-      timeDelinquent: data.timeDelinquent.toNumber(),
-      lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp.toNumber(),
-      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
+      timeDelinquent: toNumber(data.timeDelinquent),
+      lastInterestAccruedTimestamp: toNumber(data.lastInterestAccruedTimestamp),
+      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries.map(toNumber),
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
       commitmentFeeBips: 175,
       drawnAmount
@@ -484,10 +853,7 @@ describe("Market model routing metadata", () => {
   });
 
   it("updates unified v2.5 revolving optional fields when present", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -503,7 +869,7 @@ describe("Market model routing metadata", () => {
     );
 
     expect(market.commitmentFeeBips).to.equal(200);
-    expect(market.drawnAmount?.raw.eq(300)).to.equal(true);
+    expect(market.drawnAmount?.raw).to.equal(300n);
   });
 
   it("hydrates subgraph-backed markets with raw revolving fields when present", () => {
@@ -513,18 +879,40 @@ describe("Market model routing metadata", () => {
       makeSubgraphMarketData()
     );
 
-    expect(market.marketType).to.equal(undefined);
+    expect(market.marketType).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
-    expect(market.drawnAmount?.raw.eq(250)).to.equal(true);
+    expect(market.drawnAmount?.raw).to.equal(250n);
+  });
+
+  it("hydrates subgraph list markets without record and aggregate payloads", () => {
+    const market = Market.fromSubgraphMarketData(
+      SupportedChainId.Sepolia,
+      provider,
+      makeSubgraphMarketListData()
+    );
+
+    expect(market.marketType).to.equal("revolving");
+    expect(market.commitmentFeeBips).to.equal(175);
+    expect(market.drawnAmount?.raw).to.equal(250n);
+    expect(market.totalBorrowed?.raw).to.equal(0n);
+    expect(market.depositRecords).to.deep.equal([]);
+  });
+
+  it("hydrates subgraph list markets with placeholder factory template names", () => {
+    const data = makeSubgraphMarketListData();
+    data.hooks!.factoryHooksTemplate.name = "";
+
+    const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+
+    expect(market.marketType).to.equal("revolving");
+    expect(market.hooksConfig?.kind).to.equal(HooksKind.OpenTerm);
+    expect(market.hooksConfig?.template?.name).to.equal("OpenTermHooks");
   });
 });
 
 describe("Market revolving APR helpers", () => {
   it("computes exact-current revolving APR metrics from raw SDK state", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -544,14 +932,25 @@ describe("Market revolving APR helpers", () => {
       penaltyAprBips: 0,
       effectiveLenderAprBips: 475
     });
-    expect(market.currentRevolvingAprMetrics?.drawnAmount.raw.eq(250)).to.equal(true);
+    expect(market.currentRevolvingAprMetrics?.drawnAmount.raw).to.equal(250n);
+    expect(market.currentAprDisplayBips).to.deep.include({
+      isRevolving: true,
+      configuredAprKind: "utilization",
+      configuredAprBips: 1200,
+      configuredAnnualInterestBips: 1200,
+      configuredUtilizationAprBips: 1200,
+      commitmentAprBips: 175,
+      utilizationBips: 2500,
+      currentUtilizationAprBips: 300,
+      currentBaseLenderAprBips: 475,
+      currentProtocolAprBips: 1,
+      currentPenaltyAprBips: 0,
+      currentEffectiveLenderAprBips: 475
+    });
   });
 
   it("clamps revolving utilization math to total supply and includes penalties", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -573,14 +972,11 @@ describe("Market revolving APR helpers", () => {
       penaltyAprBips: 100,
       effectiveLenderAprBips: 1475
     });
-    expect(market.currentRevolvingAprMetrics?.drawnAmount.raw.eq(2_000)).to.equal(true);
+    expect(market.currentRevolvingAprMetrics?.drawnAmount.raw).to.equal(2_000n);
   });
 
   it("returns no revolving APR metrics when raw revolving state is absent", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -589,13 +985,20 @@ describe("Market revolving APR helpers", () => {
     );
 
     expect(market.currentRevolvingAprMetrics).to.equal(undefined);
+    expect(market.currentAprDisplayBips).to.deep.include({
+      isRevolving: false,
+      configuredAprKind: "annualInterest",
+      configuredAprBips: 1200,
+      configuredAnnualInterestBips: 1200,
+      currentBaseLenderAprBips: 1200,
+      currentProtocolAprBips: 3,
+      currentPenaltyAprBips: 0,
+      currentEffectiveLenderAprBips: 1200
+    });
   });
 
   it("normalizes generic effective APR getters for revolving markets", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -606,21 +1009,16 @@ describe("Market revolving APR helpers", () => {
       true
     );
 
-    const blendedBaseAprRay = bipToRay(475);
+    const blendedBaseAprRay = bipToRayBigint(475);
 
-    expect(market.effectiveLenderAPR.eq(blendedBaseAprRay)).to.equal(true);
-    expect(
-      market.effectiveBorrowerAPR.eq(
-        bipMul(blendedBaseAprRay, BIP.add(market.protocolFeeBips))
-      )
-    ).to.equal(true);
+    expect(market.effectiveLenderAPR).to.equal(blendedBaseAprRay);
+    expect(market.effectiveBorrowerAPR).to.equal(
+      bipMulBigint(blendedBaseAprRay, BIP_BIGINT + BigInt(market.protocolFeeBips))
+    );
   });
 
   it("normalizes delinquency timing helpers for revolving markets", () => {
-    const hooksFactory = getDeploymentAddress(
-      SupportedChainId.Sepolia,
-      "HooksFactoryRevolving"
-    );
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
     const revolvingMarket = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -637,9 +1035,9 @@ describe("Market revolving APR helpers", () => {
       true
     );
 
-    const rawScale = BigNumber.from(10).pow(18);
-    const scaledSupply = rawScale.mul(1_000);
-    const stressedAssets = rawScale.mul(150);
+    const rawScale = 10n ** 18n;
+    const scaledSupply = rawScale * 1_000n;
+    const stressedAssets = rawScale * 150n;
 
     revolvingMarket.totalSupply = revolvingMarket.marketToken.getAmount(scaledSupply);
     revolvingMarket.scaledTotalSupply = scaledSupply;
@@ -664,9 +1062,8 @@ describe("Market revolving APR helpers", () => {
       )
     );
     expect(
-      revolvingMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw.gt(
+      revolvingMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw >
         legacySemanticsMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw
-      )
     ).to.equal(true);
   });
 });

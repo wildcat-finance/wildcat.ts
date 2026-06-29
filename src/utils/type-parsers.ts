@@ -2,7 +2,7 @@ import {
   FeeConfigurationStructOutput,
   FeeConfigurationV2StructOutput,
   MarketParameterConstraintsStructOutput
-} from "../typechain";
+} from "../lens-types";
 import {
   FeeConfiguration,
   FeeConfigurationV2,
@@ -12,8 +12,9 @@ import {
   PartialTransaction,
   SignerOrProvider
 } from "../types";
-import { BigNumber, PopulatedTransaction, constants } from "ethers";
-import { Token } from "../token";
+import { zeroAddress } from "viem";
+import { Token, toRawAmount } from "../token";
+import { toNumber, type BigintNumberish } from "./bigint";
 
 import {
   WithdrawalRequestRecord,
@@ -30,14 +31,18 @@ import {
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { SupportedChainId } from "../constants";
 import { assert } from "./assert";
-import { SubgraphLenderHooksAccessDataFragment, SubgraphLenderStatus } from "../gql/graphql";
+import {
+  SubgraphLenderHooksAccessDataFragment,
+  SubgraphLenderStatus,
+  SubgraphWithdrawalRequestPropertiesFragment
+} from "../gql/graphql";
 import { LenderRole } from "../account";
 
 export const parseMarketParameterConstraints = (
   constraints: MarketParameterConstraintsStructOutput
 ): MarketParameterConstraints =>
   Object.fromEntries(
-    Object.entries(constraints).map(([k, v]) => [k, BigNumber.from(v).toNumber()])
+    Object.entries(constraints).map(([k, v]) => [k, toNumber(v)])
   ) as MarketParameterConstraints;
 
 export const parseFeeConfiguration = (
@@ -46,14 +51,14 @@ export const parseFeeConfiguration = (
   feeConfiguration: FeeConfigurationStructOutput
 ): FeeConfiguration => {
   const originationFeeToken =
-    feeConfiguration.originationFeeToken.token === constants.AddressZero
+    feeConfiguration.originationFeeToken.token === zeroAddress
       ? undefined
       : Token.fromTokenMetadata(chainId, feeConfiguration.originationFeeToken, provider);
   const originationFeeAmount =
     originationFeeToken && originationFeeToken.getAmount(feeConfiguration.originationFeeAmount);
   return {
     feeRecipient: feeConfiguration.feeRecipient,
-    protocolFeeBips: feeConfiguration.protocolFeeBips,
+    protocolFeeBips: toNumber(feeConfiguration.protocolFeeBips),
     originationFeeToken,
     originationFeeAmount
   };
@@ -73,9 +78,9 @@ export const parseFeeConfigurationV2 = (
 ): FeeConfigurationV2 => {
   const fees: FeeConfigurationV2 = {
     feeRecipient: feeRecipient,
-    protocolFeeBips: protocolFeeBips
+    protocolFeeBips: toNumber(protocolFeeBips)
   };
-  if (originationFeeToken.token === constants.AddressZero) return fees;
+  if (originationFeeToken.token === zeroAddress) return fees;
   const token = Token.fromTokenMetadata(chainId, originationFeeToken, provider);
 
   return {
@@ -117,17 +122,27 @@ const getTypeName: ParseFn = function <K extends WithdrawalRecordKind>(
   return log.__typename;
 }; */
 
+const test = (batch: WithdrawalBatch, records: SubgraphWithdrawalRequestPropertiesFragment[]) => {
+  const x = records.map((r) => parseWithdrawalRecord(batch, r));
+};
+
+type PopulatedTransactionLike = {
+  to?: string;
+  data?: string;
+  value?: BigintNumberish;
+};
+
 export const removeUnusedTxFields = ({
   to,
   data,
-  value = BigNumber.from(0)
-}: PopulatedTransaction): PartialTransaction => {
+  value = 0n
+}: PopulatedTransactionLike): PartialTransaction => {
   assert(to !== undefined, "to is undefined");
   assert(data !== undefined, "data is undefined");
   return {
     to,
     data,
-    value: value.toHexString()
+    value: toRawAmount(value).toString()
   };
 };
 
@@ -161,7 +176,7 @@ const marketRecordParsers: MarketRecordParserMap = {
   }),
   FixedTermUpdated: (_, log) => ({ ...log }),
   ForceBuyBack: (token, { scaledAmount, normalizedAmount, ...rest }) => ({
-    scaledAmount: BigNumber.from(scaledAmount),
+    scaledAmount: toRawAmount(scaledAmount),
     normalizedAmount: token.getAmount(normalizedAmount),
     ...rest
   }),
@@ -181,7 +196,7 @@ const marketRecordParsers: MarketRecordParserMap = {
   ProtocolFeeBipsUpdated: (_, log) => ({ ...log }),
   WithdrawalRequest: (token, { scaledAmount, normalizedAmount, account, ...rest }) => ({
     address: account.address,
-    scaledAmount: BigNumber.from(scaledAmount),
+    scaledAmount: toRawAmount(scaledAmount),
     normalizedAmount: token.getAmount(normalizedAmount),
     ...rest
   })
@@ -207,7 +222,7 @@ const Bit_Enabled_SetAnnualInterestAndReserveRatioBips = 86n;
 const Bit_Enabled_SetProtocolFeeBips = 85n;
 
 export function encodeHooksConfig({
-  hooksAddress = constants.AddressZero,
+  hooksAddress = zeroAddress,
   useOnDeposit = false,
   useOnQueueWithdrawal = false,
   useOnExecuteWithdrawal = false,

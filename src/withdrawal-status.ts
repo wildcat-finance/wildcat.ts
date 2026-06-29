@@ -1,27 +1,24 @@
-import { BigNumber, ContractTransaction } from "ethers";
 import { Market } from "./market";
-import { TokenAmount } from "./token";
+import { TokenAmount, toRawAmount } from "./token";
 import {
   WithdrawalBatchLenderStatusStructOutput,
   WithdrawalBatchDataWithLenderStatusStructOutput,
   WithdrawalBatchLenderStatusV2_5StructOutput,
   WithdrawalBatchDataWithLenderStatusV2_5StructOutput
-} from "./typechain";
+} from "./lens-types";
+import { SupportedChainId, hasDeploymentAddress } from "./constants";
 import {
-  SupportedChainId,
-  getLatestLensContract,
-  getLensContract,
-  hasDeploymentAddress
-} from "./constants";
+  getLatestWithdrawalBatchDataWithLenderStatus,
+  getLegacyWithdrawalBatchDataWithLenderStatus
+} from "./internal/market-lens";
 import {
   WithdrawalExecutionRecord,
   WithdrawalRequestRecord,
   assert,
-  mulDiv,
   parseWithdrawalRecord
 } from "./utils";
 import { WithdrawalBatch, BatchStatus } from "./withdrawal-batch";
-import { MarketVersion } from "./types";
+import { MarketVersion, TransactionHash } from "./types";
 import {
   SubgraphLenderWithdrawalPropertiesFragment,
   SubgraphWithdrawalExecution,
@@ -44,7 +41,7 @@ export class LenderWithdrawalStatus {
   constructor(
     public batch: WithdrawalBatch,
     public lender: string,
-    public scaledAmount: BigNumber,
+    public scaledAmount: bigint,
     public normalizedAmountWithdrawn: TokenAmount,
     public normalizedAmountOwed: TokenAmount,
     public isCompleted: boolean,
@@ -65,9 +62,9 @@ export class LenderWithdrawalStatus {
     return this.market.chainId;
   }
 
-  async execute(): Promise<ContractTransaction> {
+  async execute(): Promise<TransactionHash> {
     assert(this.availableWithdrawalAmount.gt(0), "No funds available to withdraw");
-    return this.market.contract.executeWithdrawal(this.lender, this.expiry);
+    return this.market.executeWithdrawal(this);
   }
 
   get expiry(): number {
@@ -95,7 +92,7 @@ export class LenderWithdrawalStatus {
   }
 
   updateWith(data: WithdrawalBatchLenderStatusStructOutput): void {
-    this.scaledAmount = data.scaledAmount;
+    this.scaledAmount = toRawAmount(data.scaledAmount);
     this.normalizedAmountWithdrawn = this.market.underlyingToken.getAmount(
       data.normalizedAmountWithdrawn
     );
@@ -107,7 +104,7 @@ export class LenderWithdrawalStatus {
       this.batch.status === BatchStatus.Complete &&
       this.batch.expiry < Math.floor(Date.now() / 1000) &&
       this.batch.normalizedAmountPaid
-        .mulDiv(data.scaledAmount, this.batch.scaledTotalAmount)
+        .mulDiv(this.scaledAmount, this.batch.scaledTotalAmount)
         .eq(data.normalizedAmountWithdrawn);
   }
 
@@ -124,15 +121,13 @@ export class LenderWithdrawalStatus {
     },
     address?: string
   ): LenderWithdrawalStatus {
-    const scaledAmount = BigNumber.from(status.scaledAmount);
+    const scaledAmount = toRawAmount(status.scaledAmount);
     const normalizedAmountWithdrawn = market.underlyingToken.getAmount(
       status.normalizedAmountWithdrawn
     );
-    const normalizedAmountOwed = market.underlyingToken.getAmount(
-      mulDiv(batch.normalizedTotalAmount.raw, scaledAmount, batch.scaledTotalAmount).sub(
-        normalizedAmountWithdrawn.raw
-      )
-    );
+    const normalizedAmountOwed = batch.normalizedTotalAmount
+      .mulDiv(scaledAmount, batch.scaledTotalAmount)
+      .sub(normalizedAmountWithdrawn);
 
     return new LenderWithdrawalStatus(
       batch,
@@ -153,14 +148,21 @@ export class LenderWithdrawalStatus {
   ): Promise<LenderWithdrawalStatus> {
     const useLatestLens =
       market.version === MarketVersion.V2 || !hasDeploymentAddress(market.chainId, "MarketLens");
-    const lens = useLatestLens
-      ? getLatestLensContract(market.chainId, market.provider)
-      : getLensContract(market.chainId, market.provider);
-    const batchData = await lens.getWithdrawalBatchDataWithLenderStatus(
-      market.address,
-      expiry,
-      lender
-    );
+    const batchData = useLatestLens
+      ? await getLatestWithdrawalBatchDataWithLenderStatus(
+          market.chainId,
+          market.provider,
+          market.address,
+          expiry,
+          lender
+        )
+      : await getLegacyWithdrawalBatchDataWithLenderStatus(
+          market.chainId,
+          market.provider,
+          market.address,
+          expiry,
+          lender
+        );
     const batch = WithdrawalBatch.fromWithdrawalBatchData(market, batchData.batch);
     return LenderWithdrawalStatus.fromWithdrawalBatchLenderStatus(
       market,
@@ -174,16 +176,17 @@ export class LenderWithdrawalStatus {
     batch: WithdrawalBatch,
     data: WithdrawalBatchLenderStatusOutput
   ): LenderWithdrawalStatus {
+    const scaledAmount = toRawAmount(data.scaledAmount);
     const isCompleted =
       batch.status === BatchStatus.Complete &&
       batch.expiry < Math.floor(Date.now() / 1000) &&
       batch.normalizedAmountPaid
-        .mulDiv(data.scaledAmount, batch.scaledTotalAmount)
+        .mulDiv(scaledAmount, batch.scaledTotalAmount)
         .eq(data.normalizedAmountWithdrawn);
     return new LenderWithdrawalStatus(
       batch,
       data.lender,
-      data.scaledAmount,
+      scaledAmount,
       market.underlyingToken.getAmount(data.normalizedAmountWithdrawn),
       market.underlyingToken.getAmount(data.normalizedAmountOwed),
       isCompleted

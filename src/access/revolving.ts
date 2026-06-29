@@ -1,4 +1,4 @@
-import { defaultAbiCoder } from "ethers/lib/utils";
+import { encodeAbiParameters, type Hex } from "viem";
 import { assert } from "../utils";
 
 export const REVOLVING_MARKET_DATA_VERSION = 1;
@@ -8,15 +8,15 @@ export type RevolvingMarketData = {
   commitmentFeeBips: number;
 };
 
-export const encodeRevolvingMarketData = ({ commitmentFeeBips }: RevolvingMarketData): string => {
+export const encodeRevolvingMarketData = ({ commitmentFeeBips }: RevolvingMarketData): Hex => {
   assert(Number.isInteger(commitmentFeeBips), "commitmentFeeBips must be an integer");
   assert(commitmentFeeBips >= 0, "commitmentFeeBips must be non-negative");
   assert(
     commitmentFeeBips <= MAX_REVOLVING_COMMITMENT_FEE_BIPS,
     `commitmentFeeBips must be <= ${MAX_REVOLVING_COMMITMENT_FEE_BIPS}`
   );
-  return defaultAbiCoder.encode(
-    ["uint8", "uint16"],
+  return encodeAbiParameters(
+    [{ type: "uint8" }, { type: "uint16" }],
     [REVOLVING_MARKET_DATA_VERSION, commitmentFeeBips]
   );
 };

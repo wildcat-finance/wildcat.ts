@@ -10,7 +10,8 @@ enum BatchStatusV2_5 {
 enum HooksInstanceKindV2_5 {
   Unknown,
   OpenTerm,
-  FixedTermLoan
+  FixedTermLoan,
+  PeriodicTerm
 }
 
 struct TokenMetadataV2_5 {
@@ -116,6 +117,10 @@ struct MarketHooksDataV2_5 {
   uint32 fixedTermEndTime;
   bool allowClosureBeforeTerm;
   bool allowTermReduction;
+  uint32 firstWithdrawalWindowStart;
+  uint32 periodDuration;
+  uint32 withdrawalWindowDuration;
+  bool periodicTermClosed;
 }
 
 struct LenderAccountDataV2_5 {
@@ -179,6 +184,34 @@ struct MarketDataV2_5 {
 
 struct MarketDataWithLenderStatusV2_5 {
   MarketDataBaseV2_5 market;
+  LenderAccountDataV2_5 lenderStatus;
+}
+
+struct MarketLiveDataV2_5 {
+  address market;
+  bool isClosed;
+  uint256 protocolFeeBips;
+  uint256 reserveRatioBips;
+  uint256 annualInterestBips;
+  uint256 scaleFactor;
+  uint256 totalSupply;
+  uint256 maxTotalSupply;
+  uint256 scaledTotalSupply;
+  uint256 totalAssets;
+  uint256 lastAccruedProtocolFees;
+  uint256 normalizedUnclaimedWithdrawals;
+  uint256 scaledPendingWithdrawals;
+  uint256 pendingWithdrawalExpiry;
+  bool isDelinquent;
+  uint256 timeDelinquent;
+  uint256 lastInterestAccruedTimestamp;
+  uint256 coverageLiquidity;
+  OptionalUintDataV2_5 commitmentFeeBips;
+  OptionalUintDataV2_5 drawnAmount;
+}
+
+struct MarketLiveDataWithLenderStatusV2_5 {
+  MarketLiveDataV2_5 market;
   LenderAccountDataV2_5 lenderStatus;
 }
 
@@ -366,6 +399,15 @@ interface MarketLensV2_5 {
   function getAggregatedAllMarketsDataV2ForHooksTemplate(
     address hooksTemplate
   ) external view returns (MarketDataV2_5[] memory data);
+
+  function getMarketsLiveDataV2(
+    address[] calldata markets
+  ) external view returns (MarketLiveDataV2_5[] memory data);
+
+  function getMarketsLiveDataWithLenderStatusV2(
+    address lender,
+    address[] calldata markets
+  ) external view returns (MarketLiveDataWithLenderStatusV2_5[] memory data);
 
   function getMarketDataWithLenderStatus(
     address lender,

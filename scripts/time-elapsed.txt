@@ -12,3 +12,22 @@ Replaced duplicate type literals: 17283ms
 Found functions to repair: 23ms
 Repaired return types: 1ms
 Saved file: 3ms
+Gathered unique type definitions: 3ms
+Mapped type literals: 31ms
+Replaced duplicate type literals: 14254ms
+Found functions to repair: 26ms
+Repaired return types: 0ms
+Saved file: 3ms
+Gathered unique type definitions: 4ms
+Mapped type literals: 34ms
+Replaced duplicate type literals: 18262ms
+Found functions to repair: 30ms
+Repaired return types: 1ms
+Saved file: 4ms
+Repaired 1 duplicate enum members: 377ms
+Gathered unique type definitions: 4ms
+Mapped type literals: 29ms
+Replaced duplicate type literals: 0ms
+Found functions to repair: 23ms
+Repaired return types: 0ms
+Saved file: 4ms

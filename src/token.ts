@@ -1,30 +1,139 @@
-import { BigNumber, BigNumberish, ContractTransaction } from "ethers";
-import { parseUnits } from "ethers/lib/utils";
+import { encodeFunctionData, type Abi, type Address } from "viem";
+import { iERC20Abi, marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "./abi";
+import type { TokenMetadataStructOutput, TokenMetadataV2_5StructOutput } from "./lens-types";
+import { ContractWrapper, PartialTransaction, SignerOrProvider, TransactionHash } from "./types";
+import { SupportedChainId, getDeploymentAddress, hasDeploymentAddress } from "./constants";
+import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
+import { readViemContract } from "./internal/viem-read";
 import {
-  IERC20,
-  IERC20__factory,
-  TokenMetadataStructOutput,
-  TokenMetadataV2_5StructOutput
-} from "./typechain";
-import { ContractWrapper, SignerOrProvider } from "./types";
-import {
-  SupportedChainId,
-  getLensContract,
-  getLensV2Contract,
-  getLensV2_5Contract,
-  hasDeploymentAddress
-} from "./constants";
-import { bipMul, formatBnFixed, mulDiv, rayDiv, rayMul } from "./utils";
+  bipMulBigint,
+  formatFixedBigint,
+  mulDivBigint,
+  parseFixedBigint,
+  prepareTransaction,
+  rayDivBigint,
+  rayMulBigint,
+  toBigint,
+  toNumber,
+  type BigintNumberish
+} from "./utils";
 import { SubgraphMarketDataFragment, SubgraphToken } from "./gql/graphql";
+import { submitPreparedTransaction } from "./internal/viem-write";
 
-type RhsAmount = BigNumberish | TokenAmount;
+type RhsAmount = BigintNumberish | TokenAmount;
+type BigIntCompatNumberish = bigint | number | string | { toString(): string };
 type TokenMetadataOutput = TokenMetadataStructOutput | TokenMetadataV2_5StructOutput;
+type ViemTokenMetadataObject = {
+  token: string;
+  name: string;
+  symbol: string;
+  decimals: bigint | number;
+  isMock: boolean;
+};
+type ViemTokenMetadataField = ViemTokenMetadataObject[keyof ViemTokenMetadataObject];
+type ViemTokenMetadataOutput =
+  | ViemTokenMetadataObject
+  | readonly [string, string, string, bigint | number, boolean];
+type BigIntCompatibilityMethodName =
+  | "isZero"
+  | "gt"
+  | "gte"
+  | "lt"
+  | "lte"
+  | "eq"
+  | "add"
+  | "sub"
+  | "mul"
+  | "div"
+  | "toNumber"
+  | "toJSON";
 
-export const toBn = (amount: RhsAmount): BigNumber => {
+declare global {
+  interface BigInt {
+    isZero(): boolean;
+    gt(value: BigIntCompatNumberish): boolean;
+    gte(value: BigIntCompatNumberish): boolean;
+    lt(value: BigIntCompatNumberish): boolean;
+    lte(value: BigIntCompatNumberish): boolean;
+    eq(value: BigIntCompatNumberish): boolean;
+    add(value: BigIntCompatNumberish): bigint;
+    sub(value: BigIntCompatNumberish): bigint;
+    mul(value: BigIntCompatNumberish): bigint;
+    div(value: BigIntCompatNumberish): bigint;
+    toNumber(): number;
+    toJSON(): string;
+  }
+}
+
+const toCompatBigInt = (value: BigIntCompatNumberish): bigint => {
+  if (typeof value === "bigint") return value;
+  if (typeof value === "number") return BigInt(value);
+  if (typeof value === "string") return BigInt(value);
+  return BigInt(value.toString());
+};
+
+const installBigIntCompatibilityMethod = (
+  name: BigIntCompatibilityMethodName,
+  value: (this: bigint, value?: BigIntCompatNumberish) => bigint | boolean | number | string
+) => {
+  if (typeof BigInt.prototype[name] === "function") return;
+  Object.defineProperty(BigInt.prototype, name, {
+    value,
+    configurable: true
+  });
+};
+
+installBigIntCompatibilityMethod("isZero", function isZero(this: bigint) {
+  return this.valueOf() === 0n;
+});
+installBigIntCompatibilityMethod("gt", function gt(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() > toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("gte", function gte(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() >= toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("lt", function lt(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() < toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("lte", function lte(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() <= toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("eq", function eq(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() === toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("add", function add(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() + toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("sub", function sub(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() - toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("mul", function mul(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() * toCompatBigInt(value ?? 0n);
+});
+installBigIntCompatibilityMethod("div", function div(this: bigint, value?: BigIntCompatNumberish) {
+  return this.valueOf() / toCompatBigInt(value ?? 1n);
+});
+installBigIntCompatibilityMethod("toNumber", function toNumberCompat(this: bigint) {
+  return Number(this.valueOf());
+});
+installBigIntCompatibilityMethod("toJSON", function toJSONCompat(this: bigint) {
+  return this.toString();
+});
+
+const getViemTokenMetadataValue = (
+  metadata: ViemTokenMetadataOutput,
+  key: keyof ViemTokenMetadataObject,
+  index: number
+): ViemTokenMetadataField => {
+  const keyedValue = (metadata as Partial<ViemTokenMetadataObject>)[key];
+  return keyedValue ?? (metadata as readonly ViemTokenMetadataField[])[index];
+};
+
+export const toRawAmount = (amount: RhsAmount): bigint => {
   if (amount instanceof TokenAmount) {
     return amount.raw;
   }
-  return BigNumber.from(amount);
+  return toBigint(amount);
 };
 
 export const maxTokenAmount = (...amounts: TokenAmount[]): TokenAmount => {
@@ -44,7 +153,11 @@ export const minTokenAmount = (...amounts: TokenAmount[]): TokenAmount => {
 };
 
 export class TokenAmount {
-  constructor(public raw: BigNumber, public token: Token) {}
+  public raw: bigint;
+
+  constructor(raw: RhsAmount, public token: Token) {
+    this.raw = toRawAmount(raw);
+  }
 
   get name(): string {
     return this.token.name;
@@ -59,7 +172,7 @@ export class TokenAmount {
   }
 
   toFixed(digits = this.decimals): string {
-    return formatBnFixed(this.raw, this.decimals, digits);
+    return formatFixedBigint(this.raw, this.decimals, digits);
   }
 
   format(digits = this.decimals, withSymbol?: boolean): string {
@@ -67,83 +180,82 @@ export class TokenAmount {
   }
 
   gt(amount: RhsAmount): boolean {
-    amount = toBn(amount);
-    return this.raw.gt(amount);
+    return this.raw > toRawAmount(amount);
   }
 
   lt(amount: RhsAmount): boolean {
-    amount = toBn(amount);
-    return this.raw.lt(amount);
+    return this.raw < toRawAmount(amount);
   }
 
   lte(amount: RhsAmount): boolean {
-    amount = toBn(amount);
-    return this.raw.lte(amount);
+    return this.raw <= toRawAmount(amount);
   }
 
   gte(amount: RhsAmount): boolean {
-    amount = toBn(amount);
-    return this.raw.gte(amount);
+    return this.raw >= toRawAmount(amount);
   }
 
   eq(amount: RhsAmount): boolean {
-    amount = toBn(amount);
-    return this.raw.eq(amount);
+    return this.raw === toRawAmount(amount);
   }
 
   add(amount: RhsAmount): TokenAmount {
-    amount = toBn(amount);
-    return this.token.getAmount(this.raw.add(amount));
+    return this.token.getAmount(this.raw + toRawAmount(amount));
   }
 
   sub(amount: RhsAmount): TokenAmount {
-    amount = toBn(amount);
-    return this.token.getAmount(this.raw.sub(amount));
+    return this.token.getAmount(this.raw - toRawAmount(amount));
   }
 
   mul(amount: RhsAmount): TokenAmount {
-    amount = toBn(amount);
-    return this.token.getAmount(this.raw.mul(amount));
+    return this.token.getAmount(this.raw * toRawAmount(amount));
   }
 
   div(amount: RhsAmount, allowDivideByZero = false): TokenAmount {
-    amount = toBn(amount);
-    return this.token.getAmount(
-      allowDivideByZero && amount.isZero() ? BigNumber.from(0) : this.raw.div(amount)
-    );
+    const divisor = toRawAmount(amount);
+    return this.token.getAmount(allowDivideByZero && divisor === 0n ? 0n : this.raw / divisor);
   }
 
   mulDiv(numer: RhsAmount, denom: RhsAmount): TokenAmount {
-    numer = toBn(numer);
-    denom = toBn(denom);
-    return this.token.getAmount(mulDiv(this.raw, numer, denom));
+    return this.token.getAmount(mulDivBigint(this.raw, toRawAmount(numer), toRawAmount(denom)));
   }
 
   bipMul(amount: RhsAmount): TokenAmount {
-    return this.token.getAmount(bipMul(this.raw, toBn(amount)));
+    return this.token.getAmount(bipMulBigint(this.raw, toRawAmount(amount)));
   }
 
   rayMul(amount: RhsAmount): TokenAmount {
-    return this.token.getAmount(rayMul(this.raw, toBn(amount)));
+    return this.token.getAmount(rayMulBigint(this.raw, toRawAmount(amount)));
   }
 
   rayDiv(amount: RhsAmount): TokenAmount {
-    return this.token.getAmount(rayDiv(this.raw, toBn(amount)));
+    return this.token.getAmount(rayDivBigint(this.raw, toRawAmount(amount)));
   }
 
   satsub(amount: RhsAmount): TokenAmount {
-    amount = toBn(amount);
-    const a = this.raw;
-    const b = amount;
-    if (a.lt(b)) {
-      return this.token.getAmount(BigNumber.from(0));
-    }
-    return this.token.getAmount(a.sub(b));
+    const b = toRawAmount(amount);
+    return this.token.getAmount(this.raw < b ? 0n : this.raw - b);
+  }
+
+  toJSON(): { raw: string; token: ReturnType<Token["toJSON"]> } {
+    return {
+      raw: this.raw.toString(),
+      token: this.token.toJSON()
+    };
   }
 }
 
-export class Token extends ContractWrapper<IERC20> {
-  readonly contractFactory = IERC20__factory;
+export class Token extends ContractWrapper {
+  public contract: {
+    address: string;
+    interface: {
+      encodeFunctionData: (functionName: string, args?: readonly unknown[]) => string;
+    };
+    allowance: (owner: string, spender: string) => Promise<bigint>;
+    balanceOf: (account: string) => Promise<bigint>;
+    totalSupply: () => Promise<bigint>;
+    approve: (spender: string, amount: RhsAmount) => Promise<TransactionHash>;
+  };
 
   constructor(
     public chainId: SupportedChainId,
@@ -155,26 +267,99 @@ export class Token extends ContractWrapper<IERC20> {
     provider: SignerOrProvider
   ) {
     super(provider);
+    this.contract = {
+      address,
+      interface: {
+        encodeFunctionData: (functionName, args = []) =>
+          encodeFunctionData({
+            abi: iERC20Abi,
+            functionName,
+            args
+          } as Parameters<typeof encodeFunctionData>[0])
+      },
+      allowance: async (owner, spender) => (await this.allowance(owner, spender)).raw,
+      balanceOf: async (account) => (await this.balanceOf(account)).raw,
+      totalSupply: async () => (await this.totalSupply()).raw,
+      approve: (spender, amount) => this.approve(spender, amount)
+    };
   }
 
-  protected get _contractAddress(): string {
-    return this.address;
-  }
-
-  async faucet(): Promise<ContractTransaction> {
+  async faucet(): Promise<TransactionHash> {
     if (!this.isMock) {
       throw Error("Can not use faucet on non-mock token");
     }
-    return IERC20__factory.connect(this.address, this.signer).faucet();
+    return submitPreparedTransaction(
+      this.signer,
+      prepareTransaction({
+        to: this.address,
+        abi: iERC20Abi,
+        functionName: "faucet"
+      })
+    );
+  }
+
+  private readToken<Result>(functionName: string, args: readonly unknown[] = []): Promise<Result> {
+    return readViemContract<Result>(
+      getViemPublicClientFromEthers(this.provider),
+      this.address,
+      iERC20Abi,
+      functionName,
+      args
+    );
+  }
+
+  async balanceOf(account: string): Promise<TokenAmount> {
+    const balance = await this.readToken<bigint>("balanceOf", [account]);
+    return this.getAmount(balance);
+  }
+
+  async totalSupply(): Promise<TokenAmount> {
+    const totalSupply = await this.readToken<bigint>("totalSupply");
+    return this.getAmount(totalSupply);
+  }
+
+  async allowance(owner: string, spender: string): Promise<TokenAmount> {
+    const allowance = await this.readToken<bigint>("allowance", [owner, spender]);
+    return this.getAmount(allowance);
+  }
+
+  populateApprove(spender: string, amount: RhsAmount): PartialTransaction {
+    return prepareTransaction({
+      to: this.address,
+      abi: iERC20Abi,
+      functionName: "approve",
+      args: [spender, toRawAmount(amount)]
+    });
+  }
+
+  async approve(spender: string, amount: RhsAmount): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateApprove(spender, amount));
   }
 
   getAmount(amount: RhsAmount): TokenAmount {
-    return new TokenAmount(toBn(amount), this);
+    return new TokenAmount(toRawAmount(amount), this);
+  }
+
+  toJSON(): {
+    chainId: SupportedChainId;
+    address: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    isMock: boolean;
+  } {
+    return {
+      chainId: this.chainId,
+      address: this.address,
+      name: this.name,
+      symbol: this.symbol,
+      decimals: this.decimals,
+      isMock: this.isMock
+    };
   }
 
   parseAmount(amount: number | string): TokenAmount {
-    const bnAmount = parseUnits(amount.toString(), this.decimals);
-    return this.getAmount(bnAmount);
+    return this.getAmount(parseFixedBigint(amount, this.decimals));
   }
 
   static fromTokenMetadata(
@@ -187,8 +372,25 @@ export class Token extends ContractWrapper<IERC20> {
       metadata.token,
       metadata.name,
       metadata.symbol,
-      metadata.decimals.toNumber(),
+      toNumber(metadata.decimals),
       metadata.isMock,
+      provider
+    );
+  }
+
+  static fromViemTokenMetadata(
+    chainId: SupportedChainId,
+    metadata: ViemTokenMetadataOutput,
+    provider: SignerOrProvider
+  ): Token {
+    const decimals = getViemTokenMetadataValue(metadata, "decimals", 3) as bigint | number;
+    return new Token(
+      chainId,
+      getViemTokenMetadataValue(metadata, "token", 0) as string,
+      getViemTokenMetadataValue(metadata, "name", 1) as string,
+      getViemTokenMetadataValue(metadata, "symbol", 2) as string,
+      Number(decimals),
+      getViemTokenMetadataValue(metadata, "isMock", 4) as boolean,
       provider
     );
   }
@@ -222,13 +424,25 @@ export class Token extends ContractWrapper<IERC20> {
     token: string,
     provider: SignerOrProvider
   ): Promise<Token> {
+    const publicClient = getViemPublicClientFromEthers(provider);
     if (hasDeploymentAddress(chainId, "MarketLensV2_5")) {
-      const metadata = await getLensV2_5Contract(chainId, provider).getTokenInfo(token);
-      return Token.fromTokenMetadata(chainId, metadata, provider);
+      const metadata = await readViemContract<ViemTokenMetadataOutput>(
+        publicClient,
+        getDeploymentAddress(chainId, "MarketLensV2_5"),
+        marketLensV2_5Abi as Abi,
+        "getTokenInfo",
+        [token as Address]
+      );
+      return Token.fromViemTokenMetadata(chainId, metadata, provider);
     }
-    const lens = getLensV2Contract(chainId, provider);
-    const metadata = await lens.getTokenInfo(token);
-    return Token.fromTokenMetadata(chainId, metadata, provider);
+    const metadata = await readViemContract<ViemTokenMetadataOutput>(
+      publicClient,
+      getDeploymentAddress(chainId, "MarketLensV2"),
+      marketLensV2Abi as Abi,
+      "getTokenInfo",
+      [token as Address]
+    );
+    return Token.fromViemTokenMetadata(chainId, metadata, provider);
   }
 
   static async getTokensData(
@@ -236,14 +450,24 @@ export class Token extends ContractWrapper<IERC20> {
     tokens: string[],
     provider: SignerOrProvider
   ): Promise<Token[]> {
+    const publicClient = getViemPublicClientFromEthers(provider);
     if (hasDeploymentAddress(chainId, "MarketLensV2_5")) {
-      return getLensV2_5Contract(chainId, provider)
-        .getTokensInfo(tokens)
-        .then((metadata) => metadata.map((m) => Token.fromTokenMetadata(chainId, m, provider)));
+      const metadata = await readViemContract<readonly ViemTokenMetadataOutput[]>(
+        publicClient,
+        getDeploymentAddress(chainId, "MarketLensV2_5"),
+        marketLensV2_5Abi as Abi,
+        "getTokensInfo",
+        [tokens as Address[]]
+      );
+      return metadata.map((m) => Token.fromViemTokenMetadata(chainId, m, provider));
     }
-    const lens = getLensContract(chainId, provider);
-    return lens
-      .getTokensInfo(tokens)
-      .then((metadata) => metadata.map((m) => Token.fromTokenMetadata(chainId, m, provider)));
+    const metadata = await readViemContract<readonly ViemTokenMetadataOutput[]>(
+      publicClient,
+      getDeploymentAddress(chainId, "MarketLens"),
+      marketLensAbi as Abi,
+      "getTokensInfo",
+      [tokens as Address[]]
+    );
+    return metadata.map((m) => Token.fromViemTokenMetadata(chainId, m, provider));
   }
 }

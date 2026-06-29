@@ -1,10 +1,16 @@
 import { MarketAccount } from "./account";
-import { APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS } from "./constants";
 import { Market } from "./market";
-import { HooksKind, MarketVersion, PartialTransaction, Signer } from "./types";
+import {
+  HooksKind,
+  MarketVersion,
+  PartialTransaction,
+  PeriodicTermHooksConfig
+} from "./types";
 import { TokenAmount } from "./token";
-import { SECONDS_IN_365_DAYS } from "./utils";
-import { IPeriodicTermHooks__factory, WildcatMarketV2__factory } from "./typechain";
+import { prepareTransaction, SECONDS_IN_365_DAYS, toNumber } from "./utils";
+import { iPeriodicTermHooksAbi, wildcatMarketV2Abi } from "./abi";
+import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
+import { readViemContract } from "./internal/viem-read";
 
 /**
  * Helpers for the periodic APR reduction settlement flow.
@@ -37,6 +43,79 @@ export const MAX_UNPAID_BATCHES_PER_SETTLEMENT_TX = 10;
 const SETTLEMENT_BUFFER_SECONDS = 600;
 /** Interest drift allowance used for the suggested token approval (~2 hours). */
 const APPROVAL_BUFFER_SECONDS = 7_200;
+
+type PendingAprChangeValue =
+  | {
+      annualInterestBips: bigint | number | string;
+      proposalTimestamp: bigint | number | string;
+    }
+  | readonly [bigint | number | string, bigint | number | string];
+
+type PendingAprChangeResult =
+  | {
+      pendingAprChange: PendingAprChangeValue;
+      responseWindowStart: bigint | number | string;
+      responseWindowEnd: bigint | number | string;
+    }
+  | readonly [
+      PendingAprChangeValue,
+      bigint | number | string,
+      bigint | number | string
+    ];
+
+const getPendingAprChangeField = (
+  pendingAprChange: PendingAprChangeValue,
+  index: 0 | 1,
+  key: "annualInterestBips" | "proposalTimestamp"
+): number => {
+  if (Array.isArray(pendingAprChange)) {
+    return toNumber(pendingAprChange[index]);
+  }
+  return toNumber(
+    (pendingAprChange as {
+      annualInterestBips: bigint | number | string;
+      proposalTimestamp: bigint | number | string;
+    })[key]
+  );
+};
+
+const normalizePendingAprChangeResult = (result: PendingAprChangeResult) => {
+  const objectResult = result as {
+    pendingAprChange: PendingAprChangeValue;
+    responseWindowEnd: bigint | number | string;
+  };
+  const pendingAprChange = Array.isArray(result) ? result[0] : objectResult.pendingAprChange;
+  const responseWindowEnd = Array.isArray(result) ? result[2] : objectResult.responseWindowEnd;
+  return {
+    pendingAprChange: {
+      annualInterestBips: getPendingAprChangeField(
+        pendingAprChange,
+        0,
+        "annualInterestBips"
+      ),
+      proposalTimestamp: getPendingAprChangeField(pendingAprChange, 1, "proposalTimestamp")
+    },
+    responseWindowEnd: toNumber(responseWindowEnd)
+  };
+};
+
+const getAprReductionExpiryTimestamp = (
+  config: PeriodicTermHooksConfig,
+  responseWindowEnd: number
+): number => {
+  if (config.periodDuration <= 0) return responseWindowEnd;
+  if (responseWindowEnd < config.firstWithdrawalWindowStart) {
+    return config.firstWithdrawalWindowStart;
+  }
+  const periodsElapsed = Math.floor(
+    (responseWindowEnd - config.firstWithdrawalWindowStart) / config.periodDuration
+  );
+  const currentWindowStart =
+    config.firstWithdrawalWindowStart + periodsElapsed * config.periodDuration;
+  return currentWindowStart <= responseWindowEnd
+    ? currentWindowStart + config.periodDuration
+    : currentWindowStart;
+};
 
 export enum PeriodicAprSettlementStatus {
   /** The APR reduction can be executed now; no settlement transaction is needed. */
@@ -165,16 +244,21 @@ export async function getPeriodicAprReductionSettlementQuote(
 
   // Live reads: lens market data (view-updated state, including pending-batch
   // payment application) and the hook's authoritative proposal/window math.
-  const hooks = IPeriodicTermHooks__factory.connect(config.hooksAddress, market.provider);
-  const provider = Signer.isSigner(market.provider) ? market.provider.provider : market.provider;
-  const [, { pendingAprChange, responseWindowEnd }, now] = await Promise.all([
+  const publicClient = getViemPublicClientFromEthers(market.provider);
+  const [, pendingAprChangeResult, now] = await Promise.all([
     market.update(),
-    hooks.getPendingAprChange(market.address),
+    readViemContract<PendingAprChangeResult>(
+      publicClient,
+      config.hooksAddress,
+      iPeriodicTermHooksAbi,
+      "getPendingAprChange",
+      [market.address]
+    ),
     timestampSec ??
-      (provider
-        ? provider.getBlock("latest").then((block) => block.timestamp)
-        : Math.floor(Date.now() / 1_000))
+      publicClient.getBlock().then((block) => toNumber(block.timestamp))
   ]);
+  const { pendingAprChange, responseWindowEnd } =
+    normalizePendingAprChangeResult(pendingAprChangeResult);
 
   if (market.isClosed) {
     // repayAndProcessUnpaidWithdrawalBatches reverts on closed markets even with
@@ -198,7 +282,7 @@ export async function getPeriodicAprReductionSettlementQuote(
   if (now < responseWindowEnd) {
     return { ...base, status: PeriodicAprSettlementStatus.ResponseWindowNotElapsed };
   }
-  if (now >= responseWindowEnd + config.periodDuration * APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS) {
+  if (now >= getAprReductionExpiryTimestamp(config, responseWindowEnd)) {
     return { ...base, status: PeriodicAprSettlementStatus.ProposalExpired };
   }
 
@@ -304,16 +388,14 @@ export async function populatePeriodicAprReductionPlan(
   }
 
   transactions.push({
-    tx: {
+    tx: prepareTransaction({
       to: market.address,
-      data: WildcatMarketV2__factory.createInterface().encodeFunctionData(
-        "setAnnualInterestAndReserveRatioBips",
-        // The hook overwrites the reserve ratio with the current value on the
-        // proposed-reduction path; pass the current ratio.
-        [proposedAprBips, market.reserveRatioBips]
-      ),
-      value: "0"
-    },
+      abi: wildcatMarketV2Abi,
+      functionName: "setAnnualInterestAndReserveRatioBips",
+      // The hook overwrites the reserve ratio with the current value on the
+      // proposed-reduction path; pass the current ratio.
+      args: [proposedAprBips, market.reserveRatioBips]
+    }),
     kind: "executeApr",
     requiresBorrower: true,
     description: `Execute the proposed APR reduction to ${proposedAprBips / 100}%`

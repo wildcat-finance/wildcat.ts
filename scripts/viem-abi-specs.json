@@ -1,0 +1,109 @@
+[
+  {
+    "exportName": "iERC20Abi",
+    "artifact": "artifacts/contracts/IERC20.sol/IERC20.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "mockERC20FactoryAbi",
+    "artifact": "artifacts/contracts/MockERC20Factory.sol/MockERC20Factory.json",
+    "types": ["function", "event"]
+  },
+  {
+    "exportName": "mockArchControllerOwnerAbi",
+    "artifact": "artifacts/contracts/MockArchControllerOwner.sol/MockArchControllerOwner.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "wildcatCollateralFactoryAbi",
+    "artifact": "artifacts/contracts/WildcatCollateralFactory.sol/WildcatCollateralFactory.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "simpleMarketCollateralAbi",
+    "artifact": "artifacts/contracts/SimpleMarketCollateral.sol/SimpleMarketCollateral.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "wildcatMarketAbi",
+    "artifact": "artifacts/contracts/WildcatMarket.sol/WildcatMarket.json",
+    "types": ["function", "event"]
+  },
+  {
+    "exportName": "wildcatMarketV2Abi",
+    "artifact": "artifacts/contracts/WildcatMarketV2.sol/WildcatMarketV2.json",
+    "types": ["function", "event"]
+  },
+  {
+    "exportName": "wildcatMarketControllerAbi",
+    "artifact": "artifacts/contracts/WildcatMarketController.sol/WildcatMarketController.json",
+    "types": ["function", "event"]
+  },
+  {
+    "exportName": "wildcatMarketControllerFactoryAbi",
+    "artifact": "artifacts/contracts/WildcatMarketControllerFactory.sol/WildcatMarketControllerFactory.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "marketLensAbi",
+    "artifact": "artifacts/contracts/MarketLens.sol/MarketLens.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "marketLensV2Abi",
+    "artifact": "artifacts/contracts/MarketLensV2.sol/MarketLensV2.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "marketLensV2_5Abi",
+    "artifact": "artifacts/contracts/MarketLensV2_5.sol/MarketLensV2_5.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "collateralLensAbi",
+    "artifact": "artifacts/contracts/CollateralLens.sol/CollateralLens.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "wildcatArchControllerAbi",
+    "artifact": "artifacts/contracts/WildcatArchController.sol/WildcatArchController.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "hooksFactoryAbi",
+    "artifact": "artifacts/contracts/HooksFactory.sol/HooksFactory.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "hooksFactoryRevolvingAbi",
+    "artifact": "artifacts/contracts/HooksFactoryRevolving.sol/HooksFactoryRevolving.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "iOpenTermHooksAbi",
+    "artifact": "artifacts/contracts/IOpenTermHooks.sol/IOpenTermHooks.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "iFixedTermHooksAbi",
+    "artifact": "artifacts/contracts/IFixedTermHooks.sol/IFixedTermHooks.json",
+    "types": ["function"]
+  },
+  {
+    "exportName": "iPeriodicTermHooksAbi",
+    "artifact": "artifacts/contracts/IPeriodicTermHooks.sol/IPeriodicTermHooks.json",
+    "types": ["function"]
+  },
+  {
+    "bytecodeExportName": "checkBorrowersRegisteredBytecode",
+    "artifact": "artifacts/contracts/CheckBorrowersRegistered.sol/CheckBorrowersRegistered.json"
+  },
+  {
+    "bytecodeExportName": "accountQueryBytecode",
+    "artifact": "artifacts/contracts/AccountQuery.sol/AccountQuery.json"
+  },
+  {
+    "bytecodeExportName": "describeSignatureBytecode",
+    "artifact": "artifacts/contracts/DescribeSignature.sol/DescribeSignature.json"
+  }
+]

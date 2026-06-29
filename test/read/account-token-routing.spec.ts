@@ -1,10 +1,23 @@
 import { expect } from "chai";
 import { BigNumber, providers } from "ethers";
+import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
+import {
+  iERC20Abi,
+  marketLensAbi,
+  marketLensV2Abi,
+  marketLensV2_5Abi,
+  wildcatArchControllerAbi
+} from "../../src/abi";
 import * as constantsModule from "../../src/constants";
 import { Market } from "../../src/market";
 import { MarketAccount } from "../../src/account";
 import { Token } from "../../src/token";
-import { MarketDataV2StructOutput } from "../../src/typechain";
+import {
+  MarketDataStructOutput,
+  MarketDataV2StructOutput,
+  MarketLiveDataV2_5StructOutput,
+  MarketLenderStatusStructOutput
+} from "../../src/lens-types";
 
 const provider = new providers.JsonRpcProvider();
 const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
@@ -21,6 +34,96 @@ const makeTokenMetadata = (suffix: number, name: string, symbol: string) => ({
   isMock: false
 });
 
+const makeViemTokenMetadata = (suffix: number, name: string, symbol: string) => ({
+  token: makeAddress(suffix),
+  name,
+  symbol,
+  decimals: 18n,
+  isMock: false
+});
+
+type FakeRpcCall = {
+  to?: string;
+  data?: string;
+};
+
+class FakeViemProvider {
+  calls: FakeRpcCall[] = [];
+  private readonly getResponse: (call: FakeRpcCall) => string;
+
+  constructor(getResponse: (call: FakeRpcCall) => string) {
+    this.getResponse = getResponse;
+  }
+
+  async send(method: string, params: unknown[] = []): Promise<unknown> {
+    if (method === "eth_chainId") {
+      return "0xaa36a7";
+    }
+    if (method !== "eth_call") {
+      throw new Error(`Unexpected RPC method: ${method}`);
+    }
+
+    const call = params[0] as FakeRpcCall;
+    this.calls.push(call);
+    return this.getResponse(call);
+  }
+}
+
+const toViemResult = (value: unknown): unknown => {
+  if (BigNumber.isBigNumber(value)) {
+    return BigInt(value.toString());
+  }
+  if (Array.isArray(value)) {
+    return value.map(toViemResult);
+  }
+  if (value !== null && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, toViemResult(entry)])
+    );
+  }
+  return value;
+};
+
+const encodeLensResult = (abi: Abi, functionName: string, result: unknown): `0x${string}` => {
+  return encodeFunctionResult({
+    abi,
+    functionName,
+    result: toViemResult(result)
+  });
+};
+
+const encodeArchControllerResult = (functionName: string, result: unknown): `0x${string}` => {
+  return encodeLensResult(wildcatArchControllerAbi as Abi, functionName, result);
+};
+
+const decodeArchControllerCall = (call: FakeRpcCall) => {
+  return decodeFunctionData({
+    abi: wildcatArchControllerAbi as Abi,
+    data: call.data as `0x${string}`
+  });
+};
+
+const decodeLensCall = (abi: Abi, call: FakeRpcCall) => {
+  return decodeFunctionData({
+    abi,
+    data: call.data as `0x${string}`
+  });
+};
+
+const getMainnetTokenInfoTarget = (): { address: string; abi: Abi } => {
+  const chainId = constantsModule.SupportedChainId.Mainnet;
+  if (constantsModule.hasDeploymentAddress(chainId, "MarketLensV2_5")) {
+    return {
+      address: constantsModule.getDeploymentAddress(chainId, "MarketLensV2_5"),
+      abi: marketLensV2_5Abi as Abi
+    };
+  }
+  return {
+    address: constantsModule.getDeploymentAddress(chainId, "MarketLensV2"),
+    abi: marketLensV2Abi as Abi
+  };
+};
+
 const makeHooksFlags = () => ({
   useOnDeposit: false,
   useOnQueueWithdrawal: false,
@@ -34,6 +137,46 @@ const makeHooksFlags = () => ({
   useOnSetAnnualInterestAndReserveRatioBips: false,
   useOnSetProtocolFeeBips: false
 });
+
+const makeLegacyMarketData = (): MarketDataStructOutput => {
+  const marketToken = makeTokenMetadata(1, "Legacy Market", "LMKT");
+  const underlyingToken = makeTokenMetadata(2, "Mock USD", "mUSD");
+
+  return {
+    marketToken,
+    underlyingToken,
+    borrower: makeAddress(3),
+    controller: makeAddress(4),
+    feeRecipient: makeAddress(5),
+    protocolFeeBips: BigNumber.from(25),
+    delinquencyFeeBips: BigNumber.from(100),
+    delinquencyGracePeriod: BigNumber.from(86_400),
+    withdrawalBatchDuration: BigNumber.from(86_400),
+    reserveRatioBips: BigNumber.from(1_000),
+    annualInterestBips: BigNumber.from(1_200),
+    temporaryReserveRatio: false,
+    originalAnnualInterestBips: BigNumber.from(1_200),
+    originalReserveRatioBips: BigNumber.from(1_000),
+    temporaryReserveRatioExpiry: BigNumber.from(0),
+    isClosed: false,
+    scaleFactor: BigNumber.from(10).pow(27),
+    totalSupply: BigNumber.from(1_000),
+    maxTotalSupply: BigNumber.from(10_000),
+    scaledTotalSupply: BigNumber.from(1_000),
+    totalAssets: BigNumber.from(1_100),
+    lastAccruedProtocolFees: BigNumber.from(10),
+    normalizedUnclaimedWithdrawals: BigNumber.from(0),
+    scaledPendingWithdrawals: BigNumber.from(0),
+    pendingWithdrawalExpiry: BigNumber.from(0),
+    isDelinquent: false,
+    timeDelinquent: BigNumber.from(0),
+    lastInterestAccruedTimestamp: BigNumber.from(1_700_000_000),
+    unpaidWithdrawalBatchExpiries: [],
+    coverageLiquidity: BigNumber.from(100),
+    borrowableAssets: BigNumber.from(1_000),
+    delinquentDebt: BigNumber.from(0)
+  };
+};
 
 const makeFactoryBackedMarketData = (hooksFactory: string): MarketDataV2StructOutput => {
   const originationFeeToken = makeTokenMetadata(6, "Origination Token", "ORIG");
@@ -58,7 +201,11 @@ const makeFactoryBackedMarketData = (hooksFactory: string): MarketDataV2StructOu
       withdrawalRequiresAccess: false,
       fixedTermEndTime: 0,
       allowClosureBeforeTerm: false,
-      allowTermReduction: false
+      allowTermReduction: false,
+      firstWithdrawalWindowStart: 0,
+      periodDuration: 0,
+      withdrawalWindowDuration: 0,
+      periodicTermClosed: false
     },
     withdrawalBatchDuration: BigNumber.from(86_400),
     feeRecipient: makeAddress(11),
@@ -130,6 +277,62 @@ const makeFactoryBackedMarketData = (hooksFactory: string): MarketDataV2StructOu
   };
 };
 
+const makeUnifiedMarketData = (hooksFactory: string) => {
+  const marketData = makeFactoryBackedMarketData(hooksFactory);
+  const hooksConfig = { ...marketData.hooksConfig };
+  delete (hooksConfig as { allowForceBuyBacks?: unknown }).allowForceBuyBacks;
+
+  return {
+    ...marketData,
+    hooksConfig
+  };
+};
+
+const makeMarketLiveData = (
+  hooksFactory: string,
+  {
+    commitmentFeeBips = { isPresent: false, value: BigNumber.from(0) },
+    drawnAmount = { isPresent: false, value: BigNumber.from(0) }
+  }: {
+    commitmentFeeBips?: { isPresent: boolean; value: BigNumber };
+    drawnAmount?: { isPresent: boolean; value: BigNumber };
+  } = {}
+): MarketLiveDataV2_5StructOutput => {
+  const data = makeFactoryBackedMarketData(hooksFactory);
+  return {
+    market: data.marketToken.token,
+    isClosed: data.isClosed,
+    protocolFeeBips: data.protocolFeeBips,
+    reserveRatioBips: data.reserveRatioBips,
+    annualInterestBips: data.annualInterestBips,
+    scaleFactor: data.scaleFactor,
+    totalSupply: data.totalSupply,
+    maxTotalSupply: data.maxTotalSupply,
+    scaledTotalSupply: data.scaledTotalSupply,
+    totalAssets: data.totalAssets,
+    lastAccruedProtocolFees: data.lastAccruedProtocolFees,
+    normalizedUnclaimedWithdrawals: data.normalizedUnclaimedWithdrawals,
+    scaledPendingWithdrawals: data.scaledPendingWithdrawals,
+    pendingWithdrawalExpiry: data.pendingWithdrawalExpiry,
+    isDelinquent: data.isDelinquent,
+    timeDelinquent: data.timeDelinquent,
+    lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp,
+    coverageLiquidity: data.coverageLiquidity,
+    commitmentFeeBips,
+    drawnAmount
+  };
+};
+
+const makeMarketLenderStatus = (lender: string): MarketLenderStatusStructOutput => ({
+  lender,
+  isAuthorizedOnController: true,
+  role: 3,
+  scaledBalance: BigNumber.from(25),
+  normalizedBalance: BigNumber.from(50),
+  underlyingBalance: BigNumber.from(75),
+  underlyingApproval: BigNumber.from(100)
+});
+
 const makeLenderAccountData = (lender: string) => ({
   lender,
   scaledBalance: BigNumber.from(25),
@@ -150,77 +353,124 @@ const makeLenderAccountData = (lender: string) => ({
 
 describe("Account and token read routing", () => {
   const originalHasDeploymentAddress = constantsModule.hasDeploymentAddress;
-  const originalGetLensContract = constantsModule.getLensContract;
-  const originalGetLensV2Contract = constantsModule.getLensV2Contract;
-  const originalGetLensV2_5Contract = constantsModule.getLensV2_5Contract;
-  const originalGetLatestLensContract = constantsModule.getLatestLensContract;
-  const originalGetArchControllerContract = constantsModule.getArchControllerContract;
   const originalFromMarketDataWithLenderStatus = MarketAccount.fromMarketDataWithLenderStatus;
 
   const mutableConstants = constantsModule as typeof constantsModule & {
     hasDeploymentAddress: typeof originalHasDeploymentAddress;
-    getLensContract: typeof originalGetLensContract;
-    getLensV2Contract: typeof originalGetLensV2Contract;
-    getLensV2_5Contract: typeof originalGetLensV2_5Contract;
-    getLatestLensContract: typeof originalGetLatestLensContract;
-    getArchControllerContract: typeof originalGetArchControllerContract;
   };
 
   afterEach(() => {
     mutableConstants.hasDeploymentAddress = originalHasDeploymentAddress;
-    mutableConstants.getLensContract = originalGetLensContract;
-    mutableConstants.getLensV2Contract = originalGetLensV2Contract;
-    mutableConstants.getLensV2_5Contract = originalGetLensV2_5Contract;
-    mutableConstants.getLatestLensContract = originalGetLatestLensContract;
-    mutableConstants.getArchControllerContract = originalGetArchControllerContract;
     MarketAccount.fromMarketDataWithLenderStatus = originalFromMarketDataWithLenderStatus;
   });
 
   it("uses MarketLensV2_5 for token reads when deployed", async () => {
-    const metadata = makeTokenMetadata(31, "Unified Token", "UNIT");
-
-    mutableConstants.hasDeploymentAddress = ((_, name) =>
-      name === "MarketLensV2_5") as typeof originalHasDeploymentAddress;
-    mutableConstants.getLensV2_5Contract = (() => ({
-      getTokenInfo: async () => metadata
-    })) as unknown as typeof originalGetLensV2_5Contract;
-    mutableConstants.getLensV2Contract = (() => ({
-      getTokenInfo: async () => {
-        throw new Error("should not read token data from MarketLensV2");
-      }
-    })) as unknown as typeof originalGetLensV2Contract;
+    const metadata = makeViemTokenMetadata(31, "Unified Token", "UNIT");
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLensV2_5"
+    );
+    const viemProvider = new FakeViemProvider(() =>
+      encodeLensResult(marketLensV2_5Abi as Abi, "getTokenInfo", metadata)
+    );
 
     const token = await Token.getTokenData(
       constantsModule.SupportedChainId.Sepolia,
       metadata.token,
-      provider
+      viemProvider as unknown as providers.Provider
     );
 
-    expect(token.address).to.equal(metadata.token);
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
+    expect(token.address.toLowerCase()).to.equal(metadata.token);
     expect(token.symbol).to.equal("UNIT");
   });
 
-  it("falls back to the legacy lens for batch token reads before the unified lens is deployed", async () => {
-    const metadata = makeTokenMetadata(32, "Legacy Token", "LGCY");
-
-    mutableConstants.hasDeploymentAddress = (() => false) as typeof originalHasDeploymentAddress;
-    mutableConstants.getLensContract = (() => ({
-      getTokensInfo: async () => [metadata]
-    })) as unknown as typeof originalGetLensContract;
-    mutableConstants.getLensV2_5Contract = (() => ({
-      getTokensInfo: async () => {
-        throw new Error("should not read tokens from MarketLensV2_5");
-      }
-    })) as unknown as typeof originalGetLensV2_5Contract;
-
-    const tokens = await Token.getTokensData(
-      constantsModule.SupportedChainId.Sepolia,
-      [metadata.token],
-      provider
+  it("routes mainnet token reads from deployment configuration", async () => {
+    const metadata = makeViemTokenMetadata(33, "Mainnet Token", "MAIN");
+    const target = getMainnetTokenInfoTarget();
+    const viemProvider = new FakeViemProvider(() =>
+      encodeLensResult(target.abi, "getTokenInfo", metadata)
     );
 
+    const token = await Token.getTokenData(
+      constantsModule.SupportedChainId.Mainnet,
+      metadata.token,
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([target.address]);
+    expect(token.address.toLowerCase()).to.equal(metadata.token);
+    expect(token.symbol).to.equal("MAIN");
+  });
+
+  it("falls back to the legacy lens for batch token reads before the unified lens is deployed", async () => {
+    const metadata = makeViemTokenMetadata(32, "Legacy Token", "LGCY");
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Mainnet,
+      "MarketLens"
+    );
+    const viemProvider = new FakeViemProvider(() =>
+      encodeLensResult(marketLensAbi as Abi, "getTokensInfo", [metadata])
+    );
+
+    const tokens = await Token.getTokensData(
+      constantsModule.SupportedChainId.Mainnet,
+      [metadata.token],
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
     expect(tokens.map((token) => token.address)).to.deep.equal([metadata.token]);
     expect(tokens[0].symbol).to.equal("LGCY");
+  });
+
+  it("reads direct ERC20 balances, allowance, and total supply through viem", async () => {
+    const tokenAddress = makeAddress(34);
+    const owner = makeAddress(35);
+    const spender = makeAddress(36);
+    const viemProvider = new FakeViemProvider((call) => {
+      const { functionName, args } = decodeFunctionData({
+        abi: iERC20Abi as Abi,
+        data: call.data as `0x${string}`
+      });
+
+      if (functionName === "balanceOf") {
+        expect(args).to.deep.equal([owner]);
+        return encodeLensResult(iERC20Abi as Abi, functionName, 123n);
+      }
+      if (functionName === "allowance") {
+        expect(args).to.deep.equal([owner, spender]);
+        return encodeLensResult(iERC20Abi as Abi, functionName, 456n);
+      }
+      if (functionName === "totalSupply") {
+        return encodeLensResult(iERC20Abi as Abi, functionName, 789n);
+      }
+      throw new Error(`Unexpected ERC20 read: ${functionName}`);
+    });
+    const token = new Token(
+      constantsModule.SupportedChainId.Sepolia,
+      tokenAddress,
+      "Mock Token",
+      "MOCK",
+      18,
+      false,
+      viemProvider as unknown as providers.Provider
+    );
+
+    const [balance, allowance, totalSupply] = await Promise.all([
+      token.balanceOf(owner),
+      token.allowance(owner, spender),
+      token.totalSupply()
+    ]);
+
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([
+      tokenAddress,
+      tokenAddress,
+      tokenAddress
+    ]);
+    expect(balance.raw).to.equal(123n);
+    expect(allowance.raw).to.equal(456n);
+    expect(totalSupply.raw).to.equal(789n);
   });
 
   it("uses the latest lender-account data path for V2 market instances", async () => {
@@ -234,19 +484,30 @@ describe("Account and token read routing", () => {
       provider,
       makeFactoryBackedMarketData(hooksFactory)
     );
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLensV2_5"
+    );
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
 
-    mutableConstants.getLatestLensContract = (() => ({
-      "getLenderAccountData(address,address)": async () => makeLenderAccountData(account)
-    })) as unknown as typeof originalGetLatestLensContract;
-    mutableConstants.getLensContract = (() => ({
-      getMarketLenderStatus: async () => {
-        throw new Error("should not use V1 lender status for V2 markets");
-      }
-    })) as unknown as typeof originalGetLensContract;
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getLenderAccountData");
+      expect((decoded.args as string[]).map((address) => address.toLowerCase())).to.deep.equal([
+        account,
+        market.address.toLowerCase()
+      ]);
+
+      return encodeLensResult(
+        marketLensV2_5Abi as Abi,
+        "getLenderAccountData",
+        makeLenderAccountData(account)
+      );
+    });
 
     const marketAccount = await MarketAccount.getMarketAccount(
       constantsModule.SupportedChainId.Sepolia,
-      provider,
+      viemProvider as unknown as providers.Provider,
       account,
       market
     );
@@ -257,22 +518,93 @@ describe("Account and token read routing", () => {
     expect(marketAccount.isKnownLender).to.equal(true);
   });
 
+  it("refreshes V2 lender market accounts through the live list endpoint", async () => {
+    const account = makeAddress(43);
+    const hooksFactory = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "HooksFactoryRevolving"
+    );
+    const market = Market.fromMarketDataV2(
+      constantsModule.SupportedChainId.Sepolia,
+      provider,
+      makeFactoryBackedMarketData(hooksFactory)
+    );
+    const marketAccount = MarketAccount.fromLenderAccountData(
+      market,
+      makeLenderAccountData(account)
+    );
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLensV2_5"
+    );
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getMarketsLiveDataWithLenderStatusV2");
+      expect((decoded.args as [string, string[]])[0].toLowerCase()).to.equal(account);
+      expect(
+        (decoded.args as [string, string[]])[1].map((address) => address.toLowerCase())
+      ).to.deep.equal([market.address.toLowerCase()]);
+
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketsLiveDataWithLenderStatusV2", [
+        {
+          market: makeMarketLiveData(hooksFactory, {
+            commitmentFeeBips: { isPresent: true, value: BigNumber.from(200) },
+            drawnAmount: { isPresent: true, value: BigNumber.from(300) }
+          }),
+          lenderStatus: makeLenderAccountData(account)
+        }
+      ]);
+    });
+
+    const result = await MarketAccount.refreshMarketAccountsV2LiveData(
+      constantsModule.SupportedChainId.Sepolia,
+      viemProvider as unknown as providers.Provider,
+      account,
+      [marketAccount]
+    );
+
+    expect(result[0]).to.equal(marketAccount);
+    expect(marketAccount.market.commitmentFeeBips).to.equal(200);
+    expect(marketAccount.market.drawnAmount?.raw).to.equal(300n);
+    expect(marketAccount.marketBalance.raw.toString()).to.equal("50");
+  });
+
   it("falls back to the legacy lens for direct account reads when the latest lens rejects the market", async () => {
     const account = makeAddress(41);
     const marketAddress = makeAddress(42);
     const hydratedAccount = { account } as unknown as MarketAccount;
     const seenInfos: unknown[] = [];
+    const latestLensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLensV2_5"
+    );
+    const legacyLensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLens"
+    );
 
-    mutableConstants.getLatestLensContract = (() => ({
-      getMarketDataWithLenderStatus: async () => {
+    const viemProvider = new FakeViemProvider((call) => {
+      if (call.to?.toLowerCase() === latestLensAddress.toLowerCase()) {
+        const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+        expect(decoded.functionName).to.equal("getMarketDataWithLenderStatus");
         throw new Error("NotV2Market");
       }
-    })) as unknown as typeof originalGetLatestLensContract;
-    mutableConstants.getLensContract = (() => ({
-      getMarketDataWithLenderStatus: async (_account: string, market: string) => ({
-        legacyMarket: market
-      })
-    })) as unknown as typeof originalGetLensContract;
+
+      expect(call.to).to.equal(legacyLensAddress);
+      const decoded = decodeLensCall(marketLensAbi as Abi, call);
+      expect(decoded.functionName).to.equal("getMarketDataWithLenderStatus");
+      expect((decoded.args as string[]).map((address) => address.toLowerCase())).to.deep.equal([
+        account,
+        marketAddress
+      ]);
+
+      return encodeLensResult(marketLensAbi as Abi, "getMarketDataWithLenderStatus", {
+        market: makeLegacyMarketData(),
+        lenderStatus: makeMarketLenderStatus(account)
+      });
+    });
     MarketAccount.fromMarketDataWithLenderStatus = (async (_chainId, _provider, _account, info) => {
       seenInfos.push(info);
       return hydratedAccount;
@@ -280,33 +612,31 @@ describe("Account and token read routing", () => {
 
     const marketAccount = await MarketAccount.getMarketAccount(
       constantsModule.SupportedChainId.Sepolia,
-      provider,
+      viemProvider as unknown as providers.Provider,
       account,
       marketAddress
     );
 
-    expect(seenInfos).to.deep.equal([{ legacyMarket: marketAddress }]);
+    expect(seenInfos).to.have.lengthOf(1);
+    expect((seenInfos[0] as { market: { controller: string } }).market.controller).to.equal(
+      makeAddress(4)
+    );
     expect(marketAccount).to.equal(hydratedAccount);
   });
 
   it("uses ArchController enumeration plus latest-lens hydration for unified all-market account reads", async () => {
     const account = makeAddress(41);
     const markets = [makeAddress(42), makeAddress(43)];
+    const hooksFactory = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "HooksFactory"
+    );
     const hydratedAccounts = [{ account: "a" }, { account: "b" }] as unknown as MarketAccount[];
     const seenMarkets: string[][] = [];
     const seenInfos: unknown[] = [];
 
     mutableConstants.hasDeploymentAddress = ((_, name) =>
       name === "MarketLensV2_5") as typeof originalHasDeploymentAddress;
-    mutableConstants.getArchControllerContract = (() => ({
-      "getRegisteredMarkets()": async () => markets
-    })) as unknown as typeof originalGetArchControllerContract;
-    mutableConstants.getLatestLensContract = (() => ({
-      getMarketsDataWithLenderStatus: async (_account: string, addresses: string[]) => {
-        seenMarkets.push(addresses);
-        return [{ tag: "first" }, { tag: "second" }];
-      }
-    })) as unknown as typeof originalGetLatestLensContract;
 
     let hydrateIndex = 0;
     MarketAccount.fromMarketDataWithLenderStatus = (async (_chainId, _provider, _account, info) => {
@@ -314,14 +644,50 @@ describe("Account and token read routing", () => {
       return hydratedAccounts[hydrateIndex++];
     }) as typeof originalFromMarketDataWithLenderStatus;
 
+    const archControllerAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "WildcatArchController"
+    );
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLensV2_5"
+    );
+    const viemProvider = new FakeViemProvider((call) => {
+      if (call.to === archControllerAddress) {
+        return encodeArchControllerResult("getRegisteredMarkets", markets);
+      }
+
+      expect(call.to).to.equal(lensAddress);
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      expect(decoded.functionName).to.equal("getMarketsDataWithLenderStatus");
+      const [, addresses] = decoded.args as [string, string[]];
+      seenMarkets.push(addresses);
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketsDataWithLenderStatus", [
+        {
+          market: makeUnifiedMarketData(hooksFactory),
+          lenderStatus: makeLenderAccountData(account)
+        },
+        {
+          market: makeUnifiedMarketData(hooksFactory),
+          lenderStatus: makeLenderAccountData(account)
+        }
+      ]);
+    });
+
     const accounts = await MarketAccount.getAllMarketAccountsForLender(
       constantsModule.SupportedChainId.Sepolia,
-      provider,
+      viemProvider as unknown as providers.Provider,
       account
     );
 
-    expect(seenMarkets).to.deep.equal([markets]);
-    expect(seenInfos).to.deep.equal([{ tag: "first" }, { tag: "second" }]);
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([
+      archControllerAddress,
+      lensAddress
+    ]);
+    expect(
+      seenMarkets.map((addresses) => addresses.map((address) => address.toLowerCase()))
+    ).to.deep.equal([markets]);
+    expect(seenInfos).to.have.lengthOf(2);
     expect(accounts).to.deep.equal(hydratedAccounts);
   });
 
@@ -332,28 +698,47 @@ describe("Account and token read routing", () => {
 
     mutableConstants.hasDeploymentAddress = ((_, name) =>
       name === "MarketLensV2_5") as typeof originalHasDeploymentAddress;
-    mutableConstants.getArchControllerContract = (() => ({
-      getRegisteredMarketsCount: async () => BigNumber.from(markets.length),
-      "getRegisteredMarkets(uint256,uint256)": async (start: number, end: number) => {
-        rangeCalls.push([start, end]);
-        return markets.slice(start, end);
-      }
-    })) as unknown as typeof originalGetArchControllerContract;
-    mutableConstants.getLatestLensContract = (() => ({
-      getMarketsDataWithLenderStatus: async () => []
-    })) as unknown as typeof originalGetLatestLensContract;
     MarketAccount.fromMarketDataWithLenderStatus = (async () => {
       throw new Error("should not hydrate empty latest-lens responses");
     }) as typeof originalFromMarketDataWithLenderStatus;
 
+    const archControllerAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "WildcatArchController"
+    );
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLensV2_5"
+    );
+    const viemProvider = new FakeViemProvider((call) => {
+      if (call.to === lensAddress) {
+        const { functionName } = decodeLensCall(marketLensV2_5Abi as Abi, call);
+        expect(functionName).to.equal("getMarketsDataWithLenderStatus");
+        return encodeLensResult(marketLensV2_5Abi as Abi, functionName, []);
+      }
+
+      const { functionName, args } = decodeArchControllerCall(call);
+      if (functionName === "getRegisteredMarketsCount") {
+        return encodeArchControllerResult(functionName, BigInt(markets.length));
+      }
+
+      rangeCalls.push((args as [bigint, bigint]).map(Number) as [number, number]);
+      return encodeArchControllerResult(functionName, markets.slice(1, 3));
+    });
+
     const accounts = await MarketAccount.getPaginatedMarketAccounts(
       constantsModule.SupportedChainId.Sepolia,
-      provider,
+      viemProvider as unknown as providers.Provider,
       account,
       1,
       5
     );
 
+    expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([
+      archControllerAddress,
+      archControllerAddress,
+      lensAddress
+    ]);
     expect(rangeCalls).to.deep.equal([[1, 3]]);
     expect(accounts).to.deep.equal([]);
   });

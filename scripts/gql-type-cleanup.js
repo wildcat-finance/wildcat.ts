@@ -51,6 +51,69 @@ const log = (msg) => DEBUG && console.log(msg);
 const project = new Project();
 const sourceFile = project.addSourceFileAtPath(GRAPHQL_TS_PATH);
 
+function getStringInitializerValue(member) {
+  const initializer = member.getInitializer();
+  if (!initializer) return "";
+  return initializer.getText().replace(/^["'`]|["'`]$/g, "");
+}
+
+function toPascalCase(value) {
+  return value
+    .split(/[^A-Za-z0-9_$]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
+}
+
+function getDuplicateEnumMemberName(member, fallbackName) {
+  const initializerValue = getStringInitializerValue(member);
+
+  if (initializerValue.includes("__")) {
+    const [entity, ...nestedPath] = initializerValue.split("__").filter(Boolean);
+    const nestedName = nestedPath.map(toPascalCase).join("");
+    const entityName = toPascalCase(entity);
+    if (entityName && nestedName) {
+      return `${entityName}Nested${nestedName}`;
+    }
+  }
+
+  return `${fallbackName}Duplicate`;
+}
+
+function repairDuplicateEnumMembers() {
+  let repaired = 0;
+  const enums = sourceFile.getDescendantsOfKind(SyntaxKind.EnumDeclaration);
+
+  enums.forEach((enumDeclaration) => {
+    const usedNames = new Set();
+
+    enumDeclaration.getMembers().forEach((member) => {
+      const name = member.getName();
+      if (!usedNames.has(name)) {
+        usedNames.add(name);
+        return;
+      }
+
+      const baseName = getDuplicateEnumMemberName(member, name);
+      let nextName = baseName;
+      let suffix = 2;
+      while (usedNames.has(nextName)) {
+        nextName = `${baseName}${suffix}`;
+        suffix++;
+      }
+
+      member.rename(nextName);
+      usedNames.add(nextName);
+      repaired++;
+    });
+  });
+
+  checkpoint(`Repaired ${repaired} duplicate enum members`);
+  if (repaired > 0) {
+    console.log(`Repaired ${repaired} duplicate enum members.`);
+  }
+}
+
 // Map to store unique type definitions
 const typeMap = new Map();
 const typeReplacementCounts = new Map();
@@ -76,6 +139,8 @@ const timer = () => {
 };
 
 const checkpoint = timer();
+
+repairDuplicateEnumMembers();
 
 // Gather unique type definitions (by text) in all type aliases
 typeAliases.forEach((alias) => {

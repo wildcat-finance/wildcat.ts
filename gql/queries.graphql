@@ -137,6 +137,40 @@ query getAllMarketsForLenderView(
   }
 }
 
+query getAllMarketsForLenderListView(
+  $lender: Bytes
+  # markets - default order is newest first
+  $marketFilter: Market_filter = { id_not: null }
+  $numMarkets: Int = 1000
+  $skipMarkets: Int = 0
+  $orderMarkets: Market_orderBy = createdAt
+  $directionMarkets: OrderDirection = desc
+) {
+  markets(
+    where: $marketFilter
+    orderBy: $orderMarkets
+    orderDirection: $directionMarkets
+    first: $numMarkets
+    skip: $skipMarkets
+  ) {
+    ...MarketListData
+    lenders(where: { address: $lender }, first: 1) {
+      ...AccountDataForLenderListView
+    }
+  }
+  controllerAuthorizations: lenderAuthorizations(
+    where: { and: [{ lender: $lender }, { authorized: true }] }
+  ) {
+    lender
+    authorized
+    controller {
+      markets {
+        id
+      }
+    }
+  }
+}
+
 # Get only markets where lender is authorized or active, including lender account
 query getAccountsWhereLenderAuthorizedOrActive(
   $lender: Bytes!
@@ -349,8 +383,8 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
 }
 
 query getAllHooksTemplates($borrower: Bytes, $includeBorrower: Boolean!) {
-  hooksTemplates {
-    ...HooksTemplateData
+  factoryHooksTemplates {
+    ...FactoryHooksTemplateData
   }
   registeredBorrowers(where: { borrower: $borrower }, first: 1) @include(if: $includeBorrower) {
     isRegistered
@@ -364,8 +398,8 @@ query getHooksInstancesForBorrower($borrower: Bytes!) {
 }
 
 query getAllHooksDataForBorrower($borrower: Bytes!) {
-  hooksTemplates {
-    ...HooksTemplateData
+  factoryHooksTemplates {
+    ...FactoryHooksTemplateData
   }
   hooksInstances(where: { borrower: $borrower }) {
     ...HooksInstanceData
@@ -717,6 +751,24 @@ query getIncompleteWithdrawalsForMarket(
 query getAllMarkets {
   markets {
     ...MarketData
+  }
+}
+
+query getMarketList(
+  $marketFilter: Market_filter = { id_not: null }
+  $numMarkets: Int = 1000
+  $skipMarkets: Int = 0
+  $orderMarkets: Market_orderBy = createdAt
+  $directionMarkets: OrderDirection = desc
+) {
+  markets(
+    where: $marketFilter
+    orderBy: $orderMarkets
+    orderDirection: $directionMarkets
+    first: $numMarkets
+    skip: $skipMarkets
+  ) {
+    ...MarketListData
   }
 }
 

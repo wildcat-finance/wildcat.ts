@@ -1,5 +1,4 @@
-import { BigNumber } from "ethers";
-import { Token, TokenAmount } from "../token";
+import { Token, TokenAmount, toRawAmount } from "../token";
 import {
   Exact,
   SubgraphAnnualInterestBipsUpdatedDataFragment,
@@ -37,7 +36,7 @@ export class WithdrawalRequestRecord {
     public id: string,
     public eventIndex: number,
     public requestIndex: number,
-    public scaledAmount: BigNumber,
+    public scaledAmount: bigint,
     public normalizedAmount: TokenAmount,
     public blockNumber: number,
     public blockTimestamp: number,
@@ -75,7 +74,7 @@ export class WithdrawalRequestRecord {
       data.id,
       data.eventIndex,
       data.requestIndex,
-      BigNumber.from(data.scaledAmount),
+      toRawAmount(data.scaledAmount),
       batch.market.underlyingToken.getAmount(data.normalizedAmount),
       data.blockNumber,
       data.blockTimestamp,
@@ -116,7 +115,7 @@ export type WithdrawalRecordParserMap = {
 
 export type ForceBuyBackRecord = Exact<
   {
-    scaledAmount: BigNumber;
+    scaledAmount: bigint;
     normalizedAmount: TokenAmount;
   } & Omit<SubgraphForceBuyBackDataFragment, "scaledAmount" | "normalizedAmount">
 >;
@@ -202,7 +201,7 @@ export type WithdrawalRequestPartialRecord = Exact<
     SubgraphWithdrawalRequestPropertiesFragment,
     "scaledAmount" | "normalizedAmount" | "account"
   > & {
-    scaledAmount: BigNumber;
+    scaledAmount: bigint;
     normalizedAmount: TokenAmount;
     address: string;
   }

@@ -139,6 +139,8 @@ const expectDecodedNumber = (value: unknown): number => {
   throw new Error(`expected decoded number, got ${typeof value}`);
 };
 
+const HooksInstanceInputsSignature = `tuple(string name, address roleProviderFactory, tuple(uint32 timeToLive, bytes providerFactoryCalldata)[] newProviderInputs, tuple(address providerAddress, uint32 timeToLive)[] existingProviders)`;
+
 describe("deploy preview helpers", () => {
   it("encodes revolving market data with versioned commitment fee payload", () => {
     const encoded = encodeRevolvingMarketData({ commitmentFeeBips: 250 });
@@ -176,14 +178,13 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
 
     expect(preview.args).to.have.length(5);
 
-    const [minimumDeposit, transfersDisabled, allowForceBuyBacks] = defaultAbiCoder.decode(
-      ["uint128", "bool", "bool"],
+    const [minimumDeposit, transfersDisabled] = defaultAbiCoder.decode(
+      ["uint128", "bool"],
       expectEncodedData(preview.args[1])
     );
 
     expect(minimumDeposit.eq(asset.parseAmount("100").raw)).to.equal(true);
     expect(transfersDisabled).to.equal(true);
-    expect(allowForceBuyBacks).to.equal(true);
   });
 
   it("returns the revolving direct deploy preview when explicitly requested", () => {
@@ -209,6 +210,14 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
     );
 
     expect(preview.args).to.have.length(6);
+
+    const [minimumDeposit, transfersDisabled] = defaultAbiCoder.decode(
+      ["uint128", "bool"],
+      expectEncodedData(preview.args[1])
+    );
+
+    expect(minimumDeposit.eq(asset.parseAmount("25").raw)).to.equal(true);
+    expect(transfersDisabled).to.equal(false);
 
     const [version, commitmentFeeBips] = defaultAbiCoder.decode(
       ["uint8", "uint16"],
@@ -270,6 +279,13 @@ describe("FixedTermHooksTemplate.previewDeployMarket", () => {
       template.previewDeployMarket({
         ...makeMarketParameters(asset),
         hooksInstanceName: "FixedTermHooksInstance",
+        roleProviderFactory: makeAddress(32),
+        newProviderInputs: [
+          {
+            data: "0x1234",
+            timeToLive: 1800
+          }
+        ],
         existingProviders: [
           {
             providerAddress: makeAddress(30),
@@ -291,22 +307,31 @@ describe("FixedTermHooksTemplate.previewDeployMarket", () => {
 
     expect(preview.args).to.have.length(7);
 
+    const [hooksInstanceInputs] = defaultAbiCoder.decode(
+      [HooksInstanceInputsSignature],
+      expectEncodedData(preview.args[1])
+    );
+    expect(hooksInstanceInputs.name).to.equal("FixedTermHooksInstance");
+    expect(hooksInstanceInputs.roleProviderFactory).to.equal(makeAddress(32));
+    expect(expectDecodedNumber(hooksInstanceInputs.newProviderInputs[0].timeToLive)).to.equal(1800);
+    expect(hooksInstanceInputs.newProviderInputs[0].providerFactoryCalldata).to.equal("0x1234");
+    expect(hooksInstanceInputs.existingProviders[0].providerAddress).to.equal(makeAddress(30));
+    expect(expectDecodedNumber(hooksInstanceInputs.existingProviders[0].timeToLive)).to.equal(3600);
+
     const [
       fixedTermEndTime,
       minimumDeposit,
       transfersDisabled,
-      allowForceBuyBacks,
       allowClosureBeforeTerm,
       allowTermReduction
     ] = defaultAbiCoder.decode(
-      ["uint32", "uint128", "bool", "bool", "bool", "bool"],
+      ["uint32", "uint128", "bool", "bool", "bool"],
       expectEncodedData(preview.args[3])
     );
 
     expect(expectDecodedNumber(fixedTermEndTime)).to.equal(1_800_000_000);
     expect(minimumDeposit.eq(asset.parseAmount("50").raw)).to.equal(true);
     expect(transfersDisabled).to.equal(true);
-    expect(allowForceBuyBacks).to.equal(true);
     expect(allowClosureBeforeTerm).to.equal(true);
     expect(allowTermReduction).to.equal(false);
   });
@@ -343,6 +368,23 @@ describe("FixedTermHooksTemplate.previewDeployMarket", () => {
     );
 
     expect(preview.args).to.have.length(8);
+
+    const [
+      fixedTermEndTime,
+      minimumDeposit,
+      transfersDisabled,
+      allowClosureBeforeTerm,
+      allowTermReduction
+    ] = defaultAbiCoder.decode(
+      ["uint32", "uint128", "bool", "bool", "bool"],
+      expectEncodedData(preview.args[3])
+    );
+
+    expect(expectDecodedNumber(fixedTermEndTime)).to.equal(1_800_000_000);
+    expect(minimumDeposit.eq(asset.parseAmount("75").raw)).to.equal(true);
+    expect(transfersDisabled).to.equal(false);
+    expect(allowClosureBeforeTerm).to.equal(false);
+    expect(allowTermReduction).to.equal(true);
 
     const [version, commitmentFeeBips] = defaultAbiCoder.decode(
       ["uint8", "uint16"],

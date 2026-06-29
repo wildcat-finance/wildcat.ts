@@ -1,5 +1,4 @@
-import { BigNumber } from "ethers";
-import { Token, TokenAmount } from "../token";
+import { Token, TokenAmount, toRawAmount } from "../token";
 import {
   Exact,
   GetCollateralContractEventsDocument,
@@ -28,7 +27,7 @@ export type CollateralContractDeposit = Exact<
     collateralContract: string;
     account: string;
     amountDeposited: TokenAmount;
-    sharesMinted: BigNumber;
+    sharesMinted: bigint;
   }
 >;
 
@@ -40,7 +39,7 @@ export type CollateralContractReclaim = Exact<
     collateralContract: string;
     account: string;
     amountReclaimed: TokenAmount;
-    sharesBurned: BigNumber;
+    sharesBurned: bigint;
   }
 >;
 
@@ -68,7 +67,7 @@ export type CollateralContractLiquidatedSharesReset = Exact<
   > & {
     collateralContract: string;
     account: string;
-    sharesReset: BigNumber;
+    sharesReset: bigint;
   }
 >;
 
@@ -113,7 +112,7 @@ export const collateralContractEventParsers: CollateralContractEventParserMap = 
       collateralContract: collateralContract.id,
       account: account.id,
       amountDeposited: collateralAsset.getAmount(amountDeposited),
-      sharesMinted: BigNumber.from(sharesMinted),
+      sharesMinted: toRawAmount(sharesMinted),
       ...rest
     };
   },
@@ -123,7 +122,7 @@ export const collateralContractEventParsers: CollateralContractEventParserMap = 
       collateralContract: collateralContract.id,
       account: account.id,
       amountReclaimed: collateralAsset.getAmount(amountReclaimed),
-      sharesBurned: BigNumber.from(sharesBurned),
+      sharesBurned: toRawAmount(sharesBurned),
       ...rest
     };
   },
@@ -139,7 +138,7 @@ export const collateralContractEventParsers: CollateralContractEventParserMap = 
     return {
       collateralContract: collateralContract.id,
       account: account.id,
-      sharesReset: BigNumber.from(sharesReset),
+      sharesReset: toRawAmount(sharesReset),
       ...rest
     };
   },

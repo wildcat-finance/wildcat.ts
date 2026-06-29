@@ -1,9 +1,8 @@
-import { Provider } from "@ethersproject/abstract-provider";
-import { Signer } from "@ethersproject/abstract-signer";
-import { BaseContract } from "ethers";
+import type { Address, Hash, Hex, TransactionReceipt } from "viem";
 import { Token, TokenAmount } from "./token";
 import { SubgraphMarketVersion } from "./gql/graphql";
 import { HooksTemplate } from "./access";
+import { isEthersSigner } from "./internal/ethers-signer";
 
 // `MarketVersion` remains the existing subgraph/protocol concept.
 export { SubgraphMarketVersion as MarketVersion };
@@ -16,23 +15,50 @@ export const isMarketType = (value: string): value is MarketType => {
   return MarketTypes.includes(value as MarketType);
 };
 
+export type RpcRequestArgs = {
+  method: string;
+  params?: unknown;
+};
+
+export type Provider = {
+  // Keep provider values structurally compatible with ethers-based downstream code
+  // while the SDK runtime no longer imports ethers.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+  request?: (args: RpcRequestArgs) => Promise<unknown>;
+  send?: (method: string, params: unknown[]) => Promise<unknown>;
+  call: (transaction: { to?: string; data?: string }, blockNumber?: number) => Promise<string>;
+  getCode?: (address: string) => Promise<string>;
+  provider?: unknown;
+};
+
+export type Signer = {
+  _isSigner?: boolean;
+  provider?: Provider;
+  chainId?: number;
+  call: (transaction: { to?: string; data?: string }, blockNumber?: number) => Promise<string>;
+  getCode?: (address: string) => Promise<string>;
+  getAddress: () => Promise<string>;
+  sendTransaction: (transaction: {
+    to?: string;
+    data?: string;
+    value?: string;
+  }) => Promise<{ hash: string; wait?: () => Promise<unknown> }>;
+};
+
 export type SignerOrProvider = Signer | Provider;
 
-export { Provider, Signer };
+export const Signer = {
+  isSigner: isEthersSigner
+} as const;
 
-export abstract class ContractWrapper<Contract extends BaseContract> {
+export abstract class ContractWrapper {
+  public contract: { address: string } = { address: "" };
+
   constructor(protected _provider: SignerOrProvider) {}
 
-  protected _contract?: Contract;
-
-  abstract readonly contractFactory: {
-    connect(address: string, signerOrProvider: Signer | Provider): Contract;
-  };
-
-  protected abstract _contractAddress: string;
-
   get signer(): Signer {
-    if (Signer.isSigner(this._provider)) {
+    if (isEthersSigner(this._provider)) {
       return this._provider;
     }
     throw new Error("Provider is not a signer");
@@ -44,32 +70,60 @@ export abstract class ContractWrapper<Contract extends BaseContract> {
 
   set provider(provider: SignerOrProvider) {
     this._provider = provider;
-    if (this._contract) {
-      this._contract = this.contractFactory.connect(this._contractAddress, this.provider);
-    }
     for (const property of Object.values(this)) {
       if (property instanceof ContractWrapper) {
         property.provider = provider;
       }
     }
   }
-
-  get contract(): Contract {
-    if (!this._contract) {
-      this._contract = this.contractFactory.connect(this._contractAddress, this.provider);
-    }
-    return this._contract;
-  }
 }
 
-// Use class to give build error if `removeUnusedTxFields` is not called,
-// so that we don't accidentally fill fields we want to be derived at the
-// time of execution.
-export type PartialTransaction = {
+export type PreparedTransaction = {
   to: string;
   data: string;
   value: string;
 };
+
+export type SafeTransactionInput = {
+  to: string;
+  data: string;
+  value: string;
+};
+
+export type PartialTransaction = PreparedTransaction;
+
+export type SubmittedTransaction = {
+  hash: Hash;
+  wait: () => Promise<TransactionReceipt>;
+};
+
+export type TransactionHashLike =
+  | string
+  | {
+      hash: string;
+    };
+
+export type TransactionHash = SubmittedTransaction & {
+  toString: () => Hash;
+  valueOf: () => Hash;
+  [Symbol.toPrimitive]: () => Hash;
+};
+
+export const toTransactionHashString = (transaction: TransactionHashLike): Hash => {
+  if (typeof transaction === "string") {
+    return transaction as Hash;
+  }
+  return transaction.hash as Hash;
+};
+
+export type SubmittedTransactionResult<T> = {
+  hash: Hash;
+  receipt: TransactionReceipt;
+  transaction: SubmittedTransaction;
+  result: T;
+};
+
+export type SubmittedDeployment<T> = SubmittedTransactionResult<T>;
 
 export type FeeConfiguration = {
   feeRecipient: string;

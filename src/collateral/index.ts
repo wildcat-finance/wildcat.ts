@@ -1,11 +1,6 @@
-import { BigNumber, ContractTransaction, Overrides } from "ethers";
-import { maxTokenAmount, TokenAmount } from "../token";
-import {
-  CollateralContractDataStructOutput,
-  SimpleMarketCollateral,
-  SimpleMarketCollateral__factory
-} from "../typechain";
-import { ContractWrapper, PartialTransaction, SignerOrProvider } from "../types";
+import { TokenAmount, toRawAmount } from "../token";
+import type { CollateralContractDataStructOutput } from "../lens-types";
+import { ContractWrapper, PartialTransaction, SignerOrProvider, TransactionHash } from "../types";
 import { Token } from "../token";
 import {
   getCollateralFactoryContract,
@@ -20,7 +15,10 @@ import {
 } from "../gql/graphql";
 import { Market } from "../market";
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
-import { assert } from "../utils";
+import { assert, prepareTransaction, toNumber } from "../utils";
+import { simpleMarketCollateralAbi, wildcatCollateralFactoryAbi } from "../abi";
+import { submitPreparedTransaction } from "../internal/viem-write";
+import { isEthersSigner } from "../internal/ethers-signer";
 
 export * from "./collateral-events";
 
@@ -32,7 +30,7 @@ export interface CollateralV1Args {
   liquidationCooldown: number;
   maxRepaymentBips: number;
   fullLiquidationIndex: number;
-  totalShares: BigNumber;
+  totalShares: bigint;
   availableCollateral: TokenAmount;
   nextLiquidationTrigger: number;
   eventIndex?: number;
@@ -48,14 +46,11 @@ export interface CollateralV1Args {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MarketCollateralV1 extends CollateralV1Args {}
 
-export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> {
-  readonly contractFactory = SimpleMarketCollateral__factory;
-  protected readonly _contractAddress: string;
+export class MarketCollateralV1 extends ContractWrapper {
   public address: string;
 
   constructor({ provider, address, ...args }: CollateralV1Args) {
     super(provider);
-    this._contractAddress = address;
     this.address = address;
     Object.assign(this, args);
   }
@@ -64,30 +59,29 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
     return this.market.delinquentDebt.bipMul(this.maxRepaymentBips);
   }
 
-  async deposit(amount: TokenAmount): Promise<ContractTransaction> {
-    return this.contract.deposit(amount.raw);
+  async deposit(amount: TokenAmount): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateDeposit(amount));
   }
 
   populateDeposit(amount: TokenAmount): PartialTransaction {
-    const data = this.contract.interface.encodeFunctionData("deposit", [amount.raw]);
-    return {
-      to: this.contract.address,
-      data,
-      value: "0"
-    };
+    return prepareTransaction({
+      to: this.address,
+      abi: simpleMarketCollateralAbi,
+      functionName: "deposit",
+      args: [amount.raw]
+    });
   }
 
-  async reclaimCollateral(): Promise<ContractTransaction> {
-    return this.contract.reclaimCollateral();
+  async reclaimCollateral(): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateReclaimCollateral());
   }
 
   populateReclaimCollateral(): PartialTransaction {
-    const data = this.contract.interface.encodeFunctionData("reclaimCollateral");
-    return {
-      to: this.contract.address,
-      data,
-      value: "0"
-    };
+    return prepareTransaction({
+      to: this.address,
+      abi: simpleMarketCollateralAbi,
+      functionName: "reclaimCollateral"
+    });
   }
 
   static fromSubgraphData(
@@ -107,7 +101,7 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
       provider,
       address: data.id,
       availableCollateral: collateralAsset.getAmount(data.availableCollateral),
-      totalShares: BigNumber.from(data.totalShares),
+      totalShares: toRawAmount(data.totalShares),
 
       totalDeposited: collateralAsset.getAmount(data.totalDeposited),
       totalReclaimed: collateralAsset.getAmount(data.totalReclaimed),
@@ -131,13 +125,13 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
       this.totalDeposited = this.collateralAsset.getAmount(data.totalDeposited);
       this.totalReclaimed = this.collateralAsset.getAmount(data.totalReclaimed);
       this.totalLiquidated = this.collateralAsset.getAmount(data.totalLiquidated);
-      this.totalShares = BigNumber.from(data.totalShares);
-      this.fullLiquidationIndex = data.lastFullLiquidationIndex;
+      this.totalShares = toRawAmount(data.totalShares);
+      this.fullLiquidationIndex = toNumber(data.lastFullLiquidationIndex);
     } else {
-      this.totalShares = data.totalShares;
-      this.fullLiquidationIndex = data.fullLiquidationIndex;
+      this.totalShares = toRawAmount(data.totalShares);
+      this.fullLiquidationIndex = toNumber(data.fullLiquidationIndex);
     }
-    this.nextLiquidationTrigger = data.nextLiquidationTrigger;
+    this.nextLiquidationTrigger = toNumber(data.nextLiquidationTrigger);
   }
 
   static fromLensData(
@@ -157,17 +151,14 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
     return new MarketCollateralV1({
       provider: market.provider,
       address: data.collateralContract,
-      availableCollateral: new TokenAmount(
-        BigNumber.from(data.availableCollateral),
-        collateralAsset
-      ),
-      totalShares: BigNumber.from(data.totalShares),
+      availableCollateral: collateralAsset.getAmount(data.availableCollateral),
+      totalShares: toRawAmount(data.totalShares),
       underlyingAsset,
       collateralAsset,
-      fullLiquidationIndex: data.fullLiquidationIndex,
-      liquidationCooldown: data.liquidationCooldown,
-      maxRepaymentBips: data.maxRepaymentBips,
-      nextLiquidationTrigger: data.nextLiquidationTrigger,
+      fullLiquidationIndex: toNumber(data.fullLiquidationIndex),
+      liquidationCooldown: toNumber(data.liquidationCooldown),
+      maxRepaymentBips: toNumber(data.maxRepaymentBips),
+      nextLiquidationTrigger: toNumber(data.nextLiquidationTrigger),
       market
     });
   }
@@ -177,9 +168,12 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
     provider: SignerOrProvider,
     market: Market,
     collateralAsset: Token
-  ): Promise<ContractTransaction> {
-    const collateralFactory = getCollateralFactoryContract(chainId, provider);
-    return collateralFactory.deployCollateralContract(market.address, collateralAsset.address);
+  ): Promise<TransactionHash> {
+    assert(isEthersSigner(provider), "Signer is required to create collateral");
+    return submitPreparedTransaction(
+      provider,
+      MarketCollateralV1.populateCreate(chainId, provider, market, collateralAsset)
+    );
   }
 
   static populateCreate(
@@ -189,11 +183,12 @@ export class MarketCollateralV1 extends ContractWrapper<SimpleMarketCollateral> 
     collateralAsset: Token
   ): PartialTransaction {
     const collateralFactory = getCollateralFactoryContract(chainId, provider);
-    const data = collateralFactory.interface.encodeFunctionData("deployCollateralContract", [
-      market.address,
-      collateralAsset.address
-    ]);
-    return { to: collateralFactory.address, data, value: "0" };
+    return prepareTransaction({
+      to: collateralFactory.address,
+      abi: wildcatCollateralFactoryAbi,
+      functionName: "deployCollateralContract",
+      args: [market.address, collateralAsset.address]
+    });
   }
 }
 

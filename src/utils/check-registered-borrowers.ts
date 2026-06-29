@@ -1,5 +1,5 @@
-import { defaultAbiCoder } from "ethers/lib/utils";
-import { CheckBorrowersRegistered__factory } from "../typechain";
+import { decodeAbiParameters, encodeAbiParameters, type Address, type Hex } from "viem";
+import { checkBorrowersRegisteredBytecode } from "../abi";
 import { SignerOrProvider } from "../types";
 import { Deployments, SupportedChainId } from "../constants";
 
@@ -8,11 +8,15 @@ export async function checkRegisteredBorrowers(
   chainId: SupportedChainId,
   borrowers: string[]
 ): Promise<boolean[]> {
-  const bytecode = CheckBorrowersRegistered__factory.bytecode.concat(
-    defaultAbiCoder
-      .encode(["address", "address[]"], [Deployments[chainId].WildcatArchController, borrowers])
-      .slice(2)
+  const bytecode = checkBorrowersRegisteredBytecode.concat(
+    encodeAbiParameters(
+      [{ type: "address" }, { type: "address[]" }],
+      [Deployments[chainId].WildcatArchController as Address, borrowers as Address[]]
+    ).slice(2)
   );
+  if (typeof provider.call !== "function") {
+    throw new Error("Provider call support is required");
+  }
   const result = await provider.call({ data: bytecode });
-  return defaultAbiCoder.decode(["bool[]"], result)[0];
+  return [...decodeAbiParameters([{ type: "bool[]" }], result as Hex)[0]];
 }

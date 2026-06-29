@@ -1,16 +1,20 @@
-import { ContractWrapper, PartialTransaction, Provider, Signer, SignerOrProvider } from "./types";
-import { MockERC20Factory, MockERC20Factory__factory } from "./typechain";
-import { NewTokenDeployedEvent } from "./typechain/MockERC20Factory";
+import {
+  ContractWrapper,
+  PartialTransaction,
+  Signer,
+  SignerOrProvider,
+  SubmittedDeployment
+} from "./types";
 import { Token } from "./token";
 import { SupportedChainId, getDeploymentAddress } from "./constants";
-import { assert, removeUnusedTxFields } from "./utils";
-import { ContractReceipt, ContractTransaction } from "ethers";
+import { assert, prepareTransaction } from "./utils";
+import { mockERC20FactoryAbi } from "./abi";
+import { submitPreparedTransactionAndWait } from "./internal/viem-write";
+import { parseEventLogs } from "viem";
+import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
+import { readViemContract } from "./internal/viem-read";
 
-export class TokenFactory extends ContractWrapper<MockERC20Factory> {
-  readonly contractFactory = MockERC20Factory__factory;
-  protected get _contractAddress(): string {
-    return this.address;
-  }
+export class TokenFactory extends ContractWrapper {
   constructor(
     public chainId: SupportedChainId,
     public address: string,
@@ -42,7 +46,7 @@ export class TokenFactory extends ContractWrapper<MockERC20Factory> {
     signer: Signer,
     name: string,
     symbol: string
-  ): Promise<{ token: Token; receipt: ContractReceipt }> {
+  ): Promise<SubmittedDeployment<Token> & { token: Token }> {
     const factory = TokenFactory.getFactory(chainId, signer);
     return factory.deployToken(name, symbol);
   }
@@ -60,39 +64,48 @@ export class TokenFactory extends ContractWrapper<MockERC20Factory> {
   async deployToken(
     name: string,
     symbol: string
-  ): Promise<{
-    token: Token;
-    receipt: ContractReceipt;
-    transaction: ContractTransaction;
-  }> {
-    const transaction = await this.contract.deployMockERC20(name, symbol);
-    const receipt = await transaction.wait();
+  ): Promise<SubmittedDeployment<Token> & { token: Token }> {
+    const { hash, receipt, transaction } = await submitPreparedTransactionAndWait(
+      this.provider,
+      this.signer,
+      this.populateDeployToken(name, symbol)
+    );
 
-    const {
-      args: { token: tokenAddress, decimals }
-    } = receipt.events!.find((e) => e.event === "NewTokenDeployed")! as NewTokenDeployedEvent;
+    const event = parseEventLogs({
+      abi: mockERC20FactoryAbi,
+      eventName: "NewTokenDeployed",
+      logs: receipt.logs
+    })[0];
+    assert(event !== undefined, "No NewTokenDeployed event found");
 
     const token = new Token(
       this.chainId,
-      tokenAddress,
+      event.args.token,
       name,
       symbol,
-      decimals,
+      event.args.decimals,
       true,
       this.provider
     );
-    return { token, transaction, receipt };
+    return { hash, receipt, transaction, result: token, token };
   }
 
   populateDeployToken(name: string, symbol: string): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("deployMockERC20", [name, symbol]),
-      value: "0"
-    };
+      abi: mockERC20FactoryAbi,
+      functionName: "deployMockERC20",
+      args: [name, symbol]
+    });
   }
 
   async getNextTokenAddress(address: string): Promise<string> {
-    return this.contract.getNextTokenAddress(address);
+    return readViemContract<string>(
+      getViemPublicClientFromEthers(this.provider),
+      this.address,
+      mockERC20FactoryAbi,
+      "getNextTokenAddress",
+      [address]
+    );
   }
 }

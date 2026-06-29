@@ -1,49 +1,58 @@
-import { BigNumber, ContractReceipt, ContractTransaction } from "ethers";
-import { Token, TokenAmount, minTokenAmount } from "../token";
+import { Token, TokenAmount, minTokenAmount, toRawAmount } from "../token";
 import { Market } from "../market";
 import {
   MarketLenderStatusStructOutput,
   MarketDataWithLenderStatusStructOutput,
-  WildcatMarketV2__factory,
   LenderAccountDataStructOutput,
   MarketDataWithLenderStatusV2StructOutput,
-  LenderAccountDataV21StructOutput,
-  MarketDataWithLenderStatusV21StructOutput,
   LenderAccountDataV2_5StructOutput,
   MarketDataWithLenderStatusV2_5StructOutput,
-  IOpenTermHooks__factory,
-  IFixedTermHooks__factory,
-  IPeriodicTermHooks__factory
-} from "../typechain";
-import { WithdrawalQueuedEvent } from "../typechain/WildcatMarket";
+  MarketLiveDataWithLenderStatusV2_5StructOutput
+} from "../lens-types";
 import {
   assert,
   DepositRecord,
   parseMarketRecord,
   parseSubgraphLenderStatus,
   parseSubgraphLenderHooksAccess,
-  rayMul,
-  SECONDS_IN_365_DAYS
+  rayMulBigint,
+  SECONDS_IN_365_DAYS,
+  prepareTransaction,
+  toNumber,
+  type BigintNumberish
 } from "../utils";
+import { SupportedChainId, hasDeploymentAddress } from "../constants";
 import {
-  APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS,
-  SupportedChainId,
-  getArchControllerContract,
-  getControllerContract,
-  getLensContract,
-  getLatestLensContract,
-  hasDeploymentAddress
-} from "../constants";
+  getRegisteredMarkets,
+  getRegisteredMarketsCount,
+  getRegisteredMarketsPage
+} from "../internal/arch-controller";
+import {
+  getLatestLenderAccountData,
+  getLatestLenderAccountsData,
+  getLatestMarketDataWithLenderStatus,
+  getLatestMarketsDataWithLenderStatus,
+  getUnifiedMarketsLiveDataWithLenderStatusV2,
+  getLegacyAllMarketsDataWithLenderStatus,
+  getLegacyMarketDataWithLenderStatus,
+  getLegacyMarketLenderStatus,
+  getLegacyMarketsDataWithLenderStatus,
+  getLegacyMarketsLenderStatus,
+  getLegacyPaginatedMarketsDataWithLenderStatus
+} from "../internal/market-lens";
 import {
   HooksCredential,
   HooksKind,
   MarketVersion,
   PartialTransaction,
-  SignerOrProvider
+  SignerOrProvider,
+  SubmittedTransactionResult,
+  TransactionHash
 } from "../types";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 import {
   SubgraphAccountDataForLenderViewFragment,
+  SubgraphAccountDataForLenderListViewFragment,
   SubgraphDepositDataFragment
 } from "../gql/graphql";
 import {
@@ -65,10 +74,21 @@ import {
   SetMinimumDepositPreview,
   SetMinimumDepositStatus,
   SetFixedTermEndTimeStatus,
-  SetFixedTermEndTimePreview,
-  ProposeAnnualInterestBipsPreview,
-  ProposeAnnualInterestBipsStatus
+  SetFixedTermEndTimePreview
 } from "./validation";
+import {
+  iERC20Abi,
+  iFixedTermHooksAbi,
+  iOpenTermHooksAbi,
+  wildcatMarketAbi,
+  wildcatMarketControllerAbi,
+  wildcatMarketV2Abi
+} from "../abi";
+import {
+  submitPreparedTransaction,
+  submitPreparedTransactionAndWait
+} from "../internal/viem-write";
+import { parseEventLogs, type TransactionReceipt } from "viem";
 export * from "./validation";
 
 export enum LenderRole {
@@ -78,21 +98,31 @@ export enum LenderRole {
   DepositAndWithdraw = 3
 }
 
-const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
+const NullProviderIndex = 2 ** 24 - 1;
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
 const hasUnifiedLatestLensForAccountReads = (chainId: SupportedChainId): boolean => {
   return hasDeploymentAddress(chainId, "MarketLensV2_5");
 };
 
 type LatestLenderAccountDataStructOutput =
   | LenderAccountDataStructOutput
-  | LenderAccountDataV21StructOutput
   | LenderAccountDataV2_5StructOutput;
 
 type MarketDataWithLenderStatusOutput =
   | MarketDataWithLenderStatusStructOutput
   | MarketDataWithLenderStatusV2StructOutput
-  | MarketDataWithLenderStatusV21StructOutput
   | MarketDataWithLenderStatusV2_5StructOutput;
+
+const zeroLenderBalances = (
+  info: LatestLenderAccountDataStructOutput
+): LatestLenderAccountDataStructOutput => ({
+  ...info,
+  scaledBalance: 0n,
+  normalizedBalance: 0n,
+  underlyingBalance: 0n,
+  underlyingApproval: 0n
+});
 
 export type MarketAccountArgs = {
   account: string;
@@ -104,14 +134,14 @@ export type MarketAccountArgs = {
   isKnownLender?: boolean;
   /** For V1 markets - access level enum */
   role: LenderRole;
-  scaledMarketBalance: BigNumber;
+  scaledMarketBalance: bigint;
   marketBalance: TokenAmount;
   underlyingBalance: TokenAmount;
-  underlyingApproval: BigNumber;
+  underlyingApproval: bigint;
   market: Market;
   deposits?: SubgraphDepositDataFragment[];
   totalDeposited?: TokenAmount;
-  lastScaleFactor?: BigNumber;
+  lastScaleFactor?: bigint;
   lastUpdatedTimestamp?: number;
   totalInterestEarned?: TokenAmount;
   numPendingWithdrawalBatches?: number;
@@ -240,9 +270,6 @@ export class MarketAccount {
       if (!config.flags!.useOnQueueWithdrawal) return QueueWithdrawalStatus.Ready;
       // Can not withdraw if market in fixed term
       if (this.market.isInFixedTerm) return QueueWithdrawalStatus.MarketInClosedTerm;
-      if (config.kind === HooksKind.PeriodicTerm && !this.market.isPeriodicWithdrawalWindowOpen) {
-        return QueueWithdrawalStatus.WithdrawalWindowClosed;
-      }
       // Can not withdraw if market requires access and lender has no credential and is not a known lender
       if (
         config.flags.useOnQueueWithdrawal &&
@@ -317,61 +344,9 @@ export class MarketAccount {
     return { status: CloseMarketStatus.Ready };
   }
 
-  previewSetAPR(apr: number, timestampSec?: number): SetAprPreview {
+  previewSetAPR(apr: number): SetAprPreview {
     if (!this.isBorrower) return { status: SetAprStatus.NotBorrower };
     if (!(apr > 0 && apr <= 10000)) return { status: SetAprStatus.InvalidApr };
-
-    const now = timestampSec ?? Math.floor(Date.now() / 1_000);
-    const config = this.market.hooksConfig;
-    if (config?.kind === HooksKind.PeriodicTerm && apr < this.market.annualInterestBips) {
-      if (config.pendingAprChangeProposalTimestamp === 0) {
-        return { status: SetAprStatus.AprReductionNotProposed };
-      }
-      if (config.pendingAprChangeAnnualInterestBips !== apr) {
-        return { status: SetAprStatus.AprChangeDoesNotMatchProposal };
-      }
-      if (now < config.pendingAprChangeResponseWindowEnd) {
-        return { status: SetAprStatus.AprChangeNotReady };
-      }
-      // Template v2+ hooks reject executions more than
-      // APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS periods past the response
-      // window. Applied uniformly here (conservative for v1 instances,
-      // which do not enforce expiry on-chain).
-      if (
-        now >=
-        config.pendingAprChangeResponseWindowEnd +
-          config.periodDuration * APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS
-      ) {
-        return { status: SetAprStatus.AprChangeExpired };
-      }
-      if (!this.market.scaledPendingWithdrawals.isZero()) {
-        return { status: SetAprStatus.UnpaidWithdrawalsExist };
-      }
-      // The hook keeps the reserve ratio unchanged for proposed reductions, so the
-      // market-level check in setAnnualInterestAndReserveRatioBips takes the
-      // `reserveRatio <= initial` branch and reverts with
-      // InsufficientReservesForOldLiquidityRatio if the market is delinquent.
-      if (this.market.totalAssets.lt(this.market.coverageLiquidity)) {
-        return {
-          status: SetAprStatus.InsufficientReserves,
-          newReserveRatio: this.market.reserveRatioBips,
-          newCoverageLiquidity: this.market.coverageLiquidity,
-          missingReserves: this.market.delinquentDebt,
-          changeCausedByReset: false
-        };
-      }
-      return {
-        status: SetAprStatus.Ready,
-        willChangeReserveRatio: false
-      };
-    }
-
-    // On a periodic market, executing any APR increase deletes a pending reduction
-    // proposal on-chain without an event. Surface it so the UI can warn first.
-    const willCancelPendingProposal =
-      config?.kind === HooksKind.PeriodicTerm &&
-      config.pendingAprChangeProposalTimestamp !== 0 &&
-      apr > this.market.annualInterestBips;
 
     const [originalReserveRatioBips, originalAnnualInterestBips] =
       this.market.originalReserveRatioAndAnnualInterestBips;
@@ -407,39 +382,15 @@ export class MarketAccount {
           willChangeReserveRatio: true,
           newCoverageLiquidity,
           newReserveRatio: newReserveRatioBips,
-          changeCausedByReset,
-          willCancelPendingProposal
+          changeCausedByReset
         };
       }
     } else {
       return {
         status: SetAprStatus.Ready,
-        willChangeReserveRatio: false,
-        willCancelPendingProposal
+        willChangeReserveRatio: false
       };
     }
-  }
-
-  previewProposeAnnualInterestBips(apr: number): ProposeAnnualInterestBipsPreview {
-    if (this.market.version !== MarketVersion.V2) {
-      return { status: ProposeAnnualInterestBipsStatus.NotV2Market };
-    }
-    if (!this.isBorrower) return { status: ProposeAnnualInterestBipsStatus.NotBorrower };
-    if (!(apr > 0 && apr <= 10000)) {
-      return { status: ProposeAnnualInterestBipsStatus.InvalidApr };
-    }
-
-    const config = this.market.hooksConfig;
-    if (config?.kind !== HooksKind.PeriodicTerm) {
-      return { status: ProposeAnnualInterestBipsStatus.NotPeriodicTermMarket };
-    }
-    if (apr >= this.market.annualInterestBips) {
-      return { status: ProposeAnnualInterestBipsStatus.NotReduction };
-    }
-    if (this.market.isPeriodicWithdrawalWindowOpen) {
-      return { status: ProposeAnnualInterestBipsStatus.WithdrawalWindowOpen };
-    }
-    return { status: ProposeAnnualInterestBipsStatus.Ready };
   }
 
   previewSetMaxTotalSupply(amount: TokenAmount): SetMaxTotalSupplyPreview {
@@ -480,12 +431,12 @@ export class MarketAccount {
     assert(status === SetMinimumDepositStatus.Ready, `Cannot set minimum deposit: ${status}`);
     const config = this.market.hooksConfig;
     assert(config !== undefined, `V2 market missing hooksConfig`);
-    const iface = IOpenTermHooks__factory.createInterface();
-    return {
+    return prepareTransaction({
       to: config.hooksAddress,
-      data: iface.encodeFunctionData("setMinimumDeposit", [this.market.address, amount.raw]),
-      value: "0"
-    };
+      abi: iOpenTermHooksAbi,
+      functionName: "setMinimumDeposit",
+      args: [this.market.address, amount.raw]
+    });
   }
 
   async populateSetFixedTermEndTime(endTime: number): Promise<PartialTransaction> {
@@ -493,73 +444,34 @@ export class MarketAccount {
     assert(status === SetFixedTermEndTimeStatus.Ready, `Cannot set fixed term end time: ${status}`);
     const config = this.market.hooksConfig;
     assert(config !== undefined, `V2 market missing hooksConfig`);
-    const iface = IFixedTermHooks__factory.createInterface();
-    return {
+    return prepareTransaction({
       to: config.hooksAddress,
-      data: iface.encodeFunctionData("setFixedTermEndTime", [this.market.address, endTime]),
-      value: "0"
-    };
+      abi: iFixedTermHooksAbi,
+      functionName: "setFixedTermEndTime",
+      args: [this.market.address, endTime]
+    });
   }
 
-  async setMinimumDeposit(amount: TokenAmount): Promise<ContractTransaction> {
-    const { status } = this.previewSetMinimumDeposit(amount);
-    assert(status === SetMinimumDepositStatus.Ready, `Cannot set minimum deposit: ${status}`);
-    const config = this.market.hooksConfig;
-    assert(config !== undefined, `V2 market missing hooksConfig`);
-    const contract = IOpenTermHooks__factory.connect(config.hooksAddress, this.market.signer);
-    return contract.setMinimumDeposit(this.market.address, amount.raw);
-  }
-
-  async setFixedTermEndTime(endTime: number): Promise<ContractTransaction> {
-    const { status } = this.previewSetFixedTermEndTime(endTime);
-    assert(status === SetFixedTermEndTimeStatus.Ready, `Cannot set fixed term end time: ${status}`);
-    const config = this.market.hooksConfig;
-    assert(config !== undefined, `V2 market missing hooksConfig`);
-    const contract = IFixedTermHooks__factory.connect(config.hooksAddress, this.market.signer);
-    return contract.setFixedTermEndTime(this.market.address, endTime);
-  }
-
-  populateProposeAnnualInterestBips(apr: number): PartialTransaction {
-    const { status } = this.previewProposeAnnualInterestBips(apr);
-    assert(
-      status === ProposeAnnualInterestBipsStatus.Ready,
-      `Cannot propose annual interest bips: ${status}`
+  async setMinimumDeposit(amount: TokenAmount): Promise<TransactionHash> {
+    return submitPreparedTransaction(
+      this.market.signer,
+      await this.populateSetMinimumDeposit(amount)
     );
-    const config = this.market.hooksConfig;
-    assert(config?.kind === HooksKind.PeriodicTerm, `Market is not periodic term`);
-    const iface = IPeriodicTermHooks__factory.createInterface();
-    return {
-      to: config.hooksAddress,
-      data: iface.encodeFunctionData("proposeAnnualInterestBips", [this.market.address, apr]),
-      value: "0"
-    };
   }
 
-  async proposeAnnualInterestBips(apr: number): Promise<ContractTransaction> {
-    const { status } = this.previewProposeAnnualInterestBips(apr);
-    assert(
-      status === ProposeAnnualInterestBipsStatus.Ready,
-      `Cannot propose annual interest bips: ${status}`
+  async setFixedTermEndTime(endTime: number): Promise<TransactionHash> {
+    return submitPreparedTransaction(
+      this.market.signer,
+      await this.populateSetFixedTermEndTime(endTime)
     );
-    const config = this.market.hooksConfig;
-    assert(config?.kind === HooksKind.PeriodicTerm, `Market is not periodic term`);
-    const contract = IPeriodicTermHooks__factory.connect(config.hooksAddress, this.market.signer);
-    return contract.proposeAnnualInterestBips(this.market.address, apr);
   }
 
   /* -------------------------------------------------------------------------- */
   /*                             Management Actions                             */
   /* -------------------------------------------------------------------------- */
 
-  async closeMarket(): Promise<ContractTransaction> {
-    const { status } = this.previewCloseMarket();
-    assert(status === CloseMarketStatus.Ready, `Cannot close market: ${status}`);
-    if (this.market.version === MarketVersion.V1) {
-      assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
-      const controller = getControllerContract(this.market.signer, this.market.controller);
-      return controller.closeMarket(this.market.address);
-    }
-    return this.market.contract.closeMarket();
+  async closeMarket(): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, this.populateCloseMarket());
   }
 
   populateCloseMarket(): PartialTransaction {
@@ -568,33 +480,47 @@ export class MarketAccount {
 
     if (this.market.version === MarketVersion.V1) {
       assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
-      const controller = getControllerContract(this.market.signer, this.market.controller);
-      return {
-        to: controller.address,
-        data: controller.interface.encodeFunctionData("closeMarket", [this.market.address]),
-        value: "0"
-      };
+      return prepareTransaction({
+        to: this.market.controller,
+        abi: wildcatMarketControllerAbi,
+        functionName: "closeMarket",
+        args: [this.market.address]
+      });
     }
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: this.market.contract.interface.encodeFunctionData("closeMarket"),
-      value: "0"
-    };
+      abi: wildcatMarketV2Abi,
+      functionName: "closeMarket"
+    });
   }
 
-  async setMaxTotalSupply(amount: TokenAmount): Promise<ContractTransaction> {
+  async setMaxTotalSupply(amount: TokenAmount): Promise<TransactionHash> {
     const { status } = this.previewSetMaxTotalSupply(amount);
     assert(status === SetMaxTotalSupplyStatus.Ready, `Cannot close market: ${status}`);
     if (this.market.version === MarketVersion.V1) {
       assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
-      const controller = getControllerContract(this.market.signer, this.market.controller);
-      return controller.setMaxTotalSupply(this.market.address, amount.raw);
-    } else {
-      return this.market.contract.setMaxTotalSupply(amount.raw);
+      return submitPreparedTransaction(
+        this.market.signer,
+        prepareTransaction({
+          to: this.market.controller,
+          abi: wildcatMarketControllerAbi,
+          functionName: "setMaxTotalSupply",
+          args: [this.market.address, amount.raw]
+        })
+      );
     }
+    return submitPreparedTransaction(
+      this.market.signer,
+      prepareTransaction({
+        to: this.market.address,
+        abi: wildcatMarketV2Abi,
+        functionName: "setMaxTotalSupply",
+        args: [amount.raw]
+      })
+    );
   }
 
-  async setAnnualInterestBips(newAprBips: number): Promise<ContractTransaction> {
+  async setAnnualInterestBips(newAprBips: number): Promise<TransactionHash> {
     const { status } = this.previewSetAPR(newAprBips);
     assert(
       status === SetAprStatus.Ready,
@@ -602,15 +528,25 @@ export class MarketAccount {
     );
     if (this.market.version === MarketVersion.V1) {
       assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
-      const controller = getControllerContract(this.market.provider, this.market.controller);
-      return controller.setAnnualInterestBips(this.market.address, newAprBips);
-    } else {
-      const contract = WildcatMarketV2__factory.connect(this.market.address, this.market.signer);
-      return contract.setAnnualInterestAndReserveRatioBips(
-        newAprBips,
-        this.market.reserveRatioBips
+      return submitPreparedTransaction(
+        this.market.signer,
+        prepareTransaction({
+          to: this.market.controller,
+          abi: wildcatMarketControllerAbi,
+          functionName: "setAnnualInterestBips",
+          args: [this.market.address, newAprBips]
+        })
       );
     }
+    return submitPreparedTransaction(
+      this.market.signer,
+      prepareTransaction({
+        to: this.market.address,
+        abi: wildcatMarketV2Abi,
+        functionName: "setAnnualInterestAndReserveRatioBips",
+        args: [newAprBips, this.market.reserveRatioBips]
+      })
+    );
   }
 
   /* -------------------------------------------------------------------------- */
@@ -618,16 +554,11 @@ export class MarketAccount {
   /* -------------------------------------------------------------------------- */
 
   isApprovedFor(amount: TokenAmount): boolean {
-    return this.underlyingApproval.gte(amount.raw);
+    return this.underlyingApproval >= amount.raw;
   }
 
-  async approveMarket(amount: TokenAmount): Promise<ContractTransaction> {
-    const token = this.market.underlyingToken;
-    const signer = await token.signer.getAddress();
-    if (signer.toLowerCase() !== this.account.toLowerCase()) {
-      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    return token.contract.approve(this.market.address, amount.raw);
+  async approveMarket(amount: TokenAmount): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, await this.populateApproveMarket(amount));
   }
 
   async populateApproveMarket(amount: TokenAmount): Promise<PartialTransaction> {
@@ -636,14 +567,12 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    return {
+    return prepareTransaction({
       to: token.address,
-      data: token.contract.interface.encodeFunctionData("approve", [
-        this.market.address,
-        amount.raw
-      ]),
-      value: "0"
-    };
+      abi: iERC20Abi,
+      functionName: "approve",
+      args: [this.market.address, amount.raw]
+    });
   }
 
   /* -------------------------------------------------------------------------- */
@@ -657,6 +586,14 @@ export class MarketAccount {
     }
     if (this.market.chainId !== SupportedChainId.Sepolia) {
       return { status: ForceBuyBackStatus.MainnetNotSupported };
+    }
+    const hooksConfig = this.market.hooksConfig;
+    if (
+      !hooksConfig ||
+      hooksConfig.kind === HooksKind.PeriodicTerm ||
+      !hooksConfig.allowForceBuyBacks
+    ) {
+      return { status: ForceBuyBackStatus.HooksNotSupported };
     }
     if (amount.gt(this.underlyingBalance)) {
       return { status: ForceBuyBackStatus.InsufficientBalance };
@@ -672,23 +609,20 @@ export class MarketAccount {
     };
   }
 
-  async forceBuyBack(lender: string, amount: TokenAmount): Promise<ContractTransaction> {
-    const { status } = this.previewForceBuyBack(lender, amount);
-    assert(status === ForceBuyBackStatus.Ready, `Cannot force buy back: ${status}`);
-    const contract = WildcatMarketV2__factory.connect(this.market.address, this.market.signer);
-    return await contract.forceBuyBack(lender, amount.raw);
+  async forceBuyBack(lender: string, amount: TokenAmount): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, this.populateForceBuyBack(lender, amount));
   }
 
   populateForceBuyBack(lender: string, amount: TokenAmount): PartialTransaction {
     const { status } = this.previewForceBuyBack(lender, amount);
     assert(status === ForceBuyBackStatus.Ready, `Cannot force buy back: ${status}`);
 
-    const contract = WildcatMarketV2__factory.connect(this.market.address, this.market.signer);
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: contract.interface.encodeFunctionData("forceBuyBack", [lender, amount.raw]),
-      value: "0"
-    };
+      abi: wildcatMarketV2Abi,
+      functionName: "forceBuyBack",
+      args: [lender, amount.raw]
+    });
   }
 
   /* -------------------------------------------------------------------------- */
@@ -742,21 +676,16 @@ export class MarketAccount {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
 
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: this.market.contract.interface.encodeFunctionData("deposit", [amount.raw]),
-      value: "0"
-    };
+      abi: wildcatMarketAbi,
+      functionName: "deposit",
+      args: [amount.raw]
+    });
   }
 
-  async deposit(amount: TokenAmount): Promise<ContractTransaction> {
-    const { status } = this.previewDeposit(amount);
-    assert(status === DepositStatus.Ready, `Cannot deposit: ${status}`);
-    const signer = await this.market.signer.getAddress();
-    if (signer.toLowerCase() !== this.account.toLowerCase()) {
-      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    return this.market.contract.deposit(amount.raw);
+  async deposit(amount: TokenAmount): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, await this.populateDeposit(amount));
   }
 
   /* ------ Withdrawals ------ */
@@ -770,11 +699,9 @@ export class MarketAccount {
     return { status: QueueWithdrawalStatus.Ready };
   }
 
-  async queueWithdrawal(amount: TokenAmount): Promise<{
-    withdrawal: LenderWithdrawalStatus;
-    transaction: ContractTransaction;
-    receipt: ContractReceipt;
-  }> {
+  async queueWithdrawal(
+    amount: TokenAmount
+  ): Promise<SubmittedTransactionResult<LenderWithdrawalStatus>> {
     const { status } = this.previewQueueWithdrawal(amount);
     assert(status === QueueWithdrawalStatus.Ready, `Cannot queue withdrawal: ${status}`);
 
@@ -782,32 +709,35 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    const transaction = await this.market.contract.queueWithdrawal(amount.raw);
-    const receipt = await transaction.wait();
-    const queuedWithdrawalTopic = this.market.contract.interface.getEventTopic("WithdrawalQueued");
+    const { hash, receipt, transaction } = await submitPreparedTransactionAndWait(
+      this.market.provider,
+      this.market.signer,
+      prepareTransaction({
+        to: this.market.address,
+        abi: wildcatMarketAbi,
+        functionName: "queueWithdrawal",
+        args: [amount.raw]
+      })
+    );
     const queuedWithdrawalTransaction = toQueueWithdrawalTransaction(
       this.market.underlyingToken,
-      receipt.events!.find((e) => e.topics[0] === queuedWithdrawalTopic) as WithdrawalQueuedEvent
+      receipt,
+      this.market.address
     );
-    if (!queuedWithdrawalTransaction) throw Error("No queued withdrawal event found");
-
     const withdrawal = await LenderWithdrawalStatus.getWithdrawalForLender(
       this.market,
       queuedWithdrawalTransaction.expiry,
       this.account
     );
     return {
-      withdrawal,
+      hash,
+      receipt,
       transaction,
-      receipt
+      result: withdrawal
     };
   }
 
-  async queueFullWithdrawal(): Promise<{
-    withdrawal: LenderWithdrawalStatus;
-    transaction: ContractTransaction;
-    receipt: ContractReceipt;
-  }> {
+  async queueFullWithdrawal(): Promise<SubmittedTransactionResult<LenderWithdrawalStatus>> {
     const { status } = this.previewQueueWithdrawal(this.marketBalance);
     assert(status === QueueWithdrawalStatus.Ready, `Cannot queue withdrawal: ${status}`);
 
@@ -815,30 +745,37 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
-    let transaction: ContractTransaction;
-    if (this.market.version === MarketVersion.V2) {
-      const contract = WildcatMarketV2__factory.connect(this.market.address, this.market.signer);
-      transaction = await contract.queueFullWithdrawal();
-    } else {
-      transaction = await this.market.contract.queueWithdrawal(this.marketBalance.raw);
-    }
-    const receipt = await transaction.wait();
-    const queuedWithdrawalTopic = this.market.contract.interface.getEventTopic("WithdrawalQueued");
+    const { hash, receipt, transaction } = await submitPreparedTransactionAndWait(
+      this.market.provider,
+      this.market.signer,
+      this.market.version === MarketVersion.V2
+        ? prepareTransaction({
+            to: this.market.address,
+            abi: wildcatMarketV2Abi,
+            functionName: "queueFullWithdrawal"
+          })
+        : prepareTransaction({
+            to: this.market.address,
+            abi: wildcatMarketAbi,
+            functionName: "queueWithdrawal",
+            args: [this.marketBalance.raw]
+          })
+    );
     const queuedWithdrawalTransaction = toQueueWithdrawalTransaction(
       this.market.underlyingToken,
-      receipt.events!.find((e) => e.topics[0] === queuedWithdrawalTopic) as WithdrawalQueuedEvent
+      receipt,
+      this.market.address
     );
-    if (!queuedWithdrawalTransaction) throw Error("No queued withdrawal event found");
-
     const withdrawal = await LenderWithdrawalStatus.getWithdrawalForLender(
       this.market,
       queuedWithdrawalTransaction.expiry,
       this.account
     );
     return {
-      withdrawal,
+      hash,
+      receipt,
       transaction,
-      receipt
+      result: withdrawal
     };
   }
 
@@ -880,41 +817,27 @@ export class MarketAccount {
     return { status: RepayStatus.Ready };
   }
 
-  async repay(amount: BigNumber): Promise<ContractTransaction> {
-    const signer = await this.market.signer.getAddress();
-    if (signer.toLowerCase() !== this.account.toLowerCase()) {
-      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-    if (!this.isBorrower) throw Error("Only borrower can repay");
-
-    return this.market.contract.repay(amount);
+  async repay(amount: TokenAmount | BigintNumberish): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, await this.populateRepay(amount));
   }
 
-  async populateRepay(amount: BigNumber): Promise<PartialTransaction> {
+  async populateRepay(amount: TokenAmount | BigintNumberish): Promise<PartialTransaction> {
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
     if (!this.isBorrower) throw Error("Only borrower can repay");
 
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: this.market.contract.interface.encodeFunctionData("repay", [amount]),
-      value: "0"
-    };
+      abi: wildcatMarketAbi,
+      functionName: "repay",
+      args: [toRawAmount(amount)]
+    });
   }
 
-  async repayOutstandingDebt(): Promise<ContractTransaction> {
-    if (this.market.version !== MarketVersion.V1) {
-      throw Error(`Only V1 supports repayOutstandingDebt`);
-    }
-    if (!this.isBorrower) throw Error("Only borrower can repay");
-    const signer = await this.market.signer.getAddress();
-    if (signer.toLowerCase() !== this.account.toLowerCase()) {
-      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-
-    return this.market.contract.repayOutstandingDebt();
+  async repayOutstandingDebt(): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, await this.populateRepayOutstandingDebt());
   }
 
   async populateRepayOutstandingDebt(): Promise<PartialTransaction> {
@@ -927,24 +850,15 @@ export class MarketAccount {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
 
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: this.market.contract.interface.encodeFunctionData("repayOutstandingDebt"),
-      value: "0"
-    };
+      abi: wildcatMarketAbi,
+      functionName: "repayOutstandingDebt"
+    });
   }
 
-  async repayDelinquentDebt(): Promise<ContractTransaction> {
-    if (this.market.version !== MarketVersion.V1) {
-      throw Error(`Only V1 supports repayDelinquentDebt`);
-    }
-    if (!this.isBorrower) throw Error("Only borrower can repay");
-    const signer = await this.market.signer.getAddress();
-    if (signer.toLowerCase() !== this.account.toLowerCase()) {
-      throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
-    }
-
-    return this.market.contract.repayDelinquentDebt();
+  async repayDelinquentDebt(): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.market.signer, await this.populateRepayDelinquentDebt());
   }
 
   async populateRepayDelinquentDebt(): Promise<PartialTransaction> {
@@ -957,11 +871,11 @@ export class MarketAccount {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
 
-    return {
+    return prepareTransaction({
       to: this.market.address,
-      data: this.market.contract.interface.encodeFunctionData("repayDelinquentDebt"),
-      value: "0"
-    };
+      abi: wildcatMarketAbi,
+      functionName: "repayDelinquentDebt"
+    });
   }
 
   /* -------------------------------------------------------------------------- */
@@ -975,7 +889,7 @@ export class MarketAccount {
     return minTokenAmount(amount, this.market.borrowableAssets);
   }
 
-  async borrow(amount: TokenAmount): Promise<ContractTransaction> {
+  async borrow(amount: TokenAmount): Promise<TransactionHash> {
     const signer = await this.market.signer.getAddress();
     if (!this.isBorrower) throw Error("Only borrower can borrow");
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
@@ -984,7 +898,15 @@ export class MarketAccount {
     if (amount.gt(this.market.borrowableAssets)) {
       throw Error("Insufficient borrowable assets");
     }
-    return this.market.contract.borrow(amount.raw);
+    return submitPreparedTransaction(
+      this.market.signer,
+      prepareTransaction({
+        to: this.market.address,
+        abi: wildcatMarketAbi,
+        functionName: "borrow",
+        args: [amount.raw]
+      })
+    );
   }
 
   /* -------------------------------------------------------------------------- */
@@ -993,16 +915,21 @@ export class MarketAccount {
 
   async update(): Promise<void> {
     if (this.market.version === MarketVersion.V1) {
-      const acccountMarketInfo = await getLensContract(
+      const acccountMarketInfo = await getLegacyMarketLenderStatus(
         this.chainId,
-        this.market.provider
-      ).getMarketLenderStatus(this.account, this.market.address);
+        this.market.provider,
+        this.account,
+        this.market.address
+      );
       this.updateWith(acccountMarketInfo);
       return;
     }
-    const accountMarketInfo = await getLatestLensContract(this.chainId, this.market.provider)[
-      "getLenderAccountData(address,address)"
-    ](this.account, this.market.address);
+    const accountMarketInfo = await getLatestLenderAccountData(
+      this.chainId,
+      this.market.provider,
+      this.account,
+      this.market.address
+    );
     this.updateWith(accountMarketInfo);
   }
 
@@ -1013,7 +940,7 @@ export class MarketAccount {
         "V2 market can not be updated with V1 lens data"
       );
       this.isAuthorizedOnController = info.isAuthorizedOnController;
-      this.role = info.role;
+      this.role = toNumber(info.role) as LenderRole;
     } else {
       assert(
         this.market.version === MarketVersion.V2,
@@ -1022,39 +949,39 @@ export class MarketAccount {
       this.credential = {
         canRefresh: info.canRefresh,
         isBlockedFromDeposits: info.isBlockedFromDeposits,
-        lastApprovalTimestamp: info.lastApprovalTimestamp,
+        lastApprovalTimestamp: toNumber(info.lastApprovalTimestamp),
         lastProvider: {
           isApproved: true,
           providerAddress: info.lastProvider.providerAddress,
-          isPullProvider: info.lastProvider.pullProviderIndex !== NullProviderIndex,
-          isPushProvider: info.lastProvider.pushProviderIndex !== NullProviderIndex,
-          pullProviderIndex: info.lastProvider.pullProviderIndex,
-          pushProviderIndex: info.lastProvider.pushProviderIndex,
-          timeToLive: info.lastProvider.timeToLive
+          isPullProvider: toNumber(info.lastProvider.pullProviderIndex) !== NullProviderIndex,
+          isPushProvider: toNumber(info.lastProvider.pushProviderIndex) !== NullProviderIndex,
+          pullProviderIndex: toNumber(info.lastProvider.pullProviderIndex),
+          pushProviderIndex: toNumber(info.lastProvider.pushProviderIndex),
+          timeToLive: toNumber(info.lastProvider.timeToLive)
         }
       };
       this.isKnownLender = info.isKnownLender;
     }
-    this.scaledMarketBalance = info.scaledBalance;
+    this.scaledMarketBalance = toRawAmount(info.scaledBalance);
     this.marketBalance = this.market.marketToken.getAmount(info.normalizedBalance);
     this.underlyingBalance = this.market.underlyingToken.getAmount(info.underlyingBalance);
-    this.underlyingApproval = info.underlyingApproval;
+    this.underlyingApproval = toRawAmount(info.underlyingApproval);
     this.processInterestAccrued();
   }
 
-  private calculateInterestEarned(): BigNumber {
-    if (!this.lastScaleFactor) return BigNumber.from(0);
-    if (this.scaledMarketBalance.eq(0) || this.lastScaleFactor?.eq(this.market.scaleFactor)) {
-      return BigNumber.from(0);
+  private calculateInterestEarned(): bigint {
+    if (!this.lastScaleFactor) return 0n;
+    if (this.scaledMarketBalance === 0n || this.lastScaleFactor === this.market.scaleFactor) {
+      return 0n;
     }
-    const lastBalance = rayMul(this.scaledMarketBalance, this.lastScaleFactor);
-    const currentBalance = rayMul(this.scaledMarketBalance, this.market.scaleFactor);
-    return currentBalance.sub(lastBalance);
+    const lastBalance = rayMulBigint(this.scaledMarketBalance, this.lastScaleFactor);
+    const currentBalance = rayMulBigint(this.scaledMarketBalance, this.market.scaleFactor);
+    return currentBalance - lastBalance;
   }
 
   processInterestAccrued(): void {
     if (!this.lastScaleFactor || !this.totalInterestEarned) return;
-    if (!this.lastScaleFactor.eq(this.market.scaleFactor)) {
+    if (this.lastScaleFactor !== this.market.scaleFactor) {
       const interestEarned = this.calculateInterestEarned();
       this.lastScaleFactor = this.market.scaleFactor;
       this.totalInterestEarned = this.totalInterestEarned.add(interestEarned);
@@ -1070,22 +997,22 @@ export class MarketAccount {
 
   static fromSubgraphAccountData(
     market: Market,
-    data: SubgraphAccountDataForLenderViewFragment
+    data: SubgraphAccountDataForLenderViewFragment | SubgraphAccountDataForLenderListViewFragment
   ): MarketAccount {
-    const scaledBalance = BigNumber.from(data.scaledBalance);
+    const scaledBalance = toRawAmount(data.scaledBalance);
 
     const account = new MarketAccount({
       account: data.address,
       isAuthorizedOnController: data.controllerAuthorization?.authorized ?? false,
       role: parseSubgraphLenderStatus(data.role),
       scaledMarketBalance: scaledBalance,
-      marketBalance: market.marketToken.getAmount(rayMul(scaledBalance, market.scaleFactor)),
+      marketBalance: market.marketToken.getAmount(rayMulBigint(scaledBalance, market.scaleFactor)),
       underlyingBalance: market.underlyingToken.getAmount(0),
-      underlyingApproval: BigNumber.from(0),
+      underlyingApproval: 0n,
       market,
-      deposits: data.deposits,
+      deposits: "deposits" in data ? data.deposits : undefined,
       totalDeposited: market.underlyingToken.getAmount(data.totalDeposited),
-      lastScaleFactor: BigNumber.from(data.lastScaleFactor),
+      lastScaleFactor: toRawAmount(data.lastScaleFactor),
       lastUpdatedTimestamp: data.lastUpdatedTimestamp,
       totalInterestEarned: market.underlyingToken.getAmount(data.totalInterestEarned),
       numPendingWithdrawalBatches: data.numPendingWithdrawalBatches,
@@ -1106,10 +1033,10 @@ export class MarketAccount {
       account,
       isAuthorizedOnController: info.isAuthorizedOnController,
       role: info.role as LenderRole,
-      scaledMarketBalance: info.scaledBalance,
+      scaledMarketBalance: toRawAmount(info.scaledBalance),
       marketBalance: market.marketToken.getAmount(info.normalizedBalance),
       underlyingBalance: market.underlyingToken.getAmount(info.underlyingBalance),
-      underlyingApproval: info.underlyingApproval,
+      underlyingApproval: toRawAmount(info.underlyingApproval),
       market
     });
   }
@@ -1123,23 +1050,23 @@ export class MarketAccount {
       market,
       role: LenderRole.Null,
       marketBalance: market.marketToken.getAmount(data.normalizedBalance),
-      scaledMarketBalance: data.scaledBalance,
-      underlyingApproval: data.underlyingApproval,
+      scaledMarketBalance: toRawAmount(data.scaledBalance),
+      underlyingApproval: toRawAmount(data.underlyingApproval),
       underlyingBalance: market.underlyingToken.getAmount(data.underlyingBalance),
       isAuthorizedOnController: false,
       isKnownLender: data.isKnownLender,
       credential: {
         canRefresh: data.canRefresh,
         isBlockedFromDeposits: data.isBlockedFromDeposits,
-        lastApprovalTimestamp: data.lastApprovalTimestamp,
+        lastApprovalTimestamp: toNumber(data.lastApprovalTimestamp),
         lastProvider: {
           isApproved: true,
           providerAddress: data.lastProvider.providerAddress,
-          isPullProvider: data.lastProvider.pullProviderIndex !== NullProviderIndex,
-          pullProviderIndex: data.lastProvider.pullProviderIndex,
-          isPushProvider: data.lastProvider.pushProviderIndex !== NullProviderIndex,
-          pushProviderIndex: data.lastProvider.pushProviderIndex,
-          timeToLive: data.lastProvider.timeToLive
+          isPullProvider: toNumber(data.lastProvider.pullProviderIndex) !== NullProviderIndex,
+          pullProviderIndex: toNumber(data.lastProvider.pullProviderIndex),
+          isPushProvider: toNumber(data.lastProvider.pushProviderIndex) !== NullProviderIndex,
+          pushProviderIndex: toNumber(data.lastProvider.pushProviderIndex),
+          timeToLive: toNumber(data.lastProvider.timeToLive)
         }
       }
     });
@@ -1159,10 +1086,8 @@ export class MarketAccount {
         Market.fromMarketData(chainId, info.market, provider)
       );
     }
-    if (!("hooksFactory" in info.market)) {
-      const infoV2 = info as
-        | MarketDataWithLenderStatusV2StructOutput
-        | MarketDataWithLenderStatusV21StructOutput;
+    if ("allowForceBuyBacks" in info.market.hooksConfig) {
+      const infoV2 = info as MarketDataWithLenderStatusV2StructOutput;
       return MarketAccount.fromLenderAccountData(
         Market.fromMarketDataV2(chainId, provider, infoV2.market),
         infoV2.lenderStatus
@@ -1195,10 +1120,10 @@ export class MarketAccount {
       account,
       isAuthorizedOnController,
       role: LenderRole.Null,
-      scaledMarketBalance: BigNumber.from(0),
+      scaledMarketBalance: 0n,
       marketBalance: market.marketToken.getAmount(0),
       underlyingBalance: market.underlyingToken.getAmount(0),
-      underlyingApproval: BigNumber.from(0),
+      underlyingApproval: 0n,
       market
     });
   }
@@ -1215,25 +1140,19 @@ export class MarketAccount {
   ): Promise<MarketAccount> {
     if (market instanceof Market) {
       if (market.version === MarketVersion.V1) {
-        return getLensContract(chainId, provider)
-          .getMarketLenderStatus(account, market.address)
-          .then((info) => MarketAccount.fromMarketLenderStatus(account, info, market));
+        return getLegacyMarketLenderStatus(chainId, provider, account, market.address).then(
+          (info) => MarketAccount.fromMarketLenderStatus(account, info, market)
+        );
       }
-      return getLatestLensContract(chainId, provider)
-        ["getLenderAccountData(address,address)"](account, market.address)
-        .then((info) => MarketAccount.fromLenderAccountData(market, info));
+      return getLatestLenderAccountData(chainId, provider, account, market.address).then((info) =>
+        MarketAccount.fromLenderAccountData(market, info)
+      );
     }
     try {
-      const info = await getLatestLensContract(chainId, provider).getMarketDataWithLenderStatus(
-        account,
-        market
-      );
+      const info = await getLatestMarketDataWithLenderStatus(chainId, provider, account, market);
       return MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info);
     } catch (_) {
-      const info = await getLensContract(chainId, provider).getMarketDataWithLenderStatus(
-        account,
-        market
-      );
+      const info = await getLegacyMarketDataWithLenderStatus(chainId, provider, account, market);
       return MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info);
     }
   }
@@ -1249,15 +1168,13 @@ export class MarketAccount {
     market: Market | string
   ): Promise<MarketAccount> {
     if (market instanceof Market) {
-      return getLatestLensContract(chainId, provider)
-        ["getLenderAccountData(address,address)"](account, market.address)
-        .then((info) => MarketAccount.fromLenderAccountData(market, info));
-    }
-    return getLatestLensContract(chainId, provider)
-      .getMarketDataWithLenderStatus(account, market)
-      .then((info) =>
-        MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
+      return getLatestLenderAccountData(chainId, provider, account, market.address).then((info) =>
+        MarketAccount.fromLenderAccountData(market, info)
       );
+    }
+    return getLatestMarketDataWithLenderStatus(chainId, provider, account, market).then((info) =>
+      MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info)
+    );
   }
 
   /**
@@ -1289,7 +1206,9 @@ export class MarketAccount {
 
       if (legacyIndexes.length > 0) {
         const legacyMarkets = legacyIndexes.map((index) => markets[index]);
-        const infos = await getLensContract(chainId, provider).getMarketsLenderStatus(
+        const infos = await getLegacyMarketsLenderStatus(
+          chainId,
+          provider,
           account,
           legacyMarkets.map((market) => market.address)
         );
@@ -1304,9 +1223,9 @@ export class MarketAccount {
 
       if (latestIndexes.length > 0) {
         const latestMarkets = latestIndexes.map((index) => markets[index]);
-        const infos = await getLatestLensContract(chainId, provider)[
-          "getLenderAccountData(address,address[])"
-        ](
+        const infos = await getLatestLenderAccountsData(
+          chainId,
+          provider,
           account,
           latestMarkets.map((market) => market.address)
         );
@@ -1318,18 +1237,64 @@ export class MarketAccount {
       return results;
     }
     try {
-      const infos = await getLatestLensContract(chainId, provider).getMarketsDataWithLenderStatus(
-        account,
-        markets
-      );
+      const infos = await getLatestMarketsDataWithLenderStatus(chainId, provider, account, markets);
       return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
     } catch (_) {
-      const infos = await getLensContract(chainId, provider).getMarketsDataWithLenderStatus(
-        account,
-        markets
-      );
+      const infos = await getLegacyMarketsDataWithLenderStatus(chainId, provider, account, markets);
       return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
     }
+  }
+
+  /**
+   * Refresh existing V2 lender market accounts using the focused live lens surface when available.
+   * Falls back to existing broad V2 market reads plus lender-account reads.
+   */
+  static async refreshMarketAccountsV2LiveData(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider,
+    account: string | undefined,
+    marketAccounts: MarketAccount[]
+  ): Promise<MarketAccount[]> {
+    if (marketAccounts.length === 0) {
+      return marketAccounts;
+    }
+
+    const lender = account ?? ZERO_ADDRESS;
+    const shouldZeroBalances = !account;
+    const marketAddresses = marketAccounts.map((marketAccount) => marketAccount.market.address);
+
+    if (hasUnifiedLatestLensForAccountReads(chainId)) {
+      try {
+        const updates = await getUnifiedMarketsLiveDataWithLenderStatusV2(
+          chainId,
+          provider,
+          lender,
+          marketAddresses
+        );
+        updates.forEach((update: MarketLiveDataWithLenderStatusV2_5StructOutput, i) => {
+          marketAccounts[i].market.updateWithLiveData(update.market);
+          marketAccounts[i].updateWith(
+            shouldZeroBalances ? zeroLenderBalances(update.lenderStatus) : update.lenderStatus
+          );
+        });
+        return marketAccounts;
+      } catch (_) {
+        // Fall back to existing reads for older unified lens deployments.
+      }
+    }
+
+    const [refreshedMarkets, lenderStatuses] = await Promise.all([
+      Market.getMarketsV2(chainId, marketAddresses, provider),
+      getLatestLenderAccountsData(chainId, provider, lender, marketAddresses)
+    ]);
+
+    marketAccounts.forEach((marketAccount, i) => {
+      Object.assign(marketAccount.market, refreshedMarkets[i]);
+      marketAccount.updateWith(
+        shouldZeroBalances ? zeroLenderBalances(lenderStatuses[i]) : lenderStatuses[i]
+      );
+    });
+    return marketAccounts;
   }
 
   /**
@@ -1342,21 +1307,14 @@ export class MarketAccount {
     account: string
   ): Promise<MarketAccount[]> {
     if (hasUnifiedLatestLensForAccountReads(chainId)) {
-      const markets = await getArchControllerContract(chainId, provider)[
-        "getRegisteredMarkets()"
-      ]();
+      const markets = await getRegisteredMarkets(chainId, provider);
       if (markets.length === 0) {
         return [];
       }
-      const infos = await getLatestLensContract(chainId, provider).getMarketsDataWithLenderStatus(
-        account,
-        markets
-      );
+      const infos = await getLatestMarketsDataWithLenderStatus(chainId, provider, account, markets);
       return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
     }
-    const infos = await getLensContract(chainId, provider).getAllMarketsDataWithLenderStatus(
-      account
-    );
+    const infos = await getLegacyAllMarketsDataWithLenderStatus(chainId, provider, account);
     return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
   }
 
@@ -1376,23 +1334,21 @@ export class MarketAccount {
       if (count <= 0) {
         return [];
       }
-      const archController = getArchControllerContract(chainId, provider);
-      const totalMarkets = (await archController.getRegisteredMarketsCount()).toNumber();
+      const totalMarkets = await getRegisteredMarketsCount(chainId, provider);
       if (start >= totalMarkets) {
         return [];
       }
       const end = Math.min(start + count, totalMarkets);
-      const markets = await archController["getRegisteredMarkets(uint256,uint256)"](start, end);
+      const markets = await getRegisteredMarketsPage(chainId, provider, start, end);
       if (markets.length === 0) {
         return [];
       }
-      const infos = await getLatestLensContract(chainId, provider).getMarketsDataWithLenderStatus(
-        account,
-        markets
-      );
+      const infos = await getLatestMarketsDataWithLenderStatus(chainId, provider, account, markets);
       return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
     }
-    const infos = await getLensContract(chainId, provider).getPaginatedMarketsDataWithLenderStatus(
+    const infos = await getLegacyPaginatedMarketsDataWithLenderStatus(
+      chainId,
+      provider,
       account,
       start,
       count
@@ -1404,7 +1360,7 @@ type QueueWithdrawalTransaction = {
   expiry: number;
   lender: string;
   market: string;
-  scaledAmount: BigNumber;
+  scaledAmount: bigint;
   originalAmount: TokenAmount;
   transactionHash: string;
   blockNumber: number;
@@ -1412,13 +1368,22 @@ type QueueWithdrawalTransaction = {
 
 const toQueueWithdrawalTransaction = (
   underlyingToken: Token,
-  log: WithdrawalQueuedEvent
-): QueueWithdrawalTransaction => ({
-  transactionHash: log.transactionHash,
-  blockNumber: log.blockNumber,
-  expiry: log.args.expiry.toNumber(),
-  lender: log.args.account,
-  market: log.address,
-  scaledAmount: log.args.scaledAmount,
-  originalAmount: underlyingToken.getAmount(log.args.normalizedAmount)
-});
+  receipt: TransactionReceipt,
+  marketAddress: string
+): QueueWithdrawalTransaction => {
+  const event = parseEventLogs({
+    abi: wildcatMarketAbi,
+    eventName: "WithdrawalQueued",
+    logs: receipt.logs
+  })[0];
+  if (!event) throw Error("No queued withdrawal event found");
+  return {
+    transactionHash: receipt.transactionHash,
+    blockNumber: Number(receipt.blockNumber),
+    expiry: Number(event.args.expiry),
+    lender: event.args.account,
+    market: marketAddress,
+    scaledAmount: toRawAmount(event.args.scaledAmount),
+    originalAmount: underlyingToken.getAmount(event.args.normalizedAmount)
+  };
+};

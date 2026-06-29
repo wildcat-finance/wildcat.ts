@@ -5,8 +5,8 @@ import {
   SubgraphGetAllHooksDataForBorrowerQueryVariables,
   SubgraphHooksKind
 } from "./graphql";
-import { SupportedChainId } from "../constants";
-import { Signer, SignerOrProvider } from "../types";
+import { isIndexedHooksFactory, SupportedChainId } from "../constants";
+import { SignerOrProvider } from "../types";
 import {
   HooksInstance,
   HooksTemplate,
@@ -14,6 +14,7 @@ import {
   hooksTemplateFromSubgraph
 } from "../access";
 import { MarketController } from "../controller";
+import { getEthersSignerAddress } from "../internal/ethers-signer";
 
 export type GetAllHooksDataForBorrowerOptions = {
   chainId: SupportedChainId;
@@ -33,8 +34,11 @@ export async function getAllHooksDataForBorrower(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   { chainId, fetchPolicy, signerOrProvider, borrower }: GetAllHooksDataForBorrowerOptions
 ): Promise<GetAllHooksDataForBorrowerResult> {
-  if (borrower === undefined && Signer.isSigner(signerOrProvider)) {
-    borrower = await signerOrProvider.getAddress();
+  if (borrower === undefined) {
+    const signerAddress = await getEthersSignerAddress(signerOrProvider);
+    if (signerAddress !== undefined) {
+      borrower = signerAddress;
+    }
   }
   const result = await subgraphClient.query<
     SubgraphGetAllHooksDataForBorrowerQuery,
@@ -47,21 +51,14 @@ export async function getAllHooksDataForBorrower(
     }
   });
   const isRegisteredBorrower = result.data.registeredBorrowers?.[0]?.isRegistered ?? false;
-  const hooksTemplates = result.data.hooksTemplates
-    .filter(
-      (t) =>
-        t.name === "OpenTermHooks" || t.name === "FixedTermHooks" || t.name === "PeriodicTermHooks"
-    )
+  const hooksTemplates = result.data.factoryHooksTemplates
+    .filter((t) => isIndexedHooksFactory(chainId, t.hooksFactory.id))
+    .filter((t) => t.name === "OpenTermHooks" || t.name === "FixedTermHooks")
     .map((template) =>
       hooksTemplateFromSubgraph(chainId, signerOrProvider, template, borrower, isRegisteredBorrower)
     );
   const hooksInstances = result.data.hooksInstances
-    .filter(
-      (i) =>
-        i.kind === SubgraphHooksKind.OpenTerm ||
-        i.kind === SubgraphHooksKind.FixedTerm ||
-        i.kind === SubgraphHooksKind.PeriodicTerm
-    )
+    .filter((i) => i.kind === SubgraphHooksKind.OpenTerm || i.kind === SubgraphHooksKind.FixedTerm)
     .map((instance) =>
       hooksInstanceFromSubgraph(chainId, signerOrProvider, instance, borrower, isRegisteredBorrower)
     );

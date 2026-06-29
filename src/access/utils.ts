@@ -1,11 +1,83 @@
-import { defaultAbiCoder } from "ethers/lib/utils";
+import {
+  decodeEventLog,
+  encodeAbiParameters,
+  toEventSelector,
+  zeroAddress,
+  type AbiEvent,
+  type Address,
+  type Hex
+} from "viem";
 import { MarketHooksInstanceInputs } from "../types";
 import { assert } from "../utils";
-import { constants } from "ethers";
 
-const NameAndProviderInputsSignature = `tuple(string name, address roleProviderFactory, tuple(uint32 timeToLive, bytes providerFactoryCalldata)[] newProviderInputs, tuple(address providerAddress, uint32 timeToLive)[] existingProviders)`;
+const marketDeployedEventAbi = {
+  anonymous: false,
+  inputs: [
+    { indexed: true, internalType: "address", name: "hooksTemplate", type: "address" },
+    { indexed: true, internalType: "address", name: "market", type: "address" },
+    { indexed: false, internalType: "string", name: "name", type: "string" },
+    { indexed: false, internalType: "string", name: "symbol", type: "string" },
+    { indexed: false, internalType: "address", name: "asset", type: "address" },
+    { indexed: false, internalType: "uint256", name: "maxTotalSupply", type: "uint256" },
+    { indexed: false, internalType: "uint256", name: "annualInterestBips", type: "uint256" },
+    { indexed: false, internalType: "uint256", name: "delinquencyFeeBips", type: "uint256" },
+    { indexed: false, internalType: "uint256", name: "withdrawalBatchDuration", type: "uint256" },
+    { indexed: false, internalType: "uint256", name: "reserveRatioBips", type: "uint256" },
+    { indexed: false, internalType: "uint256", name: "delinquencyGracePeriod", type: "uint256" },
+    { indexed: false, internalType: "uint256", name: "hooks", type: "uint256" }
+  ],
+  name: "MarketDeployed",
+  type: "event"
+} as const satisfies AbiEvent;
 
-export function encodeMarketHooksInstanceInputs(args: MarketHooksInstanceInputs): string {
+const hooksFactoryEventAbiByName = {
+  MarketDeployed: marketDeployedEventAbi
+} as const;
+
+type HooksFactoryEventName = keyof typeof hooksFactoryEventAbiByName;
+
+function getHooksFactoryEventAbi(eventName: string): AbiEvent {
+  if (eventName in hooksFactoryEventAbiByName) {
+    return hooksFactoryEventAbiByName[eventName as HooksFactoryEventName];
+  }
+  throw new Error(`Unsupported hooks factory event: ${eventName}`);
+}
+
+export type LegacyEventResult = Record<string, unknown>;
+
+export type LegacyHooksFactoryContractFacade = {
+  address: string;
+  interface: {
+    getEventTopic: (eventName: string) => string;
+    decodeEventLog: (
+      eventName: string,
+      data: string,
+      topics?: readonly string[]
+    ) => LegacyEventResult;
+  };
+};
+
+export function createLegacyHooksFactoryContractFacade(
+  address: string
+): LegacyHooksFactoryContractFacade {
+  return {
+    address,
+    interface: {
+      getEventTopic: (eventName) => toEventSelector(getHooksFactoryEventAbi(eventName)),
+      decodeEventLog: (eventName, data, topics) => {
+        const eventTopics = topics as [Hex, ...Hex[]] | undefined;
+        const decoded = decodeEventLog({
+          abi: [getHooksFactoryEventAbi(eventName)],
+          data: data as Hex,
+          topics: eventTopics ?? []
+        });
+        return decoded.args as LegacyEventResult;
+      }
+    }
+  };
+}
+
+export function encodeMarketHooksInstanceInputs(args: MarketHooksInstanceInputs): Hex {
   assert(
     args.hooksAddress === undefined,
     `Can not encode hooks instance constructor parameters when hooks address already provided`
@@ -19,14 +91,46 @@ export function encodeMarketHooksInstanceInputs(args: MarketHooksInstanceInputs)
   if (newProviderInputs.length) {
     assert(roleProviderFactory !== undefined, `Can not create new providers without a factory`);
   }
-  return defaultAbiCoder.encode(
-    [NameAndProviderInputsSignature],
+  const encodedNewProviderInputs = newProviderInputs.map(({ data, timeToLive }) => ({
+    timeToLive,
+    providerFactoryCalldata: data as Hex
+  }));
+  const encodedExistingProviders = existingProviders.map(({ providerAddress, timeToLive }) => ({
+    providerAddress: providerAddress as Address,
+    timeToLive
+  }));
+  return encodeAbiParameters(
+    [
+      {
+        type: "tuple",
+        components: [
+          { name: "name", type: "string" },
+          { name: "roleProviderFactory", type: "address" },
+          {
+            name: "newProviderInputs",
+            type: "tuple[]",
+            components: [
+              { name: "timeToLive", type: "uint32" },
+              { name: "providerFactoryCalldata", type: "bytes" }
+            ]
+          },
+          {
+            name: "existingProviders",
+            type: "tuple[]",
+            components: [
+              { name: "providerAddress", type: "address" },
+              { name: "timeToLive", type: "uint32" }
+            ]
+          }
+        ]
+      }
+    ],
     [
       {
         name: hooksInstanceName,
-        roleProviderFactory: roleProviderFactory || constants.AddressZero,
-        newProviderInputs,
-        existingProviders
+        roleProviderFactory: (roleProviderFactory || zeroAddress) as Address,
+        newProviderInputs: encodedNewProviderInputs,
+        existingProviders: encodedExistingProviders
       }
     ]
   );

@@ -1,69 +1,73 @@
-import { defaultAbiCoder } from "ethers/lib/utils";
+import { encodeAbiParameters, zeroAddress } from "viem";
 import {
   DefaultV2ParameterConstraints,
+  getHooksFactoryAddressForMarketType,
   getDeploymentAddress,
+  hasHooksFactoryDeployment,
   SupportedChainId
 } from "../constants";
 import { MarketParameters } from "../controller";
-import {
-  SubgraphHooksInstanceDataFragment,
-  SubgraphHooksTemplateDataFragment
-} from "../gql/graphql";
+import { SubgraphHooksInstanceDataFragment } from "../gql/graphql";
 import { Token, TokenAmount } from "../token";
 import {
   DeployMarketInputsV2Struct,
-  HooksFactory,
-  HooksFactory__factory,
   HooksInstanceDataStructOutput,
-  HooksInstanceDataV21StructOutput,
-  HooksTemplateDataStructOutput,
-  HooksTemplateDataV21StructOutput,
-  IPeriodicTermHooks,
-  IPeriodicTermHooks__factory
-} from "../typechain";
+  HooksTemplateDataStructOutput
+} from "../lens-types";
 import {
   AddLenderInput,
   ContractWrapper,
   DepositAccess,
   FeeConfigurationV2,
   HooksKind,
+  MarketType,
   MarketHooksInstanceInputs,
   MarketParameterConstraints,
   PartialTransaction,
   RoleProvider,
   SignerOrProvider,
+  TransactionHash,
   TransferAccess,
   WithdrawalAccess
 } from "../types";
-import { assert, encodeHooksConfig, parseFeeConfigurationV2 } from "../utils";
-import { BigNumber, constants, ContractTransaction } from "ethers";
+import {
+  assert,
+  encodeHooksConfig,
+  parseFeeConfigurationV2,
+  parseMarketParameterConstraints,
+  prepareTransaction,
+  toNumber
+} from "../utils";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
+  DeployMarketPreview,
   DeployMarketStatus,
   LegacyDeployMarketPreview,
-  readyLegacyDeployMarketPreview
+  readyLegacyDeployMarketPreview,
+  readyRevolvingDeployMarketPreview,
+  RevolvingDeployMarketPreview
 } from "./validation";
-import { encodeMarketHooksInstanceInputs } from "./utils";
-
-type HooksInstanceData = HooksInstanceDataStructOutput | HooksInstanceDataV21StructOutput;
-type HooksTemplateData = HooksTemplateDataStructOutput | HooksTemplateDataV21StructOutput;
+import { encodeRevolvingMarketData } from "./revolving";
+import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iPeriodicTermHooksAbi } from "../abi";
+import { submitPreparedTransaction } from "../internal/viem-write";
+import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
+import {
+  createLegacyHooksFactoryContractFacade,
+  encodeMarketHooksInstanceInputs,
+  LegacyHooksFactoryContractFacade
+} from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface PeriodicTermHooks
   extends Omit<PeriodicTermHooksArgs, "roleProviders" | "constraints"> {}
 
-const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
+const NullProviderIndex = 2 ** 24 - 1;
 
-export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
+export class PeriodicTermHooks extends ContractWrapper {
   readonly kind: HooksKind.PeriodicTerm = HooksKind.PeriodicTerm;
-  readonly contractFactory = IPeriodicTermHooks__factory;
   public roleProviders: RoleProvider[];
   public constraints: MarketParameterConstraints;
-
-  protected get _contractAddress(): string {
-    return this.address;
-  }
 
   constructor({
     provider,
@@ -73,26 +77,41 @@ export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
   }: PeriodicTermHooksArgs) {
     super(provider);
     Object.assign(this, args);
+    this.contract = { address: this.address };
     this.roleProviders = roleProviders;
     this.constraints = constraints;
   }
 
   updateWith(
-    data: HooksInstanceData,
+    data: HooksInstanceDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): void {
-    this.hooksTemplate.updateWith(data.hooksTemplate, signerAddress, isRegisteredBorrower);
+    this.hooksTemplate.updateWith(
+      data.hooksTemplate,
+      signerAddress,
+      isRegisteredBorrower,
+      hooksFactory ?? this.hooksFactory
+    );
     this.name = data.name;
-    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => ({
-      isApproved: true,
-      providerAddress: p.providerAddress,
-      isPullProvider: p.pullProviderIndex !== NullProviderIndex,
-      pullProviderIndex: p.pullProviderIndex,
-      isPushProvider: p.pushProviderIndex !== NullProviderIndex,
-      pushProviderIndex: p.pushProviderIndex,
-      timeToLive: p.timeToLive
-    }));
+    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => {
+      const pullProviderIndex = toNumber(p.pullProviderIndex);
+      const pushProviderIndex = toNumber(p.pushProviderIndex);
+      return {
+        isApproved: true,
+        providerAddress: p.providerAddress,
+        isPullProvider: pullProviderIndex !== NullProviderIndex,
+        pullProviderIndex,
+        isPushProvider: pushProviderIndex !== NullProviderIndex,
+        pushProviderIndex,
+        timeToLive: toNumber(p.timeToLive)
+      };
+    });
+  }
+
+  get hooksFactory(): string {
+    return this.hooksTemplate.hooksFactory;
   }
 
   previewAddLenders(_: AddLenderInput[]): ChangeLenderRolePreview {
@@ -107,33 +126,21 @@ export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
     const credentialTimestamps = inputs.map(
       (input) => input.credentialTimestamp ?? Math.floor(Date.now() / 1000)
     );
-    return {
+    return prepareTransaction({
       to: this.address,
-      data:
+      abi: iPeriodicTermHooksAbi,
+      functionName: inputs.length === 1 ? "grantRole" : "grantRoles",
+      args:
         inputs.length === 1
-          ? this.contract.interface.encodeFunctionData("grantRole", [
-              lenders[0],
-              credentialTimestamps[0]
-            ])
-          : this.contract.interface.encodeFunctionData("grantRoles", [
-              lenders,
-              credentialTimestamps
-            ]),
-      value: "0"
-    };
+          ? [lenders[0], credentialTimestamps[0]]
+          : [lenders, credentialTimestamps]
+    });
   }
 
-  addLenders(inputs: AddLenderInput[]): Promise<ContractTransaction> {
+  addLenders(inputs: AddLenderInput[]): Promise<TransactionHash> {
     const result = this.previewAddLenders(inputs);
     assert(result.status === ChangeLenderRoleStatus.Ready, `Can not add lenders: ${result.status}`);
-
-    const lenders = inputs.map((input) => input.lender);
-    const credentialTimestamps = inputs.map(
-      (input) => input.credentialTimestamp ?? Math.floor(Date.now() / 1000)
-    );
-    return lenders.length === 1
-      ? this.contract.grantRole(lenders[0], credentialTimestamps[0])
-      : this.contract.grantRoles(lenders, credentialTimestamps);
+    return submitPreparedTransaction(this.signer, this.populateAddLenders(inputs));
   }
 
   previewBlockLenders(_: string[]): ChangeLenderRolePreview {
@@ -144,14 +151,12 @@ export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
   }
 
   populateBlockLenders(lenders: string[]): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data:
-        lenders.length === 1
-          ? this.contract.interface.encodeFunctionData("blockFromDeposits(address)", [lenders[0]])
-          : this.contract.interface.encodeFunctionData("blockFromDeposits(address[])", [lenders]),
-      value: "0"
-    };
+      abi: iPeriodicTermHooksAbi,
+      functionName: "blockFromDeposits",
+      args: lenders.length === 1 ? [lenders[0]] : [lenders]
+    });
   }
 
   previewUnblockLender(): ChangeLenderRolePreview {
@@ -161,31 +166,31 @@ export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
     return { status: ChangeLenderRoleStatus.Ready };
   }
 
-  blockLenders(lenders: string[]): Promise<ContractTransaction> {
+  blockLenders(lenders: string[]): Promise<TransactionHash> {
     const result = this.previewBlockLenders(lenders);
     assert(
       result.status === ChangeLenderRoleStatus.Ready,
       `Can not block lenders: ${result.status}`
     );
-    return lenders.length === 1
-      ? this.contract["blockFromDeposits(address)"](lenders[0])
-      : this.contract["blockFromDeposits(address[])"](lenders);
+    return submitPreparedTransaction(this.signer, this.populateBlockLenders(lenders));
   }
 
   populateUnblockLender(lender: string): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("unblockFromDeposits", [lender]),
-      value: "0"
-    };
+      abi: iPeriodicTermHooksAbi,
+      functionName: "unblockFromDeposits",
+      args: [lender]
+    });
   }
 
   static fromLensData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: HooksInstanceData,
+    data: HooksInstanceDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): PeriodicTermHooks {
     return new PeriodicTermHooks({
       chainId,
@@ -198,19 +203,24 @@ export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
         provider,
         data.hooksTemplate,
         signerAddress,
-        isRegisteredBorrower
+        isRegisteredBorrower,
+        hooksFactory
       ),
       borrower: data.borrower,
-      constraints: data.constraints,
-      roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => ({
-        isApproved: true,
-        providerAddress: p.providerAddress,
-        isPullProvider: p.pullProviderIndex !== NullProviderIndex,
-        pullProviderIndex: p.pullProviderIndex,
-        isPushProvider: p.pushProviderIndex !== NullProviderIndex,
-        pushProviderIndex: p.pushProviderIndex,
-        timeToLive: p.timeToLive
-      }))
+      constraints: parseMarketParameterConstraints(data.constraints),
+      roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => {
+        const pullProviderIndex = toNumber(p.pullProviderIndex);
+        const pushProviderIndex = toNumber(p.pushProviderIndex);
+        return {
+          isApproved: true,
+          providerAddress: p.providerAddress,
+          isPullProvider: pullProviderIndex !== NullProviderIndex,
+          pullProviderIndex,
+          isPushProvider: pushProviderIndex !== NullProviderIndex,
+          pushProviderIndex,
+          timeToLive: toNumber(p.timeToLive)
+        };
+      })
     });
   }
 
@@ -219,7 +229,8 @@ export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
     provider: SignerOrProvider,
     data: SubgraphHooksInstanceDataFragment,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): PeriodicTermHooks {
     return new PeriodicTermHooks({
       chainId,
@@ -229,9 +240,10 @@ export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
       hooksTemplate: PeriodicTermHooksTemplate.fromSubgraphData(
         chainId,
         provider,
-        data.hooksTemplate,
+        data.factoryHooksTemplate,
         signerAddress,
-        isRegisteredBorrower
+        isRegisteredBorrower,
+        hooksFactory
       ),
       signerAddress,
       name: data.name,
@@ -263,6 +275,7 @@ export type PeriodicTermHooksArgs = {
 };
 
 export type PeriodicTermHooksTemplateArgs = {
+  hooksFactory?: string;
   signerAddress?: string;
   isRegisteredBorrower?: boolean;
   hooksTemplate: string;
@@ -274,12 +287,13 @@ export type PeriodicTermHooksTemplateArgs = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface PeriodicTermHooksTemplate extends PeriodicTermHooksTemplateArgs {}
+export interface PeriodicTermHooksTemplate extends PeriodicTermHooksTemplateArgs {
+  hooksFactory: string;
+  contract: LegacyHooksFactoryContractFacade;
+}
 
-export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
+export class PeriodicTermHooksTemplate extends ContractWrapper {
   readonly kind: HooksKind.PeriodicTerm = HooksKind.PeriodicTerm;
-  readonly contractFactory = HooksFactory__factory;
-  protected _contractAddress: string;
 
   constructor(
     public chainId: SupportedChainId,
@@ -287,38 +301,47 @@ export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
     args: PeriodicTermHooksTemplateArgs
   ) {
     super(provider);
-    Object.assign(this, args);
-    this._contractAddress = getDeploymentAddress(chainId, "HooksFactory");
+    const hooksFactory = args.hooksFactory ?? getDeploymentAddress(chainId, "HooksFactory");
+    Object.assign(this, {
+      ...args,
+      hooksFactory,
+      contract: createLegacyHooksFactoryContractFacade(hooksFactory)
+    });
   }
 
   updateWith(
-    data: HooksTemplateData,
+    data: HooksTemplateDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory: string = this.hooksFactory
   ): void {
     this.fees = parseFeeConfigurationV2(this.chainId, this.provider, data.fees);
     this.enabled = data.enabled;
-    this.index = data.index;
+    this.index = toNumber(data.index);
     this.name = data.name;
-    this.totalMarkets = data.totalMarkets.toNumber();
+    this.totalMarkets = toNumber(data.totalMarkets);
     this.signerAddress = signerAddress;
     this.isRegisteredBorrower = isRegisteredBorrower;
+    this.hooksFactory = hooksFactory;
+    this.contract = createLegacyHooksFactoryContractFacade(hooksFactory);
   }
 
   static fromLensData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: HooksTemplateData,
+    data: HooksTemplateDataStructOutput,
     signerAddress?: string,
-    isRegisteredBorrower?: boolean
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
   ): PeriodicTermHooksTemplate {
     return new PeriodicTermHooksTemplate(chainId, provider, {
       enabled: data.enabled,
       fees: parseFeeConfigurationV2(chainId, provider, data.fees),
       hooksTemplate: data.hooksTemplate,
-      index: data.index,
+      hooksFactory,
+      index: toNumber(data.index),
       name: data.name,
-      totalMarkets: data.totalMarkets.toNumber(),
+      totalMarkets: toNumber(data.totalMarkets),
       signerAddress,
       isRegisteredBorrower
     });
@@ -327,24 +350,29 @@ export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
   static fromSubgraphData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    {
+    data: SubgraphHooksTemplateLike,
+    signerAddress?: string,
+    isRegisteredBorrower?: boolean,
+    hooksFactory?: string
+  ): PeriodicTermHooksTemplate {
+    const normalizedTemplate = normalizeSubgraphHooksTemplateData(data);
+    const {
       feeRecipient,
       protocolFeeBips,
       disabled,
-      id,
+      hooksTemplate,
       name,
       originationFeeAsset,
       originationFeeAmount
-    }: SubgraphHooksTemplateDataFragment,
-    signerAddress?: string,
-    isRegisteredBorrower?: boolean
-  ): PeriodicTermHooksTemplate {
+    } = normalizedTemplate;
+    const scopedHooksFactory = hooksFactory ?? normalizedTemplate.hooksFactory;
     const originationFeeToken = originationFeeAsset
       ? Token.fromSubgraphToken(chainId, originationFeeAsset, provider)
       : undefined;
 
     return new PeriodicTermHooksTemplate(chainId, provider, {
-      hooksTemplate: id,
+      hooksTemplate,
+      hooksFactory: scopedHooksFactory,
       fees: {
         feeRecipient,
         protocolFeeBips,
@@ -364,7 +392,16 @@ export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
     });
   }
 
+  previewDeployMarket(
+    args: LegacyPeriodicTermMarketDeploymentArgs & MarketHooksInstanceInputs
+  ): LegacyDeployMarketPreview;
+  previewDeployMarket(
+    args: RevolvingPeriodicTermMarketDeploymentArgs & MarketHooksInstanceInputs
+  ): RevolvingDeployMarketPreview;
+  previewDeployMarket(args: PeriodicTermMarketDeploymentArgs): DeployMarketPreview;
   previewDeployMarket({
+    marketType,
+    commitmentFeeBips,
     hooksAddress,
     hooksInstanceName,
     existingProviders,
@@ -381,7 +418,8 @@ export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
     periodDuration,
     withdrawalWindowDuration,
     ...otherParameters
-  }: PeriodicTermMarketDeploymentArgs): LegacyDeployMarketPreview {
+  }: PeriodicTermMarketDeploymentArgs): DeployMarketPreview {
+    const targetMarketType = marketType ?? "legacy";
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -403,6 +441,16 @@ export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
     if (!hooksAddress && !roleProviderFactory && newProviderInputs?.length) {
       return { status: DeployMarketStatus.CreateProviderInputsWithoutFactory };
     }
+    if (!hasHooksFactoryDeployment(this.chainId, targetMarketType)) {
+      return { status: DeployMarketStatus.WrongHooksFactory };
+    }
+    const expectedHooksFactory = getHooksFactoryAddressForMarketType(
+      this.chainId,
+      targetMarketType
+    );
+    if (this.hooksFactory.toLowerCase() !== expectedHooksFactory.toLowerCase()) {
+      return { status: DeployMarketStatus.WrongHooksFactory };
+    }
 
     const hooksConfig = encodeHooksConfig({
       hooksAddress,
@@ -410,13 +458,19 @@ export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
       useOnQueueWithdrawal: withdrawalAccess === WithdrawalAccess.RequiresCredential,
       useOnTransfer: transferAccess === TransferAccess.RequiresCredential
     });
-    const hooksData = defaultAbiCoder.encode(
-      ["uint32", "uint32", "uint32", "uint128", "bool"],
+    const hooksData = encodeAbiParameters(
+      [
+        { type: "uint32" },
+        { type: "uint32" },
+        { type: "uint32" },
+        { type: "uint128" },
+        { type: "bool" }
+      ],
       [
         firstWithdrawalWindowStart,
         periodDuration,
         withdrawalWindowDuration,
-        minimumDeposit?.raw ?? 0,
+        minimumDeposit?.raw ?? 0n,
         transferAccess === TransferAccess.Disabled
       ]
     );
@@ -426,8 +480,35 @@ export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
       maxTotalSupply: maxTotalSupply.raw,
       hooks: hooksConfig
     } as DeployMarketInputsV2Struct;
-    const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? BigNumber.from(0);
-    const originationFeeToken = this.fees.originationFeeToken?.address ?? constants.AddressZero;
+    const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0n;
+    const originationFeeToken = this.fees.originationFeeToken?.address ?? zeroAddress;
+    if (marketType === "revolving") {
+      const marketData = encodeRevolvingMarketData({ commitmentFeeBips });
+      if (hooksAddress) {
+        return readyRevolvingDeployMarketPreview({
+          fn: "deployMarket",
+          args: [parameters, hooksData, marketData, salt, originationFeeToken, originationFeeAmount]
+        });
+      }
+      return readyRevolvingDeployMarketPreview({
+        fn: "deployMarketAndHooks",
+        args: [
+          this.hooksTemplate,
+          encodeMarketHooksInstanceInputs({
+            existingProviders,
+            newProviderInputs,
+            hooksInstanceName,
+            roleProviderFactory
+          }),
+          parameters,
+          hooksData,
+          marketData,
+          salt,
+          originationFeeToken,
+          originationFeeAmount
+        ]
+      });
+    }
     if (hooksAddress) {
       return readyLegacyDeployMarketPreview({
         fn: "deployMarket",
@@ -453,19 +534,22 @@ export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
     });
   }
 
-  deployMarket({
-    ...otherParameters
-  }: PeriodicTermMarketDeploymentArgs): Promise<ContractTransaction> {
+  deployMarket({ ...otherParameters }: PeriodicTermMarketDeploymentArgs): Promise<TransactionHash> {
     const result = this.previewDeployMarket(otherParameters);
     assert(result.status === DeployMarketStatus.Ready, `Can not deploy market: ${result.status}`);
-    if (result.fn === "deployMarket") {
-      return this.contract.deployMarket(...result.args);
-    }
-    return this.contract.deployMarketAndHooks(...result.args);
+    return submitPreparedTransaction(
+      this.signer,
+      prepareTransaction({
+        to: this.hooksFactory,
+        abi: result.marketType === "legacy" ? hooksFactoryAbi : hooksFactoryRevolvingAbi,
+        functionName: result.fn,
+        args: result.args
+      })
+    );
   }
 }
 
-export type PeriodicTermMarketDeploymentArgs = MarketParameters & {
+type PeriodicTermCommonMarketDeploymentArgs = MarketParameters & {
   /** Create2 salt to use for the market deployment */
   salt: string;
   /** First timestamp at which lenders can queue withdrawals */
@@ -482,4 +566,18 @@ export type PeriodicTermMarketDeploymentArgs = MarketParameters & {
   depositAccess: DepositAccess;
   /** Level of access required for a lender to make a withdrawal request */
   withdrawalAccess: WithdrawalAccess;
-} & MarketHooksInstanceInputs;
+};
+
+export type LegacyPeriodicTermMarketDeploymentArgs = PeriodicTermCommonMarketDeploymentArgs & {
+  marketType?: Extract<MarketType, "legacy">;
+  commitmentFeeBips?: undefined;
+};
+
+export type RevolvingPeriodicTermMarketDeploymentArgs = PeriodicTermCommonMarketDeploymentArgs & {
+  marketType: Extract<MarketType, "revolving">;
+  commitmentFeeBips: number;
+};
+
+export type PeriodicTermMarketDeploymentArgs =
+  | (LegacyPeriodicTermMarketDeploymentArgs & MarketHooksInstanceInputs)
+  | (RevolvingPeriodicTermMarketDeploymentArgs & MarketHooksInstanceInputs);

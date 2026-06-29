@@ -7,12 +7,17 @@ import {
 import { Market } from "../market";
 import { LenderRole } from "../account";
 import { HooksCredential, HooksKind, MarketVersion } from "../types";
-import { BigNumber } from "ethers";
-import { TokenAmount } from "../token";
-import { assert, parseSubgraphLenderHooksAccess, parseSubgraphLenderStatus } from "../utils";
-import { LenderAccountDataStructOutput, LenderAccountDataV21StructOutput } from "../typechain";
+import { TokenAmount, toRawAmount } from "../token";
+import {
+  assert,
+  BigintNumberish,
+  parseSubgraphLenderHooksAccess,
+  parseSubgraphLenderStatus,
+  toNumber
+} from "../utils";
+import type { LenderAccountDataStructOutput } from "../lens-types";
 
-const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
+const NullProviderIndex = 2 ** 24 - 1;
 
 export type GetActiveLendersByMarketOptions = SubgraphGetActiveLendersByMarketQueryVariables & {
   fetchPolicy?: FetchPolicy;
@@ -22,7 +27,7 @@ export type GetActiveLendersByMarketOptions = SubgraphGetActiveLendersByMarketQu
 type BasicLenderArgs = {
   market: Market;
   address: string;
-  scaledBalance: BigNumber;
+  scaledBalance: BigintNumberish;
   addedTimestamp: number;
   isKnownLender?: boolean;
   /** For V2 markets - credentials on market hooks instance */
@@ -33,12 +38,14 @@ type BasicLenderArgs = {
   role?: LenderRole;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface BasicLenderData extends BasicLenderArgs {}
+export interface BasicLenderData extends Omit<BasicLenderArgs, "scaledBalance"> {
+  scaledBalance: bigint;
+}
 
 export class BasicLenderData {
   constructor(args: BasicLenderArgs) {
     Object.assign(this, args);
+    this.scaledBalance = toRawAmount(args.scaledBalance);
   }
 
   get marketBalance(): TokenAmount {
@@ -114,9 +121,6 @@ export class BasicLenderData {
       if (!config.flags!.useOnQueueWithdrawal) return true;
       // Can not withdraw if market in fixed term
       if (this.market.isInFixedTerm) return false;
-      if (config.kind === HooksKind.PeriodicTerm && !this.market.isPeriodicWithdrawalWindowOpen) {
-        return false;
-      }
       // Can not withdraw if market requires access and lender has no credential and is not a known lender
       if (
         config.flags.useOnQueueWithdrawal &&
@@ -129,21 +133,21 @@ export class BasicLenderData {
     }
   }
 
-  updateWith(data: LenderAccountDataStructOutput | LenderAccountDataV21StructOutput): void {
-    this.scaledBalance = data.scaledBalance;
+  updateWith(data: LenderAccountDataStructOutput): void {
+    this.scaledBalance = toRawAmount(data.scaledBalance);
     this.isKnownLender = data.isKnownLender;
     this.credential = {
       canRefresh: data.canRefresh,
       isBlockedFromDeposits: data.isBlockedFromDeposits,
-      lastApprovalTimestamp: data.lastApprovalTimestamp,
+      lastApprovalTimestamp: toNumber(data.lastApprovalTimestamp),
       lastProvider: {
         isApproved: true,
         providerAddress: data.lastProvider.providerAddress,
-        isPullProvider: data.lastProvider.pullProviderIndex !== NullProviderIndex,
-        pullProviderIndex: data.lastProvider.pullProviderIndex,
-        isPushProvider: data.lastProvider.pushProviderIndex !== NullProviderIndex,
-        pushProviderIndex: data.lastProvider.pushProviderIndex,
-        timeToLive: data.lastProvider.timeToLive
+        isPullProvider: toNumber(data.lastProvider.pullProviderIndex) !== NullProviderIndex,
+        pullProviderIndex: toNumber(data.lastProvider.pullProviderIndex),
+        isPushProvider: toNumber(data.lastProvider.pushProviderIndex) !== NullProviderIndex,
+        pushProviderIndex: toNumber(data.lastProvider.pushProviderIndex),
+        timeToLive: toNumber(data.lastProvider.timeToLive)
       }
     };
   }
@@ -182,7 +186,7 @@ export async function getActiveLendersByMarket(
         addedTimestamp:
           controllerAuthorization?.addedTimestamp ?? hooksAccess?.addedTimestamp ?? addedTimestamp,
         market,
-        scaledBalance: BigNumber.from(scaledBalance),
+        scaledBalance: toRawAmount(scaledBalance),
         credential: hooksAccess ? parseSubgraphLenderHooksAccess(hooksAccess) : undefined,
         isAuthorizedOnController: controllerAuthorization?.authorized,
         isKnownLender: !!knownLenderStatus?.id,

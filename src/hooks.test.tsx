@@ -9,7 +9,6 @@ import {
   SubgraphMarketVersion,
   useGetSubgraphStatusQuery
 } from "./gql/graphql";
-// import { JsonRpcProvider } from "@ethersproject/providers";
 import { SupportedChainId, getSubgraphClient } from "./constants";
 // import {
 // useAccountsWhereLenderAuthorizedOrActive,

@@ -1,26 +1,26 @@
-import { BigNumber, ContractTransaction } from "ethers";
-import { Signer } from "@ethersproject/abstract-signer";
+import { encodeFunctionData } from "viem";
 import {
-  IFixedTermHooks__factory,
-  IOpenTermHooks__factory,
   MarketDataBaseV2_5StructOutput,
   MarketDataStructOutput,
   MarketDataV2_5StructOutput,
   MarketDataV2StructOutput,
-  MarketDataV21StructOutput,
-  WildcatMarket,
-  WildcatMarket__factory
-} from "./typechain";
+  MarketLiveDataV2_5StructOutput
+} from "./lens-types";
+import { SupportedChainId, getMarketTypeForHooksFactory, hasDeploymentAddress } from "./constants";
 import {
-  SupportedChainId,
-  getArchControllerContract,
-  getLensV2_5Contract,
-  getLensContract,
-  getLensV2Contract,
-  getMarketTypeForHooksFactory,
-  hasDeploymentAddress
-} from "./constants";
-import { TokenAmount, Token, toBn } from "./token";
+  getRegisteredMarkets,
+  getRegisteredMarketsCount,
+  getRegisteredMarketsPage
+} from "./internal/arch-controller";
+import {
+  getLegacyMarketData,
+  getLegacyMarketsData,
+  getUnifiedMarketDataV2,
+  getUnifiedMarketsDataV2,
+  getUnifiedMarketsLiveDataV2,
+  getV2MarketData
+} from "./internal/market-lens";
+import { TokenAmount, Token, toRawAmount } from "./token";
 import {
   SignerOrProvider,
   ContractWrapper,
@@ -31,9 +31,9 @@ import {
   HooksConfig,
   OpenTermHooksConfig,
   FixedTermHooksConfig,
-  PeriodicTermHooksConfig
+  PeriodicTermHooksConfig,
+  TransactionHash
 } from "./types";
-import { formatUnits } from "ethers/lib/utils";
 import { MarketAccount } from "./account";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
 
@@ -43,6 +43,7 @@ import {
   SubgraphFeesCollectedDataFragment,
   SubgraphMarketDataWithEventsFragment,
   SubgraphMarketDeployedEventFragment,
+  SubgraphMarketListDataFragment,
   SubgraphRepaymentDataFragment
 } from "./gql/graphql";
 import {
@@ -52,17 +53,22 @@ import {
   MakeOptional,
   RepaymentRecord,
   parseMarketRecord,
-  bipMul,
-  mulDiv,
-  rayDiv,
-  rayMul,
-  RAY,
-  bipToRay,
-  BIP,
+  BIP_BIGINT,
+  RAY_BIGINT,
   SECONDS_IN_365_DAYS,
-  assert
+  assert,
+  bipMulBigint,
+  bipToRayBigint,
+  formatFixedBigint,
+  prepareTransaction,
+  rayDivBigint,
+  rayMulBigint,
+  toNumber
 } from "./utils";
 import { hooksTemplateFromSubgraph } from "./access";
+import { wildcatMarketAbi } from "./abi";
+import { submitPreparedTransaction } from "./internal/viem-write";
+import { getEthersSignerAddress } from "./internal/ethers-signer";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -107,6 +113,22 @@ export type RevolvingCurrentAprMetrics = {
   effectiveLenderAprBips: number;
 };
 
+export type MarketAprDisplayBips = {
+  isRevolving: boolean;
+  marketType?: MarketType;
+  configuredAprKind: "annualInterest" | "utilization";
+  configuredAprBips: number;
+  configuredAnnualInterestBips: number;
+  configuredUtilizationAprBips?: number;
+  commitmentAprBips?: number;
+  utilizationBips?: number;
+  currentUtilizationAprBips?: number;
+  currentBaseLenderAprBips: number;
+  currentProtocolAprBips: number;
+  currentPenaltyAprBips: number;
+  currentEffectiveLenderAprBips: number;
+};
+
 const hasUnifiedLatestLensForDirectReads = (chainId: SupportedChainId): boolean => {
   return hasDeploymentAddress(chainId, "MarketLensV2_5");
 };
@@ -122,14 +144,32 @@ const toUnifiedMarketDataV2 = (
     market: data,
     commitmentFeeBips: {
       isPresent: false,
-      value: BigNumber.from(0)
+      value: 0n
     },
     drawnAmount: {
       isPresent: false,
-      value: BigNumber.from(0)
+      value: 0n
     }
-  };
+  } as unknown as MarketDataV2_5StructOutput;
 };
+
+type SubgraphMarketHydrationData =
+  | MakeOptional<
+      SubgraphMarketDataWithEventsFragment,
+      "depositRecords" | "repaymentRecords" | "borrowRecords" | "feeCollectionRecords"
+    >
+  | SubgraphMarketListDataFragment;
+
+const hasSubgraphMarketTotals = (
+  data: SubgraphMarketHydrationData
+): data is MakeOptional<
+  SubgraphMarketDataWithEventsFragment,
+  "depositRecords" | "repaymentRecords" | "borrowRecords" | "feeCollectionRecords"
+> => "totalBorrowed" in data;
+
+const hasSubgraphMarketRecords = (
+  data: SubgraphMarketHydrationData
+): data is SubgraphMarketDataWithEventsFragment => "depositRecords" in data;
 
 export type MarketArgs = {
   provider: SignerOrProvider;
@@ -155,17 +195,17 @@ export type MarketArgs = {
   originalReserveRatioBips: number;
   temporaryReserveRatioExpiry: number;
   isClosed: boolean;
-  scaleFactor: BigNumber;
+  scaleFactor: bigint;
   // Total amount of market tokens in existence
   totalSupply: TokenAmount;
   // Maximum amount of market tokens that can be minted
   maxTotalSupply: TokenAmount;
-  scaledTotalSupply: BigNumber;
+  scaledTotalSupply: bigint;
   // Total amount of underlying assets held in the market
   totalAssets: TokenAmount;
   lastAccruedProtocolFees: TokenAmount;
   normalizedUnclaimedWithdrawals: TokenAmount;
-  scaledPendingWithdrawals: BigNumber;
+  scaledPendingWithdrawals: bigint;
   pendingWithdrawalExpiry: number;
   // Whether the market is delinquent
   isDelinquent: boolean;
@@ -207,15 +247,18 @@ export interface Market
   decimals: number;
 }
 
-export class Market extends ContractWrapper<WildcatMarket> {
+export class Market extends ContractWrapper {
+  public contract!: {
+    address: string;
+    interface: {
+      encodeFunctionData: (functionName: string, args?: readonly unknown[]) => string;
+    };
+  };
+
   public depositRecords: DepositRecord[];
   public repaymentRecords: RepaymentRecord[];
   public borrowRecords: BorrowRecord[];
   public feeCollectionRecords: FeeCollectionRecord[];
-
-  protected get _contractAddress(): string {
-    return this.address;
-  }
 
   constructor({ provider, ...args }: MarketArgs & { hooksConfig?: HooksConfig }) {
     super(provider);
@@ -224,7 +267,18 @@ export class Market extends ContractWrapper<WildcatMarket> {
       address,
       name,
       symbol,
-      decimals
+      decimals,
+      contract: {
+        address,
+        interface: {
+          encodeFunctionData: (functionName: string, args: readonly unknown[] = []) =>
+            encodeFunctionData({
+              abi: wildcatMarketAbi,
+              functionName,
+              args
+            } as Parameters<typeof encodeFunctionData>[0])
+        }
+      }
     });
     Object.assign(this, args);
     this.depositRecords = (args.depositRecords ?? []).map((log) =>
@@ -245,7 +299,31 @@ export class Market extends ContractWrapper<WildcatMarket> {
     );
   }
 
-  readonly contractFactory = WildcatMarket__factory;
+  toJSON(): {
+    type: "Market";
+    chainId: SupportedChainId;
+    address: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    version: MarketVersion;
+    marketType?: MarketType;
+    hooksFactory?: string;
+    borrower: string;
+  } {
+    return {
+      type: "Market",
+      chainId: this.chainId,
+      address: this.address,
+      name: this.name,
+      symbol: this.symbol,
+      decimals: this.decimals,
+      version: this.version,
+      marketType: this.marketType,
+      hooksFactory: this.hooksFactory,
+      borrower: this.borrower
+    };
+  }
 
   /* -------------------------------------------------------------------------- */
   /*                              Property Getters                              */
@@ -257,8 +335,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   get isInFixedTerm(): boolean {
     if (this.version !== MarketVersion.V2) return false;
-    const config = this.hooksConfig;
-    return config?.kind === HooksKind.FixedTerm && config.fixedTermEndTime >= Date.now() / 1_000;
+    const config = this.hooksConfig!;
+    if (config.kind !== HooksKind.FixedTerm) return false;
+    const fixedTermEndTime = config.fixedTermEndTime;
+    return fixedTermEndTime >= Date.now() / 1_000;
   }
 
   get periodicHooksConfig(): PeriodicTermHooksConfig | undefined {
@@ -302,7 +382,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   /** @returns Percentage growth of the market since it was created */
   get allTimeGrowth(): number {
     // 27 - 2 to convert to percentage
-    return +formatUnits(this.scaleFactor, 25);
+    return +formatFixedBigint(this.scaleFactor, 25, 25);
   }
 
   /** @returns Maximum amount of underlying token that can be deposited */
@@ -318,21 +398,20 @@ export class Market extends ContractWrapper<WildcatMarket> {
     }
 
     const totalSupply = this.totalSupply.raw;
-    const drawnAmountRaw = drawnAmount.raw.gt(totalSupply) ? totalSupply : drawnAmount.raw;
+    const drawnAmountRaw = drawnAmount.raw > totalSupply ? totalSupply : drawnAmount.raw;
 
-    const utilizationBips = totalSupply.gt(0)
-      ? drawnAmountRaw.mul(BIP).div(totalSupply).toNumber()
-      : 0;
+    const utilizationBips =
+      totalSupply > 0n ? Number((drawnAmountRaw * BIP_BIGINT) / totalSupply) : 0;
 
-    const utilizationAprBips = totalSupply.gt(0)
-      ? drawnAmountRaw.mul(this.annualInterestBips).div(totalSupply).toNumber()
-      : 0;
+    const utilizationAprBips =
+      totalSupply > 0n
+        ? Number((drawnAmountRaw * BigInt(this.annualInterestBips)) / totalSupply)
+        : 0;
 
     const blendedBaseAprBips = commitmentFeeBips + utilizationAprBips;
-    const protocolAprBips = BigNumber.from(blendedBaseAprBips)
-      .mul(this.protocolFeeBips)
-      .div(BIP)
-      .toNumber();
+    const protocolAprBips = Number(
+      (BigInt(blendedBaseAprBips) * BigInt(this.protocolFeeBips)) / BIP_BIGINT
+    );
     const penaltyAprBips = this.isIncurringPenalties ? this.delinquencyFeeBips : 0;
 
     return {
@@ -351,16 +430,54 @@ export class Market extends ContractWrapper<WildcatMarket> {
     return this.currentRevolvingAprMetrics?.blendedBaseAprBips ?? this.annualInterestBips;
   }
 
-  private get currentBaseLenderAPR(): BigNumber {
-    return bipToRay(this.currentBaseLenderAprBips);
+  get currentAprDisplayBips(): MarketAprDisplayBips {
+    const revolvingMetrics = this.currentRevolvingAprMetrics;
+    if (revolvingMetrics) {
+      return {
+        isRevolving: true,
+        marketType: this.marketType,
+        configuredAprKind: "utilization",
+        configuredAprBips: this.annualInterestBips,
+        configuredAnnualInterestBips: this.annualInterestBips,
+        configuredUtilizationAprBips: this.annualInterestBips,
+        commitmentAprBips: revolvingMetrics.commitmentFeeBips,
+        utilizationBips: revolvingMetrics.utilizationBips,
+        currentUtilizationAprBips: revolvingMetrics.utilizationAprBips,
+        currentBaseLenderAprBips: revolvingMetrics.blendedBaseAprBips,
+        currentProtocolAprBips: revolvingMetrics.protocolAprBips,
+        currentPenaltyAprBips: revolvingMetrics.penaltyAprBips,
+        currentEffectiveLenderAprBips: revolvingMetrics.effectiveLenderAprBips
+      };
+    }
+
+    const currentProtocolAprBips = Number(
+      (BigInt(this.annualInterestBips) * BigInt(this.protocolFeeBips)) / BIP_BIGINT
+    );
+    const currentPenaltyAprBips = this.isIncurringPenalties ? this.delinquencyFeeBips : 0;
+
+    return {
+      isRevolving: false,
+      marketType: this.marketType,
+      configuredAprKind: "annualInterest",
+      configuredAprBips: this.annualInterestBips,
+      configuredAnnualInterestBips: this.annualInterestBips,
+      currentBaseLenderAprBips: this.annualInterestBips,
+      currentProtocolAprBips,
+      currentPenaltyAprBips,
+      currentEffectiveLenderAprBips: this.annualInterestBips + currentPenaltyAprBips
+    };
   }
 
-  private get currentPenaltyAPR(): BigNumber {
-    return this.isIncurringPenalties ? bipToRay(this.delinquencyFeeBips) : BigNumber.from(0);
+  private get currentBaseLenderAPR(): bigint {
+    return bipToRayBigint(this.currentBaseLenderAprBips);
   }
 
-  private get currentProtocolAPR(): BigNumber {
-    return bipMul(this.currentBaseLenderAPR, BigNumber.from(this.protocolFeeBips));
+  private get currentPenaltyAPR(): bigint {
+    return this.isIncurringPenalties ? bipToRayBigint(this.delinquencyFeeBips) : 0n;
+  }
+
+  private get currentProtocolAPR(): bigint {
+    return bipMulBigint(this.currentBaseLenderAPR, this.protocolFeeBips);
   }
 
   /** @returns Whether the borrower is in penalized delinquency */
@@ -418,7 +535,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
     const actualRatio = this.totalSupply.eq(0)
       ? 100
-      : +formatUnits(this.totalAssets.raw.mul(RAY).div(this.totalSupply.raw), 25);
+      : +formatFixedBigint((this.totalAssets.raw * RAY_BIGINT) / this.totalSupply.raw, 25, 25);
     if (this.temporaryReserveRatio) {
       return {
         targetRatio,
@@ -432,7 +549,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   get normalizedPendingWithdrawals(): TokenAmount {
-    return this.underlyingToken.getAmount(rayMul(this.scaledPendingWithdrawals, this.scaleFactor));
+    return this.underlyingToken.getAmount(
+      rayMulBigint(this.scaledPendingWithdrawals, this.scaleFactor)
+    );
   }
 
   /** @returns Whether the borrower can change the APR */
@@ -451,9 +570,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   get minimumReserves(): TokenAmount {
-    return this.underlyingToken.getAmount(
-      bipMul(this.outstandingTotalSupply.raw, BigNumber.from(this.reserveRatioBips))
-    );
+    return this.outstandingTotalSupply.bipMul(this.reserveRatioBips);
   }
 
   get borrowableAssets(): TokenAmount {
@@ -495,19 +612,21 @@ export class Market extends ContractWrapper<WildcatMarket> {
     };
   }
 
-  normalizeAmount(amount: BigNumber): BigNumber {
-    return rayMul(amount, this.scaleFactor);
+  normalizeAmount(amount: bigint): bigint {
+    return rayMulBigint(amount, this.scaleFactor);
   }
 
-  scaleAmount(amount: BigNumber): BigNumber {
-    return rayDiv(amount, this.scaleFactor);
+  scaleAmount(amount: bigint): bigint {
+    return rayDivBigint(amount, this.scaleFactor);
   }
 
   get secondsBeforeDelinquency(): number {
     if (this.willBeDelinquent || this.totalDebts.eq(0)) return 0;
 
     const scaledBase = this.scaledTotalSupply;
-    const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
+    const basePrincipal = this.underlyingToken.getAmount(
+      rayMulBigint(scaledBase, this.scaleFactor)
+    );
 
     const baseAPRRay = this.currentBaseLenderAPR;
     const protocolFeeAPRRay = this.currentProtocolAPR;
@@ -515,7 +634,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
     // lender APR portion
     const lenderRequirementGrowthPerSecond = basePrincipal
-      .rayMul(baseAPRRay.add(delinquencyFeeAPRRay))
+      .rayMul(baseAPRRay + delinquencyFeeAPRRay)
       .div(SECONDS_IN_365_DAYS)
       .bipMul(this.reserveRatioBips);
 
@@ -528,24 +647,26 @@ export class Market extends ContractWrapper<WildcatMarket> {
       protocolRequirementGrowthPerSecond.raw
     );
     // essentially if  apr=0 and rr=0 then bips alone wont move us to delinquency
-    if (totalRequirementGrowthPerSecond.raw.isZero()) return Number.MAX_SAFE_INTEGER;
+    if (totalRequirementGrowthPerSecond.raw === 0n) return Number.MAX_SAFE_INTEGER;
 
     const buffer = this.liquidReserves.sub(this.minimumReserves);
-    if (buffer.raw.lte(0)) return 0; // we are delinquent
-    return buffer.div(totalRequirementGrowthPerSecond, true).raw.toNumber(); // seconds until the party
+    if (buffer.raw <= 0n) return 0; // we are delinquent
+    return Number(buffer.div(totalRequirementGrowthPerSecond, true).raw); // seconds until the party
   }
 
   getSecondsBeforeDelinquencyForBorrowedAmount(borrowAmount: TokenAmount): number {
     if (this.isDelinquent || this.totalDebts.eq(0)) return 0;
     const scaledBase = this.scaledTotalSupply;
 
-    const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
+    const basePrincipal = this.underlyingToken.getAmount(
+      rayMulBigint(scaledBase, this.scaleFactor)
+    );
     const baseAPRRay = this.currentBaseLenderAPR;
     const protocolFeeAPRRay = this.currentProtocolAPR;
     const delinquencyFeeAPRRay = this.currentPenaltyAPR;
 
     const lenderRequirementGrowthPerSecond = basePrincipal
-      .rayMul(baseAPRRay.add(delinquencyFeeAPRRay))
+      .rayMul(baseAPRRay + delinquencyFeeAPRRay)
       .div(SECONDS_IN_365_DAYS)
       .bipMul(this.reserveRatioBips);
 
@@ -556,11 +677,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
     const totalRequirementGrowthPerSecond = lenderRequirementGrowthPerSecond.add(
       protocolRequirementGrowthPerSecond.raw
     );
-    if (totalRequirementGrowthPerSecond.raw.isZero()) return Number.MAX_SAFE_INTEGER;
+    if (totalRequirementGrowthPerSecond.raw === 0n) return Number.MAX_SAFE_INTEGER;
 
     const postBorrowBuffer = this.liquidReserves.sub(this.minimumReserves).sub(borrowAmount);
-    if (postBorrowBuffer.raw.lte(0)) return 0;
-    return postBorrowBuffer.div(totalRequirementGrowthPerSecond, true).raw.toNumber();
+    if (postBorrowBuffer.raw <= 0n) return 0;
+    return Number(postBorrowBuffer.div(totalRequirementGrowthPerSecond, true).raw);
   }
   /**
    * @dev Calculate token amount to be repayed by borrower for a given duration
@@ -568,14 +689,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
    * @return token amount to be repayed
    **/
   repayRequiredForDuration(timeToPayInSeconds: number): TokenAmount {
-    const scaledBase = this.scaledTotalSupply.sub(this.scaledPendingWithdrawals);
-    if (scaledBase.lte(0)) return this.underlyingToken.getAmount(0);
-    const basePrincipal = this.underlyingToken.getAmount(rayMul(scaledBase, this.scaleFactor));
+    const scaledBase = this.scaledTotalSupply - this.scaledPendingWithdrawals;
+    if (scaledBase <= 0n) return this.underlyingToken.getAmount(0);
+    const basePrincipal = this.underlyingToken.getAmount(
+      rayMulBigint(scaledBase, this.scaleFactor)
+    );
     const baseAPRRay = this.currentBaseLenderAPR;
     const protocolFeeAPRRay = this.currentProtocolAPR;
     const delinquencyFeeAPRRay = this.currentPenaltyAPR;
     const lenderRequirementGrowthPerSecond = basePrincipal
-      .rayMul(baseAPRRay.add(delinquencyFeeAPRRay))
+      .rayMul(baseAPRRay + delinquencyFeeAPRRay)
       .div(SECONDS_IN_365_DAYS)
       .bipMul(this.reserveRatioBips);
     const protocolRequirementGrowthPerSecond = basePrincipal
@@ -594,10 +717,14 @@ export class Market extends ContractWrapper<WildcatMarket> {
    *
    * @return apr paid by borrower in ray
    */
-  get effectiveBorrowerAPR(): BigNumber {
-    let apr = bipMul(this.currentBaseLenderAPR, BIP.add(this.protocolFeeBips));
-    apr = apr.add(this.currentPenaltyAPR);
-    return apr;
+  // Preserve ethers-era consumers whose formatting helpers typed APR rays as BigNumber.
+  // Runtime remains bigint, with BigInt compatibility methods installed by token.ts.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get effectiveBorrowerAPR(): any {
+    return (
+      bipMulBigint(this.currentBaseLenderAPR, BIP_BIGINT + BigInt(this.protocolFeeBips)) +
+      this.currentPenaltyAPR
+    );
   }
 
   /**
@@ -606,8 +733,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
    *
    * @return apr earned by lender in ray
    */
-  get effectiveLenderAPR(): BigNumber {
-    return this.currentBaseLenderAPR.add(this.currentPenaltyAPR);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get effectiveLenderAPR(): any {
+    return this.currentBaseLenderAPR + this.currentPenaltyAPR;
   }
 
   /* -------------------------------------------------------------------------- */
@@ -617,37 +745,54 @@ export class Market extends ContractWrapper<WildcatMarket> {
   async executeWithdrawal({
     lender,
     expiry
-  }: Pick<LenderWithdrawalStatus, "lender" | "expiry">): Promise<ContractTransaction> {
-    return this.contract.executeWithdrawal(lender, expiry);
+  }: Pick<LenderWithdrawalStatus, "lender" | "expiry">): Promise<TransactionHash> {
+    return submitPreparedTransaction(
+      this.signer,
+      prepareTransaction({
+        to: this.address,
+        abi: wildcatMarketAbi,
+        functionName: "executeWithdrawal",
+        args: [lender, expiry]
+      })
+    );
   }
 
   async executeWithdrawals(
     withdrawals: Array<Pick<LenderWithdrawalStatus, "lender" | "expiry">>
-  ): Promise<ContractTransaction> {
+  ): Promise<TransactionHash> {
     const lenders = withdrawals.map((w) => w.lender);
     const expiries = withdrawals.map((w) => w.expiry);
-    return this.contract.executeWithdrawals(lenders, expiries);
+    return submitPreparedTransaction(
+      this.signer,
+      prepareTransaction({
+        to: this.address,
+        abi: wildcatMarketAbi,
+        functionName: "executeWithdrawals",
+        args: [lenders, expiries]
+      })
+    );
   }
 
   populateRepayAndProcessUnpaidWithdrawalBatches(
     amount: TokenAmount,
     maxBatches = 10
   ): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("repayAndProcessUnpaidWithdrawalBatches", [
-        amount.raw,
-        maxBatches
-      ]),
-      value: "0"
-    };
+      abi: wildcatMarketAbi,
+      functionName: "repayAndProcessUnpaidWithdrawalBatches",
+      args: [amount.raw, maxBatches]
+    });
   }
 
   async repayAndProcessUnpaidWithdrawalBatches(
     amount: TokenAmount,
     maxBatches = 10
-  ): Promise<ContractTransaction> {
-    return this.contract.repayAndProcessUnpaidWithdrawalBatches(amount.raw, maxBatches);
+  ): Promise<TransactionHash> {
+    return submitPreparedTransaction(
+      this.signer,
+      this.populateRepayAndProcessUnpaidWithdrawalBatches(amount, maxBatches)
+    );
   }
 
   /* -------------------------------------------------------------------------- */
@@ -667,22 +812,20 @@ export class Market extends ContractWrapper<WildcatMarket> {
     if (annualInterestBips < originalAnnualInterestBips) {
       let doubleRelativeDiff: number;
       if (this.version === MarketVersion.V2) {
-        const relativeDiff = mulDiv(
-          toBn(10_000),
-          toBn(originalAnnualInterestBips - annualInterestBips),
-          toBn(originalAnnualInterestBips)
-        ).toNumber();
+        const relativeDiff = Number(
+          (10_000n * BigInt(originalAnnualInterestBips - annualInterestBips)) /
+            BigInt(originalAnnualInterestBips)
+        );
         if (relativeDiff <= 2_500) {
           // In v2, if the relative diff is 25% or less, the reserve ratio is not changed
           return originalReserveRatioBips;
         }
         doubleRelativeDiff = 2 * relativeDiff;
       } else {
-        doubleRelativeDiff = mulDiv(
-          toBn(20_000),
-          toBn(originalAnnualInterestBips - annualInterestBips),
-          toBn(originalAnnualInterestBips)
-        ).toNumber();
+        doubleRelativeDiff = Number(
+          (20_000n * BigInt(originalAnnualInterestBips - annualInterestBips)) /
+            BigInt(originalAnnualInterestBips)
+        );
       }
 
       const boundRelativeDiff = Math.min(10000, doubleRelativeDiff);
@@ -695,14 +838,13 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   calculateLiquidityCoverageForReserveRatio(reserveRatio: number): TokenAmount {
-    const scaledRequiredReserves = bipMul(
-      this.scaledTotalSupply.sub(this.scaledPendingWithdrawals),
-      toBn(reserveRatio)
-    ).add(this.scaledPendingWithdrawals);
+    const scaledRequiredReserves =
+      bipMulBigint(this.scaledTotalSupply - this.scaledPendingWithdrawals, reserveRatio) +
+      this.scaledPendingWithdrawals;
     return this.underlyingToken.getAmount(
-      rayMul(scaledRequiredReserves, this.scaleFactor)
-        .add(this.lastAccruedProtocolFees.raw)
-        .add(this.normalizedUnclaimedWithdrawals.raw)
+      rayMulBigint(scaledRequiredReserves, this.scaleFactor) +
+        this.lastAccruedProtocolFees.raw +
+        this.normalizedUnclaimedWithdrawals.raw
     );
   }
 
@@ -742,23 +884,19 @@ export class Market extends ContractWrapper<WildcatMarket> {
     if (this.version === MarketVersion.V2) {
       if (hasUnifiedLatestLensForDirectReads(this.chainId)) {
         try {
-          const market = await getLensV2_5Contract(this.chainId, this.provider).getMarketDataV2(
-            this.address
-          );
+          const market = await getUnifiedMarketDataV2(this.chainId, this.provider, this.address);
           this.updateWith(market);
           return;
         } catch (_) {
           // Fall back to the pre-2.5 V2 lens until unified lens deployment is reliable.
         }
       }
-      const market = await getLensV2Contract(this.chainId, this.provider).getMarketData(
-        this.address
-      );
+      const market = await getV2MarketData(this.chainId, this.provider, this.address);
       this.updateWith(market);
       return;
     }
 
-    const market = await getLensContract(this.chainId, this.provider).getMarketData(this.address);
+    const market = await getLegacyMarketData(this.chainId, this.provider, this.address);
     this.updateWith(market);
   }
 
@@ -766,60 +904,63 @@ export class Market extends ContractWrapper<WildcatMarket> {
     data:
       | MarketDataStructOutput
       | MarketDataV2StructOutput
-      | MarketDataV21StructOutput
       | MarketDataBaseV2_5StructOutput
       | MarketDataV2_5StructOutput
   ): void {
     const baseData = "market" in data ? data.market : data;
+    const nextScaleFactor = toRawAmount(baseData.scaleFactor);
+    const nextScaledTotalSupply = toRawAmount(baseData.scaledTotalSupply);
+    const nextScaledPendingWithdrawals = toRawAmount(baseData.scaledPendingWithdrawals);
+    const nextLastAccruedProtocolFees = toRawAmount(baseData.lastAccruedProtocolFees);
 
     // Note: this adds all the interest accrued to the base interest accrued, since the lens
     // doesn't give us any way to distinguish between base interest and delinquency fees.
     if (
-      this.scaledTotalSupply.eq(baseData.scaledTotalSupply) &&
-      baseData.scaleFactor.gt(this.scaleFactor) &&
+      this.scaledTotalSupply === nextScaledTotalSupply &&
+      nextScaleFactor > this.scaleFactor &&
       this.totalBaseInterestAccrued
     ) {
-      const lastTotalValue = rayMul(this.scaledTotalSupply, this.scaleFactor);
-      const currentTotalValue = rayMul(this.scaledTotalSupply, baseData.scaleFactor);
-      const baseInterestAccrued = currentTotalValue.sub(lastTotalValue);
+      const lastTotalValue = rayMulBigint(this.scaledTotalSupply, this.scaleFactor);
+      const currentTotalValue = rayMulBigint(this.scaledTotalSupply, nextScaleFactor);
+      const baseInterestAccrued = currentTotalValue - lastTotalValue;
       this.totalBaseInterestAccrued = this.totalBaseInterestAccrued.add(baseInterestAccrued);
     }
 
     if (
-      baseData.lastAccruedProtocolFees.gt(this.lastAccruedProtocolFees.raw) &&
+      nextLastAccruedProtocolFees > this.lastAccruedProtocolFees.raw &&
       this.totalProtocolFeesAccrued
     ) {
       this.totalProtocolFeesAccrued = this.totalProtocolFeesAccrued.add(
-        baseData.lastAccruedProtocolFees.sub(this.lastAccruedProtocolFees.raw)
+        nextLastAccruedProtocolFees - this.lastAccruedProtocolFees.raw
       );
     }
     this.feeRecipient = baseData.feeRecipient;
-    this.protocolFeeBips = baseData.protocolFeeBips.toNumber();
-    this.delinquencyFeeBips = baseData.delinquencyFeeBips.toNumber();
-    this.delinquencyGracePeriod = baseData.delinquencyGracePeriod.toNumber();
-    this.withdrawalBatchDuration = baseData.withdrawalBatchDuration.toNumber();
-    this.reserveRatioBips = baseData.reserveRatioBips.toNumber();
-    this.annualInterestBips = baseData.annualInterestBips.toNumber();
+    this.protocolFeeBips = toNumber(baseData.protocolFeeBips);
+    this.delinquencyFeeBips = toNumber(baseData.delinquencyFeeBips);
+    this.delinquencyGracePeriod = toNumber(baseData.delinquencyGracePeriod);
+    this.withdrawalBatchDuration = toNumber(baseData.withdrawalBatchDuration);
+    this.reserveRatioBips = toNumber(baseData.reserveRatioBips);
+    this.annualInterestBips = toNumber(baseData.annualInterestBips);
     this.temporaryReserveRatio = baseData.temporaryReserveRatio;
-    this.originalAnnualInterestBips = baseData.originalAnnualInterestBips.toNumber();
-    this.originalReserveRatioBips = baseData.originalReserveRatioBips.toNumber();
-    this.temporaryReserveRatioExpiry = baseData.temporaryReserveRatioExpiry.toNumber();
+    this.originalAnnualInterestBips = toNumber(baseData.originalAnnualInterestBips);
+    this.originalReserveRatioBips = toNumber(baseData.originalReserveRatioBips);
+    this.temporaryReserveRatioExpiry = toNumber(baseData.temporaryReserveRatioExpiry);
     this.isClosed = baseData.isClosed;
-    this.scaleFactor = baseData.scaleFactor;
+    this.scaleFactor = nextScaleFactor;
     this.totalSupply = this.marketToken.getAmount(baseData.totalSupply);
     this.maxTotalSupply = this.marketToken.getAmount(baseData.maxTotalSupply);
-    this.scaledTotalSupply = baseData.scaledTotalSupply;
+    this.scaledTotalSupply = nextScaledTotalSupply;
     this.totalAssets = this.underlyingToken.getAmount(baseData.totalAssets);
     this.lastAccruedProtocolFees = this.underlyingToken.getAmount(baseData.lastAccruedProtocolFees);
     this.normalizedUnclaimedWithdrawals = this.underlyingToken.getAmount(
       baseData.normalizedUnclaimedWithdrawals
     );
-    this.scaledPendingWithdrawals = baseData.scaledPendingWithdrawals;
-    this.pendingWithdrawalExpiry = baseData.pendingWithdrawalExpiry.toNumber();
+    this.scaledPendingWithdrawals = nextScaledPendingWithdrawals;
+    this.pendingWithdrawalExpiry = toNumber(baseData.pendingWithdrawalExpiry);
     this.isDelinquent = baseData.isDelinquent;
-    this.timeDelinquent = baseData.timeDelinquent.toNumber();
-    this.lastInterestAccruedTimestamp = baseData.lastInterestAccruedTimestamp.toNumber();
-    this.unpaidWithdrawalBatchExpiries = baseData.unpaidWithdrawalBatchExpiries;
+    this.timeDelinquent = toNumber(baseData.timeDelinquent);
+    this.lastInterestAccruedTimestamp = toNumber(baseData.lastInterestAccruedTimestamp);
+    this.unpaidWithdrawalBatchExpiries = baseData.unpaidWithdrawalBatchExpiries.map(toNumber);
     this.coverageLiquidity = this.underlyingToken.getAmount(baseData.coverageLiquidity);
     if ("hooksFactory" in baseData) {
       this.hooksFactory = baseData.hooksFactory;
@@ -831,28 +972,21 @@ export class Market extends ContractWrapper<WildcatMarket> {
       assert(config !== undefined, `V2 market has no hooksConfig!`);
       config.minimumDeposit = this.underlyingToken.getAmount(baseData.hooksConfig.minimumDeposit);
       if (config.kind === HooksKind.FixedTerm) {
-        config.fixedTermEndTime = baseData.hooksConfig.fixedTermEndTime;
-      } else if (
-        config.kind === HooksKind.PeriodicTerm &&
-        "periodDuration" in baseData.hooksConfig
-      ) {
-        const periodicHooksConfigData = baseData.hooksConfig as unknown as {
-          firstWithdrawalWindowStart: number;
-          periodDuration: number;
-          withdrawalWindowDuration: number;
-          periodicTermClosed: boolean;
-        };
-        config.firstWithdrawalWindowStart = periodicHooksConfigData.firstWithdrawalWindowStart;
-        config.periodDuration = periodicHooksConfigData.periodDuration;
-        config.withdrawalWindowDuration = periodicHooksConfigData.withdrawalWindowDuration;
-        config.periodicTermClosed = periodicHooksConfigData.periodicTermClosed;
+        config.fixedTermEndTime = toNumber(baseData.hooksConfig.fixedTermEndTime);
+      } else if (config.kind === HooksKind.PeriodicTerm) {
+        config.firstWithdrawalWindowStart = toNumber(
+          baseData.hooksConfig.firstWithdrawalWindowStart
+        );
+        config.periodDuration = toNumber(baseData.hooksConfig.periodDuration);
+        config.withdrawalWindowDuration = toNumber(baseData.hooksConfig.withdrawalWindowDuration);
+        config.periodicTermClosed = baseData.hooksConfig.periodicTermClosed;
       }
     } else {
       assert(this.version === MarketVersion.V1, `Can not push V1 lens data to V2 market!`);
     }
     if ("market" in data) {
       this.commitmentFeeBips = data.commitmentFeeBips.isPresent
-        ? data.commitmentFeeBips.value.toNumber()
+        ? toNumber(data.commitmentFeeBips.value)
         : undefined;
       this.drawnAmount = data.drawnAmount.isPresent
         ? this.underlyingToken.getAmount(data.drawnAmount.value)
@@ -863,6 +997,65 @@ export class Market extends ContractWrapper<WildcatMarket> {
     }
   }
 
+  updateWithLiveData(data: MarketLiveDataV2_5StructOutput): void {
+    assert(
+      data.market.toLowerCase() === this.address.toLowerCase(),
+      `Live market data address mismatch`
+    );
+
+    const nextScaleFactor = toRawAmount(data.scaleFactor);
+    const nextScaledTotalSupply = toRawAmount(data.scaledTotalSupply);
+    const nextScaledPendingWithdrawals = toRawAmount(data.scaledPendingWithdrawals);
+    const nextLastAccruedProtocolFees = toRawAmount(data.lastAccruedProtocolFees);
+
+    if (
+      this.scaledTotalSupply === nextScaledTotalSupply &&
+      nextScaleFactor > this.scaleFactor &&
+      this.totalBaseInterestAccrued
+    ) {
+      const lastTotalValue = rayMulBigint(this.scaledTotalSupply, this.scaleFactor);
+      const currentTotalValue = rayMulBigint(this.scaledTotalSupply, nextScaleFactor);
+      this.totalBaseInterestAccrued = this.totalBaseInterestAccrued.add(
+        currentTotalValue - lastTotalValue
+      );
+    }
+
+    if (
+      nextLastAccruedProtocolFees > this.lastAccruedProtocolFees.raw &&
+      this.totalProtocolFeesAccrued
+    ) {
+      this.totalProtocolFeesAccrued = this.totalProtocolFeesAccrued.add(
+        nextLastAccruedProtocolFees - this.lastAccruedProtocolFees.raw
+      );
+    }
+
+    this.protocolFeeBips = toNumber(data.protocolFeeBips);
+    this.reserveRatioBips = toNumber(data.reserveRatioBips);
+    this.annualInterestBips = toNumber(data.annualInterestBips);
+    this.isClosed = data.isClosed;
+    this.scaleFactor = nextScaleFactor;
+    this.totalSupply = this.marketToken.getAmount(data.totalSupply);
+    this.maxTotalSupply = this.marketToken.getAmount(data.maxTotalSupply);
+    this.scaledTotalSupply = nextScaledTotalSupply;
+    this.totalAssets = this.underlyingToken.getAmount(data.totalAssets);
+    this.lastAccruedProtocolFees = this.underlyingToken.getAmount(data.lastAccruedProtocolFees);
+    this.normalizedUnclaimedWithdrawals = this.underlyingToken.getAmount(
+      data.normalizedUnclaimedWithdrawals
+    );
+    this.scaledPendingWithdrawals = nextScaledPendingWithdrawals;
+    this.pendingWithdrawalExpiry = toNumber(data.pendingWithdrawalExpiry);
+    this.isDelinquent = data.isDelinquent;
+    this.timeDelinquent = toNumber(data.timeDelinquent);
+    this.lastInterestAccruedTimestamp = toNumber(data.lastInterestAccruedTimestamp);
+    this.coverageLiquidity = this.underlyingToken.getAmount(data.coverageLiquidity);
+    this.commitmentFeeBips = data.commitmentFeeBips.isPresent
+      ? toNumber(data.commitmentFeeBips.value)
+      : undefined;
+    this.drawnAmount = data.drawnAmount.isPresent
+      ? this.underlyingToken.getAmount(data.drawnAmount.value)
+      : undefined;
+  }
+
   /* -------------------------------------------------------------------------- */
   /*                            Class Builder Methods                           */
   /* -------------------------------------------------------------------------- */
@@ -870,32 +1063,34 @@ export class Market extends ContractWrapper<WildcatMarket> {
   static fromSubgraphMarketData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: MakeOptional<
-      SubgraphMarketDataWithEventsFragment,
-      | "depositRecords"
-      | "repaymentRecords"
-      | "borrowRecords"
-      | "feeCollectionRecords"
-      | "periodicTermUpdatedRecords"
-      | "periodicTermClosedRecord"
-      | "annualInterestBipsReductionProposalRecords"
-    >,
+    data: SubgraphMarketHydrationData,
     signerAddress?: string
   ): Market {
     const underlyingToken = Token.fromSubgraphToken(chainId, data._asset, provider);
-    const marketToken = Token.fromSubgraphMarketData(chainId, data, provider);
-    const scaledTotalSupply = BigNumber.from(data.scaledTotalSupply);
-    const scaleFactor = BigNumber.from(data.scaleFactor);
-    const scaledWithdrawals = BigNumber.from(data.scaledPendingWithdrawals);
-    const scaledRequiredReserves = bipMul(
-      scaledTotalSupply.sub(scaledWithdrawals),
-      BigNumber.from(data.reserveRatioBips)
-    ).add(scaledWithdrawals);
-    const coverageLiquidity = rayMul(scaledRequiredReserves, scaleFactor)
-      .add(data.pendingProtocolFees)
-      .add(data.normalizedUnclaimedWithdrawals);
+    const marketToken = new Token(
+      chainId,
+      data.id,
+      data.name,
+      data.symbol,
+      data.decimals,
+      false,
+      provider
+    );
+    const hasTotals = hasSubgraphMarketTotals(data);
+    const hasRecords = hasSubgraphMarketRecords(data);
+    const scaledTotalSupply = toRawAmount(data.scaledTotalSupply);
+    const scaleFactor = toRawAmount(data.scaleFactor);
+    const scaledWithdrawals = toRawAmount(data.scaledPendingWithdrawals);
+    const scaledRequiredReserves =
+      bipMulBigint(scaledTotalSupply - scaledWithdrawals, data.reserveRatioBips) +
+      scaledWithdrawals;
+    const coverageLiquidity =
+      rayMulBigint(scaledRequiredReserves, scaleFactor) +
+      toRawAmount(data.pendingProtocolFees) +
+      toRawAmount(data.normalizedUnclaimedWithdrawals);
 
     let hooksConfig: HooksConfig | undefined;
+    let hooksFactory: string | undefined;
     if (data.version === MarketVersion.V2) {
       assert(!!data.hooks, `V2 markets require hooks`);
       assert(!!data.hooksConfig, `V2 markets require hooksConfig`);
@@ -905,7 +1100,6 @@ export class Market extends ContractWrapper<WildcatMarket> {
         transferRequiresAccess,
         queueWithdrawalRequiresAccess,
         allowClosureBeforeTerm,
-        allowForceBuyBacks,
         allowTermReduction,
         fixedTermEndTime,
         firstWithdrawalWindowStart,
@@ -932,8 +1126,22 @@ export class Market extends ContractWrapper<WildcatMarket> {
           data.hooksConfig.useOnSetAnnualInterestAndReserveRatioBips,
         useOnSetProtocolFeeBips: data.hooksConfig.useOnSetProtocolFeeBips
       };
-      const { id, hooksTemplate: hooksTemplateData } = data.hooks;
-      const template = hooksTemplateFromSubgraph(chainId, provider, hooksTemplateData);
+      const { id } = data.hooks;
+      const templateData = data.hooks.factoryHooksTemplate.name
+        ? data.hooks.factoryHooksTemplate
+        : {
+            ...data.hooks.factoryHooksTemplate,
+            // Older subgraph deployments can contain placeholder factory-template rows
+            // created before HooksTemplateAdded populated the template name.
+            name:
+              periodDuration > 0
+                ? "PeriodicTermHooks"
+                : fixedTermEndTime > 0
+                  ? "FixedTermHooks"
+                  : "OpenTermHooks"
+          };
+      const template = hooksTemplateFromSubgraph(chainId, provider, templateData);
+      hooksFactory = template.hooksFactory;
       const minimumDeposit = _minimumDeposit
         ? underlyingToken.getAmount(_minimumDeposit)
         : undefined;
@@ -946,7 +1154,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
           minimumDeposit,
           transferRequiresAccess,
           depositRequiresAccess,
-          allowForceBuyBacks,
+          allowForceBuyBacks: false,
           transfersDisabled
         };
       } else if (template.kind === HooksKind.FixedTerm) {
@@ -960,7 +1168,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
           depositRequiresAccess,
           queueWithdrawalRequiresAccess,
           allowClosureBeforeTerm,
-          allowForceBuyBacks,
+          allowForceBuyBacks: false,
           allowTermReduction,
           fixedTermEndTime,
           transfersDisabled
@@ -991,6 +1199,8 @@ export class Market extends ContractWrapper<WildcatMarket> {
       chainId,
       provider,
       version: data.version,
+      hooksFactory,
+      marketType: hooksFactory ? getMarketTypeForHooksFactory(chainId, hooksFactory) : undefined,
       hooksConfig,
       marketToken,
       underlyingToken,
@@ -1008,8 +1218,8 @@ export class Market extends ContractWrapper<WildcatMarket> {
       originalReserveRatioBips: data.originalReserveRatioBips,
       temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry,
       isClosed: data.isClosed,
-      scaleFactor: BigNumber.from(data.scaleFactor),
-      totalSupply: marketToken.getAmount(rayMul(scaledTotalSupply, scaleFactor)),
+      scaleFactor,
+      totalSupply: marketToken.getAmount(rayMulBigint(scaledTotalSupply, scaleFactor)),
       maxTotalSupply: marketToken.getAmount(data.maxTotalSupply),
       scaledTotalSupply: scaledTotalSupply,
       totalAssets: underlyingToken.getAmount(0), // @todo maybe update subgraph to query this per update?
@@ -1017,7 +1227,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
         data.normalizedUnclaimedWithdrawals
       ),
-      scaledPendingWithdrawals: BigNumber.from(data.scaledPendingWithdrawals),
+      scaledPendingWithdrawals: scaledWithdrawals,
       pendingWithdrawalExpiry: +data.pendingWithdrawalExpiry,
       isDelinquent: data.isDelinquent,
       timeDelinquent: data.timeDelinquent,
@@ -1028,16 +1238,22 @@ export class Market extends ContractWrapper<WildcatMarket> {
         data.commitmentFeeBips != null ? Number(data.commitmentFeeBips) : undefined,
       drawnAmount:
         data.drawnAmount != null ? underlyingToken.getAmount(data.drawnAmount) : undefined,
-      totalBorrowed: underlyingToken.getAmount(data.totalBorrowed),
-      totalRepaid: underlyingToken.getAmount(data.totalRepaid),
-      totalBaseInterestAccrued: underlyingToken.getAmount(data.totalBaseInterestAccrued),
-      totalDelinquencyFeesAccrued: underlyingToken.getAmount(data.totalDelinquencyFeesAccrued),
-      totalProtocolFeesAccrued: underlyingToken.getAmount(data.totalProtocolFeesAccrued),
-      totalDeposited: underlyingToken.getAmount(data.totalDeposited),
-      depositRecords: data.depositRecords,
-      repaymentRecords: data.repaymentRecords,
-      borrowRecords: data.borrowRecords,
-      feeCollectionRecords: data.feeCollectionRecords,
+      totalBorrowed: underlyingToken.getAmount(hasTotals ? data.totalBorrowed : 0),
+      totalRepaid: underlyingToken.getAmount(hasTotals ? data.totalRepaid : 0),
+      totalBaseInterestAccrued: underlyingToken.getAmount(
+        hasTotals ? data.totalBaseInterestAccrued : 0
+      ),
+      totalDelinquencyFeesAccrued: underlyingToken.getAmount(
+        hasTotals ? data.totalDelinquencyFeesAccrued : 0
+      ),
+      totalProtocolFeesAccrued: underlyingToken.getAmount(
+        hasTotals ? data.totalProtocolFeesAccrued : 0
+      ),
+      totalDeposited: underlyingToken.getAmount(hasTotals ? data.totalDeposited : 0),
+      depositRecords: hasRecords ? data.depositRecords : undefined,
+      repaymentRecords: hasRecords ? data.repaymentRecords : undefined,
+      borrowRecords: hasRecords ? data.borrowRecords : undefined,
+      feeCollectionRecords: hasRecords ? data.feeCollectionRecords : undefined,
       deployedEvent: data.deployedEvent,
       eventIndex: data.eventIndex,
       numCollateralContracts: data.numCollateralContracts,
@@ -1062,32 +1278,32 @@ export class Market extends ContractWrapper<WildcatMarket> {
       borrower: data.borrower,
       controller: data.controller,
       feeRecipient: data.feeRecipient,
-      protocolFeeBips: data.protocolFeeBips.toNumber(),
-      delinquencyFeeBips: data.delinquencyFeeBips.toNumber(),
-      delinquencyGracePeriod: data.delinquencyGracePeriod.toNumber(),
-      withdrawalBatchDuration: data.withdrawalBatchDuration.toNumber(), // @todo add withdrawalBatchDuration to lens output
-      reserveRatioBips: data.reserveRatioBips.toNumber(),
-      annualInterestBips: data.annualInterestBips.toNumber(),
+      protocolFeeBips: toNumber(data.protocolFeeBips),
+      delinquencyFeeBips: toNumber(data.delinquencyFeeBips),
+      delinquencyGracePeriod: toNumber(data.delinquencyGracePeriod),
+      withdrawalBatchDuration: toNumber(data.withdrawalBatchDuration), // @todo add withdrawalBatchDuration to lens output
+      reserveRatioBips: toNumber(data.reserveRatioBips),
+      annualInterestBips: toNumber(data.annualInterestBips),
       temporaryReserveRatio: data.temporaryReserveRatio,
-      originalAnnualInterestBips: data.originalAnnualInterestBips.toNumber(),
-      originalReserveRatioBips: data.originalReserveRatioBips.toNumber(),
-      temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry.toNumber(),
+      originalAnnualInterestBips: toNumber(data.originalAnnualInterestBips),
+      originalReserveRatioBips: toNumber(data.originalReserveRatioBips),
+      temporaryReserveRatioExpiry: toNumber(data.temporaryReserveRatioExpiry),
       isClosed: data.isClosed,
-      scaleFactor: data.scaleFactor,
+      scaleFactor: toRawAmount(data.scaleFactor),
       totalSupply: marketToken.getAmount(data.totalSupply),
       maxTotalSupply: marketToken.getAmount(data.maxTotalSupply),
-      scaledTotalSupply: data.scaledTotalSupply,
+      scaledTotalSupply: toRawAmount(data.scaledTotalSupply),
       totalAssets: underlyingToken.getAmount(data.totalAssets),
       lastAccruedProtocolFees: underlyingToken.getAmount(data.lastAccruedProtocolFees),
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
         data.normalizedUnclaimedWithdrawals
       ),
-      scaledPendingWithdrawals: data.scaledPendingWithdrawals,
-      pendingWithdrawalExpiry: data.pendingWithdrawalExpiry.toNumber(),
+      scaledPendingWithdrawals: toRawAmount(data.scaledPendingWithdrawals),
+      pendingWithdrawalExpiry: toNumber(data.pendingWithdrawalExpiry),
       isDelinquent: data.isDelinquent,
-      timeDelinquent: data.timeDelinquent.toNumber(),
-      lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp.toNumber(),
-      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
+      timeDelinquent: toNumber(data.timeDelinquent),
+      lastInterestAccruedTimestamp: toNumber(data.lastInterestAccruedTimestamp),
+      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries.map(toNumber),
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
       totalBorrowed: undefined,
       totalRepaid: undefined,
@@ -1108,46 +1324,41 @@ export class Market extends ContractWrapper<WildcatMarket> {
   static fromMarketDataV2(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    {
-      hooks,
-      hooksConfig: hooksConfigData,
-      ...data
-    }: MarketDataV2StructOutput | MarketDataV21StructOutput,
+    { hooks, hooksConfig: hooksConfigData, ...data }: MarketDataV2StructOutput,
     signerAddress?: string
   ): Market {
     const marketToken = Token.fromTokenMetadata(chainId, data.marketToken, provider);
     const underlyingToken = Token.fromTokenMetadata(chainId, data.underlyingToken, provider);
     const { hooksAddress } = hooks;
     let hooksConfig: HooksConfig;
-    const allowForceBuyBacks =
-      "allowForceBuyBacks" in hooksConfigData ? hooksConfigData.allowForceBuyBacks : false;
-    if (hooksConfigData.kind === 1) {
+    const hooksKind = toNumber(hooksConfigData.kind);
+    if (hooksKind === 1) {
       hooksConfig = {
         kind: HooksKind.OpenTerm,
-        hooksAddress,
+        hooksAddress: hooksAddress,
         flags: { ...hooksConfigData.flags },
         depositRequiresAccess: hooksConfigData.depositRequiresAccess,
         transferRequiresAccess: hooksConfigData.transferRequiresAccess,
         transfersDisabled: hooksConfigData.transfersDisabled,
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
-        allowForceBuyBacks
-      };
-    } else if (hooksConfigData.kind === 2) {
+        allowForceBuyBacks: false
+      } as OpenTermHooksConfig;
+    } else if (hooksKind === 2) {
       hooksConfig = {
         kind: HooksKind.FixedTerm,
-        hooksAddress,
+        hooksAddress: hooksAddress,
         flags: { ...hooksConfigData.flags },
         depositRequiresAccess: hooksConfigData.depositRequiresAccess,
         transferRequiresAccess: hooksConfigData.transferRequiresAccess,
         transfersDisabled: hooksConfigData.transfersDisabled,
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
-        fixedTermEndTime: hooksConfigData.fixedTermEndTime,
+        fixedTermEndTime: toNumber(hooksConfigData.fixedTermEndTime),
         queueWithdrawalRequiresAccess: hooksConfigData.withdrawalRequiresAccess,
         allowTermReduction: hooksConfigData.allowTermReduction,
         allowClosureBeforeTerm: hooksConfigData.allowClosureBeforeTerm,
-        allowForceBuyBacks
-      };
-    } else if (hooksConfigData.kind === 3 && "periodDuration" in hooksConfigData) {
+        allowForceBuyBacks: false
+      } as FixedTermHooksConfig;
+    } else if (hooksKind === 3) {
       hooksConfig = {
         kind: HooksKind.PeriodicTerm,
         hooksAddress,
@@ -1157,25 +1368,22 @@ export class Market extends ContractWrapper<WildcatMarket> {
         transfersDisabled: hooksConfigData.transfersDisabled,
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
         queueWithdrawalRequiresAccess: hooksConfigData.withdrawalRequiresAccess,
-        firstWithdrawalWindowStart: hooksConfigData.firstWithdrawalWindowStart,
-        periodDuration: hooksConfigData.periodDuration,
-        withdrawalWindowDuration: hooksConfigData.withdrawalWindowDuration,
+        firstWithdrawalWindowStart: toNumber(hooksConfigData.firstWithdrawalWindowStart),
+        periodDuration: toNumber(hooksConfigData.periodDuration),
+        withdrawalWindowDuration: toNumber(hooksConfigData.withdrawalWindowDuration),
         periodicTermClosed: hooksConfigData.periodicTermClosed,
         pendingAprChangeAnnualInterestBips: 0,
         pendingAprChangeProposalTimestamp: 0,
         pendingAprChangeResponseWindowStart: 0,
         pendingAprChangeResponseWindowEnd: 0
-      };
+      } as PeriodicTermHooksConfig;
     } else {
-      throw Error(
-        `Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksConfigData.kind}`
-      );
+      throw Error(`Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksKind}`);
     }
-    const hooksFactory = "hooksFactory" in data ? data.hooksFactory : undefined;
     return new Market({
       provider,
-      hooksFactory,
-      marketType: hooksFactory ? getMarketTypeForHooksFactory(chainId, hooksFactory) : undefined,
+      hooksFactory: data.hooksFactory,
+      marketType: getMarketTypeForHooksFactory(chainId, data.hooksFactory),
       hooksConfig,
       version: MarketVersion.V2,
       chainId: chainId,
@@ -1183,32 +1391,32 @@ export class Market extends ContractWrapper<WildcatMarket> {
       underlyingToken: underlyingToken,
       borrower: data.borrower,
       feeRecipient: data.feeRecipient,
-      protocolFeeBips: data.protocolFeeBips.toNumber(),
-      delinquencyFeeBips: data.delinquencyFeeBips.toNumber(),
-      delinquencyGracePeriod: data.delinquencyGracePeriod.toNumber(),
-      withdrawalBatchDuration: data.withdrawalBatchDuration.toNumber(), // @todo add withdrawalBatchDuration to lens output
-      reserveRatioBips: data.reserveRatioBips.toNumber(),
-      annualInterestBips: data.annualInterestBips.toNumber(),
+      protocolFeeBips: toNumber(data.protocolFeeBips),
+      delinquencyFeeBips: toNumber(data.delinquencyFeeBips),
+      delinquencyGracePeriod: toNumber(data.delinquencyGracePeriod),
+      withdrawalBatchDuration: toNumber(data.withdrawalBatchDuration), // @todo add withdrawalBatchDuration to lens output
+      reserveRatioBips: toNumber(data.reserveRatioBips),
+      annualInterestBips: toNumber(data.annualInterestBips),
       temporaryReserveRatio: data.temporaryReserveRatio,
-      originalAnnualInterestBips: data.originalAnnualInterestBips.toNumber(),
-      originalReserveRatioBips: data.originalReserveRatioBips.toNumber(),
-      temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry.toNumber(),
+      originalAnnualInterestBips: toNumber(data.originalAnnualInterestBips),
+      originalReserveRatioBips: toNumber(data.originalReserveRatioBips),
+      temporaryReserveRatioExpiry: toNumber(data.temporaryReserveRatioExpiry),
       isClosed: data.isClosed,
-      scaleFactor: data.scaleFactor,
+      scaleFactor: toRawAmount(data.scaleFactor),
       totalSupply: marketToken.getAmount(data.totalSupply),
       maxTotalSupply: marketToken.getAmount(data.maxTotalSupply),
-      scaledTotalSupply: data.scaledTotalSupply,
+      scaledTotalSupply: toRawAmount(data.scaledTotalSupply),
       totalAssets: underlyingToken.getAmount(data.totalAssets),
       lastAccruedProtocolFees: underlyingToken.getAmount(data.lastAccruedProtocolFees),
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
         data.normalizedUnclaimedWithdrawals
       ),
-      scaledPendingWithdrawals: data.scaledPendingWithdrawals,
-      pendingWithdrawalExpiry: data.pendingWithdrawalExpiry.toNumber(),
+      scaledPendingWithdrawals: toRawAmount(data.scaledPendingWithdrawals),
+      pendingWithdrawalExpiry: toNumber(data.pendingWithdrawalExpiry),
       isDelinquent: data.isDelinquent,
-      timeDelinquent: data.timeDelinquent.toNumber(),
-      lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp.toNumber(),
-      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
+      timeDelinquent: toNumber(data.timeDelinquent),
+      lastInterestAccruedTimestamp: toNumber(data.lastInterestAccruedTimestamp),
+      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries.map(toNumber),
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
       signerAddress
       // borrowableAssets: underlyingToken.getAmount(data.borrowableAssets)
@@ -1222,12 +1430,14 @@ export class Market extends ContractWrapper<WildcatMarket> {
     allowForceBuyBacks: boolean,
     signerAddress?: string
   ): Market {
+    void allowForceBuyBacks;
     const { hooks, hooksConfig: hooksConfigData, ...data } = market;
     const marketToken = Token.fromTokenMetadata(chainId, data.marketToken, provider);
     const underlyingToken = Token.fromTokenMetadata(chainId, data.underlyingToken, provider);
     const { hooksAddress } = hooks;
     let hooksConfig: HooksConfig;
-    if (hooksConfigData.kind === 1) {
+    const hooksKind = toNumber(hooksConfigData.kind);
+    if (hooksKind === 1) {
       hooksConfig = {
         kind: HooksKind.OpenTerm,
         hooksAddress,
@@ -1236,9 +1446,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
         transferRequiresAccess: hooksConfigData.transferRequiresAccess,
         transfersDisabled: hooksConfigData.transfersDisabled,
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
-        allowForceBuyBacks
+        allowForceBuyBacks: false
       } as OpenTermHooksConfig;
-    } else if (hooksConfigData.kind === 2) {
+    } else if (hooksKind === 2) {
       hooksConfig = {
         kind: HooksKind.FixedTerm,
         hooksAddress,
@@ -1247,16 +1457,33 @@ export class Market extends ContractWrapper<WildcatMarket> {
         transferRequiresAccess: hooksConfigData.transferRequiresAccess,
         transfersDisabled: hooksConfigData.transfersDisabled,
         minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
-        fixedTermEndTime: hooksConfigData.fixedTermEndTime,
+        fixedTermEndTime: toNumber(hooksConfigData.fixedTermEndTime),
         queueWithdrawalRequiresAccess: hooksConfigData.withdrawalRequiresAccess,
         allowTermReduction: hooksConfigData.allowTermReduction,
         allowClosureBeforeTerm: hooksConfigData.allowClosureBeforeTerm,
-        allowForceBuyBacks
+        allowForceBuyBacks: false
       } as FixedTermHooksConfig;
+    } else if (hooksKind === 3) {
+      hooksConfig = {
+        kind: HooksKind.PeriodicTerm,
+        hooksAddress,
+        flags: { ...hooksConfigData.flags },
+        depositRequiresAccess: hooksConfigData.depositRequiresAccess,
+        transferRequiresAccess: hooksConfigData.transferRequiresAccess,
+        transfersDisabled: hooksConfigData.transfersDisabled,
+        minimumDeposit: underlyingToken.getAmount(hooksConfigData.minimumDeposit),
+        queueWithdrawalRequiresAccess: hooksConfigData.withdrawalRequiresAccess,
+        firstWithdrawalWindowStart: toNumber(hooksConfigData.firstWithdrawalWindowStart),
+        periodDuration: toNumber(hooksConfigData.periodDuration),
+        withdrawalWindowDuration: toNumber(hooksConfigData.withdrawalWindowDuration),
+        periodicTermClosed: hooksConfigData.periodicTermClosed,
+        pendingAprChangeAnnualInterestBips: 0,
+        pendingAprChangeProposalTimestamp: 0,
+        pendingAprChangeResponseWindowStart: 0,
+        pendingAprChangeResponseWindowEnd: 0
+      } as PeriodicTermHooksConfig;
     } else {
-      throw Error(
-        `Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksConfigData.kind}`
-      );
+      throw Error(`Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksKind}`);
     }
     return new Market({
       provider,
@@ -1269,63 +1496,39 @@ export class Market extends ContractWrapper<WildcatMarket> {
       underlyingToken,
       borrower: data.borrower,
       feeRecipient: data.feeRecipient,
-      protocolFeeBips: data.protocolFeeBips.toNumber(),
-      delinquencyFeeBips: data.delinquencyFeeBips.toNumber(),
-      delinquencyGracePeriod: data.delinquencyGracePeriod.toNumber(),
-      withdrawalBatchDuration: data.withdrawalBatchDuration.toNumber(),
-      reserveRatioBips: data.reserveRatioBips.toNumber(),
-      annualInterestBips: data.annualInterestBips.toNumber(),
+      protocolFeeBips: toNumber(data.protocolFeeBips),
+      delinquencyFeeBips: toNumber(data.delinquencyFeeBips),
+      delinquencyGracePeriod: toNumber(data.delinquencyGracePeriod),
+      withdrawalBatchDuration: toNumber(data.withdrawalBatchDuration),
+      reserveRatioBips: toNumber(data.reserveRatioBips),
+      annualInterestBips: toNumber(data.annualInterestBips),
       temporaryReserveRatio: data.temporaryReserveRatio,
-      originalAnnualInterestBips: data.originalAnnualInterestBips.toNumber(),
-      originalReserveRatioBips: data.originalReserveRatioBips.toNumber(),
-      temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry.toNumber(),
+      originalAnnualInterestBips: toNumber(data.originalAnnualInterestBips),
+      originalReserveRatioBips: toNumber(data.originalReserveRatioBips),
+      temporaryReserveRatioExpiry: toNumber(data.temporaryReserveRatioExpiry),
       isClosed: data.isClosed,
-      scaleFactor: data.scaleFactor,
+      scaleFactor: toRawAmount(data.scaleFactor),
       totalSupply: marketToken.getAmount(data.totalSupply),
       maxTotalSupply: marketToken.getAmount(data.maxTotalSupply),
-      scaledTotalSupply: data.scaledTotalSupply,
+      scaledTotalSupply: toRawAmount(data.scaledTotalSupply),
       totalAssets: underlyingToken.getAmount(data.totalAssets),
       lastAccruedProtocolFees: underlyingToken.getAmount(data.lastAccruedProtocolFees),
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
         data.normalizedUnclaimedWithdrawals
       ),
-      scaledPendingWithdrawals: data.scaledPendingWithdrawals,
-      pendingWithdrawalExpiry: data.pendingWithdrawalExpiry.toNumber(),
+      scaledPendingWithdrawals: toRawAmount(data.scaledPendingWithdrawals),
+      pendingWithdrawalExpiry: toNumber(data.pendingWithdrawalExpiry),
       isDelinquent: data.isDelinquent,
-      timeDelinquent: data.timeDelinquent.toNumber(),
-      lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp.toNumber(),
-      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries,
+      timeDelinquent: toNumber(data.timeDelinquent),
+      lastInterestAccruedTimestamp: toNumber(data.lastInterestAccruedTimestamp),
+      unpaidWithdrawalBatchExpiries: data.unpaidWithdrawalBatchExpiries.map(toNumber),
       coverageLiquidity: underlyingToken.getAmount(data.coverageLiquidity),
-      commitmentFeeBips: commitmentFeeBips.isPresent ? commitmentFeeBips.value.toNumber() : undefined,
-      drawnAmount: drawnAmount.isPresent
-        ? underlyingToken.getAmount(drawnAmount.value)
+      commitmentFeeBips: commitmentFeeBips.isPresent
+        ? toNumber(commitmentFeeBips.value)
         : undefined,
+      drawnAmount: drawnAmount.isPresent ? underlyingToken.getAmount(drawnAmount.value) : undefined,
       signerAddress
     });
-  }
-
-  static async resolveAllowForceBuyBacks(
-    provider: SignerOrProvider,
-    marketAddress: string,
-    data: MarketDataBaseV2_5StructOutput | MarketDataV2_5StructOutput
-  ): Promise<boolean> {
-    const marketData = "market" in data ? data.market : data;
-
-    if (marketData.hooksConfig.kind === 1) {
-      const hookedMarket = await IOpenTermHooks__factory.connect(
-        marketData.hooksConfig.hooksAddress,
-        provider
-      ).getHookedMarket(marketAddress);
-      return hookedMarket.allowForceBuyBacks;
-    }
-    if (marketData.hooksConfig.kind === 2) {
-      const hookedMarket = await IFixedTermHooks__factory.connect(
-        marketData.hooksConfig.hooksAddress,
-        provider
-      ).getHookedMarket(marketAddress);
-      return hookedMarket.allowForceBuyBacks;
-    }
-    return false;
   }
 
   static async fromUnifiedMarketData(
@@ -1335,18 +1538,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     signerAddress?: string
   ): Promise<Market> {
     const marketData = toUnifiedMarketDataV2(data);
-    const allowForceBuyBacks = await Market.resolveAllowForceBuyBacks(
-      provider,
-      marketData.market.marketToken.token,
-      marketData
-    );
-    return Market.fromMarketDataV2_5(
-      chainId,
-      provider,
-      marketData,
-      allowForceBuyBacks,
-      signerAddress
-    );
+    return Market.fromMarketDataV2_5(chainId, provider, marketData, false, signerAddress);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -1361,17 +1553,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
     market: string,
     provider: SignerOrProvider
   ): Promise<Market> {
-    const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
+    const signerAddress = await getEthersSignerAddress(provider);
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
-        const data = await getLensV2_5Contract(chainId, provider).getMarketDataV2(market);
+        const data = await getUnifiedMarketDataV2(chainId, provider, market);
         return Market.fromUnifiedMarketData(chainId, provider, data, signerAddress);
       } catch (_) {
         // Fall back to the legacy lens for V1 markets and pre-unified deployments.
       }
     }
-    const lens = getLensContract(chainId, provider);
-    const data = await lens.getMarketData(market);
+    const data = await getLegacyMarketData(chainId, provider, market);
     return Market.fromMarketData(chainId, data, provider, signerAddress);
   }
   /**
@@ -1382,18 +1573,80 @@ export class Market extends ContractWrapper<WildcatMarket> {
     market: string,
     provider: SignerOrProvider
   ): Promise<Market> {
-    const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
+    const signerAddress = await getEthersSignerAddress(provider);
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
-        const data = await getLensV2_5Contract(chainId, provider).getMarketDataV2(market);
+        const data = await getUnifiedMarketDataV2(chainId, provider, market);
         return Market.fromUnifiedMarketData(chainId, provider, data, signerAddress);
       } catch (_) {
         // Fall back to the pre-2.5 V2 lens for chains that have not fully migrated.
       }
     }
-    const lens = getLensV2Contract(chainId, provider);
-    const data = await lens.getMarketData(market);
+    const data = await getV2MarketData(chainId, provider, market);
     return Market.fromMarketDataV2(chainId, provider, data, signerAddress);
+  }
+
+  /**
+   * @returns V2 `Market` instances for `markets`, preserving V2.5/RCF fields
+   *          when the current lens exposes them.
+   */
+  static async getMarketsV2(
+    chainId: SupportedChainId,
+    markets: string[],
+    provider: SignerOrProvider
+  ): Promise<Market[]> {
+    const signerAddress = await getEthersSignerAddress(provider);
+    if (hasUnifiedLatestLensForDirectReads(chainId)) {
+      try {
+        const data = await getUnifiedMarketsDataV2(chainId, provider, markets);
+        return Promise.all(
+          data.map((market) =>
+            Market.fromUnifiedMarketData(chainId, provider, market, signerAddress)
+          )
+        );
+      } catch (_) {
+        // Fall back to the pre-2.5 V2 lens for chains that have not fully migrated.
+      }
+    }
+    return Promise.all(
+      markets.map(async (market) => {
+        const data = await getV2MarketData(chainId, provider, market);
+        return Market.fromMarketDataV2(chainId, provider, data, signerAddress);
+      })
+    );
+  }
+
+  /**
+   * Refresh existing V2 market instances with the focused live lens surface when available.
+   * Falls back to broad V2 market reads so callers can use this as a route-intent API.
+   */
+  static async refreshMarketsV2LiveData(
+    chainId: SupportedChainId,
+    markets: Market[],
+    provider: SignerOrProvider
+  ): Promise<Market[]> {
+    if (markets.length === 0) {
+      return markets;
+    }
+
+    const marketAddresses = markets.map((market) => market.address);
+    if (hasUnifiedLatestLensForDirectReads(chainId)) {
+      try {
+        const updates = await getUnifiedMarketsLiveDataV2(chainId, provider, marketAddresses);
+        updates.forEach((update, i) => {
+          markets[i].updateWithLiveData(update);
+        });
+        return markets;
+      } catch (_) {
+        // Fall back to broad reads for older unified lens deployments.
+      }
+    }
+
+    const refreshedMarkets = await Market.getMarketsV2(chainId, marketAddresses, provider);
+    refreshedMarkets.forEach((market, i) => {
+      Object.assign(markets[i], market);
+    });
+    return markets;
   }
 
   /**
@@ -1404,10 +1657,10 @@ export class Market extends ContractWrapper<WildcatMarket> {
     markets: string[],
     provider: SignerOrProvider
   ): Promise<Market[]> {
-    const signerAddress = Signer.isSigner(provider) ? await provider.getAddress() : undefined;
+    const signerAddress = await getEthersSignerAddress(provider);
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
-        const data = await getLensV2_5Contract(chainId, provider).getMarketsDataV2(markets);
+        const data = await getUnifiedMarketsDataV2(chainId, provider, markets);
         return Promise.all(
           data.map((market) =>
             Market.fromUnifiedMarketData(chainId, provider, market, signerAddress)
@@ -1417,8 +1670,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
         return Promise.all(markets.map((market) => Market.getMarket(chainId, market, provider)));
       }
     }
-    const lens = getLensContract(chainId, provider);
-    const data = await lens.getMarketsData(markets);
+    const data = await getLegacyMarketsData(chainId, provider, markets);
     return data.map((market) => Market.fromMarketData(chainId, market, provider, signerAddress));
   }
 
@@ -1429,8 +1681,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
     chainId: SupportedChainId,
     provider: SignerOrProvider
   ): Promise<Market[]> {
-    const archController = getArchControllerContract(chainId, provider);
-    const markets = await archController["getRegisteredMarkets()"]();
+    const markets = await getRegisteredMarkets(chainId, provider);
     if (!markets.length) {
       return [];
     }
@@ -1449,13 +1700,12 @@ export class Market extends ContractWrapper<WildcatMarket> {
     if (count <= 0) {
       return [];
     }
-    const archController = getArchControllerContract(chainId, provider);
-    const totalMarkets = (await archController.getRegisteredMarketsCount()).toNumber();
+    const totalMarkets = await getRegisteredMarketsCount(chainId, provider);
     if (start >= totalMarkets) {
       return [];
     }
     const end = Math.min(start + count, totalMarkets);
-    const markets = await archController["getRegisteredMarkets(uint256,uint256)"](start, end);
+    const markets = await getRegisteredMarketsPage(chainId, provider, start, end);
     if (!markets.length) {
       return [];
     }
@@ -1469,7 +1719,6 @@ export class Market extends ContractWrapper<WildcatMarket> {
     chainId: SupportedChainId,
     provider: SignerOrProvider
   ): Promise<number> {
-    const archController = getArchControllerContract(chainId, provider);
-    return archController.getRegisteredMarketsCount().then((count) => count.toNumber());
+    return getRegisteredMarketsCount(chainId, provider);
   }
 }

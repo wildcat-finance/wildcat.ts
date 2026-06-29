@@ -12,7 +12,6 @@ export const enableDebug = (): void => {
   DEBUG = true;
 };
 
-enableDebug();
 const print = (...args: any[]): void => {
   if (!SILENCE) console.log(...args);
 };

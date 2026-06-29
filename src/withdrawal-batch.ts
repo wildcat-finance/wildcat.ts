@@ -1,8 +1,11 @@
-import { BigNumber } from "ethers";
 import { Market } from "./market";
-import { TokenAmount, minTokenAmount } from "./token";
-import { WithdrawalBatchDataStructOutput, WithdrawalBatchDataV2_5StructOutput } from "./typechain";
-import { getLatestLensContract, getLensContract, hasDeploymentAddress } from "./constants";
+import { TokenAmount, minTokenAmount, toRawAmount } from "./token";
+import type {
+  WithdrawalBatchDataStructOutput,
+  WithdrawalBatchDataV2_5StructOutput
+} from "./lens-types";
+import { hasDeploymentAddress } from "./constants";
+import { getLatestWithdrawalBatchData, getLegacyWithdrawalBatchData } from "./internal/market-lens";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
 import {
   MakeOptional,
@@ -17,7 +20,8 @@ import {
   WithdrawalPaymentRecord,
   WithdrawalRequestRecord,
   parseWithdrawalRecord,
-  rayMul
+  rayMulBigint,
+  toNumber
 } from "./utils";
 import { MarketVersion } from "./types";
 
@@ -42,11 +46,11 @@ export class WithdrawalBatch {
     public market: Market,
     public expiry: number,
     public status: BatchStatus,
-    public scaledTotalAmount: BigNumber,
-    public scaledAmountBurned: BigNumber,
+    public scaledTotalAmount: bigint,
+    public scaledAmountBurned: bigint,
     public normalizedAmountPaid: TokenAmount,
     public normalizedTotalAmount: TokenAmount,
-    public lastScaleFactor?: BigNumber,
+    public lastScaleFactor?: bigint,
     public paymentsCount?: number,
     public lastUpdatedTimestamp?: number,
     public totalInterestEarned?: TokenAmount,
@@ -64,20 +68,20 @@ export class WithdrawalBatch {
     this.requests = requests.map((w) => parseWithdrawalRecord(this, w));
   }
 
-  private calculateBatchInterestEarned(): BigNumber {
-    if (!this.lastScaleFactor) return BigNumber.from(0);
-    const scaledAmountOwed = this.scaledTotalAmount.sub(this.scaledAmountBurned);
-    if (scaledAmountOwed.eq(0) || this.lastScaleFactor?.eq(this.market.scaleFactor)) {
-      return BigNumber.from(0);
+  private calculateBatchInterestEarned(): bigint {
+    if (!this.lastScaleFactor) return 0n;
+    const scaledAmountOwed = this.scaledTotalAmount - this.scaledAmountBurned;
+    if (scaledAmountOwed === 0n || this.lastScaleFactor === this.market.scaleFactor) {
+      return 0n;
     }
-    const lastBalance = rayMul(scaledAmountOwed, this.lastScaleFactor);
-    const currentBalance = rayMul(scaledAmountOwed, this.market.scaleFactor);
-    return currentBalance.sub(lastBalance);
+    const lastBalance = rayMulBigint(scaledAmountOwed, this.lastScaleFactor);
+    const currentBalance = rayMulBigint(scaledAmountOwed, this.market.scaleFactor);
+    return currentBalance - lastBalance;
   }
 
   processWithdrawalBatchInterestAccrued(): void {
     if (!this.lastScaleFactor || !this.totalInterestEarned) return;
-    if (!this.lastScaleFactor.eq(this.market.scaleFactor)) {
+    if (this.lastScaleFactor !== this.market.scaleFactor) {
       const interestEarned = this.calculateBatchInterestEarned();
       this.lastScaleFactor = this.market.scaleFactor;
       this.totalInterestEarned = this.totalInterestEarned.add(interestEarned);
@@ -116,7 +120,7 @@ export class WithdrawalBatch {
     if (!this.isConcluded) {
       return BatchStatus.Pending;
     }
-    return this.scaledAmountBurned.eq(this.scaledTotalAmount)
+    return this.scaledAmountBurned === this.scaledTotalAmount
       ? BatchStatus.Complete
       : BatchStatus.Unpaid;
   }
@@ -125,16 +129,14 @@ export class WithdrawalBatch {
     return this.normalizedTotalAmount.sub(this.normalizedAmountPaid);
   }
 
-  get scaledAmountOwed(): BigNumber {
-    return this.scaledTotalAmount.sub(this.scaledAmountBurned);
+  get scaledAmountOwed(): bigint {
+    return this.scaledTotalAmount - this.scaledAmountBurned;
   }
 
   get availableLiquidityToProcess(): TokenAmount {
     if (this.isClosed) return this.market.underlyingToken.getAmount(0);
     if (this.expiry === this.market.pendingWithdrawalExpiry) {
-      const priorScaledAmountPending = this.market.scaledPendingWithdrawals.sub(
-        this.scaledAmountOwed
-      );
+      const priorScaledAmountPending = this.market.scaledPendingWithdrawals - this.scaledAmountOwed;
       const unavailableAssets = this.market.normalizedUnclaimedWithdrawals
         .add(this.market.normalizeAmount(priorScaledAmountPending))
         .add(this.market.lastAccruedProtocolFees);
@@ -156,23 +158,23 @@ export class WithdrawalBatch {
   }
 
   applyLensUpdate(data: WithdrawalBatchDataOutput): void {
-    this.scaledTotalAmount = data.scaledTotalAmount;
-    this.scaledAmountBurned = data.scaledAmountBurned;
+    this.scaledTotalAmount = toRawAmount(data.scaledTotalAmount);
+    this.scaledAmountBurned = toRawAmount(data.scaledAmountBurned);
     this.normalizedAmountPaid = this.market.underlyingToken.getAmount(data.normalizedAmountPaid);
     this.normalizedTotalAmount = this.market.underlyingToken.getAmount(data.normalizedTotalAmount);
     this.status =
       this.expiry > Math.floor(Date.now() / 1000)
         ? BatchStatus.Pending
-        : this.scaledAmountBurned.eq(this.scaledTotalAmount)
+        : this.scaledAmountBurned === this.scaledTotalAmount
         ? BatchStatus.Complete
         : BatchStatus.Unpaid;
     if (this.status === BatchStatus.Complete) {
       const scaledTotalFromRecords = this.withdrawals.reduce(
-        (total, w) => total.add(w.scaledAmount),
-        BigNumber.from(0)
+        (total, w) => total + w.scaledAmount,
+        0n
       );
       if (
-        scaledTotalFromRecords.eq(this.scaledTotalAmount) &&
+        scaledTotalFromRecords === this.scaledTotalAmount &&
         this.withdrawals.every((w) => w.isCompleted)
       ) {
         this.isCompleted = true;
@@ -188,10 +190,10 @@ export class WithdrawalBatch {
   static fromWithdrawalBatchData(market: Market, data: WithdrawalBatchDataOutput): WithdrawalBatch {
     return new WithdrawalBatch(
       market,
-      data.expiry,
-      data.status,
-      data.scaledTotalAmount,
-      data.scaledAmountBurned,
+      toNumber(data.expiry),
+      toNumber(data.status),
+      toRawAmount(data.scaledTotalAmount),
+      toRawAmount(data.scaledAmountBurned),
       market.underlyingToken.getAmount(data.normalizedAmountPaid),
       market.underlyingToken.getAmount(data.normalizedTotalAmount)
     );
@@ -204,27 +206,27 @@ export class WithdrawalBatch {
       "requests" | "executions" | "withdrawals"
     >
   ): WithdrawalBatch {
-    const scaledTotalAmount = BigNumber.from(batch.scaledTotalAmount);
-    const scaledAmountBurned = BigNumber.from(batch.scaledAmountBurned);
+    const scaledTotalAmount = toRawAmount(batch.scaledTotalAmount);
+    const scaledAmountBurned = toRawAmount(batch.scaledAmountBurned);
     const normalizedAmountPaid = market.underlyingToken.getAmount(batch.normalizedAmountPaid);
     const expiry = +batch.expiry;
     const status =
       expiry > Math.floor(Date.now() / 1000)
         ? BatchStatus.Pending
-        : scaledAmountBurned.eq(scaledTotalAmount)
+        : scaledAmountBurned === scaledTotalAmount
         ? BatchStatus.Complete
         : BatchStatus.Unpaid;
-    let scaledAmountOwed: BigNumber;
+    let scaledAmountOwed: bigint;
     let normalizedAmountOwed: TokenAmount;
     let normalizedTotalAmount: TokenAmount;
-    if (!scaledAmountBurned.eq(scaledTotalAmount)) {
-      scaledAmountOwed = scaledTotalAmount.sub(scaledAmountBurned);
+    if (scaledAmountBurned !== scaledTotalAmount) {
+      scaledAmountOwed = scaledTotalAmount - scaledAmountBurned;
       normalizedAmountOwed = market.underlyingToken.getAmount(
-        rayMul(scaledAmountOwed, market.scaleFactor)
+        rayMulBigint(scaledAmountOwed, market.scaleFactor)
       );
       normalizedTotalAmount = normalizedAmountPaid.add(normalizedAmountOwed);
     } else {
-      scaledAmountOwed = BigNumber.from(0);
+      scaledAmountOwed = 0n;
       normalizedAmountOwed = market.underlyingToken.getAmount(0);
       normalizedTotalAmount = normalizedAmountPaid;
     }
@@ -236,7 +238,7 @@ export class WithdrawalBatch {
       scaledAmountBurned,
       normalizedAmountPaid,
       normalizedTotalAmount,
-      BigNumber.from(batch.lastScaleFactor),
+      toRawAmount(batch.lastScaleFactor),
       batch.paymentsCount,
       batch.lastUpdatedTimestamp,
       market.underlyingToken.getAmount(batch.totalInterestEarned),
@@ -251,10 +253,9 @@ export class WithdrawalBatch {
   static async getWithdrawalBatch(market: Market, expiry: number): Promise<WithdrawalBatch> {
     const useLatestLens =
       market.version === MarketVersion.V2 || !hasDeploymentAddress(market.chainId, "MarketLens");
-    const lens = useLatestLens
-      ? getLatestLensContract(market.chainId, market.provider)
-      : getLensContract(market.chainId, market.provider);
-    const data = await lens.getWithdrawalBatchData(market.address, expiry);
+    const data = useLatestLens
+      ? await getLatestWithdrawalBatchData(market.chainId, market.provider, market.address, expiry)
+      : await getLegacyWithdrawalBatchData(market.chainId, market.provider, market.address, expiry);
     return WithdrawalBatch.fromWithdrawalBatchData(market, data);
   }
 }

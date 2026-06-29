@@ -1,4 +1,9 @@
-import { HooksFactory, HooksFactoryRevolving } from "../typechain";
+import type {
+  LegacyDeployMarketAndHooksArgs,
+  LegacyDeployMarketArgs,
+  RevolvingDeployMarketAndHooksArgs,
+  RevolvingDeployMarketArgs
+} from "../lens-types";
 
 export enum DeployMarketStatus {
   Ready = "Ready",
@@ -12,21 +17,21 @@ export enum DeployMarketStatus {
 type LegacyDeployMarketCallPreview =
   | {
       fn: "deployMarket";
-      args: Parameters<HooksFactory["deployMarket"]>;
+      args: LegacyDeployMarketArgs;
     }
   | {
       fn: "deployMarketAndHooks";
-      args: Parameters<HooksFactory["deployMarketAndHooks"]>;
+      args: LegacyDeployMarketAndHooksArgs;
     };
 
 type RevolvingDeployMarketCallPreview =
   | {
       fn: "deployMarket";
-      args: Parameters<HooksFactoryRevolving["deployMarket"]>;
+      args: RevolvingDeployMarketArgs;
     }
   | {
       fn: "deployMarketAndHooks";
-      args: Parameters<HooksFactoryRevolving["deployMarketAndHooks"]>;
+      args: RevolvingDeployMarketAndHooksArgs;
     };
 
 export type LegacyReadyDeployMarketPreview = {

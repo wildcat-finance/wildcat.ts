@@ -1,0 +1,137 @@
+import { expect } from "chai";
+import { providers } from "ethers";
+import { Market } from "../../src/market";
+import { SupportedChainId } from "../../src/constants";
+import { Token, toRawAmount } from "../../src/token";
+import { MarketVersion } from "../../src/types";
+import { BIP_BIGINT, RAY_BIGINT } from "../../src/utils";
+
+const provider = new providers.JsonRpcProvider();
+
+const token = new Token(
+  SupportedChainId.Sepolia,
+  "0x0000000000000000000000000000000000000001",
+  "Mock USD",
+  "mUSD",
+  6,
+  false,
+  provider
+);
+
+const legacyBigNumberLike = (value: bigint | number | string): { toString(): string } => ({
+  toString: () => value.toString()
+});
+
+describe("TokenAmount bigint model", () => {
+  it("stores raw amounts as bigint while preserving parse and format ergonomics", () => {
+    const amount = token.parseAmount("123.4567");
+
+    expect(amount.raw).to.equal(123_456_700n);
+    expect(amount.raw.isZero()).to.equal(false);
+    expect(amount.raw.gt(123_456_699n)).to.equal(true);
+    expect(amount.raw.lt(123_456_701n)).to.equal(true);
+    expect(amount.raw.mul(2).div(2).eq(amount.raw)).to.equal(true);
+    expect(amount.raw.toNumber()).to.equal(123_456_700);
+    expect(amount.toFixed(2)).to.equal("123.45");
+    expect(amount.format(2, true)).to.equal("123.45 mUSD");
+  });
+
+  it("keeps arithmetic and comparisons compatible with bigint-ish inputs", () => {
+    const amount = token.getAmount(1_000n);
+
+    expect(amount.gt(legacyBigNumberLike(999))).to.equal(true);
+    expect(amount.gte("1000")).to.equal(true);
+    expect(amount.lt(1_001)).to.equal(true);
+    expect(amount.eq(token.getAmount(1_000))).to.equal(true);
+    expect(amount.add(legacyBigNumberLike(5)).raw).to.equal(1_005n);
+    expect(amount.sub("5").raw).to.equal(995n);
+    expect(amount.mul(3).raw).to.equal(3_000n);
+    expect(amount.div(4).raw).to.equal(250n);
+    expect(amount.div(0, true).raw).to.equal(0n);
+    expect(amount.satsub(2_000).raw).to.equal(0n);
+  });
+
+  it("uses bigint protocol math helpers for token amount math", () => {
+    const amount = token.getAmount(1_000_000n);
+
+    expect(amount.bipMul(250).raw).to.equal((1_000_000n * 250n + BIP_BIGINT / 2n) / BIP_BIGINT);
+    expect(amount.rayMul(RAY_BIGINT * 2n).raw).to.equal(2_000_000n);
+    expect(amount.rayDiv(RAY_BIGINT * 2n).raw).to.equal(500_000n);
+    expect(amount.mulDiv(3, 2).raw).to.equal(1_500_000n);
+  });
+
+  it("normalizes BigNumber-like objects structurally without ethers runtime helpers", () => {
+    const amount = token.getAmount(42n);
+
+    expect(toRawAmount(legacyBigNumberLike(42))).to.equal(42n);
+    expect(toRawAmount(amount)).to.equal(42n);
+  });
+
+  it("keeps legacy JSON.stringify paths safe for bigint-backed SDK values", () => {
+    const amount = token.getAmount(42n);
+
+    expect(JSON.stringify(42n)).to.equal('"42"');
+    expect(() => JSON.stringify(amount)).not.to.throw();
+    expect(JSON.parse(JSON.stringify(amount))).to.deep.equal({
+      raw: "42",
+      token: token.toJSON()
+    });
+  });
+
+  it("serializes market cache keys without walking provider internals", () => {
+    const market = new Market({
+      provider,
+      chainId: SupportedChainId.Sepolia,
+      version: MarketVersion.V2,
+      marketType: "revolving",
+      marketToken: token,
+      underlyingToken: token,
+      hooksFactory: "0x0000000000000000000000000000000000000002",
+      borrower: "0x0000000000000000000000000000000000000003",
+      feeRecipient: "0x0000000000000000000000000000000000000004",
+      protocolFeeBips: 100,
+      delinquencyFeeBips: 200,
+      delinquencyGracePeriod: 1_000,
+      withdrawalBatchDuration: 1_000,
+      reserveRatioBips: 1_000,
+      annualInterestBips: 1_000,
+      temporaryReserveRatio: false,
+      originalAnnualInterestBips: 1_000,
+      originalReserveRatioBips: 1_000,
+      temporaryReserveRatioExpiry: 0,
+      isClosed: false,
+      scaleFactor: RAY_BIGINT,
+      totalSupply: token.getAmount(1_000n),
+      maxTotalSupply: token.getAmount(2_000n),
+      scaledTotalSupply: 1_000n,
+      totalAssets: token.getAmount(1_000n),
+      lastAccruedProtocolFees: token.getAmount(0n),
+      normalizedUnclaimedWithdrawals: token.getAmount(0n),
+      scaledPendingWithdrawals: 0n,
+      pendingWithdrawalExpiry: 0,
+      isDelinquent: false,
+      timeDelinquent: 0,
+      lastInterestAccruedTimestamp: 0,
+      unpaidWithdrawalBatchExpiries: [],
+      coverageLiquidity: token.getAmount(0n),
+      commitmentFeeBips: 100,
+      drawnAmount: token.getAmount(500n)
+    });
+
+    const serialized = JSON.stringify(["market-account", market]);
+    const parsed = JSON.parse(serialized);
+
+    expect(parsed[1]).to.deep.equal({
+      type: "Market",
+      chainId: SupportedChainId.Sepolia,
+      address: token.address,
+      name: token.name,
+      symbol: token.symbol,
+      decimals: token.decimals,
+      version: MarketVersion.V2,
+      marketType: "revolving",
+      hooksFactory: "0x0000000000000000000000000000000000000002",
+      borrower: "0x0000000000000000000000000000000000000003"
+    });
+  });
+});

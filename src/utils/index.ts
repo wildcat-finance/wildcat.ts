@@ -1,4 +1,5 @@
 export * from "./assert";
+export * from "./bigint";
 export * from "./check-registered-borrowers";
 export * from "./describe-account";
 export * from "./logger";
@@ -6,3 +7,4 @@ export * from "./math";
 export * from "./misc";
 export * from "./record-types";
 export * from "./type-parsers";
+export * from "./viem-encoding";

@@ -1,6 +1,4 @@
 import { ethers } from "hardhat";
-// import { WildcatVaultController } from "../src/typechain";
-import { ERC20, IERC20, WildcatVaultToken } from "../typechain-types";
 // import { ControllerAddress } from "../src/constants";
 import { Token, Vault, VaultAccount, VaultFactory, getAllVaultsData, Signer } from "../src";
 import { expect } from "chai";
@@ -8,6 +6,9 @@ import { TokenFactory } from "../src/mockerc20factory";
 import { ControllerAddress } from "../src/constants";
 import { constants } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+
+type ERC20 = any;
+type WildcatVaultToken = any;
 
 describe("Test", () => {
   let vaultContract: WildcatVaultToken;

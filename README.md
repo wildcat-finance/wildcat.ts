@@ -23,7 +23,8 @@ For local development inside this repo run `yarn build` (or `npm run build`) to 
 
 - **Code generation**: run `yarn codegen` (or `npm run codegen`) whenever contracts in `contracts/` or GraphQL fragments in `gql/` change. This invokes:
   - `yarn codegen:gql` → rebuilds typed gql 
-  - `yarn codegen:typechain` → regenerates typeChain bindings and exports
+  - `yarn codegen:artifacts` → rebuilds Hardhat artifacts
+  - `yarn codegen:abi` → regenerates viem ABI constants from artifacts
 - **Build**: `yarn build` (or `npm run build`) outputs the package defined by `tsconfig.prod.json`.
 
 ## App Integration Testing
@@ -44,4 +45,3 @@ Once happy with changes publish to npm (if you have permissions):
 - `main`: latest supported release branch. Publish production npm releases (`npm publish` or `yarn npm publish`).
 - `develop`: integration branch. Publish beta releases with `npm publish --tag beta` (or the yarn equivalent).
 - Feature branches should merge into `develop` via pull request, then graduate to `main` for release once validated.
-

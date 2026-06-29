@@ -1,27 +1,19 @@
-import { defaultAbiCoder } from "ethers/lib/utils";
+import { encodeAbiParameters, zeroAddress } from "viem";
 import {
   DefaultV2ParameterConstraints,
   getDeploymentAddress,
   getHooksFactoryAddressForMarketType,
-  getHooksFactoryRevolvingContract,
   hasHooksFactoryDeployment,
   SupportedChainId
 } from "../constants";
 import { MarketParameters } from "../controller";
-import {
-  SubgraphHooksInstanceDataFragment,
-  SubgraphHooksTemplateDataFragment
-} from "../gql/graphql";
+import { SubgraphHooksInstanceDataFragment } from "../gql/graphql";
 import { Token, TokenAmount } from "../token";
 import {
   DeployMarketInputsV2Struct,
-  HooksFactory,
-  HooksFactory__factory,
   HooksInstanceDataStructOutput,
-  HooksTemplateDataStructOutput,
-  IFixedTermHooks,
-  IFixedTermHooks__factory
-} from "../typechain";
+  HooksTemplateDataStructOutput
+} from "../lens-types";
 import {
   AddLenderInput,
   ContractWrapper,
@@ -34,36 +26,47 @@ import {
   PartialTransaction,
   RoleProvider,
   SignerOrProvider,
+  TransactionHash,
   TransferAccess,
   WithdrawalAccess
 } from "../types";
-import { assert, encodeHooksConfig, parseFeeConfigurationV2 } from "../utils";
-import { BigNumber, constants, ContractTransaction } from "ethers";
+import {
+  assert,
+  encodeHooksConfig,
+  parseFeeConfigurationV2,
+  parseMarketParameterConstraints,
+  prepareTransaction,
+  toNumber
+} from "../utils";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
   DeployMarketPreview,
   DeployMarketStatus,
+  LegacyDeployMarketPreview,
   readyLegacyDeployMarketPreview,
-  readyRevolvingDeployMarketPreview
+  readyRevolvingDeployMarketPreview,
+  RevolvingDeployMarketPreview
 } from "./validation";
 import { encodeRevolvingMarketData } from "./revolving";
-import { encodeMarketHooksInstanceInputs } from "./utils";
+import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
+import {
+  createLegacyHooksFactoryContractFacade,
+  encodeMarketHooksInstanceInputs,
+  LegacyHooksFactoryContractFacade
+} from "./utils";
+import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iFixedTermHooksAbi } from "../abi";
+import { submitPreparedTransaction } from "../internal/viem-write";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface FixedTermHooks extends Omit<FixedTermHooksArgs, "roleProviders" | "constraints"> {}
 
-const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
+const NullProviderIndex = 2 ** 24 - 1;
 
-export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
+export class FixedTermHooks extends ContractWrapper {
   readonly kind: HooksKind.FixedTerm = HooksKind.FixedTerm;
-  readonly contractFactory = IFixedTermHooks__factory;
   public roleProviders: RoleProvider[];
   public constraints: MarketParameterConstraints;
-
-  protected get _contractAddress(): string {
-    return this.address;
-  }
 
   constructor({
     provider,
@@ -73,6 +76,7 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
   }: FixedTermHooksArgs) {
     super(provider);
     Object.assign(this, args);
+    this.contract = { address: this.address };
     this.roleProviders = roleProviders;
     this.constraints = constraints;
   }
@@ -90,15 +94,19 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
       hooksFactory ?? this.hooksFactory
     );
     this.name = data.name;
-    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => ({
-      isApproved: true,
-      providerAddress: p.providerAddress,
-      isPullProvider: p.pullProviderIndex !== NullProviderIndex,
-      pullProviderIndex: p.pullProviderIndex,
-      isPushProvider: p.pushProviderIndex !== NullProviderIndex,
-      pushProviderIndex: p.pushProviderIndex,
-      timeToLive: p.timeToLive
-    }));
+    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => {
+      const pullProviderIndex = toNumber(p.pullProviderIndex);
+      const pushProviderIndex = toNumber(p.pushProviderIndex);
+      return {
+        isApproved: true,
+        providerAddress: p.providerAddress,
+        isPullProvider: pullProviderIndex !== NullProviderIndex,
+        pullProviderIndex,
+        isPushProvider: pushProviderIndex !== NullProviderIndex,
+        pushProviderIndex,
+        timeToLive: toNumber(p.timeToLive)
+      };
+    });
   }
 
   get hooksFactory(): string {
@@ -123,33 +131,21 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
     const credentialTimestamps = inputs.map(
       (input) => input.credentialTimestamp ?? Math.floor(Date.now() / 1000)
     );
-    return {
+    return prepareTransaction({
       to: this.address,
-      data:
+      abi: iFixedTermHooksAbi,
+      functionName: inputs.length === 1 ? "grantRole" : "grantRoles",
+      args:
         inputs.length === 1
-          ? this.contract.interface.encodeFunctionData("grantRole", [
-              lenders[0],
-              credentialTimestamps[0]
-            ])
-          : this.contract.interface.encodeFunctionData("grantRoles", [
-              lenders,
-              credentialTimestamps
-            ]),
-      value: "0"
-    };
+          ? [lenders[0], credentialTimestamps[0]]
+          : [lenders, credentialTimestamps]
+    });
   }
 
-  addLenders(inputs: AddLenderInput[]): Promise<ContractTransaction> {
+  addLenders(inputs: AddLenderInput[]): Promise<TransactionHash> {
     const result = this.previewAddLenders(inputs);
     assert(result.status === ChangeLenderRoleStatus.Ready, `Can not add lenders: ${result.status}`);
-
-    const lenders = inputs.map((input) => input.lender);
-    const credentialTimestamps = inputs.map(
-      (input) => input.credentialTimestamp ?? Math.floor(Date.now() / 1000)
-    );
-    return lenders.length === 1
-      ? this.contract.grantRole(lenders[0], credentialTimestamps[0])
-      : this.contract.grantRoles(lenders, credentialTimestamps);
+    return submitPreparedTransaction(this.signer, this.populateAddLenders(inputs));
   }
 
   /* ========================================================================== */
@@ -166,14 +162,12 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
   }
 
   populateBlockLenders(lenders: string[]): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data:
-        lenders.length === 1
-          ? this.contract.interface.encodeFunctionData("blockFromDeposits(address)", [lenders[0]])
-          : this.contract.interface.encodeFunctionData("blockFromDeposits(address[])", [lenders]),
-      value: "0"
-    };
+      abi: iFixedTermHooksAbi,
+      functionName: "blockFromDeposits",
+      args: lenders.length === 1 ? [lenders[0]] : [lenders]
+    });
   }
 
   previewUnblockLender(): ChangeLenderRolePreview {
@@ -185,23 +179,22 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
     };
   }
 
-  blockLenders(lenders: string[]): Promise<ContractTransaction> {
+  blockLenders(lenders: string[]): Promise<TransactionHash> {
     const result = this.previewBlockLenders(lenders);
     assert(
       result.status === ChangeLenderRoleStatus.Ready,
       `Can not block lenders: ${result.status}`
     );
-    return lenders.length === 1
-      ? this.contract["blockFromDeposits(address)"](lenders[0])
-      : this.contract["blockFromDeposits(address[])"](lenders);
+    return submitPreparedTransaction(this.signer, this.populateBlockLenders(lenders));
   }
 
   populateUnblockLender(lender: string): PartialTransaction {
-    return {
+    return prepareTransaction({
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("unblockFromDeposits", [lender]),
-      value: "0"
-    };
+      abi: iFixedTermHooksAbi,
+      functionName: "unblockFromDeposits",
+      args: [lender]
+    });
   }
 
   /* ========================================================================== */
@@ -231,16 +224,20 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
         hooksFactory
       ),
       borrower: data.borrower,
-      constraints: data.constraints,
-      roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => ({
-        isApproved: true,
-        providerAddress: p.providerAddress,
-        isPullProvider: p.pullProviderIndex !== NullProviderIndex,
-        pullProviderIndex: p.pullProviderIndex,
-        isPushProvider: p.pushProviderIndex !== NullProviderIndex,
-        pushProviderIndex: p.pushProviderIndex,
-        timeToLive: p.timeToLive
-      }))
+      constraints: parseMarketParameterConstraints(data.constraints),
+      roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => {
+        const pullProviderIndex = toNumber(p.pullProviderIndex);
+        const pushProviderIndex = toNumber(p.pushProviderIndex);
+        return {
+          isApproved: true,
+          providerAddress: p.providerAddress,
+          isPullProvider: pullProviderIndex !== NullProviderIndex,
+          pullProviderIndex,
+          isPushProvider: pushProviderIndex !== NullProviderIndex,
+          pushProviderIndex,
+          timeToLive: toNumber(p.timeToLive)
+        };
+      })
     });
   }
 
@@ -260,7 +257,7 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
       hooksTemplate: FixedTermHooksTemplate.fromSubgraphData(
         chainId,
         provider,
-        data.hooksTemplate,
+        data.factoryHooksTemplate,
         signerAddress,
         isRegisteredBorrower,
         hooksFactory
@@ -309,12 +306,11 @@ export type FixedTermHooksTemplateArgs = {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface FixedTermHooksTemplate extends FixedTermHooksTemplateArgs {
   hooksFactory: string;
+  contract: LegacyHooksFactoryContractFacade;
 }
 
-export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
+export class FixedTermHooksTemplate extends ContractWrapper {
   readonly kind: HooksKind.FixedTerm = HooksKind.FixedTerm;
-  readonly contractFactory = HooksFactory__factory;
-  protected _contractAddress: string;
 
   constructor(
     public chainId: SupportedChainId,
@@ -323,8 +319,11 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
   ) {
     super(provider);
     const hooksFactory = args.hooksFactory ?? getDeploymentAddress(chainId, "HooksFactory");
-    Object.assign(this, { ...args, hooksFactory });
-    this._contractAddress = hooksFactory;
+    Object.assign(this, {
+      ...args,
+      hooksFactory,
+      contract: createLegacyHooksFactoryContractFacade(hooksFactory)
+    });
   }
 
   updateWith(
@@ -335,13 +334,13 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
   ): void {
     this.fees = parseFeeConfigurationV2(this.chainId, this.provider, data.fees);
     this.enabled = data.enabled;
-    this.index = data.index;
+    this.index = toNumber(data.index);
     this.name = data.name;
-    this.totalMarkets = data.totalMarkets.toNumber();
+    this.totalMarkets = toNumber(data.totalMarkets);
     this.signerAddress = signerAddress;
     this.isRegisteredBorrower = isRegisteredBorrower;
     this.hooksFactory = hooksFactory;
-    this._contractAddress = hooksFactory;
+    this.contract = createLegacyHooksFactoryContractFacade(hooksFactory);
   }
 
   static fromLensData(
@@ -357,9 +356,9 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
       fees: parseFeeConfigurationV2(chainId, provider, data.fees),
       hooksTemplate: data.hooksTemplate,
       hooksFactory,
-      index: data.index,
+      index: toNumber(data.index),
       name: data.name,
-      totalMarkets: data.totalMarkets.toNumber(),
+      totalMarkets: toNumber(data.totalMarkets),
       signerAddress,
       isRegisteredBorrower
     });
@@ -368,26 +367,29 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
   static fromSubgraphData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    {
-      feeRecipient,
-      protocolFeeBips,
-      disabled,
-      id,
-      name,
-      originationFeeAsset,
-      originationFeeAmount
-    }: SubgraphHooksTemplateDataFragment,
+    data: SubgraphHooksTemplateLike,
     signerAddress?: string,
     isRegisteredBorrower?: boolean,
     hooksFactory?: string
   ): FixedTermHooksTemplate {
+    const normalizedTemplate = normalizeSubgraphHooksTemplateData(data);
+    const {
+      feeRecipient,
+      protocolFeeBips,
+      disabled,
+      hooksTemplate,
+      name,
+      originationFeeAsset,
+      originationFeeAmount
+    } = normalizedTemplate;
+    const scopedHooksFactory = hooksFactory ?? normalizedTemplate.hooksFactory;
     const originationFeeToken = originationFeeAsset
       ? Token.fromSubgraphToken(chainId, originationFeeAsset, provider)
       : undefined;
 
     return new FixedTermHooksTemplate(chainId, provider, {
-      hooksTemplate: id,
-      hooksFactory,
+      hooksTemplate,
+      hooksFactory: scopedHooksFactory,
       fees: {
         feeRecipient,
         protocolFeeBips,
@@ -407,6 +409,13 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     });
   }
 
+  previewDeployMarket(
+    args: LegacyFixedTermMarketDeploymentArgs & MarketHooksInstanceInputs
+  ): LegacyDeployMarketPreview;
+  previewDeployMarket(
+    args: RevolvingFixedTermMarketDeploymentArgs & MarketHooksInstanceInputs
+  ): RevolvingDeployMarketPreview;
+  previewDeployMarket(args: FixedTermMarketDeploymentArgs): DeployMarketPreview;
   previewDeployMarket({
     marketType,
     commitmentFeeBips,
@@ -425,7 +434,6 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     fixedTermEndTime,
     allowClosureBeforeTerm,
     allowTermReduction,
-    allowForceBuyBacks,
     ...otherParameters
   }: FixedTermMarketDeploymentArgs): DeployMarketPreview {
     const targetMarketType = marketType ?? "legacy";
@@ -467,27 +475,21 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
       useOnQueueWithdrawal: withdrawalAccess === WithdrawalAccess.RequiresCredential,
       useOnTransfer: transferAccess === TransferAccess.RequiresCredential
     });
-    const hooksData = defaultAbiCoder.encode(
-      this.chainId === SupportedChainId.Sepolia
-        ? ["uint32", "uint128", "bool", "bool", "bool", "bool"]
-        : ["uint32", "uint128", "bool", "bool", "bool"],
-
-      this.chainId === SupportedChainId.Sepolia
-        ? [
-            fixedTermEndTime,
-            minimumDeposit?.raw ?? 0,
-            transferAccess === TransferAccess.Disabled,
-            allowForceBuyBacks ?? false,
-            allowClosureBeforeTerm ?? false,
-            allowTermReduction ?? false
-          ]
-        : [
-            fixedTermEndTime,
-            minimumDeposit?.raw ?? 0,
-            transferAccess === TransferAccess.Disabled,
-            allowClosureBeforeTerm ?? false,
-            allowTermReduction ?? false
-          ]
+    const hooksData = encodeAbiParameters(
+      [
+        { type: "uint32" },
+        { type: "uint128" },
+        { type: "bool" },
+        { type: "bool" },
+        { type: "bool" }
+      ],
+      [
+        fixedTermEndTime,
+        minimumDeposit?.raw ?? 0n,
+        transferAccess === TransferAccess.Disabled,
+        allowClosureBeforeTerm ?? false,
+        allowTermReduction ?? false
+      ]
     );
     const parameters = {
       ...otherParameters,
@@ -496,7 +498,7 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
       hooks: hooksConfig
     } as DeployMarketInputsV2Struct;
     const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0;
-    const originationFeeToken = this.fees.originationFeeToken?.address ?? constants.AddressZero;
+    const originationFeeToken = this.fees.originationFeeToken?.address ?? zeroAddress;
     if (marketType === "revolving") {
       const marketData = encodeRevolvingMarketData({ commitmentFeeBips });
       if (hooksAddress) {
@@ -551,24 +553,18 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     }
   }
 
-  deployMarket({
-    ...otherParameters
-  }: FixedTermMarketDeploymentArgs): Promise<ContractTransaction> {
+  deployMarket({ ...otherParameters }: FixedTermMarketDeploymentArgs): Promise<TransactionHash> {
     const result = this.previewDeployMarket(otherParameters);
     assert(result.status === DeployMarketStatus.Ready, `Can not deploy market: ${result.status}`);
-    if (result.marketType === "legacy" && result.fn === "deployMarket") {
-      return this.contract.deployMarket(...result.args);
-    } else if (result.marketType === "legacy") {
-      return this.contract.deployMarketAndHooks(...result.args);
-    } else if (result.fn === "deployMarket") {
-      return getHooksFactoryRevolvingContract(this.chainId, this.provider).deployMarket(
-        ...result.args
-      );
-    } else {
-      return getHooksFactoryRevolvingContract(this.chainId, this.provider).deployMarketAndHooks(
-        ...result.args
-      );
-    }
+    return submitPreparedTransaction(
+      this.signer,
+      prepareTransaction({
+        to: this.hooksFactory,
+        abi: result.marketType === "legacy" ? hooksFactoryAbi : hooksFactoryRevolvingAbi,
+        functionName: result.fn,
+        args: result.args
+      })
+    );
   }
 }
 

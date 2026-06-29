@@ -1,21 +1,20 @@
 import {
   SupportedChainId,
-  getHooksFactoryAddressForMarketType,
-  getLatestLensDeploymentName,
-  getLensV2Contract,
-  getLensV2_5Contract,
-  hasHooksFactoryDeployment
+  getIndexedHooksFactories,
+  getLatestLensDeploymentName
 } from "../constants";
+import { SubgraphHooksInstanceDataFragment, SubgraphHooksKind } from "../gql/graphql";
+import type { HooksInstanceDataStructOutput, HooksTemplateDataStructOutput } from "../lens-types";
 import {
-  SubgraphHooksInstanceDataFragment,
-  SubgraphHooksKind,
-  SubgraphHooksTemplateDataFragment
-} from "../gql/graphql";
-import { HooksInstanceDataStructOutput, HooksTemplateDataStructOutput } from "../typechain";
-import { MarketTypes, Signer, SignerOrProvider } from "../types";
+  getV2HooksDataForBorrower,
+  getV2_5FactoryScopedHooksDataForBorrower
+} from "../internal/market-lens";
+import { SignerOrProvider } from "../types";
+import { getEthersSignerAddress } from "../internal/ethers-signer";
 import { OpenTermHooks, OpenTermHooksTemplate } from "./access-control";
 import { FixedTermHooks, FixedTermHooksTemplate } from "./fixed-term";
 import { PeriodicTermHooks, PeriodicTermHooksTemplate } from "./periodic-term";
+import { SubgraphHooksTemplateLike } from "./subgraph-template";
 
 export * from "./access-control";
 export * from "./fixed-term";
@@ -41,8 +40,8 @@ export async function getBorrowerHooksData(
   provider: SignerOrProvider,
   borrower?: string
 ): Promise<BorrowerHooksDataResult> {
-  if (borrower === undefined && Signer.isSigner(provider)) {
-    borrower = await provider.getAddress();
+  if (borrower === undefined) {
+    borrower = await getEthersSignerAddress(provider);
   }
   if (borrower === undefined) {
     throw Error("Borrower address is required");
@@ -50,18 +49,16 @@ export async function getBorrowerHooksData(
   const borrowerAddress = borrower;
 
   if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
-    const lens = getLensV2_5Contract(chainId, provider);
     const factoryScopedResults = await Promise.all(
-      MarketTypes.filter((marketType) => hasHooksFactoryDeployment(chainId, marketType)).map(
-        async (marketType) => {
-          const hooksFactory = getHooksFactoryAddressForMarketType(chainId, marketType);
-          const data = await lens["getHooksDataForBorrower(address,address)"](
-            hooksFactory,
-            borrowerAddress
-          );
-          return { data, hooksFactory };
-        }
-      )
+      getIndexedHooksFactories(chainId).map(async ({ address: hooksFactory }) => {
+        const data = await getV2_5FactoryScopedHooksDataForBorrower(
+          chainId,
+          provider,
+          hooksFactory,
+          borrowerAddress
+        );
+        return { data, hooksFactory };
+      })
     );
 
     const hooksInstancesByAddress = new Map<string, HooksInstance>();
@@ -111,9 +108,7 @@ export async function getBorrowerHooksData(
     };
   }
 
-  const result = await getLensV2Contract(chainId, provider).getHooksDataForBorrower(
-    borrowerAddress
-  );
+  const result = await getV2HooksDataForBorrower(chainId, provider, borrowerAddress);
 
   const hooksTemplateDataByAddress = new Map(
     result.hooksTemplates.map((template) => [template.hooksTemplate.toLowerCase(), template])
@@ -157,7 +152,7 @@ export async function getBorrowerHooksData(
 export function hooksTemplateFromSubgraph(
   chainId: SupportedChainId,
   provider: SignerOrProvider,
-  data: SubgraphHooksTemplateDataFragment,
+  data: SubgraphHooksTemplateLike,
   signerAddress?: string,
   isRegisteredBorrower?: boolean
 ): HooksTemplate {
@@ -222,7 +217,8 @@ export function hooksTemplateFromLens(
       provider,
       data,
       signerAddress,
-      isRegisteredBorrower
+      isRegisteredBorrower,
+      hooksFactory
     );
   } else {
     throw Error(`Unknown hooks template: ${data.name}`);
@@ -297,7 +293,8 @@ export function hooksInstanceFromLens(
       provider,
       data,
       signerAddress,
-      isRegisteredBorrower
+      isRegisteredBorrower,
+      hooksFactory
     );
   } else {
     throw Error(`Unknown hooks template: ${data.kind}`);

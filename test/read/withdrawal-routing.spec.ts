@@ -1,15 +1,72 @@
 import { expect } from "chai";
 import { BigNumber, providers } from "ethers";
+import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
+import { marketLensV2_5Abi } from "../../src/abi";
 import * as constantsModule from "../../src/constants";
 import { Market } from "../../src/market";
 import { WithdrawalBatch, BatchStatus } from "../../src/withdrawal-batch";
 import { LenderWithdrawalStatus } from "../../src/withdrawal-status";
-import { MarketDataV2StructOutput } from "../../src/typechain";
-
-const provider = new providers.JsonRpcProvider();
+import { MarketDataV2StructOutput } from "../../src/lens-types";
 
 const makeAddress = (suffix: number): string => {
   return `0x${suffix.toString(16).padStart(40, "0")}`;
+};
+
+type FakeRpcCall = {
+  to?: string;
+  data?: string;
+};
+
+class FakeViemProvider {
+  calls: FakeRpcCall[] = [];
+  private readonly getResponse: (call: FakeRpcCall) => string;
+
+  constructor(getResponse: (call: FakeRpcCall) => string) {
+    this.getResponse = getResponse;
+  }
+
+  async send(method: string, params: unknown[] = []): Promise<unknown> {
+    if (method === "eth_chainId") {
+      return "0xaa36a7";
+    }
+    if (method !== "eth_call") {
+      throw new Error(`Unexpected RPC method: ${method}`);
+    }
+
+    const call = params[0] as FakeRpcCall;
+    this.calls.push(call);
+    return this.getResponse(call);
+  }
+}
+
+const toViemResult = (value: unknown): unknown => {
+  if (BigNumber.isBigNumber(value)) {
+    return BigInt(value.toString());
+  }
+  if (Array.isArray(value)) {
+    return value.map(toViemResult);
+  }
+  if (value !== null && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, toViemResult(entry)])
+    );
+  }
+  return value;
+};
+
+const encodeLensResult = (abi: Abi, functionName: string, result: unknown): `0x${string}` => {
+  return encodeFunctionResult({
+    abi,
+    functionName,
+    result: toViemResult(result)
+  });
+};
+
+const decodeLensCall = (abi: Abi, call: FakeRpcCall) => {
+  return decodeFunctionData({
+    abi,
+    data: call.data as `0x${string}`
+  });
 };
 
 const makeTokenMetadata = (suffix: number, name: string, symbol: string) => ({
@@ -57,7 +114,11 @@ const makeFactoryBackedMarketData = (hooksFactory: string): MarketDataV2StructOu
       withdrawalRequiresAccess: false,
       fixedTermEndTime: 0,
       allowClosureBeforeTerm: false,
-      allowTermReduction: false
+      allowTermReduction: false,
+      firstWithdrawalWindowStart: 0,
+      periodDuration: 0,
+      withdrawalWindowDuration: 0,
+      periodicTermClosed: false
     },
     withdrawalBatchDuration: BigNumber.from(86_400),
     feeRecipient: makeAddress(11),
@@ -147,37 +208,37 @@ const makeWithdrawalBatchLenderStatus = (lender: string) => ({
 });
 
 describe("Withdrawal read routing", () => {
-  const originalGetLatestLensContract = constantsModule.getLatestLensContract;
-  const originalGetLensContract = constantsModule.getLensContract;
-  const mutableConstants = constantsModule as typeof constantsModule & {
-    getLatestLensContract: typeof originalGetLatestLensContract;
-    getLensContract: typeof originalGetLensContract;
-  };
-
-  afterEach(() => {
-    mutableConstants.getLatestLensContract = originalGetLatestLensContract;
-    mutableConstants.getLensContract = originalGetLensContract;
-  });
-
   it("uses the latest lens for V2 withdrawal batch reads", async () => {
     const hooksFactory = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,
       "HooksFactory"
     );
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLensV2_5"
+    );
+    const marketData = makeFactoryBackedMarketData(hooksFactory);
+    const marketAddress = marketData.marketToken.token;
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getWithdrawalBatchData");
+      expect((decoded.args as [string, number])[0].toLowerCase()).to.equal(marketAddress);
+      expect((decoded.args as [string, number])[1]).to.equal(1_700_000_123);
+
+      return encodeLensResult(
+        marketLensV2_5Abi as Abi,
+        "getWithdrawalBatchData",
+        makeWithdrawalBatchData()
+      );
+    });
+
     const market = Market.fromMarketDataV2(
       constantsModule.SupportedChainId.Sepolia,
-      provider,
-      makeFactoryBackedMarketData(hooksFactory)
+      viemProvider as unknown as providers.Provider,
+      marketData
     );
-
-    mutableConstants.getLatestLensContract = (() => ({
-      getWithdrawalBatchData: async () => makeWithdrawalBatchData()
-    })) as unknown as typeof originalGetLatestLensContract;
-    mutableConstants.getLensContract = (() => ({
-      getWithdrawalBatchData: async () => {
-        throw new Error("should not use the legacy lens for V2 withdrawal batch reads");
-      }
-    })) as unknown as typeof originalGetLensContract;
 
     const batch = await WithdrawalBatch.getWithdrawalBatch(market, 1_700_000_123);
 
@@ -192,23 +253,32 @@ describe("Withdrawal read routing", () => {
       constantsModule.SupportedChainId.Sepolia,
       "HooksFactory"
     );
-    const market = Market.fromMarketDataV2(
+    const lensAddress = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,
-      provider,
-      makeFactoryBackedMarketData(hooksFactory)
+      "MarketLensV2_5"
     );
+    const marketData = makeFactoryBackedMarketData(hooksFactory);
+    const marketAddress = marketData.marketToken.token;
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
 
-    mutableConstants.getLatestLensContract = (() => ({
-      getWithdrawalBatchDataWithLenderStatus: async () => ({
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getWithdrawalBatchDataWithLenderStatus");
+      expect((decoded.args as [string, number, string])[0].toLowerCase()).to.equal(marketAddress);
+      expect((decoded.args as [string, number, string])[1]).to.equal(1_700_000_123);
+      expect((decoded.args as [string, number, string])[2].toLowerCase()).to.equal(lender);
+
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getWithdrawalBatchDataWithLenderStatus", {
         batch: makeWithdrawalBatchData(),
         lenderStatus: makeWithdrawalBatchLenderStatus(lender)
-      })
-    })) as unknown as typeof originalGetLatestLensContract;
-    mutableConstants.getLensContract = (() => ({
-      getWithdrawalBatchDataWithLenderStatus: async () => {
-        throw new Error("should not use the legacy lens for V2 lender withdrawal reads");
-      }
-    })) as unknown as typeof originalGetLensContract;
+      });
+    });
+
+    const market = Market.fromMarketDataV2(
+      constantsModule.SupportedChainId.Sepolia,
+      viemProvider as unknown as providers.Provider,
+      marketData
+    );
 
     const withdrawal = await LenderWithdrawalStatus.getWithdrawalForLender(
       market,

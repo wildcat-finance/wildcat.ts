@@ -4,9 +4,10 @@ import {
   SubgraphGetAllHooksTemplatesQuery,
   SubgraphGetAllHooksTemplatesQueryVariables
 } from "./graphql";
-import { SupportedChainId } from "../constants";
-import { Signer, SignerOrProvider } from "../types";
+import { isIndexedHooksFactory, SupportedChainId } from "../constants";
+import { SignerOrProvider } from "../types";
 import { HooksTemplate, hooksTemplateFromSubgraph } from "../access";
+import { getEthersSignerAddress } from "../internal/ethers-signer";
 
 export type GetAllHooksTemplatesOptions = {
   chainId: SupportedChainId;
@@ -26,8 +27,8 @@ export async function getAllHooksTemplates(
     isRegisteredBorrower
   }: GetAllHooksTemplatesOptions
 ): Promise<HooksTemplate[]> {
-  if (borrower === undefined && Signer.isSigner(signerOrProvider)) {
-    borrower = await signerOrProvider.getAddress();
+  if (borrower === undefined) {
+    borrower = await getEthersSignerAddress(signerOrProvider);
   }
   const result = await subgraphClient.query<
     SubgraphGetAllHooksTemplatesQuery,
@@ -40,11 +41,9 @@ export async function getAllHooksTemplates(
       includeBorrower: !!borrower
     }
   });
-  return result.data.hooksTemplates
-    .filter(
-      (t) =>
-        t.name === "OpenTermHooks" || t.name === "FixedTermHooks" || t.name === "PeriodicTermHooks"
-    )
+  return result.data.factoryHooksTemplates
+    .filter((t) => isIndexedHooksFactory(chainId, t.hooksFactory.id))
+    .filter((t) => t.name === "OpenTermHooks" || t.name === "FixedTermHooks")
     .map((template) =>
       hooksTemplateFromSubgraph(
         chainId,
