@@ -1137,8 +1137,8 @@ export class Market extends ContractWrapper {
               periodDuration > 0
                 ? "PeriodicTermHooks"
                 : fixedTermEndTime > 0
-                  ? "FixedTermHooks"
-                  : "OpenTermHooks"
+                ? "FixedTermHooks"
+                : "OpenTermHooks"
           };
       const template = hooksTemplateFromSubgraph(chainId, provider, templateData);
       hooksFactory = template.hooksFactory;

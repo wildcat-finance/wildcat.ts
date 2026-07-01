@@ -1,11 +1,6 @@
 import { MarketAccount } from "./account";
 import { Market } from "./market";
-import {
-  HooksKind,
-  MarketVersion,
-  PartialTransaction,
-  PeriodicTermHooksConfig
-} from "./types";
+import { HooksKind, MarketVersion, PartialTransaction, PeriodicTermHooksConfig } from "./types";
 import { TokenAmount } from "./token";
 import { prepareTransaction, SECONDS_IN_365_DAYS, toNumber } from "./utils";
 import { iPeriodicTermHooksAbi, wildcatMarketV2Abi } from "./abi";
@@ -57,11 +52,7 @@ type PendingAprChangeResult =
       responseWindowStart: bigint | number | string;
       responseWindowEnd: bigint | number | string;
     }
-  | readonly [
-      PendingAprChangeValue,
-      bigint | number | string,
-      bigint | number | string
-    ];
+  | readonly [PendingAprChangeValue, bigint | number | string, bigint | number | string];
 
 const getPendingAprChangeField = (
   pendingAprChange: PendingAprChangeValue,
@@ -72,10 +63,12 @@ const getPendingAprChangeField = (
     return toNumber(pendingAprChange[index]);
   }
   return toNumber(
-    (pendingAprChange as {
-      annualInterestBips: bigint | number | string;
-      proposalTimestamp: bigint | number | string;
-    })[key]
+    (
+      pendingAprChange as {
+        annualInterestBips: bigint | number | string;
+        proposalTimestamp: bigint | number | string;
+      }
+    )[key]
   );
 };
 
@@ -88,11 +81,7 @@ const normalizePendingAprChangeResult = (result: PendingAprChangeResult) => {
   const responseWindowEnd = Array.isArray(result) ? result[2] : objectResult.responseWindowEnd;
   return {
     pendingAprChange: {
-      annualInterestBips: getPendingAprChangeField(
-        pendingAprChange,
-        0,
-        "annualInterestBips"
-      ),
+      annualInterestBips: getPendingAprChangeField(pendingAprChange, 0, "annualInterestBips"),
       proposalTimestamp: getPendingAprChangeField(pendingAprChange, 1, "proposalTimestamp")
     },
     responseWindowEnd: toNumber(responseWindowEnd)
@@ -252,8 +241,7 @@ export async function getPeriodicAprReductionSettlementQuote(
       "getPendingAprChange",
       [market.address]
     ),
-    timestampSec ??
-      publicClient.getBlock().then((block) => toNumber(block.timestamp))
+    timestampSec ?? publicClient.getBlock().then((block) => toNumber(block.timestamp))
   ]);
   const { pendingAprChange, responseWindowEnd } =
     normalizePendingAprChangeResult(pendingAprChangeResult);

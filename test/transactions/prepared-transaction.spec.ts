@@ -381,9 +381,7 @@ describe("prepared transaction encoding", () => {
 
     const staleTargetPlan = await populatePeriodicAprReductionPlan(account, 800, readyQuote);
 
-    expect(staleTargetPlan.quote.status).to.equal(
-      PeriodicAprSettlementStatus.ProposalDoesNotMatch
-    );
+    expect(staleTargetPlan.quote.status).to.equal(PeriodicAprSettlementStatus.ProposalDoesNotMatch);
     expect(staleTargetPlan.safeBatchable).to.equal(false);
     expect(staleTargetPlan.transactions).to.deep.equal([]);
   });
