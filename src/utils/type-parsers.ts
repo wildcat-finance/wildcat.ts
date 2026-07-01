@@ -31,11 +31,7 @@ import {
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { SupportedChainId } from "../constants";
 import { assert } from "./assert";
-import {
-  SubgraphLenderHooksAccessDataFragment,
-  SubgraphLenderStatus,
-  SubgraphWithdrawalRequestPropertiesFragment
-} from "../gql/graphql";
+import { SubgraphLenderHooksAccessDataFragment, SubgraphLenderStatus } from "../gql/graphql";
 import { LenderRole } from "../account";
 
 export const parseMarketParameterConstraints = (
@@ -121,10 +117,6 @@ const getTypeName: ParseFn = function <K extends WithdrawalRecordKind>(
 ): K {
   return log.__typename;
 }; */
-
-const test = (batch: WithdrawalBatch, records: SubgraphWithdrawalRequestPropertiesFragment[]) => {
-  const x = records.map((r) => parseWithdrawalRecord(batch, r));
-};
 
 type PopulatedTransactionLike = {
   to?: string;

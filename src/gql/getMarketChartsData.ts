@@ -48,7 +48,6 @@ export type MarketChartsData = {
 export async function getMarketChartsData(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   {
-    chainId,
     fetchPolicy,
     market,
     numWithdrawalBatches,

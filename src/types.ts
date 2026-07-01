@@ -1,4 +1,4 @@
-import type { Address, Hash, Hex, TransactionReceipt } from "viem";
+import type { Hash, TransactionReceipt } from "viem";
 import { Token, TokenAmount } from "./token";
 import { SubgraphMarketVersion } from "./gql/graphql";
 import { HooksTemplate } from "./access";

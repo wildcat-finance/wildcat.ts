@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 // import { ControllerAddress } from "../src/constants";
-import { Token, Vault, VaultAccount, VaultFactory, getAllVaultsData, Signer } from "../src";
+import { Token, Vault, VaultAccount, VaultFactory, getAllVaultsData } from "../src";
 import { expect } from "chai";
 import { TokenFactory } from "../src/mockerc20factory";
 import { ControllerAddress } from "../src/constants";

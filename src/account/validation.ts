@@ -126,25 +126,6 @@ export enum QueueWithdrawalStatus {
 
 export type QueueWithdrawalPreview = { status: QueueWithdrawalStatus };
 
-type MarketFunctionName =
-  | "Deposit"
-  | "QueueWithdrawal"
-  | "SetApr"
-  | "Close"
-  | "Repay"
-  | "ForceBuyBack";
-
-type AccountActionAvailability = {
-  [key in MarketFunctionName]:
-    | {
-        available: true;
-      }
-    | {
-        available: false;
-        reason: string;
-      };
-};
-
 export const isMarketInstanceArray = (markets: Market[] | string[]): markets is Market[] => {
   return typeof markets[0] !== "string";
 };
