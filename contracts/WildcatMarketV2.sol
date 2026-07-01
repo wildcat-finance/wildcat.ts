@@ -27,6 +27,8 @@ interface WildcatMarketV2 {
 
   error AprChangeOnClosedMarket();
 
+  error AprReductionNotReduction();
+
   error BadLaunchCode();
 
   error BadRescueAsset();
@@ -211,6 +213,8 @@ interface WildcatMarketV2 {
   function deposit(uint256 amount) external;
 
   function depositUpTo(uint256 amount) external returns (uint256 param0);
+
+  function executePendingAnnualInterestBipsReduction() external;
 
   function executeWithdrawal(
     address accountAddress,

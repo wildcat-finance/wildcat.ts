@@ -180,9 +180,9 @@ export interface PlannedPeriodicAprTransaction {
   tx: PartialTransaction;
   kind: "approve" | "settle" | "executeApr";
   /**
-   * Only `executeApr` must be sent by the borrower (`onlyBorrower`). `approve`
-   * and `settle` may come from any wallet, but must share a sender with each
-   * other when a repayment amount is being transferred.
+   * `approve` and `settle` may come from any wallet, but must share a sender
+   * with each other when a repayment amount is being transferred. `executeApr`
+   * is permissionless once the proposal is executable.
    */
   requiresBorrower: boolean;
   description: string;
@@ -192,10 +192,8 @@ export interface PeriodicAprReductionPlan {
   quote: PeriodicAprSettlementQuote;
   transactions: PlannedPeriodicAprTransaction[];
   /**
-   * True when the transactions may be batched atomically by a contract-wallet
-   * borrower (e.g. a Safe). Both market calls see `msg.sender == borrower` in
-   * that case. A generic helper-contract multicall does NOT work: the market
-   * would see the helper as `msg.sender` for the borrower-only APR call.
+   * True when the transactions may be batched atomically. When repayment is
+   * included, the approval and settlement steps must still share a sender.
    */
   safeBatchable: boolean;
 }
@@ -318,9 +316,10 @@ export async function getPeriodicAprReductionSettlementQuote(
 
 /**
  * Build the ordered transactions for settling and executing a pending periodic
- * APR reduction: [approve?, settle?, executeApr]. For EOA borrowers these are
+ * APR reduction: [approve?, settle?, executeApr]. For EOAs these are
  * sequential transactions and market state should be refreshed between settle
- * and execute; for contract-wallet borrowers they may be batched atomically.
+ * and execute; contract wallets may batch them atomically when the same wallet
+ * is sending the approval/settlement steps.
  *
  * When more unpaid batches are queued than one settlement transaction can
  * process (`quote.remainingBatchesAfterThisPass > 0`), the plan contains the
@@ -338,6 +337,18 @@ export async function populatePeriodicAprReductionPlan(
     existingQuote ?? (await getPeriodicAprReductionSettlementQuote(marketAccount, proposedAprBips));
   const market = marketAccount.market;
   const transactions: PlannedPeriodicAprTransaction[] = [];
+
+  if (
+    (quote.status === PeriodicAprSettlementStatus.Ready ||
+      quote.status === PeriodicAprSettlementStatus.NeedsSettlement) &&
+    quote.proposedAprBips !== proposedAprBips
+  ) {
+    return {
+      quote: { ...quote, status: PeriodicAprSettlementStatus.ProposalDoesNotMatch },
+      transactions,
+      safeBatchable: false
+    };
+  }
 
   if (
     quote.status !== PeriodicAprSettlementStatus.Ready &&
@@ -391,14 +402,11 @@ export async function populatePeriodicAprReductionPlan(
     tx: prepareTransaction({
       to: market.address,
       abi: wildcatMarketV2Abi,
-      functionName: "setAnnualInterestAndReserveRatioBips",
-      // The hook overwrites the reserve ratio with the current value on the
-      // proposed-reduction path; pass the current ratio.
-      args: [proposedAprBips, market.reserveRatioBips]
+      functionName: "executePendingAnnualInterestBipsReduction"
     }),
     kind: "executeApr",
-    requiresBorrower: true,
-    description: `Execute the proposed APR reduction to ${proposedAprBips / 100}%`
+    requiresBorrower: false,
+    description: `Execute the proposed APR reduction to ${quote.proposedAprBips / 100}%`
   });
 
   return { quote, transactions, safeBatchable: true };

@@ -5,7 +5,8 @@ import {
   iERC20Abi,
   iOpenTermHooksAbi,
   wildcat4626WrapperFactoryAbi,
-  wildcatMarketControllerAbi
+  wildcatMarketControllerAbi,
+  wildcatMarketV2Abi
 } from "../../src/abi";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { MarketController } from "../../src/controller";
@@ -21,6 +22,10 @@ import {
 } from "../../src/types";
 import { ForceBuyBackStatus, LenderRole, MarketAccount } from "../../src/account";
 import { Token } from "../../src/token";
+import {
+  PeriodicAprSettlementStatus,
+  populatePeriodicAprReductionPlan
+} from "../../src/periodic-settlement";
 
 const provider = new providers.JsonRpcProvider();
 
@@ -309,5 +314,77 @@ describe("prepared transaction encoding", () => {
     expect(() => account.populateForceBuyBack(makeAddress(29), token.getAmount(1n))).to.throw(
       "Cannot force buy back: HooksNotSupported"
     );
+  });
+
+  it("plans permissionless periodic APR reduction execution on the market", async () => {
+    const lender = makeAddress(30);
+    const borrower = makeAddress(31);
+    const marketAddress = makeAddress(32);
+    const token = new Token(
+      SupportedChainId.Sepolia,
+      makeAddress(33),
+      "Mock Token",
+      "MOCK",
+      18,
+      false,
+      provider
+    );
+    const account = new MarketAccount({
+      account: lender,
+      role: LenderRole.Null,
+      market: {
+        address: marketAddress,
+        borrower,
+        chainId: SupportedChainId.Sepolia,
+        version: MarketVersion.V2,
+        underlyingToken: token
+      },
+      scaledMarketBalance: 0n,
+      marketBalance: token.getAmount(0n),
+      underlyingBalance: token.getAmount(0n),
+      underlyingApproval: token.getAmount(0n)
+    } as any);
+    const zero = token.getAmount(0n);
+
+    const readyQuote = {
+      status: PeriodicAprSettlementStatus.Ready,
+      amountToSettle: zero,
+      suggestedApprovalAmount: zero,
+      needsRepayment: false,
+      needsBatchProcessing: false,
+      unpaidBatchCount: 0,
+      maxBatches: 0,
+      remainingBatchesAfterThisPass: 0,
+      settlementIsPermissionless: true,
+      isWithdrawalWindowOpen: false,
+      responseWindowEnd: 1_000,
+      proposedAprBips: 900
+    };
+
+    const plan = await populatePeriodicAprReductionPlan(account, 900, readyQuote);
+
+    expect(plan.safeBatchable).to.equal(true);
+    expect(plan.transactions).to.have.length(1);
+    expect(plan.transactions[0]).to.deep.equal({
+      tx: {
+        to: marketAddress,
+        data: encodeFunctionData({
+          abi: wildcatMarketV2Abi,
+          functionName: "executePendingAnnualInterestBipsReduction"
+        }),
+        value: "0"
+      },
+      kind: "executeApr",
+      requiresBorrower: false,
+      description: "Execute the proposed APR reduction to 9%"
+    });
+
+    const staleTargetPlan = await populatePeriodicAprReductionPlan(account, 800, readyQuote);
+
+    expect(staleTargetPlan.quote.status).to.equal(
+      PeriodicAprSettlementStatus.ProposalDoesNotMatch
+    );
+    expect(staleTargetPlan.safeBatchable).to.equal(false);
+    expect(staleTargetPlan.transactions).to.deep.equal([]);
   });
 });

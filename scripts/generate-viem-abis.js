@@ -46,5 +46,5 @@ for (const spec of specs) {
 }
 
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-fs.writeFileSync(outputPath, `${chunks.join("\n")}\n`);
+fs.writeFileSync(outputPath, `${chunks.join("\n").replace(/\n+$/, "")}\n`);
 console.log(`Wrote ${path.relative(root, outputPath)}`);

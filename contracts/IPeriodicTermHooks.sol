@@ -24,6 +24,23 @@ struct PeriodicPendingAprChange {
   uint32 proposalTimestamp;
 }
 
+struct MarketState {
+  bool isClosed;
+  uint128 maxTotalSupply;
+  uint128 accruedProtocolFees;
+  uint128 normalizedUnclaimedWithdrawals;
+  uint104 scaledTotalSupply;
+  uint104 scaledPendingWithdrawals;
+  uint32 pendingWithdrawalExpiry;
+  bool isDelinquent;
+  uint32 timeDelinquent;
+  uint16 protocolFeeBips;
+  uint16 annualInterestBips;
+  uint16 reserveRatioBips;
+  uint112 scaleFactor;
+  uint32 lastInterestAccruedTimestamp;
+}
+
 interface IPeriodicTermHooks {
   error CallerNotBorrower();
   error NotHookedMarket();
@@ -127,6 +144,10 @@ interface IPeriodicTermHooks {
       uint32 responseWindowStart,
       uint32 responseWindowEnd
     );
+
+  function executePendingAnnualInterestBipsReduction(
+    MarketState calldata intermediateState
+  ) external returns (uint16 annualInterestBips);
 
   function proposeAnnualInterestBips(address market, uint16 annualInterestBips) external;
 
