@@ -41370,11 +41370,6 @@ export const iOpenTermHooksAbi = [
             "internalType": "bool",
             "name": "transfersDisabled",
             "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "allowForceBuyBacks",
-            "type": "bool"
           }
         ],
         "internalType": "struct HookedMarket",
@@ -41420,11 +41415,6 @@ export const iOpenTermHooksAbi = [
           {
             "internalType": "bool",
             "name": "transfersDisabled",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "allowForceBuyBacks",
             "type": "bool"
           }
         ],
@@ -43026,6 +43016,19 @@ export const iOpenTermHooksAbi = [
   {
     "inputs": [
       {
+        "internalType": "address[]",
+        "name": "accounts",
+        "type": "address[]"
+      }
+    ],
+    "name": "revokeRoles",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "market",
         "type": "address"
@@ -43300,11 +43303,6 @@ export const iFixedTermHooksAbi = [
             "internalType": "bool",
             "name": "allowTermReduction",
             "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "allowForceBuyBacks",
-            "type": "bool"
           }
         ],
         "internalType": "struct FixedTermHookedMarket",
@@ -43370,11 +43368,6 @@ export const iFixedTermHooksAbi = [
           {
             "internalType": "bool",
             "name": "allowTermReduction",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "allowForceBuyBacks",
             "type": "bool"
           }
         ],
@@ -44969,6 +44962,19 @@ export const iFixedTermHooksAbi = [
       }
     ],
     "name": "revokeRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "accounts",
+        "type": "address[]"
+      }
+    ],
+    "name": "revokeRoles",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

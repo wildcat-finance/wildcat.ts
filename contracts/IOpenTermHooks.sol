@@ -18,9 +18,11 @@ struct HookedMarket {
   bool depositRequiresAccess;
   uint128 minimumDeposit;
   bool transfersDisabled;
-  bool allowForceBuyBacks;
 }
 
+/// @dev Consumer ABI shared by legacy and V2.5 deployments. Legacy force-buyback
+/// selectors remain for backwards-compatible encoding; getter tuples use the
+/// shorter V2.5 shape, which also decodes legacy trailing return data.
 interface IOpenTermHooks {
   error AnnualInterestBipsOutOfBounds();
 
@@ -265,6 +267,8 @@ interface IOpenTermHooks {
   function removeRoleProvider(address providerAddress) external;
 
   function revokeRole(address account) external;
+
+  function revokeRoles(address[] calldata accounts) external;
 
   function setMinimumDeposit(address market, uint128 newMinimumDeposit) external;
 

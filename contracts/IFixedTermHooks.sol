@@ -22,9 +22,11 @@ struct FixedTermHookedMarket {
   bool transfersDisabled;
   bool allowClosureBeforeTerm;
   bool allowTermReduction;
-  bool allowForceBuyBacks;
 }
 
+/// @dev Consumer ABI shared by legacy and V2.5 deployments. Legacy force-buyback
+/// selectors remain for backwards-compatible encoding; getter tuples use the
+/// shorter V2.5 shape, which also decodes legacy trailing return data.
 interface IFixedTermHooks {
   error AnnualInterestBipsOutOfBounds();
 
@@ -289,6 +291,8 @@ interface IFixedTermHooks {
   function removeRoleProvider(address providerAddress) external;
 
   function revokeRole(address account) external;
+
+  function revokeRoles(address[] calldata accounts) external;
 
   function setFixedTermEndTime(address market, uint32 newFixedTermEndTime) external;
 

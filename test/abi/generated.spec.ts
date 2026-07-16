@@ -4,6 +4,8 @@ import path from "path";
 import { encodeFunctionData, getAddress } from "viem";
 import * as generatedAbis from "../../src/abi";
 import {
+  iFixedTermHooksAbi,
+  iOpenTermHooksAbi,
   iPeriodicTermHooksAbi,
   marketLensV2Abi,
   marketLensV2_5Abi,
@@ -137,5 +139,21 @@ describe("generated viem ABIs", () => {
       (entry) => entry.type === "function" && entry.name === "getHookedMarket"
     );
     expect(findNamedComponent(getter, "minimumDeposit")?.type).to.equal("uint96");
+  });
+
+  it("models the V2.5 OpenTerm and FixedTerm hooked-market tuples", () => {
+    for (const abi of [iOpenTermHooksAbi, iFixedTermHooksAbi]) {
+      for (const functionName of ["getHookedMarket", "getHookedMarkets"]) {
+        const getter = (abi as readonly unknown[]).find(
+          (entry) =>
+            typeof entry === "object" &&
+            entry !== null &&
+            (entry as { type?: string; name?: string }).type === "function" &&
+            (entry as { type?: string; name?: string }).name === functionName
+        );
+        expect(hasNamedComponent(getter, "allowForceBuyBacks")).to.equal(false);
+      }
+      expect(functionNames(abi as readonly unknown[])).to.include("revokeRoles");
+    }
   });
 });
