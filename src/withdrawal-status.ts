@@ -6,7 +6,7 @@ import {
   WithdrawalBatchLenderStatusV2_5StructOutput,
   WithdrawalBatchDataWithLenderStatusV2_5StructOutput
 } from "./lens-types";
-import { SupportedChainId, hasDeploymentAddress } from "./constants";
+import { SupportedChainId, getLatestLensDeploymentName, hasDeploymentAddress } from "./constants";
 import {
   getLatestWithdrawalBatchDataWithLenderStatus,
   getLegacyWithdrawalBatchDataWithLenderStatus
@@ -163,7 +163,13 @@ export class LenderWithdrawalStatus {
           expiry,
           lender
         );
-    const batch = WithdrawalBatch.fromWithdrawalBatchData(market, batchData.batch);
+    const hasExplicitExpiredStatus =
+      useLatestLens && getLatestLensDeploymentName(market.chainId) === "MarketLensV2_5";
+    const batch = WithdrawalBatch.fromWithdrawalBatchData(
+      market,
+      batchData.batch,
+      hasExplicitExpiredStatus
+    );
     return LenderWithdrawalStatus.fromWithdrawalBatchLenderStatus(
       market,
       batch,
@@ -195,11 +201,12 @@ export class LenderWithdrawalStatus {
 
   static fromWithdrawalBatchDataWithLenderStatus(
     market: Market,
-    data: WithdrawalBatchDataWithLenderStatusOutput
+    data: WithdrawalBatchDataWithLenderStatusOutput,
+    hasExplicitExpiredStatus = false
   ): LenderWithdrawalStatus {
     return LenderWithdrawalStatus.fromWithdrawalBatchLenderStatus(
       market,
-      WithdrawalBatch.fromWithdrawalBatchData(market, data.batch),
+      WithdrawalBatch.fromWithdrawalBatchData(market, data.batch, hasExplicitExpiredStatus),
       data.lenderStatus
     );
   }

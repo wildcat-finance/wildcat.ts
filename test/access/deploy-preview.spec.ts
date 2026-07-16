@@ -6,6 +6,7 @@ import {
   DeployMarketStatus,
   FixedTermHooksTemplate,
   OpenTermHooksTemplate,
+  PeriodicTermHooksTemplate,
   REVOLVING_MARKET_DATA_VERSION,
   RevolvingReadyDeployMarketPreview,
   LegacyReadyDeployMarketPreview,
@@ -20,6 +21,7 @@ import {
   TransferAccess,
   WithdrawalAccess
 } from "../../src/types";
+import { decodeHooksConfig } from "../../src/utils";
 
 const provider = new providers.JsonRpcProvider();
 
@@ -85,6 +87,21 @@ const makeFixedTermTemplate = (
     enabled: true,
     index: 0,
     name: "FixedTermHooks",
+    totalMarkets: 0,
+    isRegisteredBorrower: true
+  });
+};
+
+const makePeriodicTermTemplate = (
+  hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory")
+): PeriodicTermHooksTemplate => {
+  return new PeriodicTermHooksTemplate(SupportedChainId.Sepolia, provider, {
+    hooksTemplate: makeAddress(14),
+    hooksFactory,
+    fees: makeFees(),
+    enabled: true,
+    index: 0,
+    name: "PeriodicTermHooks",
     totalMarkets: 0,
     isRegisteredBorrower: true
   });
@@ -218,6 +235,9 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
 
     expect(minimumDeposit.eq(asset.parseAmount("25").raw)).to.equal(true);
     expect(transfersDisabled).to.equal(false);
+    expect(decodeHooksConfig((preview.args[0] as { hooks: bigint }).hooks).useOnDeposit).to.equal(
+      false
+    );
 
     const [version, commitmentFeeBips] = defaultAbiCoder.decode(
       ["uint8", "uint16"],
@@ -267,6 +287,74 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
         withdrawalAccess: WithdrawalAccess.Open
       })
     ).to.throw("commitmentFeeBips must be <= 10000");
+  });
+});
+
+describe("V2.5 hook deployment validation", () => {
+  it("rejects credential-gated withdrawals without credential-gated deposits", () => {
+    const asset = makeToken();
+    const common = {
+      ...makeMarketParameters(asset),
+      hooksAddress: makeAddress(40),
+      salt: constants.HashZero,
+      minimumDeposit: asset.getAmount(0n),
+      transferAccess: TransferAccess.Disabled,
+      depositAccess: DepositAccess.Open,
+      withdrawalAccess: WithdrawalAccess.RequiresCredential
+    };
+
+    expect(makeOpenTermTemplate().previewDeployMarket(common).status).to.equal(
+      DeployMarketStatus.InvalidAccessConfiguration
+    );
+    expect(
+      makeFixedTermTemplate().previewDeployMarket({
+        ...common,
+        fixedTermEndTime: 1_800_000_000,
+        allowClosureBeforeTerm: false,
+        allowTermReduction: false
+      }).status
+    ).to.equal(DeployMarketStatus.InvalidAccessConfiguration);
+    expect(
+      makePeriodicTermTemplate().previewDeployMarket({
+        ...common,
+        firstWithdrawalWindowStart: 1_800_000_000,
+        periodDuration: 30 * 24 * 60 * 60,
+        withdrawalWindowDuration: 7 * 24 * 60 * 60
+      }).status
+    ).to.equal(DeployMarketStatus.InvalidAccessConfiguration);
+  });
+
+  it("rejects credential-gated withdrawals while transfers remain open", () => {
+    const asset = makeToken();
+    const preview = makeOpenTermTemplate().previewDeployMarket({
+      ...makeMarketParameters(asset),
+      hooksAddress: makeAddress(41),
+      salt: constants.HashZero,
+      minimumDeposit: asset.getAmount(0n),
+      transferAccess: TransferAccess.Open,
+      depositAccess: DepositAccess.RequiresCredential,
+      withdrawalAccess: WithdrawalAccess.RequiresCredential
+    });
+
+    expect(preview.status).to.equal(DeployMarketStatus.InvalidAccessConfiguration);
+  });
+
+  it("rejects periodic minimum deposits that exceed uint96 storage", () => {
+    const asset = makeToken();
+    const preview = makePeriodicTermTemplate().previewDeployMarket({
+      ...makeMarketParameters(asset),
+      hooksAddress: makeAddress(42),
+      salt: constants.HashZero,
+      minimumDeposit: asset.getAmount(1n << 96n),
+      transferAccess: TransferAccess.Open,
+      depositAccess: DepositAccess.Open,
+      withdrawalAccess: WithdrawalAccess.Open,
+      firstWithdrawalWindowStart: 1_800_000_000,
+      periodDuration: 30 * 24 * 60 * 60,
+      withdrawalWindowDuration: 7 * 24 * 60 * 60
+    });
+
+    expect(preview.status).to.equal(DeployMarketStatus.MinimumDepositTooHigh);
   });
 });
 

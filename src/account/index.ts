@@ -401,10 +401,18 @@ export class MarketAccount {
     return { status: SetMaxTotalSupplyStatus.Ready };
   }
 
-  previewSetMinimumDeposit(_: TokenAmount): SetMinimumDepositPreview {
+  previewSetMinimumDeposit(amount: TokenAmount): SetMinimumDepositPreview {
     if (this.market.version !== MarketVersion.V2)
       return { status: SetMinimumDepositStatus.NotV2Market };
     if (!this.isBorrower) return { status: SetMinimumDepositStatus.NotBorrower };
+    const config = this.market.hooksConfig;
+    assert(config !== undefined, `V2 market missing hooksConfig`);
+    if (amount.gt(0) && !config.flags.useOnDeposit) {
+      return { status: SetMinimumDepositStatus.DepositHookNotEnabled };
+    }
+    if (config.kind === HooksKind.PeriodicTerm && amount.raw > (1n << 96n) - 1n) {
+      return { status: SetMinimumDepositStatus.MinimumDepositTooHigh };
+    }
     return { status: SetMinimumDepositStatus.Ready };
   }
 

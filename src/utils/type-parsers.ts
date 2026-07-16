@@ -212,6 +212,7 @@ const Bit_Enabled_NukeFromOrbit = 88n;
 const Bit_Enabled_SetMaxTotalSupply = 87n;
 const Bit_Enabled_SetAnnualInterestAndReserveRatioBips = 86n;
 const Bit_Enabled_SetProtocolFeeBips = 85n;
+const Bit_Enabled_ExecutePendingAnnualInterestBipsReduction = 84n;
 
 export function encodeHooksConfig({
   hooksAddress = zeroAddress,
@@ -225,7 +226,8 @@ export function encodeHooksConfig({
   useOnNukeFromOrbit = false,
   useOnSetMaxTotalSupply = false,
   useOnSetAnnualInterestAndReserveRatioBips = false,
-  useOnSetProtocolFeeBips = false
+  useOnSetProtocolFeeBips = false,
+  useOnExecutePendingAnnualInterestBipsReduction = false
 }: Partial<HooksFlags & { hooksAddress: string }>): bigint {
   let hooks = BigInt(hooksAddress) << 96n;
   hooks |= BigInt(useOnDeposit) << Bit_Enabled_Deposit;
@@ -241,6 +243,9 @@ export function encodeHooksConfig({
     BigInt(useOnSetAnnualInterestAndReserveRatioBips) <<
     Bit_Enabled_SetAnnualInterestAndReserveRatioBips;
   hooks |= BigInt(useOnSetProtocolFeeBips) << Bit_Enabled_SetProtocolFeeBips;
+  hooks |=
+    BigInt(useOnExecutePendingAnnualInterestBipsReduction) <<
+    Bit_Enabled_ExecutePendingAnnualInterestBipsReduction;
 
   return hooks;
 }
@@ -260,7 +265,10 @@ export function decodeHooksConfig(hooks: bigint): HooksFlags & { hooksAddress: s
     useOnSetAnnualInterestAndReserveRatioBips: Boolean(
       (hooks >> Bit_Enabled_SetAnnualInterestAndReserveRatioBips) & 1n
     ),
-    useOnSetProtocolFeeBips: Boolean((hooks >> Bit_Enabled_SetProtocolFeeBips) & 1n)
+    useOnSetProtocolFeeBips: Boolean((hooks >> Bit_Enabled_SetProtocolFeeBips) & 1n),
+    useOnExecutePendingAnnualInterestBipsReduction: Boolean(
+      (hooks >> Bit_Enabled_ExecutePendingAnnualInterestBipsReduction) & 1n
+    )
   };
 }
 

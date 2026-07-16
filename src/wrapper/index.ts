@@ -10,7 +10,12 @@ import {
 } from "../types";
 import { SupportedChainId, getDeploymentAddress, hasDeploymentAddress } from "../constants";
 import { assert, prepareTransaction, toNumber } from "../utils";
-import { iERC20Abi, wildcat4626WrapperAbi, wildcat4626WrapperFactoryAbi } from "../abi";
+import {
+  iERC20Abi,
+  wildcat4626WrapperAbi,
+  wildcat4626WrapperFactoryAbi,
+  wildcatMarketV2Abi
+} from "../abi";
 import {
   submitPreparedTransaction,
   submitPreparedTransactionAndWait
@@ -57,8 +62,31 @@ export class WrapperFactory extends ContractWrapper {
     providerOrSigner: SignerOrProvider,
     market: string
   ): Promise<string> {
+    const publicClient = getViemPublicClientFromEthers(providerOrSigner);
+    try {
+      const registeredWrapper = await readViemContract<string>(
+        publicClient,
+        market,
+        wildcatMarketV2Abi,
+        "registeredWrapper"
+      );
+      if (registeredWrapper !== zeroAddress) {
+        return registeredWrapper;
+      }
+    } catch (_) {
+      // Markets before V2.5 do not expose registeredWrapper; use the
+      // generation-routing factory facade for those markets.
+    }
     const factory = WrapperFactory.getFactory(chainId, providerOrSigner);
     return factory.getWrapperForMarket(market);
+  }
+
+  static async isFloorRoundingMarket(
+    chainId: SupportedChainId,
+    providerOrSigner: SignerOrProvider,
+    market: string
+  ): Promise<boolean> {
+    return WrapperFactory.getFactory(chainId, providerOrSigner).isFloorRoundingMarket(market);
   }
 
   static async createWrapper(
@@ -86,6 +114,25 @@ export class WrapperFactory extends ContractWrapper {
       wildcat4626WrapperFactoryAbi,
       "wrapperForMarket",
       [market]
+    );
+  }
+
+  async isFloorRoundingMarket(market: string): Promise<boolean> {
+    return readViemContract<boolean>(
+      getViemPublicClientFromEthers(this.provider),
+      this.address,
+      wildcat4626WrapperFactoryAbi,
+      "isFloorRoundingMarket",
+      [market]
+    );
+  }
+
+  async getV1Factory(): Promise<string> {
+    return readViemContract<string>(
+      getViemPublicClientFromEthers(this.provider),
+      this.address,
+      wildcat4626WrapperFactoryAbi,
+      "v1Factory"
     );
   }
 
@@ -421,6 +468,19 @@ export class TokenWrapper extends ContractWrapper {
 
   async sharesPerAssetRay(): Promise<bigint> {
     return toRawAmount(await this.readWrapper<bigint>("sharesPerAssetRay"));
+  }
+
+  async nukeFromOrbit(account: string): Promise<TransactionHash> {
+    return submitPreparedTransaction(this.signer, this.populateNukeFromOrbit(account));
+  }
+
+  populateNukeFromOrbit(account: string): PartialTransaction {
+    return prepareTransaction({
+      to: this.address,
+      abi: wildcat4626WrapperAbi,
+      functionName: "nukeFromOrbit",
+      args: [account]
+    });
   }
 
   async deposit(assets: TokenAmount, receiver: string): Promise<TransactionHash> {

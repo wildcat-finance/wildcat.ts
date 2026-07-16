@@ -155,7 +155,9 @@ export type ForceBuyBackPreview = { status: ForceBuyBackStatus };
 export enum SetMinimumDepositStatus {
   Ready = "Ready",
   NotBorrower = "NotBorrower",
-  NotV2Market = "NotV2Market"
+  NotV2Market = "NotV2Market",
+  DepositHookNotEnabled = "DepositHookNotEnabled",
+  MinimumDepositTooHigh = "MinimumDepositTooHigh"
 }
 
 export type SetMinimumDepositPreview = { status: SetMinimumDepositStatus };

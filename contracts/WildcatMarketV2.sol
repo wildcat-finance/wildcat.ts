@@ -186,6 +186,8 @@ interface WildcatMarketV2 {
     uint256 normalizedAmount
   );
 
+  event WrapperRegistered(address indexed wrapper);
+
   function accruedProtocolFees() external view returns (uint256 param0);
 
   function annualInterestBips() external view returns (uint256 param0);
@@ -266,9 +268,15 @@ interface WildcatMarketV2 {
 
   function reserveRatioBips() external view returns (uint256 param0);
 
+  function registerWrapper(address wrapper) external;
+
+  function registeredWrapper() external view returns (address);
+
   function scaledBalanceOf(address account) external view returns (uint256 param0);
 
   function scaledTotalSupply() external view returns (uint256 param0);
+
+  function scaledTransferRounding() external pure returns (bytes32);
 
   function scaleFactor() external view returns (uint256 param0);
 
@@ -302,4 +310,6 @@ interface WildcatMarketV2 {
   function version() external pure returns (string memory param0);
 
   function withdrawableProtocolFees() external view returns (uint128 param0);
+
+  function wrapperFactory() external view returns (address);
 }

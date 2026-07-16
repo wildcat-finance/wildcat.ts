@@ -3096,6 +3096,19 @@ export const wildcatMarketV2Abi = [
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "wrapper",
+        "type": "address"
+      }
+    ],
+    "name": "WrapperRegistered",
+    "type": "event"
+  },
+  {
     "inputs": [],
     "name": "accruedProtocolFees",
     "outputs": [
@@ -3727,6 +3740,32 @@ export const wildcatMarketV2Abi = [
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "wrapper",
+        "type": "address"
+      }
+    ],
+    "name": "registerWrapper",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "registeredWrapper",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
@@ -3824,6 +3863,19 @@ export const wildcatMarketV2Abi = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "scaledTransferRounding",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -4029,6 +4081,19 @@ export const wildcatMarketV2Abi = [
         "internalType": "uint128",
         "name": "param0",
         "type": "uint128"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "wrapperFactory",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -18268,7 +18333,33 @@ export const marketLensV2Abi = [
 export const marketLensV2_5Abi = [
   {
     "inputs": [],
+    "name": "aggregationHelper",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "archController",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "coreHelper",
     "outputs": [
       {
         "internalType": "address",
@@ -18542,6 +18633,11 @@ export const marketLensV2_5Abi = [
                   {
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
                     "type": "bool"
                   }
                 ],
@@ -18877,6 +18973,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -18938,6 +19039,11 @@ export const marketLensV2_5Abi = [
                       {
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
                         "type": "bool"
                       }
                     ],
@@ -19284,6 +19390,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -19618,6 +19729,11 @@ export const marketLensV2_5Abi = [
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
                             "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                            "type": "bool"
                           }
                         ],
                         "internalType": "struct HooksConfigDataV2_5",
@@ -19679,6 +19795,11 @@ export const marketLensV2_5Abi = [
                           {
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
                             "type": "bool"
                           }
                         ],
@@ -20274,6 +20395,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -20335,6 +20461,11 @@ export const marketLensV2_5Abi = [
                       {
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
                         "type": "bool"
                       }
                     ],
@@ -20668,6 +20799,11 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                    "type": "bool"
                   }
                 ],
                 "internalType": "struct HooksConfigDataV2_5",
@@ -20729,6 +20865,11 @@ export const marketLensV2_5Abi = [
                   {
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
                     "type": "bool"
                   }
                 ],
@@ -21344,6 +21485,11 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                    "type": "bool"
                   }
                 ],
                 "internalType": "struct HooksConfigDataV2_5",
@@ -21678,6 +21824,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -21739,6 +21890,11 @@ export const marketLensV2_5Abi = [
                       {
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
                         "type": "bool"
                       }
                     ],
@@ -22083,6 +22239,11 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                    "type": "bool"
                   }
                 ],
                 "internalType": "struct HooksConfigDataV2_5",
@@ -22417,6 +22578,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -22478,6 +22644,11 @@ export const marketLensV2_5Abi = [
                       {
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
                         "type": "bool"
                       }
                     ],
@@ -22829,6 +23000,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -23163,6 +23339,11 @@ export const marketLensV2_5Abi = [
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
                             "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                            "type": "bool"
                           }
                         ],
                         "internalType": "struct HooksConfigDataV2_5",
@@ -23224,6 +23405,11 @@ export const marketLensV2_5Abi = [
                           {
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
                             "type": "bool"
                           }
                         ],
@@ -23609,6 +23795,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -23943,6 +24134,11 @@ export const marketLensV2_5Abi = [
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
                             "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                            "type": "bool"
                           }
                         ],
                         "internalType": "struct HooksConfigDataV2_5",
@@ -24004,6 +24200,11 @@ export const marketLensV2_5Abi = [
                           {
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
                             "type": "bool"
                           }
                         ],
@@ -24599,6 +24800,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -24660,6 +24866,11 @@ export const marketLensV2_5Abi = [
                       {
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
                         "type": "bool"
                       }
                     ],
@@ -25111,6 +25322,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -25172,6 +25388,11 @@ export const marketLensV2_5Abi = [
                       {
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
                         "type": "bool"
                       }
                     ],
@@ -25510,6 +25731,11 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                    "type": "bool"
                   }
                 ],
                 "internalType": "struct HooksConfigDataV2_5",
@@ -25571,6 +25797,11 @@ export const marketLensV2_5Abi = [
                   {
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
                     "type": "bool"
                   }
                 ],
@@ -25899,6 +26130,11 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                    "type": "bool"
                   }
                 ],
                 "internalType": "struct HooksConfigDataV2_5",
@@ -25960,6 +26196,11 @@ export const marketLensV2_5Abi = [
                   {
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
                     "type": "bool"
                   }
                 ],
@@ -26973,6 +27214,11 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                    "type": "bool"
                   }
                 ],
                 "internalType": "struct HooksConfigDataV2_5",
@@ -27307,6 +27553,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -27368,6 +27619,11 @@ export const marketLensV2_5Abi = [
                       {
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
                         "type": "bool"
                       }
                     ],
@@ -27714,6 +27970,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -28048,6 +28309,11 @@ export const marketLensV2_5Abi = [
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
                             "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                            "type": "bool"
                           }
                         ],
                         "internalType": "struct HooksConfigDataV2_5",
@@ -28109,6 +28375,11 @@ export const marketLensV2_5Abi = [
                           {
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
                             "type": "bool"
                           }
                         ],
@@ -28499,6 +28770,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -28833,6 +29109,11 @@ export const marketLensV2_5Abi = [
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
                             "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                            "type": "bool"
                           }
                         ],
                         "internalType": "struct HooksConfigDataV2_5",
@@ -28894,6 +29175,11 @@ export const marketLensV2_5Abi = [
                           {
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
                             "type": "bool"
                           }
                         ],
@@ -29322,6 +29608,11 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                    "type": "bool"
                   }
                 ],
                 "internalType": "struct HooksConfigDataV2_5",
@@ -29656,6 +29947,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -29717,6 +30013,11 @@ export const marketLensV2_5Abi = [
                       {
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
                         "type": "bool"
                       }
                     ],
@@ -30063,6 +30364,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -30397,6 +30703,11 @@ export const marketLensV2_5Abi = [
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
                             "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                            "type": "bool"
                           }
                         ],
                         "internalType": "struct HooksConfigDataV2_5",
@@ -30458,6 +30769,11 @@ export const marketLensV2_5Abi = [
                           {
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
                             "type": "bool"
                           }
                         ],
@@ -30848,6 +31164,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -31182,6 +31503,11 @@ export const marketLensV2_5Abi = [
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
                             "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                            "type": "bool"
                           }
                         ],
                         "internalType": "struct HooksConfigDataV2_5",
@@ -31243,6 +31569,11 @@ export const marketLensV2_5Abi = [
                           {
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
                             "type": "bool"
                           }
                         ],
@@ -32110,6 +32441,11 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                    "type": "bool"
                   }
                 ],
                 "internalType": "struct HooksConfigDataV2_5",
@@ -32444,6 +32780,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -32505,6 +32846,11 @@ export const marketLensV2_5Abi = [
                       {
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
                         "type": "bool"
                       }
                     ],
@@ -32859,6 +33205,11 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "useOnSetProtocolFeeBips",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                    "type": "bool"
                   }
                 ],
                 "internalType": "struct HooksConfigDataV2_5",
@@ -33193,6 +33544,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -33254,6 +33610,11 @@ export const marketLensV2_5Abi = [
                       {
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
                         "type": "bool"
                       }
                     ],
@@ -33615,6 +33976,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -33949,6 +34315,11 @@ export const marketLensV2_5Abi = [
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
                             "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                            "type": "bool"
                           }
                         ],
                         "internalType": "struct HooksConfigDataV2_5",
@@ -34010,6 +34381,11 @@ export const marketLensV2_5Abi = [
                           {
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
                             "type": "bool"
                           }
                         ],
@@ -34405,6 +34781,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -34739,6 +35120,11 @@ export const marketLensV2_5Abi = [
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
                             "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                            "type": "bool"
                           }
                         ],
                         "internalType": "struct HooksConfigDataV2_5",
@@ -34800,6 +35186,11 @@ export const marketLensV2_5Abi = [
                           {
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
                             "type": "bool"
                           }
                         ],
@@ -35545,6 +35936,19 @@ export const marketLensV2_5Abi = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "liveHelper",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "components": [
@@ -35711,6 +36115,11 @@ export const marketLensV2_5Abi = [
                       {
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
                         "type": "bool"
                       }
                     ],
@@ -36046,6 +36455,11 @@ export const marketLensV2_5Abi = [
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
                             "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                            "type": "bool"
                           }
                         ],
                         "internalType": "struct HooksConfigDataV2_5",
@@ -36107,6 +36521,11 @@ export const marketLensV2_5Abi = [
                           {
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
                             "type": "bool"
                           }
                         ],
@@ -36630,6 +37049,11 @@ export const marketLensV2_5Abi = [
                         "internalType": "bool",
                         "name": "useOnSetProtocolFeeBips",
                         "type": "bool"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                        "type": "bool"
                       }
                     ],
                     "internalType": "struct HooksConfigDataV2_5",
@@ -36964,6 +37388,11 @@ export const marketLensV2_5Abi = [
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
                             "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
+                            "type": "bool"
                           }
                         ],
                         "internalType": "struct HooksConfigDataV2_5",
@@ -37025,6 +37454,11 @@ export const marketLensV2_5Abi = [
                           {
                             "internalType": "bool",
                             "name": "useOnSetProtocolFeeBips",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bool",
+                            "name": "useOnExecutePendingAnnualInterestBipsReduction",
                             "type": "bool"
                           }
                         ],
@@ -39476,6 +39910,11 @@ export const hooksFactoryAbi = [
             "type": "address"
           },
           {
+            "internalType": "address",
+            "name": "wrapperFactory",
+            "type": "address"
+          },
+          {
             "internalType": "uint128",
             "name": "maxTotalSupply",
             "type": "uint128"
@@ -39832,6 +40271,19 @@ export const hooksFactoryAbi = [
     "name": "updateHooksTemplateFees",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "wrapperFactory",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ] as const satisfies Abi;
@@ -40371,6 +40823,11 @@ export const hooksFactoryRevolvingAbi = [
             "type": "address"
           },
           {
+            "internalType": "address",
+            "name": "wrapperFactory",
+            "type": "address"
+          },
+          {
             "internalType": "uint128",
             "name": "maxTotalSupply",
             "type": "uint128"
@@ -40650,7 +41107,7 @@ export const hooksFactoryRevolvingAbi = [
         "type": "string"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -40740,6 +41197,19 @@ export const hooksFactoryRevolvingAbi = [
     "name": "updateHooksTemplateFees",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "wrapperFactory",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ] as const satisfies Abi;
@@ -41208,6 +41678,25 @@ export const iOpenTermHooksAbi = [
       }
     ],
     "name": "isKnownLenderOnMarket",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "marketAddress",
+        "type": "address"
+      }
+    ],
+    "name": "isMarketTransferDisabled",
     "outputs": [
       {
         "internalType": "bool",
@@ -43150,6 +43639,25 @@ export const iFixedTermHooksAbi = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "marketAddress",
+        "type": "address"
+      }
+    ],
+    "name": "isMarketTransferDisabled",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "name",
     "outputs": [
@@ -44766,9 +45274,9 @@ export const iPeriodicTermHooksAbi = [
             "type": "bool"
           },
           {
-            "internalType": "uint128",
+            "internalType": "uint96",
             "name": "minimumDeposit",
-            "type": "uint128"
+            "type": "uint96"
           },
           {
             "internalType": "uint32",
@@ -44842,9 +45350,9 @@ export const iPeriodicTermHooksAbi = [
             "type": "bool"
           },
           {
-            "internalType": "uint128",
+            "internalType": "uint96",
             "name": "minimumDeposit",
-            "type": "uint128"
+            "type": "uint96"
           },
           {
             "internalType": "uint32",
@@ -45054,6 +45562,25 @@ export const iPeriodicTermHooksAbi = [
         "type": "address"
       }
     ],
+    "name": "isMarketTransferDisabled",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "marketAddress",
+        "type": "address"
+      }
+    ],
     "name": "isWithdrawalWindowOpen",
     "outputs": [
       {
@@ -45149,6 +45676,19 @@ export const iPeriodicTermHooksAbi = [
     "name": "setName",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "templateVersion",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {

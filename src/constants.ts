@@ -19,6 +19,7 @@ import type {
   LenderAccountDataStructOutput,
   LenderAccountDataV2_5StructOutput,
   HooksDataForBorrowerStructOutput,
+  HooksDataForBorrowerV2_5StructOutput,
   LegacyDeployMarketAndHooksArgs,
   LegacyDeployMarketArgs,
   MarketDataStructOutput,
@@ -125,7 +126,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     Wildcat4626WrapperFactory: "0xEA6DE11f8F3F83c79bD9d8Db5517fCFDf2Bb148a"
   },
   [SupportedChainId.Sepolia]: {
-    HooksFactory: "0xE3e4B7C9E0Ab4ccbC70e0583Dca7B4Db9B4CFD88",
+    HooksFactory: "0x10A64ABa0159720F8a23E1A552800CA4eb21576C",
     HooksFactoryRevolving: "0xb899ba2a5F5b609898A2bABe445Aa31dDf0277e5",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
     MarketLensV2: "0x5D8cEacEe19c06C3b4108b8Ae5B881eb0240B9c7",
@@ -172,7 +173,7 @@ const CanonicalHooksFactoryCapabilityOverridesByChainId: Partial<
 > = {
   [SupportedChainId.Sepolia]: {
     HooksFactory: {
-      label: "Sepolia legacy hooks factory"
+      label: "Sepolia standard hooks factory"
     }
   }
 };
@@ -184,19 +185,19 @@ const NonCanonicalHooksFactoryCapabilitiesByChainId: Partial<
   >
 > = {
   [SupportedChainId.Sepolia]: {
-    // Indexed historical legacy factory from the pre-RCF Sepolia subgraph.
-    // It must remain readable, but must not be used as the deploy target.
-    "0x10a64aba0159720f8a23e1a552800ca4eb21576c": {
+    // Superseded standard factory. It remains indexed for attached markets,
+    // but must not be used as the deploy target for new standard markets.
+    "0xe3e4b7c9e0ab4ccbc70e0583dca7b4db9b4cfd88": {
       marketType: "legacy",
       indexed: true,
-      label: "Sepolia historical legacy hooks factory"
+      label: "Sepolia superseded standard hooks factory"
     },
-    // Indexed historical RCF factory. It must remain readable, but must not be
-    // used as the deploy target for new revolving markets.
+    // Retired RCF test factory. It remains registered on-chain but is
+    // intentionally excluded from the release subgraph.
     "0xf4564015e524cf5629828e61f45ed339d998d85f": {
       marketType: "revolving",
-      indexed: true,
-      label: "Sepolia historical revolving hooks factory"
+      indexed: false,
+      label: "Sepolia retired revolving hooks factory"
     }
   }
 };
@@ -280,7 +281,15 @@ export const getHooksFactoryCapabilities = (
   hooksFactoryAddress: string
 ): HooksFactoryCapabilities | undefined => {
   const normalizedAddress = hooksFactoryAddress.toLowerCase();
-  return getIndexedHooksFactories(chainId).find(
+  const canonical = getCanonicalHooksFactoryCapabilities(chainId);
+  const nonCanonical = Object.entries(
+    NonCanonicalHooksFactoryCapabilitiesByChainId[chainId] ?? {}
+  ).map(([address, capabilities]) => ({
+    address,
+    canonical: false,
+    ...capabilities
+  }));
+  return [...canonical, ...nonCanonical].find(
     (capabilities) => capabilities.address.toLowerCase() === normalizedAddress
   );
 };
@@ -350,7 +359,9 @@ type LegacyLensContract = AddressOnlyContract & {
 };
 
 type LatestLensContract = AddressOnlyContract & {
-  getHooksDataForBorrower: (borrower: string) => Promise<HooksDataForBorrowerStructOutput>;
+  getHooksDataForBorrower: (
+    borrower: string
+  ) => Promise<HooksDataForBorrowerStructOutput | HooksDataForBorrowerV2_5StructOutput>;
   getMarketData: (
     market: string
   ) => Promise<MarketDataV2StructOutput | MarketDataBaseV2_5StructOutput>;

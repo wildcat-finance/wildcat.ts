@@ -11,7 +11,7 @@ struct PeriodicTermHookedMarket {
   bool depositRequiresAccess;
   bool withdrawalRequiresAccess;
   bool depositHookEnabled;
-  uint128 minimumDeposit;
+  uint96 minimumDeposit;
   uint32 firstWithdrawalWindowStart;
   uint32 periodDuration;
   uint32 withdrawalWindowDuration;
@@ -58,6 +58,9 @@ interface IPeriodicTermHooks {
   error AprChangeDoesNotMatchProposal();
   error AprChangeNotReady();
   error UnpaidWithdrawalsExist();
+  error InvalidAccessConfiguration();
+  error AprReductionProposalExpired();
+  error AprReductionProposalOnClosedMarket();
 
   event AccountAccessGranted(
     address indexed providerAddress,
@@ -94,6 +97,10 @@ interface IPeriodicTermHooks {
     uint32 responseWindowEnd
   );
 
+  event AnnualInterestBipsReductionProposalCancelled(address indexed market);
+
+  event AnnualInterestBipsReductionExecuted(address indexed market, uint16 annualInterestBips);
+
   function blockFromDeposits(address account) external;
 
   function blockFromDeposits(address[] calldata accounts) external;
@@ -125,6 +132,8 @@ interface IPeriodicTermHooks {
   ) external;
 
   function isKnownLenderOnMarket(address lender, address market) external view returns (bool);
+
+  function isMarketTransferDisabled(address marketAddress) external view returns (bool);
 
   function isWithdrawalWindowOpen(address marketAddress) external view returns (bool);
 
@@ -158,4 +167,6 @@ interface IPeriodicTermHooks {
   function unblockFromDeposits(address account) external;
 
   function version() external pure returns (string memory);
+
+  function templateVersion() external pure returns (uint256);
 }

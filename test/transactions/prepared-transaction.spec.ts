@@ -4,6 +4,7 @@ import { encodeFunctionData, type Address } from "viem";
 import {
   iERC20Abi,
   iOpenTermHooksAbi,
+  wildcat4626WrapperAbi,
   wildcat4626WrapperFactoryAbi,
   wildcatMarketControllerAbi,
   wildcatMarketV2Abi
@@ -11,7 +12,7 @@ import {
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { MarketController } from "../../src/controller";
 import { OpenTermHooks, OpenTermHooksTemplate } from "../../src/access";
-import { WrapperFactory } from "../../src/wrapper";
+import { TokenWrapper, WrapperFactory } from "../../src/wrapper";
 import { prepareTransaction, toSafeTransactionInput } from "../../src/utils";
 import { submitPreparedTransaction } from "../../src/internal/viem-write";
 import {
@@ -20,7 +21,12 @@ import {
   MarketParameterConstraints,
   MarketVersion
 } from "../../src/types";
-import { ForceBuyBackStatus, LenderRole, MarketAccount } from "../../src/account";
+import {
+  ForceBuyBackStatus,
+  LenderRole,
+  MarketAccount,
+  SetMinimumDepositStatus
+} from "../../src/account";
 import { Token } from "../../src/token";
 import {
   PeriodicAprSettlementStatus,
@@ -52,6 +58,26 @@ const fees: FeeConfiguration = {
   originationFeeToken: undefined,
   originationFeeAmount: undefined
 };
+
+const makeHooksFlagsBase = () => ({
+  useOnDeposit: false,
+  useOnQueueWithdrawal: false,
+  useOnExecuteWithdrawal: false,
+  useOnTransfer: false,
+  useOnBorrow: false,
+  useOnRepay: false,
+  useOnCloseMarket: false,
+  useOnNukeFromOrbit: false,
+  useOnSetMaxTotalSupply: false,
+  useOnSetAnnualInterestAndReserveRatioBips: false,
+  useOnSetProtocolFeeBips: false,
+  useOnExecutePendingAnnualInterestBipsReduction: false
+});
+
+const makeHooksFlags = (overrides: Partial<ReturnType<typeof makeHooksFlagsBase>> = {}) => ({
+  ...makeHooksFlagsBase(),
+  ...overrides
+});
 
 describe("prepared transaction encoding", () => {
   it("encodes calldata with viem and converts explicitly to Safe payloads", () => {
@@ -160,6 +186,32 @@ describe("prepared transaction encoding", () => {
     });
     const wrapperFactory = new WrapperFactory(SupportedChainId.Sepolia, makeAddress(16), provider);
     const market = makeAddress(17);
+    const wrapperAddress = makeAddress(19);
+    const marketToken = new Token(
+      SupportedChainId.Sepolia,
+      market,
+      "Mock Market",
+      "mMOCK",
+      18,
+      false,
+      provider
+    );
+    const wrapper = new TokenWrapper({
+      chainId: SupportedChainId.Sepolia,
+      provider,
+      address: wrapperAddress,
+      marketAddress: market,
+      marketToken,
+      shareToken: new Token(
+        SupportedChainId.Sepolia,
+        wrapperAddress,
+        "Wrapped Mock Market",
+        "wmMOCK",
+        18,
+        false,
+        provider
+      )
+    });
 
     expect(hooks.populateUnblockLender(makeAddress(18)).data).to.equal(
       encodeFunctionData({
@@ -183,6 +235,13 @@ describe("prepared transaction encoding", () => {
         args: [market]
       }).data
     ).to.equal(wrapperFactory.populateCreateWrapper(market).data);
+    expect(wrapper.populateNukeFromOrbit(makeAddress(20)).data).to.equal(
+      encodeFunctionData({
+        abi: wildcat4626WrapperAbi,
+        functionName: "nukeFromOrbit",
+        args: [makeAddress(20)]
+      })
+    );
   });
 
   it("uses viem encoding through token approval helpers", () => {
@@ -255,7 +314,8 @@ describe("prepared transaction encoding", () => {
         version: MarketVersion.V2,
         hooksConfig: {
           kind: HooksKind.OpenTerm,
-          hooksAddress
+          hooksAddress,
+          flags: makeHooksFlags({ useOnDeposit: true })
         }
       },
       scaledMarketBalance: 0n,
@@ -273,6 +333,41 @@ describe("prepared transaction encoding", () => {
         functionName: "setMinimumDeposit",
         args: [marketAddress, 1n]
       })
+    );
+  });
+
+  it("prevents positive minimum deposits when the deposit hook is disabled", () => {
+    const borrower = makeAddress(34);
+    const token = new Token(
+      SupportedChainId.Sepolia,
+      makeAddress(35),
+      "Mock Token",
+      "MOCK",
+      18,
+      false,
+      provider
+    );
+    const account = new MarketAccount({
+      account: borrower,
+      role: LenderRole.Null,
+      market: {
+        address: makeAddress(36),
+        borrower,
+        version: MarketVersion.V2,
+        hooksConfig: {
+          kind: HooksKind.OpenTerm,
+          hooksAddress: makeAddress(37),
+          flags: makeHooksFlags()
+        }
+      },
+      scaledMarketBalance: 0n,
+      marketBalance: token.getAmount(0n),
+      underlyingBalance: token.getAmount(0n),
+      underlyingApproval: token.getAmount(0n)
+    } as any);
+
+    expect(account.previewSetMinimumDeposit(token.getAmount(1n)).status).to.equal(
+      SetMinimumDepositStatus.DepositHookNotEnabled
     );
   });
 
@@ -337,7 +432,14 @@ describe("prepared transaction encoding", () => {
         borrower,
         chainId: SupportedChainId.Sepolia,
         version: MarketVersion.V2,
-        underlyingToken: token
+        underlyingToken: token,
+        hooksConfig: {
+          kind: HooksKind.PeriodicTerm,
+          hooksAddress: makeAddress(34),
+          flags: makeHooksFlags({
+            useOnExecutePendingAnnualInterestBipsReduction: true
+          })
+        }
       },
       scaledMarketBalance: 0n,
       marketBalance: token.getAmount(0n),
@@ -384,5 +486,12 @@ describe("prepared transaction encoding", () => {
     expect(staleTargetPlan.quote.status).to.equal(PeriodicAprSettlementStatus.ProposalDoesNotMatch);
     expect(staleTargetPlan.safeBatchable).to.equal(false);
     expect(staleTargetPlan.transactions).to.deep.equal([]);
+
+    account.market.hooksConfig!.flags.useOnExecutePendingAnnualInterestBipsReduction = false;
+    const disabledPlan = await populatePeriodicAprReductionPlan(account, 900, readyQuote);
+
+    expect(disabledPlan.quote.status).to.equal(PeriodicAprSettlementStatus.ExecutionNotEnabled);
+    expect(disabledPlan.safeBatchable).to.equal(false);
+    expect(disabledPlan.transactions).to.deep.equal([]);
   });
 });

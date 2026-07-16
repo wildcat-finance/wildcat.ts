@@ -44,13 +44,15 @@ interface HooksFactoryRevolving {
 
   function sanctionsSentinel() external view returns (address);
 
+  function wrapperFactory() external view returns (address);
+
   function marketInitCodeStorage() external view returns (address);
 
   function marketInitCodeHash() external view returns (uint256);
 
   function registerWithArchController() external;
 
-  function name() external view returns (string memory);
+  function name() external pure returns (string memory);
 
   function addHooksTemplate(
     address hooksTemplate,

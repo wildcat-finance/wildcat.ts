@@ -36,6 +36,8 @@ interface IOpenTermHooks {
 
   error DepositBelowMinimum();
 
+  error DepositHookNotEnabled();
+
   error ForceBuyBacksDisabled();
 
   error GrantedCredentialExpired();
@@ -43,6 +45,8 @@ interface IOpenTermHooks {
   error InvalidArrayLength();
 
   error InvalidCredentialReturned();
+
+  error InvalidAccessConfiguration();
 
   error NotApprovedLender();
 
@@ -173,6 +177,8 @@ interface IOpenTermHooks {
   ) external;
 
   function isKnownLenderOnMarket(address key0, address key1) external view returns (bool);
+
+  function isMarketTransferDisabled(address marketAddress) external view returns (bool);
 
   function name() external view returns (string memory);
 

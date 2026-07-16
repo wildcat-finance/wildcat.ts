@@ -463,6 +463,12 @@ export class OpenTermHooksTemplate extends ContractWrapper {
     if (this.hooksFactory.toLowerCase() !== expectedHooksFactory.toLowerCase()) {
       return { status: DeployMarketStatus.WrongHooksFactory };
     }
+    if (
+      withdrawalAccess === WithdrawalAccess.RequiresCredential &&
+      (depositAccess !== DepositAccess.RequiresCredential || transferAccess === TransferAccess.Open)
+    ) {
+      return { status: DeployMarketStatus.InvalidAccessConfiguration };
+    }
     const hooksConfig = encodeHooksConfig({
       hooksAddress: hooksAddress,
       useOnDeposit: depositAccess === DepositAccess.RequiresCredential,

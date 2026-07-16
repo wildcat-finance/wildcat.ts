@@ -970,6 +970,7 @@ export class Market extends ContractWrapper {
       assert(this.version === MarketVersion.V2, `Can not push V2 lens data to V1 market!`);
       const config = this.hooksConfig;
       assert(config !== undefined, `V2 market has no hooksConfig!`);
+      config.flags = { ...baseData.hooksConfig.flags };
       config.minimumDeposit = this.underlyingToken.getAmount(baseData.hooksConfig.minimumDeposit);
       if (config.kind === HooksKind.FixedTerm) {
         config.fixedTermEndTime = toNumber(baseData.hooksConfig.fixedTermEndTime);

@@ -8,6 +8,8 @@ import { WithdrawalBatch, BatchStatus } from "../../src/withdrawal-batch";
 import { LenderWithdrawalStatus } from "../../src/withdrawal-status";
 import { MarketDataV2StructOutput } from "../../src/lens-types";
 
+const provider = new providers.JsonRpcProvider();
+
 const makeAddress = (suffix: number): string => {
   return `0x${suffix.toString(16).padStart(40, "0")}`;
 };
@@ -88,7 +90,8 @@ const makeHooksFlags = () => ({
   useOnNukeFromOrbit: false,
   useOnSetMaxTotalSupply: false,
   useOnSetAnnualInterestAndReserveRatioBips: false,
-  useOnSetProtocolFeeBips: false
+  useOnSetProtocolFeeBips: false,
+  useOnExecutePendingAnnualInterestBipsReduction: false
 });
 
 const makeFactoryBackedMarketData = (hooksFactory: string): MarketDataV2StructOutput => {
@@ -190,9 +193,9 @@ const makeFactoryBackedMarketData = (hooksFactory: string): MarketDataV2StructOu
   };
 };
 
-const makeWithdrawalBatchData = () => ({
+const makeWithdrawalBatchData = (status: BatchStatus = BatchStatus.Unpaid) => ({
   expiry: 1_700_000_123,
-  status: BatchStatus.Unpaid,
+  status,
   scaledTotalAmount: BigNumber.from(100),
   scaledAmountBurned: BigNumber.from(60),
   normalizedAmountPaid: BigNumber.from(40),
@@ -208,6 +211,47 @@ const makeWithdrawalBatchLenderStatus = (lender: string) => ({
 });
 
 describe("Withdrawal read routing", () => {
+  it("preserves the explicit V2.5 Expired status on lens updates", () => {
+    const hooksFactory = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "HooksFactory"
+    );
+    const market = Market.fromMarketDataV2(
+      constantsModule.SupportedChainId.Sepolia,
+      provider,
+      makeFactoryBackedMarketData(hooksFactory)
+    );
+    const batch = WithdrawalBatch.fromWithdrawalBatchData(
+      market,
+      makeWithdrawalBatchData(BatchStatus.Pending),
+      true
+    );
+
+    batch.applyLensUpdate(makeWithdrawalBatchData(BatchStatus.Expired), true);
+
+    expect(batch.status).to.equal(BatchStatus.Expired);
+    expect(batch.isPendingExpired).to.equal(true);
+  });
+
+  it("maps the legacy lens status value 1 to Unpaid rather than Expired", () => {
+    const hooksFactory = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "HooksFactory"
+    );
+    const market = Market.fromMarketDataV2(
+      constantsModule.SupportedChainId.Sepolia,
+      provider,
+      makeFactoryBackedMarketData(hooksFactory)
+    );
+
+    const batch = WithdrawalBatch.fromWithdrawalBatchData(
+      market,
+      makeWithdrawalBatchData(1 as BatchStatus)
+    );
+
+    expect(batch.status).to.equal(BatchStatus.Unpaid);
+  });
+
   it("uses the latest lens for V2 withdrawal batch reads", async () => {
     const hooksFactory = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,

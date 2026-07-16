@@ -5,6 +5,7 @@ import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi
 import {
   getDeploymentAddress,
   getMarketTypeForHooksFactory,
+  isIndexedHooksFactory,
   SupportedChainId
 } from "../../src/constants";
 import { Market } from "../../src/market";
@@ -117,7 +118,8 @@ const makeHooksFlags = () => ({
   useOnNukeFromOrbit: false,
   useOnSetMaxTotalSupply: false,
   useOnSetAnnualInterestAndReserveRatioBips: false,
-  useOnSetProtocolFeeBips: false
+  useOnSetProtocolFeeBips: false,
+  useOnExecutePendingAnnualInterestBipsReduction: false
 });
 
 const makeLegacyMarketData = (): MarketDataStructOutput => {
@@ -620,6 +622,7 @@ describe("Market direct read routing", () => {
       commitmentFeeBips: { isPresent: true, value: BigNumber.from(200) },
       drawnAmount: { isPresent: true, value: BigNumber.from(300) }
     });
+    updatedData.market.hooksConfig.flags.useOnExecutePendingAnnualInterestBipsReduction = true;
     const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
     const viemProvider = new FakeViemProvider((call) => {
       const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
@@ -639,6 +642,7 @@ describe("Market direct read routing", () => {
     expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
     expect(market.commitmentFeeBips).to.equal(200);
     expect(market.drawnAmount?.raw).to.equal(300n);
+    expect(market.hooksConfig?.flags.useOnExecutePendingAnnualInterestBipsReduction).to.equal(true);
   });
 
   it("refreshes existing v2.5 markets through the live list endpoint", async () => {
@@ -720,7 +724,7 @@ describe("Market model routing metadata", () => {
     expect(market.marketType).to.equal(undefined);
   });
 
-  it("derives marketType from an indexed non-canonical hooks factory address", () => {
+  it("retains marketType metadata for a retired non-indexed hooks factory", () => {
     const market = Market.fromMarketDataV2(
       SupportedChainId.Sepolia,
       provider,
@@ -730,6 +734,9 @@ describe("Market model routing metadata", () => {
     expect(
       getMarketTypeForHooksFactory(SupportedChainId.Sepolia, historicalSepoliaRevolvingFactory)
     ).to.equal("revolving");
+    expect(
+      isIndexedHooksFactory(SupportedChainId.Sepolia, historicalSepoliaRevolvingFactory)
+    ).to.equal(false);
     expect(market.hooksFactory).to.equal(historicalSepoliaRevolvingFactory);
     expect(market.marketType).to.equal("revolving");
   });

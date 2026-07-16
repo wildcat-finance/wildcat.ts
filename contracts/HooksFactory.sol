@@ -13,6 +13,7 @@ struct MarketParametersV2 {
   address borrower;
   address feeRecipient;
   address sentinel;
+  address wrapperFactory;
   uint128 maxTotalSupply;
   uint16 protocolFeeBips;
   uint16 annualInterestBips;
@@ -112,6 +113,8 @@ interface HooksFactory {
   function archController() external view returns (address);
 
   function sanctionsSentinel() external view returns (address);
+
+  function wrapperFactory() external view returns (address);
 
   function marketInitCodeStorage() external view returns (address);
 

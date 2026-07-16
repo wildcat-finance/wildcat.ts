@@ -175,6 +175,8 @@ export type HooksFlags = {
   useOnSetMaxTotalSupply: boolean;
   useOnSetAnnualInterestAndReserveRatioBips: boolean;
   useOnSetProtocolFeeBips: boolean;
+  /** Present on V2.5 lens data; older subgraphs and lenses do not expose this bit. */
+  useOnExecutePendingAnnualInterestBipsReduction?: boolean;
 };
 
 export type MarketHooksInstanceInputs =
@@ -306,7 +308,8 @@ export enum DepositAccess {
   RequiresCredential,
   /**
    * Anyone can make a deposit
-   * `useOnDeposit` = false (in deployment hooks config)
+   * The hook contract may enable `useOnDeposit` after deployment to enforce a
+   * positive initial minimum without making deposits credential-gated.
    */
   Open
 }

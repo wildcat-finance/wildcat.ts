@@ -19,6 +19,26 @@ export const wildcat4626WrapperFactoryAbi = [
   },
   {
     inputs: [{ internalType: "address", name: "market", type: "address" }],
+    name: "isFloorRoundingMarket",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "v1Factory",
+    outputs: [
+      {
+        internalType: "contract IWildcat4626WrapperFactoryV1",
+        name: "",
+        type: "address"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [{ internalType: "address", name: "market", type: "address" }],
     name: "wrapperForMarket",
     outputs: [{ internalType: "address", name: "wrapper", type: "address" }],
     stateMutability: "view",
@@ -27,6 +47,16 @@ export const wildcat4626WrapperFactoryAbi = [
 ] as const satisfies Abi;
 
 export const wildcat4626WrapperAbi = [
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "address", name: "account", type: "address" },
+      { indexed: true, internalType: "address", name: "escrow", type: "address" },
+      { indexed: false, internalType: "uint256", name: "shares", type: "uint256" }
+    ],
+    name: "SanctionedAccountSharesSentToEscrow",
+    type: "event"
+  },
   {
     inputs: [],
     name: "market",
@@ -195,6 +225,13 @@ export const wildcat4626WrapperAbi = [
     ],
     name: "sweep",
     outputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [{ internalType: "address", name: "account", type: "address" }],
+    name: "nukeFromOrbit",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function"
   }

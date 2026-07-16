@@ -4,7 +4,7 @@ import type {
   WithdrawalBatchDataStructOutput,
   WithdrawalBatchDataV2_5StructOutput
 } from "./lens-types";
-import { hasDeploymentAddress } from "./constants";
+import { getLatestLensDeploymentName, hasDeploymentAddress } from "./constants";
 import { getLatestWithdrawalBatchData, getLegacyWithdrawalBatchData } from "./internal/market-lens";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
 import {
@@ -35,6 +35,15 @@ export enum BatchStatus {
 type WithdrawalBatchDataOutput =
   | WithdrawalBatchDataStructOutput
   | WithdrawalBatchDataV2_5StructOutput;
+
+const getLegacyBatchStatus = (
+  expiry: number,
+  scaledTotalAmount: bigint,
+  scaledAmountBurned: bigint
+): BatchStatus => {
+  if (expiry > Math.floor(Date.now() / 1000)) return BatchStatus.Pending;
+  return scaledAmountBurned === scaledTotalAmount ? BatchStatus.Complete : BatchStatus.Unpaid;
+};
 
 export class WithdrawalBatch {
   public withdrawals: LenderWithdrawalStatus[] = [];
@@ -104,7 +113,10 @@ export class WithdrawalBatch {
    * @description Whether the batch is expired but the market has not yet been updated
    */
   get isPendingExpired(): boolean {
-    return this.status === BatchStatus.Pending && this.expiry < Math.floor(Date.now() / 1000);
+    return (
+      this.status === BatchStatus.Expired ||
+      (this.status === BatchStatus.Pending && this.expiry < Math.floor(Date.now() / 1000))
+    );
   }
 
   get isConcluded(): boolean {
@@ -157,17 +169,14 @@ export class WithdrawalBatch {
     }
   }
 
-  applyLensUpdate(data: WithdrawalBatchDataOutput): void {
+  applyLensUpdate(data: WithdrawalBatchDataOutput, hasExplicitExpiredStatus = false): void {
     this.scaledTotalAmount = toRawAmount(data.scaledTotalAmount);
     this.scaledAmountBurned = toRawAmount(data.scaledAmountBurned);
     this.normalizedAmountPaid = this.market.underlyingToken.getAmount(data.normalizedAmountPaid);
     this.normalizedTotalAmount = this.market.underlyingToken.getAmount(data.normalizedTotalAmount);
-    this.status =
-      this.expiry > Math.floor(Date.now() / 1000)
-        ? BatchStatus.Pending
-        : this.scaledAmountBurned === this.scaledTotalAmount
-        ? BatchStatus.Complete
-        : BatchStatus.Unpaid;
+    this.status = hasExplicitExpiredStatus
+      ? (toNumber(data.status) as BatchStatus)
+      : getLegacyBatchStatus(this.expiry, this.scaledTotalAmount, this.scaledAmountBurned);
     if (this.status === BatchStatus.Complete) {
       const scaledTotalFromRecords = this.withdrawals.reduce(
         (total, w) => total + w.scaledAmount,
@@ -187,13 +196,22 @@ export class WithdrawalBatch {
   /*                             Builders / Getters                             */
   /* -------------------------------------------------------------------------- */
 
-  static fromWithdrawalBatchData(market: Market, data: WithdrawalBatchDataOutput): WithdrawalBatch {
+  static fromWithdrawalBatchData(
+    market: Market,
+    data: WithdrawalBatchDataOutput,
+    hasExplicitExpiredStatus = false
+  ): WithdrawalBatch {
+    const expiry = toNumber(data.expiry);
+    const scaledTotalAmount = toRawAmount(data.scaledTotalAmount);
+    const scaledAmountBurned = toRawAmount(data.scaledAmountBurned);
     return new WithdrawalBatch(
       market,
-      toNumber(data.expiry),
-      toNumber(data.status),
-      toRawAmount(data.scaledTotalAmount),
-      toRawAmount(data.scaledAmountBurned),
+      expiry,
+      hasExplicitExpiredStatus
+        ? toNumber(data.status)
+        : getLegacyBatchStatus(expiry, scaledTotalAmount, scaledAmountBurned),
+      scaledTotalAmount,
+      scaledAmountBurned,
       market.underlyingToken.getAmount(data.normalizedAmountPaid),
       market.underlyingToken.getAmount(data.normalizedTotalAmount)
     );
@@ -256,6 +274,8 @@ export class WithdrawalBatch {
     const data = useLatestLens
       ? await getLatestWithdrawalBatchData(market.chainId, market.provider, market.address, expiry)
       : await getLegacyWithdrawalBatchData(market.chainId, market.provider, market.address, expiry);
-    return WithdrawalBatch.fromWithdrawalBatchData(market, data);
+    const hasExplicitExpiredStatus =
+      useLatestLens && getLatestLensDeploymentName(market.chainId) === "MarketLensV2_5";
+    return WithdrawalBatch.fromWithdrawalBatchData(market, data, hasExplicitExpiredStatus);
   }
 }

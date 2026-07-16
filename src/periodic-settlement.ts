@@ -20,10 +20,10 @@ import { readViemContract } from "./internal/viem-read";
  * Both 2 and 3 are satisfied by a single `repayAndProcessUnpaidWithdrawalBatches`
  * call sized as `coverageLiquidity - totalAssets`: `liquidityRequired` already counts
  * 100% of pending/unpaid withdrawals and is invariant under batch processing, and
- * exact coverage always fully burns the queue (no rounding buffer is needed —
- * `scaleAmount` rounds half-up and `scaleFactor >= RAY`; see
- * v2-protocol/test/exploration/PeriodicAprReductionSettlementDust.t.sol). The only
- * buffer applied covers interest accruing between quote and transaction inclusion.
+ * exact coverage always fully burns the queue (no rounding buffer is needed):
+ * V2.5 batch settlement computes the maximum floor-priced scaled amount that
+ * available liquidity can settle. The only buffer applied here covers interest
+ * accruing between quote and transaction inclusion.
  *
  * Quotes are computed from LIVE state (lens + hook reads), never subgraph state:
  * the APR transaction itself processes an expired-but-coverable pending batch via
@@ -120,7 +120,9 @@ export enum PeriodicAprSettlementStatus {
   NotProposed = "NotProposed",
   ProposalDoesNotMatch = "ProposalDoesNotMatch",
   MarketClosed = "MarketClosed",
-  NotPeriodicMarket = "NotPeriodicMarket"
+  NotPeriodicMarket = "NotPeriodicMarket",
+  /** The market did not enable the V2.5 permissionless execution hook. */
+  ExecutionNotEnabled = "ExecutionNotEnabled"
 }
 
 export interface PeriodicAprSettlementQuote {
@@ -246,6 +248,9 @@ export async function getPeriodicAprReductionSettlementQuote(
   const { pendingAprChange, responseWindowEnd } =
     normalizePendingAprChangeResult(pendingAprChangeResult);
 
+  if (config.flags.useOnExecutePendingAnnualInterestBipsReduction !== true) {
+    return emptyQuote(PeriodicAprSettlementStatus.ExecutionNotEnabled);
+  }
   if (market.isClosed) {
     // repayAndProcessUnpaidWithdrawalBatches reverts on closed markets even with
     // a zero amount, and APR changes on closed markets revert anyway.
@@ -325,6 +330,22 @@ export async function populatePeriodicAprReductionPlan(
     existingQuote ?? (await getPeriodicAprReductionSettlementQuote(marketAccount, proposedAprBips));
   const market = marketAccount.market;
   const transactions: PlannedPeriodicAprTransaction[] = [];
+  const periodicConfig = market.hooksConfig;
+
+  if (periodicConfig?.kind !== HooksKind.PeriodicTerm) {
+    return {
+      quote: { ...quote, status: PeriodicAprSettlementStatus.NotPeriodicMarket },
+      transactions,
+      safeBatchable: false
+    };
+  }
+  if (periodicConfig.flags.useOnExecutePendingAnnualInterestBipsReduction !== true) {
+    return {
+      quote: { ...quote, status: PeriodicAprSettlementStatus.ExecutionNotEnabled },
+      transactions,
+      safeBatchable: false
+    };
+  }
 
   if (
     (quote.status === PeriodicAprSettlementStatus.Ready ||

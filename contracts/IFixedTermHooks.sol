@@ -42,6 +42,8 @@ interface IFixedTermHooks {
 
   error DepositBelowMinimum();
 
+  error DepositHookNotEnabled();
+
   error FixedTermNotProvided();
 
   error ForceBuyBackDisabledBeforeTerm();
@@ -57,6 +59,8 @@ interface IFixedTermHooks {
   error InvalidCredentialReturned();
 
   error InvalidFixedTerm();
+
+  error InvalidAccessConfiguration();
 
   error NoReducingAprBeforeTermEnd();
 
@@ -195,6 +199,8 @@ interface IFixedTermHooks {
   ) external;
 
   function isKnownLenderOnMarket(address key0, address key1) external view returns (bool);
+
+  function isMarketTransferDisabled(address marketAddress) external view returns (bool);
 
   function MaximumLoanTerm() external view returns (uint32);
 

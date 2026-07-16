@@ -135,7 +135,8 @@ const makeHooksFlags = () => ({
   useOnNukeFromOrbit: false,
   useOnSetMaxTotalSupply: false,
   useOnSetAnnualInterestAndReserveRatioBips: false,
-  useOnSetProtocolFeeBips: false
+  useOnSetProtocolFeeBips: false,
+  useOnExecutePendingAnnualInterestBipsReduction: false
 });
 
 const makeLegacyMarketData = (): MarketDataStructOutput => {

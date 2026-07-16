@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 enum BatchStatusV2_5 {
   Pending,
+  Expired,
   Unpaid,
   Complete
 }
@@ -56,6 +57,7 @@ struct HooksConfigDataV2_5 {
   bool useOnSetMaxTotalSupply;
   bool useOnSetAnnualInterestAndReserveRatioBips;
   bool useOnSetProtocolFeeBips;
+  bool useOnExecutePendingAnnualInterestBipsReduction;
 }
 
 struct HooksDeploymentFlagsV2_5 {
@@ -253,6 +255,12 @@ interface MarketLensV2_5 {
   function archController() external view returns (address);
 
   function hooksFactory() external view returns (address);
+
+  function coreHelper() external view returns (address);
+
+  function aggregationHelper() external view returns (address);
+
+  function liveHelper() external view returns (address);
 
   function getHooksDataForBorrower(
     address borrower

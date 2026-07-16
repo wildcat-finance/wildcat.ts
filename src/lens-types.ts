@@ -52,6 +52,10 @@ export type HooksConfigDataStructOutput = {
   useOnSetProtocolFeeBips: boolean;
 };
 
+export type HooksConfigDataV2_5StructOutput = HooksConfigDataStructOutput & {
+  useOnExecutePendingAnnualInterestBipsReduction: boolean;
+};
+
 export type RoleProviderDataStructOutput = {
   timeToLive: Numeric;
   providerAddress: string;
@@ -62,6 +66,11 @@ export type RoleProviderDataStructOutput = {
 export type HooksDeploymentFlagsStructOutput = {
   optional: HooksConfigDataStructOutput;
   required: HooksConfigDataStructOutput;
+};
+
+export type HooksDeploymentFlagsV2_5StructOutput = {
+  optional: HooksConfigDataV2_5StructOutput;
+  required: HooksConfigDataV2_5StructOutput;
 };
 
 export type HooksTemplateDataStructOutput = {
@@ -87,6 +96,13 @@ export type HooksInstanceDataStructOutput = {
   totalMarkets: Numeric;
 };
 
+export type HooksInstanceDataV2_5StructOutput = Omit<
+  HooksInstanceDataStructOutput,
+  "deploymentFlags"
+> & {
+  deploymentFlags: HooksDeploymentFlagsV2_5StructOutput;
+};
+
 export type MarketHooksDataStructOutput = {
   hooksAddress: string;
   flags: HooksConfigDataStructOutput;
@@ -104,6 +120,13 @@ export type MarketHooksDataStructOutput = {
   periodDuration: Numeric;
   withdrawalWindowDuration: Numeric;
   periodicTermClosed: boolean;
+};
+
+export type MarketHooksDataV2_5StructOutput = Omit<
+  MarketHooksDataStructOutput,
+  "flags" | "allowForceBuyBacks"
+> & {
+  flags: HooksConfigDataV2_5StructOutput;
 };
 
 export type MarketDataStructOutput = {
@@ -155,7 +178,13 @@ export type OptionalUintDataV2_5StructOutput = {
   value: Numeric;
 };
 
-export type MarketDataBaseV2_5StructOutput = MarketDataV2StructOutput;
+export type MarketDataBaseV2_5StructOutput = Omit<
+  MarketDataV2StructOutput,
+  "hooksConfig" | "hooks"
+> & {
+  hooksConfig: MarketHooksDataV2_5StructOutput;
+  hooks: HooksInstanceDataV2_5StructOutput;
+};
 
 export type MarketDataV2_5StructOutput = {
   market: MarketDataBaseV2_5StructOutput;
@@ -251,7 +280,12 @@ export type HooksDataForBorrowerStructOutput = {
   hooksInstances: HooksInstanceDataStructOutput[];
 };
 
-export type HooksDataForBorrowerV2_5StructOutput = HooksDataForBorrowerStructOutput;
+export type HooksDataForBorrowerV2_5StructOutput = Omit<
+  HooksDataForBorrowerStructOutput,
+  "hooksInstances"
+> & {
+  hooksInstances: HooksInstanceDataV2_5StructOutput[];
+};
 
 export type WithdrawalBatchDataStructOutput = {
   expiry: Numeric;

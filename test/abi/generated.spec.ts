@@ -3,7 +3,15 @@ import fs from "fs";
 import path from "path";
 import { encodeFunctionData, getAddress } from "viem";
 import * as generatedAbis from "../../src/abi";
-import { marketLensV2_5Abi, wildcatArchControllerAbi } from "../../src/abi";
+import {
+  iPeriodicTermHooksAbi,
+  marketLensV2Abi,
+  marketLensV2_5Abi,
+  wildcat4626WrapperAbi,
+  wildcat4626WrapperFactoryAbi,
+  wildcatArchControllerAbi,
+  wildcatMarketV2Abi
+} from "../../src/abi";
 
 type AbiSpec = {
   exportName?: keyof typeof generatedAbis;
@@ -29,6 +37,44 @@ const filterAbi = (abi: any[], spec: AbiSpec): any[] => {
 
 const getArtifactAbi = (artifactPath: string): any[] => {
   return JSON.parse(fs.readFileSync(path.join(root, artifactPath), "utf8")).abi;
+};
+
+const hasNamedComponent = (value: unknown, name: string): boolean => {
+  if (Array.isArray(value)) return value.some((entry) => hasNamedComponent(entry, name));
+  if (value === null || typeof value !== "object") return false;
+  const record = value as Record<string, unknown>;
+  return (
+    record.name === name || Object.values(record).some((entry) => hasNamedComponent(entry, name))
+  );
+};
+
+const findNamedComponent = (value: unknown, name: string): Record<string, unknown> | undefined => {
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      const match = findNamedComponent(entry, name);
+      if (match) return match;
+    }
+    return undefined;
+  }
+  if (value === null || typeof value !== "object") return undefined;
+  const record = value as Record<string, unknown>;
+  if (record.name === name) return record;
+  for (const entry of Object.values(record)) {
+    const match = findNamedComponent(entry, name);
+    if (match) return match;
+  }
+  return undefined;
+};
+
+const functionNames = (abi: readonly unknown[]): string[] => {
+  return abi
+    .filter(
+      (entry): entry is { type: "function"; name: string } =>
+        typeof entry === "object" &&
+        entry !== null &&
+        (entry as { type?: string }).type === "function"
+    )
+    .map((entry) => entry.name);
 };
 
 describe("generated viem ABIs", () => {
@@ -60,5 +106,36 @@ describe("generated viem ABIs", () => {
         args: [account]
       })
     ).to.match(/^0x[0-9a-f]+$/);
+  });
+
+  it("keeps the V2.5 hook flag isolated from the legacy V2 lens tuple", () => {
+    expect(
+      hasNamedComponent(marketLensV2_5Abi, "useOnExecutePendingAnnualInterestBipsReduction")
+    ).to.equal(true);
+    expect(
+      hasNamedComponent(marketLensV2Abi, "useOnExecutePendingAnnualInterestBipsReduction")
+    ).to.equal(false);
+  });
+
+  it("exposes the V2.5 market and wrapper compatibility surface", () => {
+    expect(functionNames(wildcatMarketV2Abi)).to.include.members([
+      "registerWrapper",
+      "registeredWrapper",
+      "scaledTransferRounding",
+      "wrapperFactory"
+    ]);
+    expect(functionNames(wildcat4626WrapperFactoryAbi)).to.include.members([
+      "isFloorRoundingMarket",
+      "v1Factory",
+      "wrapperForMarket"
+    ]);
+    expect(functionNames(wildcat4626WrapperAbi)).to.include("nukeFromOrbit");
+  });
+
+  it("models the V2.5 periodic minimum-deposit storage width", () => {
+    const getter = iPeriodicTermHooksAbi.find(
+      (entry) => entry.type === "function" && entry.name === "getHookedMarket"
+    );
+    expect(findNamedComponent(getter, "minimumDeposit")?.type).to.equal("uint96");
   });
 });

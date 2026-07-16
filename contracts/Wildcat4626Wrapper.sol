@@ -12,6 +12,8 @@ interface IWildcatMarketToken {
 
   function sentinel() external view returns (address);
 
+  function wrapperFactory() external view returns (address);
+
   function name() external view returns (string memory);
 
   function symbol() external view returns (string memory);
@@ -55,6 +57,10 @@ interface Wildcat4626Wrapper {
   error WithdrawMoreThanMax();
   error RedeemMoreThanMax();
   error NoReentrantCalls();
+  error AccountNotSanctioned(address account);
+  error CannotNukeWrapper();
+  error NotWrapperFactory();
+  error InsolventWrapper(uint256 scaledBacking, uint256 shareSupply);
 
   event Transfer(address indexed from, address indexed to, uint256 amount);
   event Approval(address indexed owner, address indexed spender, uint256 amount);
@@ -67,6 +73,11 @@ interface Wildcat4626Wrapper {
     uint256 shares
   );
   event TokensSwept(address indexed token, address indexed to, uint256 amount);
+  event SanctionedAccountSharesSentToEscrow(
+    address indexed account,
+    address indexed escrow,
+    uint256 shares
+  );
 
   function name() external view returns (string memory);
 
@@ -151,6 +162,8 @@ interface Wildcat4626Wrapper {
     address receiver,
     address owner_
   ) external returns (uint256 assets);
+
+  function nukeFromOrbit(address account) external;
 
   function sweep(address token, address to) external returns (uint256 amount);
 }

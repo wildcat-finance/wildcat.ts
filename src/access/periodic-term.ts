@@ -63,6 +63,7 @@ export interface PeriodicTermHooks
   extends Omit<PeriodicTermHooksArgs, "roleProviders" | "constraints"> {}
 
 const NullProviderIndex = 2 ** 24 - 1;
+const MaxPeriodicMinimumDeposit = (1n << 96n) - 1n;
 
 export class PeriodicTermHooks extends ContractWrapper {
   readonly kind: HooksKind.PeriodicTerm = HooksKind.PeriodicTerm;
@@ -450,6 +451,15 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
     );
     if (this.hooksFactory.toLowerCase() !== expectedHooksFactory.toLowerCase()) {
       return { status: DeployMarketStatus.WrongHooksFactory };
+    }
+    if (
+      withdrawalAccess === WithdrawalAccess.RequiresCredential &&
+      (depositAccess !== DepositAccess.RequiresCredential || transferAccess === TransferAccess.Open)
+    ) {
+      return { status: DeployMarketStatus.InvalidAccessConfiguration };
+    }
+    if (minimumDeposit && minimumDeposit.raw > MaxPeriodicMinimumDeposit) {
+      return { status: DeployMarketStatus.MinimumDepositTooHigh };
     }
 
     const hooksConfig = encodeHooksConfig({
