@@ -51,6 +51,10 @@ describe("SDK public surface smoke", () => {
     expect(typeof sdk.getConfiguredHooksFactoryTargets).to.equal("function");
     expect(typeof sdk.getConfiguredMarketKindForHooksFactory).to.equal("function");
     expect(typeof sdk.getHooksFactoryAddress).to.equal("function");
+    expect(typeof sdk.getHooksFactories).to.equal("function");
+    expect(typeof sdk.getHooksTemplateRegistrations).to.equal("function");
+    expect(typeof sdk.getHooksFactoryDeploymentTargetIssues).to.equal("function");
+    expect(typeof sdk.getBorrowerHooksData).to.equal("function");
     expect("MarketTypes" in sdk).to.equal(false);
   });
 });

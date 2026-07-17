@@ -28932,10 +28932,21 @@ export type SubgraphGetIndexerDeploymentQueryVariables = Exact<{ [key: string]: 
 
 export type SubgraphGetIndexerDeploymentQuery = { __typename: 'Query', indexerDeployments: Array<{ __typename: 'IndexerDeployment', id: string, chainId: string, network: string, graphNetwork: string, schemaRelease: string, configDigest: string, archController: string, sanctionsSentinel: string, analyticsEnabled: boolean, collateralEnabled: boolean, wrappersEnabled: boolean, pricingMode: SubgraphPricingMode, firstObservedBlock: string, firstObservedTimestamp: string, firstObservedTransaction: string, firstObservedLogIndex: string }> };
 
-export type SubgraphGetHooksFactoriesQueryVariables = Exact<{ [key: string]: never; }>;
+export type SubgraphGetHooksFactoriesQueryVariables = Exact<{
+  first: Scalars['Int']['input'];
+  skip: Scalars['Int']['input'];
+}>;
 
 
 export type SubgraphGetHooksFactoriesQuery = { __typename: 'Query', hooksFactories: Array<{ __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }> };
+
+export type SubgraphGetHooksTemplateRegistrationsQueryVariables = Exact<{
+  first: Scalars['Int']['input'];
+  skip: Scalars['Int']['input'];
+}>;
+
+
+export type SubgraphGetHooksTemplateRegistrationsQuery = { __typename: 'Query', hooksTemplateRegistrations: Array<{ __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }> };
 
 export type SubgraphGetMarketEventsQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -30649,13 +30660,29 @@ export const GetIndexerDeploymentDocument = gql`
     `;
 export type GetIndexerDeploymentQueryResult = Apollo.QueryResult<SubgraphGetIndexerDeploymentQuery, SubgraphGetIndexerDeploymentQueryVariables>;
 export const GetHooksFactoriesDocument = gql`
-    query getHooksFactories {
-  hooksFactories {
+    query getHooksFactories($first: Int!, $skip: Int!) {
+  hooksFactories(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
     ...HooksFactoryData
   }
 }
     ${HooksFactoryDataFragmentDoc}`;
 export type GetHooksFactoriesQueryResult = Apollo.QueryResult<SubgraphGetHooksFactoriesQuery, SubgraphGetHooksFactoriesQueryVariables>;
+export const GetHooksTemplateRegistrationsDocument = gql`
+    query getHooksTemplateRegistrations($first: Int!, $skip: Int!) {
+  hooksTemplateRegistrations(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...HooksTemplateRegistrationData
+  }
+}
+    ${HooksTemplateRegistrationDataFragmentDoc}
+${TokenDataFragmentDoc}
+${HooksTemplateDataFragmentDoc}
+${HooksFactoryDataFragmentDoc}`;
+export type GetHooksTemplateRegistrationsQueryResult = Apollo.QueryResult<SubgraphGetHooksTemplateRegistrationsQuery, SubgraphGetHooksTemplateRegistrationsQueryVariables>;
 export const GetMarketEventsDocument = gql`
     query getMarketEvents($market: ID!, $startEventIndex: Int = 0, $endEventIndex: Int = 100000000, $limit: Int = 10, $delinquencyRecordsFilter: DelinquencyStatusChanged_filter = {id_not: null}, $borrowRecordsFilter: Borrow_filter = {id_not: null}, $depositRecordsFilter: Deposit_filter = {id_not: null}, $feeCollectionRecordsFilter: FeesCollected_filter = {id_not: null}, $repaymentRecordsFilter: DebtRepaid_filter = {id_not: null}, $annualInterestBipsUpdatedRecordsFilter: AnnualInterestBipsUpdated_filter = {id_not: null}, $maxTotalSupplyUpdatedRecordsFilter: MaxTotalSupplyUpdated_filter = {id_not: null}, $withdrawalRequestRecordsFilter: WithdrawalRequest_filter = {id_not: null}, $forceBuyBackRecordsFilter: ForceBuyBack_filter = {id_not: null}, $minimumDepositUpdateRecordsFilter: MinimumDepositUpdated_filter = {id_not: null}, $protocolFeeBipsUpdatedRecordsFilter: ProtocolFeeBipsUpdated_filter = {id_not: null}, $fixedTermUpdatedRecordsFilter: FixedTermUpdated_filter = {id_not: null}, $periodicTermUpdatedRecordsFilter: PeriodicTermUpdated_filter = {id_not: null}, $annualInterestBipsReductionProposalRecordsFilter: AnnualInterestBipsReductionProposed_filter = {id_not: null}) {
   market(id: $market) {

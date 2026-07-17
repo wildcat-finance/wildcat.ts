@@ -54,12 +54,18 @@ export async function getAllHooksDataForBorrower(
   const hooksTemplates = result.data.hooksTemplateRegistrations
     .filter((registration) => parseHooksKind(registration.hooksTemplate.kind) !== HooksKind.Unknown)
     .map((template) =>
-      hooksTemplateFromSubgraph(chainId, signerOrProvider, template, borrower, isRegisteredBorrower)
+      hooksTemplateFromSubgraph(chainId, signerOrProvider, template, {
+        signerAddress: borrower,
+        isRegisteredBorrower
+      })
     );
   const hooksInstances = result.data.hooksInstances
     .filter((instance) => parseHooksKind(instance.kind) !== HooksKind.Unknown)
     .map((instance) =>
-      hooksInstanceFromSubgraph(chainId, signerOrProvider, instance, borrower, isRegisteredBorrower)
+      hooksInstanceFromSubgraph(chainId, signerOrProvider, instance, {
+        signerAddress: borrower,
+        isRegisteredBorrower
+      })
     );
   const controller =
     result.data.controllers.length > 0

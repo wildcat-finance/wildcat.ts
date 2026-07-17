@@ -1,7 +1,12 @@
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
-import { getAllHooksDataForBorrower, getAllHooksTemplates } from "../../src/gql";
+import {
+  getAllHooksDataForBorrower,
+  getAllHooksTemplates,
+  getHooksFactories,
+  getHooksTemplateRegistrations
+} from "../../src/gql";
 import {
   SubgraphFactoryLifecycle,
   SubgraphHookedMarketAbi,
@@ -172,6 +177,7 @@ describe("subgraph hooks helpers", () => {
       configuredHooksFactory.toLowerCase(),
       historicalHooksFactory.toLowerCase()
     ]);
+    expect(templates[0].registration?.id).to.equal(`${configuredHooksFactory.toLowerCase()}-1`);
   });
 
   it("includes periodic term borrower instances while filtering unsupported kinds", async () => {
@@ -220,6 +226,111 @@ describe("subgraph hooks helpers", () => {
       "OpenTermHooks",
       "FixedTermHooks",
       "PeriodicTermHooks"
+    ]);
+  });
+
+  it("keeps registration state isolated for the same template on different factories", async () => {
+    const sharedTemplate = makeAddress(88);
+    const current = makeTemplateRegistration(SubgraphHooksKind.OpenTerm, "Current Open Term", 88);
+    const historical = {
+      ...makeTemplateRegistration(
+        SubgraphHooksKind.OpenTerm,
+        "Historical Open Term",
+        89,
+        historicalHooksFactory
+      ),
+      isEnabled: false,
+      hooksTemplate: {
+        ...makeHooksTemplate(SubgraphHooksKind.OpenTerm, 89),
+        id: sharedTemplate,
+        address: sharedTemplate
+      },
+      hooksFactory: {
+        ...makeFactory(historicalHooksFactory),
+        lifecycle: SubgraphFactoryLifecycle.HISTORICAL,
+        deploymentTarget: false,
+        isRegistered: false
+      }
+    };
+    current.templateAddress = sharedTemplate;
+    current.hooksTemplate.id = sharedTemplate;
+    current.hooksTemplate.address = sharedTemplate;
+
+    const registrations = await getHooksTemplateRegistrations(
+      makeSubgraphClient({ hooksTemplateRegistrations: [current, historical] }),
+      { fetchPolicy: "no-cache" }
+    );
+
+    expect(registrations).to.have.lengthOf(2);
+    expect(registrations.map(({ hooksTemplate }) => hooksTemplate.address)).to.deep.equal([
+      sharedTemplate,
+      sharedTemplate
+    ]);
+    expect(registrations.map(({ hooksFactory }) => hooksFactory.address)).to.deep.equal([
+      configuredHooksFactory,
+      historicalHooksFactory
+    ]);
+    expect(registrations.map(({ isEnabled }) => isEnabled)).to.deep.equal([true, false]);
+    expect(registrations[1].hooksFactory.isRegistered).to.equal(false);
+    expect(registrations[1].hooksFactory.lifecycle).to.equal("historical");
+  });
+
+  it("retains deregistered and future factory metadata without guessing enum values", async () => {
+    const futureFactory = makeAddress(777);
+    const factories = await getHooksFactories(
+      makeSubgraphClient({
+        hooksFactories: [
+          {
+            ...makeFactory(historicalHooksFactory),
+            lifecycle: SubgraphFactoryLifecycle.HISTORICAL,
+            isRegistered: false
+          },
+          {
+            ...makeFactory(futureFactory),
+            marketKind: "FUTURE_MARKET_KIND",
+            hookedMarketAbi: "FUTURE_ABI",
+            lifecycle: "FUTURE_LIFECYCLE"
+          }
+        ]
+      })
+    );
+
+    expect(factories[0]).to.deep.include({
+      address: historicalHooksFactory,
+      lifecycle: "historical",
+      isRegistered: false
+    });
+    expect(factories[1]).to.deep.include({
+      address: futureFactory,
+      marketKind: "unknown",
+      hookedMarketAbi: "unknown",
+      lifecycle: "unknown"
+    });
+  });
+
+  it("paginates registration metadata instead of accepting Graph's default limit", async () => {
+    const queries: QueryArgs[] = [];
+    const pages = [
+      Array.from({ length: 1_000 }, (_, index) =>
+        makeTemplateRegistration(SubgraphHooksKind.OpenTerm, "OpenTermHooks", 10_000 + index)
+      ),
+      [makeTemplateRegistration(SubgraphHooksKind.FixedTerm, "FixedTermHooks", 11_001)]
+    ];
+    const client = {
+      query: async (args: QueryArgs) => {
+        queries.push(args);
+        return { data: { hooksTemplateRegistrations: pages.shift() ?? [] } };
+      }
+    } as unknown as ApolloClient<NormalizedCacheObject>;
+
+    const registrations = await getHooksTemplateRegistrations(client, {
+      fetchPolicy: "no-cache"
+    });
+
+    expect(registrations).to.have.lengthOf(1_001);
+    expect(queries.map(({ variables }) => variables)).to.deep.equal([
+      { first: 1_000, skip: 0 },
+      { first: 1_000, skip: 1_000 }
     ]);
   });
 });

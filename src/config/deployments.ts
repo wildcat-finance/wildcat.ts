@@ -1,4 +1,9 @@
-import { DeployableMarketKind, DeployableMarketKinds, MarketKind } from "../domain";
+import {
+  DeployableMarketKind,
+  DeployableMarketKinds,
+  HooksFactoryMetadata,
+  MarketKind
+} from "../domain";
 import { assert } from "../utils/assert";
 import { SupportedChainId } from "./chains";
 
@@ -29,6 +34,22 @@ export type HooksFactoryDeploymentTarget = {
   address: string;
   marketKind: DeployableMarketKind;
   deploymentName: HooksFactoryDeploymentName;
+};
+
+export type HooksFactoryDeploymentTargetIssueCode =
+  | "MISSING_INDEXED_FACTORY"
+  | "FACTORY_NOT_INDEXED"
+  | "FACTORY_NOT_CONFIGURED"
+  | "FACTORY_NOT_DEPLOYMENT_TARGET"
+  | "FACTORY_MARKET_KIND_MISMATCH"
+  | "FACTORY_ARCH_CONTROLLER_MISMATCH"
+  | "FACTORY_SENTINEL_MISMATCH"
+  | "FACTORY_NOT_ACTIVE";
+
+export type HooksFactoryDeploymentTargetIssue = {
+  code: HooksFactoryDeploymentTargetIssueCode;
+  target: HooksFactoryDeploymentTarget;
+  factory?: HooksFactoryMetadata;
 };
 
 const HooksFactoryDeploymentNamesByMarketKind: Record<
@@ -136,6 +157,49 @@ export const getConfiguredHooksFactoryTargets = (
     }
     return targets;
   }, []);
+
+/**
+ * Cross-check static transaction authority against indexer configuration.
+ * Historical or otherwise extra indexed factories are intentionally ignored.
+ */
+export const getHooksFactoryDeploymentTargetIssues = (
+  chainId: SupportedChainId,
+  factories: readonly HooksFactoryMetadata[]
+): HooksFactoryDeploymentTargetIssue[] => {
+  const factoriesByAddress = new Map(
+    factories.map((factory) => [factory.address.toLowerCase(), factory])
+  );
+  return getConfiguredHooksFactoryTargets(chainId).flatMap((target) => {
+    const factory = factoriesByAddress.get(target.address.toLowerCase());
+    if (!factory) return [{ code: "MISSING_INDEXED_FACTORY", target }];
+
+    const issues: HooksFactoryDeploymentTargetIssue[] = [];
+    if (!factory.indexed) issues.push({ code: "FACTORY_NOT_INDEXED", target, factory });
+    if (!factory.configured) issues.push({ code: "FACTORY_NOT_CONFIGURED", target, factory });
+    if (!factory.deploymentTarget) {
+      issues.push({ code: "FACTORY_NOT_DEPLOYMENT_TARGET", target, factory });
+    }
+    if (factory.marketKind !== target.marketKind) {
+      issues.push({ code: "FACTORY_MARKET_KIND_MISMATCH", target, factory });
+    }
+    if (
+      factory.archController.toLowerCase() !==
+      getDeploymentAddress(chainId, "WildcatArchController").toLowerCase()
+    ) {
+      issues.push({ code: "FACTORY_ARCH_CONTROLLER_MISMATCH", target, factory });
+    }
+    if (
+      factory.sentinel.toLowerCase() !==
+      getDeploymentAddress(chainId, "WildcatSanctionsSentinel").toLowerCase()
+    ) {
+      issues.push({ code: "FACTORY_SENTINEL_MISMATCH", target, factory });
+    }
+    if (factory.lifecycle !== "active") {
+      issues.push({ code: "FACTORY_NOT_ACTIVE", target, factory });
+    }
+    return issues;
+  });
+};
 
 export const getConfiguredMarketKindForHooksFactory = (
   chainId: SupportedChainId,

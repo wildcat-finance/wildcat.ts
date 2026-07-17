@@ -69,6 +69,7 @@ type AddressOnlyContract = {
 
 type ArchControllerContract = AddressOnlyContract & {
   isRegisteredBorrower: (borrower: string) => Promise<boolean>;
+  isRegisteredController: (controller: string) => Promise<boolean>;
 };
 
 type EncodingInterface = {
@@ -218,6 +219,14 @@ export const getArchControllerContract = (
         wildcatArchControllerAbi as Abi,
         "isRegisteredBorrower",
         [borrower as Address]
+      ),
+    isRegisteredController: (controller) =>
+      readViemContract(
+        getViemClient(provider),
+        address,
+        wildcatArchControllerAbi as Abi,
+        "isRegisteredController",
+        [controller as Address]
       )
   };
 };

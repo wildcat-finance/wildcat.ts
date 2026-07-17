@@ -3,8 +3,10 @@ import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../abi";
 import { getDeploymentAddress, getLatestLensDeploymentName, SupportedChainId } from "../constants";
 import type {
   ControllerDataStructOutput,
+  FactoryScopedHooksTemplateDataV2_5StructOutput,
   HooksDataForBorrowerStructOutput,
   HooksDataForBorrowerV2_5StructOutput,
+  HooksInstanceDataV2_5StructOutput,
   LenderAccountDataStructOutput,
   LenderAccountDataV2_5StructOutput,
   MarketDataStructOutput,
@@ -210,6 +212,37 @@ export const getV2_5FactoryScopedHooksDataForBorrower = (
     "MarketLensV2_5",
     marketLensV2_5Abi as Abi,
     "getHooksDataForBorrower",
+    [hooksFactory as Address, borrower as Address]
+  );
+};
+
+export const getV2_5AggregatedHooksTemplatesForBorrowerWithFactory = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  borrower: string
+): Promise<FactoryScopedHooksTemplateDataV2_5StructOutput[]> => {
+  return readMarketLens<FactoryScopedHooksTemplateDataV2_5StructOutput[]>(
+    chainId,
+    provider,
+    "MarketLensV2_5",
+    marketLensV2_5Abi as Abi,
+    "getAggregatedHooksTemplatesForBorrowerWithFactory",
+    [borrower as Address]
+  );
+};
+
+export const getV2_5FactoryScopedHooksInstancesForBorrower = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  hooksFactory: string,
+  borrower: string
+): Promise<HooksInstanceDataV2_5StructOutput[]> => {
+  return readMarketLens<HooksInstanceDataV2_5StructOutput[]>(
+    chainId,
+    provider,
+    "MarketLensV2_5",
+    marketLensV2_5Abi as Abi,
+    "getHooksInstancesForBorrower",
     [hooksFactory as Address, borrower as Address]
   );
 };

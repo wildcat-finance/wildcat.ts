@@ -45,12 +45,10 @@ export async function getAllHooksTemplates(
   return result.data.hooksTemplateRegistrations
     .filter((registration) => parseHooksKind(registration.hooksTemplate.kind) !== HooksKind.Unknown)
     .map((template) =>
-      hooksTemplateFromSubgraph(
-        chainId,
-        signerOrProvider,
-        template,
-        borrower,
-        result.data.registeredBorrowers?.[0]?.isRegistered ?? isRegisteredBorrower
-      )
+      hooksTemplateFromSubgraph(chainId, signerOrProvider, template, {
+        signerAddress: borrower,
+        isRegisteredBorrower:
+          result.data.registeredBorrowers?.[0]?.isRegistered ?? isRegisteredBorrower
+      })
     );
 }

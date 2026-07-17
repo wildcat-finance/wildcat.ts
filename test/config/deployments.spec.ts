@@ -7,9 +7,34 @@ import {
   getConfiguredMarketKindForHooksFactory,
   getDeploymentAddress,
   getHooksFactoryAddress,
+  getHooksFactoryDeploymentTargetIssues,
   getLatestLensDeploymentName,
   hasHooksFactoryDeployment
 } from "../../src/config";
+import { HooksFactoryMetadata } from "../../src/domain";
+
+const makeFactoryMetadata = (
+  address: string,
+  marketKind: HooksFactoryMetadata["marketKind"],
+  chainId: SupportedChainId = SupportedChainId.Sepolia,
+  overrides: Partial<HooksFactoryMetadata> = {}
+): HooksFactoryMetadata => ({
+  address,
+  label: "factory",
+  archController: getDeploymentAddress(chainId, "WildcatArchController"),
+  sentinel: getDeploymentAddress(chainId, "WildcatSanctionsSentinel"),
+  marketKind,
+  generation: "v2.5",
+  abiFamily: "hooks-shared-current",
+  hookedMarketAbi: "base",
+  configuredStartBlock: 1n,
+  indexed: true,
+  deploymentTarget: true,
+  lifecycle: "active",
+  configured: true,
+  isRegistered: true,
+  ...overrides
+});
 
 describe("SDK deployment configuration", () => {
   it("separates Sepolia standard and revolving transaction targets", () => {
@@ -41,6 +66,52 @@ describe("SDK deployment configuration", () => {
     expect(
       getConfiguredMarketKindForHooksFactory(SupportedChainId.Sepolia, retiredSepoliaFactory)
     ).to.equal("unknown");
+  });
+
+  it("accepts current targets while ignoring additional historical factories", () => {
+    const targets = getConfiguredHooksFactoryTargets(SupportedChainId.Sepolia);
+    const factories = [
+      ...targets.map(({ address, marketKind }) => makeFactoryMetadata(address, marketKind)),
+      makeFactoryMetadata(
+        "0x0000000000000000000000000000000000000003",
+        "standard",
+        SupportedChainId.Sepolia,
+        {
+          deploymentTarget: false,
+          lifecycle: "historical",
+          isRegistered: false
+        }
+      )
+    ];
+
+    expect(
+      getHooksFactoryDeploymentTargetIssues(SupportedChainId.Sepolia, factories)
+    ).to.deep.equal([]);
+  });
+
+  it("reports missing and inconsistent indexed transaction targets", () => {
+    const revolvingTarget = getConfiguredHooksFactoryTargets(SupportedChainId.Sepolia)[1];
+    const issues = getHooksFactoryDeploymentTargetIssues(SupportedChainId.Sepolia, [
+      makeFactoryMetadata(revolvingTarget.address, "standard", SupportedChainId.Sepolia, {
+        indexed: false,
+        configured: false,
+        deploymentTarget: false,
+        lifecycle: "historical",
+        archController: "0x0000000000000000000000000000000000000003",
+        sentinel: "0x0000000000000000000000000000000000000004"
+      })
+    ]);
+
+    expect(issues.map(({ code }) => code)).to.deep.equal([
+      "MISSING_INDEXED_FACTORY",
+      "FACTORY_NOT_INDEXED",
+      "FACTORY_NOT_CONFIGURED",
+      "FACTORY_NOT_DEPLOYMENT_TARGET",
+      "FACTORY_MARKET_KIND_MISMATCH",
+      "FACTORY_ARCH_CONTROLLER_MISMATCH",
+      "FACTORY_SENTINEL_MISMATCH",
+      "FACTORY_NOT_ACTIVE"
+    ]);
   });
 
   it("returns unknown for unconfigured factories instead of defaulting to standard", () => {

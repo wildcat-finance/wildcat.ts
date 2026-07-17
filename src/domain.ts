@@ -58,10 +58,13 @@ export type PricingMode = "chainlink" | "synthetic-testnet" | "none" | "unknown"
 export const parseHooksKind = (value: string | null | undefined): HooksKind => {
   switch (normalizeEnumValue(value)) {
     case "openterm":
+    case "opentermhooks":
       return HooksKind.OpenTerm;
     case "fixedterm":
+    case "fixedtermhooks":
       return HooksKind.FixedTerm;
     case "periodicterm":
+    case "periodictermhooks":
       return HooksKind.PeriodicTerm;
     default:
       return HooksKind.Unknown;

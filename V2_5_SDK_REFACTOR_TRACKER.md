@@ -20,6 +20,8 @@ Status values:
 - [x] Breaking changes to unpublished `3.1.8-beta` are allowed.
 - [x] A full V2.5 Graph API schema was captured from a local deployment of the
       frozen subgraph.
+- [x] Factory/template registration identity and live hook reads use explicit
+      factory scope.
 - [!] Final V2.5 Sepolia addresses and start blocks are pending deployment.
 - [!] A hosted V2.5 Graph API endpoint URL is pending subgraph deployment.
 
@@ -74,20 +76,20 @@ Status values:
 
 ## Phase 3 - Factory, registration, and hooks behavior
 
-- [ ] Normalize one SDK registration object per factory/template pair.
-- [ ] Dispatch template behavior by `HooksKind`.
-- [ ] Preserve display name as data, not type identity.
-- [ ] Discover all indexed historical factories from subgraph data.
-- [ ] Query only explicit SDK targets for transaction construction.
-- [ ] Cross-check SDK targets with subgraph deployment-target metadata.
-- [ ] Implement active aggregated lens reads.
-- [ ] Implement explicit factory-scoped live reads where required.
-- [ ] Test identical template addresses on multiple factories.
-- [ ] Test disabled registrations.
-- [ ] Test deregistered but indexed factories.
-- [ ] Test unknown/future factories and kinds.
-- [ ] Run Phase 3 checks.
-- [ ] Commit Phase 3.
+- [x] Normalize one SDK registration object per factory/template pair.
+- [x] Dispatch template behavior by `HooksKind`.
+- [x] Preserve display name as data, not type identity.
+- [x] Discover all indexed historical factories from subgraph data.
+- [x] Query only explicit SDK targets for transaction construction.
+- [x] Cross-check SDK targets with subgraph deployment-target metadata.
+- [x] Implement active aggregated lens reads.
+- [x] Implement explicit factory-scoped live reads where required.
+- [x] Test identical template addresses on multiple factories.
+- [x] Test disabled registrations.
+- [x] Test deregistered but indexed factories.
+- [x] Test unknown/future factories and kinds.
+- [x] Run Phase 3 checks.
+- [x] Commit Phase 3.
 
 ## Phase 4 - Market discovery, snapshots, and live state
 
@@ -185,6 +187,12 @@ Status values:
 | 2026-07-17 | SDK Phase 2 | `yarn mocha` | Pass | 124 passing, including endpoint-gate and collateral-identity regressions |
 | 2026-07-17 | SDK Phase 2 | `env -u WILDCAT_SUBGRAPH_SCHEMA yarn codegen:gql` | Pass | Reproducible from the checked-in full schema |
 | 2026-07-17 | SDK Phase 2 | `git diff --check` | Pass | No whitespace errors |
+| 2026-07-17 | SDK Phase 3 targeted | Hooks routing, registration, deployment-target, and preview tests | Pass | Same-address multi-factory scope, pagination, unknown kinds, disabled templates, and deregistered factories covered |
+| 2026-07-17 | SDK Phase 3 | `yarn lint` | Pass | Source and tests are clean |
+| 2026-07-17 | SDK Phase 3 | `yarn build` | Pass | TypeScript production build with factory-scoped public APIs |
+| 2026-07-17 | SDK Phase 3 | `yarn mocha` | Pass | 133 passing, including fail-closed deployment authority regressions |
+| 2026-07-17 | SDK Phase 3 | `env -u WILDCAT_SUBGRAPH_SCHEMA yarn codegen:gql` | Pass | Paginated factory and registration queries reproduce generated transport types |
+| 2026-07-17 | SDK Phase 3 | `git diff --check` | Pass | No whitespace errors |
 
 ## Decision ledger
 
@@ -200,6 +208,9 @@ Status values:
 | 2026-07-17 | Keep historical factory addresses out of deployment configuration | Indexed provenance discovers old factories; checked-in addresses authorize only the current transaction targets |
 | 2026-07-17 | Require an explicit full Graph API schema for codegen | Prevents accidental generation against the stale Sepolia endpoint or the incomplete entity SDL |
 | 2026-07-17 | Remove the GraphQL checksum cache and post-generation rewrite | The cache stored partial introspection with inconsistent digest ordering; standard codegen options replace the required-typename rewrite |
+| 2026-07-17 | Key hook behavior by indexed factory/template registration kind | Template addresses are stored initcode blobs rather than callable contracts, and mutable lens display names are not type identity |
+| 2026-07-17 | Treat lens template state and ArchController registration as live authority | Indexed enablement and factory registration can lag; previews fail closed unless indexed provenance and positive live registration are both present |
+| 2026-07-17 | Page factory and registration metadata explicitly | Graph's default entity limit must not truncate historical factories or factory-scoped registrations |
 
 ## Open inputs and blockers
 
@@ -223,7 +234,7 @@ Status values:
 - [ ] Consolidate duplicated hooks-template subgraph hydration after adopting
       registration data.
 - [x] Stop requiring mutable template names to identify indexed hook behavior.
-- [ ] Stop requiring mutable template names to identify lens hook behavior.
+- [x] Stop requiring mutable template names to identify lens hook behavior.
 
 ## Commit ledger
 
@@ -231,8 +242,8 @@ Status values:
 | --- | --- | --- | --- |
 | 0 - Plan | `1c6e231` | Documentation and clean worktree check | Complete |
 | 1 - Domain/config | `dde64f7` | Domain/config unit tests, lint, build, 113-test suite | Complete |
-| 2 - GraphQL/codegen | This commit | Schema validation, endpoint-gate integration, lint, build, 124-test suite | Complete |
-| 3 - Factories/hooks | Pending | Multi-factory fixtures, lint, build, mocha | Not started |
+| 2 - GraphQL/codegen | `6e56b3b` | Schema validation, endpoint-gate integration, lint, build, 124-test suite | Complete |
+| 3 - Factories/hooks | This commit | Multi-factory fixtures, lint, build, 133-test suite | Complete |
 | 4 - Markets/live | Pending | Historical fixtures, fixed-block parity, lint, build, mocha | Not started |
 | 5 - Analytics | Pending | Analytics fixtures, lint, build, mocha | Not started |
 | 6 - Deployment | Pending | Artifact checks, previews, deployed endpoint checks | Blocked on deployment |
@@ -282,3 +293,16 @@ Status values:
   subgraph.
 - Added collateral depositor addresses and restored liquidated-share reset
   events to the SDK query path.
+- Added paginated, SDK-owned factory and factory/template registration reads so
+  historical and future factories remain visible without becoming transaction
+  targets.
+- Replaced mutable lens-name dispatch with exact indexed `HooksKind` identity,
+  retaining independent registrations when the same template initcode address
+  appears on multiple factories.
+- Switched V2.5 borrower hook reads to the aggregated active-template lens path,
+  followed by explicit factory-scoped instance reads and live ArchController
+  registration checks.
+- Restricted create-market previews to the configured factory for the requested
+  market kind and required matching indexed deployment metadata plus positive
+  live factory registration. Stale indexed enablement cannot override live lens
+  state, while missing live or indexed authority fails closed.

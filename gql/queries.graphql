@@ -427,9 +427,15 @@ query getIndexerDeployment {
   }
 }
 
-query getHooksFactories {
-  hooksFactories {
+query getHooksFactories($first: Int!, $skip: Int!) {
+  hooksFactories(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
     ...HooksFactoryData
+  }
+}
+
+query getHooksTemplateRegistrations($first: Int!, $skip: Int!) {
+  hooksTemplateRegistrations(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+    ...HooksTemplateRegistrationData
   }
 }
 
@@ -453,7 +459,9 @@ query getMarketEvents(
   $protocolFeeBipsUpdatedRecordsFilter: ProtocolFeeBipsUpdated_filter = { id_not: null }
   $fixedTermUpdatedRecordsFilter: FixedTermUpdated_filter = { id_not: null }
   $periodicTermUpdatedRecordsFilter: PeriodicTermUpdated_filter = { id_not: null }
-  $annualInterestBipsReductionProposalRecordsFilter: AnnualInterestBipsReductionProposed_filter = { id_not: null }
+  $annualInterestBipsReductionProposalRecordsFilter: AnnualInterestBipsReductionProposed_filter = {
+    id_not: null
+  }
 ) {
   market(id: $market) {
     marketClosedEvent {
@@ -1096,7 +1104,9 @@ query getCollateralContractEvents(
   $includeLiquidations: Boolean = true
   $fullResetRecordsFilter: SimpleCollateralContractFullReset_filter = { id_not: null }
   $includeFullResets: Boolean = true
-  $liquidatedSharesResetRecordsFilter: SimpleCollateralContractLiquidatedSharesReset_filter = { id_not: null }
+  $liquidatedSharesResetRecordsFilter: SimpleCollateralContractLiquidatedSharesReset_filter = {
+    id_not: null
+  }
   $includeLiquidatedSharesResets: Boolean = true
 ) {
   simpleCollateralContract(id: $collateralContract) {
@@ -1112,7 +1122,7 @@ query getCollateralContractEvents(
       first: $limit
     ) @include(if: $includeDeposits) {
       ...SimpleCollateralContractDepositData
-    } 
+    }
     reclaims(
       where: {
         and: [

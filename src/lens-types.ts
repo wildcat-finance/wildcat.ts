@@ -83,6 +83,11 @@ export type HooksTemplateDataStructOutput = {
   totalMarkets: Numeric;
 };
 
+export type FactoryScopedHooksTemplateDataV2_5StructOutput = {
+  hooksFactory: string;
+  hooksTemplateData: HooksTemplateDataStructOutput;
+};
+
 export type HooksInstanceDataStructOutput = {
   hooksAddress: string;
   borrower: string;

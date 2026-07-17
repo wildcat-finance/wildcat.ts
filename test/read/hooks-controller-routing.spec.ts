@@ -1,15 +1,16 @@
 import { expect } from "chai";
 import { BigNumber, constants, providers } from "ethers";
 import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
-import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi";
-import { getBorrowerHooksData } from "../../src/access";
 import {
-  getDeploymentAddress,
-  getConfiguredHooksFactoryTargets,
-  getConfiguredMarketKindForHooksFactory,
-  SupportedChainId
-} from "../../src/constants";
+  marketLensAbi,
+  marketLensV2Abi,
+  marketLensV2_5Abi,
+  wildcatArchControllerAbi
+} from "../../src/abi";
+import { getBorrowerHooksData } from "../../src/access";
+import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { MarketController } from "../../src/controller";
+import { HooksKind, HooksTemplateRegistrationMetadata, MarketKind } from "../../src/domain";
 
 type FakeRpcCall = {
   to?: string;
@@ -141,6 +142,56 @@ const makeHooksInstance = (borrower: string, template: ReturnType<typeof makeHoo
   totalMarkets: BigNumber.from(1)
 });
 
+const makeTemplateRegistration = (
+  hooksFactory: string,
+  hooksTemplate: string,
+  kind: HooksKind,
+  marketKind: MarketKind,
+  deploymentTarget: boolean,
+  chainId: SupportedChainId = SupportedChainId.Sepolia
+): HooksTemplateRegistrationMetadata => ({
+  id: `${hooksFactory.toLowerCase()}-${hooksTemplate.toLowerCase()}`,
+  hooksFactory: {
+    address: hooksFactory,
+    label: "factory",
+    archController: getDeploymentAddress(chainId, "WildcatArchController"),
+    sentinel: getDeploymentAddress(chainId, "WildcatSanctionsSentinel"),
+    marketKind,
+    generation: "v2.5",
+    abiFamily: "hooks-shared-current",
+    hookedMarketAbi: "base",
+    configuredStartBlock: 1n,
+    indexed: true,
+    deploymentTarget,
+    lifecycle: "active",
+    configured: true,
+    isRegistered: true
+  },
+  hooksTemplate: {
+    address: hooksTemplate,
+    kind,
+    version: "v2.5",
+    abiFamily: "hooks-shared-current"
+  },
+  name: "Indexed display label",
+  feeRecipient: makeAddress(11),
+  protocolFeeBips: 25,
+  originationFeeAmount: 0n,
+  isEnabled: true,
+  createdAt: {
+    blockNumber: 1n,
+    blockTimestamp: 1n,
+    transactionHash: constants.HashZero,
+    logIndex: 0n
+  },
+  updatedAt: {
+    blockNumber: 1n,
+    blockTimestamp: 1n,
+    transactionHash: constants.HashZero,
+    logIndex: 0n
+  }
+});
+
 const makeHooksDataForBorrower = (borrower: string, template: string, includeInstance = false) => {
   const hooksTemplate = makeHooksTemplate(template);
   return {
@@ -170,48 +221,136 @@ const makeControllerData = (borrower: string) => ({
 });
 
 describe("Hooks and controller read routing", () => {
-  it("uses factory-scoped MarketLensV2_5 hooks reads when the unified lens is deployed", async () => {
+  it("discovers active templates and preserves factory scope in V2.5 live reads", async () => {
     const borrower = makeAddress(20);
     const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const archController = getDeploymentAddress(SupportedChainId.Sepolia, "WildcatArchController");
+    const standardFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
     const revolvingFactory = getDeploymentAddress(
       SupportedChainId.Sepolia,
       "HooksFactoryRevolving"
     );
-    const configuredTargets = getConfiguredHooksFactoryTargets(SupportedChainId.Sepolia);
+    const futureFactory = makeAddress(99);
+    const sharedTemplate = makeAddress(30);
+    const periodicTemplate = makeAddress(33);
+    const unknownTemplate = makeAddress(34);
+    const activeTemplates = [
+      {
+        hooksFactory: standardFactory,
+        hooksTemplateData: makeHooksTemplate(sharedTemplate, "Standard display label")
+      },
+      {
+        hooksFactory: revolvingFactory,
+        hooksTemplateData: makeHooksTemplate(sharedTemplate, "Revolving display label")
+      },
+      {
+        hooksFactory: futureFactory,
+        hooksTemplateData: makeHooksTemplate(periodicTemplate, "Renamed periodic template")
+      },
+      {
+        hooksFactory: futureFactory,
+        hooksTemplateData: makeHooksTemplate(unknownTemplate, "Unknown display label")
+      }
+    ];
+    const registrations = [
+      makeTemplateRegistration(
+        standardFactory,
+        sharedTemplate,
+        HooksKind.OpenTerm,
+        "standard",
+        true
+      ),
+      makeTemplateRegistration(
+        revolvingFactory,
+        sharedTemplate,
+        HooksKind.OpenTerm,
+        "revolving",
+        true
+      ),
+      makeTemplateRegistration(
+        futureFactory,
+        periodicTemplate,
+        HooksKind.PeriodicTerm,
+        "unknown",
+        false
+      ),
+      makeTemplateRegistration(futureFactory, unknownTemplate, HooksKind.Unknown, "unknown", false)
+    ];
     const seenCalls: Array<[string, string]> = [];
 
     const viemProvider = new FakeViemProvider((call) => {
+      if (call.to === archController) {
+        const decoded = decodeLensCall(wildcatArchControllerAbi as Abi, call);
+        const address = (decoded.args as [string])[0].toLowerCase();
+        if (decoded.functionName === "isRegisteredBorrower") {
+          expect(address).to.equal(borrower);
+          return encodeLensResult(wildcatArchControllerAbi as Abi, "isRegisteredBorrower", true);
+        }
+        expect(decoded.functionName).to.equal("isRegisteredController");
+        return encodeLensResult(
+          wildcatArchControllerAbi as Abi,
+          "isRegisteredController",
+          address !== futureFactory
+        );
+      }
+
       const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
       expect(call.to).to.equal(lensAddress);
-      expect(decoded.functionName).to.equal("getHooksDataForBorrower");
+      if (decoded.functionName === "getAggregatedHooksTemplatesForBorrowerWithFactory") {
+        expect((decoded.args as [string])[0].toLowerCase()).to.equal(borrower);
+        return encodeLensResult(
+          marketLensV2_5Abi as Abi,
+          "getAggregatedHooksTemplatesForBorrowerWithFactory",
+          activeTemplates
+        );
+      }
+
+      expect(decoded.functionName).to.equal("getHooksInstancesForBorrower");
 
       const [hooksFactory, argBorrower] = decoded.args as [string, string];
       seenCalls.push([hooksFactory.toLowerCase(), argBorrower.toLowerCase()]);
 
-      const isRevolving =
-        getConfiguredMarketKindForHooksFactory(SupportedChainId.Sepolia, hooksFactory) ===
-        "revolving";
       const isCanonicalRevolving = hooksFactory.toLowerCase() === revolvingFactory.toLowerCase();
-      const data = isRevolving
-        ? makeHooksDataForBorrower(borrower, makeAddress(31), isCanonicalRevolving)
-        : makeHooksDataForBorrower(borrower, makeAddress(30));
+      const instances = isCanonicalRevolving
+        ? [makeHooksInstance(borrower, makeHooksTemplate(sharedTemplate))]
+        : [];
 
-      return encodeLensResult(marketLensV2_5Abi as Abi, "getHooksDataForBorrower", data);
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getHooksInstancesForBorrower", instances);
     });
 
-    const result = await getBorrowerHooksData(
-      SupportedChainId.Sepolia,
-      viemProvider as unknown as providers.Provider,
+    const result = await getBorrowerHooksData({
+      chainId: SupportedChainId.Sepolia,
+      signerOrProvider: viemProvider as unknown as providers.Provider,
+      hooksTemplateRegistrations: registrations,
       borrower
-    );
+    });
 
     expect(seenCalls).to.deep.equal(
-      configuredTargets.map(({ address }) => [address.toLowerCase(), borrower])
+      [standardFactory, revolvingFactory, futureFactory].map((hooksFactory) => [
+        hooksFactory.toLowerCase(),
+        borrower
+      ])
     );
     expect(result.isRegisteredBorrower).to.equal(true);
     expect(
       result.hooksTemplates.map((template) => template.hooksFactory.toLowerCase())
-    ).to.deep.equal(configuredTargets.map(({ address }) => address.toLowerCase()));
+    ).to.deep.equal(
+      [standardFactory, revolvingFactory, futureFactory].map((factory) => factory.toLowerCase())
+    );
+    expect(result.hooksTemplates.map(({ kind }) => kind)).to.deep.equal([
+      HooksKind.OpenTerm,
+      HooksKind.OpenTerm,
+      HooksKind.PeriodicTerm
+    ]);
+    expect(result.hooksTemplates.map(({ name }) => name)).to.deep.equal([
+      "Standard display label",
+      "Revolving display label",
+      "Renamed periodic template"
+    ]);
+    expect(
+      result.hooksTemplates.map(({ isRegisteredHooksFactory }) => isRegisteredHooksFactory)
+    ).to.deep.equal([true, true, false]);
+    expect(result.hooksTemplates[2].previewDeployMarket).to.be.a("function");
     expect(result.hooksInstances).to.have.lengthOf(1);
     expect(result.hooksInstances[0].hooksFactory.toLowerCase()).to.equal(
       revolvingFactory.toLowerCase()
@@ -222,8 +361,26 @@ describe("Hooks and controller read routing", () => {
     const borrower = makeAddress(21);
     const lensAddress = getDeploymentAddress(SupportedChainId.Mainnet, "MarketLensV2");
     const hooksFactory = getDeploymentAddress(SupportedChainId.Mainnet, "HooksFactoryStandard");
+    const archController = getDeploymentAddress(SupportedChainId.Mainnet, "WildcatArchController");
+    const hooksTemplate = makeAddress(32);
+    const registrations = [
+      makeTemplateRegistration(
+        hooksFactory,
+        hooksTemplate,
+        HooksKind.OpenTerm,
+        "standard",
+        true,
+        SupportedChainId.Mainnet
+      )
+    ];
 
     const viemProvider = new FakeViemProvider((call) => {
+      if (call.to === archController) {
+        const decoded = decodeLensCall(wildcatArchControllerAbi as Abi, call);
+        expect(decoded.functionName).to.equal("isRegisteredController");
+        expect((decoded.args as [string])[0].toLowerCase()).to.equal(hooksFactory.toLowerCase());
+        return encodeLensResult(wildcatArchControllerAbi as Abi, "isRegisteredController", true);
+      }
       const decoded = decodeLensCall(marketLensV2Abi as Abi, call);
       expect(call.to).to.equal(lensAddress);
       expect(decoded.functionName).to.equal("getHooksDataForBorrower");
@@ -232,15 +389,16 @@ describe("Hooks and controller read routing", () => {
       return encodeLensResult(
         marketLensV2Abi as Abi,
         "getHooksDataForBorrower",
-        makeHooksDataForBorrower(borrower, makeAddress(32), true)
+        makeHooksDataForBorrower(borrower, hooksTemplate, true)
       );
     });
 
-    const result = await getBorrowerHooksData(
-      SupportedChainId.Mainnet,
-      viemProvider as unknown as providers.Provider,
+    const result = await getBorrowerHooksData({
+      chainId: SupportedChainId.Mainnet,
+      signerOrProvider: viemProvider as unknown as providers.Provider,
+      hooksTemplateRegistrations: registrations,
       borrower
-    );
+    });
 
     expect(result.hooksTemplates).to.have.lengthOf(1);
     expect(result.hooksTemplates[0].hooksFactory.toLowerCase()).to.equal(

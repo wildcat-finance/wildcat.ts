@@ -14,6 +14,7 @@ import {
 } from "../../src/access";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { MarketParameters } from "../../src/controller";
+import { HooksKind, HooksTemplateRegistrationMetadata } from "../../src/domain";
 import { Token } from "../../src/token";
 import {
   DepositAccess,
@@ -62,48 +63,110 @@ const makeMarketParameters = (asset: Token): MarketParameters => {
   };
 };
 
+const makeTemplateRegistration = (
+  hooksFactory: string,
+  hooksTemplate: string,
+  kind: HooksKind,
+  overrides: Partial<HooksTemplateRegistrationMetadata> = {}
+): HooksTemplateRegistrationMetadata => ({
+  id: `${hooksFactory.toLowerCase()}-${hooksTemplate.toLowerCase()}`,
+  hooksFactory: {
+    address: hooksFactory,
+    label: "standard-v2.5",
+    archController: getDeploymentAddress(SupportedChainId.Sepolia, "WildcatArchController"),
+    sentinel: getDeploymentAddress(SupportedChainId.Sepolia, "WildcatSanctionsSentinel"),
+    marketKind:
+      hooksFactory.toLowerCase() ===
+      getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving").toLowerCase()
+        ? "revolving"
+        : "standard",
+    generation: "v2.5",
+    abiFamily: "hooks-shared-current",
+    hookedMarketAbi: "base",
+    configuredStartBlock: 1n,
+    indexed: true,
+    deploymentTarget: true,
+    lifecycle: "active",
+    configured: true,
+    isRegistered: true
+  },
+  hooksTemplate: {
+    address: hooksTemplate,
+    kind,
+    version: "v2.5",
+    abiFamily: "hooks-shared-current"
+  },
+  name: "OpenTermHooks",
+  feeRecipient: makeAddress(10),
+  protocolFeeBips: 25,
+  originationFeeAmount: 0n,
+  isEnabled: true,
+  createdAt: {
+    blockNumber: 1n,
+    blockTimestamp: 1n,
+    transactionHash: constants.HashZero,
+    logIndex: 0n
+  },
+  updatedAt: {
+    blockNumber: 1n,
+    blockTimestamp: 1n,
+    transactionHash: constants.HashZero,
+    logIndex: 0n
+  },
+  ...overrides
+});
+
 const makeOpenTermTemplate = (
   hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard")
 ): OpenTermHooksTemplate => {
+  const hooksTemplate = makeAddress(12);
   return new OpenTermHooksTemplate(SupportedChainId.Sepolia, provider, {
-    hooksTemplate: makeAddress(12),
+    hooksTemplate,
     hooksFactory,
     fees: makeFees(),
     enabled: true,
     index: 0,
     name: "OpenTermHooks",
     totalMarkets: 0,
-    isRegisteredBorrower: true
+    isRegisteredBorrower: true,
+    isRegisteredHooksFactory: true,
+    registration: makeTemplateRegistration(hooksFactory, hooksTemplate, HooksKind.OpenTerm)
   });
 };
 
 const makeFixedTermTemplate = (
   hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard")
 ): FixedTermHooksTemplate => {
+  const hooksTemplate = makeAddress(13);
   return new FixedTermHooksTemplate(SupportedChainId.Sepolia, provider, {
-    hooksTemplate: makeAddress(13),
+    hooksTemplate,
     hooksFactory,
     fees: makeFees(),
     enabled: true,
     index: 0,
     name: "FixedTermHooks",
     totalMarkets: 0,
-    isRegisteredBorrower: true
+    isRegisteredBorrower: true,
+    isRegisteredHooksFactory: true,
+    registration: makeTemplateRegistration(hooksFactory, hooksTemplate, HooksKind.FixedTerm)
   });
 };
 
 const makePeriodicTermTemplate = (
   hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard")
 ): PeriodicTermHooksTemplate => {
+  const hooksTemplate = makeAddress(14);
   return new PeriodicTermHooksTemplate(SupportedChainId.Sepolia, provider, {
-    hooksTemplate: makeAddress(14),
+    hooksTemplate,
     hooksFactory,
     fees: makeFees(),
     enabled: true,
     index: 0,
     name: "PeriodicTermHooks",
     totalMarkets: 0,
-    isRegisteredBorrower: true
+    isRegisteredBorrower: true,
+    isRegisteredHooksFactory: true,
+    registration: makeTemplateRegistration(hooksFactory, hooksTemplate, HooksKind.PeriodicTerm)
   });
 };
 
@@ -291,6 +354,140 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
 });
 
 describe("V2.5 hook deployment validation", () => {
+  it("fails closed without indexed registration metadata or a live factory check", () => {
+    const asset = makeToken();
+    const template = makeOpenTermTemplate();
+    const args = {
+      ...makeMarketParameters(asset),
+      hooksAddress: makeAddress(37),
+      salt: constants.HashZero,
+      minimumDeposit: asset.getAmount(0n),
+      transferAccess: TransferAccess.Open,
+      depositAccess: DepositAccess.Open,
+      withdrawalAccess: WithdrawalAccess.Open
+    };
+
+    template.registration = undefined;
+    expect(template.previewDeployMarket(args).status).to.equal(
+      DeployMarketStatus.HooksTemplateRegistrationUnavailable
+    );
+
+    template.registration = makeTemplateRegistration(
+      template.hooksFactory,
+      template.hooksTemplate,
+      HooksKind.OpenTerm
+    );
+    template.isRegisteredHooksFactory = undefined;
+    expect(template.previewDeployMarket(args).status).to.equal(
+      DeployMarketStatus.HooksFactoryRegistrationUnknown
+    );
+  });
+
+  it("rejects templates from a live-deregistered hooks factory", () => {
+    const asset = makeToken();
+    const template = makeOpenTermTemplate();
+    template.isRegisteredHooksFactory = false;
+
+    expect(
+      template.previewDeployMarket({
+        ...makeMarketParameters(asset),
+        hooksAddress: makeAddress(38),
+        salt: constants.HashZero,
+        minimumDeposit: asset.getAmount(0n),
+        transferAccess: TransferAccess.Open,
+        depositAccess: DepositAccess.Open,
+        withdrawalAccess: WithdrawalAccess.Open
+      }).status
+    ).to.equal(DeployMarketStatus.HooksFactoryNotRegistered);
+  });
+
+  it("rejects live-disabled templates for every supported hook kind", () => {
+    const asset = makeToken();
+    const common = {
+      ...makeMarketParameters(asset),
+      hooksAddress: makeAddress(39),
+      salt: constants.HashZero,
+      minimumDeposit: asset.getAmount(0n),
+      transferAccess: TransferAccess.Open,
+      depositAccess: DepositAccess.Open,
+      withdrawalAccess: WithdrawalAccess.Open
+    };
+    const open = makeOpenTermTemplate();
+    const fixed = makeFixedTermTemplate();
+    const periodic = makePeriodicTermTemplate();
+    open.enabled = false;
+    fixed.enabled = false;
+    periodic.enabled = false;
+
+    expect(open.previewDeployMarket(common).status).to.equal(
+      DeployMarketStatus.HooksTemplateDisabled
+    );
+    expect(
+      fixed.previewDeployMarket({
+        ...common,
+        fixedTermEndTime: 1_800_000_000,
+        allowClosureBeforeTerm: false,
+        allowTermReduction: false
+      }).status
+    ).to.equal(DeployMarketStatus.HooksTemplateDisabled);
+    expect(
+      periodic.previewDeployMarket({
+        ...common,
+        firstWithdrawalWindowStart: 1_800_000_000,
+        periodDuration: 30 * 24 * 60 * 60,
+        withdrawalWindowDuration: 7 * 24 * 60 * 60
+      }).status
+    ).to.equal(DeployMarketStatus.HooksTemplateDisabled);
+  });
+
+  it("uses live enabled state while enforcing static registration authority", () => {
+    const asset = makeToken();
+    const template = makeOpenTermTemplate();
+    template.registration = makeTemplateRegistration(
+      template.hooksFactory,
+      template.hooksTemplate,
+      HooksKind.OpenTerm,
+      { isEnabled: false }
+    );
+    const args = {
+      ...makeMarketParameters(asset),
+      hooksAddress: makeAddress(40),
+      salt: constants.HashZero,
+      minimumDeposit: asset.getAmount(0n),
+      transferAccess: TransferAccess.Open,
+      depositAccess: DepositAccess.Open,
+      withdrawalAccess: WithdrawalAccess.Open
+    };
+
+    expect(template.previewDeployMarket(args).status).to.equal(DeployMarketStatus.Ready);
+
+    template.registration = {
+      ...template.registration,
+      hooksFactory: {
+        ...template.registration.hooksFactory,
+        deploymentTarget: false
+      }
+    };
+    expect(template.previewDeployMarket(args).status).to.equal(
+      DeployMarketStatus.HooksFactoryNotDeploymentTarget
+    );
+
+    template.registration = {
+      ...template.registration,
+      hooksFactory: {
+        ...template.registration.hooksFactory,
+        deploymentTarget: true
+      },
+      hooksTemplate: {
+        ...template.registration.hooksTemplate,
+        kind: HooksKind.FixedTerm
+      }
+    };
+    expect(template.previewDeployMarket(args).status).to.equal(
+      DeployMarketStatus.HooksFactoryNotDeploymentTarget
+    );
+  });
+
   it("rejects credential-gated withdrawals without credential-gated deposits", () => {
     const asset = makeToken();
     const common = {

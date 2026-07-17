@@ -33,6 +33,9 @@ describe("SDK domain normalization", () => {
 
   it("normalizes subgraph metadata without silently accepting unknown values", () => {
     expect(parseHooksKind("PeriodicTerm")).to.equal(HooksKind.PeriodicTerm);
+    expect(parseHooksKind("OpenTermHooks")).to.equal(HooksKind.OpenTerm);
+    expect(parseHooksKind("FixedTermHooks")).to.equal(HooksKind.FixedTerm);
+    expect(parseHooksKind("PeriodicTermHooks")).to.equal(HooksKind.PeriodicTerm);
     expect(parseHooksKind("future-hooks")).to.equal(HooksKind.Unknown);
     expect(parseFactoryLifecycle("HISTORICAL")).to.equal("historical");
     expect(parseFactoryLifecycle("future-lifecycle")).to.equal("unknown");
