@@ -6,7 +6,11 @@ import {
   MarketDataV2StructOutput,
   MarketLiveDataV2_5StructOutput
 } from "./lens-types";
-import { SupportedChainId, getMarketTypeForHooksFactory, hasDeploymentAddress } from "./constants";
+import {
+  SupportedChainId,
+  getConfiguredMarketKindForHooksFactory,
+  hasDeploymentAddress
+} from "./constants";
 import {
   getRegisteredMarkets,
   getRegisteredMarketsCount,
@@ -26,7 +30,8 @@ import {
   ContractWrapper,
   PartialTransaction,
   MarketVersion,
-  MarketType,
+  MarketKind,
+  parseMarketKind,
   HooksKind,
   HooksConfig,
   OpenTermHooksConfig,
@@ -115,7 +120,7 @@ export type RevolvingCurrentAprMetrics = {
 
 export type MarketAprDisplayBips = {
   isRevolving: boolean;
-  marketType?: MarketType;
+  marketKind: MarketKind;
   configuredAprKind: "annualInterest" | "utilization";
   configuredAprBips: number;
   configuredAnnualInterestBips: number;
@@ -127,6 +132,15 @@ export type MarketAprDisplayBips = {
   currentProtocolAprBips: number;
   currentPenaltyAprBips: number;
   currentEffectiveLenderAprBips: number;
+};
+
+const marketKindFromRevolvingFields = (
+  hasCommitmentFeeBips: boolean,
+  hasDrawnAmount: boolean
+): MarketKind => {
+  if (hasCommitmentFeeBips && hasDrawnAmount) return "revolving";
+  if (!hasCommitmentFeeBips && !hasDrawnAmount) return "standard";
+  return "unknown";
 };
 
 const hasUnifiedLatestLensForDirectReads = (chainId: SupportedChainId): boolean => {
@@ -178,7 +192,7 @@ export type MarketArgs = {
   marketToken: Token;
   underlyingToken: Token;
   hooksFactory?: string;
-  marketType?: MarketType;
+  marketKind: MarketKind;
   hooksConfig?: HooksConfig;
   borrower: string;
   controller?: string;
@@ -307,7 +321,7 @@ export class Market extends ContractWrapper {
     symbol: string;
     decimals: number;
     version: MarketVersion;
-    marketType?: MarketType;
+    marketKind: MarketKind;
     hooksFactory?: string;
     borrower: string;
   } {
@@ -319,7 +333,7 @@ export class Market extends ContractWrapper {
       symbol: this.symbol,
       decimals: this.decimals,
       version: this.version,
-      marketType: this.marketType,
+      marketKind: this.marketKind,
       hooksFactory: this.hooksFactory,
       borrower: this.borrower
     };
@@ -435,7 +449,7 @@ export class Market extends ContractWrapper {
     if (revolvingMetrics) {
       return {
         isRevolving: true,
-        marketType: this.marketType,
+        marketKind: this.marketKind,
         configuredAprKind: "utilization",
         configuredAprBips: this.annualInterestBips,
         configuredAnnualInterestBips: this.annualInterestBips,
@@ -457,7 +471,7 @@ export class Market extends ContractWrapper {
 
     return {
       isRevolving: false,
-      marketType: this.marketType,
+      marketKind: this.marketKind,
       configuredAprKind: "annualInterest",
       configuredAprBips: this.annualInterestBips,
       configuredAnnualInterestBips: this.annualInterestBips,
@@ -964,7 +978,6 @@ export class Market extends ContractWrapper {
     this.coverageLiquidity = this.underlyingToken.getAmount(baseData.coverageLiquidity);
     if ("hooksFactory" in baseData) {
       this.hooksFactory = baseData.hooksFactory;
-      this.marketType = getMarketTypeForHooksFactory(this.chainId, baseData.hooksFactory);
     }
     if ("hooksConfig" in baseData) {
       assert(this.version === MarketVersion.V2, `Can not push V2 lens data to V1 market!`);
@@ -992,9 +1005,17 @@ export class Market extends ContractWrapper {
       this.drawnAmount = data.drawnAmount.isPresent
         ? this.underlyingToken.getAmount(data.drawnAmount.value)
         : undefined;
+      this.marketKind = marketKindFromRevolvingFields(
+        data.commitmentFeeBips.isPresent,
+        data.drawnAmount.isPresent
+      );
     } else {
       this.commitmentFeeBips = undefined;
       this.drawnAmount = undefined;
+      this.marketKind =
+        "hooksFactory" in baseData
+          ? getConfiguredMarketKindForHooksFactory(this.chainId, baseData.hooksFactory)
+          : "standard";
     }
   }
 
@@ -1055,6 +1076,10 @@ export class Market extends ContractWrapper {
     this.drawnAmount = data.drawnAmount.isPresent
       ? this.underlyingToken.getAmount(data.drawnAmount.value)
       : undefined;
+    this.marketKind = marketKindFromRevolvingFields(
+      data.commitmentFeeBips.isPresent,
+      data.drawnAmount.isPresent
+    );
   }
 
   /* -------------------------------------------------------------------------- */
@@ -1196,12 +1221,19 @@ export class Market extends ContractWrapper {
         };
       }
     }
+    let marketKind: MarketKind =
+      data.version === MarketVersion.V1
+        ? "standard"
+        : parseMarketKind(data.hooks?.factoryHooksTemplate.hooksFactory.marketType);
+    if (marketKind === "unknown" && data.commitmentFeeBips != null && data.drawnAmount != null) {
+      marketKind = "revolving";
+    }
     return new Market({
       chainId,
       provider,
       version: data.version,
       hooksFactory,
-      marketType: hooksFactory ? getMarketTypeForHooksFactory(chainId, hooksFactory) : undefined,
+      marketKind,
       hooksConfig,
       marketToken,
       underlyingToken,
@@ -1273,6 +1305,7 @@ export class Market extends ContractWrapper {
     return new Market({
       provider,
       version: MarketVersion.V1,
+      marketKind: "standard",
       chainId: chainId,
       marketToken: marketToken,
       underlyingToken: underlyingToken,
@@ -1384,7 +1417,7 @@ export class Market extends ContractWrapper {
     return new Market({
       provider,
       hooksFactory: data.hooksFactory,
-      marketType: getMarketTypeForHooksFactory(chainId, data.hooksFactory),
+      marketKind: getConfiguredMarketKindForHooksFactory(chainId, data.hooksFactory),
       hooksConfig,
       version: MarketVersion.V2,
       chainId: chainId,
@@ -1489,7 +1522,7 @@ export class Market extends ContractWrapper {
     return new Market({
       provider,
       hooksFactory: data.hooksFactory,
-      marketType: getMarketTypeForHooksFactory(chainId, data.hooksFactory),
+      marketKind: marketKindFromRevolvingFields(commitmentFeeBips.isPresent, drawnAmount.isPresent),
       hooksConfig,
       version: MarketVersion.V2,
       chainId,

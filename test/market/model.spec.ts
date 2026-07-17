@@ -2,12 +2,7 @@ import { expect } from "chai";
 import { BigNumber, providers } from "ethers";
 import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
 import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi";
-import {
-  getDeploymentAddress,
-  getMarketTypeForHooksFactory,
-  isIndexedHooksFactory,
-  SupportedChainId
-} from "../../src/constants";
+import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { Market } from "../../src/market";
 import { Token, toRawAmount } from "../../src/token";
 import { HooksKind, MarketVersion } from "../../src/types";
@@ -34,8 +29,6 @@ import {
 } from "../../src/utils";
 
 const provider = new providers.JsonRpcProvider();
-const historicalSepoliaRevolvingFactory = "0xF4564015E524cf5629828E61F45ed339D998D85f";
-
 const makeAddress = (suffix: number): string => {
   return `0x${suffix.toString(16).padStart(40, "0")}`;
 };
@@ -504,7 +497,7 @@ describe("Market direct read routing", () => {
 
     expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([lensAddress]);
     expect(market.hooksFactory).to.equal(hooksFactory);
-    expect(market.marketType).to.equal("revolving");
+    expect(market.marketKind).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
     expect(market.drawnAmount?.raw).to.equal(250n);
     expectAllowForceBuyBacks(market, false);
@@ -581,7 +574,7 @@ describe("Market direct read routing", () => {
 
   it("falls back from unified reads to the V2 lens through viem", async () => {
     const marketAddress = makeAddress(105);
-    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory");
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
     const data = makeFactoryBackedMarketData(hooksFactory);
     const unifiedLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
     const v2LensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2");
@@ -609,7 +602,7 @@ describe("Market direct read routing", () => {
     ]);
     expect(market.version).to.equal(MarketVersion.V2);
     expect(market.hooksFactory).to.equal(hooksFactory);
-    expect(market.marketType).to.equal("legacy");
+    expect(market.marketKind).to.equal("standard");
   });
 
   it("updates v2.5 market data through viem", async () => {
@@ -689,7 +682,7 @@ describe("Market direct read routing", () => {
 });
 
 describe("Market model routing metadata", () => {
-  it("leaves legacy lens markets without factory routing metadata", () => {
+  it("classifies V1 markets as standard without factory routing metadata", () => {
     const market = Market.fromMarketData(
       SupportedChainId.Sepolia,
       makeLegacyMarketData(),
@@ -697,11 +690,11 @@ describe("Market model routing metadata", () => {
     );
 
     expect(market.hooksFactory).to.equal(undefined);
-    expect(market.marketType).to.equal(undefined);
+    expect(market.marketKind).to.equal("standard");
   });
 
-  it("derives legacy marketType from a configured hooks factory address", () => {
-    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory");
+  it("derives standard marketKind from the configured standard factory", () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
     const market = Market.fromMarketDataV2(
       SupportedChainId.Sepolia,
       provider,
@@ -709,10 +702,10 @@ describe("Market model routing metadata", () => {
     );
 
     expect(market.hooksFactory).to.equal(hooksFactory);
-    expect(market.marketType).to.equal("legacy");
+    expect(market.marketKind).to.equal("standard");
   });
 
-  it("preserves unknown hooksFactory addresses while leaving marketType unresolved", () => {
+  it("preserves unknown hooksFactory addresses without defaulting their market kind", () => {
     const unknownHooksFactory = makeAddress(99);
     const market = Market.fromMarketDataV2(
       SupportedChainId.Sepolia,
@@ -721,28 +714,11 @@ describe("Market model routing metadata", () => {
     );
 
     expect(market.hooksFactory).to.equal(unknownHooksFactory);
-    expect(market.marketType).to.equal(undefined);
+    expect(market.marketKind).to.equal("unknown");
   });
 
-  it("retains marketType metadata for a retired non-indexed hooks factory", () => {
-    const market = Market.fromMarketDataV2(
-      SupportedChainId.Sepolia,
-      provider,
-      makeFactoryBackedMarketData(historicalSepoliaRevolvingFactory)
-    );
-
-    expect(
-      getMarketTypeForHooksFactory(SupportedChainId.Sepolia, historicalSepoliaRevolvingFactory)
-    ).to.equal("revolving");
-    expect(
-      isIndexedHooksFactory(SupportedChainId.Sepolia, historicalSepoliaRevolvingFactory)
-    ).to.equal(false);
-    expect(market.hooksFactory).to.equal(historicalSepoliaRevolvingFactory);
-    expect(market.marketType).to.equal("revolving");
-  });
-
-  it("drops stale force-buyback compatibility for legacy factory market data", () => {
-    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory");
+  it("drops stale force-buyback compatibility for standard factory market data", () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
     const market = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
@@ -751,7 +727,7 @@ describe("Market model routing metadata", () => {
     );
 
     expect(market.hooksFactory).to.equal(hooksFactory);
-    expect(market.marketType).to.equal("legacy");
+    expect(market.marketKind).to.equal("standard");
     expectAllowForceBuyBacks(market, false);
   });
 
@@ -763,7 +739,7 @@ describe("Market model routing metadata", () => {
     const market = Market.fromMarketDataV2(SupportedChainId.Sepolia, provider, data);
 
     expect(market.hooksFactory).to.equal(hooksFactory);
-    expect(market.marketType).to.equal("revolving");
+    expect(market.marketKind).to.equal("revolving");
     expectAllowForceBuyBacks(market, false);
   });
 
@@ -780,25 +756,43 @@ describe("Market model routing metadata", () => {
     );
 
     expect(market.hooksFactory).to.equal(hooksFactory);
-    expect(market.marketType).to.equal("revolving");
+    expect(market.marketKind).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
     expect(market.drawnAmount?.raw).to.equal(250n);
     expectAllowForceBuyBacks(market, false);
   });
 
-  it("refreshes hooksFactory and marketType when v2 market data is updated", () => {
-    const legacyHooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory");
+  it("does not guess a kind from inconsistent V2.5 revolving fields", () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
+    const market = Market.fromMarketDataV2_5(
+      SupportedChainId.Sepolia,
+      provider,
+      makeUnifiedMarketDataV2(hooksFactory, {
+        commitmentFeeBips: { isPresent: true, value: BigNumber.from(175) },
+        drawnAmount: { isPresent: false, value: BigNumber.from(0) }
+      }),
+      true
+    );
+
+    expect(market.marketKind).to.equal("unknown");
+  });
+
+  it("refreshes hooksFactory and marketKind when v2 market data is updated", () => {
+    const standardHooksFactory = getDeploymentAddress(
+      SupportedChainId.Sepolia,
+      "HooksFactoryStandard"
+    );
     const market = Market.fromMarketDataV2(
       SupportedChainId.Sepolia,
       provider,
-      makeFactoryBackedMarketData(legacyHooksFactory)
+      makeFactoryBackedMarketData(standardHooksFactory)
     );
 
     const unknownHooksFactory = makeAddress(100);
     market.updateWith(makeFactoryBackedMarketData(unknownHooksFactory));
 
     expect(market.hooksFactory).to.equal(unknownHooksFactory);
-    expect(market.marketType).to.equal(undefined);
+    expect(market.marketKind).to.equal("unknown");
   });
 
   it("accepts optional revolving raw fields on the market model", () => {
@@ -819,6 +813,7 @@ describe("Market model routing metadata", () => {
       provider,
       chainId: SupportedChainId.Sepolia,
       version: MarketVersion.V1,
+      marketKind: "standard",
       marketToken,
       underlyingToken,
       borrower: data.borrower,
@@ -886,9 +881,19 @@ describe("Market model routing metadata", () => {
       makeSubgraphMarketData()
     );
 
-    expect(market.marketType).to.equal("revolving");
+    expect(market.marketKind).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
     expect(market.drawnAmount?.raw).to.equal(250n);
+  });
+
+  it("uses indexed provenance for historical factories absent from SDK targets", () => {
+    const data = makeSubgraphMarketData();
+    data.hooks!.factoryHooksTemplate.hooksFactory.id = "0xF4564015E524cf5629828E61F45ed339D998D85f";
+
+    const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+
+    expect(market.hooksFactory).to.equal(data.hooks!.factoryHooksTemplate.hooksFactory.id);
+    expect(market.marketKind).to.equal("revolving");
   });
 
   it("hydrates subgraph list markets without record and aggregate payloads", () => {
@@ -898,7 +903,7 @@ describe("Market model routing metadata", () => {
       makeSubgraphMarketListData()
     );
 
-    expect(market.marketType).to.equal("revolving");
+    expect(market.marketKind).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
     expect(market.drawnAmount?.raw).to.equal(250n);
     expect(market.totalBorrowed?.raw).to.equal(0n);
@@ -911,7 +916,7 @@ describe("Market model routing metadata", () => {
 
     const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
 
-    expect(market.marketType).to.equal("revolving");
+    expect(market.marketKind).to.equal("revolving");
     expect(market.hooksConfig?.kind).to.equal(HooksKind.OpenTerm);
     expect(market.hooksConfig?.template?.name).to.equal("OpenTermHooks");
   });
@@ -1035,7 +1040,7 @@ describe("Market revolving APR helpers", () => {
       }),
       true
     );
-    const legacySemanticsMarket = Market.fromMarketDataV2_5(
+    const standardSemanticsMarket = Market.fromMarketDataV2_5(
       SupportedChainId.Sepolia,
       provider,
       makeUnifiedMarketDataV2(hooksFactory),
@@ -1051,26 +1056,27 @@ describe("Market revolving APR helpers", () => {
     revolvingMarket.drawnAmount = revolvingMarket.underlyingToken.getAmount(scaledSupply);
     revolvingMarket.totalAssets = revolvingMarket.underlyingToken.getAmount(stressedAssets);
 
-    legacySemanticsMarket.totalSupply = legacySemanticsMarket.marketToken.getAmount(scaledSupply);
-    legacySemanticsMarket.scaledTotalSupply = scaledSupply;
-    legacySemanticsMarket.totalAssets =
-      legacySemanticsMarket.underlyingToken.getAmount(stressedAssets);
+    standardSemanticsMarket.totalSupply =
+      standardSemanticsMarket.marketToken.getAmount(scaledSupply);
+    standardSemanticsMarket.scaledTotalSupply = scaledSupply;
+    standardSemanticsMarket.totalAssets =
+      standardSemanticsMarket.underlyingToken.getAmount(stressedAssets);
 
     expect(revolvingMarket.secondsBeforeDelinquency).to.be.lessThan(
-      legacySemanticsMarket.secondsBeforeDelinquency
+      standardSemanticsMarket.secondsBeforeDelinquency
     );
     expect(
       revolvingMarket.getSecondsBeforeDelinquencyForBorrowedAmount(
         revolvingMarket.underlyingToken.getAmount(100)
       )
     ).to.be.lessThan(
-      legacySemanticsMarket.getSecondsBeforeDelinquencyForBorrowedAmount(
-        legacySemanticsMarket.underlyingToken.getAmount(100)
+      standardSemanticsMarket.getSecondsBeforeDelinquencyForBorrowedAmount(
+        standardSemanticsMarket.underlyingToken.getAmount(100)
       )
     );
     expect(
       revolvingMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw >
-        legacySemanticsMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw
+        standardSemanticsMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw
     ).to.equal(true);
   });
 });

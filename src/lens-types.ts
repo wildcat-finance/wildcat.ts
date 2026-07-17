@@ -349,7 +349,7 @@ export type DeployMarketInputsV2Struct = {
   hooks: Numeric;
 };
 
-export type LegacyDeployMarketArgs = [
+export type StandardDeployMarketArgs = [
   parameters: DeployMarketInputsV2Struct,
   hooksData: BytesLike,
   salt: BytesLike,
@@ -357,7 +357,7 @@ export type LegacyDeployMarketArgs = [
   originationFeeAmount: Numeric
 ];
 
-export type LegacyDeployMarketAndHooksArgs = [
+export type StandardDeployMarketAndHooksArgs = [
   hooksTemplate: string,
   hooksConstructorArgs: BytesLike,
   parameters: DeployMarketInputsV2Struct,

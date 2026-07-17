@@ -5,8 +5,8 @@ import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi
 import { getBorrowerHooksData } from "../../src/access";
 import {
   getDeploymentAddress,
-  getIndexedHooksFactories,
-  getMarketTypeForHooksFactory,
+  getConfiguredHooksFactoryTargets,
+  getConfiguredMarketKindForHooksFactory,
   SupportedChainId
 } from "../../src/constants";
 import { MarketController } from "../../src/controller";
@@ -177,7 +177,7 @@ describe("Hooks and controller read routing", () => {
       SupportedChainId.Sepolia,
       "HooksFactoryRevolving"
     );
-    const indexedFactories = getIndexedHooksFactories(SupportedChainId.Sepolia);
+    const configuredTargets = getConfiguredHooksFactoryTargets(SupportedChainId.Sepolia);
     const seenCalls: Array<[string, string]> = [];
 
     const viemProvider = new FakeViemProvider((call) => {
@@ -189,7 +189,8 @@ describe("Hooks and controller read routing", () => {
       seenCalls.push([hooksFactory.toLowerCase(), argBorrower.toLowerCase()]);
 
       const isRevolving =
-        getMarketTypeForHooksFactory(SupportedChainId.Sepolia, hooksFactory) === "revolving";
+        getConfiguredMarketKindForHooksFactory(SupportedChainId.Sepolia, hooksFactory) ===
+        "revolving";
       const isCanonicalRevolving = hooksFactory.toLowerCase() === revolvingFactory.toLowerCase();
       const data = isRevolving
         ? makeHooksDataForBorrower(borrower, makeAddress(31), isCanonicalRevolving)
@@ -205,12 +206,12 @@ describe("Hooks and controller read routing", () => {
     );
 
     expect(seenCalls).to.deep.equal(
-      indexedFactories.map(({ address }) => [address.toLowerCase(), borrower])
+      configuredTargets.map(({ address }) => [address.toLowerCase(), borrower])
     );
     expect(result.isRegisteredBorrower).to.equal(true);
     expect(
       result.hooksTemplates.map((template) => template.hooksFactory.toLowerCase())
-    ).to.deep.equal(indexedFactories.map(({ address }) => address.toLowerCase()));
+    ).to.deep.equal(configuredTargets.map(({ address }) => address.toLowerCase()));
     expect(result.hooksInstances).to.have.lengthOf(1);
     expect(result.hooksInstances[0].hooksFactory.toLowerCase()).to.equal(
       revolvingFactory.toLowerCase()
@@ -220,7 +221,7 @@ describe("Hooks and controller read routing", () => {
   it("uses MarketLensV2 hooks reads when the unified lens is not deployed", async () => {
     const borrower = makeAddress(21);
     const lensAddress = getDeploymentAddress(SupportedChainId.Mainnet, "MarketLensV2");
-    const hooksFactory = getDeploymentAddress(SupportedChainId.Mainnet, "HooksFactory");
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Mainnet, "HooksFactoryStandard");
 
     const viemProvider = new FakeViemProvider((call) => {
       const decoded = decodeLensCall(marketLensV2Abi as Abi, call);

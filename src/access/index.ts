@@ -1,6 +1,6 @@
 import {
   SupportedChainId,
-  getIndexedHooksFactories,
+  getConfiguredHooksFactoryTargets,
   getLatestLensDeploymentName
 } from "../constants";
 import { SubgraphHooksInstanceDataFragment, SubgraphHooksKind } from "../gql/graphql";
@@ -50,7 +50,7 @@ export async function getBorrowerHooksData(
 
   if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
     const factoryScopedResults = await Promise.all(
-      getIndexedHooksFactories(chainId).map(async ({ address: hooksFactory }) => {
+      getConfiguredHooksFactoryTargets(chainId).map(async ({ address: hooksFactory }) => {
         const data = await getV2_5FactoryScopedHooksDataForBorrower(
           chainId,
           provider,

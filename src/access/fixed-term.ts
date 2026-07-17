@@ -2,7 +2,7 @@ import { encodeAbiParameters, zeroAddress } from "viem";
 import {
   DefaultV2ParameterConstraints,
   getDeploymentAddress,
-  getHooksFactoryAddressForMarketType,
+  getHooksFactoryAddress,
   hasHooksFactoryDeployment,
   SupportedChainId
 } from "../constants";
@@ -20,7 +20,7 @@ import {
   DepositAccess,
   FeeConfigurationV2,
   HooksKind,
-  MarketType,
+  DeployableMarketKind,
   MarketHooksInstanceInputs,
   MarketParameterConstraints,
   PartialTransaction,
@@ -43,17 +43,17 @@ import {
   ChangeLenderRoleStatus,
   DeployMarketPreview,
   DeployMarketStatus,
-  LegacyDeployMarketPreview,
-  readyLegacyDeployMarketPreview,
+  StandardDeployMarketPreview,
+  readyStandardDeployMarketPreview,
   readyRevolvingDeployMarketPreview,
   RevolvingDeployMarketPreview
 } from "./validation";
 import { encodeRevolvingMarketData } from "./revolving";
 import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
 import {
-  createLegacyHooksFactoryContractFacade,
+  createHooksFactoryContractFacade,
   encodeMarketHooksInstanceInputs,
-  LegacyHooksFactoryContractFacade
+  HooksFactoryContractFacade
 } from "./utils";
 import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iFixedTermHooksAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
@@ -306,7 +306,7 @@ export type FixedTermHooksTemplateArgs = {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface FixedTermHooksTemplate extends FixedTermHooksTemplateArgs {
   hooksFactory: string;
-  contract: LegacyHooksFactoryContractFacade;
+  contract: HooksFactoryContractFacade;
 }
 
 export class FixedTermHooksTemplate extends ContractWrapper {
@@ -318,11 +318,11 @@ export class FixedTermHooksTemplate extends ContractWrapper {
     args: FixedTermHooksTemplateArgs
   ) {
     super(provider);
-    const hooksFactory = args.hooksFactory ?? getDeploymentAddress(chainId, "HooksFactory");
+    const hooksFactory = args.hooksFactory ?? getDeploymentAddress(chainId, "HooksFactoryStandard");
     Object.assign(this, {
       ...args,
       hooksFactory,
-      contract: createLegacyHooksFactoryContractFacade(hooksFactory)
+      contract: createHooksFactoryContractFacade(hooksFactory)
     });
   }
 
@@ -340,7 +340,7 @@ export class FixedTermHooksTemplate extends ContractWrapper {
     this.signerAddress = signerAddress;
     this.isRegisteredBorrower = isRegisteredBorrower;
     this.hooksFactory = hooksFactory;
-    this.contract = createLegacyHooksFactoryContractFacade(hooksFactory);
+    this.contract = createHooksFactoryContractFacade(hooksFactory);
   }
 
   static fromLensData(
@@ -410,14 +410,14 @@ export class FixedTermHooksTemplate extends ContractWrapper {
   }
 
   previewDeployMarket(
-    args: LegacyFixedTermMarketDeploymentArgs & MarketHooksInstanceInputs
-  ): LegacyDeployMarketPreview;
+    args: StandardFixedTermMarketDeploymentArgs & MarketHooksInstanceInputs
+  ): StandardDeployMarketPreview;
   previewDeployMarket(
     args: RevolvingFixedTermMarketDeploymentArgs & MarketHooksInstanceInputs
   ): RevolvingDeployMarketPreview;
   previewDeployMarket(args: FixedTermMarketDeploymentArgs): DeployMarketPreview;
   previewDeployMarket({
-    marketType,
+    marketKind,
     commitmentFeeBips,
     hooksAddress,
     hooksInstanceName,
@@ -436,7 +436,7 @@ export class FixedTermHooksTemplate extends ContractWrapper {
     allowTermReduction,
     ...otherParameters
   }: FixedTermMarketDeploymentArgs): DeployMarketPreview {
-    const targetMarketType = marketType ?? "legacy";
+    const targetMarketKind = marketKind ?? "standard";
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -458,13 +458,10 @@ export class FixedTermHooksTemplate extends ContractWrapper {
     if (!hooksAddress && !roleProviderFactory && newProviderInputs?.length) {
       return { status: DeployMarketStatus.CreateProviderInputsWithoutFactory };
     }
-    if (!hasHooksFactoryDeployment(this.chainId, targetMarketType)) {
+    if (!hasHooksFactoryDeployment(this.chainId, targetMarketKind)) {
       return { status: DeployMarketStatus.WrongHooksFactory };
     }
-    const expectedHooksFactory = getHooksFactoryAddressForMarketType(
-      this.chainId,
-      targetMarketType
-    );
+    const expectedHooksFactory = getHooksFactoryAddress(this.chainId, targetMarketKind);
     if (this.hooksFactory.toLowerCase() !== expectedHooksFactory.toLowerCase()) {
       return { status: DeployMarketStatus.WrongHooksFactory };
     }
@@ -505,7 +502,7 @@ export class FixedTermHooksTemplate extends ContractWrapper {
     } as DeployMarketInputsV2Struct;
     const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0;
     const originationFeeToken = this.fees.originationFeeToken?.address ?? zeroAddress;
-    if (marketType === "revolving") {
+    if (marketKind === "revolving") {
       const marketData = encodeRevolvingMarketData({ commitmentFeeBips });
       if (hooksAddress) {
         return readyRevolvingDeployMarketPreview({
@@ -534,12 +531,12 @@ export class FixedTermHooksTemplate extends ContractWrapper {
       }
     }
     if (hooksAddress) {
-      return readyLegacyDeployMarketPreview({
+      return readyStandardDeployMarketPreview({
         fn: "deployMarket",
         args: [parameters, hooksData, salt, originationFeeToken, originationFeeAmount]
       });
     } else {
-      return readyLegacyDeployMarketPreview({
+      return readyStandardDeployMarketPreview({
         fn: "deployMarketAndHooks",
         args: [
           this.hooksTemplate,
@@ -566,7 +563,7 @@ export class FixedTermHooksTemplate extends ContractWrapper {
       this.signer,
       prepareTransaction({
         to: this.hooksFactory,
-        abi: result.marketType === "legacy" ? hooksFactoryAbi : hooksFactoryRevolvingAbi,
+        abi: result.marketKind === "standard" ? hooksFactoryAbi : hooksFactoryRevolvingAbi,
         functionName: result.fn,
         args: result.args
       })
@@ -595,16 +592,16 @@ type FixedTermCommonMarketDeploymentArgs = MarketParameters & {
   allowForceBuyBacks?: boolean;
 };
 
-export type LegacyFixedTermMarketDeploymentArgs = FixedTermCommonMarketDeploymentArgs & {
-  marketType?: Extract<MarketType, "legacy">;
+export type StandardFixedTermMarketDeploymentArgs = FixedTermCommonMarketDeploymentArgs & {
+  marketKind?: Extract<DeployableMarketKind, "standard">;
   commitmentFeeBips?: undefined;
 };
 
 export type RevolvingFixedTermMarketDeploymentArgs = FixedTermCommonMarketDeploymentArgs & {
-  marketType: Extract<MarketType, "revolving">;
+  marketKind: Extract<DeployableMarketKind, "revolving">;
   commitmentFeeBips: number;
 };
 
 export type FixedTermMarketDeploymentArgs =
-  | (LegacyFixedTermMarketDeploymentArgs & MarketHooksInstanceInputs)
+  | (StandardFixedTermMarketDeploymentArgs & MarketHooksInstanceInputs)
   | (RevolvingFixedTermMarketDeploymentArgs & MarketHooksInstanceInputs);

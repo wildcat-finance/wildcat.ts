@@ -1,0 +1,45 @@
+import { expect } from "chai";
+import {
+  DeployableMarketKinds,
+  HooksKind,
+  MarketKinds,
+  isDeployableMarketKind,
+  isMarketKind,
+  parseFactoryLifecycle,
+  parseHookedMarketAbiKind,
+  parseHooksKind,
+  parseMarketKind,
+  parseProtocolMarketVersion,
+  parsePricingMode
+} from "../../src/domain";
+
+describe("SDK domain normalization", () => {
+  it("keeps unknown market kinds distinct from deployable kinds", () => {
+    expect(MarketKinds).to.deep.equal(["standard", "revolving", "unknown"]);
+    expect(DeployableMarketKinds).to.deep.equal(["standard", "revolving"]);
+    expect(isMarketKind("unknown")).to.equal(true);
+    expect(isDeployableMarketKind("unknown")).to.equal(false);
+  });
+
+  it("normalizes current and transitional market-kind spellings", () => {
+    expect(parseMarketKind("STANDARD")).to.equal("standard");
+    expect(parseMarketKind("legacy")).to.equal("standard");
+    expect(parseMarketKind("REVOLVING")).to.equal("revolving");
+    expect(parseMarketKind("future-kind")).to.equal("unknown");
+    expect(parseMarketKind(undefined)).to.equal("unknown");
+    expect(parseProtocolMarketVersion("V2")).to.equal("v2");
+    expect(parseProtocolMarketVersion("future-version")).to.equal("unknown");
+  });
+
+  it("normalizes subgraph metadata without silently accepting unknown values", () => {
+    expect(parseHooksKind("PeriodicTerm")).to.equal(HooksKind.PeriodicTerm);
+    expect(parseHooksKind("future-hooks")).to.equal(HooksKind.Unknown);
+    expect(parseFactoryLifecycle("HISTORICAL")).to.equal("historical");
+    expect(parseFactoryLifecycle("future-lifecycle")).to.equal("unknown");
+    expect(parseHookedMarketAbiKind("FORCE_BUYBACK")).to.equal("force-buyback");
+    expect(parseHookedMarketAbiKind("future-abi")).to.equal("unknown");
+    expect(parsePricingMode("SYNTHETIC_TESTNET")).to.equal("synthetic-testnet");
+    expect(parsePricingMode("NONE")).to.equal("none");
+    expect(parsePricingMode("future-pricing")).to.equal("unknown");
+  });
+});

@@ -5,7 +5,7 @@ import {
   SubgraphGetAllHooksDataForBorrowerQueryVariables,
   SubgraphHooksKind
 } from "./graphql";
-import { isIndexedHooksFactory, SupportedChainId } from "../constants";
+import { SupportedChainId } from "../constants";
 import { SignerOrProvider } from "../types";
 import {
   HooksInstance,
@@ -52,7 +52,6 @@ export async function getAllHooksDataForBorrower(
   });
   const isRegisteredBorrower = result.data.registeredBorrowers?.[0]?.isRegistered ?? false;
   const hooksTemplates = result.data.factoryHooksTemplates
-    .filter((t) => isIndexedHooksFactory(chainId, t.hooksFactory.id))
     .filter(
       (t) =>
         t.name === "OpenTermHooks" || t.name === "FixedTermHooks" || t.name === "PeriodicTermHooks"

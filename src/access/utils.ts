@@ -43,9 +43,9 @@ function getHooksFactoryEventAbi(eventName: string): AbiEvent {
   throw new Error(`Unsupported hooks factory event: ${eventName}`);
 }
 
-export type LegacyEventResult = Record<string, unknown>;
+export type HooksFactoryEventResult = Record<string, unknown>;
 
-export type LegacyHooksFactoryContractFacade = {
+export type HooksFactoryContractFacade = {
   address: string;
   interface: {
     getEventTopic: (eventName: string) => string;
@@ -53,13 +53,11 @@ export type LegacyHooksFactoryContractFacade = {
       eventName: string,
       data: string,
       topics?: readonly string[]
-    ) => LegacyEventResult;
+    ) => HooksFactoryEventResult;
   };
 };
 
-export function createLegacyHooksFactoryContractFacade(
-  address: string
-): LegacyHooksFactoryContractFacade {
+export function createHooksFactoryContractFacade(address: string): HooksFactoryContractFacade {
   return {
     address,
     interface: {
@@ -71,7 +69,7 @@ export function createLegacyHooksFactoryContractFacade(
           data: data as Hex,
           topics: eventTopics ?? []
         });
-        return decoded.args as LegacyEventResult;
+        return decoded.args as HooksFactoryEventResult;
       }
     }
   };

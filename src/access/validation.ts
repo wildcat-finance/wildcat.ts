@@ -1,6 +1,6 @@
 import type {
-  LegacyDeployMarketAndHooksArgs,
-  LegacyDeployMarketArgs,
+  StandardDeployMarketAndHooksArgs,
+  StandardDeployMarketArgs,
   RevolvingDeployMarketAndHooksArgs,
   RevolvingDeployMarketArgs
 } from "../lens-types";
@@ -16,14 +16,14 @@ export enum DeployMarketStatus {
   MinimumDepositTooHigh = "MinimumDepositTooHigh"
 }
 
-type LegacyDeployMarketCallPreview =
+type StandardDeployMarketCallPreview =
   | {
       fn: "deployMarket";
-      args: LegacyDeployMarketArgs;
+      args: StandardDeployMarketArgs;
     }
   | {
       fn: "deployMarketAndHooks";
-      args: LegacyDeployMarketAndHooksArgs;
+      args: StandardDeployMarketAndHooksArgs;
     };
 
 type RevolvingDeployMarketCallPreview =
@@ -36,14 +36,14 @@ type RevolvingDeployMarketCallPreview =
       args: RevolvingDeployMarketAndHooksArgs;
     };
 
-export type LegacyReadyDeployMarketPreview = {
+export type StandardReadyDeployMarketPreview = {
   status: DeployMarketStatus.Ready;
-  marketType: "legacy";
-} & LegacyDeployMarketCallPreview;
+  marketKind: "standard";
+} & StandardDeployMarketCallPreview;
 
 export type RevolvingReadyDeployMarketPreview = {
   status: DeployMarketStatus.Ready;
-  marketType: "revolving";
+  marketKind: "revolving";
 } & RevolvingDeployMarketCallPreview;
 
 type DeployMarketNotReadyPreview = {
@@ -51,11 +51,11 @@ type DeployMarketNotReadyPreview = {
 };
 
 export type ReadyDeployMarketPreview =
-  | LegacyReadyDeployMarketPreview
+  | StandardReadyDeployMarketPreview
   | RevolvingReadyDeployMarketPreview;
 
-export type LegacyDeployMarketPreview =
-  | LegacyReadyDeployMarketPreview
+export type StandardDeployMarketPreview =
+  | StandardReadyDeployMarketPreview
   | {
       status: Exclude<DeployMarketStatus, DeployMarketStatus.Ready>;
     };
@@ -66,12 +66,12 @@ export type RevolvingDeployMarketPreview =
 
 export type DeployMarketPreview = ReadyDeployMarketPreview | DeployMarketNotReadyPreview;
 
-export const readyLegacyDeployMarketPreview = (
-  preview: LegacyDeployMarketCallPreview
-): LegacyReadyDeployMarketPreview => {
+export const readyStandardDeployMarketPreview = (
+  preview: StandardDeployMarketCallPreview
+): StandardReadyDeployMarketPreview => {
   return {
     status: DeployMarketStatus.Ready,
-    marketType: "legacy",
+    marketKind: "standard",
     ...preview
   };
 };
@@ -81,7 +81,7 @@ export const readyRevolvingDeployMarketPreview = (
 ): RevolvingReadyDeployMarketPreview => {
   return {
     status: DeployMarketStatus.Ready,
-    marketType: "revolving",
+    marketKind: "revolving",
     ...preview
   };
 };

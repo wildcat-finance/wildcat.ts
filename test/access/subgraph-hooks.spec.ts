@@ -6,8 +6,8 @@ import { SubgraphHooksKind } from "../../src/gql/graphql";
 import { HooksKind, Provider } from "../../src/types";
 
 const chainId = SupportedChainId.Sepolia;
-const indexedHooksFactory = getDeploymentAddress(chainId, "HooksFactory");
-const nonIndexedHooksFactory = "0x000000000000000000000000000000000000faca";
+const configuredHooksFactory = getDeploymentAddress(chainId, "HooksFactoryStandard");
+const historicalHooksFactory = "0x000000000000000000000000000000000000faca";
 const borrower = "0x000000000000000000000000000000000000b0b0";
 
 type QueryArgs = {
@@ -44,7 +44,11 @@ const makeTemplateFields = (name: string, suffix: number) => ({
   originationFeeAsset: null
 });
 
-const makeFactoryTemplate = (name: string, suffix: number, hooksFactory = indexedHooksFactory) => ({
+const makeFactoryTemplate = (
+  name: string,
+  suffix: number,
+  hooksFactory = configuredHooksFactory
+) => ({
   __typename: "FactoryHooksTemplate" as const,
   id: `${hooksFactory.toLowerCase()}-${suffix}`,
   templateAddress: makeAddress(suffix),
@@ -79,7 +83,7 @@ const makeHooksInstance = (kind: SubgraphHooksKind, templateName: string, suffix
 };
 
 describe("subgraph hooks helpers", () => {
-  it("includes periodic term templates while preserving indexed-factory filtering", async () => {
+  it("includes supported templates from historical factories discovered by the subgraph", async () => {
     const queries: QueryArgs[] = [];
     const subgraphClient = makeSubgraphClient(
       {
@@ -88,7 +92,7 @@ describe("subgraph hooks helpers", () => {
           makeFactoryTemplate("FixedTermHooks", 2),
           makeFactoryTemplate("PeriodicTermHooks", 3),
           makeFactoryTemplate("UnknownHooks", 4),
-          makeFactoryTemplate("PeriodicTermHooks", 5, nonIndexedHooksFactory)
+          makeFactoryTemplate("PeriodicTermHooks", 5, historicalHooksFactory)
         ],
         registeredBorrowers: [{ isRegistered: true }]
       },
@@ -109,17 +113,20 @@ describe("subgraph hooks helpers", () => {
     expect(templates.map((template) => template.name)).to.deep.equal([
       "OpenTermHooks",
       "FixedTermHooks",
+      "PeriodicTermHooks",
       "PeriodicTermHooks"
     ]);
     expect(templates.map((template) => template.kind)).to.deep.equal([
       HooksKind.OpenTerm,
       HooksKind.FixedTerm,
+      HooksKind.PeriodicTerm,
       HooksKind.PeriodicTerm
     ]);
     expect(templates.map((template) => template.hooksFactory.toLowerCase())).to.deep.equal([
-      indexedHooksFactory.toLowerCase(),
-      indexedHooksFactory.toLowerCase(),
-      indexedHooksFactory.toLowerCase()
+      configuredHooksFactory.toLowerCase(),
+      configuredHooksFactory.toLowerCase(),
+      configuredHooksFactory.toLowerCase(),
+      historicalHooksFactory.toLowerCase()
     ]);
   });
 
@@ -129,7 +136,7 @@ describe("subgraph hooks helpers", () => {
         makeFactoryTemplate("OpenTermHooks", 11),
         makeFactoryTemplate("FixedTermHooks", 12),
         makeFactoryTemplate("PeriodicTermHooks", 13),
-        makeFactoryTemplate("PeriodicTermHooks", 14, nonIndexedHooksFactory)
+        makeFactoryTemplate("PeriodicTermHooks", 14, historicalHooksFactory)
       ],
       hooksInstances: [
         makeHooksInstance(SubgraphHooksKind.OpenTerm, "OpenTermHooks", 21),
@@ -152,6 +159,7 @@ describe("subgraph hooks helpers", () => {
     expect(result.hooksTemplates.map((template) => template.name)).to.deep.equal([
       "OpenTermHooks",
       "FixedTermHooks",
+      "PeriodicTermHooks",
       "PeriodicTermHooks"
     ]);
     expect(result.hooksInstances.map((instance) => instance.kind)).to.deep.equal([

@@ -353,15 +353,9 @@ const makeLenderAccountData = (lender: string) => ({
 });
 
 describe("Account and token read routing", () => {
-  const originalHasDeploymentAddress = constantsModule.hasDeploymentAddress;
   const originalFromMarketDataWithLenderStatus = MarketAccount.fromMarketDataWithLenderStatus;
 
-  const mutableConstants = constantsModule as typeof constantsModule & {
-    hasDeploymentAddress: typeof originalHasDeploymentAddress;
-  };
-
   afterEach(() => {
-    mutableConstants.hasDeploymentAddress = originalHasDeploymentAddress;
     MarketAccount.fromMarketDataWithLenderStatus = originalFromMarketDataWithLenderStatus;
   });
 
@@ -478,7 +472,7 @@ describe("Account and token read routing", () => {
     const account = makeAddress(40);
     const hooksFactory = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,
-      "HooksFactory"
+      "HooksFactoryStandard"
     );
     const market = Market.fromMarketDataV2(
       constantsModule.SupportedChainId.Sepolia,
@@ -630,14 +624,11 @@ describe("Account and token read routing", () => {
     const markets = [makeAddress(42), makeAddress(43)];
     const hooksFactory = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,
-      "HooksFactory"
+      "HooksFactoryStandard"
     );
     const hydratedAccounts = [{ account: "a" }, { account: "b" }] as unknown as MarketAccount[];
     const seenMarkets: string[][] = [];
     const seenInfos: unknown[] = [];
-
-    mutableConstants.hasDeploymentAddress = ((_, name) =>
-      name === "MarketLensV2_5") as typeof originalHasDeploymentAddress;
 
     let hydrateIndex = 0;
     MarketAccount.fromMarketDataWithLenderStatus = (async (_chainId, _provider, _account, info) => {
@@ -697,8 +688,6 @@ describe("Account and token read routing", () => {
     const markets = [makeAddress(51), makeAddress(52), makeAddress(53)];
     const rangeCalls: Array<[number, number]> = [];
 
-    mutableConstants.hasDeploymentAddress = ((_, name) =>
-      name === "MarketLensV2_5") as typeof originalHasDeploymentAddress;
     MarketAccount.fromMarketDataWithLenderStatus = (async () => {
       throw new Error("should not hydrate empty latest-lens responses");
     }) as typeof originalFromMarketDataWithLenderStatus;

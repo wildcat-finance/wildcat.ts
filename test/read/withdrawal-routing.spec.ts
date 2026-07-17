@@ -214,7 +214,7 @@ describe("Withdrawal read routing", () => {
   it("preserves the explicit V2.5 Expired status on lens updates", () => {
     const hooksFactory = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,
-      "HooksFactory"
+      "HooksFactoryStandard"
     );
     const market = Market.fromMarketDataV2(
       constantsModule.SupportedChainId.Sepolia,
@@ -236,7 +236,7 @@ describe("Withdrawal read routing", () => {
   it("maps the legacy lens status value 1 to Unpaid rather than Expired", () => {
     const hooksFactory = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,
-      "HooksFactory"
+      "HooksFactoryStandard"
     );
     const market = Market.fromMarketDataV2(
       constantsModule.SupportedChainId.Sepolia,
@@ -255,7 +255,7 @@ describe("Withdrawal read routing", () => {
   it("uses the latest lens for V2 withdrawal batch reads", async () => {
     const hooksFactory = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,
-      "HooksFactory"
+      "HooksFactoryStandard"
     );
     const lensAddress = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,
@@ -295,7 +295,7 @@ describe("Withdrawal read routing", () => {
     const lender = makeAddress(30);
     const hooksFactory = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,
-      "HooksFactory"
+      "HooksFactoryStandard"
     );
     const lensAddress = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,

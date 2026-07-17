@@ -42,4 +42,13 @@ describe("SDK public surface smoke", () => {
     expect(typeof sdk.getPeriodicAprReductionSettlementQuote).to.equal("function");
     expect(typeof sdk.populatePeriodicAprReductionPlan).to.equal("function");
   });
+
+  it("exports the V2.5 domain and deployment-target model", () => {
+    expect(sdk.MarketKinds).to.deep.equal(["standard", "revolving", "unknown"]);
+    expect(typeof sdk.parseMarketKind).to.equal("function");
+    expect(typeof sdk.getConfiguredHooksFactoryTargets).to.equal("function");
+    expect(typeof sdk.getConfiguredMarketKindForHooksFactory).to.equal("function");
+    expect(typeof sdk.getHooksFactoryAddress).to.equal("function");
+    expect("MarketTypes" in sdk).to.equal(false);
+  });
 });

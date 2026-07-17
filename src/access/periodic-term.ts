@@ -1,7 +1,7 @@
 import { encodeAbiParameters, zeroAddress } from "viem";
 import {
   DefaultV2ParameterConstraints,
-  getHooksFactoryAddressForMarketType,
+  getHooksFactoryAddress,
   getDeploymentAddress,
   hasHooksFactoryDeployment,
   SupportedChainId
@@ -20,7 +20,7 @@ import {
   DepositAccess,
   FeeConfigurationV2,
   HooksKind,
-  MarketType,
+  DeployableMarketKind,
   MarketHooksInstanceInputs,
   MarketParameterConstraints,
   PartialTransaction,
@@ -43,8 +43,8 @@ import {
   ChangeLenderRoleStatus,
   DeployMarketPreview,
   DeployMarketStatus,
-  LegacyDeployMarketPreview,
-  readyLegacyDeployMarketPreview,
+  StandardDeployMarketPreview,
+  readyStandardDeployMarketPreview,
   readyRevolvingDeployMarketPreview,
   RevolvingDeployMarketPreview
 } from "./validation";
@@ -53,9 +53,9 @@ import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iPeriodicTermHooksAbi } from
 import { submitPreparedTransaction } from "../internal/viem-write";
 import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
 import {
-  createLegacyHooksFactoryContractFacade,
+  createHooksFactoryContractFacade,
   encodeMarketHooksInstanceInputs,
-  LegacyHooksFactoryContractFacade
+  HooksFactoryContractFacade
 } from "./utils";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -290,7 +290,7 @@ export type PeriodicTermHooksTemplateArgs = {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface PeriodicTermHooksTemplate extends PeriodicTermHooksTemplateArgs {
   hooksFactory: string;
-  contract: LegacyHooksFactoryContractFacade;
+  contract: HooksFactoryContractFacade;
 }
 
 export class PeriodicTermHooksTemplate extends ContractWrapper {
@@ -302,11 +302,11 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
     args: PeriodicTermHooksTemplateArgs
   ) {
     super(provider);
-    const hooksFactory = args.hooksFactory ?? getDeploymentAddress(chainId, "HooksFactory");
+    const hooksFactory = args.hooksFactory ?? getDeploymentAddress(chainId, "HooksFactoryStandard");
     Object.assign(this, {
       ...args,
       hooksFactory,
-      contract: createLegacyHooksFactoryContractFacade(hooksFactory)
+      contract: createHooksFactoryContractFacade(hooksFactory)
     });
   }
 
@@ -324,7 +324,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
     this.signerAddress = signerAddress;
     this.isRegisteredBorrower = isRegisteredBorrower;
     this.hooksFactory = hooksFactory;
-    this.contract = createLegacyHooksFactoryContractFacade(hooksFactory);
+    this.contract = createHooksFactoryContractFacade(hooksFactory);
   }
 
   static fromLensData(
@@ -394,14 +394,14 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
   }
 
   previewDeployMarket(
-    args: LegacyPeriodicTermMarketDeploymentArgs & MarketHooksInstanceInputs
-  ): LegacyDeployMarketPreview;
+    args: StandardPeriodicTermMarketDeploymentArgs & MarketHooksInstanceInputs
+  ): StandardDeployMarketPreview;
   previewDeployMarket(
     args: RevolvingPeriodicTermMarketDeploymentArgs & MarketHooksInstanceInputs
   ): RevolvingDeployMarketPreview;
   previewDeployMarket(args: PeriodicTermMarketDeploymentArgs): DeployMarketPreview;
   previewDeployMarket({
-    marketType,
+    marketKind,
     commitmentFeeBips,
     hooksAddress,
     hooksInstanceName,
@@ -420,7 +420,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
     withdrawalWindowDuration,
     ...otherParameters
   }: PeriodicTermMarketDeploymentArgs): DeployMarketPreview {
-    const targetMarketType = marketType ?? "legacy";
+    const targetMarketKind = marketKind ?? "standard";
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -442,13 +442,10 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
     if (!hooksAddress && !roleProviderFactory && newProviderInputs?.length) {
       return { status: DeployMarketStatus.CreateProviderInputsWithoutFactory };
     }
-    if (!hasHooksFactoryDeployment(this.chainId, targetMarketType)) {
+    if (!hasHooksFactoryDeployment(this.chainId, targetMarketKind)) {
       return { status: DeployMarketStatus.WrongHooksFactory };
     }
-    const expectedHooksFactory = getHooksFactoryAddressForMarketType(
-      this.chainId,
-      targetMarketType
-    );
+    const expectedHooksFactory = getHooksFactoryAddress(this.chainId, targetMarketKind);
     if (this.hooksFactory.toLowerCase() !== expectedHooksFactory.toLowerCase()) {
       return { status: DeployMarketStatus.WrongHooksFactory };
     }
@@ -492,7 +489,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
     } as DeployMarketInputsV2Struct;
     const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0n;
     const originationFeeToken = this.fees.originationFeeToken?.address ?? zeroAddress;
-    if (marketType === "revolving") {
+    if (marketKind === "revolving") {
       const marketData = encodeRevolvingMarketData({ commitmentFeeBips });
       if (hooksAddress) {
         return readyRevolvingDeployMarketPreview({
@@ -520,12 +517,12 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
       });
     }
     if (hooksAddress) {
-      return readyLegacyDeployMarketPreview({
+      return readyStandardDeployMarketPreview({
         fn: "deployMarket",
         args: [parameters, hooksData, salt, originationFeeToken, originationFeeAmount]
       });
     }
-    return readyLegacyDeployMarketPreview({
+    return readyStandardDeployMarketPreview({
       fn: "deployMarketAndHooks",
       args: [
         this.hooksTemplate,
@@ -551,7 +548,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
       this.signer,
       prepareTransaction({
         to: this.hooksFactory,
-        abi: result.marketType === "legacy" ? hooksFactoryAbi : hooksFactoryRevolvingAbi,
+        abi: result.marketKind === "standard" ? hooksFactoryAbi : hooksFactoryRevolvingAbi,
         functionName: result.fn,
         args: result.args
       })
@@ -578,16 +575,16 @@ type PeriodicTermCommonMarketDeploymentArgs = MarketParameters & {
   withdrawalAccess: WithdrawalAccess;
 };
 
-export type LegacyPeriodicTermMarketDeploymentArgs = PeriodicTermCommonMarketDeploymentArgs & {
-  marketType?: Extract<MarketType, "legacy">;
+export type StandardPeriodicTermMarketDeploymentArgs = PeriodicTermCommonMarketDeploymentArgs & {
+  marketKind?: Extract<DeployableMarketKind, "standard">;
   commitmentFeeBips?: undefined;
 };
 
 export type RevolvingPeriodicTermMarketDeploymentArgs = PeriodicTermCommonMarketDeploymentArgs & {
-  marketType: Extract<MarketType, "revolving">;
+  marketKind: Extract<DeployableMarketKind, "revolving">;
   commitmentFeeBips: number;
 };
 
 export type PeriodicTermMarketDeploymentArgs =
-  | (LegacyPeriodicTermMarketDeploymentArgs & MarketHooksInstanceInputs)
+  | (StandardPeriodicTermMarketDeploymentArgs & MarketHooksInstanceInputs)
   | (RevolvingPeriodicTermMarketDeploymentArgs & MarketHooksInstanceInputs);

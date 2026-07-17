@@ -83,7 +83,7 @@ describe("TokenAmount bigint model", () => {
       provider,
       chainId: SupportedChainId.Sepolia,
       version: MarketVersion.V2,
-      marketType: "revolving",
+      marketKind: "revolving",
       marketToken: token,
       underlyingToken: token,
       hooksFactory: "0x0000000000000000000000000000000000000002",
@@ -129,7 +129,7 @@ describe("TokenAmount bigint model", () => {
       symbol: token.symbol,
       decimals: token.decimals,
       version: MarketVersion.V2,
-      marketType: "revolving",
+      marketKind: "revolving",
       hooksFactory: "0x0000000000000000000000000000000000000002",
       borrower: "0x0000000000000000000000000000000000000003"
     });

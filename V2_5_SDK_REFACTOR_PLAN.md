@@ -1,6 +1,6 @@
 # V2.5 SDK Refactor Plan
 
-Status: accepted direction; implementation pending  
+Status: implementation in progress; Phase 1 complete
 Branch: `feat/sdk-refactor`  
 Baseline: `4c3d8cc` (`release/v2.5`)  
 Package under development: `@wildcatfi/wildcat-sdk@3.1.8-beta`

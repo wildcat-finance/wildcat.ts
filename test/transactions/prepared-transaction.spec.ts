@@ -165,7 +165,7 @@ describe("prepared transaction encoding", () => {
 
   it("uses viem encoding through hooks and wrapper populate helpers", () => {
     const hooksTemplate = new OpenTermHooksTemplate(SupportedChainId.Sepolia, provider, {
-      hooksFactory: getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory"),
+      hooksFactory: getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard"),
       hooksTemplate: makeAddress(12),
       fees: {
         feeRecipient: makeAddress(13),

@@ -1,5 +1,5 @@
 import { DocumentNode } from "graphql";
-import { SupportedChainId, supportsPeriodicTermHooks } from "../constants";
+import { SupportedChainId, supportsPeriodicTermSchema } from "../constants";
 import {
   GetAllMarketsForLenderViewDocument,
   GetMarketDocument,
@@ -19,7 +19,7 @@ const selectDocument = (
   chainId: SupportedChainId,
   periodicDocument: DocumentNode,
   legacyDocument: DocumentNode
-): DocumentNode => (supportsPeriodicTermHooks(chainId) ? periodicDocument : legacyDocument);
+): DocumentNode => (supportsPeriodicTermSchema(chainId) ? periodicDocument : legacyDocument);
 
 export const getMarketsWithEventsDocumentForChain = (chainId: SupportedChainId): DocumentNode =>
   selectDocument(chainId, GetMarketsWithEventsDocument, LegacyGetMarketsWithEventsDocument);

@@ -32,19 +32,19 @@ Status values:
 
 ## Phase 1 - Domain and configuration foundation
 
-- [ ] Define SDK-owned market-kind and unknown-kind behavior.
-- [ ] Define indexed factory identity and provenance types.
-- [ ] Define transaction deployment-target configuration separately.
-- [ ] Define hook-template identity and registration types separately.
-- [ ] Define indexed snapshot freshness metadata.
-- [ ] Define indexer endpoint metadata and compatibility error types.
-- [ ] Split overloaded deployment, subgraph, and factory-routing configuration.
-- [ ] Remove WIP `MarketType = "legacy" | "revolving"` routing assumptions.
-- [ ] Remove historical factory discovery from checked-in deployment constants.
-- [ ] Replace address-derived kind logic where authoritative data is available.
-- [ ] Add unit tests for mappings, unknown values, and missing targets.
-- [ ] Run Phase 1 checks.
-- [ ] Commit Phase 1.
+- [x] Define SDK-owned market-kind and unknown-kind behavior.
+- [x] Define indexed factory identity and provenance types.
+- [x] Define transaction deployment-target configuration separately.
+- [x] Define hook-template identity and registration types separately.
+- [x] Define indexed snapshot freshness metadata.
+- [x] Define indexer endpoint metadata and compatibility error types.
+- [x] Split overloaded deployment, subgraph, and factory-routing configuration.
+- [x] Remove WIP `MarketType = "legacy" | "revolving"` routing assumptions.
+- [x] Remove historical factory discovery from checked-in deployment constants.
+- [x] Replace address-derived kind logic where authoritative data is available.
+- [x] Add unit tests for mappings, unknown values, and missing targets.
+- [x] Run Phase 1 checks.
+- [x] Commit Phase 1.
 
 ## Phase 2 - Clean GraphQL contract and codegen
 
@@ -164,6 +164,10 @@ Status values:
 | 2026-07-17 | SDK baseline | `yarn mocha` | Pass | 102 passing |
 | 2026-07-17 | New entity schema | SDK fragment field audit | Partial pass | Only documented template-registration field breaks found; Query root requires Graph API schema |
 | 2026-07-17 | Live legacy endpoints | Introspection and operation validation | Fail as expected | Current generated superset has 15 invalid operations on mainnet; partial selector layer is insufficient |
+| 2026-07-17 | SDK Phase 1 | `yarn lint` | Pass with warning | Existing unused `LegacyBasicLenderDataFragmentDoc` warning remains scoped to Phase 2 removal |
+| 2026-07-17 | SDK Phase 1 | `yarn build` | Pass | Clean TypeScript production build after config/domain split |
+| 2026-07-17 | SDK Phase 1 | `yarn mocha` | Pass | 113 passing, including domain, target, provenance, preview, and routing regressions |
+| 2026-07-17 | SDK Phase 1 | `git diff --check` | Pass | No whitespace errors |
 
 ## Decision ledger
 
@@ -175,6 +179,8 @@ Status values:
 | 2026-07-17 | Keep indexed and live state explicit | Prevents stale GraphQL snapshots from becoming transaction inputs while preserving efficient list hydration |
 | 2026-07-17 | Generated GraphQL types are internal transport types | Decouples the SDK/app contract from future schema maintenance |
 | 2026-07-17 | Promote stable analytics reads into the SDK | The subgraph now treats profiles and analytics as first-class data; most consumers should not maintain parallel raw queries |
+| 2026-07-17 | Use `standard`, `revolving`, and explicit `unknown` market kinds | Removes the overloaded `legacy` factory-routing label and prevents unknown historical implementations from silently becoming standard |
+| 2026-07-17 | Keep historical factory addresses out of deployment configuration | Indexed provenance discovers old factories; checked-in addresses authorize only the current transaction targets |
 
 ## Open inputs and blockers
 
@@ -203,8 +209,8 @@ Status values:
 
 | Phase | Commit | Verification | Status |
 | --- | --- | --- | --- |
-| 0 - Plan | This commit | Documentation and clean worktree check | Complete |
-| 1 - Domain/config | Pending | Unit, lint, build, mocha | Not started |
+| 0 - Plan | `1c6e231` | Documentation and clean worktree check | Complete |
+| 1 - Domain/config | This commit | Domain/config unit tests, lint, build, 113-test suite | Complete |
 | 2 - GraphQL/codegen | Pending | Schema validation, unit, lint, build, mocha | Blocked on endpoint |
 | 3 - Factories/hooks | Pending | Multi-factory fixtures, lint, build, mocha | Not started |
 | 4 - Markets/live | Pending | Historical fixtures, fixed-block parity, lint, build, mocha | Not started |
@@ -220,4 +226,15 @@ Status values:
 - Reclassified `3.1.8-beta` as disposable WIP rather than a compatibility base.
 - Recorded the clean-schema, SDK-owned-type, explicit-authority refactor plan.
 - Committed the plan and tracker as the Phase 0 rollback point.
-- No implementation changes made yet.
+- Split chain deployments, subgraph endpoints, and SDK domain types out of
+  `constants.ts` without changing the checked-in addresses or URLs.
+- Replaced the unpublished `marketType: "legacy" | "revolving"` API with
+  `marketKind: "standard" | "revolving" | "unknown"`.
+- Removed the checked-in historical factory inventory. Subgraph reads now retain
+  factories returned by the endpoint; live borrower hooks reads use configured
+  transaction targets until the Phase 3 normalized read layer lands.
+- Made old-schema hydration use indexed factory provenance and V2.5 lens
+  hydration use the revolving optional fields, with inconsistent/unknown input
+  remaining explicitly unknown.
+- Added regression coverage for historical factory provenance, missing targets,
+  unknown enum values, public exports, and both factory deployment previews.

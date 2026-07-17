@@ -18,7 +18,7 @@ import {
   SubgraphGetMarketEventsQuery,
   SubgraphGetMarketEventsQueryVariables
 } from "./graphql";
-import { supportsPeriodicTermHooks } from "../constants";
+import { supportsPeriodicTermSchema } from "../constants";
 import {
   MarketDataFragment,
   MarketRecord,
@@ -78,7 +78,7 @@ export async function getMarketRecords(
     endEventIndex = market.eventIndex;
   }
   const startEventIndex = endEventIndex ? Math.max(0, endEventIndex - limit) : 0;
-  const supportsPeriodicRecords = supportsPeriodicTermHooks(market.chainId);
+  const supportsPeriodicRecords = supportsPeriodicTermSchema(market.chainId);
   const variables: SubgraphGetMarketEventsQueryVariables = {
     market: marketAddress,
     endEventIndex,

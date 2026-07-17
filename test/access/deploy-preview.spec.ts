@@ -9,7 +9,7 @@ import {
   PeriodicTermHooksTemplate,
   REVOLVING_MARKET_DATA_VERSION,
   RevolvingReadyDeployMarketPreview,
-  LegacyReadyDeployMarketPreview,
+  StandardReadyDeployMarketPreview,
   encodeRevolvingMarketData
 } from "../../src/access";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
@@ -63,7 +63,7 @@ const makeMarketParameters = (asset: Token): MarketParameters => {
 };
 
 const makeOpenTermTemplate = (
-  hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory")
+  hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard")
 ): OpenTermHooksTemplate => {
   return new OpenTermHooksTemplate(SupportedChainId.Sepolia, provider, {
     hooksTemplate: makeAddress(12),
@@ -78,7 +78,7 @@ const makeOpenTermTemplate = (
 };
 
 const makeFixedTermTemplate = (
-  hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory")
+  hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard")
 ): FixedTermHooksTemplate => {
   return new FixedTermHooksTemplate(SupportedChainId.Sepolia, provider, {
     hooksTemplate: makeAddress(13),
@@ -93,7 +93,7 @@ const makeFixedTermTemplate = (
 };
 
 const makePeriodicTermTemplate = (
-  hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactory")
+  hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard")
 ): PeriodicTermHooksTemplate => {
   return new PeriodicTermHooksTemplate(SupportedChainId.Sepolia, provider, {
     hooksTemplate: makeAddress(14),
@@ -107,15 +107,15 @@ const makePeriodicTermTemplate = (
   });
 };
 
-const expectReadyLegacyPreview = (
+const expectReadyStandardPreview = (
   preview: DeployMarketPreview,
   fn: "deployMarket" | "deployMarketAndHooks"
-): LegacyReadyDeployMarketPreview => {
+): StandardReadyDeployMarketPreview => {
   if (preview.status !== DeployMarketStatus.Ready) {
     throw new Error(`expected ready preview, got ${preview.status}`);
   }
-  if (preview.marketType !== "legacy") {
-    throw new Error(`expected legacy preview, got ${preview.marketType}`);
+  if (preview.marketKind !== "standard") {
+    throw new Error(`expected standard preview, got ${preview.marketKind}`);
   }
   if (preview.fn !== fn) {
     throw new Error(`expected ${fn}, got ${preview.fn}`);
@@ -130,8 +130,8 @@ const expectReadyRevolvingPreview = (
   if (preview.status !== DeployMarketStatus.Ready) {
     throw new Error(`expected ready preview, got ${preview.status}`);
   }
-  if (preview.marketType !== "revolving") {
-    throw new Error(`expected revolving preview, got ${preview.marketType}`);
+  if (preview.marketKind !== "revolving") {
+    throw new Error(`expected revolving preview, got ${preview.marketKind}`);
   }
   if (preview.fn !== fn) {
     throw new Error(`expected ${fn}, got ${preview.fn}`);
@@ -175,11 +175,11 @@ describe("deploy preview helpers", () => {
 });
 
 describe("OpenTermHooksTemplate.previewDeployMarket", () => {
-  it("defaults to the legacy direct deploy preview", () => {
+  it("defaults to the standard direct deploy preview", () => {
     const asset = makeToken();
     const template = makeOpenTermTemplate();
 
-    const preview = expectReadyLegacyPreview(
+    const preview = expectReadyStandardPreview(
       template.previewDeployMarket({
         ...makeMarketParameters(asset),
         hooksAddress: makeAddress(20),
@@ -213,7 +213,7 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
     const preview = expectReadyRevolvingPreview(
       template.previewDeployMarket({
         ...makeMarketParameters(asset),
-        marketType: "revolving",
+        marketKind: "revolving",
         commitmentFeeBips: 175,
         hooksAddress: makeAddress(21),
         salt: constants.HashZero,
@@ -248,13 +248,13 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
     expect(expectDecodedNumber(commitmentFeeBips)).to.equal(175);
   });
 
-  it("rejects revolving deploy previews from a legacy-scoped template", () => {
+  it("rejects revolving deploy previews from a standard-scoped template", () => {
     const asset = makeToken();
     const template = makeOpenTermTemplate();
 
     const preview = template.previewDeployMarket({
       ...makeMarketParameters(asset),
-      marketType: "revolving",
+      marketKind: "revolving",
       commitmentFeeBips: 175,
       hooksAddress: makeAddress(21),
       salt: constants.HashZero,
@@ -277,7 +277,7 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
     expect(() =>
       template.previewDeployMarket({
         ...makeMarketParameters(asset),
-        marketType: "revolving",
+        marketKind: "revolving",
         commitmentFeeBips: 10_001,
         hooksAddress: makeAddress(22),
         salt: constants.HashZero,
@@ -359,11 +359,11 @@ describe("V2.5 hook deployment validation", () => {
 });
 
 describe("FixedTermHooksTemplate.previewDeployMarket", () => {
-  it("defaults to the legacy deploy-and-hooks preview", () => {
+  it("defaults to the standard deploy-and-hooks preview", () => {
     const asset = makeToken();
     const template = makeFixedTermTemplate();
 
-    const preview = expectReadyLegacyPreview(
+    const preview = expectReadyStandardPreview(
       template.previewDeployMarket({
         ...makeMarketParameters(asset),
         hooksInstanceName: "FixedTermHooksInstance",
@@ -433,7 +433,7 @@ describe("FixedTermHooksTemplate.previewDeployMarket", () => {
     const preview = expectReadyRevolvingPreview(
       template.previewDeployMarket({
         ...makeMarketParameters(asset),
-        marketType: "revolving",
+        marketKind: "revolving",
         commitmentFeeBips: 95,
         hooksInstanceName: "FixedTermHooksInstance",
         existingProviders: [
