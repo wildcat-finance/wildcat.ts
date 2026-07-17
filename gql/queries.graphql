@@ -264,12 +264,16 @@ query getLenderWithdrawalsForMarket(
   $lender: Bytes!
   $numWithdrawals: Int = 200
   $skipWithdrawals: Int = 0
+  $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry
+  $directionWithdrawals: OrderDirection = desc
 ) {
   market(id: $market) {
     lenders(where: { address: $lender }) {
       incompleteWithdrawals: withdrawals(
         first: $numWithdrawals
         skip: $skipWithdrawals
+        orderBy: $orderWithdrawals
+        orderDirection: $directionWithdrawals
         where: { isCompleted: false }
       ) {
         ...LenderWithdrawalPropertiesWithEvents
@@ -278,6 +282,8 @@ query getLenderWithdrawalsForMarket(
       completeWithdrawals: withdrawals(
         first: $numWithdrawals
         skip: $skipWithdrawals
+        orderBy: $orderWithdrawals
+        orderDirection: $directionWithdrawals
         where: { isCompleted: true }
       ) {
         ...LenderWithdrawalPropertiesWithEvents

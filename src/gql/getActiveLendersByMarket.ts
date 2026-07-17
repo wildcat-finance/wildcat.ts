@@ -19,7 +19,10 @@ import type { LenderAccountDataStructOutput } from "../lens-types";
 
 const NullProviderIndex = 2 ** 24 - 1;
 
-export type GetActiveLendersByMarketOptions = SubgraphGetActiveLendersByMarketQueryVariables & {
+export type GetActiveLendersByMarketOptions = Omit<
+  SubgraphGetActiveLendersByMarketQueryVariables,
+  "market"
+> & {
   fetchPolicy?: FetchPolicy;
   market: Market;
 };

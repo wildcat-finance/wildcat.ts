@@ -28919,6 +28919,8 @@ export type SubgraphGetLenderWithdrawalsForMarketQueryVariables = Exact<{
   lender: Scalars['Bytes']['input'];
   numWithdrawals?: InputMaybe<Scalars['Int']['input']>;
   skipWithdrawals?: InputMaybe<Scalars['Int']['input']>;
+  orderWithdrawals?: InputMaybe<SubgraphLenderWithdrawalStatus_OrderBy>;
+  directionWithdrawals?: InputMaybe<SubgraphOrderDirection>;
 }>;
 
 
@@ -31189,12 +31191,14 @@ ${BorrowDataFragmentDoc}
 ${RepaymentDataFragmentDoc}`;
 export type GetAccountsWhereLenderAuthorizedOrActiveQueryResult = Apollo.QueryResult<SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery, SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables>;
 export const GetLenderWithdrawalsForMarketDocument = gql`
-    query getLenderWithdrawalsForMarket($market: ID!, $lender: Bytes!, $numWithdrawals: Int = 200, $skipWithdrawals: Int = 0) {
+    query getLenderWithdrawalsForMarket($market: ID!, $lender: Bytes!, $numWithdrawals: Int = 200, $skipWithdrawals: Int = 0, $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry, $directionWithdrawals: OrderDirection = desc) {
   market(id: $market) {
     lenders(where: {address: $lender}) {
       incompleteWithdrawals: withdrawals(
         first: $numWithdrawals
         skip: $skipWithdrawals
+        orderBy: $orderWithdrawals
+        orderDirection: $directionWithdrawals
         where: {isCompleted: false}
       ) {
         ...LenderWithdrawalPropertiesWithEvents
@@ -31202,6 +31206,8 @@ export const GetLenderWithdrawalsForMarketDocument = gql`
       completeWithdrawals: withdrawals(
         first: $numWithdrawals
         skip: $skipWithdrawals
+        orderBy: $orderWithdrawals
+        orderDirection: $directionWithdrawals
         where: {isCompleted: true}
       ) {
         ...LenderWithdrawalPropertiesWithEvents

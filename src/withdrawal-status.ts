@@ -21,9 +21,7 @@ import { WithdrawalBatch, BatchStatus } from "./withdrawal-batch";
 import { MarketVersion, TransactionHash } from "./types";
 import {
   SubgraphLenderWithdrawalPropertiesFragment,
-  SubgraphWithdrawalExecution,
   SubgraphWithdrawalExecutionPropertiesFragment,
-  SubgraphWithdrawalRequest,
   SubgraphWithdrawalRequestPropertiesFragment
 } from "./gql/graphql";
 
@@ -116,8 +114,8 @@ export class LenderWithdrawalStatus {
     market: Market,
     batch: WithdrawalBatch,
     status: SubgraphLenderWithdrawalPropertiesFragment & {
-      requests?: SubgraphWithdrawalRequest[];
-      executions?: SubgraphWithdrawalExecution[];
+      requests?: SubgraphWithdrawalRequestPropertiesFragment[];
+      executions?: SubgraphWithdrawalExecutionPropertiesFragment[];
     },
     address?: string
   ): LenderWithdrawalStatus {

@@ -75,6 +75,19 @@ export class WithdrawalBatch {
     this.payments = payments.map((w) => parseWithdrawalRecord(this, w));
     this.executions = executions.map((w) => parseWithdrawalRecord(this, w));
     this.requests = requests.map((w) => parseWithdrawalRecord(this, w));
+
+    // Batch-level event queries return every request and execution separately
+    // from their lender status. Reconnect those records here so consumers do
+    // not need to reconstruct the relationship themselves.
+    this.withdrawals.forEach((withdrawal) => {
+      const lender = withdrawal.lender.toLowerCase();
+      withdrawal.requests = this.requests.filter(
+        (request) => request.address.toLowerCase() === lender
+      );
+      withdrawal.executions = this.executions.filter(
+        (execution) => execution.account.address.toLowerCase() === lender
+      );
+    });
   }
 
   private calculateBatchInterestEarned(): bigint {
