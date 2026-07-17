@@ -257,7 +257,7 @@ export class OpenTermHooks extends ContractWrapper {
       hooksTemplate: OpenTermHooksTemplate.fromSubgraphData(
         chainId,
         provider,
-        data.factoryHooksTemplate,
+        data.templateRegistration,
         signerAddress,
         isRegisteredBorrower,
         hooksFactory
@@ -375,7 +375,7 @@ export class OpenTermHooksTemplate extends ContractWrapper {
     const {
       feeRecipient,
       protocolFeeBips,
-      disabled,
+      enabled,
       hooksTemplate,
       name,
       originationFeeAsset,
@@ -398,7 +398,7 @@ export class OpenTermHooksTemplate extends ContractWrapper {
             }
           : {})
       } as FeeConfigurationV2,
-      enabled: !disabled,
+      enabled,
       index: 0, // @todo
       name,
       totalMarkets: 0, // @todo

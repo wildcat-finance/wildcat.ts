@@ -1,6 +1,6 @@
 # V2.5 SDK Refactor Plan
 
-Status: implementation in progress; Phase 2 blocked after endpoint-independent codegen cleanup
+Status: implementation in progress; Phase 2 complete, Phase 3 next
 Branch: `feat/sdk-refactor`  
 Baseline: `4c3d8cc` (`release/v2.5`)  
 Package under development: `@wildcatfi/wildcat-sdk@3.1.8-beta`

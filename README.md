@@ -21,17 +21,21 @@ For local development inside this repo run `yarn build` (or `npm run build`) to 
 
 ## Development Workflow
 
-- **Code generation**: run `WILDCAT_SUBGRAPH_SCHEMA=<schema> yarn codegen` whenever
-  contracts in `contracts/` or GraphQL fragments in `gql/` change. This invokes:
-  - `WILDCAT_SUBGRAPH_SCHEMA=<schema> yarn codegen:gql` → rebuilds typed gql
+- **Code generation**: run `yarn codegen` whenever contracts in `contracts/` or
+  GraphQL fragments in `gql/` change. This invokes:
+  - `yarn codegen:gql` → rebuilds typed gql from the checked-in Graph API schema
   - `yarn codegen:artifacts` → rebuilds Hardhat artifacts
   - `yarn codegen:abi` → regenerates viem ABI constants from artifacts
 - **Build**: `yarn build` (or `npm run build`) outputs the package defined by `tsconfig.prod.json`.
 
-`WILDCAT_SUBGRAPH_SCHEMA` must be either a deployed Graph API endpoint or a local
-full introspection schema. The subgraph repository's entity SDL is not enough:
-Graph Node adds the query roots, filters, ordering fields, and pagination types
-used by SDK operations.
+Run `WILDCAT_SUBGRAPH_SCHEMA=<endpoint> yarn codegen:schema` to refresh the
+checked-in Graph API schema from a deployed endpoint. `WILDCAT_SUBGRAPH_SCHEMA`
+may also override the checked-in schema for `yarn codegen:gql`. The subgraph
+repository's entity SDL is not enough: Graph Node adds the query roots, filters,
+ordering fields, and pagination types used by SDK operations.
+
+`src/gql/graphql.ts` is generated output and is excluded from ESLint. Validate
+its source documents through `yarn codegen:gql`; do not hand-edit the file.
 
 ## App Integration Testing
 

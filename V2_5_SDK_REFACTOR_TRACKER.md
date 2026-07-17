@@ -18,8 +18,10 @@ Status values:
 - [x] Protocol is frozen for this refactor.
 - [x] Subgraph schema and mappings are frozen for this refactor.
 - [x] Breaking changes to unpublished `3.1.8-beta` are allowed.
+- [x] A full V2.5 Graph API schema was captured from a local deployment of the
+      frozen subgraph.
 - [!] Final V2.5 Sepolia addresses and start blocks are pending deployment.
-- [!] A deployed V2.5 Graph API endpoint/introspection schema is pending.
+- [!] A hosted V2.5 Graph API endpoint URL is pending subgraph deployment.
 
 ## Phase 0 - Baseline and plan
 
@@ -48,27 +50,27 @@ Status values:
 
 ## Phase 2 - Clean GraphQL contract and codegen
 
-- [!] Obtain a V2.5 Graph API endpoint or introspection schema.
+- [x] Obtain a V2.5 Graph API endpoint or introspection schema.
 - [x] Make the codegen schema source explicit/configurable.
 - [x] Remove the ineffective partial-introspection checksum cache.
 - [x] Remove the post-generation AST rewrite and its otherwise-unused dependency.
 - [x] Add codegen configuration regression tests.
-- [ ] Add and validate `IndexerDeployment` query.
-- [ ] Replace `FactoryHooksTemplate` documents with registration documents.
-- [ ] Follow `HooksInstance.templateRegistration`.
-- [ ] Select factory `marketKind`, generation, ABI family, lifecycle, indexing,
+- [x] Add and validate `IndexerDeployment` query.
+- [x] Replace `FactoryHooksTemplate` documents with registration documents.
+- [x] Follow `HooksInstance.templateRegistration`.
+- [x] Select factory `marketKind`, generation, ABI family, lifecycle, indexing,
       target, and observed registration fields.
-- [ ] Select market origin, kind, generation, ABI family, and creation coordinates.
-- [ ] Select market/account/collateral snapshot freshness.
-- [ ] Select collateral depositor `address`.
-- [ ] Regenerate GraphQL transport types.
-- [ ] Stop root-level re-export of generated schema types.
-- [ ] Remove legacy documents and schema selectors.
-- [ ] Remove chain-level schema compatibility flags.
-- [ ] Validate every operation against V2.5 introspection.
-- [ ] Add GraphQL contract regression tests.
-- [ ] Run Phase 2 checks.
-- [ ] Commit Phase 2.
+- [x] Select market origin, kind, generation, ABI family, and creation coordinates.
+- [x] Select market/account/collateral snapshot freshness.
+- [x] Select collateral depositor `address`.
+- [x] Regenerate GraphQL transport types.
+- [x] Stop root-level re-export of generated schema types.
+- [x] Remove legacy documents and schema selectors.
+- [x] Remove chain-level schema compatibility flags.
+- [x] Validate every operation against V2.5 introspection.
+- [x] Add GraphQL contract regression tests.
+- [x] Run Phase 2 checks.
+- [x] Commit Phase 2.
 
 ## Phase 3 - Factory, registration, and hooks behavior
 
@@ -174,6 +176,15 @@ Status values:
 | 2026-07-17 | SDK Phase 2 prep | `yarn lint` | Pass with warning | Existing unused legacy GraphQL fragment warning remains |
 | 2026-07-17 | SDK Phase 2 prep | `yarn build` | Pass | Generated transport file remains unchanged pending the V2.5 schema |
 | 2026-07-17 | SDK Phase 2 prep | `yarn mocha` | Pass | 115 passing, including explicit codegen-input tests |
+| 2026-07-17 | V2.5 Graph API schema | Local Graph Node deploy plus `yarn codegen:schema` | Pass | Captured the complete Graph-generated API schema from the frozen subgraph |
+| 2026-07-17 | GraphQL contract | Standard GraphQL validation over all fragments and operations | Pass | No field, type, variable, or fragment validation errors |
+| 2026-07-17 | Endpoint compatibility | Mock Graph API integration | Pass | Metadata is normalized, validated, cached on success, retried on failure, and gates client operations |
+| 2026-07-17 | Local indexing smoke | `validateSubgraphEndpoint` against local Graph Node | Environment blocked | Public Sepolia RPC returned HTTP 403 for historical `eth_getLogs`; hosted endpoint smoke remains Phase 6/7 |
+| 2026-07-17 | SDK Phase 2 | `yarn lint` | Pass | Generated transport is intentionally excluded; source and tests are clean |
+| 2026-07-17 | SDK Phase 2 | `yarn build` | Pass | TypeScript production build against generated V2.5 transport |
+| 2026-07-17 | SDK Phase 2 | `yarn mocha` | Pass | 124 passing, including endpoint-gate and collateral-identity regressions |
+| 2026-07-17 | SDK Phase 2 | `env -u WILDCAT_SUBGRAPH_SCHEMA yarn codegen:gql` | Pass | Reproducible from the checked-in full schema |
+| 2026-07-17 | SDK Phase 2 | `git diff --check` | Pass | No whitespace errors |
 
 ## Decision ledger
 
@@ -194,15 +205,15 @@ Status values:
 
 | Input | Owner/source | Blocks | Current handling |
 | --- | --- | --- | --- |
-| V2.5 Graph API schema/endpoint | Subgraph deployment | Phase 2 completion | Codegen plumbing is ready; do not replace queries or generated types until the full schema is available |
+| Hosted V2.5 Graph API endpoint | Subgraph deployment | Phase 6 and app smoke tests | Phase 2 uses the checked-in full local Graph API schema; refresh and validate it against the hosted endpoint after deployment |
 | Sepolia V2.5 addresses/start blocks | Protocol deployment ceremony | Phase 6 | Keep address changes isolated |
 | Replacement subgraph URLs | Subgraph deployment | Phase 6 and app smoke tests | Retain placeholders until endpoint metadata validates |
 | App migration feedback | `wildcat-app-v2` integration | Final SDK surface | Treat required behavior as acceptance criteria, not current generated types |
 
 ## Known cleanup candidates within scope
 
-- [ ] Remove incomplete legacy GraphQL document machinery.
-- [ ] Remove stale chain-level periodic schema feature flags.
+- [x] Remove incomplete legacy GraphQL document machinery.
+- [x] Remove stale chain-level periodic schema feature flags.
 - [x] Fix codegen URL/runtime URL divergence by requiring an explicit schema.
 - [x] Remove the checksum cache.
 - [ ] Split oversized `constants.ts` by responsibility without changing unrelated
@@ -211,7 +222,8 @@ Status values:
       adapters.
 - [ ] Consolidate duplicated hooks-template subgraph hydration after adopting
       registration data.
-- [ ] Stop requiring mutable template names to identify hook behavior.
+- [x] Stop requiring mutable template names to identify indexed hook behavior.
+- [ ] Stop requiring mutable template names to identify lens hook behavior.
 
 ## Commit ledger
 
@@ -219,7 +231,7 @@ Status values:
 | --- | --- | --- | --- |
 | 0 - Plan | `1c6e231` | Documentation and clean worktree check | Complete |
 | 1 - Domain/config | `dde64f7` | Domain/config unit tests, lint, build, 113-test suite | Complete |
-| 2 - GraphQL/codegen | Preparatory commit pending | Config tests, lint, build, 115-test suite | Blocked after endpoint-independent prep |
+| 2 - GraphQL/codegen | This commit | Schema validation, endpoint-gate integration, lint, build, 124-test suite | Complete |
 | 3 - Factories/hooks | Pending | Multi-factory fixtures, lint, build, mocha | Not started |
 | 4 - Markets/live | Pending | Historical fixtures, fixed-block parity, lint, build, mocha | Not started |
 | 5 - Analytics | Pending | Analytics fixtures, lint, build, mocha | Not started |
@@ -252,5 +264,21 @@ Status values:
 - Removed the stale partial-introspection cache, schema snapshot, timing/logging
   files, post-generation AST rewrite, and its otherwise-unused `ts-morph`
   dependency.
-- Kept the existing generated transport untouched. Replacing documents and
-  generating V2.5 types remains blocked on the full Graph API schema.
+- Deployed the frozen subgraph to a local Graph Node and captured its full API
+  schema. Historical indexing could not advance because the public Sepolia RPC
+  returned HTTP 403 for `eth_getLogs`; schema introspection was unaffected.
+- Replaced legacy factory-template documents with exact factory/template
+  registrations and selected indexed factory, market provenance, creation, and
+  snapshot freshness fields.
+- Regenerated the transport module from the checked-in schema and removed the
+  legacy documents, per-chain selectors, schema feature flags, and root-level
+  generated GraphQL exports.
+- Added explicit endpoint metadata validation for chain/network identity,
+  schema release, digest shape, protocol anchors, optional modules, and pricing
+  mode. SDK client operations wait for validation, successful results are
+  cached per chain/endpoint, and failures remain retryable.
+- Made indexed hook dispatch depend on the authoritative hook kind rather than
+  mutable display names, while retaining historical factories returned by the
+  subgraph.
+- Added collateral depositor addresses and restored liquidated-share reset
+  events to the SDK query path.

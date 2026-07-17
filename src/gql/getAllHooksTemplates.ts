@@ -8,6 +8,7 @@ import { SupportedChainId } from "../constants";
 import { SignerOrProvider } from "../types";
 import { HooksTemplate, hooksTemplateFromSubgraph } from "../access";
 import { getEthersSignerAddress } from "../internal/ethers-signer";
+import { HooksKind, parseHooksKind } from "../domain";
 
 export type GetAllHooksTemplatesOptions = {
   chainId: SupportedChainId;
@@ -41,11 +42,8 @@ export async function getAllHooksTemplates(
       includeBorrower: !!borrower
     }
   });
-  return result.data.factoryHooksTemplates
-    .filter(
-      (t) =>
-        t.name === "OpenTermHooks" || t.name === "FixedTermHooks" || t.name === "PeriodicTermHooks"
-    )
+  return result.data.hooksTemplateRegistrations
+    .filter((registration) => parseHooksKind(registration.hooksTemplate.kind) !== HooksKind.Unknown)
     .map((template) =>
       hooksTemplateFromSubgraph(
         chainId,

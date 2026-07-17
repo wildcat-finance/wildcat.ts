@@ -17,7 +17,7 @@ import {
   toNumber,
   type BigintNumberish
 } from "./utils";
-import { SubgraphMarketDataFragment, SubgraphToken } from "./gql/graphql";
+import { SubgraphMarketDataFragment, SubgraphTokenDataFragment } from "./gql/graphql";
 import { submitPreparedTransaction } from "./internal/viem-write";
 
 type RhsAmount = BigintNumberish | TokenAmount;
@@ -397,7 +397,7 @@ export class Token extends ContractWrapper {
 
   static fromSubgraphToken(
     chainId: SupportedChainId,
-    data: SubgraphToken,
+    data: SubgraphTokenDataFragment,
     provider: SignerOrProvider
   ): Token {
     return new Token(

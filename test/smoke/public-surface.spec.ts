@@ -25,6 +25,8 @@ describe("SDK public surface smoke", () => {
     expect(Array.isArray(sdk.marketLensV2_5Abi)).to.equal(true);
     expect(Array.isArray(sdk.wildcatArchControllerAbi)).to.equal(true);
     expect("typechain" in sdk).to.equal(false);
+    expect("GetMarketDocument" in sdk).to.equal(false);
+    expect("SubgraphOrderDirection" in sdk).to.equal(false);
   });
 
   it("keeps the legacy dist/typechain subpath available for existing app code", () => {

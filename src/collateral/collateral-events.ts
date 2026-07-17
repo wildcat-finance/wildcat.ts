@@ -14,7 +14,7 @@ import {
   SubgraphSimpleCollateralContractLiquidationDataFragment,
   SubgraphSimpleCollateralContractReclaim_Filter,
   SubgraphSimpleCollateralContractReclaimDataFragment
-} from "../gql";
+} from "../gql/graphql";
 import { MarketCollateralV1 } from ".";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import { assert } from "../utils";
@@ -110,7 +110,7 @@ export const collateralContractEventParsers: CollateralContractEventParserMap = 
     const { collateralContract, account, amountDeposited, sharesMinted, ...rest } = log;
     return {
       collateralContract: collateralContract.id,
-      account: account.id,
+      account: account.address,
       amountDeposited: collateralAsset.getAmount(amountDeposited),
       sharesMinted: toRawAmount(sharesMinted),
       ...rest
@@ -120,7 +120,7 @@ export const collateralContractEventParsers: CollateralContractEventParserMap = 
     const { collateralContract, account, amountReclaimed, sharesBurned, ...rest } = log;
     return {
       collateralContract: collateralContract.id,
-      account: account.id,
+      account: account.address,
       amountReclaimed: collateralAsset.getAmount(amountReclaimed),
       sharesBurned: toRawAmount(sharesBurned),
       ...rest
@@ -137,7 +137,7 @@ export const collateralContractEventParsers: CollateralContractEventParserMap = 
     const { collateralContract, account, sharesReset, ...rest } = log;
     return {
       collateralContract: collateralContract.id,
-      account: account.id,
+      account: account.address,
       sharesReset: toRawAmount(sharesReset),
       ...rest
     };
@@ -212,10 +212,13 @@ export async function getCollateralContractEvents(
     reclaimRecordsFilter: additionalFilter,
     liquidationRecordsFilter: additionalFilter,
     fullResetRecordsFilter: additionalFilter,
+    liquidatedSharesResetRecordsFilter: additionalFilter,
     includeDeposits: !kinds?.length || kinds.includes("SimpleCollateralContractDeposit"),
     includeReclaims: !kinds?.length || kinds.includes("SimpleCollateralContractReclaim"),
     includeLiquidations: !kinds?.length || kinds.includes("SimpleCollateralContractLiquidation"),
-    includeFullResets: !kinds?.length || kinds.includes("SimpleCollateralContractFullReset")
+    includeFullResets: !kinds?.length || kinds.includes("SimpleCollateralContractFullReset"),
+    includeLiquidatedSharesResets:
+      !kinds?.length || kinds.includes("SimpleCollateralContractLiquidatedSharesReset")
   });
   const result = await subgraphClient.query<
     SubgraphGetCollateralContractEventsQuery,
@@ -232,10 +235,13 @@ export async function getCollateralContractEvents(
       reclaimRecordsFilter: additionalFilter,
       liquidationRecordsFilter: additionalFilter,
       fullResetRecordsFilter: additionalFilter,
+      liquidatedSharesResetRecordsFilter: additionalFilter,
       includeDeposits: !kinds?.length || kinds.includes("SimpleCollateralContractDeposit"),
       includeReclaims: !kinds?.length || kinds.includes("SimpleCollateralContractReclaim"),
       includeLiquidations: !kinds?.length || kinds.includes("SimpleCollateralContractLiquidation"),
-      includeFullResets: !kinds?.length || kinds.includes("SimpleCollateralContractFullReset")
+      includeFullResets: !kinds?.length || kinds.includes("SimpleCollateralContractFullReset"),
+      includeLiquidatedSharesResets:
+        !kinds?.length || kinds.includes("SimpleCollateralContractLiquidatedSharesReset")
     }
   });
   const {
@@ -246,7 +252,8 @@ export async function getCollateralContractEvents(
     `Collateral contract not found in subgraph: ${collateralContractAddress}`
   );
   const { collateralAsset, underlyingAsset } = collateralContract;
-  const { deposits, reclaims, liquidations, fullResets } = collateralContractData;
+  const { deposits, reclaims, liquidations, fullResets, liquidatedSharesResets } =
+    collateralContractData;
   return [
     ...(deposits?.map((deposit) =>
       parseCollateralContractEvent(collateralAsset, underlyingAsset, deposit)
@@ -259,6 +266,9 @@ export async function getCollateralContractEvents(
     ) ?? []),
     ...(fullResets?.map((fullReset) =>
       parseCollateralContractEvent(collateralAsset, underlyingAsset, fullReset)
+    ) ?? []),
+    ...(liquidatedSharesResets?.map((liquidatedSharesReset) =>
+      parseCollateralContractEvent(collateralAsset, underlyingAsset, liquidatedSharesReset)
     ) ?? [])
   ];
 }

@@ -175,12 +175,6 @@ query getAllMarketsForLenderListView(
 query getAccountsWhereLenderAuthorizedOrActive(
   $lender: Bytes!
   $accountFilter: LenderAccount_filter = { address_not: null }
-  # markets - default order is newest first
-  $marketFilter: Market_filter = { id_not: null }
-  $numMarkets: Int = 1000
-  $skipMarkets: Int = 0
-  $orderMarkets: Market_orderBy = createdAt
-  $directionMarkets: OrderDirection = desc
   # deposits
   $numDeposits: Int = 200
   $skipDeposits: Int = 0
@@ -383,8 +377,8 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
 }
 
 query getAllHooksTemplates($borrower: Bytes, $includeBorrower: Boolean!) {
-  factoryHooksTemplates {
-    ...FactoryHooksTemplateData
+  hooksTemplateRegistrations {
+    ...HooksTemplateRegistrationData
   }
   registeredBorrowers(where: { borrower: $borrower }, first: 1) @include(if: $includeBorrower) {
     isRegistered
@@ -398,8 +392,8 @@ query getHooksInstancesForBorrower($borrower: Bytes!) {
 }
 
 query getAllHooksDataForBorrower($borrower: Bytes!) {
-  factoryHooksTemplates {
-    ...FactoryHooksTemplateData
+  hooksTemplateRegistrations {
+    ...HooksTemplateRegistrationData
   }
   hooksInstances(where: { borrower: $borrower }) {
     ...HooksInstanceData
@@ -409,6 +403,33 @@ query getAllHooksDataForBorrower($borrower: Bytes!) {
   }
   controllers(where: { borrower: $borrower }, first: 1) {
     ...MinimalControllerData
+  }
+}
+
+query getIndexerDeployment {
+  indexerDeployments(first: 1) {
+    id
+    chainId
+    network
+    graphNetwork
+    schemaRelease
+    configDigest
+    archController
+    sanctionsSentinel
+    analyticsEnabled
+    collateralEnabled
+    wrappersEnabled
+    pricingMode
+    firstObservedBlock
+    firstObservedTimestamp
+    firstObservedTransaction
+    firstObservedLogIndex
+  }
+}
+
+query getHooksFactories {
+  hooksFactories {
+    ...HooksFactoryData
   }
 }
 
@@ -1075,6 +1096,8 @@ query getCollateralContractEvents(
   $includeLiquidations: Boolean = true
   $fullResetRecordsFilter: SimpleCollateralContractFullReset_filter = { id_not: null }
   $includeFullResets: Boolean = true
+  $liquidatedSharesResetRecordsFilter: SimpleCollateralContractLiquidatedSharesReset_filter = { id_not: null }
+  $includeLiquidatedSharesResets: Boolean = true
 ) {
   simpleCollateralContract(id: $collateralContract) {
     deposits(
@@ -1128,6 +1151,19 @@ query getCollateralContractEvents(
       first: $limit
     ) @include(if: $includeFullResets) {
       ...SimpleCollateralContractFullResetData
+    }
+    liquidatedSharesResets(
+      where: {
+        and: [
+          $liquidatedSharesResetRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) @include(if: $includeLiquidatedSharesResets) {
+      ...SimpleCollateralContractLiquidatedSharesResetData
     }
   }
 }

@@ -241,7 +241,7 @@ export class PeriodicTermHooks extends ContractWrapper {
       hooksTemplate: PeriodicTermHooksTemplate.fromSubgraphData(
         chainId,
         provider,
-        data.factoryHooksTemplate,
+        data.templateRegistration,
         signerAddress,
         isRegisteredBorrower,
         hooksFactory
@@ -360,7 +360,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
     const {
       feeRecipient,
       protocolFeeBips,
-      disabled,
+      enabled,
       hooksTemplate,
       name,
       originationFeeAsset,
@@ -384,7 +384,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
             }
           : {})
       } as FeeConfigurationV2,
-      enabled: !disabled,
+      enabled,
       index: 0,
       name,
       totalMarkets: 0,

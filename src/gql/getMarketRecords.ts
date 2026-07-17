@@ -15,10 +15,10 @@ import {
   SubgraphFixedTermUpdated_Filter,
   SubgraphPeriodicTermUpdated_Filter,
   SubgraphAnnualInterestBipsReductionProposed_Filter,
+  GetMarketEventsDocument,
   SubgraphGetMarketEventsQuery,
   SubgraphGetMarketEventsQueryVariables
 } from "./graphql";
-import { supportsPeriodicTermSchema } from "../constants";
 import {
   MarketDataFragment,
   MarketRecord,
@@ -26,7 +26,6 @@ import {
   assert,
   parseMarketRecord
 } from "../utils";
-import { getMarketEventsDocumentForChain } from "./document-selectors";
 
 export type GetMarketRecordsOptions = {
   market: Market;
@@ -78,7 +77,6 @@ export async function getMarketRecords(
     endEventIndex = market.eventIndex;
   }
   const startEventIndex = endEventIndex ? Math.max(0, endEventIndex - limit) : 0;
-  const supportsPeriodicRecords = supportsPeriodicTermSchema(market.chainId);
   const variables: SubgraphGetMarketEventsQueryVariables = {
     market: marketAddress,
     endEventIndex,
@@ -94,18 +92,16 @@ export async function getMarketRecords(
     forceBuyBackRecordsFilter: additionalFilter,
     minimumDepositUpdateRecordsFilter: additionalFilter,
     protocolFeeBipsUpdatedRecordsFilter: additionalFilter,
-    fixedTermUpdatedRecordsFilter: additionalFilter
+    fixedTermUpdatedRecordsFilter: additionalFilter,
+    periodicTermUpdatedRecordsFilter: additionalFilter,
+    annualInterestBipsReductionProposalRecordsFilter: additionalFilter
   };
-  if (supportsPeriodicRecords) {
-    variables.periodicTermUpdatedRecordsFilter = additionalFilter;
-    variables.annualInterestBipsReductionProposalRecordsFilter = additionalFilter;
-  }
 
   const result = await subgraphClient.query<
     SubgraphGetMarketEventsQuery,
     SubgraphGetMarketEventsQueryVariables
   >({
-    query: getMarketEventsDocumentForChain(market.chainId),
+    query: GetMarketEventsDocument,
     variables,
     fetchPolicy
   });

@@ -23,7 +23,7 @@ import {
   parseMarketParameterConstraints,
   prepareTransaction
 } from "./utils";
-import { SubgraphMinimalControllerDataFragment } from "./gql";
+import { SubgraphMinimalControllerDataFragment } from "./gql/graphql";
 import {
   mockArchControllerOwnerAbi,
   wildcatMarketControllerAbi,

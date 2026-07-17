@@ -1153,20 +1153,11 @@ export class Market extends ContractWrapper {
         useOnSetProtocolFeeBips: data.hooksConfig.useOnSetProtocolFeeBips
       };
       const { id } = data.hooks;
-      const templateData = data.hooks.factoryHooksTemplate.name
-        ? data.hooks.factoryHooksTemplate
-        : {
-            ...data.hooks.factoryHooksTemplate,
-            // Older subgraph deployments can contain placeholder factory-template rows
-            // created before HooksTemplateAdded populated the template name.
-            name:
-              periodDuration > 0
-                ? "PeriodicTermHooks"
-                : fixedTermEndTime > 0
-                ? "FixedTermHooks"
-                : "OpenTermHooks"
-          };
-      const template = hooksTemplateFromSubgraph(chainId, provider, templateData);
+      const template = hooksTemplateFromSubgraph(
+        chainId,
+        provider,
+        data.hooks.templateRegistration
+      );
       hooksFactory = template.hooksFactory;
       const minimumDeposit = _minimumDeposit
         ? underlyingToken.getAmount(_minimumDeposit)
@@ -1221,13 +1212,7 @@ export class Market extends ContractWrapper {
         };
       }
     }
-    let marketKind: MarketKind =
-      data.version === MarketVersion.V1
-        ? "standard"
-        : parseMarketKind(data.hooks?.factoryHooksTemplate.hooksFactory.marketType);
-    if (marketKind === "unknown" && data.commitmentFeeBips != null && data.drawnAmount != null) {
-      marketKind = "revolving";
-    }
+    const marketKind: MarketKind = parseMarketKind(data.marketKind);
     return new Market({
       chainId,
       provider,

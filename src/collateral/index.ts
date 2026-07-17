@@ -90,12 +90,13 @@ export class MarketCollateralV1 extends ContractWrapper {
     market: Market,
     data: SubgraphSimpleCollateralContractDataFragment
   ): MarketCollateralV1 {
-    const collateralAsset = Token.fromSubgraphToken(chainId, data.collateralAsset!, provider);
-    const underlyingAsset = Token.fromSubgraphToken(
-      chainId,
-      data.market.underlyingAsset!,
-      provider
+    assert(data.market !== null && data.market !== undefined, "Collateral market is not indexed");
+    assert(
+      data.liquidationCooldown !== null && data.liquidationCooldown !== undefined,
+      "Collateral liquidation cooldown is not indexed"
     );
+    const collateralAsset = Token.fromSubgraphToken(chainId, data.collateralAsset, provider);
+    const underlyingAsset = Token.fromSubgraphToken(chainId, data.market.underlyingAsset, provider);
 
     return new MarketCollateralV1({
       provider,

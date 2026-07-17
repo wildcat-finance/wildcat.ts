@@ -112,6 +112,25 @@ fragment LenderProperties on LenderAccount {
   lastUpdatedTimestamp
   totalInterestEarned
   numPendingWithdrawalBatches
+  snapshot {
+    ...LenderAccountSnapshotData
+  }
+}
+
+fragment LenderAccountSnapshotData on LenderAccountSnapshot {
+  source
+  scaledBalance
+  role
+  totalDeposited
+  lastScaleFactor
+  lastUpdatedTimestamp
+  lastUpdatedBlockNumber
+  totalInterestEarned
+  numPendingWithdrawalBatches
+  updatedAtBlock
+  updatedAtTimestamp
+  updatedAtTransaction
+  updatedAtLogIndex
 }
 
 fragment AllAuthorizedLendersView on LenderAuthorization {
@@ -150,7 +169,18 @@ fragment MinimalControllerData on Controller {
 
 fragment MarketData on Market {
   id
+  address
   version
+  marketKind
+  originKind
+  generation
+  abiFamily
+  archController {
+    id
+  }
+  hooksFactory {
+    ...HooksFactoryData
+  }
 
   # ================================= Config ================================= #
   isRegistered
@@ -213,11 +243,13 @@ fragment MarketData on Market {
   deployedEvent {
     ...MarketDeployedEvent
   }
-}
-
-fragment AprConstraints on ParameterConstraints {
-  minimumAnnualInterestBips
-  maximumAnnualInterestBips
+  createdAtBlock
+  createdAtTimestamp
+  createdAtTransaction
+  createdAtLogIndex
+  snapshot {
+    ...MarketSnapshotData
+  }
 }
 
 fragment ParameterConstraintsData on ParameterConstraints {
@@ -274,7 +306,18 @@ fragment MarketDataWithEvents on Market {
 
 fragment MarketListData on Market {
   id
+  address
   version
+  marketKind
+  originKind
+  generation
+  abiFamily
+  archController {
+    id
+  }
+  hooksFactory {
+    ...HooksFactoryData
+  }
   isRegistered
   isClosed
   controller {
@@ -317,13 +360,50 @@ fragment MarketListData on Market {
   }
   hooks {
     id
-    factoryHooksTemplate {
-      ...FactoryHooksTemplateData
+    templateRegistration {
+      ...HooksTemplateRegistrationData
     }
   }
   deployedEvent {
     ...MarketDeployedEvent
   }
+  createdAtBlock
+  createdAtTimestamp
+  createdAtTransaction
+  createdAtLogIndex
+  snapshot {
+    ...MarketSnapshotData
+  }
+}
+
+fragment MarketSnapshotData on MarketSnapshot {
+  source
+  isClosed
+  maxTotalSupply
+  protocolFeeBips
+  pendingProtocolFees
+  normalizedUnclaimedWithdrawals
+  scaledTotalSupply
+  scaledPendingWithdrawals
+  pendingWithdrawalExpiry
+  isDelinquent
+  isIncurringPenalties
+  timeDelinquent
+  annualInterestBips
+  commitmentFeeBips
+  reserveRatioBips
+  drawnAmount
+  scaleFactor
+  lastInterestAccruedTimestamp
+  lastInterestAccruedBlockNumber
+  originalAnnualInterestBips
+  originalReserveRatioBips
+  temporaryReserveRatioExpiry
+  temporaryReserveRatioActive
+  updatedAtBlock
+  updatedAtTimestamp
+  updatedAtTransaction
+  updatedAtLogIndex
 }
 
 fragment WithdrawalBatchPaymentProperties on WithdrawalBatchPayment {
@@ -653,15 +733,22 @@ fragment HooksConfigDataForMarket on HooksConfig {
 
 fragment HooksInstanceData on HooksInstance {
   id
+  address
   borrower
   name
   kind
+  marketKind
+  generation
+  abiFamily
   numMarkets
   hooksTemplate {
     ...HooksTemplateData
   }
-  factoryHooksTemplate {
-    ...FactoryHooksTemplateData
+  templateRegistration {
+    ...HooksTemplateRegistrationData
+  }
+  hooksFactory {
+    ...HooksFactoryData
   }
   providers {
     ...RoleProviderData
@@ -671,17 +758,35 @@ fragment HooksInstanceData on HooksInstance {
 
 fragment HooksTemplateData on HooksTemplate {
   id
-  name
-  feeRecipient
-  protocolFeeBips
-  originationFeeAsset {
-    ...TokenData
-  }
-  originationFeeAmount
-  disabled
+  address
+  kind
+  version
+  abiFamily
 }
 
-fragment FactoryHooksTemplateData on FactoryHooksTemplate {
+fragment HooksFactoryData on HooksFactory {
+  id
+  address
+  label
+  archController {
+    id
+  }
+  sentinel
+  marketKind
+  generation
+  abiFamily
+  hookedMarketAbi
+  configuredStartBlock
+  indexed
+  deploymentTarget
+  lifecycle
+  configured
+  isRegistered
+  registrationUpdatedAtBlock
+  registrationUpdatedAtTimestamp
+}
+
+fragment HooksTemplateRegistrationData on HooksTemplateRegistration {
   id
   templateAddress
   name
@@ -691,31 +796,21 @@ fragment FactoryHooksTemplateData on FactoryHooksTemplate {
     ...TokenData
   }
   originationFeeAmount
-  disabled
-  hooksFactory {
-    id
-    marketType
-    isRegistered
+  isEnabled
+  createdAtBlock
+  createdAtTimestamp
+  createdAtTransaction
+  createdAtLogIndex
+  updatedAtBlock
+  updatedAtTimestamp
+  updatedAtTransaction
+  updatedAtLogIndex
+  hooksTemplate {
+    ...HooksTemplateData
   }
-}
-
-fragment ApprovedLiquidatorData on ApprovedLiquidator {
-  isApproved
-  liquidator
-}
-
-fragment LiquidatorApprovedData on LiquidatorApproved {
-  liquidator
-  blockNumber
-  blockTimestamp
-  transactionHash
-}
-
-fragment LiquidatorRemovedData on LiquidatorRemoved {
-  liquidator
-  blockNumber
-  blockTimestamp
-  transactionHash
+  hooksFactory {
+    ...HooksFactoryData
+  }
 }
 
 fragment SimpleCollateralContractData on SimpleCollateralContract {
@@ -751,6 +846,27 @@ fragment SimpleCollateralContractData on SimpleCollateralContract {
   lastFullLiquidationIndex
   depositIndex
   eventIndex
+  snapshot {
+    ...SimpleCollateralContractSnapshotData
+  }
+}
+
+fragment SimpleCollateralContractSnapshotData on SimpleCollateralContractSnapshot {
+  source
+  totalDeposited
+  totalReclaimed
+  totalLiquidated
+  totalShares
+  availableCollateral
+  lastFullLiquidationIndex
+  depositIndex
+  liquidationCooldown
+  nextLiquidationTrigger
+  eventIndex
+  updatedAtBlock
+  updatedAtTimestamp
+  updatedAtTransaction
+  updatedAtLogIndex
 }
 
 fragment SimpleCollateralContractReclaimData on SimpleCollateralContractReclaim {
@@ -760,6 +876,7 @@ fragment SimpleCollateralContractReclaimData on SimpleCollateralContractReclaim 
   }
   account {
     id
+    address
   }
 
   amountReclaimed
@@ -768,17 +885,6 @@ fragment SimpleCollateralContractReclaimData on SimpleCollateralContractReclaim 
   blockNumber
   blockTimestamp
   transactionHash
-}
-
-fragment SimpleCollateralContractDepositorData on SimpleCollateralContractDepositor {
-  id
-  collateralContract {
-    id
-  }
-
-  shares
-  totalDeposited
-  totalReclaimed
 }
 
 fragment SimpleCollateralContractLiquidationData on SimpleCollateralContractLiquidation {
@@ -818,6 +924,7 @@ fragment SimpleCollateralContractLiquidatedSharesResetData on SimpleCollateralCo
   }
   account {
     id
+    address
   }
   sharesReset
 
@@ -834,6 +941,7 @@ fragment SimpleCollateralContractDepositData on SimpleCollateralContractDeposit 
   }
   account {
     id
+    address
   }
 
   amountDeposited
@@ -844,24 +952,4 @@ fragment SimpleCollateralContractDepositData on SimpleCollateralContractDeposit 
   blockNumber
   blockTimestamp
   transactionHash
-}
-
-fragment SimpleCollateralContractDataWithEvents on SimpleCollateralContract {
-  ...SimpleCollateralContractData
-
-  depositors {
-    ...SimpleCollateralContractDepositorData
-  }
-  liquidations {
-    ...SimpleCollateralContractLiquidationData
-  }
-  deposits {
-    ...SimpleCollateralContractDepositData
-  }
-  reclaims {
-    ...SimpleCollateralContractReclaimData
-  }
-  fullResets {
-    ...SimpleCollateralContractFullResetData
-  }
 }

@@ -3,7 +3,8 @@ import {
   getConfiguredHooksFactoryTargets,
   getLatestLensDeploymentName
 } from "../constants";
-import { SubgraphHooksInstanceDataFragment, SubgraphHooksKind } from "../gql/graphql";
+import { SubgraphHooksInstanceDataFragment } from "../gql/graphql";
+import { HooksKind, parseHooksKind } from "../domain";
 import type { HooksInstanceDataStructOutput, HooksTemplateDataStructOutput } from "../lens-types";
 import {
   getV2HooksDataForBorrower,
@@ -14,7 +15,7 @@ import { getEthersSignerAddress } from "../internal/ethers-signer";
 import { OpenTermHooks, OpenTermHooksTemplate } from "./access-control";
 import { FixedTermHooks, FixedTermHooksTemplate } from "./fixed-term";
 import { PeriodicTermHooks, PeriodicTermHooksTemplate } from "./periodic-term";
-import { SubgraphHooksTemplateLike } from "./subgraph-template";
+import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
 
 export * from "./access-control";
 export * from "./fixed-term";
@@ -156,7 +157,8 @@ export function hooksTemplateFromSubgraph(
   signerAddress?: string,
   isRegisteredBorrower?: boolean
 ): HooksTemplate {
-  if (data.name === "OpenTermHooks") {
+  const kind = normalizeSubgraphHooksTemplateData(data).kind;
+  if (kind === HooksKind.OpenTerm) {
     return OpenTermHooksTemplate.fromSubgraphData(
       chainId,
       provider,
@@ -164,7 +166,7 @@ export function hooksTemplateFromSubgraph(
       signerAddress,
       isRegisteredBorrower
     );
-  } else if (data.name === "FixedTermHooks") {
+  } else if (kind === HooksKind.FixedTerm) {
     return FixedTermHooksTemplate.fromSubgraphData(
       chainId,
       provider,
@@ -172,7 +174,7 @@ export function hooksTemplateFromSubgraph(
       signerAddress,
       isRegisteredBorrower
     );
-  } else if (data.name === "PeriodicTermHooks") {
+  } else if (kind === HooksKind.PeriodicTerm) {
     return PeriodicTermHooksTemplate.fromSubgraphData(
       chainId,
       provider,
@@ -181,7 +183,7 @@ export function hooksTemplateFromSubgraph(
       isRegisteredBorrower
     );
   } else {
-    throw Error(`Unknown hooks template: ${data.name}`);
+    throw Error(`Unknown hooks template kind: ${data.hooksTemplate.kind}`);
   }
 }
 
@@ -232,7 +234,8 @@ export function hooksInstanceFromSubgraph(
   signerAddress?: string,
   isRegisteredBorrower?: boolean
 ): HooksInstance {
-  if (data.kind === SubgraphHooksKind.OpenTerm) {
+  const kind = parseHooksKind(data.kind);
+  if (kind === HooksKind.OpenTerm) {
     return OpenTermHooks.fromSubgraphData(
       chainId,
       provider,
@@ -240,7 +243,7 @@ export function hooksInstanceFromSubgraph(
       signerAddress,
       isRegisteredBorrower
     );
-  } else if (data.kind === SubgraphHooksKind.FixedTerm) {
+  } else if (kind === HooksKind.FixedTerm) {
     return FixedTermHooks.fromSubgraphData(
       chainId,
       provider,
@@ -248,7 +251,7 @@ export function hooksInstanceFromSubgraph(
       signerAddress,
       isRegisteredBorrower
     );
-  } else if (data.kind === SubgraphHooksKind.PeriodicTerm) {
+  } else if (kind === HooksKind.PeriodicTerm) {
     return PeriodicTermHooks.fromSubgraphData(
       chainId,
       provider,

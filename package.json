@@ -9,6 +9,7 @@
   "types": "dist/index.d.ts",
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/schema-ast": "^4.0.0",
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-operations": "^4.0.1",
     "@graphql-codegen/typescript-react-apollo": "^4.1.0",
@@ -54,7 +55,8 @@
     "codegen": "yarn codegen:gql && yarn codegen:artifacts && yarn codegen:abi",
     "codegen:abi": "node scripts/generate-viem-abis.js",
     "codegen:artifacts": "hardhat compile",
-    "codegen:gql": "graphql-codegen --config codegen.js && eslint src/gql/ --ext=ts --fix",
+    "codegen:gql": "graphql-codegen --config codegen.js",
+    "codegen:schema": "graphql-codegen --config codegen.schema.js && prettier --write gql/v2.5-schema.graphql",
     "lint": "eslint src/ test/ --ext=ts",
     "lint:fix": "eslint src/ test/ --ext=ts --fix",
     "prepublishOnly": "yarn build",

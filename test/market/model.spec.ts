@@ -7,10 +7,14 @@ import { Market } from "../../src/market";
 import { Token, toRawAmount } from "../../src/token";
 import { HooksKind, MarketVersion } from "../../src/types";
 import {
+  SubgraphFactoryLifecycle,
+  SubgraphHookedMarketAbi,
+  SubgraphHooksFactoryDataFragment,
   SubgraphHooksKind,
-  SubgraphMarketType,
   SubgraphMarketDataWithEventsFragment,
+  SubgraphMarketKind,
   SubgraphMarketListDataFragment,
+  SubgraphMarketOriginKind,
   SubgraphMarketVersion
 } from "../../src/gql/graphql";
 import {
@@ -32,6 +36,32 @@ const provider = new providers.JsonRpcProvider();
 const makeAddress = (suffix: number): string => {
   return `0x${suffix.toString(16).padStart(40, "0")}`;
 };
+
+const makeSubgraphHooksFactory = (
+  address = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving")
+): SubgraphHooksFactoryDataFragment => ({
+  __typename: "HooksFactory",
+  id: address,
+  address,
+  label: "revolving-v2.5",
+  sentinel: makeAddress(72),
+  marketKind: SubgraphMarketKind.REVOLVING,
+  generation: "v2.5",
+  abiFamily: "hooks-shared-current",
+  hookedMarketAbi: SubgraphHookedMarketAbi.BASE,
+  configuredStartBlock: "1",
+  indexed: true,
+  deploymentTarget: true,
+  lifecycle: SubgraphFactoryLifecycle.ACTIVE,
+  configured: true,
+  isRegistered: true,
+  registrationUpdatedAtBlock: "1",
+  registrationUpdatedAtTimestamp: "1700000000",
+  archController: {
+    __typename: "ArchController",
+    id: getDeploymentAddress(SupportedChainId.Sepolia, "WildcatArchController")
+  }
+});
 
 type FakeRpcCall = {
   to?: string;
@@ -311,7 +341,17 @@ const makeSubgraphMarketData = (): Omit<
 > => ({
   __typename: "Market",
   id: makeAddress(70),
+  address: makeAddress(70),
   version: SubgraphMarketVersion.V2,
+  marketKind: SubgraphMarketKind.REVOLVING,
+  originKind: SubgraphMarketOriginKind.HOOKS,
+  generation: "v2.5",
+  abiFamily: "market-v2.5",
+  archController: {
+    __typename: "ArchController",
+    id: getDeploymentAddress(SupportedChainId.Sepolia, "WildcatArchController")
+  },
+  hooksFactory: makeSubgraphHooksFactory(),
   isRegistered: true,
   isClosed: false,
   borrower: makeAddress(71),
@@ -350,6 +390,11 @@ const makeSubgraphMarketData = (): Omit<
   totalProtocolFeesAccrued: "5",
   totalDeposited: "1000",
   eventIndex: 1,
+  createdAtBlock: "1",
+  createdAtTimestamp: "1700000000",
+  createdAtTransaction: makeAddress(78),
+  createdAtLogIndex: "0",
+  snapshot: null,
   controller: null,
   _asset: {
     __typename: "Token",
@@ -395,23 +440,25 @@ const makeSubgraphMarketData = (): Omit<
   hooks: {
     __typename: "HooksInstance",
     id: makeAddress(76),
+    address: makeAddress(76),
     borrower: makeAddress(71),
     name: "OpenTermHooksInstance",
     kind: SubgraphHooksKind.OpenTerm,
+    marketKind: SubgraphMarketKind.REVOLVING,
+    generation: "v2.5",
+    abiFamily: "hooks-shared-current",
     numMarkets: 1,
     eventIndex: 1,
     hooksTemplate: {
       __typename: "HooksTemplate",
       id: makeAddress(77),
-      name: "OpenTermHooks",
-      feeRecipient: makeAddress(73),
-      protocolFeeBips: 25,
-      originationFeeAmount: "0",
-      disabled: false,
-      originationFeeAsset: null
+      address: makeAddress(77),
+      kind: SubgraphHooksKind.OpenTerm,
+      version: "v2.5",
+      abiFamily: "hooks-shared-current"
     },
-    factoryHooksTemplate: {
-      __typename: "FactoryHooksTemplate",
+    templateRegistration: {
+      __typename: "HooksTemplateRegistration",
       id: `${getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving")}-${makeAddress(
         77
       )}`,
@@ -420,15 +467,27 @@ const makeSubgraphMarketData = (): Omit<
       feeRecipient: makeAddress(73),
       protocolFeeBips: 25,
       originationFeeAmount: "0",
-      disabled: false,
+      isEnabled: true,
       originationFeeAsset: null,
-      hooksFactory: {
-        __typename: "HooksFactory",
-        id: getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving"),
-        marketType: SubgraphMarketType.Revolving,
-        isRegistered: true
-      }
+      createdAtBlock: "1",
+      createdAtTimestamp: "1700000000",
+      createdAtTransaction: makeAddress(78),
+      createdAtLogIndex: "0",
+      updatedAtBlock: "1",
+      updatedAtTimestamp: "1700000000",
+      updatedAtTransaction: makeAddress(78),
+      updatedAtLogIndex: "0",
+      hooksTemplate: {
+        __typename: "HooksTemplate",
+        id: makeAddress(77),
+        address: makeAddress(77),
+        kind: SubgraphHooksKind.OpenTerm,
+        version: "v2.5",
+        abiFamily: "hooks-shared-current"
+      },
+      hooksFactory: makeSubgraphHooksFactory()
     },
+    hooksFactory: makeSubgraphHooksFactory(),
     providers: []
   },
   deployedEvent: {
@@ -459,7 +518,7 @@ const makeSubgraphMarketListData = (): SubgraphMarketListDataFragment => {
       ? {
           __typename: "HooksInstance",
           id: hooks.id,
-          factoryHooksTemplate: hooks.factoryHooksTemplate
+          templateRegistration: hooks.templateRegistration
         }
       : null
   };
@@ -888,11 +947,17 @@ describe("Market model routing metadata", () => {
 
   it("uses indexed provenance for historical factories absent from SDK targets", () => {
     const data = makeSubgraphMarketData();
-    data.hooks!.factoryHooksTemplate.hooksFactory.id = "0xF4564015E524cf5629828E61F45ed339D998D85f";
+    const historicalFactory = "0xF4564015E524cf5629828E61F45ed339D998D85f";
+    data.hooks!.templateRegistration.hooksFactory.id = historicalFactory;
+    data.hooks!.templateRegistration.hooksFactory.address = historicalFactory;
+    data.hooks!.hooksFactory.id = historicalFactory;
+    data.hooks!.hooksFactory.address = historicalFactory;
+    data.hooksFactory!.id = historicalFactory;
+    data.hooksFactory!.address = historicalFactory;
 
     const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
 
-    expect(market.hooksFactory).to.equal(data.hooks!.factoryHooksTemplate.hooksFactory.id);
+    expect(market.hooksFactory).to.equal(historicalFactory);
     expect(market.marketKind).to.equal("revolving");
   });
 
@@ -910,15 +975,15 @@ describe("Market model routing metadata", () => {
     expect(market.depositRecords).to.deep.equal([]);
   });
 
-  it("hydrates subgraph list markets with placeholder factory template names", () => {
+  it("dispatches subgraph hook templates by kind rather than display name", () => {
     const data = makeSubgraphMarketListData();
-    data.hooks!.factoryHooksTemplate.name = "";
+    data.hooks!.templateRegistration.name = "";
 
     const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
 
     expect(market.marketKind).to.equal("revolving");
     expect(market.hooksConfig?.kind).to.equal(HooksKind.OpenTerm);
-    expect(market.hooksConfig?.template?.name).to.equal("OpenTermHooks");
+    expect(market.hooksConfig?.template?.name).to.equal("");
   });
 });
 
