@@ -9,8 +9,10 @@ import {
   parseHookedMarketAbiKind,
   parseHooksKind,
   parseMarketKind,
+  parseMarketOriginKind,
   parseProtocolMarketVersion,
-  parsePricingMode
+  parsePricingMode,
+  parseSnapshotSource
 } from "../../src/domain";
 
 describe("SDK domain normalization", () => {
@@ -44,5 +46,10 @@ describe("SDK domain normalization", () => {
     expect(parsePricingMode("SYNTHETIC_TESTNET")).to.equal("synthetic-testnet");
     expect(parsePricingMode("NONE")).to.equal("none");
     expect(parsePricingMode("future-pricing")).to.equal("unknown");
+    expect(parseMarketOriginKind("HOOKS")).to.equal("hooks");
+    expect(parseMarketOriginKind("future-origin")).to.equal("unknown");
+    expect(parseSnapshotSource("EVENT_PROJECTION")).to.equal("event-projection");
+    expect(parseSnapshotSource("EVENT_AND_CONTRACT_CALL")).to.equal("event-and-contract-call");
+    expect(parseSnapshotSource("future-source")).to.equal("unknown");
   });
 });

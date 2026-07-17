@@ -102,3 +102,6 @@ export async function getLenderAccountsForAllMarketsList(
   });
   return buildMarketAccounts(chainId, signerOrProvider, lender, _markets, controllerAuthorizations);
 }
+
+/** Indexed lender-account discovery; call `hydrateMarketAccountsLive` before actions. */
+export const getIndexedLenderAccountsForMarkets = getLenderAccountsForAllMarkets;

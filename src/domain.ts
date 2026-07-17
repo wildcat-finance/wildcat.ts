@@ -54,6 +54,8 @@ export enum HooksKind {
 export type FactoryLifecycle = "active" | "historical" | "retired" | "unknown";
 export type HookedMarketAbiKind = "base" | "force-buyback" | "unknown";
 export type PricingMode = "chainlink" | "synthetic-testnet" | "none" | "unknown";
+export type SnapshotSource = "event-projection" | "event-and-contract-call" | "unknown";
+export type ReadStateSource = "indexed" | "live";
 
 export const parseHooksKind = (value: string | null | undefined): HooksKind => {
   switch (normalizeEnumValue(value)) {
@@ -108,6 +110,30 @@ export const parsePricingMode = (value: string | null | undefined): PricingMode 
   }
 };
 
+export const parseSnapshotSource = (value: string | null | undefined): SnapshotSource => {
+  switch (normalizeEnumValue(value)) {
+    case "eventprojection":
+      return "event-projection";
+    case "eventandcontractcall":
+      return "event-and-contract-call";
+    default:
+      return "unknown";
+  }
+};
+
+export const parseMarketOriginKind = (
+  value: string | null | undefined
+): MarketOriginKind | "unknown" => {
+  switch (normalizeEnumValue(value)) {
+    case "controller":
+      return "controller";
+    case "hooks":
+      return "hooks";
+    default:
+      return "unknown";
+  }
+};
+
 export type IndexedBlock = {
   blockNumber: bigint;
   blockTimestamp: bigint;
@@ -119,7 +145,7 @@ export type IndexedAt = IndexedBlock & {
 };
 
 export type IndexedSnapshotMetadata = IndexedAt & {
-  source: "event-projection" | "event-and-contract-call";
+  source: SnapshotSource;
 };
 
 export type IndexerDeploymentMetadata = {
@@ -185,7 +211,7 @@ export type MarketProvenance = {
   address: string;
   version: ProtocolMarketVersion;
   marketKind: MarketKind;
-  originKind: MarketOriginKind;
+  originKind: MarketOriginKind | "unknown";
   generation: string;
   abiFamily: string;
   archController: string;
@@ -194,4 +220,67 @@ export type MarketProvenance = {
   controller?: string;
   hooksFactory?: HooksFactoryMetadata;
   createdAt: IndexedAt;
+};
+
+export type IndexedMarketSnapshot = IndexedSnapshotMetadata & {
+  isClosed: boolean;
+  maxTotalSupply: bigint;
+  protocolFeeBips: number;
+  pendingProtocolFees: bigint;
+  normalizedUnclaimedWithdrawals: bigint;
+  scaledTotalSupply: bigint;
+  scaledPendingWithdrawals: bigint;
+  pendingWithdrawalExpiry: bigint;
+  isDelinquent: boolean;
+  isIncurringPenalties: boolean;
+  timeDelinquent: number;
+  annualInterestBips: number;
+  commitmentFeeBips?: bigint;
+  reserveRatioBips: number;
+  drawnAmount?: bigint;
+  scaleFactor: bigint;
+  lastInterestAccruedTimestamp: number;
+  lastInterestAccruedBlockNumber: number;
+  originalAnnualInterestBips: number;
+  originalReserveRatioBips: number;
+  temporaryReserveRatioExpiry: number;
+  temporaryReserveRatioActive: boolean;
+};
+
+export type IndexedLenderRole =
+  | "null"
+  | "blocked"
+  | "withdraw-only"
+  | "deposit-and-withdraw"
+  | "unknown";
+
+export type IndexedLenderAccountSnapshot = IndexedSnapshotMetadata & {
+  scaledBalance: bigint;
+  role: IndexedLenderRole;
+  totalDeposited: bigint;
+  lastScaleFactor: bigint;
+  lastUpdatedTimestamp: number;
+  lastUpdatedBlockNumber: number;
+  totalInterestEarned: bigint;
+  numPendingWithdrawalBatches: number;
+};
+
+export type IndexedCollateralSnapshot = IndexedSnapshotMetadata & {
+  totalDeposited: bigint;
+  totalReclaimed: bigint;
+  totalLiquidated: bigint;
+  totalShares: bigint;
+  availableCollateral: bigint;
+  lastFullLiquidationIndex: number;
+  depositIndex: number;
+  liquidationCooldown?: number;
+  nextLiquidationTrigger: number;
+  eventIndex: number;
+};
+
+export type IndexedMarketEvent = IndexedAt & {
+  id: string;
+  market: string;
+  sequence: number;
+  kind: string;
 };

@@ -31,7 +31,9 @@ import {
   PartialTransaction,
   MarketVersion,
   MarketKind,
-  parseMarketKind,
+  IndexedMarketSnapshot,
+  MarketProvenance,
+  ReadStateSource,
   HooksKind,
   HooksConfig,
   OpenTermHooksConfig,
@@ -74,6 +76,10 @@ import { hooksTemplateFromSubgraph } from "./access";
 import { wildcatMarketAbi } from "./abi";
 import { submitPreparedTransaction } from "./internal/viem-write";
 import { getEthersSignerAddress } from "./internal/ethers-signer";
+import {
+  normalizeSubgraphMarketProvenance,
+  normalizeSubgraphMarketSnapshot
+} from "./gql/normalizers";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -240,6 +246,9 @@ export type MarketArgs = {
   totalDeposited?: TokenAmount;
   commitmentFeeBips?: number;
   drawnAmount?: TokenAmount;
+  provenance?: MarketProvenance;
+  indexedSnapshot?: IndexedMarketSnapshot;
+  stateSource?: ReadStateSource;
   deployedEvent?: SubgraphMarketDeployedEventFragment;
   eventIndex?: number;
   signerAddress?: string;
@@ -259,6 +268,7 @@ export interface Market
   name: string;
   symbol: string;
   decimals: number;
+  stateSource: ReadStateSource;
 }
 
 export class Market extends ContractWrapper {
@@ -294,7 +304,7 @@ export class Market extends ContractWrapper {
         }
       }
     });
-    Object.assign(this, args);
+    Object.assign(this, { ...args, stateSource: args.stateSource ?? "live" });
     this.depositRecords = (args.depositRecords ?? []).map((log) =>
       parseMarketRecord(this.underlyingToken, log)
     );
@@ -1012,11 +1022,16 @@ export class Market extends ContractWrapper {
     } else {
       this.commitmentFeeBips = undefined;
       this.drawnAmount = undefined;
-      this.marketKind =
+      const nextMarketKind =
         "hooksFactory" in baseData
           ? getConfiguredMarketKindForHooksFactory(this.chainId, baseData.hooksFactory)
           : "standard";
+      this.marketKind =
+        nextMarketKind === "unknown" && this.provenance
+          ? this.provenance.marketKind
+          : nextMarketKind;
     }
+    this.stateSource = "live";
   }
 
   updateWithLiveData(data: MarketLiveDataV2_5StructOutput): void {
@@ -1080,6 +1095,7 @@ export class Market extends ContractWrapper {
       data.commitmentFeeBips.isPresent,
       data.drawnAmount.isPresent
     );
+    this.stateSource = "live";
   }
 
   /* -------------------------------------------------------------------------- */
@@ -1092,10 +1108,13 @@ export class Market extends ContractWrapper {
     data: SubgraphMarketHydrationData,
     signerAddress?: string
   ): Market {
+    const provenance = normalizeSubgraphMarketProvenance(data);
+    const indexedSnapshot = normalizeSubgraphMarketSnapshot(data.snapshot);
+    const indexedState = data.snapshot ?? data;
     const underlyingToken = Token.fromSubgraphToken(chainId, data._asset, provider);
     const marketToken = new Token(
       chainId,
-      data.id,
+      provenance.address,
       data.name,
       data.symbol,
       data.decimals,
@@ -1104,16 +1123,16 @@ export class Market extends ContractWrapper {
     );
     const hasTotals = hasSubgraphMarketTotals(data);
     const hasRecords = hasSubgraphMarketRecords(data);
-    const scaledTotalSupply = toRawAmount(data.scaledTotalSupply);
-    const scaleFactor = toRawAmount(data.scaleFactor);
-    const scaledWithdrawals = toRawAmount(data.scaledPendingWithdrawals);
+    const scaledTotalSupply = toRawAmount(indexedState.scaledTotalSupply);
+    const scaleFactor = toRawAmount(indexedState.scaleFactor);
+    const scaledWithdrawals = toRawAmount(indexedState.scaledPendingWithdrawals);
     const scaledRequiredReserves =
-      bipMulBigint(scaledTotalSupply - scaledWithdrawals, data.reserveRatioBips) +
+      bipMulBigint(scaledTotalSupply - scaledWithdrawals, indexedState.reserveRatioBips) +
       scaledWithdrawals;
     const coverageLiquidity =
       rayMulBigint(scaledRequiredReserves, scaleFactor) +
-      toRawAmount(data.pendingProtocolFees) +
-      toRawAmount(data.normalizedUnclaimedWithdrawals);
+      toRawAmount(indexedState.pendingProtocolFees) +
+      toRawAmount(indexedState.normalizedUnclaimedWithdrawals);
 
     let hooksConfig: HooksConfig | undefined;
     let hooksFactory: string | undefined;
@@ -1159,6 +1178,10 @@ export class Market extends ContractWrapper {
         data.hooks.templateRegistration
       );
       hooksFactory = template.hooksFactory;
+      assert(
+        provenance.hooksFactory?.address.toLowerCase() === hooksFactory.toLowerCase(),
+        `Market hooks factory does not match its template registration`
+      );
       const minimumDeposit = _minimumDeposit
         ? underlyingToken.getAmount(_minimumDeposit)
         : undefined;
@@ -1212,7 +1235,7 @@ export class Market extends ContractWrapper {
         };
       }
     }
-    const marketKind: MarketKind = parseMarketKind(data.marketKind);
+    const marketKind: MarketKind = provenance.marketKind;
     return new Market({
       chainId,
       provider,
@@ -1225,37 +1248,39 @@ export class Market extends ContractWrapper {
       borrower: data.borrower,
       controller: data.controller?.id,
       feeRecipient: data.feeRecipient,
-      protocolFeeBips: data.protocolFeeBips,
+      protocolFeeBips: indexedState.protocolFeeBips,
       delinquencyFeeBips: data.delinquencyFeeBips,
       delinquencyGracePeriod: data.delinquencyGracePeriod,
       withdrawalBatchDuration: data.withdrawalBatchDuration,
-      reserveRatioBips: data.reserveRatioBips,
-      annualInterestBips: data.annualInterestBips,
-      temporaryReserveRatio: data.temporaryReserveRatioActive,
-      originalAnnualInterestBips: data.originalAnnualInterestBips,
-      originalReserveRatioBips: data.originalReserveRatioBips,
-      temporaryReserveRatioExpiry: data.temporaryReserveRatioExpiry,
-      isClosed: data.isClosed,
+      reserveRatioBips: indexedState.reserveRatioBips,
+      annualInterestBips: indexedState.annualInterestBips,
+      temporaryReserveRatio: indexedState.temporaryReserveRatioActive,
+      originalAnnualInterestBips: indexedState.originalAnnualInterestBips,
+      originalReserveRatioBips: indexedState.originalReserveRatioBips,
+      temporaryReserveRatioExpiry: indexedState.temporaryReserveRatioExpiry,
+      isClosed: indexedState.isClosed,
       scaleFactor,
       totalSupply: marketToken.getAmount(rayMulBigint(scaledTotalSupply, scaleFactor)),
-      maxTotalSupply: marketToken.getAmount(data.maxTotalSupply),
+      maxTotalSupply: marketToken.getAmount(indexedState.maxTotalSupply),
       scaledTotalSupply: scaledTotalSupply,
       totalAssets: underlyingToken.getAmount(0), // @todo maybe update subgraph to query this per update?
-      lastAccruedProtocolFees: underlyingToken.getAmount(data.pendingProtocolFees),
+      lastAccruedProtocolFees: underlyingToken.getAmount(indexedState.pendingProtocolFees),
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
-        data.normalizedUnclaimedWithdrawals
+        indexedState.normalizedUnclaimedWithdrawals
       ),
       scaledPendingWithdrawals: scaledWithdrawals,
-      pendingWithdrawalExpiry: +data.pendingWithdrawalExpiry,
-      isDelinquent: data.isDelinquent,
-      timeDelinquent: data.timeDelinquent,
-      lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp,
+      pendingWithdrawalExpiry: +indexedState.pendingWithdrawalExpiry,
+      isDelinquent: indexedState.isDelinquent,
+      timeDelinquent: indexedState.timeDelinquent,
+      lastInterestAccruedTimestamp: indexedState.lastInterestAccruedTimestamp,
       unpaidWithdrawalBatchExpiries: [] /* data.unpaidWithdrawalBatchExpiries */,
       coverageLiquidity: underlyingToken.getAmount(coverageLiquidity),
       commitmentFeeBips:
-        data.commitmentFeeBips != null ? Number(data.commitmentFeeBips) : undefined,
+        indexedState.commitmentFeeBips != null ? Number(indexedState.commitmentFeeBips) : undefined,
       drawnAmount:
-        data.drawnAmount != null ? underlyingToken.getAmount(data.drawnAmount) : undefined,
+        indexedState.drawnAmount != null
+          ? underlyingToken.getAmount(indexedState.drawnAmount)
+          : undefined,
       totalBorrowed: underlyingToken.getAmount(hasTotals ? data.totalBorrowed : 0),
       totalRepaid: underlyingToken.getAmount(hasTotals ? data.totalRepaid : 0),
       totalBaseInterestAccrued: underlyingToken.getAmount(
@@ -1275,7 +1300,10 @@ export class Market extends ContractWrapper {
       deployedEvent: data.deployedEvent,
       eventIndex: data.eventIndex,
       numCollateralContracts: data.numCollateralContracts,
-      signerAddress
+      signerAddress,
+      provenance,
+      indexedSnapshot,
+      stateSource: "indexed"
     });
   }
 
@@ -1665,6 +1693,37 @@ export class Market extends ContractWrapper {
     refreshedMarkets.forEach((market, i) => {
       Object.assign(markets[i], market);
     });
+    return markets;
+  }
+
+  /**
+   * Mutate an indexed or previously hydrated market list with current lens/RPC state.
+   * Historical V1 markets use the legacy batch lens; V2 markets use the focused
+   * V2.5 live surface when available.
+   */
+  static async hydrateMarketsLive(
+    chainId: SupportedChainId,
+    markets: Market[],
+    provider: SignerOrProvider
+  ): Promise<Market[]> {
+    const v1Markets = markets.filter(({ version }) => version === MarketVersion.V1);
+    const v2Markets = markets.filter(({ version }) => version === MarketVersion.V2);
+
+    await Promise.all([
+      v1Markets.length > 0
+        ? getLegacyMarketsData(
+            chainId,
+            provider,
+            v1Markets.map(({ address }) => address)
+          ).then((updates) =>
+            updates.forEach((update, index) => v1Markets[index].updateWith(update))
+          )
+        : Promise.resolve(),
+      v2Markets.length > 0
+        ? Market.refreshMarketsV2LiveData(chainId, v2Markets, provider)
+        : Promise.resolve()
+    ]);
+
     return markets;
   }
 

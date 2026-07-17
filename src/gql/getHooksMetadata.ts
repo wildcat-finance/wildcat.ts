@@ -3,7 +3,7 @@ import { HooksFactoryMetadata, HooksTemplateRegistrationMetadata } from "../doma
 import {
   normalizeSubgraphHooksFactoryData,
   normalizeSubgraphHooksTemplateRegistrationData
-} from "../access/subgraph-template";
+} from "./normalizers";
 import {
   GetHooksFactoriesDocument,
   GetHooksTemplateRegistrationsDocument,

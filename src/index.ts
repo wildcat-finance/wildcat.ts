@@ -31,6 +31,7 @@ export const {
   getAllMarkets,
   getMarketsCount,
   getPaginatedMarkets,
+  hydrateMarketsLive,
   refreshMarketsV2LiveData
 } = Market;
 
@@ -44,6 +45,7 @@ export const {
   getMarketAccountsForLender,
   getAllMarketAccountsForLender,
   getPaginatedMarketAccounts,
+  hydrateMarketAccountsLive,
   refreshMarketAccountsV2LiveData
 } = MarketAccount;
 

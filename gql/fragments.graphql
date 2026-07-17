@@ -299,6 +299,19 @@ fragment MarketDeployedEvent on MarketDeployed {
   transactionHash
 }
 
+fragment MarketEventData on MarketEvent {
+  id
+  sequence
+  kind
+  blockNumber
+  blockTimestamp
+  transactionHash
+  logIndex
+  market {
+    address
+  }
+}
+
 fragment MarketDataWithEvents on Market {
   ...MarketData
   ...MarketRecords @skip(if: $shouldSkipRecords)
@@ -324,6 +337,7 @@ fragment MarketListData on Market {
     id
   }
   borrower
+  sentinel
   feeRecipient
   name
   symbol

@@ -22,6 +22,8 @@ Status values:
       frozen subgraph.
 - [x] Factory/template registration identity and live hook reads use explicit
       factory scope.
+- [x] Indexed market, lender-account, and collateral state carries explicit
+      freshness and remains distinguishable from live lens/RPC overlays.
 - [!] Final V2.5 Sepolia addresses and start blocks are pending deployment.
 - [!] A hosted V2.5 Graph API endpoint URL is pending subgraph deployment.
 
@@ -93,22 +95,22 @@ Status values:
 
 ## Phase 4 - Market discovery, snapshots, and live state
 
-- [ ] Normalize immutable market identity/provenance.
-- [ ] Normalize indexed market snapshot with freshness.
-- [ ] Normalize lender-account snapshot with freshness.
-- [ ] Normalize collateral snapshot and depositor address.
-- [ ] Separate indexed list APIs from named live-hydration APIs.
-- [ ] Batch focused V2.5 lens overlays.
-- [ ] Ensure live revolving recognition does not require historical allowlists.
-- [ ] Preserve typed event payload APIs.
-- [ ] Use normalized event ordering/pagination where appropriate.
-- [ ] Add V1 historical market fixture.
-- [ ] Add historical standard V2 fixture.
-- [ ] Add V2.5 standard fixture.
-- [ ] Add V2.5 revolving fixture.
-- [ ] Add fixed-block parity checks.
-- [ ] Run Phase 4 checks.
-- [ ] Commit Phase 4.
+- [x] Normalize immutable market identity/provenance.
+- [x] Normalize indexed market snapshot with freshness.
+- [x] Normalize lender-account snapshot with freshness.
+- [x] Normalize collateral snapshot and depositor address.
+- [x] Separate indexed list APIs from named live-hydration APIs.
+- [x] Batch focused V2.5 lens overlays.
+- [x] Ensure live revolving recognition does not require historical allowlists.
+- [x] Preserve typed event payload APIs.
+- [x] Use normalized event ordering/pagination where appropriate.
+- [x] Add V1 historical market fixture.
+- [x] Add historical standard V2 fixture.
+- [x] Add V2.5 standard fixture.
+- [x] Add V2.5 revolving fixture.
+- [x] Add fixed-block parity checks.
+- [x] Run Phase 4 checks.
+- [x] Commit Phase 4.
 
 ## Phase 5 - Analytics read models
 
@@ -193,6 +195,13 @@ Status values:
 | 2026-07-17 | SDK Phase 3 | `yarn mocha` | Pass | 133 passing, including fail-closed deployment authority regressions |
 | 2026-07-17 | SDK Phase 3 | `env -u WILDCAT_SUBGRAPH_SCHEMA yarn codegen:gql` | Pass | Paginated factory and registration queries reproduce generated transport types |
 | 2026-07-17 | SDK Phase 3 | `git diff --check` | Pass | No whitespace errors |
+| 2026-07-17 | SDK Phase 4 fixtures | Fixed-block V1, historical V2, V2.5 standard, and V2.5 revolving parity | Pass | Provenance, factory lifecycle, optional revolving state, and snapshot freshness remain distinct |
+| 2026-07-17 | SDK Phase 4 targeted | Indexed snapshot, mixed live hydration, filter, and event-cursor tests | Pass | Market, lender, collateral, pagination, and no-allowlist behavior covered |
+| 2026-07-17 | SDK Phase 4 | `yarn lint` | Pass | Source and tests are clean |
+| 2026-07-17 | SDK Phase 4 | `yarn build` | Pass | TypeScript production build with indexed/live public APIs |
+| 2026-07-17 | SDK Phase 4 | `yarn mocha` | Pass | 141 passing |
+| 2026-07-17 | SDK Phase 4 | `env -u WILDCAT_SUBGRAPH_SCHEMA yarn codegen:gql` | Pass | Market provenance, snapshot, and event cursor operations reproduce transport types |
+| 2026-07-17 | SDK Phase 4 | `git diff --check` | Pass | No whitespace errors |
 
 ## Decision ledger
 
@@ -211,6 +220,10 @@ Status values:
 | 2026-07-17 | Key hook behavior by indexed factory/template registration kind | Template addresses are stored initcode blobs rather than callable contracts, and mutable lens display names are not type identity |
 | 2026-07-17 | Treat lens template state and ArchController registration as live authority | Indexed enablement and factory registration can lag; previews fail closed unless indexed provenance and positive live registration are both present |
 | 2026-07-17 | Page factory and registration metadata explicitly | Graph's default entity limit must not truncate historical factories or factory-scoped registrations |
+| 2026-07-17 | Retain immutable indexed provenance after live hydration | Mutable class fields can be refreshed without losing the factory, generation, ABI family, origin, and creation facts that explain a historical market |
+| 2026-07-17 | Mark mutable models as `indexed` or `live` | Callers can distinguish freshness-stamped projections from lens/RPC overlays even when both use the existing `Market` and `MarketAccount` behavior classes |
+| 2026-07-17 | Preserve indexed kind when an older V2 lens cannot classify a historical factory | A missing deployment allowlist entry is not evidence that indexed standard/revolving provenance is wrong; unified V2.5 optional fields remain live authority when present |
+| 2026-07-17 | Add a sequence-cursor market event API without replacing typed event APIs | The normalized subgraph chronology supplies stable cross-event ordering while existing payload-specific records retain their richer fields |
 
 ## Open inputs and blockers
 
@@ -243,8 +256,8 @@ Status values:
 | 0 - Plan | `1c6e231` | Documentation and clean worktree check | Complete |
 | 1 - Domain/config | `dde64f7` | Domain/config unit tests, lint, build, 113-test suite | Complete |
 | 2 - GraphQL/codegen | `6e56b3b` | Schema validation, endpoint-gate integration, lint, build, 124-test suite | Complete |
-| 3 - Factories/hooks | This commit | Multi-factory fixtures, lint, build, 133-test suite | Complete |
-| 4 - Markets/live | Pending | Historical fixtures, fixed-block parity, lint, build, mocha | Not started |
+| 3 - Factories/hooks | `aff7c32` | Multi-factory fixtures, lint, build, 133-test suite | Complete |
+| 4 - Markets/live | This commit | Historical fixtures, fixed-block parity, lint, build, 141-test suite | Complete |
 | 5 - Analytics | Pending | Analytics fixtures, lint, build, mocha | Not started |
 | 6 - Deployment | Pending | Artifact checks, previews, deployed endpoint checks | Blocked on deployment |
 | 7 - App/release | Pending | App tests, lint, build, Sepolia smoke | Not started |
@@ -306,3 +319,18 @@ Status values:
   market kind and required matching indexed deployment metadata plus positive
   live factory registration. Stale indexed enablement cannot override live lens
   state, while missing live or indexed authority fails closed.
+- Centralized Graph transport normalization for factory registrations, market
+  provenance, market snapshots, lender snapshots, collateral snapshots, and
+  normalized market events.
+- Added immutable provenance and freshness-stamped snapshots to SDK market,
+  lender-account, and collateral models. Mutable fields now explicitly report
+  whether their latest source is indexed or live.
+- Added SDK-owned indexed-market filters plus named mixed-generation live
+  hydration for markets and lender accounts. V2.5 uses focused batch lens reads;
+  historical V1 uses the legacy batch lens.
+- Preserved indexed historical market kind when older V2 lens data cannot
+  classify an unconfigured factory, while unified live optional fields identify
+  revolving markets without address allowlists.
+- Added normalized market-event sequence pagination alongside the existing typed
+  event payload APIs, plus deterministic V1, historical V2, V2.5 standard, and
+  V2.5 revolving fixed-block fixtures.

@@ -34,3 +34,6 @@ export async function getMarket(
     ? Market.fromSubgraphMarketData(chainId, signerOrProvider, marketData)
     : undefined;
 }
+
+/** Indexed market detail; call `market.update()` or `hydrateMarketsLive` for current state. */
+export const getIndexedMarket = getMarket;

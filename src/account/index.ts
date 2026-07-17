@@ -43,8 +43,10 @@ import {
 import {
   HooksCredential,
   HooksKind,
+  IndexedLenderAccountSnapshot,
   MarketVersion,
   PartialTransaction,
+  ReadStateSource,
   SignerOrProvider,
   SubmittedTransactionResult,
   TransactionHash
@@ -89,6 +91,7 @@ import {
   submitPreparedTransactionAndWait
 } from "../internal/viem-write";
 import { parseEventLogs, type TransactionReceipt } from "viem";
+import { normalizeSubgraphLenderAccountSnapshot } from "../gql/normalizers";
 export * from "./validation";
 
 export enum LenderRole {
@@ -124,6 +127,16 @@ const zeroLenderBalances = (
   underlyingApproval: 0n
 });
 
+const zeroLegacyLenderBalances = (
+  info: MarketLenderStatusStructOutput
+): MarketLenderStatusStructOutput => ({
+  ...info,
+  scaledBalance: 0n,
+  normalizedBalance: 0n,
+  underlyingBalance: 0n,
+  underlyingApproval: 0n
+});
+
 export type MarketAccountArgs = {
   account: string;
   /** For V1 markets - whether lender has been manually approved on controller  */
@@ -147,10 +160,14 @@ export type MarketAccountArgs = {
   numPendingWithdrawalBatches?: number;
   /** Whether lender had a LenderAccount entry in the subgraph */
   hadSubgraphEntry?: boolean;
+  indexedSnapshot?: IndexedLenderAccountSnapshot;
+  stateSource?: ReadStateSource;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface MarketAccount extends Omit<MarketAccountArgs, "deposits" | "hadSubgraphEntry"> {}
+export interface MarketAccount extends Omit<MarketAccountArgs, "deposits" | "hadSubgraphEntry"> {
+  stateSource: ReadStateSource;
+}
 
 /**
  * Class to provide information about a market user's account
@@ -167,7 +184,7 @@ export class MarketAccount {
   protected hadSubgraphEntry?: boolean;
 
   constructor(args: MarketAccountArgs) {
-    Object.assign(this, args);
+    Object.assign(this, { ...args, stateSource: args.stateSource ?? args.market.stateSource });
     this.depositRecords = (args.deposits ?? []).map((log) =>
       parseMarketRecord(this.market.underlyingToken, log)
     );
@@ -975,6 +992,7 @@ export class MarketAccount {
     this.underlyingBalance = this.market.underlyingToken.getAmount(info.underlyingBalance);
     this.underlyingApproval = toRawAmount(info.underlyingApproval);
     this.processInterestAccrued();
+    this.stateSource = "live";
   }
 
   private calculateInterestEarned(): bigint {
@@ -1007,26 +1025,30 @@ export class MarketAccount {
     market: Market,
     data: SubgraphAccountDataForLenderViewFragment | SubgraphAccountDataForLenderListViewFragment
   ): MarketAccount {
-    const scaledBalance = toRawAmount(data.scaledBalance);
+    const indexedSnapshot = normalizeSubgraphLenderAccountSnapshot(data.snapshot);
+    const indexedState = data.snapshot ?? data;
+    const scaledBalance = toRawAmount(indexedState.scaledBalance);
 
     const account = new MarketAccount({
       account: data.address,
       isAuthorizedOnController: data.controllerAuthorization?.authorized ?? false,
-      role: parseSubgraphLenderStatus(data.role),
+      role: parseSubgraphLenderStatus(indexedState.role),
       scaledMarketBalance: scaledBalance,
       marketBalance: market.marketToken.getAmount(rayMulBigint(scaledBalance, market.scaleFactor)),
       underlyingBalance: market.underlyingToken.getAmount(0),
       underlyingApproval: 0n,
       market,
       deposits: "deposits" in data ? data.deposits : undefined,
-      totalDeposited: market.underlyingToken.getAmount(data.totalDeposited),
-      lastScaleFactor: toRawAmount(data.lastScaleFactor),
-      lastUpdatedTimestamp: data.lastUpdatedTimestamp,
-      totalInterestEarned: market.underlyingToken.getAmount(data.totalInterestEarned),
-      numPendingWithdrawalBatches: data.numPendingWithdrawalBatches,
+      totalDeposited: market.underlyingToken.getAmount(indexedState.totalDeposited),
+      lastScaleFactor: toRawAmount(indexedState.lastScaleFactor),
+      lastUpdatedTimestamp: indexedState.lastUpdatedTimestamp,
+      totalInterestEarned: market.underlyingToken.getAmount(indexedState.totalInterestEarned),
+      numPendingWithdrawalBatches: indexedState.numPendingWithdrawalBatches,
       credential: data.hooksAccess ? parseSubgraphLenderHooksAccess(data.hooksAccess) : undefined,
       isKnownLender: !!data.knownLenderStatus?.id,
-      hadSubgraphEntry: true
+      hadSubgraphEntry: true,
+      indexedSnapshot,
+      stateSource: "indexed"
     });
     account.processInterestAccrued();
     return account;
@@ -1302,6 +1324,47 @@ export class MarketAccount {
         shouldZeroBalances ? zeroLenderBalances(lenderStatuses[i]) : lenderStatuses[i]
       );
     });
+    return marketAccounts;
+  }
+
+  /**
+   * Mutate indexed lender accounts with current market, authorization, balance,
+   * allowance, and credential state while preserving input order.
+   */
+  static async hydrateMarketAccountsLive(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider,
+    account: string | undefined,
+    marketAccounts: MarketAccount[]
+  ): Promise<MarketAccount[]> {
+    const lender = account ?? ZERO_ADDRESS;
+    const shouldZeroBalances = !account;
+    const v1Accounts = marketAccounts.filter(({ market }) => market.version === MarketVersion.V1);
+    const v2Accounts = marketAccounts.filter(({ market }) => market.version === MarketVersion.V2);
+
+    await Promise.all([
+      v1Accounts.length > 0
+        ? getLegacyMarketsDataWithLenderStatus(
+            chainId,
+            provider,
+            lender,
+            v1Accounts.map(({ market }) => market.address)
+          ).then((updates) =>
+            updates.forEach((update, index) => {
+              v1Accounts[index].market.updateWith(update.market);
+              v1Accounts[index].updateWith(
+                shouldZeroBalances
+                  ? zeroLegacyLenderBalances(update.lenderStatus)
+                  : update.lenderStatus
+              );
+            })
+          )
+        : Promise.resolve(),
+      v2Accounts.length > 0
+        ? MarketAccount.refreshMarketAccountsV2LiveData(chainId, provider, account, v2Accounts)
+        : Promise.resolve()
+    ]);
+
     return marketAccounts;
   }
 

@@ -9,6 +9,7 @@ export * from "./getHooksMetadata";
 export * from "./getLenderAccountForMarket";
 export * from "./getLenderAccountsForAllMarkets";
 export * from "./getMarket";
+export * from "./getMarketEventPage";
 export * from "./getMarketList";
 export * from "./getMarketChartsData";
 export * from "./getMarketRecords";

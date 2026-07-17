@@ -1,6 +1,13 @@
 import { TokenAmount, toRawAmount } from "../token";
 import type { CollateralContractDataStructOutput } from "../lens-types";
-import { ContractWrapper, PartialTransaction, SignerOrProvider, TransactionHash } from "../types";
+import {
+  ContractWrapper,
+  IndexedCollateralSnapshot,
+  PartialTransaction,
+  ReadStateSource,
+  SignerOrProvider,
+  TransactionHash
+} from "../types";
 import { Token } from "../token";
 import {
   getCollateralFactoryContract,
@@ -19,6 +26,7 @@ import { assert, prepareTransaction, toNumber } from "../utils";
 import { simpleMarketCollateralAbi, wildcatCollateralFactoryAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
 import { isEthersSigner } from "../internal/ethers-signer";
+import { normalizeSubgraphCollateralSnapshot } from "../gql/normalizers";
 
 export * from "./collateral-events";
 
@@ -41,10 +49,14 @@ export interface CollateralV1Args {
   totalReclaimed?: TokenAmount;
   totalLiquidated?: TokenAmount;
   market: Market;
+  indexedSnapshot?: IndexedCollateralSnapshot;
+  stateSource?: ReadStateSource;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface MarketCollateralV1 extends CollateralV1Args {}
+export interface MarketCollateralV1 extends CollateralV1Args {
+  stateSource: ReadStateSource;
+}
 
 export class MarketCollateralV1 extends ContractWrapper {
   public address: string;
@@ -52,7 +64,7 @@ export class MarketCollateralV1 extends ContractWrapper {
   constructor({ provider, address, ...args }: CollateralV1Args) {
     super(provider);
     this.address = address;
-    Object.assign(this, args);
+    Object.assign(this, { ...args, stateSource: args.stateSource ?? "live" });
   }
 
   get maxRepayment(): TokenAmount {
@@ -97,24 +109,28 @@ export class MarketCollateralV1 extends ContractWrapper {
     );
     const collateralAsset = Token.fromSubgraphToken(chainId, data.collateralAsset, provider);
     const underlyingAsset = Token.fromSubgraphToken(chainId, data.market.underlyingAsset, provider);
+    const indexedSnapshot = normalizeSubgraphCollateralSnapshot(data.snapshot);
+    const indexedState = data.snapshot ?? data;
 
     return new MarketCollateralV1({
       provider,
       address: data.id,
-      availableCollateral: collateralAsset.getAmount(data.availableCollateral),
-      totalShares: toRawAmount(data.totalShares),
+      availableCollateral: collateralAsset.getAmount(indexedState.availableCollateral),
+      totalShares: toRawAmount(indexedState.totalShares),
 
-      totalDeposited: collateralAsset.getAmount(data.totalDeposited),
-      totalReclaimed: collateralAsset.getAmount(data.totalReclaimed),
-      totalLiquidated: collateralAsset.getAmount(data.totalLiquidated),
+      totalDeposited: collateralAsset.getAmount(indexedState.totalDeposited),
+      totalReclaimed: collateralAsset.getAmount(indexedState.totalReclaimed),
+      totalLiquidated: collateralAsset.getAmount(indexedState.totalLiquidated),
       underlyingAsset,
       collateralAsset,
-      liquidationCooldown: data.liquidationCooldown,
+      liquidationCooldown: indexedState.liquidationCooldown ?? data.liquidationCooldown,
       maxRepaymentBips: 10000,
-      fullLiquidationIndex: data.lastFullLiquidationIndex,
-      nextLiquidationTrigger: data.nextLiquidationTrigger,
+      fullLiquidationIndex: indexedState.lastFullLiquidationIndex,
+      nextLiquidationTrigger: indexedState.nextLiquidationTrigger,
       market,
-      eventIndex: data.eventIndex
+      eventIndex: indexedState.eventIndex,
+      indexedSnapshot,
+      stateSource: "indexed"
     });
   }
 
@@ -133,6 +149,7 @@ export class MarketCollateralV1 extends ContractWrapper {
       this.fullLiquidationIndex = toNumber(data.fullLiquidationIndex);
     }
     this.nextLiquidationTrigger = toNumber(data.nextLiquidationTrigger);
+    this.stateSource = "__typename" in data ? "indexed" : "live";
   }
 
   static fromLensData(
@@ -227,3 +244,7 @@ export async function getCollateralContractsForMarketFromLens(
   const lensData = await lens["getCollateralContractsForMarket(address)"](market.address);
   return lensData.map((data) => MarketCollateralV1.fromLensData(market, data));
 }
+
+export const getIndexedCollateralContractsForMarket = getCollateralContractsForMarketFromSubgraph;
+
+export const getLiveCollateralContractsForMarket = getCollateralContractsForMarketFromLens;

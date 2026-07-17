@@ -731,6 +731,17 @@ query getMarket(
   }
 }
 
+query getMarketEventPage($market: String!, $fromSequence: Int!, $first: Int!) {
+  marketEvents(
+    where: { market: $market, sequence_gte: $fromSequence }
+    orderBy: sequence
+    orderDirection: asc
+    first: $first
+  ) {
+    ...MarketEventData
+  }
+}
+
 query getWithdrawalRequestsByMarket(
   $market: String!
   $numWithdrawals: Int = 1000

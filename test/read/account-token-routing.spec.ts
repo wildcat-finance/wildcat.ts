@@ -528,6 +528,8 @@ describe("Account and token read routing", () => {
       market,
       makeLenderAccountData(account)
     );
+    market.stateSource = "indexed";
+    marketAccount.stateSource = "indexed";
     const lensAddress = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,
       "MarketLensV2_5"
@@ -553,7 +555,7 @@ describe("Account and token read routing", () => {
       ]);
     });
 
-    const result = await MarketAccount.refreshMarketAccountsV2LiveData(
+    const result = await MarketAccount.hydrateMarketAccountsLive(
       constantsModule.SupportedChainId.Sepolia,
       viemProvider as unknown as providers.Provider,
       account,
@@ -564,6 +566,8 @@ describe("Account and token read routing", () => {
     expect(marketAccount.market.commitmentFeeBips).to.equal(200);
     expect(marketAccount.market.drawnAmount?.raw).to.equal(300n);
     expect(marketAccount.marketBalance.raw.toString()).to.equal("50");
+    expect(marketAccount.market.stateSource).to.equal("live");
+    expect(marketAccount.stateSource).to.equal("live");
   });
 
   it("falls back to the legacy lens for direct account reads when the latest lens rejects the market", async () => {

@@ -4,6 +4,7 @@ import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
 import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { Market } from "../../src/market";
+import { MarketAccount } from "../../src/account";
 import { Token, toRawAmount } from "../../src/token";
 import { HooksKind, MarketVersion } from "../../src/types";
 import {
@@ -11,10 +12,14 @@ import {
   SubgraphHookedMarketAbi,
   SubgraphHooksFactoryDataFragment,
   SubgraphHooksKind,
+  SubgraphAccountDataForLenderListViewFragment,
+  SubgraphLenderStatus,
   SubgraphMarketDataWithEventsFragment,
   SubgraphMarketKind,
   SubgraphMarketListDataFragment,
   SubgraphMarketOriginKind,
+  SubgraphMarketSnapshotDataFragment,
+  SubgraphSnapshotSource,
   SubgraphMarketVersion
 } from "../../src/gql/graphql";
 import {
@@ -335,6 +340,37 @@ const makeMarketLiveDataV2 = (
   drawnAmount: data.drawnAmount
 });
 
+const makeSubgraphMarketSnapshot = (): SubgraphMarketSnapshotDataFragment => ({
+  __typename: "MarketSnapshot",
+  source: SubgraphSnapshotSource.EVENT_PROJECTION,
+  isClosed: false,
+  maxTotalSupply: "10000",
+  protocolFeeBips: 25,
+  pendingProtocolFees: "10",
+  normalizedUnclaimedWithdrawals: "0",
+  scaledTotalSupply: "1000",
+  scaledPendingWithdrawals: "0",
+  pendingWithdrawalExpiry: "0",
+  isDelinquent: false,
+  isIncurringPenalties: false,
+  timeDelinquent: 0,
+  annualInterestBips: 1200,
+  commitmentFeeBips: "175",
+  reserveRatioBips: 1000,
+  drawnAmount: "250",
+  scaleFactor: BigNumber.from(10).pow(27).toString(),
+  lastInterestAccruedTimestamp: 1_700_000_000,
+  lastInterestAccruedBlockNumber: 123,
+  originalAnnualInterestBips: 1200,
+  originalReserveRatioBips: 1000,
+  temporaryReserveRatioExpiry: 0,
+  temporaryReserveRatioActive: false,
+  updatedAtBlock: "123",
+  updatedAtTimestamp: "1700000123",
+  updatedAtTransaction: makeAddress(79),
+  updatedAtLogIndex: "4"
+});
+
 const makeSubgraphMarketData = (): Omit<
   SubgraphMarketDataWithEventsFragment,
   "depositRecords" | "repaymentRecords" | "borrowRecords" | "feeCollectionRecords"
@@ -394,7 +430,7 @@ const makeSubgraphMarketData = (): Omit<
   createdAtTimestamp: "1700000000",
   createdAtTransaction: makeAddress(78),
   createdAtLogIndex: "0",
-  snapshot: null,
+  snapshot: makeSubgraphMarketSnapshot(),
   controller: null,
   _asset: {
     __typename: "Token",
@@ -738,9 +774,239 @@ describe("Market direct read routing", () => {
     expect(market.commitmentFeeBips).to.equal(200);
     expect(market.drawnAmount?.raw).to.equal(300n);
   });
+
+  it("hydrates mixed indexed market generations through explicit live batch reads", async () => {
+    const legacyData = makeLegacyMarketData();
+    const legacyUpdate = { ...legacyData, annualInterestBips: BigNumber.from(1_350) };
+    const revolvingFactory = getDeploymentAddress(
+      SupportedChainId.Sepolia,
+      "HooksFactoryRevolving"
+    );
+    const revolvingData = makeUnifiedMarketDataV2(revolvingFactory, {
+      commitmentFeeBips: { isPresent: true, value: BigNumber.from(175) },
+      drawnAmount: { isPresent: true, value: BigNumber.from(250) }
+    });
+    const revolvingUpdate = makeUnifiedMarketDataV2(revolvingFactory, {
+      commitmentFeeBips: { isPresent: true, value: BigNumber.from(225) },
+      drawnAmount: { isPresent: true, value: BigNumber.from(400) }
+    });
+    const legacyLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLens");
+    const unifiedLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const viemProvider = new FakeViemProvider((call) => {
+      if (call.to === legacyLensAddress) {
+        const decoded = decodeLensCall(marketLensAbi as Abi, call);
+        expect(decoded.functionName).to.equal("getMarketsData");
+        return encodeLensResult(marketLensAbi as Abi, "getMarketsData", [legacyUpdate]);
+      }
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      expect(call.to).to.equal(unifiedLensAddress);
+      expect(decoded.functionName).to.equal("getMarketsLiveDataV2");
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketsLiveDataV2", [
+        makeMarketLiveDataV2(revolvingUpdate)
+      ]);
+    });
+    const legacyMarket = Market.fromMarketData(
+      SupportedChainId.Sepolia,
+      legacyData,
+      viemProvider as unknown as providers.Provider
+    );
+    const revolvingMarket = Market.fromMarketDataV2_5(
+      SupportedChainId.Sepolia,
+      viemProvider as unknown as providers.Provider,
+      revolvingData,
+      false
+    );
+    legacyMarket.stateSource = "indexed";
+    revolvingMarket.stateSource = "indexed";
+    const markets = [legacyMarket, revolvingMarket];
+
+    const result = await Market.hydrateMarketsLive(
+      SupportedChainId.Sepolia,
+      markets,
+      viemProvider as unknown as providers.Provider
+    );
+
+    expect(result).to.equal(markets);
+    expect(markets.map(({ stateSource }) => stateSource)).to.deep.equal(["live", "live"]);
+    expect(legacyMarket.annualInterestBips).to.equal(1_350);
+    expect(revolvingMarket.commitmentFeeBips).to.equal(225);
+    expect(revolvingMarket.drawnAmount?.raw).to.equal(400n);
+  });
 });
 
 describe("Market model routing metadata", () => {
+  it("normalizes fixed-block provenance for every supported market generation", () => {
+    const v1 = makeSubgraphMarketData();
+    v1.version = SubgraphMarketVersion.V1;
+    v1.marketKind = SubgraphMarketKind.STANDARD;
+    v1.originKind = SubgraphMarketOriginKind.CONTROLLER;
+    v1.generation = "v1";
+    v1.abiFamily = "market-v1";
+    v1.controller = { __typename: "Controller", id: makeAddress(80) };
+    v1.hooksFactory = null;
+    v1.hooksConfig = null;
+    v1.hooks = null;
+    v1.commitmentFeeBips = null;
+    v1.drawnAmount = null;
+    v1.snapshot!.commitmentFeeBips = null;
+    v1.snapshot!.drawnAmount = null;
+
+    const historicalStandard = makeSubgraphMarketData();
+    const historicalFactory = {
+      ...makeSubgraphHooksFactory(makeAddress(81)),
+      label: "standard-v2-historical",
+      marketKind: SubgraphMarketKind.STANDARD,
+      generation: "v2",
+      deploymentTarget: false,
+      lifecycle: SubgraphFactoryLifecycle.HISTORICAL,
+      isRegistered: false
+    };
+    historicalStandard.marketKind = SubgraphMarketKind.STANDARD;
+    historicalStandard.generation = "v2";
+    historicalStandard.abiFamily = "market-v2";
+    historicalStandard.commitmentFeeBips = null;
+    historicalStandard.drawnAmount = null;
+    historicalStandard.snapshot!.commitmentFeeBips = null;
+    historicalStandard.snapshot!.drawnAmount = null;
+    historicalStandard.hooksFactory = historicalFactory;
+    historicalStandard.hooks!.hooksFactory = historicalFactory;
+    historicalStandard.hooks!.templateRegistration.hooksFactory = historicalFactory;
+
+    const currentStandard = makeSubgraphMarketData();
+    const standardFactory = {
+      ...makeSubgraphHooksFactory(
+        getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard")
+      ),
+      label: "standard-v2.5",
+      marketKind: SubgraphMarketKind.STANDARD
+    };
+    currentStandard.marketKind = SubgraphMarketKind.STANDARD;
+    currentStandard.commitmentFeeBips = null;
+    currentStandard.drawnAmount = null;
+    currentStandard.snapshot!.commitmentFeeBips = null;
+    currentStandard.snapshot!.drawnAmount = null;
+    currentStandard.hooksFactory = standardFactory;
+    currentStandard.hooks!.hooksFactory = standardFactory;
+    currentStandard.hooks!.templateRegistration.hooksFactory = standardFactory;
+
+    const currentRevolving = makeSubgraphMarketData();
+    const fixtures = [
+      {
+        data: v1,
+        version: "v1",
+        marketKind: "standard",
+        originKind: "controller",
+        factoryLifecycle: undefined
+      },
+      {
+        data: historicalStandard,
+        version: "v2",
+        marketKind: "standard",
+        originKind: "hooks",
+        factoryLifecycle: "historical"
+      },
+      {
+        data: currentStandard,
+        version: "v2",
+        marketKind: "standard",
+        originKind: "hooks",
+        factoryLifecycle: "active"
+      },
+      {
+        data: currentRevolving,
+        version: "v2",
+        marketKind: "revolving",
+        originKind: "hooks",
+        factoryLifecycle: "active"
+      }
+    ] as const;
+
+    fixtures.forEach(({ data, version, marketKind, originKind, factoryLifecycle }) => {
+      const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+      expect(market.stateSource).to.equal("indexed");
+      expect(market.provenance).to.deep.include({ version, marketKind, originKind });
+      expect(market.provenance?.createdAt).to.deep.equal({
+        blockNumber: 1n,
+        blockTimestamp: 1_700_000_000n,
+        transactionHash: makeAddress(78),
+        logIndex: 0n
+      });
+      expect(market.provenance?.hooksFactory?.lifecycle).to.equal(factoryLifecycle);
+      expect(market.indexedSnapshot).to.deep.include({
+        source: "event-projection",
+        blockNumber: 123n,
+        blockTimestamp: 1_700_000_123n,
+        transactionHash: makeAddress(79),
+        logIndex: 4n
+      });
+    });
+  });
+
+  it("uses the freshness-stamped market snapshot instead of legacy root state", () => {
+    const data = makeSubgraphMarketData();
+    data.annualInterestBips = 1200;
+    data.snapshot!.annualInterestBips = 1350;
+    data.snapshot!.drawnAmount = "375";
+
+    const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+
+    expect(market.annualInterestBips).to.equal(1350);
+    expect(market.drawnAmount?.raw).to.equal(375n);
+    expect(market.indexedSnapshot?.annualInterestBips).to.equal(1350);
+  });
+
+  it("normalizes lender snapshots without presenting them as live state", () => {
+    const market = Market.fromSubgraphMarketData(
+      SupportedChainId.Sepolia,
+      provider,
+      makeSubgraphMarketData()
+    );
+    const accountData: SubgraphAccountDataForLenderListViewFragment = {
+      __typename: "LenderAccount",
+      id: `${market.address}-${makeAddress(82)}`,
+      address: makeAddress(82),
+      scaledBalance: "1",
+      role: SubgraphLenderStatus.Null,
+      totalDeposited: "1",
+      lastScaleFactor: market.scaleFactor.toString(),
+      lastUpdatedTimestamp: 1_700_000_000,
+      totalInterestEarned: "1",
+      numPendingWithdrawalBatches: 0,
+      controllerAuthorization: null,
+      hooksAccess: null,
+      knownLenderStatus: null,
+      snapshot: {
+        __typename: "LenderAccountSnapshot",
+        source: SubgraphSnapshotSource.EVENT_PROJECTION,
+        scaledBalance: "5",
+        role: SubgraphLenderStatus.WithdrawOnly,
+        totalDeposited: "50",
+        lastScaleFactor: market.scaleFactor.toString(),
+        lastUpdatedTimestamp: 1_700_000_123,
+        lastUpdatedBlockNumber: 123,
+        totalInterestEarned: "7",
+        numPendingWithdrawalBatches: 2,
+        updatedAtBlock: "123",
+        updatedAtTimestamp: "1700000123",
+        updatedAtTransaction: makeAddress(83),
+        updatedAtLogIndex: "5"
+      }
+    };
+
+    const account = MarketAccount.fromSubgraphAccountData(market, accountData);
+
+    expect(account.stateSource).to.equal("indexed");
+    expect(account.scaledMarketBalance).to.equal(5n);
+    expect(account.role).to.equal(2);
+    expect(account.totalDeposited?.raw).to.equal(50n);
+    expect(account.indexedSnapshot).to.deep.include({
+      source: "event-projection",
+      role: "withdraw-only",
+      blockNumber: 123n,
+      logIndex: 5n
+    });
+  });
+
   it("classifies V1 markets as standard without factory routing metadata", () => {
     const market = Market.fromMarketData(
       SupportedChainId.Sepolia,
@@ -819,6 +1085,22 @@ describe("Market model routing metadata", () => {
     expect(market.commitmentFeeBips).to.equal(175);
     expect(market.drawnAmount?.raw).to.equal(250n);
     expectAllowForceBuyBacks(market, false);
+  });
+
+  it("recognizes live revolving state without a factory address allowlist", () => {
+    const historicalFactory = makeAddress(98);
+    const market = Market.fromMarketDataV2_5(
+      SupportedChainId.Sepolia,
+      provider,
+      makeUnifiedMarketDataV2(historicalFactory, {
+        commitmentFeeBips: { isPresent: true, value: BigNumber.from(175) },
+        drawnAmount: { isPresent: true, value: BigNumber.from(250) }
+      }),
+      false
+    );
+
+    expect(market.hooksFactory).to.equal(historicalFactory);
+    expect(market.marketKind).to.equal("revolving");
   });
 
   it("does not guess a kind from inconsistent V2.5 revolving fields", () => {
@@ -957,6 +1239,12 @@ describe("Market model routing metadata", () => {
 
     const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
 
+    expect(market.hooksFactory).to.equal(historicalFactory);
+    expect(market.marketKind).to.equal("revolving");
+
+    market.updateWith(makeFactoryBackedMarketData(historicalFactory));
+
+    expect(market.stateSource).to.equal("live");
     expect(market.hooksFactory).to.equal(historicalFactory);
     expect(market.marketKind).to.equal("revolving");
   });
