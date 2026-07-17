@@ -1,6 +1,6 @@
 # V2.5 SDK Refactor Plan
 
-Status: implementation in progress; Phase 1 complete
+Status: implementation in progress; Phase 2 blocked after endpoint-independent codegen cleanup
 Branch: `feat/sdk-refactor`  
 Baseline: `4c3d8cc` (`release/v2.5`)  
 Package under development: `@wildcatfi/wildcat-sdk@3.1.8-beta`
@@ -216,6 +216,10 @@ Commit intent: `refactor: establish v2.5 sdk domain model`
 
 Prerequisite: a deployed V2.5 Graph API endpoint or equivalent introspection
 schema. The entity SDL alone does not include Graph Node query/filter types.
+
+The endpoint-independent build cleanup may land before that prerequisite. Query
+replacement, transport generation, and operation validation must not proceed
+against the entity SDL or a legacy endpoint.
 
 - Make the schema endpoint configurable and remove the stale hard-coded codegen
   URL.

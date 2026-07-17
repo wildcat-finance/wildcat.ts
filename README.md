@@ -21,11 +21,17 @@ For local development inside this repo run `yarn build` (or `npm run build`) to 
 
 ## Development Workflow
 
-- **Code generation**: run `yarn codegen` (or `npm run codegen`) whenever contracts in `contracts/` or GraphQL fragments in `gql/` change. This invokes:
-  - `yarn codegen:gql` → rebuilds typed gql 
+- **Code generation**: run `WILDCAT_SUBGRAPH_SCHEMA=<schema> yarn codegen` whenever
+  contracts in `contracts/` or GraphQL fragments in `gql/` change. This invokes:
+  - `WILDCAT_SUBGRAPH_SCHEMA=<schema> yarn codegen:gql` → rebuilds typed gql
   - `yarn codegen:artifacts` → rebuilds Hardhat artifacts
   - `yarn codegen:abi` → regenerates viem ABI constants from artifacts
 - **Build**: `yarn build` (or `npm run build`) outputs the package defined by `tsconfig.prod.json`.
+
+`WILDCAT_SUBGRAPH_SCHEMA` must be either a deployed Graph API endpoint or a local
+full introspection schema. The subgraph repository's entity SDL is not enough:
+Graph Node adds the query roots, filters, ordering fields, and pagination types
+used by SDK operations.
 
 ## App Integration Testing
 

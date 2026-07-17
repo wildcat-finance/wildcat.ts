@@ -49,8 +49,10 @@ Status values:
 ## Phase 2 - Clean GraphQL contract and codegen
 
 - [!] Obtain a V2.5 Graph API endpoint or introspection schema.
-- [ ] Make the codegen schema source explicit/configurable.
-- [ ] Repair or remove the ineffective GraphQL checksum cache.
+- [x] Make the codegen schema source explicit/configurable.
+- [x] Remove the ineffective partial-introspection checksum cache.
+- [x] Remove the post-generation AST rewrite and its otherwise-unused dependency.
+- [x] Add codegen configuration regression tests.
 - [ ] Add and validate `IndexerDeployment` query.
 - [ ] Replace `FactoryHooksTemplate` documents with registration documents.
 - [ ] Follow `HooksInstance.templateRegistration`.
@@ -168,6 +170,10 @@ Status values:
 | 2026-07-17 | SDK Phase 1 | `yarn build` | Pass | Clean TypeScript production build after config/domain split |
 | 2026-07-17 | SDK Phase 1 | `yarn mocha` | Pass | 113 passing, including domain, target, provenance, preview, and routing regressions |
 | 2026-07-17 | SDK Phase 1 | `git diff --check` | Pass | No whitespace errors |
+| 2026-07-17 | SDK Phase 2 prep | `env -u WILDCAT_SUBGRAPH_SCHEMA yarn codegen:gql` | Fail as expected | Stops before generation with an explicit full-schema requirement |
+| 2026-07-17 | SDK Phase 2 prep | `yarn lint` | Pass with warning | Existing unused legacy GraphQL fragment warning remains |
+| 2026-07-17 | SDK Phase 2 prep | `yarn build` | Pass | Generated transport file remains unchanged pending the V2.5 schema |
+| 2026-07-17 | SDK Phase 2 prep | `yarn mocha` | Pass | 115 passing, including explicit codegen-input tests |
 
 ## Decision ledger
 
@@ -181,12 +187,14 @@ Status values:
 | 2026-07-17 | Promote stable analytics reads into the SDK | The subgraph now treats profiles and analytics as first-class data; most consumers should not maintain parallel raw queries |
 | 2026-07-17 | Use `standard`, `revolving`, and explicit `unknown` market kinds | Removes the overloaded `legacy` factory-routing label and prevents unknown historical implementations from silently becoming standard |
 | 2026-07-17 | Keep historical factory addresses out of deployment configuration | Indexed provenance discovers old factories; checked-in addresses authorize only the current transaction targets |
+| 2026-07-17 | Require an explicit full Graph API schema for codegen | Prevents accidental generation against the stale Sepolia endpoint or the incomplete entity SDL |
+| 2026-07-17 | Remove the GraphQL checksum cache and post-generation rewrite | The cache stored partial introspection with inconsistent digest ordering; standard codegen options replace the required-typename rewrite |
 
 ## Open inputs and blockers
 
 | Input | Owner/source | Blocks | Current handling |
 | --- | --- | --- | --- |
-| V2.5 Graph API schema/endpoint | Subgraph deployment | Phase 2 completion | Proceed only with domain work; never hand-edit generated types |
+| V2.5 Graph API schema/endpoint | Subgraph deployment | Phase 2 completion | Codegen plumbing is ready; do not replace queries or generated types until the full schema is available |
 | Sepolia V2.5 addresses/start blocks | Protocol deployment ceremony | Phase 6 | Keep address changes isolated |
 | Replacement subgraph URLs | Subgraph deployment | Phase 6 and app smoke tests | Retain placeholders until endpoint metadata validates |
 | App migration feedback | `wildcat-app-v2` integration | Final SDK surface | Treat required behavior as acceptance criteria, not current generated types |
@@ -195,8 +203,8 @@ Status values:
 
 - [ ] Remove incomplete legacy GraphQL document machinery.
 - [ ] Remove stale chain-level periodic schema feature flags.
-- [ ] Fix codegen URL/runtime URL divergence.
-- [ ] Fix checksum cache ordering or remove the cache.
+- [x] Fix codegen URL/runtime URL divergence by requiring an explicit schema.
+- [x] Remove the checksum cache.
 - [ ] Split oversized `constants.ts` by responsibility without changing unrelated
       transaction mechanics.
 - [ ] Extract subgraph hydration from the large `Market` class into focused
@@ -210,8 +218,8 @@ Status values:
 | Phase | Commit | Verification | Status |
 | --- | --- | --- | --- |
 | 0 - Plan | `1c6e231` | Documentation and clean worktree check | Complete |
-| 1 - Domain/config | This commit | Domain/config unit tests, lint, build, 113-test suite | Complete |
-| 2 - GraphQL/codegen | Pending | Schema validation, unit, lint, build, mocha | Blocked on endpoint |
+| 1 - Domain/config | `dde64f7` | Domain/config unit tests, lint, build, 113-test suite | Complete |
+| 2 - GraphQL/codegen | Preparatory commit pending | Config tests, lint, build, 115-test suite | Blocked after endpoint-independent prep |
 | 3 - Factories/hooks | Pending | Multi-factory fixtures, lint, build, mocha | Not started |
 | 4 - Markets/live | Pending | Historical fixtures, fixed-block parity, lint, build, mocha | Not started |
 | 5 - Analytics | Pending | Analytics fixtures, lint, build, mocha | Not started |
@@ -238,3 +246,11 @@ Status values:
   remaining explicitly unknown.
 - Added regression coverage for historical factory provenance, missing targets,
   unknown enum values, public exports, and both factory deployment previews.
+- Replaced the hard-coded legacy GraphQL endpoint with an explicit
+  `WILDCAT_SUBGRAPH_SCHEMA` input accepting a deployed Graph API or full
+  introspection schema.
+- Removed the stale partial-introspection cache, schema snapshot, timing/logging
+  files, post-generation AST rewrite, and its otherwise-unused `ts-morph`
+  dependency.
+- Kept the existing generated transport untouched. Replacing documents and
+  generating V2.5 types remains blocked on the full Graph API schema.

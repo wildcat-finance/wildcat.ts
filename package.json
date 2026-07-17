@@ -34,7 +34,6 @@
     "hardhat": "^2.13.0",
     "mocha": "^10.4.0",
     "prettier": "^2.8.8",
-    "ts-morph": "^24.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
@@ -52,10 +51,10 @@
   "scripts": {
     "build": "npm run clean && tsc -p ./tsconfig.prod.json",
     "clean": "rm -rf dist cache",
-    "codegen": "yarn codegen:gql; yarn codegen:artifacts; yarn codegen:abi",
+    "codegen": "yarn codegen:gql && yarn codegen:artifacts && yarn codegen:abi",
     "codegen:abi": "node scripts/generate-viem-abis.js",
     "codegen:artifacts": "hardhat compile",
-    "codegen:gql": "node scripts/should-update-gql && graphql-codegen && node ./scripts/gql-type-cleanup.js && eslint src/gql/ --ext=ts --fix",
+    "codegen:gql": "graphql-codegen --config codegen.js && eslint src/gql/ --ext=ts --fix",
     "lint": "eslint src/ test/ --ext=ts",
     "lint:fix": "eslint src/ test/ --ext=ts --fix",
     "prepublishOnly": "yarn build",
