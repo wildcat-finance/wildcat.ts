@@ -8,6 +8,7 @@ import { MarketController } from "./controller";
 
 export * from "./account";
 export * from "./access";
+export * from "./analytics";
 export * from "./abi";
 export * from "./client";
 export * from "./collateral";

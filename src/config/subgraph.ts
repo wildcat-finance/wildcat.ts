@@ -44,6 +44,58 @@ export class SubgraphCompatibilityError extends Error {
   }
 }
 
+export type SubgraphFeature = "analytics" | "collateral" | "wrappers" | "pricing";
+
+export type SubgraphFeatureAvailability =
+  | { feature: SubgraphFeature; available: true }
+  | {
+      feature: SubgraphFeature;
+      available: false;
+      reason:
+        | "analytics-disabled"
+        | "collateral-disabled"
+        | "wrappers-disabled"
+        | "pricing-disabled";
+    };
+
+export class SubgraphFeatureUnavailableError extends Error {
+  readonly name = "SubgraphFeatureUnavailableError";
+
+  constructor(
+    readonly feature: SubgraphFeature,
+    readonly reason: Exclude<SubgraphFeatureAvailability, { available: true }>["reason"]
+  ) {
+    super(`Subgraph feature ${feature} is unavailable: ${reason}`);
+  }
+}
+
+export const getSubgraphFeatureAvailability = (
+  metadata: IndexerDeploymentMetadata,
+  feature: SubgraphFeature
+): SubgraphFeatureAvailability => {
+  if (feature === "analytics") {
+    return metadata.analyticsEnabled
+      ? { feature, available: true }
+      : { feature, available: false, reason: "analytics-disabled" };
+  }
+  if (feature === "collateral") {
+    return metadata.collateralEnabled
+      ? { feature, available: true }
+      : { feature, available: false, reason: "collateral-disabled" };
+  }
+  if (feature === "wrappers") {
+    return metadata.wrappersEnabled
+      ? { feature, available: true }
+      : { feature, available: false, reason: "wrappers-disabled" };
+  }
+  if (!metadata.analyticsEnabled) {
+    return { feature, available: false, reason: "analytics-disabled" };
+  }
+  return metadata.pricingMode !== "none" && metadata.pricingMode !== "unknown"
+    ? { feature, available: true }
+    : { feature, available: false, reason: "pricing-disabled" };
+};
+
 export const SubgraphUrls: Record<SupportedChainId, string> = {
   [SupportedChainId.Sepolia]:
     "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.1.5/gn",
@@ -271,6 +323,68 @@ export const validateSubgraphEndpoint = (
 };
 
 const subgraphClients = new Map<string, ApolloClient<NormalizedCacheObject>>();
+const subgraphClientMetadataResolvers = new WeakMap<
+  ApolloClient<NormalizedCacheObject>,
+  () => Promise<IndexerDeploymentMetadata>
+>();
+const subgraphClientMetadataPromises = new WeakMap<
+  ApolloClient<NormalizedCacheObject>,
+  Promise<IndexerDeploymentMetadata>
+>();
+
+const fetchClientIndexerDeploymentMetadata = async (
+  client: ApolloClient<NormalizedCacheObject>
+): Promise<IndexerDeploymentMetadata> => {
+  const { data } = await client.query<SubgraphGetIndexerDeploymentQuery>({
+    query: GetIndexerDeploymentDocument,
+    fetchPolicy: "no-cache"
+  });
+  const deployment = data.indexerDeployments[0];
+  if (!deployment) {
+    throw new SubgraphCompatibilityError("Apollo client", [
+      { code: "MISSING_DEPLOYMENT_METADATA" }
+    ]);
+  }
+  try {
+    return normalizeIndexerDeployment(deployment);
+  } catch (error) {
+    throw new SubgraphCompatibilityError("Apollo client", [
+      { code: "INVALID_DEPLOYMENT_METADATA", actual: errorMessage(error) }
+    ]);
+  }
+};
+
+/** Resolve declared endpoint features for SDK-managed or custom Apollo clients. */
+export const getSubgraphClientDeploymentMetadata = (
+  client: ApolloClient<NormalizedCacheObject>
+): Promise<IndexerDeploymentMetadata> => {
+  const cached = subgraphClientMetadataPromises.get(client);
+  if (cached) return cached;
+
+  const resolver = subgraphClientMetadataResolvers.get(client);
+  const promise = (resolver ? resolver() : fetchClientIndexerDeploymentMetadata(client)).catch(
+    (error) => {
+      if (subgraphClientMetadataPromises.get(client) === promise) {
+        subgraphClientMetadataPromises.delete(client);
+      }
+      throw error;
+    }
+  );
+  subgraphClientMetadataPromises.set(client, promise);
+  return promise;
+};
+
+export const requireSubgraphFeature = async (
+  client: ApolloClient<NormalizedCacheObject>,
+  feature: SubgraphFeature
+): Promise<IndexerDeploymentMetadata> => {
+  const metadata = await getSubgraphClientDeploymentMetadata(client);
+  const availability = getSubgraphFeatureAvailability(metadata, feature);
+  if (!availability.available) {
+    throw new SubgraphFeatureUnavailableError(feature, availability.reason);
+  }
+  return metadata;
+};
 
 /** Construct a V2.5 client whose operations wait for endpoint compatibility validation. */
 export const createSubgraphClient = (
@@ -303,10 +417,12 @@ export const createSubgraphClient = (
       })
   );
 
-  return new ApolloClient({
+  const client = new ApolloClient({
     cache: new InMemoryCache(),
     link: validationLink.concat(new HttpLink({ uri: endpoint }))
   });
+  subgraphClientMetadataResolvers.set(client, () => validateSubgraphEndpoint(chainId, endpoint));
+  return client;
 };
 
 export const getSubgraphClient = (

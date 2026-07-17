@@ -967,3 +967,440 @@ fragment SimpleCollateralContractDepositData on SimpleCollateralContractDeposit 
   blockTimestamp
   transactionHash
 }
+
+# ========================================================================== #
+#                           Indexed analytics views                          #
+# ========================================================================== #
+
+fragment IndexedQueryMetadataData on _Meta_ {
+  deployment
+  hasIndexingErrors
+  block {
+    number
+    timestamp
+    hash
+  }
+}
+
+fragment AnalyticsTokenData on Token {
+  id
+  address
+  name
+  symbol
+  decimals
+  isMock
+  isUsdStablecoin
+  priceSource
+  priceFeed0
+  priceFeed1
+}
+
+fragment AnalyticsMarketReferenceData on Market {
+  id
+  address
+  name
+  borrower
+  createdAtTimestamp
+  isClosed
+  annualInterestBips
+  originalAnnualInterestBips
+  delinquencyGracePeriod
+  maxTotalSupply
+  scaledTotalSupply
+  scaleFactor
+  isDelinquent
+  isIncurringPenalties
+  totalDebtUSD
+  snapshot {
+    ...MarketSnapshotData
+  }
+  asset {
+    ...AnalyticsTokenData
+  }
+}
+
+fragment BorrowerAnalyticsIdentityData on Borrower {
+  id
+  address
+  firstSeenBlock
+  firstSeenTimestamp
+  firstSeenTransaction
+  firstSeenLogIndex
+  lastSeenBlock
+  lastSeenTimestamp
+  lastSeenTransaction
+  lastSeenLogIndex
+  registrations(first: 1000) {
+    archController {
+      id
+    }
+    isRegistered
+  }
+}
+
+fragment BorrowerAnalyticsStatsData on BorrowerStats {
+  id
+  borrower
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  numMarkets
+  numActiveMarkets
+  numDelinquentMarkets
+  numClosedMarkets
+  numBatchesExpired
+  numBatchesExpiredUnpaid
+  numBatchesPaidLate
+}
+
+fragment BorrowerDailyStatsData on BorrowerDailyStats {
+  id
+  borrower
+  startTimestamp
+  endTimestamp
+  dayDepositedUSD
+  dayBorrowedUSD
+  dayRepaidUSD
+  dayWithdrawalsRequestedUSD
+  dayWithdrawalsExecutedUSD
+  dayBaseInterestAccruedUSD
+  dayDelinquencyFeesAccruedUSD
+  dayProtocolFeesAccruedUSD
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  numMarkets
+  numActiveMarkets
+  numDelinquentMarkets
+  numClosedMarkets
+}
+
+fragment LenderAnalyticsStatsData on LenderStats {
+  id
+  lender
+  firstSeenTimestamp
+  totalDepositedUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalInterestEarnedUSD
+  numMarkets
+  numActiveMarkets
+}
+
+fragment LenderDailyStatsData on LenderDailyStats {
+  id
+  lender
+  startTimestamp
+  endTimestamp
+  dayDepositedUSD
+  dayWithdrawalsRequestedUSD
+  dayWithdrawalsExecutedUSD
+  dayInterestEarnedUSD
+  totalDepositedUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalInterestEarnedUSD
+  numMarkets
+  numActiveMarkets
+}
+
+fragment MarketDailyStatsData on MarketDailyStats {
+  id
+  startTimestamp
+  endTimestamp
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  dayDeposited
+  dayWithdrawalsRequested
+  dayWithdrawalsExecuted
+  dayBorrowed
+  dayRepaid
+  dayBaseInterestAccrued
+  dayDelinquencyFeesAccrued
+  dayProtocolFeesAccrued
+  totalBorrowed
+  totalRepaid
+  totalBaseInterestAccrued
+  totalDelinquencyFeesAccrued
+  totalProtocolFeesAccrued
+  totalDeposited
+  totalWithdrawalsRequested
+  totalWithdrawalsExecuted
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  totalDepositedUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  scaledTotalSupply
+  scaleFactor
+  usdPrice
+}
+
+fragment DelinquencyStatusChangeData on DelinquencyStatusChanged {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  isDelinquent
+  liquidityCoverageRequired
+  totalAssets
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment MarketInterestAccrualData on MarketInterestAccrued {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  fromTimestamp
+  toTimestamp
+  timeWithPenalties
+  baseInterestRay
+  delinquencyFeeRay
+  baseInterestAccrued
+  delinquencyFeesAccrued
+  protocolFeesAccrued
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment AnnualInterestBipsUpdateData on AnnualInterestBipsUpdated {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  oldAnnualInterestBips
+  newAnnualInterestBips
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment BorrowerWithdrawalReliabilityData on WithdrawalBatch {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  expiry
+  totalNormalizedRequests
+  isExpired
+  isClosed
+  isCompleted
+  updatedAtBlock
+  updatedAtTimestamp
+  updatedAtTransaction
+  updatedAtLogIndex
+  expiration {
+    normalizedAmountPaid
+    normalizedAmountOwed
+    blockNumber
+    blockTimestamp
+    transactionHash
+    blockLogIndex
+  }
+}
+
+fragment LenderPositionData on LenderAccount {
+  id
+  address
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  scaledBalance
+  totalDeposited
+  totalInterestEarned
+  lastScaleFactor
+  addedTimestamp
+  lastUpdatedTimestamp
+  numPendingWithdrawalBatches
+  snapshot {
+    ...LenderAccountSnapshotData
+  }
+}
+
+fragment LenderDepositData on Deposit {
+  id
+  account {
+    id
+    address
+  }
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  assetAmount
+  scaledAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment LenderWithdrawalRequestData on WithdrawalRequest {
+  id
+  account {
+    id
+    address
+  }
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  batch {
+    id
+    expiry
+  }
+  scaledAmount
+  normalizedAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment LenderWithdrawalExecutionData on WithdrawalExecution {
+  id
+  account {
+    id
+    address
+  }
+  batch {
+    id
+    expiry
+    market {
+      ...AnalyticsMarketReferenceData
+    }
+  }
+  normalizedAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment LenderTransferData on Transfer {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  from {
+    id
+    address
+  }
+  to {
+    id
+    address
+  }
+  amount
+  scaledAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment LenderWithdrawalStatusData on LenderWithdrawalStatus {
+  id
+  account {
+    id
+    address
+    market {
+      ...AnalyticsMarketReferenceData
+    }
+  }
+  batch {
+    id
+    expiry
+    isClosed
+    isExpired
+    isCompleted
+  }
+  scaledAmount
+  normalizedAmountWithdrawn
+  totalNormalizedRequests
+  isCompleted
+  updatedAtBlock
+  updatedAtTimestamp
+  updatedAtTransaction
+  updatedAtLogIndex
+}
+
+fragment ProtocolAnalyticsStatsData on ProtocolStats {
+  id
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  numMarkets
+  numActiveMarkets
+  numDelinquentMarkets
+  numClosedMarkets
+  numActiveBorrowers
+  numActiveLenders
+  numActiveLenderAccounts
+}
+
+fragment ProtocolDailyStatsData on ProtocolDailyStats {
+  id
+  startTimestamp
+  endTimestamp
+  dayDepositedUSD
+  dayBorrowedUSD
+  dayRepaidUSD
+  dayWithdrawalsRequestedUSD
+  dayWithdrawalsExecutedUSD
+  dayBaseInterestAccruedUSD
+  dayDelinquencyFeesAccruedUSD
+  dayProtocolFeesAccruedUSD
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  numMarkets
+  numActiveMarkets
+  numDelinquentMarkets
+  numClosedMarkets
+  numActiveBorrowers
+  numActiveLenders
+  numActiveLenderAccounts
+}
+
+fragment TokenPriceObservationData on TokenDailyPrice {
+  id
+  token {
+    ...AnalyticsTokenData
+  }
+  timestamp
+  priceUSD
+  source
+  observedAtBlock
+  observedAtTimestamp
+  observedAtTransaction
+  observedAtLogIndex
+}

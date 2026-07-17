@@ -14,7 +14,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  BigDecimal: { input: any; output: any; }
+  BigDecimal: { input: string | number; output: string; }
   BigInt: { input: string | number | bigint; output: string; }
   Bytes: { input: string; output: string; }
   /** 8 bytes signed integer */
@@ -28775,6 +28775,50 @@ export type SubgraphSimpleCollateralContractLiquidatedSharesResetDataFragment = 
 
 export type SubgraphSimpleCollateralContractDepositDataFragment = { __typename: 'SimpleCollateralContractDeposit', id: string, amountDeposited: string, sharesMinted: string, lastFullLiquidationIndex: number, depositIndex: number, blockNumber: number, blockTimestamp: number, transactionHash: string, collateralContract: { __typename: 'SimpleCollateralContract', id: string }, account: { __typename: 'SimpleCollateralContractDepositor', id: string, address: string } };
 
+export type SubgraphIndexedQueryMetadataDataFragment = { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } };
+
+export type SubgraphAnalyticsTokenDataFragment = { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null };
+
+export type SubgraphAnalyticsMarketReferenceDataFragment = { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } };
+
+export type SubgraphBorrowerAnalyticsIdentityDataFragment = { __typename: 'Borrower', id: string, address: string, firstSeenBlock: string, firstSeenTimestamp: string, firstSeenTransaction: string, firstSeenLogIndex: string, lastSeenBlock: string, lastSeenTimestamp: string, lastSeenTransaction: string, lastSeenLogIndex: string, registrations: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean, archController: { __typename: 'ArchController', id: string } }> };
+
+export type SubgraphBorrowerAnalyticsStatsDataFragment = { __typename: 'BorrowerStats', id: string, borrower: string, totalDepositedUSD: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, numMarkets: number, numActiveMarkets: number, numDelinquentMarkets: number, numClosedMarkets: number, numBatchesExpired: number, numBatchesExpiredUnpaid: number, numBatchesPaidLate: number };
+
+export type SubgraphBorrowerDailyStatsDataFragment = { __typename: 'BorrowerDailyStats', id: string, borrower: string, startTimestamp: number, endTimestamp: number, dayDepositedUSD: string, dayBorrowedUSD: string, dayRepaidUSD: string, dayWithdrawalsRequestedUSD: string, dayWithdrawalsExecutedUSD: string, dayBaseInterestAccruedUSD: string, dayDelinquencyFeesAccruedUSD: string, dayProtocolFeesAccruedUSD: string, totalDepositedUSD: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, numMarkets: number, numActiveMarkets: number, numDelinquentMarkets: number, numClosedMarkets: number };
+
+export type SubgraphLenderAnalyticsStatsDataFragment = { __typename: 'LenderStats', id: string, lender: string, firstSeenTimestamp: number, totalDepositedUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalInterestEarnedUSD: string, numMarkets: number, numActiveMarkets: number };
+
+export type SubgraphLenderDailyStatsDataFragment = { __typename: 'LenderDailyStats', id: string, lender: string, startTimestamp: number, endTimestamp: number, dayDepositedUSD: string, dayWithdrawalsRequestedUSD: string, dayWithdrawalsExecutedUSD: string, dayInterestEarnedUSD: string, totalDepositedUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalInterestEarnedUSD: string, numMarkets: number, numActiveMarkets: number };
+
+export type SubgraphMarketDailyStatsDataFragment = { __typename: 'MarketDailyStats', id: string, startTimestamp: number, endTimestamp: number, dayDeposited: string, dayWithdrawalsRequested: string, dayWithdrawalsExecuted: string, dayBorrowed: string, dayRepaid: string, dayBaseInterestAccrued: string, dayDelinquencyFeesAccrued: string, dayProtocolFeesAccrued: string, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, totalWithdrawalsRequested: string, totalWithdrawalsExecuted: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, totalDepositedUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, scaledTotalSupply: string, scaleFactor: string, usdPrice?: string | null, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+
+export type SubgraphDelinquencyStatusChangeDataFragment = { __typename: 'DelinquencyStatusChanged', id: string, isDelinquent: boolean, liquidityCoverageRequired: string, totalAssets: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+
+export type SubgraphMarketInterestAccrualDataFragment = { __typename: 'MarketInterestAccrued', id: string, fromTimestamp: number, toTimestamp: number, timeWithPenalties: number, baseInterestRay: string, delinquencyFeeRay: string, baseInterestAccrued: string, delinquencyFeesAccrued: string, protocolFeesAccrued: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+
+export type SubgraphAnnualInterestBipsUpdateDataFragment = { __typename: 'AnnualInterestBipsUpdated', id: string, oldAnnualInterestBips: number, newAnnualInterestBips: number, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+
+export type SubgraphBorrowerWithdrawalReliabilityDataFragment = { __typename: 'WithdrawalBatch', id: string, expiry: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, expiration?: { __typename: 'WithdrawalBatchExpired', normalizedAmountPaid: string, normalizedAmountOwed: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number } | null };
+
+export type SubgraphLenderPositionDataFragment = { __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, totalDeposited: string, totalInterestEarned: string, lastScaleFactor: string, addedTimestamp: number, lastUpdatedTimestamp: number, numPendingWithdrawalBatches: number, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
+
+export type SubgraphLenderDepositDataFragment = { __typename: 'Deposit', id: string, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+
+export type SubgraphLenderWithdrawalRequestDataFragment = { __typename: 'WithdrawalRequest', id: string, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string } };
+
+export type SubgraphLenderWithdrawalExecutionDataFragment = { __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } } };
+
+export type SubgraphLenderTransferDataFragment = { __typename: 'Transfer', id: string, amount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, from: { __typename: 'LenderAccount', id: string, address: string }, to: { __typename: 'LenderAccount', id: string, address: string } };
+
+export type SubgraphLenderWithdrawalStatusDataFragment = { __typename: 'LenderWithdrawalStatus', id: string, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, account: { __typename: 'LenderAccount', id: string, address: string, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, isClosed: boolean, isExpired: boolean, isCompleted: boolean } };
+
+export type SubgraphProtocolAnalyticsStatsDataFragment = { __typename: 'ProtocolStats', id: string, totalDepositedUSD: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, numMarkets: number, numActiveMarkets: number, numDelinquentMarkets: number, numClosedMarkets: number, numActiveBorrowers: number, numActiveLenders: number, numActiveLenderAccounts: number };
+
+export type SubgraphProtocolDailyStatsDataFragment = { __typename: 'ProtocolDailyStats', id: string, startTimestamp: number, endTimestamp: number, dayDepositedUSD: string, dayBorrowedUSD: string, dayRepaidUSD: string, dayWithdrawalsRequestedUSD: string, dayWithdrawalsExecutedUSD: string, dayBaseInterestAccruedUSD: string, dayDelinquencyFeesAccruedUSD: string, dayProtocolFeesAccruedUSD: string, totalDepositedUSD: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, numMarkets: number, numActiveMarkets: number, numDelinquentMarkets: number, numClosedMarkets: number, numActiveBorrowers: number, numActiveLenders: number, numActiveLenderAccounts: number };
+
+export type SubgraphTokenPriceObservationDataFragment = { __typename: 'TokenDailyPrice', id: string, timestamp: number, priceUSD: string, source: SubgraphPriceSourceKind, observedAtBlock: string, observedAtTimestamp: string, observedAtTransaction: string, observedAtLogIndex: string, token: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } };
+
 export type SubgraphGetLenderAccountForMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
   lender: Scalars['Bytes']['input'];
@@ -29254,6 +29298,178 @@ export type SubgraphGetMarketChartsDataQueryVariables = Exact<{
 
 
 export type SubgraphGetMarketChartsDataQuery = { __typename: 'Query', market?: { __typename: 'Market', withdrawalBatches: Array<{ __typename: 'WithdrawalBatch', expiry: string, expiration?: { __typename: 'WithdrawalBatchExpired', normalizedAmountPaid: string, normalizedAmountOwed: string } | null }>, asset: { __typename: 'Token', decimals: number, symbol: string, name: string }, dailyStats: Array<{ __typename: 'MarketDailyStats', totalDeposited: string, totalWithdrawalsRequested: string, totalBorrowed: string, totalRepaid: string, timestamp: number }> } | null };
+
+export type SubgraphGetBorrowerAnalyticsProfileQueryVariables = Exact<{
+  borrowerId: Scalars['ID']['input'];
+  borrower: Scalars['Bytes']['input'];
+}>;
+
+
+export type SubgraphGetBorrowerAnalyticsProfileQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, borrower?: { __typename: 'Borrower', id: string, address: string, firstSeenBlock: string, firstSeenTimestamp: string, firstSeenTransaction: string, firstSeenLogIndex: string, lastSeenBlock: string, lastSeenTimestamp: string, lastSeenTransaction: string, lastSeenLogIndex: string, registrations: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean, archController: { __typename: 'ArchController', id: string } }> } | null, borrowerStats_collection: Array<{ __typename: 'BorrowerStats', id: string, borrower: string, totalDepositedUSD: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, numMarkets: number, numActiveMarkets: number, numDelinquentMarkets: number, numClosedMarkets: number, numBatchesExpired: number, numBatchesExpiredUnpaid: number, numBatchesPaidLate: number }> };
+
+export type SubgraphGetBorrowerDailyStatsPageQueryVariables = Exact<{
+  filter: SubgraphBorrowerDailyStats_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetBorrowerDailyStatsPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, borrowerDailyStats_collection: Array<{ __typename: 'BorrowerDailyStats', id: string, borrower: string, startTimestamp: number, endTimestamp: number, dayDepositedUSD: string, dayBorrowedUSD: string, dayRepaidUSD: string, dayWithdrawalsRequestedUSD: string, dayWithdrawalsExecutedUSD: string, dayBaseInterestAccruedUSD: string, dayDelinquencyFeesAccruedUSD: string, dayProtocolFeesAccruedUSD: string, totalDepositedUSD: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, numMarkets: number, numActiveMarkets: number, numDelinquentMarkets: number, numClosedMarkets: number }> };
+
+export type SubgraphGetMarketDailyStatsPageQueryVariables = Exact<{
+  filter: SubgraphMarketDailyStats_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetMarketDailyStatsPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, marketDailyStats_collection: Array<{ __typename: 'MarketDailyStats', id: string, startTimestamp: number, endTimestamp: number, dayDeposited: string, dayWithdrawalsRequested: string, dayWithdrawalsExecuted: string, dayBorrowed: string, dayRepaid: string, dayBaseInterestAccrued: string, dayDelinquencyFeesAccrued: string, dayProtocolFeesAccrued: string, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, totalWithdrawalsRequested: string, totalWithdrawalsExecuted: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, totalDepositedUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, scaledTotalSupply: string, scaleFactor: string, usdPrice?: string | null, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+
+export type SubgraphGetDelinquencyStatusChangePageQueryVariables = Exact<{
+  filter: SubgraphDelinquencyStatusChanged_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetDelinquencyStatusChangePageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, delinquencyStatusChangeds: Array<{ __typename: 'DelinquencyStatusChanged', id: string, isDelinquent: boolean, liquidityCoverageRequired: string, totalAssets: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+
+export type SubgraphGetMarketInterestAccrualPageQueryVariables = Exact<{
+  filter: SubgraphMarketInterestAccrued_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetMarketInterestAccrualPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, marketInterestAccrueds: Array<{ __typename: 'MarketInterestAccrued', id: string, fromTimestamp: number, toTimestamp: number, timeWithPenalties: number, baseInterestRay: string, delinquencyFeeRay: string, baseInterestAccrued: string, delinquencyFeesAccrued: string, protocolFeesAccrued: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+
+export type SubgraphGetAnnualInterestBipsUpdatePageQueryVariables = Exact<{
+  filter: SubgraphAnnualInterestBipsUpdated_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetAnnualInterestBipsUpdatePageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, annualInterestBipsUpdateds: Array<{ __typename: 'AnnualInterestBipsUpdated', id: string, oldAnnualInterestBips: number, newAnnualInterestBips: number, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+
+export type SubgraphGetBorrowerWithdrawalReliabilityPageQueryVariables = Exact<{
+  filter: SubgraphWithdrawalBatch_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetBorrowerWithdrawalReliabilityPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, withdrawalBatches: Array<{ __typename: 'WithdrawalBatch', id: string, expiry: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, expiration?: { __typename: 'WithdrawalBatchExpired', normalizedAmountPaid: string, normalizedAmountOwed: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number } | null }> };
+
+export type SubgraphGetLenderAnalyticsProfileQueryVariables = Exact<{
+  lender: Scalars['Bytes']['input'];
+}>;
+
+
+export type SubgraphGetLenderAnalyticsProfileQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, lenderStats_collection: Array<{ __typename: 'LenderStats', id: string, lender: string, firstSeenTimestamp: number, totalDepositedUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalInterestEarnedUSD: string, numMarkets: number, numActiveMarkets: number }> };
+
+export type SubgraphGetLenderPositionPageQueryVariables = Exact<{
+  filter: SubgraphLenderAccount_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetLenderPositionPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, lenderAccounts: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, totalDeposited: string, totalInterestEarned: string, lastScaleFactor: string, addedTimestamp: number, lastUpdatedTimestamp: number, numPendingWithdrawalBatches: number, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> };
+
+export type SubgraphGetLenderDailyStatsPageQueryVariables = Exact<{
+  filter: SubgraphLenderDailyStats_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetLenderDailyStatsPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, lenderDailyStats_collection: Array<{ __typename: 'LenderDailyStats', id: string, lender: string, startTimestamp: number, endTimestamp: number, dayDepositedUSD: string, dayWithdrawalsRequestedUSD: string, dayWithdrawalsExecutedUSD: string, dayInterestEarnedUSD: string, totalDepositedUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalInterestEarnedUSD: string, numMarkets: number, numActiveMarkets: number }> };
+
+export type SubgraphGetLenderDepositPageQueryVariables = Exact<{
+  filter: SubgraphDeposit_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetLenderDepositPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, deposits: Array<{ __typename: 'Deposit', id: string, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+
+export type SubgraphGetLenderWithdrawalRequestPageQueryVariables = Exact<{
+  filter: SubgraphWithdrawalRequest_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetLenderWithdrawalRequestPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, withdrawalRequests: Array<{ __typename: 'WithdrawalRequest', id: string, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string } }> };
+
+export type SubgraphGetLenderWithdrawalExecutionPageQueryVariables = Exact<{
+  filter: SubgraphWithdrawalExecution_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetLenderWithdrawalExecutionPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, withdrawalExecutions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } } }> };
+
+export type SubgraphGetLenderTransferPageQueryVariables = Exact<{
+  filter: SubgraphTransfer_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetLenderTransferPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, transfers: Array<{ __typename: 'Transfer', id: string, amount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, from: { __typename: 'LenderAccount', id: string, address: string }, to: { __typename: 'LenderAccount', id: string, address: string } }> };
+
+export type SubgraphGetLenderWithdrawalStatusPageQueryVariables = Exact<{
+  filter: SubgraphLenderWithdrawalStatus_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetLenderWithdrawalStatusPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, lenderWithdrawalStatuses: Array<{ __typename: 'LenderWithdrawalStatus', id: string, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, account: { __typename: 'LenderAccount', id: string, address: string, market: { __typename: 'Market', id: string, address: string, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD: string, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, isClosed: boolean, isExpired: boolean, isCompleted: boolean } }> };
+
+export type SubgraphGetProtocolAnalyticsStatsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SubgraphGetProtocolAnalyticsStatsQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, protocolStats?: { __typename: 'ProtocolStats', id: string, totalDepositedUSD: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, numMarkets: number, numActiveMarkets: number, numDelinquentMarkets: number, numClosedMarkets: number, numActiveBorrowers: number, numActiveLenders: number, numActiveLenderAccounts: number } | null };
+
+export type SubgraphGetProtocolDailyStatsPageQueryVariables = Exact<{
+  filter: SubgraphProtocolDailyStats_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetProtocolDailyStatsPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, protocolDailyStats_collection: Array<{ __typename: 'ProtocolDailyStats', id: string, startTimestamp: number, endTimestamp: number, dayDepositedUSD: string, dayBorrowedUSD: string, dayRepaidUSD: string, dayWithdrawalsRequestedUSD: string, dayWithdrawalsExecutedUSD: string, dayBaseInterestAccruedUSD: string, dayDelinquencyFeesAccruedUSD: string, dayProtocolFeesAccruedUSD: string, totalDepositedUSD: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, numMarkets: number, numActiveMarkets: number, numDelinquentMarkets: number, numClosedMarkets: number, numActiveBorrowers: number, numActiveLenders: number, numActiveLenderAccounts: number }> };
+
+export type SubgraphGetAnalyticsTokensQueryVariables = Exact<{
+  filter: SubgraphToken_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetAnalyticsTokensQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, tokens: Array<{ __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null }> };
+
+export type SubgraphGetTokenPriceObservationPageQueryVariables = Exact<{
+  filter: SubgraphTokenDailyPrice_Filter;
+  first: Scalars['Int']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetTokenPriceObservationPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, tokenDailyPrices: Array<{ __typename: 'TokenDailyPrice', id: string, timestamp: number, priceUSD: string, source: SubgraphPriceSourceKind, observedAtBlock: string, observedAtTimestamp: string, observedAtTransaction: string, observedAtLogIndex: string, token: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }> };
+
+export type SubgraphGetLatestTokenPriceObservationQueryVariables = Exact<{
+  filter: SubgraphTokenDailyPrice_Filter;
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetLatestTokenPriceObservationQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, tokenDailyPrices: Array<{ __typename: 'TokenDailyPrice', id: string, timestamp: number, priceUSD: string, source: SubgraphPriceSourceKind, observedAtBlock: string, observedAtTimestamp: string, observedAtTransaction: string, observedAtLogIndex: string, token: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }> };
 
 export const LenderAccountSnapshotDataFragmentDoc = gql`
     fragment LenderAccountSnapshotData on LenderAccountSnapshot {
@@ -30215,6 +30431,461 @@ export const SimpleCollateralContractDepositDataFragmentDoc = gql`
   blockNumber
   blockTimestamp
   transactionHash
+}
+    `;
+export const IndexedQueryMetadataDataFragmentDoc = gql`
+    fragment IndexedQueryMetadataData on _Meta_ {
+  deployment
+  hasIndexingErrors
+  block {
+    number
+    timestamp
+    hash
+  }
+}
+    `;
+export const BorrowerAnalyticsIdentityDataFragmentDoc = gql`
+    fragment BorrowerAnalyticsIdentityData on Borrower {
+  id
+  address
+  firstSeenBlock
+  firstSeenTimestamp
+  firstSeenTransaction
+  firstSeenLogIndex
+  lastSeenBlock
+  lastSeenTimestamp
+  lastSeenTransaction
+  lastSeenLogIndex
+  registrations(first: 1000) {
+    archController {
+      id
+    }
+    isRegistered
+  }
+}
+    `;
+export const BorrowerAnalyticsStatsDataFragmentDoc = gql`
+    fragment BorrowerAnalyticsStatsData on BorrowerStats {
+  id
+  borrower
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  numMarkets
+  numActiveMarkets
+  numDelinquentMarkets
+  numClosedMarkets
+  numBatchesExpired
+  numBatchesExpiredUnpaid
+  numBatchesPaidLate
+}
+    `;
+export const BorrowerDailyStatsDataFragmentDoc = gql`
+    fragment BorrowerDailyStatsData on BorrowerDailyStats {
+  id
+  borrower
+  startTimestamp
+  endTimestamp
+  dayDepositedUSD
+  dayBorrowedUSD
+  dayRepaidUSD
+  dayWithdrawalsRequestedUSD
+  dayWithdrawalsExecutedUSD
+  dayBaseInterestAccruedUSD
+  dayDelinquencyFeesAccruedUSD
+  dayProtocolFeesAccruedUSD
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  numMarkets
+  numActiveMarkets
+  numDelinquentMarkets
+  numClosedMarkets
+}
+    `;
+export const LenderAnalyticsStatsDataFragmentDoc = gql`
+    fragment LenderAnalyticsStatsData on LenderStats {
+  id
+  lender
+  firstSeenTimestamp
+  totalDepositedUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalInterestEarnedUSD
+  numMarkets
+  numActiveMarkets
+}
+    `;
+export const LenderDailyStatsDataFragmentDoc = gql`
+    fragment LenderDailyStatsData on LenderDailyStats {
+  id
+  lender
+  startTimestamp
+  endTimestamp
+  dayDepositedUSD
+  dayWithdrawalsRequestedUSD
+  dayWithdrawalsExecutedUSD
+  dayInterestEarnedUSD
+  totalDepositedUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalInterestEarnedUSD
+  numMarkets
+  numActiveMarkets
+}
+    `;
+export const AnalyticsTokenDataFragmentDoc = gql`
+    fragment AnalyticsTokenData on Token {
+  id
+  address
+  name
+  symbol
+  decimals
+  isMock
+  isUsdStablecoin
+  priceSource
+  priceFeed0
+  priceFeed1
+}
+    `;
+export const AnalyticsMarketReferenceDataFragmentDoc = gql`
+    fragment AnalyticsMarketReferenceData on Market {
+  id
+  address
+  name
+  borrower
+  createdAtTimestamp
+  isClosed
+  annualInterestBips
+  originalAnnualInterestBips
+  delinquencyGracePeriod
+  maxTotalSupply
+  scaledTotalSupply
+  scaleFactor
+  isDelinquent
+  isIncurringPenalties
+  totalDebtUSD
+  snapshot {
+    ...MarketSnapshotData
+  }
+  asset {
+    ...AnalyticsTokenData
+  }
+}
+    `;
+export const MarketDailyStatsDataFragmentDoc = gql`
+    fragment MarketDailyStatsData on MarketDailyStats {
+  id
+  startTimestamp
+  endTimestamp
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  dayDeposited
+  dayWithdrawalsRequested
+  dayWithdrawalsExecuted
+  dayBorrowed
+  dayRepaid
+  dayBaseInterestAccrued
+  dayDelinquencyFeesAccrued
+  dayProtocolFeesAccrued
+  totalBorrowed
+  totalRepaid
+  totalBaseInterestAccrued
+  totalDelinquencyFeesAccrued
+  totalProtocolFeesAccrued
+  totalDeposited
+  totalWithdrawalsRequested
+  totalWithdrawalsExecuted
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  totalDepositedUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  scaledTotalSupply
+  scaleFactor
+  usdPrice
+}
+    `;
+export const DelinquencyStatusChangeDataFragmentDoc = gql`
+    fragment DelinquencyStatusChangeData on DelinquencyStatusChanged {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  isDelinquent
+  liquidityCoverageRequired
+  totalAssets
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const MarketInterestAccrualDataFragmentDoc = gql`
+    fragment MarketInterestAccrualData on MarketInterestAccrued {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  fromTimestamp
+  toTimestamp
+  timeWithPenalties
+  baseInterestRay
+  delinquencyFeeRay
+  baseInterestAccrued
+  delinquencyFeesAccrued
+  protocolFeesAccrued
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const AnnualInterestBipsUpdateDataFragmentDoc = gql`
+    fragment AnnualInterestBipsUpdateData on AnnualInterestBipsUpdated {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  oldAnnualInterestBips
+  newAnnualInterestBips
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const BorrowerWithdrawalReliabilityDataFragmentDoc = gql`
+    fragment BorrowerWithdrawalReliabilityData on WithdrawalBatch {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  expiry
+  totalNormalizedRequests
+  isExpired
+  isClosed
+  isCompleted
+  updatedAtBlock
+  updatedAtTimestamp
+  updatedAtTransaction
+  updatedAtLogIndex
+  expiration {
+    normalizedAmountPaid
+    normalizedAmountOwed
+    blockNumber
+    blockTimestamp
+    transactionHash
+    blockLogIndex
+  }
+}
+    `;
+export const LenderPositionDataFragmentDoc = gql`
+    fragment LenderPositionData on LenderAccount {
+  id
+  address
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  scaledBalance
+  totalDeposited
+  totalInterestEarned
+  lastScaleFactor
+  addedTimestamp
+  lastUpdatedTimestamp
+  numPendingWithdrawalBatches
+  snapshot {
+    ...LenderAccountSnapshotData
+  }
+}
+    `;
+export const LenderDepositDataFragmentDoc = gql`
+    fragment LenderDepositData on Deposit {
+  id
+  account {
+    id
+    address
+  }
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  assetAmount
+  scaledAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const LenderWithdrawalRequestDataFragmentDoc = gql`
+    fragment LenderWithdrawalRequestData on WithdrawalRequest {
+  id
+  account {
+    id
+    address
+  }
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  batch {
+    id
+    expiry
+  }
+  scaledAmount
+  normalizedAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const LenderWithdrawalExecutionDataFragmentDoc = gql`
+    fragment LenderWithdrawalExecutionData on WithdrawalExecution {
+  id
+  account {
+    id
+    address
+  }
+  batch {
+    id
+    expiry
+    market {
+      ...AnalyticsMarketReferenceData
+    }
+  }
+  normalizedAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const LenderTransferDataFragmentDoc = gql`
+    fragment LenderTransferData on Transfer {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  from {
+    id
+    address
+  }
+  to {
+    id
+    address
+  }
+  amount
+  scaledAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const LenderWithdrawalStatusDataFragmentDoc = gql`
+    fragment LenderWithdrawalStatusData on LenderWithdrawalStatus {
+  id
+  account {
+    id
+    address
+    market {
+      ...AnalyticsMarketReferenceData
+    }
+  }
+  batch {
+    id
+    expiry
+    isClosed
+    isExpired
+    isCompleted
+  }
+  scaledAmount
+  normalizedAmountWithdrawn
+  totalNormalizedRequests
+  isCompleted
+  updatedAtBlock
+  updatedAtTimestamp
+  updatedAtTransaction
+  updatedAtLogIndex
+}
+    `;
+export const ProtocolAnalyticsStatsDataFragmentDoc = gql`
+    fragment ProtocolAnalyticsStatsData on ProtocolStats {
+  id
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  numMarkets
+  numActiveMarkets
+  numDelinquentMarkets
+  numClosedMarkets
+  numActiveBorrowers
+  numActiveLenders
+  numActiveLenderAccounts
+}
+    `;
+export const ProtocolDailyStatsDataFragmentDoc = gql`
+    fragment ProtocolDailyStatsData on ProtocolDailyStats {
+  id
+  startTimestamp
+  endTimestamp
+  dayDepositedUSD
+  dayBorrowedUSD
+  dayRepaidUSD
+  dayWithdrawalsRequestedUSD
+  dayWithdrawalsExecutedUSD
+  dayBaseInterestAccruedUSD
+  dayDelinquencyFeesAccruedUSD
+  dayProtocolFeesAccruedUSD
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  numMarkets
+  numActiveMarkets
+  numDelinquentMarkets
+  numClosedMarkets
+  numActiveBorrowers
+  numActiveLenders
+  numActiveLenderAccounts
+}
+    `;
+export const TokenPriceObservationDataFragmentDoc = gql`
+    fragment TokenPriceObservationData on TokenDailyPrice {
+  id
+  token {
+    ...AnalyticsTokenData
+  }
+  timestamp
+  priceUSD
+  source
+  observedAtBlock
+  observedAtTimestamp
+  observedAtTransaction
+  observedAtLogIndex
 }
     `;
 export const V1LenderWithActiveMarketsFragmentDoc = gql`
@@ -31329,3 +32000,385 @@ export const GetMarketChartsDataDocument = gql`
 }
     `;
 export type GetMarketChartsDataQueryResult = Apollo.QueryResult<SubgraphGetMarketChartsDataQuery, SubgraphGetMarketChartsDataQueryVariables>;
+export const GetBorrowerAnalyticsProfileDocument = gql`
+    query getBorrowerAnalyticsProfile($borrowerId: ID!, $borrower: Bytes!) {
+  _meta {
+    ...IndexedQueryMetadataData
+  }
+  borrower(id: $borrowerId) {
+    ...BorrowerAnalyticsIdentityData
+  }
+  borrowerStats_collection(first: 1, where: {borrower: $borrower}) {
+    ...BorrowerAnalyticsStatsData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${BorrowerAnalyticsIdentityDataFragmentDoc}
+${BorrowerAnalyticsStatsDataFragmentDoc}`;
+export type GetBorrowerAnalyticsProfileQueryResult = Apollo.QueryResult<SubgraphGetBorrowerAnalyticsProfileQuery, SubgraphGetBorrowerAnalyticsProfileQueryVariables>;
+export const GetBorrowerDailyStatsPageDocument = gql`
+    query getBorrowerDailyStatsPage($filter: BorrowerDailyStats_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  borrowerDailyStats_collection(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...BorrowerDailyStatsData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${BorrowerDailyStatsDataFragmentDoc}`;
+export type GetBorrowerDailyStatsPageQueryResult = Apollo.QueryResult<SubgraphGetBorrowerDailyStatsPageQuery, SubgraphGetBorrowerDailyStatsPageQueryVariables>;
+export const GetMarketDailyStatsPageDocument = gql`
+    query getMarketDailyStatsPage($filter: MarketDailyStats_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  marketDailyStats_collection(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...MarketDailyStatsData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${MarketDailyStatsDataFragmentDoc}
+${AnalyticsMarketReferenceDataFragmentDoc}
+${MarketSnapshotDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetMarketDailyStatsPageQueryResult = Apollo.QueryResult<SubgraphGetMarketDailyStatsPageQuery, SubgraphGetMarketDailyStatsPageQueryVariables>;
+export const GetDelinquencyStatusChangePageDocument = gql`
+    query getDelinquencyStatusChangePage($filter: DelinquencyStatusChanged_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  delinquencyStatusChangeds(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...DelinquencyStatusChangeData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${DelinquencyStatusChangeDataFragmentDoc}
+${AnalyticsMarketReferenceDataFragmentDoc}
+${MarketSnapshotDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetDelinquencyStatusChangePageQueryResult = Apollo.QueryResult<SubgraphGetDelinquencyStatusChangePageQuery, SubgraphGetDelinquencyStatusChangePageQueryVariables>;
+export const GetMarketInterestAccrualPageDocument = gql`
+    query getMarketInterestAccrualPage($filter: MarketInterestAccrued_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  marketInterestAccrueds(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...MarketInterestAccrualData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${MarketInterestAccrualDataFragmentDoc}
+${AnalyticsMarketReferenceDataFragmentDoc}
+${MarketSnapshotDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetMarketInterestAccrualPageQueryResult = Apollo.QueryResult<SubgraphGetMarketInterestAccrualPageQuery, SubgraphGetMarketInterestAccrualPageQueryVariables>;
+export const GetAnnualInterestBipsUpdatePageDocument = gql`
+    query getAnnualInterestBipsUpdatePage($filter: AnnualInterestBipsUpdated_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  annualInterestBipsUpdateds(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...AnnualInterestBipsUpdateData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${AnnualInterestBipsUpdateDataFragmentDoc}
+${AnalyticsMarketReferenceDataFragmentDoc}
+${MarketSnapshotDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetAnnualInterestBipsUpdatePageQueryResult = Apollo.QueryResult<SubgraphGetAnnualInterestBipsUpdatePageQuery, SubgraphGetAnnualInterestBipsUpdatePageQueryVariables>;
+export const GetBorrowerWithdrawalReliabilityPageDocument = gql`
+    query getBorrowerWithdrawalReliabilityPage($filter: WithdrawalBatch_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  withdrawalBatches(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...BorrowerWithdrawalReliabilityData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${BorrowerWithdrawalReliabilityDataFragmentDoc}
+${AnalyticsMarketReferenceDataFragmentDoc}
+${MarketSnapshotDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetBorrowerWithdrawalReliabilityPageQueryResult = Apollo.QueryResult<SubgraphGetBorrowerWithdrawalReliabilityPageQuery, SubgraphGetBorrowerWithdrawalReliabilityPageQueryVariables>;
+export const GetLenderAnalyticsProfileDocument = gql`
+    query getLenderAnalyticsProfile($lender: Bytes!) {
+  _meta {
+    ...IndexedQueryMetadataData
+  }
+  lenderStats_collection(first: 1, where: {lender: $lender}) {
+    ...LenderAnalyticsStatsData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${LenderAnalyticsStatsDataFragmentDoc}`;
+export type GetLenderAnalyticsProfileQueryResult = Apollo.QueryResult<SubgraphGetLenderAnalyticsProfileQuery, SubgraphGetLenderAnalyticsProfileQueryVariables>;
+export const GetLenderPositionPageDocument = gql`
+    query getLenderPositionPage($filter: LenderAccount_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  lenderAccounts(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...LenderPositionData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${LenderPositionDataFragmentDoc}
+${AnalyticsMarketReferenceDataFragmentDoc}
+${MarketSnapshotDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}
+${LenderAccountSnapshotDataFragmentDoc}`;
+export type GetLenderPositionPageQueryResult = Apollo.QueryResult<SubgraphGetLenderPositionPageQuery, SubgraphGetLenderPositionPageQueryVariables>;
+export const GetLenderDailyStatsPageDocument = gql`
+    query getLenderDailyStatsPage($filter: LenderDailyStats_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  lenderDailyStats_collection(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...LenderDailyStatsData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${LenderDailyStatsDataFragmentDoc}`;
+export type GetLenderDailyStatsPageQueryResult = Apollo.QueryResult<SubgraphGetLenderDailyStatsPageQuery, SubgraphGetLenderDailyStatsPageQueryVariables>;
+export const GetLenderDepositPageDocument = gql`
+    query getLenderDepositPage($filter: Deposit_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  deposits(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...LenderDepositData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${LenderDepositDataFragmentDoc}
+${AnalyticsMarketReferenceDataFragmentDoc}
+${MarketSnapshotDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetLenderDepositPageQueryResult = Apollo.QueryResult<SubgraphGetLenderDepositPageQuery, SubgraphGetLenderDepositPageQueryVariables>;
+export const GetLenderWithdrawalRequestPageDocument = gql`
+    query getLenderWithdrawalRequestPage($filter: WithdrawalRequest_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  withdrawalRequests(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...LenderWithdrawalRequestData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${LenderWithdrawalRequestDataFragmentDoc}
+${AnalyticsMarketReferenceDataFragmentDoc}
+${MarketSnapshotDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetLenderWithdrawalRequestPageQueryResult = Apollo.QueryResult<SubgraphGetLenderWithdrawalRequestPageQuery, SubgraphGetLenderWithdrawalRequestPageQueryVariables>;
+export const GetLenderWithdrawalExecutionPageDocument = gql`
+    query getLenderWithdrawalExecutionPage($filter: WithdrawalExecution_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  withdrawalExecutions(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...LenderWithdrawalExecutionData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${LenderWithdrawalExecutionDataFragmentDoc}
+${AnalyticsMarketReferenceDataFragmentDoc}
+${MarketSnapshotDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetLenderWithdrawalExecutionPageQueryResult = Apollo.QueryResult<SubgraphGetLenderWithdrawalExecutionPageQuery, SubgraphGetLenderWithdrawalExecutionPageQueryVariables>;
+export const GetLenderTransferPageDocument = gql`
+    query getLenderTransferPage($filter: Transfer_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  transfers(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...LenderTransferData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${LenderTransferDataFragmentDoc}
+${AnalyticsMarketReferenceDataFragmentDoc}
+${MarketSnapshotDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetLenderTransferPageQueryResult = Apollo.QueryResult<SubgraphGetLenderTransferPageQuery, SubgraphGetLenderTransferPageQueryVariables>;
+export const GetLenderWithdrawalStatusPageDocument = gql`
+    query getLenderWithdrawalStatusPage($filter: LenderWithdrawalStatus_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  lenderWithdrawalStatuses(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...LenderWithdrawalStatusData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${LenderWithdrawalStatusDataFragmentDoc}
+${AnalyticsMarketReferenceDataFragmentDoc}
+${MarketSnapshotDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetLenderWithdrawalStatusPageQueryResult = Apollo.QueryResult<SubgraphGetLenderWithdrawalStatusPageQuery, SubgraphGetLenderWithdrawalStatusPageQueryVariables>;
+export const GetProtocolAnalyticsStatsDocument = gql`
+    query getProtocolAnalyticsStats {
+  _meta {
+    ...IndexedQueryMetadataData
+  }
+  protocolStats(id: "PROTOCOL_STATS") {
+    ...ProtocolAnalyticsStatsData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${ProtocolAnalyticsStatsDataFragmentDoc}`;
+export type GetProtocolAnalyticsStatsQueryResult = Apollo.QueryResult<SubgraphGetProtocolAnalyticsStatsQuery, SubgraphGetProtocolAnalyticsStatsQueryVariables>;
+export const GetProtocolDailyStatsPageDocument = gql`
+    query getProtocolDailyStatsPage($filter: ProtocolDailyStats_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  protocolDailyStats_collection(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...ProtocolDailyStatsData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${ProtocolDailyStatsDataFragmentDoc}`;
+export type GetProtocolDailyStatsPageQueryResult = Apollo.QueryResult<SubgraphGetProtocolDailyStatsPageQuery, SubgraphGetProtocolDailyStatsPageQueryVariables>;
+export const GetAnalyticsTokensDocument = gql`
+    query getAnalyticsTokens($filter: Token_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  tokens(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...AnalyticsTokenData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetAnalyticsTokensQueryResult = Apollo.QueryResult<SubgraphGetAnalyticsTokensQuery, SubgraphGetAnalyticsTokensQueryVariables>;
+export const GetTokenPriceObservationPageDocument = gql`
+    query getTokenPriceObservationPage($filter: TokenDailyPrice_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  tokenDailyPrices(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...TokenPriceObservationData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${TokenPriceObservationDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetTokenPriceObservationPageQueryResult = Apollo.QueryResult<SubgraphGetTokenPriceObservationPageQuery, SubgraphGetTokenPriceObservationPageQueryVariables>;
+export const GetLatestTokenPriceObservationDocument = gql`
+    query getLatestTokenPriceObservation($filter: TokenDailyPrice_filter!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  tokenDailyPrices(
+    block: $block
+    where: $filter
+    orderBy: timestamp
+    orderDirection: desc
+    first: 1
+  ) {
+    ...TokenPriceObservationData
+  }
+}
+    ${IndexedQueryMetadataDataFragmentDoc}
+${TokenPriceObservationDataFragmentDoc}
+${AnalyticsTokenDataFragmentDoc}`;
+export type GetLatestTokenPriceObservationQueryResult = Apollo.QueryResult<SubgraphGetLatestTokenPriceObservationQuery, SubgraphGetLatestTokenPriceObservationQueryVariables>;

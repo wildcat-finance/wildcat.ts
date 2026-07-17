@@ -24,6 +24,8 @@ Status values:
       factory scope.
 - [x] Indexed market, lender-account, and collateral state carries explicit
       freshness and remains distinguishable from live lens/RPC overlays.
+- [x] Borrower, lender, market, protocol, and price analytics use SDK-owned
+      indexed read models with query-block freshness.
 - [!] Final V2.5 Sepolia addresses and start blocks are pending deployment.
 - [!] A hosted V2.5 Graph API endpoint URL is pending subgraph deployment.
 
@@ -114,18 +116,18 @@ Status values:
 
 ## Phase 5 - Analytics read models
 
-- [ ] Define stable pagination primitives.
-- [ ] Add borrower identity and aggregate-stat reads.
-- [ ] Add borrower daily/cost/delinquency/reliability reads.
-- [ ] Add lender identity, position, activity, and daily-stat reads.
-- [ ] Add market daily flow and delinquency-history reads.
-- [ ] Add protocol aggregate reads.
-- [ ] Add price observation/source reads with unpriced semantics.
-- [ ] Test optional modules disabled by chain.
-- [ ] Inventory app direct GraphQL queries.
-- [ ] Map each app query to an SDK API or intentional escape hatch.
-- [ ] Run Phase 5 checks.
-- [ ] Commit Phase 5.
+- [x] Define stable pagination primitives.
+- [x] Add borrower identity and aggregate-stat reads.
+- [x] Add borrower daily/cost/delinquency/reliability reads.
+- [x] Add lender identity, position, activity, and daily-stat reads.
+- [x] Add market daily flow and delinquency-history reads.
+- [x] Add protocol aggregate reads.
+- [x] Add price observation/source reads with unpriced semantics.
+- [x] Test optional modules disabled by chain.
+- [x] Inventory app direct GraphQL queries.
+- [x] Map each app query to an SDK API or intentional escape hatch.
+- [x] Run Phase 5 checks.
+- [x] Commit Phase 5.
 
 ## Phase 6 - Transactions and deployment configuration
 
@@ -202,6 +204,13 @@ Status values:
 | 2026-07-17 | SDK Phase 4 | `yarn mocha` | Pass | 141 passing |
 | 2026-07-17 | SDK Phase 4 | `env -u WILDCAT_SUBGRAPH_SCHEMA yarn codegen:gql` | Pass | Market provenance, snapshot, and event cursor operations reproduce transport types |
 | 2026-07-17 | SDK Phase 4 | `git diff --check` | Pass | No whitespace errors |
+| 2026-07-17 | SDK Phase 5 targeted | Analytics pagination and read-model fixtures | Pass | 12 passing; cursor/block invariants and every public analytics family covered |
+| 2026-07-17 | SDK Phase 5 app inventory | Direct GraphQL callsite mapping | Pass | Every app query maps to an SDK API or documented app-owned escape hatch |
+| 2026-07-17 | SDK Phase 5 | `yarn lint` | Pass | Source and tests are clean |
+| 2026-07-17 | SDK Phase 5 | `yarn build` | Pass | TypeScript production build with public analytics models |
+| 2026-07-17 | SDK Phase 5 | `yarn mocha` | Pass | 153 passing |
+| 2026-07-17 | SDK Phase 5 | `env -u WILDCAT_SUBGRAPH_SCHEMA yarn codegen:gql` | Pass | Analytics documents reproduce against the checked-in V2.5 Graph API schema |
+| 2026-07-17 | SDK Phase 5 | `git diff --check` | Pass | No whitespace errors |
 
 ## Decision ledger
 
@@ -224,6 +233,11 @@ Status values:
 | 2026-07-17 | Mark mutable models as `indexed` or `live` | Callers can distinguish freshness-stamped projections from lens/RPC overlays even when both use the existing `Market` and `MarketAccount` behavior classes |
 | 2026-07-17 | Preserve indexed kind when an older V2 lens cannot classify a historical factory | A missing deployment allowlist entry is not evidence that indexed standard/revolving provenance is wrong; unified V2.5 optional fields remain live authority when present |
 | 2026-07-17 | Add a sequence-cursor market event API without replacing typed event APIs | The normalized subgraph chronology supplies stable cross-event ordering while existing payload-specific records retain their richer fields |
+| 2026-07-17 | Keep token amounts as `bigint` and Graph `BigDecimal` USD values as strings | Prevents analytics transport from introducing precision loss; UI consumers choose display conversion explicitly |
+| 2026-07-17 | Pin analytics continuation cursors to the first page's Graph block | Entity IDs are stable but not globally append-ordered; block pinning prevents inserts or mutable daily entities from changing a traversal |
+| 2026-07-17 | Include `_meta` freshness on every analytics result envelope | Indexed aggregate values otherwise have no entity-level update coordinates and could be mistaken for live state |
+| 2026-07-17 | Treat optional-module absence and unpriced tokens as explicit states | Disabled analytics/pricing and missing observations must not collapse into empty data or numeric zero |
+| 2026-07-17 | Keep cross-market notification polling as an app-owned GraphQL escape hatch | Its UI notification projections are not stable domain read models; profile and analytics queries now belong to the SDK |
 
 ## Open inputs and blockers
 
@@ -257,8 +271,8 @@ Status values:
 | 1 - Domain/config | `dde64f7` | Domain/config unit tests, lint, build, 113-test suite | Complete |
 | 2 - GraphQL/codegen | `6e56b3b` | Schema validation, endpoint-gate integration, lint, build, 124-test suite | Complete |
 | 3 - Factories/hooks | `aff7c32` | Multi-factory fixtures, lint, build, 133-test suite | Complete |
-| 4 - Markets/live | This commit | Historical fixtures, fixed-block parity, lint, build, 141-test suite | Complete |
-| 5 - Analytics | Pending | Analytics fixtures, lint, build, mocha | Not started |
+| 4 - Markets/live | `7a930d1` | Historical fixtures, fixed-block parity, lint, build, 141-test suite | Complete |
+| 5 - Analytics | This commit | Analytics fixtures, app query inventory, lint, build, 153-test suite | Complete |
 | 6 - Deployment | Pending | Artifact checks, previews, deployed endpoint checks | Blocked on deployment |
 | 7 - App/release | Pending | App tests, lint, build, Sepolia smoke | Not started |
 
@@ -334,3 +348,16 @@ Status values:
 - Added normalized market-event sequence pagination alongside the existing typed
   event payload APIs, plus deterministic V1, historical V2, V2.5 standard, and
   V2.5 revolving fixed-block fixtures.
+- Added SDK-owned borrower, lender, market, protocol, withdrawal-reliability,
+  activity, and price read models without exporting generated Graph transport
+  types.
+- Added Graph-block-pinned entity-ID pagination. Every analytics result exposes
+  query block/deployment/error metadata, while lender and market references
+  retain their entity snapshot freshness where available.
+- Preserved token amounts as `bigint`, USD decimals as strings, and price-source
+  provenance with explicit unpriced reasons for disabled or missing data.
+- Added optional-module feature discovery for SDK-managed and custom Apollo
+  clients, including retryable deployment-metadata resolution.
+- Inventoried all app direct GraphQL callsites and mapped profile analytics to
+  first-class SDK APIs while documenting the narrow notification/subscription
+  and server-discovery escape hatches for Phase 7.

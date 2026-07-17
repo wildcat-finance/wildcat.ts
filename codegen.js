@@ -19,6 +19,10 @@ const config = {
           enumValues: "keep"
         },
         scalars: {
+          BigDecimal: {
+            input: "string | number",
+            output: "string"
+          },
           BigInt: {
             input: "string | number | bigint",
             output: "string"
