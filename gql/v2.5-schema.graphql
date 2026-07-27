@@ -19808,7 +19808,7 @@ type RoleProvider {
   pullProviderIndex: Int!
   pushProviderIndex: Int!
   removedEvent: RoleProviderRemoved
-  timeToLive: Int!
+  timeToLive: BigInt!
   updatedEvents(
     first: Int = 100
     orderBy: RoleProviderUpdated_orderBy
@@ -19830,7 +19830,7 @@ type RoleProviderAdded {
   provider: RoleProvider!
   pullProviderIndex: Int!
   pushProviderIndex: Int!
-  timeToLive: Int!
+  timeToLive: BigInt!
   transactionHash: Bytes!
 }
 
@@ -19947,14 +19947,14 @@ input RoleProviderAdded_filter {
   pushProviderIndex_lte: Int
   pushProviderIndex_not: Int
   pushProviderIndex_not_in: [Int!]
-  timeToLive: Int
-  timeToLive_gt: Int
-  timeToLive_gte: Int
-  timeToLive_in: [Int!]
-  timeToLive_lt: Int
-  timeToLive_lte: Int
-  timeToLive_not: Int
-  timeToLive_not_in: [Int!]
+  timeToLive: BigInt
+  timeToLive_gt: BigInt
+  timeToLive_gte: BigInt
+  timeToLive_in: [BigInt!]
+  timeToLive_lt: BigInt
+  timeToLive_lte: BigInt
+  timeToLive_not: BigInt
+  timeToLive_not_in: [BigInt!]
   transactionHash: Bytes
   transactionHash_contains: Bytes
   transactionHash_gt: Bytes
@@ -20162,7 +20162,7 @@ type RoleProviderUpdated {
   provider: RoleProvider!
   pullProviderIndex: Int!
   pushProviderIndex: Int!
-  timeToLive: Int!
+  timeToLive: BigInt!
   transactionHash: Bytes!
 }
 
@@ -20279,14 +20279,14 @@ input RoleProviderUpdated_filter {
   pushProviderIndex_lte: Int
   pushProviderIndex_not: Int
   pushProviderIndex_not_in: [Int!]
-  timeToLive: Int
-  timeToLive_gt: Int
-  timeToLive_gte: Int
-  timeToLive_in: [Int!]
-  timeToLive_lt: Int
-  timeToLive_lte: Int
-  timeToLive_not: Int
-  timeToLive_not_in: [Int!]
+  timeToLive: BigInt
+  timeToLive_gt: BigInt
+  timeToLive_gte: BigInt
+  timeToLive_in: [BigInt!]
+  timeToLive_lt: BigInt
+  timeToLive_lte: BigInt
+  timeToLive_not: BigInt
+  timeToLive_not_in: [BigInt!]
   transactionHash: Bytes
   transactionHash_contains: Bytes
   transactionHash_gt: Bytes
@@ -20413,14 +20413,14 @@ input RoleProvider_filter {
   pushProviderIndex_not: Int
   pushProviderIndex_not_in: [Int!]
   removedEvent_: RoleProviderRemoved_filter
-  timeToLive: Int
-  timeToLive_gt: Int
-  timeToLive_gte: Int
-  timeToLive_in: [Int!]
-  timeToLive_lt: Int
-  timeToLive_lte: Int
-  timeToLive_not: Int
-  timeToLive_not_in: [Int!]
+  timeToLive: BigInt
+  timeToLive_gt: BigInt
+  timeToLive_gte: BigInt
+  timeToLive_in: [BigInt!]
+  timeToLive_lt: BigInt
+  timeToLive_lte: BigInt
+  timeToLive_not: BigInt
+  timeToLive_not_in: [BigInt!]
   updatedEvents_: RoleProviderUpdated_filter
 }
 

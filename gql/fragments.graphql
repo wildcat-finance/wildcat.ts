@@ -764,7 +764,7 @@ fragment HooksInstanceData on HooksInstance {
   hooksFactory {
     ...HooksFactoryData
   }
-  providers {
+  providers(where: { isApproved: true }) {
     ...RoleProviderData
   }
   eventIndex

@@ -11,9 +11,11 @@ import {
   SubgraphFactoryLifecycle,
   SubgraphHookedMarketAbi,
   SubgraphHooksKind,
+  SubgraphLenderHooksAccessDataFragment,
   SubgraphMarketKind
 } from "../../src/gql/graphql";
 import { HooksKind, Provider } from "../../src/types";
+import { parseSubgraphLenderHooksAccess } from "../../src/utils";
 
 const chainId = SupportedChainId.Sepolia;
 const configuredHooksFactory = getDeploymentAddress(chainId, "HooksFactoryStandard");
@@ -122,7 +124,19 @@ const makeHooksInstance = (kind: SubgraphHooksKind, templateName: string, suffix
     hooksTemplate: registration.hooksTemplate,
     templateRegistration: registration,
     hooksFactory: registration.hooksFactory,
-    providers: []
+    providers: [
+      {
+        __typename: "RoleProvider" as const,
+        id: makeAddress(4_000 + suffix),
+        providerAddress: borrower,
+        timeToLive: "4294967295",
+        isPullProvider: false,
+        pullProviderIndex: 2 ** 24 - 1,
+        isPushProvider: true,
+        pushProviderIndex: 0,
+        isApproved: true
+      }
+    ]
   };
 };
 
@@ -227,6 +241,42 @@ describe("subgraph hooks helpers", () => {
       "FixedTermHooks",
       "PeriodicTermHooks"
     ]);
+    expect(
+      result.hooksInstances.map((instance) => instance.roleProviders[0].timeToLive)
+    ).to.deep.equal([4_294_967_295, 4_294_967_295, 4_294_967_295]);
+    expect(
+      result.hooksInstances.map((instance) => instance.roleProviders[0].isPullProvider)
+    ).to.deep.equal([false, false, false]);
+  });
+
+  it("normalizes Graph BigInt TTLs in lender credential metadata", () => {
+    const hooksAccess: SubgraphLenderHooksAccessDataFragment = {
+      __typename: "LenderHooksAccess",
+      id: "lender-hooks-access",
+      lender: borrower,
+      isBlockedFromDeposits: false,
+      canRefresh: false,
+      lastApprovalTimestamp: 1_000,
+      addedTimestamp: 1_000,
+      lastProvider: {
+        __typename: "RoleProvider",
+        id: "borrower-role-provider",
+        providerAddress: borrower,
+        timeToLive: "4294967295",
+        isPullProvider: false,
+        pullProviderIndex: 2 ** 24 - 1,
+        isPushProvider: true,
+        pushProviderIndex: 0,
+        isApproved: true
+      }
+    };
+
+    const credential = parseSubgraphLenderHooksAccess(hooksAccess);
+
+    expect(credential.lastProvider?.timeToLive).to.equal(4_294_967_295);
+    expect(credential.lastApprovalTimestamp + (credential.lastProvider?.timeToLive ?? 0)).to.equal(
+      4_294_968_295
+    );
   });
 
   it("keeps registration state isolated for the same template on different factories", async () => {

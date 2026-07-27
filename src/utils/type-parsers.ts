@@ -292,6 +292,11 @@ export const parseSubgraphLenderHooksAccess = ({
     canRefresh,
     isBlockedFromDeposits,
     lastApprovalTimestamp,
-    lastProvider: lastProvider!
+    lastProvider: lastProvider
+      ? {
+          ...lastProvider,
+          timeToLive: toNumber(lastProvider.timeToLive)
+        }
+      : undefined
   };
 };

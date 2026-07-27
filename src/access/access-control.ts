@@ -249,7 +249,7 @@ export class OpenTermHooks extends ContractWrapper {
         pullProviderIndex: p.pullProviderIndex,
         isPushProvider: p.isPushProvider,
         pushProviderIndex: p.pushProviderIndex,
-        timeToLive: p.timeToLive
+        timeToLive: toNumber(p.timeToLive)
       })),
       numMarkets: data.numMarkets
     });
