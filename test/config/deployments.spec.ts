@@ -37,6 +37,15 @@ const makeFactoryMetadata = (
 });
 
 describe("SDK deployment configuration", () => {
+  it("pins the live Sepolia V2.5 deployment addresses", () => {
+    expect(Deployments[SupportedChainId.Sepolia]).to.include({
+      HooksFactoryStandard: "0xAa9BbaE0D519e85B6aBEA81aD3C2cBeBfA57696C",
+      HooksFactoryRevolving: "0x76Fe050d91940a72133e1819BF34c1042d8DBe73",
+      MarketLensV2_5: "0x622286C01c6417531Fdb8e63E009a06247cc8117",
+      Wildcat4626WrapperFactory: "0x8a77449eaBB1522983cd700f002b5b191463378e"
+    });
+  });
+
   it("separates Sepolia standard and revolving transaction targets", () => {
     const targets = getConfiguredHooksFactoryTargets(SupportedChainId.Sepolia);
 
