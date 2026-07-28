@@ -25,7 +25,11 @@ describe("SDK public surface smoke", () => {
     expect(typeof sdk.getBorrowerDailyStatsPage).to.equal("function");
     expect(typeof sdk.getLenderAnalyticsProfile).to.equal("function");
     expect(typeof sdk.getLenderPositionPage).to.equal("function");
+    expect(typeof sdk.getMarketAggregatePage).to.equal("function");
+    expect(typeof sdk.getMarketBorrowPage).to.equal("function");
     expect(typeof sdk.getMarketDailyStatsPage).to.equal("function");
+    expect(typeof sdk.getMarketDebtRepaymentPage).to.equal("function");
+    expect(typeof sdk.getMaxTotalSupplyUpdatePage).to.equal("function");
     expect(typeof sdk.getProtocolAnalyticsStats).to.equal("function");
     expect(typeof sdk.getLatestTokenUsdPrices).to.equal("function");
     expect(typeof sdk.collectIndexedPages).to.equal("function");

@@ -1,6 +1,10 @@
-import { IndexedAt } from "../domain";
+import { HooksKind, IndexedAt, parseHooksKind, parseProtocolMarketVersion } from "../domain";
 import {
   SubgraphAnalyticsMarketReferenceDataFragment,
+  SubgraphAnalyticsMarketAggregateDataFragment,
+  SubgraphAnalyticsMarketBorrowDataFragment,
+  SubgraphAnalyticsMarketDebtRepaymentDataFragment,
+  SubgraphAnalyticsMaxTotalSupplyUpdateDataFragment,
   SubgraphAnalyticsTokenDataFragment,
   SubgraphAnnualInterestBipsUpdateDataFragment,
   SubgraphBorrowerAnalyticsIdentityDataFragment,
@@ -37,6 +41,7 @@ import {
   DelinquencyStatusChange,
   IndexedAnalyticsMarket,
   IndexedAnalyticsToken,
+  IndexedMarketAggregate,
   IndexedQueryMetadata,
   LenderAggregateStats,
   LenderDailyStats,
@@ -47,7 +52,10 @@ import {
   LenderWithdrawalRequest,
   IndexedLenderWithdrawalStatus,
   IndexedMarketDailyStats,
+  MarketBorrow,
+  MarketDebtRepayment,
   MarketInterestAccrual,
+  MaxTotalSupplyUpdate,
   PriceSource,
   ProtocolAggregateStats,
   ProtocolDailyStats,
@@ -116,24 +124,44 @@ export const normalizeAnalyticsToken = (
 
 export const normalizeAnalyticsMarket = (
   data: SubgraphAnalyticsMarketReferenceDataFragment
-): IndexedAnalyticsMarket => ({
-  address: data.address,
-  name: data.name,
-  borrower: data.borrower,
-  createdAtTimestamp: BigInt(data.createdAtTimestamp),
-  isClosed: data.isClosed,
-  annualInterestBips: data.annualInterestBips,
-  originalAnnualInterestBips: data.originalAnnualInterestBips,
-  delinquencyGracePeriod: data.delinquencyGracePeriod,
-  maxTotalSupply: BigInt(data.maxTotalSupply),
-  scaledTotalSupply: BigInt(data.scaledTotalSupply),
-  scaleFactor: BigInt(data.scaleFactor),
-  isDelinquent: data.isDelinquent,
-  isIncurringPenalties: data.isIncurringPenalties,
-  totalDebtUSD: usd(data.totalDebtUSD),
-  ...(data.snapshot ? { snapshot: normalizeSubgraphMarketSnapshot(data.snapshot) } : {}),
-  asset: normalizeAnalyticsToken(data.asset)
-});
+): IndexedAnalyticsMarket => {
+  const kind =
+    parseProtocolMarketVersion(data.version) === "v1"
+      ? HooksKind.OpenTerm
+      : parseHooksKind(data.hooks?.kind);
+  return {
+    address: data.address,
+    name: data.name,
+    borrower: data.borrower,
+    createdAtTimestamp: BigInt(data.createdAtTimestamp),
+    isClosed: data.isClosed,
+    annualInterestBips: data.annualInterestBips,
+    originalAnnualInterestBips: data.originalAnnualInterestBips,
+    delinquencyGracePeriod: data.delinquencyGracePeriod,
+    maxTotalSupply: BigInt(data.maxTotalSupply),
+    scaledTotalSupply: BigInt(data.scaledTotalSupply),
+    scaleFactor: BigInt(data.scaleFactor),
+    isDelinquent: data.isDelinquent,
+    isIncurringPenalties: data.isIncurringPenalties,
+    totalDebtUSD: usd(data.totalDebtUSD),
+    term: {
+      kind,
+      ...(kind === HooksKind.FixedTerm && data.hooksConfig
+        ? { fixedTermEndTime: data.hooksConfig.fixedTermEndTime }
+        : {}),
+      ...(kind === HooksKind.PeriodicTerm && data.hooksConfig
+        ? {
+            firstWithdrawalWindowStart: data.hooksConfig.firstWithdrawalWindowStart,
+            periodDuration: data.hooksConfig.periodDuration,
+            withdrawalWindowDuration: data.hooksConfig.withdrawalWindowDuration,
+            periodicTermClosed: data.hooksConfig.periodicTermClosed
+          }
+        : {})
+    },
+    ...(data.snapshot ? { snapshot: normalizeSubgraphMarketSnapshot(data.snapshot) } : {}),
+    asset: normalizeAnalyticsToken(data.asset)
+  };
+};
 
 export const normalizeBorrowerIdentity = (
   data: SubgraphBorrowerAnalyticsIdentityDataFragment
@@ -293,6 +321,9 @@ const analyticsEventBase = (
     | SubgraphDelinquencyStatusChangeDataFragment
     | SubgraphMarketInterestAccrualDataFragment
     | SubgraphAnnualInterestBipsUpdateDataFragment
+    | SubgraphAnalyticsMarketBorrowDataFragment
+    | SubgraphAnalyticsMarketDebtRepaymentDataFragment
+    | SubgraphAnalyticsMaxTotalSupplyUpdateDataFragment
 ) => ({
   id: data.id,
   market: normalizeAnalyticsMarket(data.market),
@@ -328,6 +359,44 @@ export const normalizeAnnualInterestBipsUpdate = (
   ...analyticsEventBase(data),
   oldAnnualInterestBips: data.oldAnnualInterestBips,
   newAnnualInterestBips: data.newAnnualInterestBips
+});
+
+export const normalizeMarketBorrow = (
+  data: SubgraphAnalyticsMarketBorrowDataFragment
+): MarketBorrow => ({
+  ...analyticsEventBase(data),
+  assetAmount: BigInt(data.assetAmount)
+});
+
+export const normalizeMarketDebtRepayment = (
+  data: SubgraphAnalyticsMarketDebtRepaymentDataFragment
+): MarketDebtRepayment => ({
+  ...analyticsEventBase(data),
+  from: data.from,
+  assetAmount: BigInt(data.assetAmount)
+});
+
+export const normalizeMaxTotalSupplyUpdate = (
+  data: SubgraphAnalyticsMaxTotalSupplyUpdateDataFragment
+): MaxTotalSupplyUpdate => ({
+  ...analyticsEventBase(data),
+  oldMaxTotalSupply: BigInt(data.oldMaxTotalSupply),
+  newMaxTotalSupply: BigInt(data.newMaxTotalSupply)
+});
+
+export const normalizeIndexedMarketAggregate = (
+  data: SubgraphAnalyticsMarketAggregateDataFragment
+): IndexedMarketAggregate => ({
+  id: data.id,
+  market: normalizeAnalyticsMarket(data),
+  totalBorrowed: BigInt(data.totalBorrowed),
+  totalRepaid: BigInt(data.totalRepaid),
+  totalBaseInterestAccrued: BigInt(data.totalBaseInterestAccrued),
+  totalDelinquencyFeesAccrued: BigInt(data.totalDelinquencyFeesAccrued),
+  totalProtocolFeesAccrued: BigInt(data.totalProtocolFeesAccrued),
+  totalDeposited: BigInt(data.totalDeposited),
+  totalWithdrawalsRequested: BigInt(data.totalWithdrawalsRequested),
+  totalWithdrawalsExecuted: BigInt(data.totalWithdrawalsExecuted)
 });
 
 export const normalizeBorrowerWithdrawalReliability = (
@@ -445,7 +514,13 @@ export const normalizeLenderWithdrawalStatus = (
     expiry: BigInt(data.batch.expiry),
     isClosed: data.batch.isClosed,
     isExpired: data.batch.isExpired,
-    isCompleted: data.batch.isCompleted
+    isCompleted: data.batch.isCompleted,
+    createdAt: indexedAt(
+      data.batch.creation.blockNumber,
+      data.batch.creation.blockTimestamp,
+      data.batch.creation.transactionHash,
+      data.batch.creation.blockLogIndex
+    )
   },
   scaledAmount: BigInt(data.scaledAmount),
   normalizedAmountWithdrawn: BigInt(data.normalizedAmountWithdrawn),

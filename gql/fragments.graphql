@@ -998,6 +998,7 @@ fragment AnalyticsTokenData on Token {
 fragment AnalyticsMarketReferenceData on Market {
   id
   address
+  version
   name
   borrower
   createdAtTimestamp
@@ -1011,6 +1012,16 @@ fragment AnalyticsMarketReferenceData on Market {
   isDelinquent
   isIncurringPenalties
   totalDebtUSD
+  hooks {
+    kind
+  }
+  hooksConfig {
+    fixedTermEndTime
+    firstWithdrawalWindowStart
+    periodDuration
+    withdrawalWindowDuration
+    periodicTermClosed
+  }
   snapshot {
     ...MarketSnapshotData
   }
@@ -1196,6 +1207,57 @@ fragment AnnualInterestBipsUpdateData on AnnualInterestBipsUpdated {
   blockLogIndex
 }
 
+fragment AnalyticsMarketBorrowData on Borrow {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  assetAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment AnalyticsMarketDebtRepaymentData on DebtRepaid {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  from
+  assetAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment AnalyticsMaxTotalSupplyUpdateData on MaxTotalSupplyUpdated {
+  id
+  market {
+    ...AnalyticsMarketReferenceData
+  }
+  oldMaxTotalSupply
+  newMaxTotalSupply
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment AnalyticsMarketAggregateData on Market {
+  id
+  ...AnalyticsMarketReferenceData
+  totalBorrowed
+  totalRepaid
+  totalBaseInterestAccrued
+  totalDelinquencyFeesAccrued
+  totalProtocolFeesAccrued
+  totalDeposited
+  totalWithdrawalsRequested
+  totalWithdrawalsExecuted
+}
+
 fragment BorrowerWithdrawalReliabilityData on WithdrawalBatch {
   id
   market {
@@ -1332,6 +1394,12 @@ fragment LenderWithdrawalStatusData on LenderWithdrawalStatus {
     isClosed
     isExpired
     isCompleted
+    creation {
+      blockNumber
+      blockTimestamp
+      transactionHash
+      blockLogIndex
+    }
   }
   scaledAmount
   normalizedAmountWithdrawn

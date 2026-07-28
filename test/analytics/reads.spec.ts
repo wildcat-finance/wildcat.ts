@@ -23,8 +23,12 @@ import {
   getLenderWithdrawalExecutionPage,
   getLenderWithdrawalRequestPage,
   getLenderWithdrawalStatusPage,
+  getMarketAggregatePage,
+  getMarketBorrowPage,
   getMarketDailyStatsPage,
+  getMarketDebtRepaymentPage,
   getMarketInterestAccrualPage,
+  getMaxTotalSupplyUpdatePage,
   getProtocolAnalyticsStats,
   getProtocolDailyStatsPage,
   getTokenPriceObservationPage
@@ -35,7 +39,7 @@ import {
   SupportedChainId,
   getSubgraphFeatureAvailability
 } from "../../src/config";
-import { IndexerDeploymentMetadata } from "../../src/domain";
+import { HooksKind, IndexerDeploymentMetadata } from "../../src/domain";
 
 type OperationHandler = (variables: Record<string, unknown>) => Record<string, unknown>;
 
@@ -102,6 +106,7 @@ const token = {
 const market = {
   id: marketAddress,
   address: marketAddress,
+  version: "V2",
   name: "Market",
   borrower,
   createdAtTimestamp: "100",
@@ -115,6 +120,16 @@ const market = {
   isDelinquent: true,
   isIncurringPenalties: false,
   totalDebtUSD: "500000.123456",
+  hooks: {
+    kind: "PeriodicTerm"
+  },
+  hooksConfig: {
+    fixedTermEndTime: 0,
+    firstWithdrawalWindowStart: 1_000,
+    periodDuration: 86_400,
+    withdrawalWindowDuration: 3_600,
+    periodicTermClosed: false
+  },
   asset: token
 };
 
@@ -407,6 +422,13 @@ describe("V2.5 indexed analytics reads", () => {
     expect(marketDaily.items[0].dayDeposited).to.equal(10n);
     expect(marketDaily.items[0].usdPrice).to.equal(undefined);
     expect(marketDaily.items[0].market.totalDebtUSD).to.equal("500000.123456");
+    expect(marketDaily.items[0].market.term).to.deep.equal({
+      kind: HooksKind.PeriodicTerm,
+      firstWithdrawalWindowStart: 1_000,
+      periodDuration: 86_400,
+      withdrawalWindowDuration: 3_600,
+      periodicTermClosed: false
+    });
 
     const delinquency = await getDelinquencyStatusChangePage(client, {
       markets: [marketAddress.toUpperCase()],
@@ -493,6 +515,108 @@ describe("V2.5 indexed analytics reads", () => {
     ).to.deep.include({ from_: { address: lender } });
   });
 
+  it("exposes borrower event and market aggregate data through public indexed models", async () => {
+    const { client, operations } = createClient(metadataFor(SupportedChainId.Sepolia), {
+      getMarketBorrowPage: () => ({
+        borrows: [
+          {
+            id: "RECORD-borrow",
+            market,
+            assetAmount: "1000000",
+            ...eventFields
+          }
+        ]
+      }),
+      getMarketDebtRepaymentPage: () => ({
+        debtRepaids: [
+          {
+            id: "RECORD-repayment",
+            market,
+            from: lender,
+            assetAmount: "750000",
+            ...eventFields
+          }
+        ]
+      }),
+      getMaxTotalSupplyUpdatePage: () => ({
+        maxTotalSupplyUpdateds: [
+          {
+            id: "RECORD-capacity",
+            market,
+            oldMaxTotalSupply: "1000000",
+            newMaxTotalSupply: "2000000",
+            ...eventFields
+          }
+        ]
+      }),
+      getMarketAggregatePage: () => ({
+        markets: [
+          {
+            ...market,
+            totalBorrowed: "9000000",
+            totalRepaid: "8000000",
+            totalBaseInterestAccrued: "700000",
+            totalDelinquencyFeesAccrued: "60000",
+            totalProtocolFeesAccrued: "50000",
+            totalDeposited: "10000000",
+            totalWithdrawalsRequested: "4000000",
+            totalWithdrawalsExecuted: "3000000"
+          }
+        ]
+      })
+    });
+
+    const borrows = await getMarketBorrowPage(client, {
+      borrower: borrower.toUpperCase(),
+      fromTimestamp: 200,
+      toTimestamp: 400,
+      fetchPolicy: "no-cache"
+    });
+    expect(borrows.items[0]).to.include({ assetAmount: 1_000_000n });
+    expect(borrows.items[0].market.term.kind).to.equal(HooksKind.PeriodicTerm);
+
+    const repayments = await getMarketDebtRepaymentPage(client, {
+      markets: [marketAddress.toUpperCase()],
+      fetchPolicy: "no-cache"
+    });
+    expect(repayments.items[0]).to.include({ from: lender, assetAmount: 750_000n });
+
+    const capacity = await getMaxTotalSupplyUpdatePage(client, {
+      borrower,
+      fetchPolicy: "no-cache"
+    });
+    expect(capacity.items[0]).to.include({
+      oldMaxTotalSupply: 1_000_000n,
+      newMaxTotalSupply: 2_000_000n
+    });
+
+    const aggregates = await getMarketAggregatePage(client, {
+      borrower: borrower.toUpperCase(),
+      markets: [marketAddress.toUpperCase()],
+      fetchPolicy: "no-cache"
+    });
+    expect(aggregates.items[0]).to.include({
+      totalBorrowed: 9_000_000n,
+      totalRepaid: 8_000_000n,
+      totalWithdrawalsExecuted: 3_000_000n
+    });
+
+    const operationFilter = (operationName: string) =>
+      operations.find((operation) => operation.operationName === operationName)?.variables.filter;
+    expect(operationFilter("getMarketBorrowPage")).to.deep.include({
+      market_: { borrower },
+      blockTimestamp_gte: 200,
+      blockTimestamp_lt: 400
+    });
+    expect(operationFilter("getMarketDebtRepaymentPage")).to.deep.include({
+      market_in: [marketAddress]
+    });
+    expect(operationFilter("getMarketAggregatePage")).to.deep.include({
+      address_in: [marketAddress],
+      borrower
+    });
+  });
+
   it("normalizes the remaining analytics history surfaces and their scopes", async () => {
     const account = { id: `LENDER-${marketAddress}-${lender}`, address: lender };
     const batch = {
@@ -500,7 +624,13 @@ describe("V2.5 indexed analytics reads", () => {
       expiry: "400",
       isClosed: true,
       isExpired: true,
-      isCompleted: false
+      isCompleted: false,
+      creation: {
+        blockNumber: 190,
+        blockTimestamp: 290,
+        transactionHash,
+        blockLogIndex: 3
+      }
     };
     const { client, operations } = createClient(metadataFor(SupportedChainId.Sepolia), {
       getBorrowerWithdrawalReliabilityPage: () => ({
@@ -679,6 +809,12 @@ describe("V2.5 indexed analytics reads", () => {
       scaledAmount: 81n,
       normalizedAmountWithdrawn: 70n,
       totalNormalizedRequests: 90n
+    });
+    expect(status.items[0].batch.createdAt).to.deep.equal({
+      blockNumber: 190n,
+      blockTimestamp: 290n,
+      transactionHash,
+      logIndex: 3n
     });
 
     const tokens = await getAnalyticsTokenPage(client, {

@@ -1,4 +1,9 @@
-import { IndexedAt, IndexedLenderAccountSnapshot, IndexedMarketSnapshot } from "../domain";
+import {
+  HooksKind,
+  IndexedAt,
+  IndexedLenderAccountSnapshot,
+  IndexedMarketSnapshot
+} from "../domain";
 
 /** Lossless decimal value denominated in USD. */
 export type UsdValue = string;
@@ -54,6 +59,16 @@ export type IndexedAnalyticsToken = {
   priceFeed1?: string;
 };
 
+export type IndexedAnalyticsMarketTerm = {
+  /** Authoritative hook family; never inferred from zero-valued term fields. */
+  kind: HooksKind;
+  fixedTermEndTime?: number;
+  firstWithdrawalWindowStart?: number;
+  periodDuration?: number;
+  withdrawalWindowDuration?: number;
+  periodicTermClosed?: boolean;
+};
+
 export type IndexedAnalyticsMarket = {
   address: string;
   name: string;
@@ -69,6 +84,7 @@ export type IndexedAnalyticsMarket = {
   isDelinquent: boolean;
   isIncurringPenalties: boolean;
   totalDebtUSD: UsdValue;
+  term: IndexedAnalyticsMarketTerm;
   snapshot?: IndexedMarketSnapshot;
   asset: IndexedAnalyticsToken;
 };
@@ -224,6 +240,33 @@ export type AnnualInterestBipsUpdate = IndexedMarketAnalyticsEvent & {
   newAnnualInterestBips: number;
 };
 
+export type MarketBorrow = IndexedMarketAnalyticsEvent & {
+  assetAmount: bigint;
+};
+
+export type MarketDebtRepayment = IndexedMarketAnalyticsEvent & {
+  from: string;
+  assetAmount: bigint;
+};
+
+export type MaxTotalSupplyUpdate = IndexedMarketAnalyticsEvent & {
+  oldMaxTotalSupply: bigint;
+  newMaxTotalSupply: bigint;
+};
+
+export type IndexedMarketAggregate = {
+  id: string;
+  market: IndexedAnalyticsMarket;
+  totalBorrowed: bigint;
+  totalRepaid: bigint;
+  totalBaseInterestAccrued: bigint;
+  totalDelinquencyFeesAccrued: bigint;
+  totalProtocolFeesAccrued: bigint;
+  totalDeposited: bigint;
+  totalWithdrawalsRequested: bigint;
+  totalWithdrawalsExecuted: bigint;
+};
+
 export type BorrowerWithdrawalReliability = {
   id: string;
   market: IndexedAnalyticsMarket;
@@ -305,6 +348,8 @@ export type IndexedLenderWithdrawalStatus = {
     isClosed: boolean;
     isExpired: boolean;
     isCompleted: boolean;
+    /** Creation event for stable time filtering and transaction provenance. */
+    createdAt: IndexedAt;
   };
   scaledAmount: bigint;
   normalizedAmountWithdrawn: bigint;

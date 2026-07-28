@@ -1354,6 +1354,52 @@ query getAnnualInterestBipsUpdatePage(
   }
 }
 
+query getMarketBorrowPage($filter: Borrow_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  borrows(block: $block, where: $filter, orderBy: id, orderDirection: asc, first: $first) {
+    ...AnalyticsMarketBorrowData
+  }
+}
+
+query getMarketDebtRepaymentPage($filter: DebtRepaid_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  debtRepaids(block: $block, where: $filter, orderBy: id, orderDirection: asc, first: $first) {
+    ...AnalyticsMarketDebtRepaymentData
+  }
+}
+
+query getMaxTotalSupplyUpdatePage(
+  $filter: MaxTotalSupplyUpdated_filter!
+  $first: Int!
+  $block: Block_height
+) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  maxTotalSupplyUpdateds(
+    block: $block
+    where: $filter
+    orderBy: id
+    orderDirection: asc
+    first: $first
+  ) {
+    ...AnalyticsMaxTotalSupplyUpdateData
+  }
+}
+
+query getMarketAggregatePage($filter: Market_filter!, $first: Int!, $block: Block_height) {
+  _meta(block: $block) {
+    ...IndexedQueryMetadataData
+  }
+  markets(block: $block, where: $filter, orderBy: id, orderDirection: asc, first: $first) {
+    ...AnalyticsMarketAggregateData
+  }
+}
+
 query getBorrowerWithdrawalReliabilityPage(
   $filter: WithdrawalBatch_filter!
   $first: Int!
