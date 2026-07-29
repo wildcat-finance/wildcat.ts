@@ -10153,6 +10153,7 @@ enum LenderStatus {
 type LenderWithdrawalStatus {
   account: LenderAccount!
   batch: WithdrawalBatch!
+  batchExpiry: BigInt!
   executions(
     first: Int = 100
     orderBy: WithdrawalExecution_orderBy
@@ -10208,6 +10209,14 @@ input LenderWithdrawalStatus_filter {
   account_starts_with_nocase: String
   and: [LenderWithdrawalStatus_filter]
   batch: String
+  batchExpiry: BigInt
+  batchExpiry_gt: BigInt
+  batchExpiry_gte: BigInt
+  batchExpiry_in: [BigInt!]
+  batchExpiry_lt: BigInt
+  batchExpiry_lte: BigInt
+  batchExpiry_not: BigInt
+  batchExpiry_not_in: [BigInt!]
   batch_: WithdrawalBatch_filter
   batch_contains: String
   batch_contains_nocase: String
@@ -10333,6 +10342,7 @@ enum LenderWithdrawalStatus_orderBy {
   account__totalDeposited
   account__totalInterestEarned
   batch
+  batchExpiry
   batch__completedWithdrawalsCount
   batch__expiry
   batch__id
@@ -26411,6 +26421,7 @@ enum WithdrawalExecution_orderBy {
   id
   normalizedAmount
   status
+  status__batchExpiry
   status__executionsCount
   status__id
   status__isCompleted
@@ -26736,6 +26747,7 @@ enum WithdrawalRequest_orderBy {
   requestIndex
   scaledAmount
   status
+  status__batchExpiry
   status__executionsCount
   status__id
   status__isCompleted

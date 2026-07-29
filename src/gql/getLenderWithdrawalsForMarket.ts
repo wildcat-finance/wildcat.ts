@@ -64,7 +64,7 @@ export async function getLenderWithdrawalsForMarket(
       lender: lender.toLowerCase(),
       numWithdrawals: first,
       skipWithdrawals: skip,
-      orderWithdrawals: SubgraphLenderWithdrawalStatus_OrderBy.batch__expiry,
+      orderWithdrawals: SubgraphLenderWithdrawalStatus_OrderBy.batchExpiry,
       directionWithdrawals: SubgraphOrderDirection.desc
     },
     fetchPolicy

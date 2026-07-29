@@ -176,7 +176,7 @@ describe("withdrawal subgraph reads", () => {
       lender,
       numWithdrawals: 50,
       skipWithdrawals: 10,
-      orderWithdrawals: "batch__expiry",
+      orderWithdrawals: "batchExpiry",
       directionWithdrawals: "desc"
     });
     expect(history.completeWithdrawals).to.deep.equal([]);

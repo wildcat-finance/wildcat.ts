@@ -264,7 +264,7 @@ query getLenderWithdrawalsForMarket(
   $lender: Bytes!
   $numWithdrawals: Int = 200
   $skipWithdrawals: Int = 0
-  $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry
+  $orderWithdrawals: LenderWithdrawalStatus_orderBy = batchExpiry
   $directionWithdrawals: OrderDirection = desc
 ) {
   market(id: $market) {
@@ -321,7 +321,7 @@ query getMarketsAndLogsWhereLenderAuthorizedOrActive(
   $directionDeposits: OrderDirection = desc
   # withdrawals
   $numWithdrawals: Int = 200
-  $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry # $directionWithdrawals: OrderDirection = desc
+  $skipWithdrawals: Int = 0 # $orderWithdrawals: LenderWithdrawalStatus_orderBy = batchExpiry # $directionWithdrawals: OrderDirection = desc
 ) {
   lenderAccounts(
     where: {

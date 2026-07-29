@@ -10220,6 +10220,7 @@ export type SubgraphLenderWithdrawalStatus = {
   __typename: 'LenderWithdrawalStatus';
   account: SubgraphLenderAccount;
   batch: SubgraphWithdrawalBatch;
+  batchExpiry: Scalars['BigInt']['output'];
   executions: Array<SubgraphWithdrawalExecution>;
   executionsCount: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
@@ -10279,6 +10280,14 @@ export type SubgraphLenderWithdrawalStatus_Filter = {
   account_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   and?: InputMaybe<Array<InputMaybe<SubgraphLenderWithdrawalStatus_Filter>>>;
   batch?: InputMaybe<Scalars['String']['input']>;
+  batchExpiry?: InputMaybe<Scalars['BigInt']['input']>;
+  batchExpiry_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  batchExpiry_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  batchExpiry_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  batchExpiry_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  batchExpiry_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  batchExpiry_not?: InputMaybe<Scalars['BigInt']['input']>;
+  batchExpiry_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   batch_?: InputMaybe<SubgraphWithdrawalBatch_Filter>;
   batch_contains?: InputMaybe<Scalars['String']['input']>;
   batch_contains_nocase?: InputMaybe<Scalars['String']['input']>;
@@ -10404,6 +10413,7 @@ export enum SubgraphLenderWithdrawalStatus_OrderBy {
   account__totalDeposited = 'account__totalDeposited',
   account__totalInterestEarned = 'account__totalInterestEarned',
   batch = 'batch',
+  batchExpiry = 'batchExpiry',
   batch__completedWithdrawalsCount = 'batch__completedWithdrawalsCount',
   batch__expiry = 'batch__expiry',
   batch__id = 'batch__id',
@@ -25825,6 +25835,7 @@ export enum SubgraphWithdrawalExecution_OrderBy {
   id = 'id',
   normalizedAmount = 'normalizedAmount',
   status = 'status',
+  status__batchExpiry = 'status__batchExpiry',
   status__executionsCount = 'status__executionsCount',
   status__id = 'status__id',
   status__isCompleted = 'status__isCompleted',
@@ -26149,6 +26160,7 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   requestIndex = 'requestIndex',
   scaledAmount = 'scaledAmount',
   status = 'status',
+  status__batchExpiry = 'status__batchExpiry',
   status__executionsCount = 'status__executionsCount',
   status__id = 'status__id',
   status__isCompleted = 'status__isCompleted',
@@ -28904,7 +28916,7 @@ ${BorrowDataFragmentDoc}
 ${RepaymentDataFragmentDoc}`;
 export type GetAccountsWhereLenderAuthorizedOrActiveQueryResult = Apollo.QueryResult<SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery, SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables>;
 export const GetLenderWithdrawalsForMarketDocument = gql`
-    query getLenderWithdrawalsForMarket($market: ID!, $lender: Bytes!, $numWithdrawals: Int = 200, $skipWithdrawals: Int = 0, $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry, $directionWithdrawals: OrderDirection = desc) {
+    query getLenderWithdrawalsForMarket($market: ID!, $lender: Bytes!, $numWithdrawals: Int = 200, $skipWithdrawals: Int = 0, $orderWithdrawals: LenderWithdrawalStatus_orderBy = batchExpiry, $directionWithdrawals: OrderDirection = desc) {
   market(id: $market) {
     lenders(where: {address: $lender}) {
       incompleteWithdrawals: withdrawals(

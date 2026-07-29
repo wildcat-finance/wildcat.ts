@@ -82,7 +82,7 @@ const close = (server: Server): Promise<void> =>
 describe("V2.5 subgraph endpoint compatibility", () => {
   it("pins the replacement Sepolia V2.5 endpoint", () => {
     expect(SubgraphUrls[SupportedChainId.Sepolia]).to.equal(
-      "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.5.2/gn"
+      "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.5.3/gn"
     );
   });
 
