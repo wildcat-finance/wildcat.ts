@@ -189,6 +189,7 @@ export type SubgraphTokenWrapperData = {
 
 type GetTokenWrapperForMarketQuery = {
   market?: {
+    id: string;
     tokenWrapper?: SubgraphTokenWrapperData | null;
   } | null;
 };
@@ -208,6 +209,7 @@ export type GetTokenWrapperForMarketOptions = {
 export const GetTokenWrapperForMarketDocument = gql`
   query getTokenWrapperForMarket($market: ID!) {
     market(id: $market) {
+      id
       tokenWrapper {
         id
         address

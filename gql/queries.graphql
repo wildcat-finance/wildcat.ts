@@ -13,6 +13,7 @@ query getLenderAccountForMarket(
   $directionDeposits: OrderDirection = desc
 ) {
   market(id: $market) {
+    id
     lenders(where: { address: $lender }) {
       ...AccountDataForLenderView
     }
@@ -268,6 +269,7 @@ query getLenderWithdrawalsForMarket(
   $directionWithdrawals: OrderDirection = desc
 ) {
   market(id: $market) {
+    id
     lenders(where: { address: $lender }) {
       incompleteWithdrawals: withdrawals(
         first: $numWithdrawals
