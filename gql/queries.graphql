@@ -294,6 +294,30 @@ query getLenderWithdrawalsForMarket(
   }
 }
 
+query getIncompleteLenderWithdrawalsForMarket(
+  $market: ID!
+  $lender: Bytes!
+  $numWithdrawals: Int = 200
+  $skipWithdrawals: Int = 0
+  $orderWithdrawals: LenderWithdrawalStatus_orderBy = batchExpiry
+  $directionWithdrawals: OrderDirection = desc
+) {
+  market(id: $market) {
+    id
+    lenders(where: { address: $lender }) {
+      incompleteWithdrawals: withdrawals(
+        first: $numWithdrawals
+        skip: $skipWithdrawals
+        orderBy: $orderWithdrawals
+        orderDirection: $directionWithdrawals
+        where: { isCompleted: false }
+      ) {
+        ...LenderWithdrawalPropertiesWithEvents
+      }
+    }
+  }
+}
+
 query getLenderAuthorizationByMarket($market: ID!, $lender: Bytes!) {
   market(id: $market) {
     controller {

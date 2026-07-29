@@ -26543,6 +26543,18 @@ export type SubgraphGetLenderWithdrawalsForMarketQueryVariables = Exact<{
 
 export type SubgraphGetLenderWithdrawalsForMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, lenders: Array<{ __typename: 'LenderAccount', incompleteWithdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } }>, completeWithdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } }> }> } | null };
 
+export type SubgraphGetIncompleteLenderWithdrawalsForMarketQueryVariables = Exact<{
+  market: Scalars['ID']['input'];
+  lender: Scalars['Bytes']['input'];
+  numWithdrawals?: InputMaybe<Scalars['Int']['input']>;
+  skipWithdrawals?: InputMaybe<Scalars['Int']['input']>;
+  orderWithdrawals?: InputMaybe<SubgraphLenderWithdrawalStatus_OrderBy>;
+  directionWithdrawals?: InputMaybe<SubgraphOrderDirection>;
+}>;
+
+
+export type SubgraphGetIncompleteLenderWithdrawalsForMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, lenders: Array<{ __typename: 'LenderAccount', incompleteWithdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } }> }> } | null };
+
 export type SubgraphGetLenderAuthorizationByMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
   lender: Scalars['Bytes']['input'];
@@ -28949,6 +28961,30 @@ ${WithdrawalBatchPaymentPropertiesFragmentDoc}
 ${WithdrawalRequestPropertiesFragmentDoc}
 ${WithdrawalExecutionPropertiesFragmentDoc}`;
 export type GetLenderWithdrawalsForMarketQueryResult = Apollo.QueryResult<SubgraphGetLenderWithdrawalsForMarketQuery, SubgraphGetLenderWithdrawalsForMarketQueryVariables>;
+export const GetIncompleteLenderWithdrawalsForMarketDocument = gql`
+    query getIncompleteLenderWithdrawalsForMarket($market: ID!, $lender: Bytes!, $numWithdrawals: Int = 200, $skipWithdrawals: Int = 0, $orderWithdrawals: LenderWithdrawalStatus_orderBy = batchExpiry, $directionWithdrawals: OrderDirection = desc) {
+  market(id: $market) {
+    id
+    lenders(where: {address: $lender}) {
+      incompleteWithdrawals: withdrawals(
+        first: $numWithdrawals
+        skip: $skipWithdrawals
+        orderBy: $orderWithdrawals
+        orderDirection: $directionWithdrawals
+        where: {isCompleted: false}
+      ) {
+        ...LenderWithdrawalPropertiesWithEvents
+      }
+    }
+  }
+}
+    ${LenderWithdrawalPropertiesWithEventsFragmentDoc}
+${LenderWithdrawalPropertiesFragmentDoc}
+${WithdrawalBatchPropertiesFragmentDoc}
+${WithdrawalBatchPaymentPropertiesFragmentDoc}
+${WithdrawalRequestPropertiesFragmentDoc}
+${WithdrawalExecutionPropertiesFragmentDoc}`;
+export type GetIncompleteLenderWithdrawalsForMarketQueryResult = Apollo.QueryResult<SubgraphGetIncompleteLenderWithdrawalsForMarketQuery, SubgraphGetIncompleteLenderWithdrawalsForMarketQueryVariables>;
 export const GetLenderAuthorizationByMarketDocument = gql`
     query getLenderAuthorizationByMarket($market: ID!, $lender: Bytes!) {
   market(id: $market) {

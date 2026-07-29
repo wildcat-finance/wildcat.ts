@@ -5,6 +5,7 @@ import { print } from "graphql";
 import { SupportedChainId } from "../../src/constants";
 import {
   getActiveLendersByMarket,
+  getIncompleteLenderWithdrawalsForMarket,
   getIncompleteWithdrawalsForMarket,
   getLenderWithdrawalsForMarket
 } from "../../src/gql";
@@ -188,6 +189,45 @@ describe("withdrawal subgraph reads", () => {
     expect(history.incompleteWithdrawals[0].executions.map(({ id }) => id)).to.deep.equal([
       execution.id
     ]);
+  });
+
+  it("hydrates only incomplete lender withdrawals for the action path", async () => {
+    const { client, calls } = createClient({
+      market: {
+        __typename: "Market",
+        lenders: [
+          {
+            __typename: "LenderAccount",
+            incompleteWithdrawals: [
+              { ...withdrawal, batch, requests: [request], executions: [execution] }
+            ]
+          }
+        ]
+      }
+    });
+
+    const withdrawals = await getIncompleteLenderWithdrawalsForMarket(client, {
+      market,
+      lender: lender.toUpperCase(),
+      first: 25,
+      skip: 5,
+      fetchPolicy: "network-only"
+    });
+
+    expect(calls[0].variables).to.deep.equal({
+      market: marketAddress,
+      lender,
+      numWithdrawals: 25,
+      skipWithdrawals: 5,
+      orderWithdrawals: "batchExpiry",
+      directionWithdrawals: "desc"
+    });
+    expect(print(calls[0].query)).to.include("where: {isCompleted: false}");
+    expect(print(calls[0].query)).not.to.match(/\bcompleteWithdrawals:/);
+    expect(withdrawals).to.have.length(1);
+    expect(withdrawals[0].lender).to.equal(lender);
+    expect(withdrawals[0].requests.map(({ id }) => id)).to.deep.equal([request.id]);
+    expect(withdrawals[0].executions.map(({ id }) => id)).to.deep.equal([execution.id]);
   });
 
   it("accepts a Market in the active-lender options without a cast", async () => {
