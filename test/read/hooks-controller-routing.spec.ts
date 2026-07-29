@@ -231,10 +231,16 @@ describe("Hooks and controller read routing", () => {
       "HooksFactoryRevolving"
     );
     const futureFactory = makeAddress(99);
+    const unindexedLegacyFactory = makeAddress(98);
     const sharedTemplate = makeAddress(30);
     const periodicTemplate = makeAddress(33);
     const unknownTemplate = makeAddress(34);
+    const unindexedLegacyTemplate = makeAddress(35);
     const activeTemplates = [
+      {
+        hooksFactory: unindexedLegacyFactory,
+        hooksTemplateData: makeHooksTemplate(unindexedLegacyTemplate, "Unindexed legacy template")
+      },
       {
         hooksFactory: standardFactory,
         hooksTemplateData: makeHooksTemplate(sharedTemplate, "Standard display label")
@@ -282,6 +288,7 @@ describe("Hooks and controller read routing", () => {
       if (call.to === archController) {
         const decoded = decodeLensCall(wildcatArchControllerAbi as Abi, call);
         const address = (decoded.args as [string])[0].toLowerCase();
+        expect(address).not.to.equal(unindexedLegacyFactory);
         if (decoded.functionName === "isRegisteredBorrower") {
           expect(address).to.equal(borrower);
           return encodeLensResult(wildcatArchControllerAbi as Abi, "isRegisteredBorrower", true);
@@ -308,6 +315,7 @@ describe("Hooks and controller read routing", () => {
       expect(decoded.functionName).to.equal("getHooksInstancesForBorrower");
 
       const [hooksFactory, argBorrower] = decoded.args as [string, string];
+      expect(hooksFactory.toLowerCase()).not.to.equal(unindexedLegacyFactory);
       seenCalls.push([hooksFactory.toLowerCase(), argBorrower.toLowerCase()]);
 
       const isCanonicalRevolving = hooksFactory.toLowerCase() === revolvingFactory.toLowerCase();

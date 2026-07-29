@@ -84,14 +84,30 @@ export async function getBorrowerHooksData({
       getV2_5AggregatedHooksTemplatesForBorrowerWithFactory(chainId, provider, borrowerAddress),
       archController.isRegisteredBorrower(borrowerAddress)
     ]);
-    const activeFactories = Array.from(
+    // The aggregated lens discovers every factory still registered in the
+    // ArchController, including legacy factories that may not implement the
+    // V2.5 factory-scoped instance read. Only query factories whose templates
+    // the supplied registration metadata lets this SDK normalize and expose.
+    const supportedFactoryScopedTemplates = factoryScopedTemplates.flatMap(
+      ({ hooksFactory, hooksTemplateData }) => {
+        const kind = getRegistration(hooksFactory, hooksTemplateData.hooksTemplate)?.hooksTemplate
+          .kind;
+        return kind !== undefined && kind !== HooksKind.Unknown
+          ? [{ hooksFactory, hooksTemplateData, kind }]
+          : [];
+      }
+    );
+    const supportedFactories = Array.from(
       new Map(
-        factoryScopedTemplates.map(({ hooksFactory }) => [hooksFactory.toLowerCase(), hooksFactory])
+        supportedFactoryScopedTemplates.map(({ hooksFactory }) => [
+          hooksFactory.toLowerCase(),
+          hooksFactory
+        ])
       ).values()
     );
     const [factoryScopedInstances, factoryRegistrationEntries] = await Promise.all([
       Promise.all(
-        activeFactories.map(async (hooksFactory) => ({
+        supportedFactories.map(async (hooksFactory) => ({
           hooksFactory,
           instances: await getV2_5FactoryScopedHooksInstancesForBorrower(
             chainId,
@@ -102,7 +118,7 @@ export async function getBorrowerHooksData({
         }))
       ),
       Promise.all(
-        activeFactories.map(
+        supportedFactories.map(
           async (hooksFactory) =>
             [
               hooksFactory.toLowerCase(),
@@ -120,23 +136,18 @@ export async function getBorrowerHooksData({
         isRegisteredHooksFactoryByAddress.get(hooksFactory.toLowerCase()) ?? false,
       registration: getRegistration(hooksFactory, hooksTemplate)
     });
-    const hooksTemplates = factoryScopedTemplates.flatMap(({ hooksFactory, hooksTemplateData }) => {
-      const registration = getRegistration(hooksFactory, hooksTemplateData.hooksTemplate);
-      const kind = registration?.hooksTemplate.kind;
-      return kind !== undefined && kind !== HooksKind.Unknown
-        ? [
-            hooksTemplateFromLens(
-              chainId,
-              provider,
-              hooksTemplateData,
-              kind,
-              getLensContext(hooksFactory, hooksTemplateData.hooksTemplate)
-            )
-          ]
-        : [];
-    });
+    const hooksTemplates = supportedFactoryScopedTemplates.map(
+      ({ hooksFactory, hooksTemplateData, kind }) =>
+        hooksTemplateFromLens(
+          chainId,
+          provider,
+          hooksTemplateData,
+          kind,
+          getLensContext(hooksFactory, hooksTemplateData.hooksTemplate)
+        )
+    );
     const hooksTemplateDataByFactoryAndAddress = new Map(
-      factoryScopedTemplates.map(({ hooksFactory, hooksTemplateData }) => [
+      supportedFactoryScopedTemplates.map(({ hooksFactory, hooksTemplateData }) => [
         `${hooksFactory.toLowerCase()}:${hooksTemplateData.hooksTemplate.toLowerCase()}`,
         hooksTemplateData
       ])
