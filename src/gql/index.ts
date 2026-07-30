@@ -8,6 +8,7 @@ export * from "./getAllTokensWithMarkets";
 export * from "./getAuthorizedLendersByMarket";
 export * from "./getBasicBorrowerData";
 export * from "./getHooksMetadata";
+export * from "./getIndexedLenderAccountSummaryForMarket";
 export * from "./getLenderAccountForMarket";
 export * from "./getLenderAccountsForAllMarkets";
 export * from "./getLenderWithdrawalsForMarket";

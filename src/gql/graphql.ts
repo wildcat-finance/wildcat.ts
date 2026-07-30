@@ -26448,6 +26448,14 @@ export type SubgraphGetLenderAccountForMarketQueryVariables = Exact<{
 
 export type SubgraphGetLenderAccountForMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> } | null };
 
+export type SubgraphGetIndexedLenderAccountSummaryForMarketQueryVariables = Exact<{
+  market: Scalars['ID']['input'];
+  lender: Scalars['Bytes']['input'];
+}>;
+
+
+export type SubgraphGetIndexedLenderAccountSummaryForMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> } | null };
+
 export type SubgraphGetLenderAccountWithMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
   lender: Scalars['Bytes']['input'];
@@ -28702,6 +28710,21 @@ ${LenderHooksAccessDataFragmentDoc}
 ${RoleProviderDataFragmentDoc}
 ${DepositDataFragmentDoc}`;
 export type GetLenderAccountForMarketQueryResult = Apollo.QueryResult<SubgraphGetLenderAccountForMarketQuery, SubgraphGetLenderAccountForMarketQueryVariables>;
+export const GetIndexedLenderAccountSummaryForMarketDocument = gql`
+    query getIndexedLenderAccountSummaryForMarket($market: ID!, $lender: Bytes!) {
+  market(id: $market) {
+    id
+    lenders(where: {address: $lender}, first: 1) {
+      ...AccountDataForLenderListView
+    }
+  }
+}
+    ${AccountDataForLenderListViewFragmentDoc}
+${LenderPropertiesFragmentDoc}
+${LenderAccountSnapshotDataFragmentDoc}
+${LenderHooksAccessDataFragmentDoc}
+${RoleProviderDataFragmentDoc}`;
+export type GetIndexedLenderAccountSummaryForMarketQueryResult = Apollo.QueryResult<SubgraphGetIndexedLenderAccountSummaryForMarketQuery, SubgraphGetIndexedLenderAccountSummaryForMarketQueryVariables>;
 export const GetLenderAccountWithMarketDocument = gql`
     query getLenderAccountWithMarket($market: ID!, $lender: Bytes!, $numDeposits: Int = 200, $skipDeposits: Int = 0, $orderDeposits: Deposit_orderBy = blockTimestamp, $directionDeposits: OrderDirection = desc, $numBorrows: Int = 10, $skipBorrows: Int = 0, $orderBorrows: Borrow_orderBy = blockTimestamp, $directionBorrows: OrderDirection = desc, $numRepayments: Int = 10, $skipRepayments: Int = 0, $orderRepayments: DebtRepaid_orderBy = blockTimestamp, $directionRepayments: OrderDirection = desc) {
   market(id: $market) {

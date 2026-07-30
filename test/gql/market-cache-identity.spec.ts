@@ -2,6 +2,7 @@ import { DocumentNode, InMemoryCache } from "@apollo/client";
 import { expect } from "chai";
 import { print } from "graphql";
 import {
+  GetIndexedLenderAccountSummaryForMarketDocument,
   GetIncompleteLenderWithdrawalsForMarketDocument,
   GetLenderAccountForMarketDocument,
   GetLenderWithdrawalsForMarketDocument
@@ -15,6 +16,7 @@ const expectRootMarketIdentity = (document: DocumentNode) => {
 describe("market-scoped GraphQL cache identity", () => {
   it("selects the root market id in every partial market query", () => {
     [
+      GetIndexedLenderAccountSummaryForMarketDocument,
       GetIncompleteLenderWithdrawalsForMarketDocument,
       GetLenderAccountForMarketDocument,
       GetLenderWithdrawalsForMarketDocument,
@@ -38,6 +40,17 @@ describe("market-scoped GraphQL cache identity", () => {
       query: GetTokenWrapperForMarketDocument,
       variables: { market },
       data: wrapperResult
+    });
+    cache.writeQuery({
+      query: GetIndexedLenderAccountSummaryForMarketDocument,
+      variables: { market, lender },
+      data: {
+        market: {
+          __typename: "Market",
+          id: market,
+          lenders: []
+        }
+      }
     });
     cache.writeQuery({
       query: GetLenderAccountForMarketDocument,

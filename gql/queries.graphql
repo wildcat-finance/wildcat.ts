@@ -20,6 +20,15 @@ query getLenderAccountForMarket(
   }
 }
 
+query getIndexedLenderAccountSummaryForMarket($market: ID!, $lender: Bytes!) {
+  market(id: $market) {
+    id
+    lenders(where: { address: $lender }, first: 1) {
+      ...AccountDataForLenderListView
+    }
+  }
+}
+
 query getLenderAccountWithMarket(
   $market: ID!
   $lender: Bytes!
