@@ -6,7 +6,7 @@ import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { Market } from "../../src/market";
 import { MarketAccount } from "../../src/account";
 import { Token, toRawAmount } from "../../src/token";
-import { HooksKind, MarketVersion } from "../../src/types";
+import { HooksKind, MarketOnboardingMode, MarketVersion } from "../../src/types";
 import {
   SubgraphFactoryLifecycle,
   SubgraphHookedMarketAbi,
@@ -1225,6 +1225,85 @@ describe("Market model routing metadata", () => {
     expect(market.marketKind).to.equal("revolving");
     expect(market.commitmentFeeBips).to.equal(175);
     expect(market.drawnAmount?.raw).to.equal(250n);
+  });
+
+  it("preserves indexed role providers and derives stable onboarding policy", () => {
+    const data = makeSubgraphMarketData();
+    data.hooksConfig!.useOnDeposit = true;
+    data.hooksConfig!.depositRequiresAccess = true;
+    data.hooks!.providers = [
+      {
+        __typename: "RoleProvider",
+        id: `${data.hooks!.id}-${makeAddress(90)}`,
+        providerAddress: makeAddress(90),
+        timeToLive: "4294967295",
+        isPullProvider: true,
+        pullProviderIndex: 0,
+        isPushProvider: false,
+        pushProviderIndex: 0xffffff,
+        isApproved: true
+      }
+    ];
+
+    const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+
+    expect(market.roleProviders).to.deep.equal([
+      {
+        providerAddress: makeAddress(90),
+        timeToLive: 4_294_967_295,
+        isPullProvider: true,
+        pullProviderIndex: 0,
+        isPushProvider: false,
+        pushProviderIndex: 0xffffff,
+        isApproved: true
+      }
+    ]);
+    expect(market.onboardingMode).to.equal(MarketOnboardingMode.SelfOnboard);
+
+    data.hooks!.providers = [];
+    const borrowerApprovalMarket = Market.fromSubgraphMarketData(
+      SupportedChainId.Sepolia,
+      provider,
+      data
+    );
+    expect(borrowerApprovalMarket.roleProviders).to.deep.equal([]);
+    expect(borrowerApprovalMarket.onboardingMode).to.equal(MarketOnboardingMode.BorrowerApproval);
+  });
+
+  it("keeps onboarding policy unknown when a narrow projection omits providers", () => {
+    const data = makeSubgraphMarketListData();
+    data.hooksConfig!.useOnDeposit = true;
+    data.hooksConfig!.depositRequiresAccess = true;
+
+    const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+
+    expect(market.roleProviders).to.equal(undefined);
+    expect(market.onboardingMode).to.equal(undefined);
+  });
+
+  it("derives onboarding policy from direct lens provider data", () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
+    const data = makeUnifiedMarketDataV2(hooksFactory);
+    data.market.hooksConfig.flags.useOnDeposit = true;
+    data.market.hooksConfig.depositRequiresAccess = true;
+    data.market.hooks.pullProviders = [
+      {
+        providerAddress: makeAddress(91),
+        timeToLive: BigNumber.from(3600),
+        pullProviderIndex: BigNumber.from(0),
+        pushProviderIndex: BigNumber.from(0xffffff)
+      }
+    ];
+
+    const market = Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
+
+    expect(market.roleProviders?.[0]).to.deep.include({
+      providerAddress: makeAddress(91),
+      isPullProvider: true,
+      isPushProvider: false,
+      timeToLive: 3600
+    });
+    expect(market.onboardingMode).to.equal(MarketOnboardingMode.SelfOnboard);
   });
 
   it("uses indexed provenance for historical factories absent from SDK targets", () => {

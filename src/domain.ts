@@ -51,6 +51,17 @@ export enum HooksKind {
   PeriodicTerm = "PeriodicTerm"
 }
 
+/**
+ * How an otherwise eligible lender obtains deposit access to a market.
+ *
+ * This describes market policy, not whether a particular lender can deposit
+ * right now. Use `MarketAccount.depositAvailability` for the latter.
+ */
+export enum MarketOnboardingMode {
+  SelfOnboard = "self-onboard",
+  BorrowerApproval = "borrower-approval"
+}
+
 export type FactoryLifecycle = "active" | "historical" | "retired" | "unknown";
 export type HookedMarketAbiKind = "base" | "force-buyback" | "unknown";
 export type PricingMode = "chainlink" | "synthetic-testnet" | "none" | "unknown";

@@ -4,7 +4,8 @@ import {
   MarketDataStructOutput,
   MarketDataV2_5StructOutput,
   MarketDataV2StructOutput,
-  MarketLiveDataV2_5StructOutput
+  MarketLiveDataV2_5StructOutput,
+  RoleProviderDataStructOutput
 } from "./lens-types";
 import {
   SupportedChainId,
@@ -31,6 +32,7 @@ import {
   PartialTransaction,
   MarketVersion,
   MarketKind,
+  MarketOnboardingMode,
   IndexedMarketSnapshot,
   MarketProvenance,
   ReadStateSource,
@@ -39,6 +41,7 @@ import {
   OpenTermHooksConfig,
   FixedTermHooksConfig,
   PeriodicTermHooksConfig,
+  RoleProvider,
   TransactionHash
 } from "./types";
 import { MarketAccount } from "./account";
@@ -51,6 +54,7 @@ import {
   SubgraphMarketDataWithEventsFragment,
   SubgraphMarketDeployedEventFragment,
   SubgraphMarketListDataFragment,
+  SubgraphRoleProviderDataFragment,
   SubgraphRepaymentDataFragment
 } from "./gql/graphql";
 import {
@@ -191,6 +195,39 @@ const hasSubgraphMarketRecords = (
   data: SubgraphMarketHydrationData
 ): data is SubgraphMarketDataWithEventsFragment => "depositRecords" in data;
 
+const roleProviderFromSubgraph = (provider: SubgraphRoleProviderDataFragment): RoleProvider => ({
+  providerAddress: provider.providerAddress,
+  timeToLive: toNumber(provider.timeToLive),
+  isPullProvider: provider.isPullProvider,
+  pullProviderIndex: provider.pullProviderIndex,
+  isPushProvider: provider.isPushProvider,
+  pushProviderIndex: provider.pushProviderIndex,
+  isApproved: provider.isApproved
+});
+
+const NullProviderIndex = 2 ** 24 - 1;
+
+const roleProvidersFromLens = ({
+  pullProviders,
+  pushProviders
+}: {
+  pullProviders: readonly RoleProviderDataStructOutput[];
+  pushProviders: readonly RoleProviderDataStructOutput[];
+}): RoleProvider[] =>
+  [...pullProviders, ...pushProviders].map((provider) => {
+    const pullProviderIndex = toNumber(provider.pullProviderIndex);
+    const pushProviderIndex = toNumber(provider.pushProviderIndex);
+    return {
+      providerAddress: provider.providerAddress,
+      timeToLive: toNumber(provider.timeToLive),
+      isPullProvider: pullProviderIndex !== NullProviderIndex,
+      pullProviderIndex,
+      isPushProvider: pushProviderIndex !== NullProviderIndex,
+      pushProviderIndex,
+      isApproved: true
+    };
+  });
+
 export type MarketArgs = {
   provider: SignerOrProvider;
   chainId: SupportedChainId;
@@ -200,6 +237,13 @@ export type MarketArgs = {
   hooksFactory?: string;
   marketKind: MarketKind;
   hooksConfig?: HooksConfig;
+  /**
+   * Active role providers for this market's hooks instance.
+   *
+   * `undefined` means the selected read projection did not include provider
+   * metadata. An empty array means it did and no active providers exist.
+   */
+  roleProviders?: RoleProvider[];
   borrower: string;
   controller?: string;
   feeRecipient: string;
@@ -258,6 +302,30 @@ export type MarketArgs = {
   feeCollectionRecords?: SubgraphFeesCollectedDataFragment[];
 };
 
+export const getMarketOnboardingMode = ({
+  version,
+  hooksConfig,
+  roleProviders
+}: Pick<MarketArgs, "version" | "hooksConfig" | "roleProviders">):
+  | MarketOnboardingMode
+  | undefined => {
+  if (version === MarketVersion.V1) {
+    return MarketOnboardingMode.BorrowerApproval;
+  }
+  if (version !== MarketVersion.V2 || hooksConfig === undefined) {
+    return undefined;
+  }
+  if (!hooksConfig.flags.useOnDeposit || !hooksConfig.depositRequiresAccess) {
+    return MarketOnboardingMode.SelfOnboard;
+  }
+  if (roleProviders === undefined) {
+    return undefined;
+  }
+  return roleProviders.some(({ isApproved, isPullProvider }) => isApproved && isPullProvider)
+    ? MarketOnboardingMode.SelfOnboard
+    : MarketOnboardingMode.BorrowerApproval;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Market
   extends Omit<
@@ -283,6 +351,10 @@ export class Market extends ContractWrapper {
   public repaymentRecords: RepaymentRecord[];
   public borrowRecords: BorrowRecord[];
   public feeCollectionRecords: FeeCollectionRecord[];
+
+  get onboardingMode(): MarketOnboardingMode | undefined {
+    return getMarketOnboardingMode(this);
+  }
 
   constructor({ provider, ...args }: MarketArgs & { hooksConfig?: HooksConfig }) {
     super(provider);
@@ -1005,6 +1077,9 @@ export class Market extends ContractWrapper {
         config.withdrawalWindowDuration = toNumber(baseData.hooksConfig.withdrawalWindowDuration);
         config.periodicTermClosed = baseData.hooksConfig.periodicTermClosed;
       }
+      if ("hooks" in baseData) {
+        this.roleProviders = roleProvidersFromLens(baseData.hooks);
+      }
     } else {
       assert(this.version === MarketVersion.V1, `Can not push V1 lens data to V2 market!`);
     }
@@ -1136,9 +1211,12 @@ export class Market extends ContractWrapper {
 
     let hooksConfig: HooksConfig | undefined;
     let hooksFactory: string | undefined;
+    let roleProviders: RoleProvider[] | undefined;
     if (data.version === MarketVersion.V2) {
       assert(!!data.hooks, `V2 markets require hooks`);
       assert(!!data.hooksConfig, `V2 markets require hooksConfig`);
+      roleProviders =
+        "providers" in data.hooks ? data.hooks.providers.map(roleProviderFromSubgraph) : undefined;
       const {
         minimumDeposit: _minimumDeposit,
         depositRequiresAccess,
@@ -1243,6 +1321,7 @@ export class Market extends ContractWrapper {
       hooksFactory,
       marketKind,
       hooksConfig,
+      roleProviders,
       marketToken,
       underlyingToken,
       borrower: data.borrower,
@@ -1432,6 +1511,7 @@ export class Market extends ContractWrapper {
       hooksFactory: data.hooksFactory,
       marketKind: getConfiguredMarketKindForHooksFactory(chainId, data.hooksFactory),
       hooksConfig,
+      roleProviders: roleProvidersFromLens(hooks),
       version: MarketVersion.V2,
       chainId: chainId,
       marketToken: marketToken,
@@ -1537,6 +1617,7 @@ export class Market extends ContractWrapper {
       hooksFactory: data.hooksFactory,
       marketKind: marketKindFromRevolvingFields(commitmentFeeBips.isPresent, drawnAmount.isPresent),
       hooksConfig,
+      roleProviders: roleProvidersFromLens(hooks),
       version: MarketVersion.V2,
       chainId,
       marketToken,
