@@ -871,7 +871,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       totalSupply: marketToken.getAmount(rayMul(scaledTotalSupply, scaleFactor)),
       maxTotalSupply: marketToken.getAmount(data.maxTotalSupply),
       scaledTotalSupply: scaledTotalSupply,
-      totalAssets: underlyingToken.getAmount(0), // @todo maybe update subgraph to query this per update?
+      totalAssets: underlyingToken.getAmount(data.totalAssets),
       lastAccruedProtocolFees: underlyingToken.getAmount(data.pendingProtocolFees),
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
         data.normalizedUnclaimedWithdrawals

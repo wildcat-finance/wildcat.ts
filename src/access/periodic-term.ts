@@ -35,7 +35,12 @@ import {
   TransferAccess,
   WithdrawalAccess
 } from "../types";
-import { assert, encodeHooksConfig, parseFeeConfigurationV2 } from "../utils";
+import {
+  assert,
+  encodeHooksConfig,
+  parseFeeConfigurationV2,
+  parseSubgraphRoleProvider
+} from "../utils";
 import { BigNumber, constants, ContractTransaction } from "ethers";
 import {
   ChangeLenderRolePreview,
@@ -234,15 +239,7 @@ export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
       ),
       signerAddress,
       name: data.name,
-      roleProviders: data.providers.map((p) => ({
-        isApproved: p.isApproved,
-        providerAddress: p.providerAddress,
-        isPullProvider: p.isPullProvider,
-        pullProviderIndex: p.pullProviderIndex,
-        isPushProvider: p.isPushProvider,
-        pushProviderIndex: p.pushProviderIndex,
-        timeToLive: p.timeToLive
-      })),
+      roleProviders: data.providers.map(parseSubgraphRoleProvider),
       numMarkets: data.numMarkets
     });
   }

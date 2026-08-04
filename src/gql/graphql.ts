@@ -671,6 +671,7 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -1036,6 +1037,7 @@ export enum SubgraphAnnualInterestBipsReductionProposed_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -1219,6 +1221,7 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -1710,6 +1713,7 @@ export enum SubgraphBorrow_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -2915,6 +2919,7 @@ export enum SubgraphDebtRepaid_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -3102,6 +3107,7 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -3318,6 +3324,7 @@ export enum SubgraphDeposit_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -3500,6 +3507,7 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -3672,6 +3680,7 @@ export enum SubgraphFeesCollected_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -3881,6 +3890,7 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -4106,6 +4116,7 @@ export enum SubgraphForceBuyBack_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -4421,6 +4432,7 @@ export enum SubgraphHooksConfig_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -5786,6 +5798,7 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -6071,6 +6084,7 @@ export enum SubgraphLenderAccount_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -6659,6 +6673,7 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -7133,6 +7148,7 @@ export type SubgraphMarket = {
   temporaryReserveRatioActive: Scalars["Boolean"]["output"];
   temporaryReserveRatioExpiry: Scalars["Int"]["output"];
   timeDelinquent: Scalars["Int"]["output"];
+  totalAssets: Scalars["BigInt"]["output"];
   totalBaseInterestAccrued: Scalars["BigInt"]["output"];
   totalBorrowed: Scalars["BigInt"]["output"];
   totalDelinquencyFeesAccrued: Scalars["BigInt"]["output"];
@@ -7453,6 +7469,7 @@ export enum SubgraphMarketAdded_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -7614,6 +7631,7 @@ export enum SubgraphMarketClosed_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -7780,6 +7798,7 @@ export enum SubgraphMarketDailyStats_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -7927,6 +7946,7 @@ export enum SubgraphMarketDeployed_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -8146,6 +8166,7 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -8291,6 +8312,7 @@ export enum SubgraphMarketRemoved_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -8825,6 +8847,14 @@ export type SubgraphMarket_Filter = {
   timeDelinquent_lte?: InputMaybe<Scalars["Int"]["input"]>;
   timeDelinquent_not?: InputMaybe<Scalars["Int"]["input"]>;
   timeDelinquent_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  totalAssets?: InputMaybe<Scalars["BigInt"]["input"]>;
+  totalAssets_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  totalAssets_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  totalAssets_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  totalAssets_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  totalAssets_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  totalAssets_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  totalAssets_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   totalBaseInterestAccrued?: InputMaybe<Scalars["BigInt"]["input"]>;
   totalBaseInterestAccrued_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   totalBaseInterestAccrued_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -9051,6 +9081,7 @@ export enum SubgraphMarket_OrderBy {
   TemporaryReserveRatioActive = "temporaryReserveRatioActive",
   TemporaryReserveRatioExpiry = "temporaryReserveRatioExpiry",
   TimeDelinquent = "timeDelinquent",
+  TotalAssets = "totalAssets",
   TotalBaseInterestAccrued = "totalBaseInterestAccrued",
   TotalBorrowed = "totalBorrowed",
   TotalDelinquencyFeesAccrued = "totalDelinquencyFeesAccrued",
@@ -9231,6 +9262,7 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -9442,6 +9474,7 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -10238,6 +10271,7 @@ export enum SubgraphPeriodicTermClosed_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -10473,6 +10507,7 @@ export enum SubgraphPeriodicTermUpdated_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -10658,6 +10693,7 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -12238,6 +12274,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -12264,7 +12301,7 @@ export type SubgraphRoleProvider = {
   pullProviderIndex: Scalars["Int"]["output"];
   pushProviderIndex: Scalars["Int"]["output"];
   removedEvent?: Maybe<SubgraphRoleProviderRemoved>;
-  timeToLive: Scalars["Int"]["output"];
+  timeToLive: Scalars["BigInt"]["output"];
   updatedEvents: SubgraphRoleProviderUpdated[];
 };
 
@@ -12284,7 +12321,7 @@ export type SubgraphRoleProviderAdded = {
   provider: SubgraphRoleProvider;
   pullProviderIndex: Scalars["Int"]["output"];
   pushProviderIndex: Scalars["Int"]["output"];
-  timeToLive: Scalars["Int"]["output"];
+  timeToLive: Scalars["BigInt"]["output"];
   transactionHash: Scalars["Bytes"]["output"];
 };
 
@@ -12399,14 +12436,14 @@ export type SubgraphRoleProviderAdded_Filter = {
   pushProviderIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
   pushProviderIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
   pushProviderIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
-  timeToLive?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_gt?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_gte?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
-  timeToLive_lt?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_lte?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_not?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  timeToLive?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  timeToLive_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   transactionHash?: InputMaybe<Scalars["Bytes"]["input"]>;
   transactionHash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   transactionHash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
@@ -12598,7 +12635,7 @@ export type SubgraphRoleProviderUpdated = {
   provider: SubgraphRoleProvider;
   pullProviderIndex: Scalars["Int"]["output"];
   pushProviderIndex: Scalars["Int"]["output"];
-  timeToLive: Scalars["Int"]["output"];
+  timeToLive: Scalars["BigInt"]["output"];
   transactionHash: Scalars["Bytes"]["output"];
 };
 
@@ -12713,14 +12750,14 @@ export type SubgraphRoleProviderUpdated_Filter = {
   pushProviderIndex_lte?: InputMaybe<Scalars["Int"]["input"]>;
   pushProviderIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
   pushProviderIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
-  timeToLive?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_gt?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_gte?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
-  timeToLive_lt?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_lte?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_not?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  timeToLive?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  timeToLive_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   transactionHash?: InputMaybe<Scalars["Bytes"]["input"]>;
   transactionHash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   transactionHash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
@@ -12837,14 +12874,14 @@ export type SubgraphRoleProvider_Filter = {
   pushProviderIndex_not?: InputMaybe<Scalars["Int"]["input"]>;
   pushProviderIndex_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   removedEvent_?: InputMaybe<SubgraphRoleProviderRemoved_Filter>;
-  timeToLive?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_gt?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_gte?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
-  timeToLive_lt?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_lte?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_not?: InputMaybe<Scalars["Int"]["input"]>;
-  timeToLive_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  timeToLive?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  timeToLive_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  timeToLive_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   updatedEvents_?: InputMaybe<SubgraphRoleProviderUpdated_Filter>;
 };
 
@@ -14529,6 +14566,7 @@ export enum SubgraphSimpleCollateralContract_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -14946,6 +14984,7 @@ export enum SubgraphTransfer_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -15567,6 +15606,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -15928,6 +15968,7 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -16399,6 +16440,7 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   MarketTemporaryReserveRatioActive = "market__temporaryReserveRatioActive",
   MarketTemporaryReserveRatioExpiry = "market__temporaryReserveRatioExpiry",
   MarketTimeDelinquent = "market__timeDelinquent",
+  MarketTotalAssets = "market__totalAssets",
   MarketTotalBaseInterestAccrued = "market__totalBaseInterestAccrued",
   MarketTotalBorrowed = "market__totalBorrowed",
   MarketTotalDelinquencyFeesAccrued = "market__totalDelinquencyFeesAccrued",
@@ -16472,7 +16514,7 @@ export type SubgraphRoleProviderDataFragment = {
   __typename: "RoleProvider";
   id: string;
   providerAddress: string;
-  timeToLive: number;
+  timeToLive: string;
   isPullProvider: boolean;
   pullProviderIndex: number;
   isPushProvider: boolean;
@@ -16580,6 +16622,7 @@ export type SubgraphMarketDataFragment = {
   withdrawalBatchDuration: number;
   numCollateralContracts: number;
   maxTotalSupply: string;
+  totalAssets: string;
   pendingProtocolFees: string;
   normalizedUnclaimedWithdrawals: string;
   scaledTotalSupply: string;
@@ -16678,6 +16721,7 @@ export type SubgraphMarketDataWithEventsFragment = {
   withdrawalBatchDuration: number;
   numCollateralContracts: number;
   maxTotalSupply: string;
+  totalAssets: string;
   pendingProtocolFees: string;
   normalizedUnclaimedWithdrawals: string;
   scaledTotalSupply: string;
@@ -17256,6 +17300,7 @@ export type SubgraphGetLenderAccountWithMarketQuery = {
     withdrawalBatchDuration: number;
     numCollateralContracts: number;
     maxTotalSupply: string;
+    totalAssets: string;
     pendingProtocolFees: string;
     normalizedUnclaimedWithdrawals: string;
     scaledTotalSupply: string;
@@ -17340,6 +17385,7 @@ export type SubgraphGetAllMarketsForLenderViewQuery = {
     withdrawalBatchDuration: number;
     numCollateralContracts: number;
     maxTotalSupply: string;
+    totalAssets: string;
     pendingProtocolFees: string;
     normalizedUnclaimedWithdrawals: string;
     scaledTotalSupply: string;
@@ -17432,6 +17478,7 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
       withdrawalBatchDuration: number;
       numCollateralContracts: number;
       maxTotalSupply: string;
+      totalAssets: string;
       pendingProtocolFees: string;
       normalizedUnclaimedWithdrawals: string;
       scaledTotalSupply: string;
@@ -17491,6 +17538,7 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = {
         withdrawalBatchDuration: number;
         numCollateralContracts: number;
         maxTotalSupply: string;
+        totalAssets: string;
         pendingProtocolFees: string;
         normalizedUnclaimedWithdrawals: string;
         scaledTotalSupply: string;
@@ -18393,6 +18441,7 @@ export const MarketDataFragmentDoc = gql`
       ...HooksInstanceData
     }
     maxTotalSupply
+    totalAssets
     pendingProtocolFees
     normalizedUnclaimedWithdrawals
     scaledTotalSupply

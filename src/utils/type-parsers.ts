@@ -10,6 +10,7 @@ import {
   HooksFlags,
   MarketParameterConstraints,
   PartialTransaction,
+  RoleProvider,
   SignerOrProvider
 } from "../types";
 import { BigNumber, PopulatedTransaction, constants } from "ethers";
@@ -30,7 +31,11 @@ import {
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { SupportedChainId } from "../constants";
 import { assert } from "./assert";
-import { SubgraphLenderHooksAccessDataFragment, SubgraphLenderStatus } from "../gql/graphql";
+import {
+  SubgraphLenderHooksAccessDataFragment,
+  SubgraphLenderStatus,
+  SubgraphRoleProviderDataFragment
+} from "../gql/graphql";
 import { LenderRole } from "../account";
 
 export const parseMarketParameterConstraints = (
@@ -267,6 +272,13 @@ export function parseSubgraphLenderStatus(role: SubgraphLenderStatus): LenderRol
   return RolesMap[role];
 }
 
+export const parseSubgraphRoleProvider = (
+  provider: SubgraphRoleProviderDataFragment
+): RoleProvider => ({
+  ...provider,
+  timeToLive: BigNumber.from(provider.timeToLive).toNumber()
+});
+
 export const parseSubgraphLenderHooksAccess = ({
   canRefresh,
   isBlockedFromDeposits,
@@ -277,6 +289,6 @@ export const parseSubgraphLenderHooksAccess = ({
     canRefresh,
     isBlockedFromDeposits,
     lastApprovalTimestamp,
-    lastProvider: lastProvider!
+    lastProvider: lastProvider ? parseSubgraphRoleProvider(lastProvider) : undefined
   };
 };

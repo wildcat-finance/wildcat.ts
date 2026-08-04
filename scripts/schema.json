@@ -3351,6 +3351,11 @@
             },
             {
               "__typename": "__Field",
+              "name": "totalAssets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
               "name": "maxTotalSupply",
               "description": null
             },

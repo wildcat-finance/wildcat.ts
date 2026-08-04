@@ -167,6 +167,7 @@ fragment MarketData on Market {
 
   # ================================== State ================================= #
   maxTotalSupply
+  totalAssets
   pendingProtocolFees
   normalizedUnclaimedWithdrawals
   scaledTotalSupply

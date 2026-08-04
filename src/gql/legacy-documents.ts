@@ -254,6 +254,7 @@ const LegacyMarketDataFragmentDoc = gql`
       ...LegacyHooksInstanceData
     }
     maxTotalSupply
+    totalAssets
     pendingProtocolFees
     normalizedUnclaimedWithdrawals
     scaledTotalSupply
