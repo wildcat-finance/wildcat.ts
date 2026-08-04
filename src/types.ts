@@ -320,3 +320,7 @@ export type AddLenderInput = {
   lender: string;
   credentialTimestamp?: number;
 };
+
+export type TimestampedAddLenderInput = AddLenderInput & {
+  credentialTimestamp: number;
+};

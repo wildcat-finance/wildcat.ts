@@ -23,6 +23,7 @@ import {
   SignerOrProvider,
   TransactionHash,
   TransferAccess,
+  TimestampedAddLenderInput,
   WithdrawalAccess
 } from "../types";
 import {
@@ -54,6 +55,13 @@ import {
 } from "./utils";
 import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iOpenTermHooksAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
+import { getViemPublicClientFromEthers } from "../internal/ethers-viem";
+import {
+  getCredentialTimestamps,
+  prepareLenderRestoration as prepareLenderRestorationPlan,
+  LenderRestorationPlan,
+  timestampAddLenderInputs
+} from "./lender-restoration";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface OpenTermHooks extends Omit<OpenTermHooksArgs, "roleProviders" | "constraints"> {}
@@ -112,11 +120,9 @@ export class OpenTermHooks extends ContractWrapper {
     };
   }
 
-  populateAddLenders(inputs: AddLenderInput[]): PartialTransaction {
+  populateAddLenders(inputs: TimestampedAddLenderInput[]): PartialTransaction {
     const lenders = inputs.map((input) => input.lender);
-    const credentialTimestamps = inputs.map(
-      (input) => input.credentialTimestamp ?? Math.floor(Date.now() / 1000)
-    );
+    const credentialTimestamps = getCredentialTimestamps(inputs);
     return prepareTransaction({
       to: this.address,
       abi: iOpenTermHooksAbi,
@@ -128,10 +134,19 @@ export class OpenTermHooks extends ContractWrapper {
     });
   }
 
-  addLenders(inputs: AddLenderInput[]): Promise<TransactionHash> {
+  async prepareAddLenders(inputs: AddLenderInput[]): Promise<PartialTransaction> {
+    const publicClient = getViemPublicClientFromEthers(this.provider);
+    return this.populateAddLenders(await timestampAddLenderInputs(publicClient, inputs));
+  }
+
+  prepareLenderRestoration(inputs: AddLenderInput[]): Promise<LenderRestorationPlan> {
+    return prepareLenderRestorationPlan(getViemPublicClientFromEthers(this.provider), this, inputs);
+  }
+
+  async addLenders(inputs: AddLenderInput[]): Promise<TransactionHash> {
     const result = this.previewAddLenders(inputs);
     assert(result.status === ChangeLenderRoleStatus.Ready, `Can not add lenders: ${result.status}`);
-    return submitPreparedTransaction(this.signer, this.populateAddLenders(inputs));
+    return submitPreparedTransaction(this.signer, await this.prepareAddLenders(inputs));
   }
 
   /* ========================================================================== */

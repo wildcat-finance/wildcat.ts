@@ -48,6 +48,8 @@ interface IOpenTermHooks {
 
   error InvalidCredentialReturned();
 
+  error InvalidCredentialTimestamp();
+
   error InvalidAccessConfiguration();
 
   error NotApprovedLender();

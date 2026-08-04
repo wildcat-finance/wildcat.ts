@@ -23,6 +23,7 @@ import {
   SignerOrProvider,
   TransactionHash,
   TransferAccess,
+  TimestampedAddLenderInput,
   WithdrawalAccess
 } from "../types";
 import {
@@ -48,6 +49,13 @@ import { encodeRevolvingMarketData } from "./revolving";
 import { HooksAccountContext, HooksLensReadContext } from "./context";
 import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iPeriodicTermHooksAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
+import { getViemPublicClientFromEthers } from "../internal/ethers-viem";
+import {
+  getCredentialTimestamps,
+  prepareLenderRestoration as prepareLenderRestorationPlan,
+  LenderRestorationPlan,
+  timestampAddLenderInputs
+} from "./lender-restoration";
 import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
 import {
   createHooksFactoryContractFacade,
@@ -109,11 +117,9 @@ export class PeriodicTermHooks extends ContractWrapper {
     return { status: ChangeLenderRoleStatus.Ready };
   }
 
-  populateAddLenders(inputs: AddLenderInput[]): PartialTransaction {
+  populateAddLenders(inputs: TimestampedAddLenderInput[]): PartialTransaction {
     const lenders = inputs.map((input) => input.lender);
-    const credentialTimestamps = inputs.map(
-      (input) => input.credentialTimestamp ?? Math.floor(Date.now() / 1000)
-    );
+    const credentialTimestamps = getCredentialTimestamps(inputs);
     return prepareTransaction({
       to: this.address,
       abi: iPeriodicTermHooksAbi,
@@ -125,10 +131,19 @@ export class PeriodicTermHooks extends ContractWrapper {
     });
   }
 
-  addLenders(inputs: AddLenderInput[]): Promise<TransactionHash> {
+  async prepareAddLenders(inputs: AddLenderInput[]): Promise<PartialTransaction> {
+    const publicClient = getViemPublicClientFromEthers(this.provider);
+    return this.populateAddLenders(await timestampAddLenderInputs(publicClient, inputs));
+  }
+
+  prepareLenderRestoration(inputs: AddLenderInput[]): Promise<LenderRestorationPlan> {
+    return prepareLenderRestorationPlan(getViemPublicClientFromEthers(this.provider), this, inputs);
+  }
+
+  async addLenders(inputs: AddLenderInput[]): Promise<TransactionHash> {
     const result = this.previewAddLenders(inputs);
     assert(result.status === ChangeLenderRoleStatus.Ready, `Can not add lenders: ${result.status}`);
-    return submitPreparedTransaction(this.signer, this.populateAddLenders(inputs));
+    return submitPreparedTransaction(this.signer, await this.prepareAddLenders(inputs));
   }
 
   previewBlockLenders(_: string[]): ChangeLenderRolePreview {

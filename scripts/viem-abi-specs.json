@@ -95,6 +95,22 @@
     "types": ["function"]
   },
   {
+    "exportName": "baseAccessControlsErrorAbi",
+    "artifact": "artifacts/contracts/IOpenTermHooks.sol/IOpenTermHooks.json",
+    "types": ["error"],
+    "names": [
+      "CallerNotBorrower",
+      "GrantedCredentialExpired",
+      "InvalidArrayLength",
+      "InvalidCredentialReturned",
+      "InvalidCredentialTimestamp",
+      "NotApprovedLender",
+      "ProviderCanNotReplaceCredential",
+      "ProviderCanNotRevokeCredential",
+      "ProviderNotFound"
+    ]
+  },
+  {
     "bytecodeExportName": "checkBorrowersRegisteredBytecode",
     "artifact": "artifacts/contracts/CheckBorrowersRegistered.sol/CheckBorrowersRegistered.json"
   },

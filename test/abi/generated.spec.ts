@@ -4,6 +4,7 @@ import path from "path";
 import { encodeFunctionData, getAddress } from "viem";
 import * as generatedAbis from "../../src/abi";
 import {
+  baseAccessControlsErrorAbi,
   iFixedTermHooksAbi,
   iOpenTermHooksAbi,
   iPeriodicTermHooksAbi,
@@ -75,6 +76,15 @@ const functionNames = (abi: readonly unknown[]): string[] => {
         typeof entry === "object" &&
         entry !== null &&
         (entry as { type?: string }).type === "function"
+    )
+    .map((entry) => entry.name);
+};
+
+const errorNames = (abi: readonly unknown[]): string[] => {
+  return abi
+    .filter(
+      (entry): entry is { type: "error"; name: string } =>
+        typeof entry === "object" && entry !== null && (entry as { type?: string }).type === "error"
     )
     .map((entry) => entry.name);
 };
@@ -155,5 +165,19 @@ describe("generated viem ABIs", () => {
       }
       expect(functionNames(abi as readonly unknown[])).to.include("revokeRoles");
     }
+  });
+
+  it("exports access-control errors needed for viem revert decoding", () => {
+    expect(errorNames(baseAccessControlsErrorAbi as readonly unknown[])).to.have.members([
+      "CallerNotBorrower",
+      "GrantedCredentialExpired",
+      "InvalidArrayLength",
+      "InvalidCredentialReturned",
+      "InvalidCredentialTimestamp",
+      "NotApprovedLender",
+      "ProviderCanNotReplaceCredential",
+      "ProviderCanNotRevokeCredential",
+      "ProviderNotFound"
+    ]);
   });
 });

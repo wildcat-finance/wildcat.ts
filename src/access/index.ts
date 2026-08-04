@@ -24,6 +24,7 @@ import { HooksAccountContext, HooksLensReadContext } from "./context";
 export * from "./access-control";
 export * from "./context";
 export * from "./fixed-term";
+export * from "./lender-restoration";
 export * from "./periodic-term";
 export * from "./revolving";
 export * from "./validation";
