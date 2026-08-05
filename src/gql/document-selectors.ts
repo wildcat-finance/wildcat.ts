@@ -2,6 +2,7 @@ import { DocumentNode } from "graphql";
 import { SupportedChainId, supportsPeriodicTermHooks } from "../constants";
 import {
   GetAllMarketsForLenderViewDocument,
+  GetLenderMarketCatalogueDocument,
   GetMarketDocument,
   GetMarketEventsDocument,
   GetMarketsAndLendersByHooksInstanceOrControllerDocument,
@@ -9,6 +10,7 @@ import {
 } from "./graphql";
 import {
   LegacyGetAllMarketsForLenderViewDocument,
+  LegacyGetLenderMarketCatalogueDocument,
   LegacyGetMarketDocument,
   LegacyGetMarketEventsDocument,
   LegacyGetMarketsAndLendersByHooksInstanceOrControllerDocument,
@@ -38,6 +40,9 @@ export const getAllMarketsForLenderViewDocumentForChain = (
     GetAllMarketsForLenderViewDocument,
     LegacyGetAllMarketsForLenderViewDocument
   );
+
+export const getLenderMarketCatalogueDocumentForChain = (chainId: SupportedChainId): DocumentNode =>
+  selectDocument(chainId, GetLenderMarketCatalogueDocument, LegacyGetLenderMarketCatalogueDocument);
 
 export const getPolicyMarketsAndLendersDocumentForChain = (
   chainId: SupportedChainId

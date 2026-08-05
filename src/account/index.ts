@@ -38,6 +38,7 @@ import {
 } from "../types";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 import {
+  SubgraphAccountDataForLenderCatalogueFragment,
   SubgraphAccountDataForLenderViewFragment,
   SubgraphDepositDataFragment
 } from "../gql/graphql";
@@ -102,6 +103,8 @@ export type MarketAccountArgs = {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MarketAccount extends Omit<MarketAccountArgs, "deposits" | "hadSubgraphEntry"> {}
+
+export type MarketAccountAccess = Pick<MarketAccountArgs, "credential" | "isKnownLender">;
 
 /**
  * Class to provide information about a market user's account
@@ -1015,7 +1018,8 @@ export class MarketAccount {
 
   static fromSubgraphAccountData(
     market: Market,
-    data: SubgraphAccountDataForLenderViewFragment
+    data: SubgraphAccountDataForLenderViewFragment | SubgraphAccountDataForLenderCatalogueFragment,
+    access?: MarketAccountAccess
   ): MarketAccount {
     const scaledBalance = BigNumber.from(data.scaledBalance);
 
@@ -1028,14 +1032,16 @@ export class MarketAccount {
       underlyingBalance: market.underlyingToken.getAmount(0),
       underlyingApproval: BigNumber.from(0),
       market,
-      deposits: data.deposits,
+      deposits: "deposits" in data ? data.deposits : undefined,
       totalDeposited: market.underlyingToken.getAmount(data.totalDeposited),
       lastScaleFactor: BigNumber.from(data.lastScaleFactor),
       lastUpdatedTimestamp: data.lastUpdatedTimestamp,
       totalInterestEarned: market.underlyingToken.getAmount(data.totalInterestEarned),
       numPendingWithdrawalBatches: data.numPendingWithdrawalBatches,
-      credential: data.hooksAccess ? parseSubgraphLenderHooksAccess(data.hooksAccess) : undefined,
-      isKnownLender: !!data.knownLenderStatus?.id,
+      credential:
+        access?.credential ??
+        (data.hooksAccess ? parseSubgraphLenderHooksAccess(data.hooksAccess) : undefined),
+      isKnownLender: access?.isKnownLender ?? !!data.knownLenderStatus?.id,
       hadSubgraphEntry: true
     });
     account.processInterestAccrued();
@@ -1120,7 +1126,8 @@ export class MarketAccount {
   static fromMarketDataOnly(
     market: Market,
     account: string,
-    isAuthorizedOnController: boolean
+    isAuthorizedOnController: boolean,
+    access?: MarketAccountAccess
   ): MarketAccount {
     return new MarketAccount({
       account,
@@ -1130,6 +1137,8 @@ export class MarketAccount {
       marketBalance: market.marketToken.getAmount(0),
       underlyingBalance: market.underlyingToken.getAmount(0),
       underlyingApproval: BigNumber.from(0),
+      credential: access?.credential,
+      isKnownLender: access?.isKnownLender,
       market
     });
   }

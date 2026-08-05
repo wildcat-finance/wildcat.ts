@@ -41,14 +41,14 @@ import {
   parseFeeConfigurationV2,
   parseSubgraphRoleProvider
 } from "../utils";
-import { BigNumber, constants, ContractTransaction } from "ethers";
+import { constants, ContractTransaction } from "ethers";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
   DeployMarketPreview,
   DeployMarketStatus
 } from "./validation";
-import { encodeMarketHooksInstanceInputs } from "./utils";
+import { encodeMarketHooksInstanceInputs, roleProvidersFromLens } from "./utils";
 
 type HooksInstanceData = HooksInstanceDataStructOutput | HooksInstanceDataV21StructOutput;
 type HooksTemplateData = HooksTemplateDataStructOutput | HooksTemplateDataV21StructOutput;
@@ -56,8 +56,6 @@ type HooksTemplateData = HooksTemplateDataStructOutput | HooksTemplateDataV21Str
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface PeriodicTermHooks
   extends Omit<PeriodicTermHooksArgs, "roleProviders" | "constraints"> {}
-
-const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
 
 export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
   readonly kind: HooksKind.PeriodicTerm = HooksKind.PeriodicTerm;
@@ -88,15 +86,7 @@ export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
   ): void {
     this.hooksTemplate.updateWith(data.hooksTemplate, signerAddress, isRegisteredBorrower);
     this.name = data.name;
-    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => ({
-      isApproved: true,
-      providerAddress: p.providerAddress,
-      isPullProvider: p.pullProviderIndex !== NullProviderIndex,
-      pullProviderIndex: p.pullProviderIndex,
-      isPushProvider: p.pushProviderIndex !== NullProviderIndex,
-      pushProviderIndex: p.pushProviderIndex,
-      timeToLive: p.timeToLive
-    }));
+    this.roleProviders = roleProvidersFromLens(data.pullProviders, data.pushProviders);
   }
 
   previewAddLenders(_: AddLenderInput[]): ChangeLenderRolePreview {
@@ -206,15 +196,7 @@ export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
       ),
       borrower: data.borrower,
       constraints: data.constraints,
-      roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => ({
-        isApproved: true,
-        providerAddress: p.providerAddress,
-        isPullProvider: p.pullProviderIndex !== NullProviderIndex,
-        pullProviderIndex: p.pullProviderIndex,
-        isPushProvider: p.pushProviderIndex !== NullProviderIndex,
-        pushProviderIndex: p.pushProviderIndex,
-        timeToLive: p.timeToLive
-      }))
+      roleProviders: roleProvidersFromLens(data.pullProviders, data.pushProviders)
     });
   }
 

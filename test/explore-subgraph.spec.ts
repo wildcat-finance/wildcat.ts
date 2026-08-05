@@ -1,15 +1,23 @@
 import { expect } from "chai";
-import { providers } from "ethers";
+import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
+import { BigNumber, providers } from "ethers";
 import { print } from "graphql";
 import { SupportedChainId } from "../src/constants";
-import { getAllMarketsForLenderViewDocumentForChain } from "../src/gql/document-selectors";
 import {
+  getAllMarketsForLenderViewDocumentForChain,
+  getLenderMarketCatalogueDocumentForChain
+} from "../src/gql/document-selectors";
+import { getLenderMarketCatalogue } from "../src/gql/getLenderMarketCatalogue";
+import {
+  SubgraphGetLenderMarketCatalogueQuery,
+  SubgraphHooksKind,
   SubgraphLenderHooksAccessDataFragment,
   SubgraphMarketDataWithEventsFragment,
   SubgraphMarketVersion,
   SubgraphRoleProviderDataFragment
 } from "../src/gql/graphql";
 import { Market } from "../src/market";
+import { MarketDataV2StructOutput } from "../src/typechain";
 import { parseSubgraphLenderHooksAccess, parseSubgraphRoleProvider } from "../src/utils";
 
 const marketAddress = "0x0000000000000000000000000000000000000001";
@@ -17,6 +25,14 @@ const borrowerAddress = "0x0000000000000000000000000000000000000002";
 const controllerAddress = "0x0000000000000000000000000000000000000003";
 const assetAddress = "0x0000000000000000000000000000000000000004";
 const providerAddress = "0x0000000000000000000000000000000000000005";
+const hooksAddress = "0x0000000000000000000000000000000000000006";
+const hooksTemplateAddress = "0x0000000000000000000000000000000000000007";
+const secondMarketAddress = "0x0000000000000000000000000000000000000008";
+const pushProviderAddress = "0x0000000000000000000000000000000000000009";
+const removedProviderAddress = "0x000000000000000000000000000000000000000a";
+const lenderAddress = "0x000000000000000000000000000000000000000b";
+const nullAddress = "0x0000000000000000000000000000000000000000";
+const nullProviderIndex = 2 ** 24 - 1;
 
 const makeMarketData = (totalAssets: string): SubgraphMarketDataWithEventsFragment => ({
   __typename: "Market",
@@ -98,6 +114,212 @@ const roleProvider: SubgraphRoleProviderDataFragment = {
   isApproved: true
 };
 
+type CatalogueMarket = SubgraphGetLenderMarketCatalogueQuery["markets"][number];
+
+const makeRoleProvider = (
+  address: string,
+  isPullProvider: boolean,
+  isPushProvider: boolean,
+  isApproved = true
+): SubgraphRoleProviderDataFragment => ({
+  __typename: "RoleProvider",
+  id: address,
+  providerAddress: address,
+  timeToLive: "3600",
+  isPullProvider,
+  pullProviderIndex: isPullProvider ? 0 : nullProviderIndex,
+  isPushProvider,
+  pushProviderIndex: isPushProvider ? 0 : nullProviderIndex,
+  isApproved
+});
+
+const approvedPullProvider = makeRoleProvider(providerAddress, true, false);
+const approvedPushProvider = makeRoleProvider(pushProviderAddress, false, true);
+const removedPullProvider = makeRoleProvider(removedProviderAddress, true, false, false);
+
+const makeCatalogueMarket = (id: string, latestDepositTimestamp?: number): CatalogueMarket => {
+  const market = makeMarketData("900000000000000000000");
+
+  return {
+    ...market,
+    id,
+    version: SubgraphMarketVersion.V2,
+    controller: null,
+    hooksConfig: {
+      __typename: "HooksConfig",
+      id: `${id}-hooks-config`,
+      useOnDeposit: true,
+      useOnQueueWithdrawal: false,
+      useOnExecuteWithdrawal: false,
+      useOnTransfer: true,
+      useOnBorrow: false,
+      useOnRepay: false,
+      useOnCloseMarket: false,
+      useOnNukeFromOrbit: false,
+      useOnSetMaxTotalSupply: false,
+      useOnSetAnnualInterestAndReserveRatioBips: false,
+      useOnSetProtocolFeeBips: false,
+      depositRequiresAccess: true,
+      transferRequiresAccess: true,
+      transfersDisabled: false,
+      minimumDeposit: "0",
+      allowForceBuyBacks: false,
+      queueWithdrawalRequiresAccess: false,
+      fixedTermEndTime: 0,
+      allowClosureBeforeTerm: false,
+      allowTermReduction: false,
+      firstWithdrawalWindowStart: 0,
+      periodDuration: 0,
+      withdrawalWindowDuration: 0,
+      periodicTermClosed: false,
+      pendingAprChangeAnnualInterestBips: 0,
+      pendingAprChangeProposalTimestamp: 0,
+      pendingAprChangeResponseWindowStart: 0,
+      pendingAprChangeResponseWindowEnd: 0
+    },
+    hooks: {
+      __typename: "HooksInstance",
+      id: hooksAddress,
+      borrower: borrowerAddress,
+      name: "Test hooks",
+      kind: SubgraphHooksKind.OpenTerm,
+      numMarkets: 2,
+      eventIndex: 1,
+      hooksTemplate: {
+        __typename: "HooksTemplate",
+        id: hooksTemplateAddress,
+        name: "OpenTermHooks",
+        feeRecipient: nullAddress,
+        protocolFeeBips: 0,
+        originationFeeAsset: null,
+        originationFeeAmount: "0",
+        disabled: false
+      },
+      providers: [approvedPullProvider, approvedPushProvider, removedPullProvider]
+    },
+    latestDeposit: latestDepositTimestamp
+      ? [{ __typename: "Deposit", blockTimestamp: latestDepositTimestamp }]
+      : [],
+    lenders: []
+  };
+};
+
+const makeLensMarketUpdate = (market: Market): MarketDataV2StructOutput => {
+  const flags = {
+    useOnDeposit: true,
+    useOnQueueWithdrawal: false,
+    useOnExecuteWithdrawal: false,
+    useOnTransfer: true,
+    useOnBorrow: false,
+    useOnRepay: false,
+    useOnCloseMarket: false,
+    useOnNukeFromOrbit: false,
+    useOnSetMaxTotalSupply: false,
+    useOnSetAnnualInterestAndReserveRatioBips: false,
+    useOnSetProtocolFeeBips: false
+  };
+  const tokenMetadata = {
+    token: assetAddress,
+    name: "Test Asset",
+    symbol: "TST",
+    decimals: BigNumber.from(18),
+    isMock: false
+  };
+  const constraints = {
+    minimumDelinquencyGracePeriod: 0,
+    maximumDelinquencyGracePeriod: 0,
+    minimumReserveRatioBips: 0,
+    maximumReserveRatioBips: 10_000,
+    minimumDelinquencyFeeBips: 0,
+    maximumDelinquencyFeeBips: 10_000,
+    minimumWithdrawalBatchDuration: 0,
+    maximumWithdrawalBatchDuration: 0,
+    minimumAnnualInterestBips: 0,
+    maximumAnnualInterestBips: 10_000
+  };
+
+  return {
+    marketToken: { ...tokenMetadata, token: market.address },
+    underlyingToken: tokenMetadata,
+    hooksFactory: nullAddress,
+    borrower: borrowerAddress,
+    hooksConfig: {
+      hooksAddress,
+      flags,
+      kind: 1,
+      transferRequiresAccess: true,
+      depositRequiresAccess: true,
+      minimumDeposit: BigNumber.from(0),
+      transfersDisabled: false,
+      allowForceBuyBacks: false,
+      withdrawalRequiresAccess: false,
+      fixedTermEndTime: 0,
+      allowClosureBeforeTerm: false,
+      allowTermReduction: false
+    },
+    withdrawalBatchDuration: BigNumber.from(market.withdrawalBatchDuration),
+    feeRecipient: market.feeRecipient,
+    delinquencyFeeBips: BigNumber.from(market.delinquencyFeeBips),
+    delinquencyGracePeriod: BigNumber.from(market.delinquencyGracePeriod),
+    hooks: {
+      hooksAddress,
+      borrower: borrowerAddress,
+      name: "Lens-refreshed hooks",
+      kind: 1,
+      hooksTemplate: {
+        hooksTemplate: hooksTemplateAddress,
+        fees: {
+          feeRecipient: nullAddress,
+          protocolFeeBips: 0,
+          originationFeeToken: { ...tokenMetadata, token: nullAddress },
+          originationFeeAmount: BigNumber.from(0),
+          borrowerOriginationFeeBalance: BigNumber.from(0),
+          borrowerOriginationFeeApproval: BigNumber.from(0)
+        },
+        exists: true,
+        enabled: true,
+        index: 0,
+        name: "OpenTermHooks",
+        totalMarkets: BigNumber.from(2)
+      },
+      constraints,
+      deploymentFlags: { optional: flags, required: flags },
+      pullProviders: [],
+      pushProviders: [
+        {
+          providerAddress: pushProviderAddress,
+          timeToLive: 7200,
+          pullProviderIndex: nullProviderIndex,
+          pushProviderIndex: 0
+        }
+      ],
+      totalMarkets: BigNumber.from(2)
+    },
+    temporaryReserveRatio: market.temporaryReserveRatio,
+    originalAnnualInterestBips: BigNumber.from(market.originalAnnualInterestBips),
+    originalReserveRatioBips: BigNumber.from(market.originalReserveRatioBips),
+    temporaryReserveRatioExpiry: BigNumber.from(market.temporaryReserveRatioExpiry),
+    isClosed: market.isClosed,
+    protocolFeeBips: BigNumber.from(market.protocolFeeBips),
+    reserveRatioBips: BigNumber.from(market.reserveRatioBips),
+    annualInterestBips: BigNumber.from(market.annualInterestBips),
+    scaleFactor: market.scaleFactor,
+    totalSupply: market.totalSupply.raw,
+    maxTotalSupply: market.maxTotalSupply.raw,
+    scaledTotalSupply: market.scaledTotalSupply,
+    totalAssets: market.totalAssets.raw,
+    lastAccruedProtocolFees: market.lastAccruedProtocolFees.raw,
+    normalizedUnclaimedWithdrawals: market.normalizedUnclaimedWithdrawals.raw,
+    scaledPendingWithdrawals: market.scaledPendingWithdrawals,
+    pendingWithdrawalExpiry: BigNumber.from(market.pendingWithdrawalExpiry),
+    isDelinquent: market.isDelinquent,
+    timeDelinquent: BigNumber.from(market.timeDelinquent),
+    lastInterestAccruedTimestamp: BigNumber.from(market.lastInterestAccruedTimestamp),
+    unpaidWithdrawalBatchExpiries: market.unpaidWithdrawalBatchExpiries,
+    coverageLiquidity: market.coverageLiquidity.raw
+  };
+};
+
 describe("Explore subgraph hydration", () => {
   it("requests totalAssets from both periodic and legacy market queries", () => {
     const queries = [SupportedChainId.Sepolia, SupportedChainId.Mainnet].map((chainId) =>
@@ -105,6 +327,24 @@ describe("Explore subgraph hydration", () => {
     );
 
     expect(queries.every((query) => query.includes("totalAssets"))).to.equal(true);
+  });
+
+  it("uses a history-free catalogue query with a stable variable set", () => {
+    const queries = [SupportedChainId.Sepolia, SupportedChainId.Mainnet].map((chainId) =>
+      print(getLenderMarketCatalogueDocumentForChain(chainId))
+    );
+
+    for (const query of queries) {
+      expect(query).to.include("totalAssets");
+      expect(query).to.match(/latestDeposit:\s*depositRecords\(\s*first:\s*1/);
+      expect(query).to.include("lenderHooksAccesses");
+      expect(query).not.to.include("borrowRecords");
+      expect(query).not.to.include("repaymentRecords");
+      expect(query).not.to.match(/\bdeposits\s*\(/);
+      expect(query).not.to.include("$numDeposits");
+      expect(query).not.to.include("$numBorrows");
+      expect(query).not.to.include("$numRepayments");
+    }
   });
 
   it("hydrates totalAssets instead of waiting for a Lens update", () => {
@@ -138,5 +378,91 @@ describe("Explore subgraph hydration", () => {
     expect(credential.lastApprovalTimestamp + (credential.lastProvider?.timeToLive ?? 0)).to.equal(
       4_294_968_295
     );
+  });
+
+  it("hydrates shared hooks, lender access, known status, and latest deposits", async () => {
+    const firstLatestDepositTimestamp = 1_700_000_123;
+    const data: SubgraphGetLenderMarketCatalogueQuery = {
+      __typename: "Query",
+      _meta: {
+        __typename: "_Meta_",
+        block: { __typename: "_Block_", number: 123, timestamp: 1_700_000_456 }
+      },
+      markets: [
+        makeCatalogueMarket(marketAddress, firstLatestDepositTimestamp),
+        makeCatalogueMarket(secondMarketAddress)
+      ],
+      controllerAuthorizations: [],
+      lenderHooksAccesses: [
+        {
+          __typename: "LenderHooksAccess",
+          id: "hooks-access",
+          lender: lenderAddress,
+          isBlockedFromDeposits: true,
+          canRefresh: true,
+          lastApprovalTimestamp: 1_700_000_000,
+          addedTimestamp: 1_699_000_000,
+          lastProvider: approvedPullProvider,
+          hooks: { __typename: "HooksInstance", id: hooksAddress },
+          knownLenderStatuses: [
+            {
+              __typename: "KnownLenderStatus",
+              market: { __typename: "Market", id: marketAddress }
+            }
+          ]
+        }
+      ]
+    };
+    const client = {
+      query: async () => ({ data })
+    } as unknown as ApolloClient<NormalizedCacheObject>;
+
+    const catalogue = await getLenderMarketCatalogue(client, {
+      lender: lenderAddress.toUpperCase(),
+      chainId: SupportedChainId.Sepolia,
+      signerOrProvider: new providers.JsonRpcProvider()
+    });
+    const [first, second] = catalogue.accounts;
+
+    expect(catalogue.indexedBlockNumber).to.equal(123);
+    expect(catalogue.indexedBlockTimestamp).to.equal(1_700_000_456);
+    expect(first.market.hooksInstance).to.equal(second.market.hooksInstance);
+    expect(first.market.approvedPullProviders.map((provider) => provider.providerAddress)).to.eql([
+      providerAddress
+    ]);
+    expect(first.market.approvedPushProviders.map((provider) => provider.providerAddress)).to.eql([
+      pushProviderAddress
+    ]);
+    expect(first.market.canSelfOnboard).to.equal(true);
+    expect(first.market.latestDepositTimestamp).to.equal(firstLatestDepositTimestamp);
+    expect(second.market.latestDepositTimestamp).to.equal(undefined);
+    expect(first.credential?.isBlockedFromDeposits).to.equal(true);
+    expect(second.credential?.canRefresh).to.equal(true);
+    expect(first.credential?.lastApprovalTimestamp).to.equal(1_700_000_000);
+    expect(first.credential?.lastProvider?.providerAddress).to.equal(providerAddress);
+    expect(first.isKnownLender).to.equal(true);
+    expect(second.isKnownLender).to.equal(false);
+    expect(first.depositRecords).to.have.length(0);
+    expect(second.depositRecords).to.have.length(0);
+  });
+
+  it("refreshes the same hooks instance and provider getters with Lens data", () => {
+    const market = Market.fromSubgraphMarketData(
+      SupportedChainId.Sepolia,
+      new providers.JsonRpcProvider(),
+      makeCatalogueMarket(marketAddress)
+    );
+    const hooksInstance = market.hooksInstance;
+
+    expect(market.canSelfOnboard).to.equal(true);
+    market.updateWith(makeLensMarketUpdate(market));
+
+    expect(market.hooksInstance).to.equal(hooksInstance);
+    expect(market.hooksInstance?.name).to.equal("Lens-refreshed hooks");
+    expect(market.approvedPullProviders).to.have.length(0);
+    expect(market.approvedPushProviders.map((provider) => provider.providerAddress)).to.eql([
+      pushProviderAddress
+    ]);
+    expect(market.canSelfOnboard).to.equal(false);
   });
 });

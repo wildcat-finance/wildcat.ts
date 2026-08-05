@@ -15,11 +15,11 @@ import {
   HooksFactory,
   HooksFactory__factory,
   HooksInstanceDataStructOutput,
+  HooksInstanceDataV21StructOutput,
   HooksTemplateDataStructOutput,
+  HooksTemplateDataV21StructOutput,
   IFixedTermHooks,
-  IFixedTermHooks__factory,
-  IOpenTermHooks,
-  IOpenTermHooks__factory
+  IFixedTermHooks__factory
 } from "../typechain";
 import {
   AddLenderInput,
@@ -41,19 +41,20 @@ import {
   parseFeeConfigurationV2,
   parseSubgraphRoleProvider
 } from "../utils";
-import { BigNumber, constants, ContractTransaction } from "ethers";
+import { constants, ContractTransaction } from "ethers";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
   DeployMarketPreview,
   DeployMarketStatus
 } from "./validation";
-import { encodeMarketHooksInstanceInputs } from "./utils";
+import { encodeMarketHooksInstanceInputs, roleProvidersFromLens } from "./utils";
+
+type HooksInstanceData = HooksInstanceDataStructOutput | HooksInstanceDataV21StructOutput;
+type HooksTemplateData = HooksTemplateDataStructOutput | HooksTemplateDataV21StructOutput;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface FixedTermHooks extends Omit<FixedTermHooksArgs, "roleProviders" | "constraints"> {}
-
-const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
 
 export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
   readonly kind: HooksKind.FixedTerm = HooksKind.FixedTerm;
@@ -78,21 +79,13 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
   }
 
   updateWith(
-    data: HooksInstanceDataStructOutput,
+    data: HooksInstanceData,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
   ): void {
     this.hooksTemplate.updateWith(data.hooksTemplate, signerAddress, isRegisteredBorrower);
     this.name = data.name;
-    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => ({
-      isApproved: true,
-      providerAddress: p.providerAddress,
-      isPullProvider: p.pullProviderIndex !== NullProviderIndex,
-      pullProviderIndex: p.pullProviderIndex,
-      isPushProvider: p.pushProviderIndex !== NullProviderIndex,
-      pushProviderIndex: p.pushProviderIndex,
-      timeToLive: p.timeToLive
-    }));
+    this.roleProviders = roleProvidersFromLens(data.pullProviders, data.pushProviders);
   }
 
   /* ========================================================================== */
@@ -201,7 +194,7 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
   static fromLensData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: HooksInstanceDataStructOutput,
+    data: HooksInstanceData,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
   ): FixedTermHooks {
@@ -220,15 +213,7 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
       ),
       borrower: data.borrower,
       constraints: data.constraints,
-      roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => ({
-        isApproved: true,
-        providerAddress: p.providerAddress,
-        isPullProvider: p.pullProviderIndex !== NullProviderIndex,
-        pullProviderIndex: p.pullProviderIndex,
-        isPushProvider: p.pushProviderIndex !== NullProviderIndex,
-        pushProviderIndex: p.pushProviderIndex,
-        timeToLive: p.timeToLive
-      }))
+      roleProviders: roleProvidersFromLens(data.pullProviders, data.pushProviders)
     });
   }
 
@@ -302,7 +287,7 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
   }
 
   updateWith(
-    data: HooksTemplateDataStructOutput,
+    data: HooksTemplateData,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
   ): void {

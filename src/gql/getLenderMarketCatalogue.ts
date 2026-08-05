@@ -1,58 +1,75 @@
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
-import { Market } from "../market";
-import {
-  SubgraphGetAllMarketsForLenderViewQuery,
-  SubgraphGetAllMarketsForLenderViewQueryVariables
-} from "./graphql";
+import { HooksInstance, hooksInstanceFromSubgraph } from "../access";
 import { MarketAccount } from "../account";
 import { SupportedChainId } from "../constants";
+import { Market } from "../market";
 import { SignerOrProvider } from "../types";
-import { getAllMarketsForLenderViewDocumentForChain } from "./document-selectors";
-import { HooksInstance, hooksInstanceFromSubgraph } from "../access";
 import { parseSubgraphLenderHooksAccess } from "../utils";
+import { getLenderMarketCatalogueDocumentForChain } from "./document-selectors";
+import {
+  SubgraphGetLenderMarketCatalogueQuery,
+  SubgraphGetLenderMarketCatalogueQueryVariables
+} from "./graphql";
 
-type GetLenderAccountsForAllMarketsOptions = SubgraphGetAllMarketsForLenderViewQueryVariables & {
+export type LenderMarketCatalogue = {
+  accounts: MarketAccount[];
+  indexedBlockNumber?: number;
+  indexedBlockTimestamp?: number;
+};
+
+export type GetLenderMarketCatalogueOptions = Omit<
+  SubgraphGetLenderMarketCatalogueQueryVariables,
+  "lender"
+> & {
   lender: string;
   chainId: SupportedChainId;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy?: FetchPolicy;
   signerOrProvider: SignerOrProvider;
 };
 
-export async function getLenderAccountsForAllMarkets(
+/**
+ * Fetch current market and lender state without raw market history.
+ *
+ * The returned accounts represent the indexed subgraph block. Consumers may
+ * enrich the same Market and MarketAccount instances with Lens data for newer
+ * chain and wallet state.
+ */
+export async function getLenderMarketCatalogue(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   {
     lender,
-    fetchPolicy,
+    fetchPolicy = "cache-first",
     chainId,
     signerOrProvider,
     ...variables
-  }: GetLenderAccountsForAllMarketsOptions
-): Promise<MarketAccount[]> {
+  }: GetLenderMarketCatalogueOptions
+): Promise<LenderMarketCatalogue> {
   const {
-    data: { markets: _markets, controllerAuthorizations, lenderHooksAccesses }
+    data: { _meta, markets, controllerAuthorizations, lenderHooksAccesses }
   } = await subgraphClient.query<
-    SubgraphGetAllMarketsForLenderViewQuery,
-    SubgraphGetAllMarketsForLenderViewQueryVariables
+    SubgraphGetLenderMarketCatalogueQuery,
+    SubgraphGetLenderMarketCatalogueQueryVariables
   >({
-    query: getAllMarketsForLenderViewDocumentForChain(chainId),
+    query: getLenderMarketCatalogueDocumentForChain(chainId),
     variables: {
       lender: lender.toLowerCase(),
       ...variables
     },
     fetchPolicy
   });
+
   const authorizedMarkets = new Set(
     controllerAuthorizations
-      .filter((auth) => !!auth.controller)
-      .map((auth) => auth.controller.markets)
-      .flat()
+      .filter((authorization) => !!authorization.controller)
+      .flatMap((authorization) => authorization.controller.markets)
       .map(({ id }) => id.toLowerCase())
   );
   const hooksInstances = new Map<string, HooksInstance>();
   const hooksAccessByInstance = new Map(
     lenderHooksAccesses.map((access) => [access.hooks.id.toLowerCase(), access])
   );
-  return _markets.map((marketData) => {
+
+  const accounts = markets.map((marketData) => {
     let hooksInstance: HooksInstance | undefined;
     if (marketData.hooks) {
       const hooksAddress = marketData.hooks.id.toLowerCase();
@@ -62,6 +79,7 @@ export async function getLenderAccountsForAllMarkets(
         hooksInstances.set(hooksAddress, hooksInstance);
       }
     }
+
     const market = Market.fromSubgraphMarketData(
       chainId,
       signerOrProvider,
@@ -82,14 +100,21 @@ export async function getLenderAccountsForAllMarkets(
         }
       : undefined;
     const lenderData = marketData.lenders[0];
-    if (!lenderData) {
-      return MarketAccount.fromMarketDataOnly(
-        market,
-        lender,
-        authorizedMarkets.has(market.address.toLowerCase()),
-        access
-      );
+
+    if (lenderData) {
+      return MarketAccount.fromSubgraphAccountData(market, lenderData, access);
     }
-    return MarketAccount.fromSubgraphAccountData(market, lenderData, access);
+    return MarketAccount.fromMarketDataOnly(
+      market,
+      lender,
+      authorizedMarkets.has(market.address.toLowerCase()),
+      access
+    );
   });
+
+  return {
+    accounts,
+    indexedBlockNumber: _meta?.block.number,
+    indexedBlockTimestamp: _meta?.block.timestamp ?? undefined
+  };
 }

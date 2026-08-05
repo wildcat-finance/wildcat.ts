@@ -39,6 +39,21 @@ const LegacyLenderHooksAccessDataFragmentDoc = gql`
   ${LegacyRoleProviderDataFragmentDoc}
 `;
 
+const LegacyLenderHooksAccessWithKnownMarketsFragmentDoc = gql`
+  fragment LegacyLenderHooksAccessWithKnownMarkets on LenderHooksAccess {
+    ...LegacyLenderHooksAccessData
+    hooks {
+      id
+    }
+    knownLenderStatuses(first: 1000) {
+      market {
+        id
+      }
+    }
+  }
+  ${LegacyLenderHooksAccessDataFragmentDoc}
+`;
+
 const LegacyLenderPropertiesFragmentDoc = gql`
   fragment LegacyLenderProperties on LenderAccount {
     id
@@ -92,6 +107,23 @@ const LegacyAccountDataForLenderViewFragmentDoc = gql`
   ${LegacyLenderPropertiesFragmentDoc}
   ${LegacyLenderHooksAccessDataFragmentDoc}
   ${LegacyDepositDataFragmentDoc}
+`;
+
+const LegacyAccountDataForLenderCatalogueFragmentDoc = gql`
+  fragment LegacyAccountDataForLenderCatalogue on LenderAccount {
+    ...LegacyLenderProperties
+    controllerAuthorization {
+      authorized
+    }
+    hooksAccess {
+      ...LegacyLenderHooksAccessData
+    }
+    knownLenderStatus {
+      id
+    }
+  }
+  ${LegacyLenderPropertiesFragmentDoc}
+  ${LegacyLenderHooksAccessDataFragmentDoc}
 `;
 
 const LegacyBasicLenderDataFragmentDoc = gql`
@@ -865,6 +897,7 @@ export const LegacyGetAllMarketsForLenderViewDocument = gql`
     }
     controllerAuthorizations: lenderAuthorizations(
       where: { and: [{ lender: $lender }, { authorized: true }] }
+      first: 1000
     ) {
       lender
       authorized
@@ -874,11 +907,66 @@ export const LegacyGetAllMarketsForLenderViewDocument = gql`
         }
       }
     }
+    lenderHooksAccesses(where: { lender: $lender }, first: 1000) {
+      ...LegacyLenderHooksAccessWithKnownMarkets
+    }
   }
   ${LegacyMarketDataFragmentDoc}
   ${LegacyBorrowDataFragmentDoc}
   ${LegacyRepaymentDataFragmentDoc}
   ${LegacyAccountDataForLenderViewFragmentDoc}
+  ${LegacyLenderHooksAccessWithKnownMarketsFragmentDoc}
+`;
+
+export const LegacyGetLenderMarketCatalogueDocument = gql`
+  query legacyGetLenderMarketCatalogue(
+    $lender: Bytes!
+    $marketFilter: Market_filter = { id_not: null }
+    $numMarkets: Int = 1000
+    $skipMarkets: Int = 0
+    $orderMarkets: Market_orderBy = createdAt
+    $directionMarkets: OrderDirection = desc
+  ) {
+    _meta {
+      block {
+        number
+        timestamp
+      }
+    }
+    markets(
+      where: $marketFilter
+      orderBy: $orderMarkets
+      orderDirection: $directionMarkets
+      first: $numMarkets
+      skip: $skipMarkets
+    ) {
+      ...LegacyMarketData
+      latestDeposit: depositRecords(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
+        blockTimestamp
+      }
+      lenders(where: { address: $lender }, first: 1) {
+        ...LegacyAccountDataForLenderCatalogue
+      }
+    }
+    controllerAuthorizations: lenderAuthorizations(
+      where: { and: [{ lender: $lender }, { authorized: true }] }
+      first: 1000
+    ) {
+      lender
+      authorized
+      controller {
+        markets {
+          id
+        }
+      }
+    }
+    lenderHooksAccesses(where: { lender: $lender }, first: 1000) {
+      ...LegacyLenderHooksAccessWithKnownMarkets
+    }
+  }
+  ${LegacyMarketDataFragmentDoc}
+  ${LegacyAccountDataForLenderCatalogueFragmentDoc}
+  ${LegacyLenderHooksAccessWithKnownMarketsFragmentDoc}
 `;
 
 export const LegacyGetMarketsAndLendersByHooksInstanceOrControllerDocument = gql`

@@ -4,7 +4,11 @@ import {
   SubgraphHooksKind,
   SubgraphHooksTemplateDataFragment
 } from "../gql/graphql";
-import { HooksInstanceDataStructOutput, HooksTemplateDataStructOutput } from "../typechain";
+import {
+  HooksInstanceDataStructOutput,
+  HooksInstanceDataV21StructOutput,
+  HooksTemplateDataStructOutput
+} from "../typechain";
 import { SignerOrProvider } from "../types";
 import { OpenTermHooks, OpenTermHooksTemplate } from "./access-control";
 import { FixedTermHooks, FixedTermHooksTemplate } from "./fixed-term";
@@ -133,7 +137,7 @@ export function hooksInstanceFromSubgraph(
 export function hooksInstanceFromLens(
   chainId: SupportedChainId,
   provider: SignerOrProvider,
-  data: HooksInstanceDataStructOutput,
+  data: HooksInstanceDataStructOutput | HooksInstanceDataV21StructOutput,
   signerAddress?: string,
   isRegisteredBorrower?: boolean
 ): HooksInstance {

@@ -16,7 +16,8 @@ import {
   MarketVersion,
   HooksKind,
   HooksConfig,
-  PeriodicTermHooksConfig
+  PeriodicTermHooksConfig,
+  RoleProvider
 } from "./types";
 import { formatUnits } from "ethers/lib/utils";
 import { MarketAccount } from "./account";
@@ -47,7 +48,7 @@ import {
   SECONDS_IN_365_DAYS,
   assert
 } from "./utils";
-import { hooksTemplateFromSubgraph } from "./access";
+import { HooksInstance, hooksInstanceFromLens, hooksInstanceFromSubgraph } from "./access";
 
 export type CollateralizationInfo = {
   // Percentage of total assets that must be held in reserve
@@ -88,6 +89,7 @@ export type MarketArgs = {
   marketToken: Token;
   underlyingToken: Token;
   hooksConfig?: HooksConfig;
+  hooksInstance?: HooksInstance;
   borrower: string;
   controller?: string;
   feeRecipient: string;
@@ -132,6 +134,8 @@ export type MarketArgs = {
   totalDelinquencyFeesAccrued?: TokenAmount;
   totalProtocolFeesAccrued?: TokenAmount;
   totalDeposited?: TokenAmount;
+  /** Timestamp of the most recent deposit indexed by the catalogue query. */
+  latestDepositTimestamp?: number;
   deployedEvent?: SubgraphMarketDeployedEventFragment;
   eventIndex?: number;
   signerAddress?: string;
@@ -199,6 +203,26 @@ export class Market extends ContractWrapper<WildcatMarket> {
 
   get hooksKind(): HooksKind | undefined {
     return this.hooksConfig?.kind;
+  }
+
+  get approvedPullProviders(): RoleProvider[] {
+    return (
+      this.hooksInstance?.roleProviders.filter(
+        (provider) => provider.isApproved && provider.isPullProvider
+      ) ?? []
+    );
+  }
+
+  get approvedPushProviders(): RoleProvider[] {
+    return (
+      this.hooksInstance?.roleProviders.filter(
+        (provider) => provider.isApproved && provider.isPushProvider
+      ) ?? []
+    );
+  }
+
+  get canSelfOnboard(): boolean {
+    return this.approvedPullProviders.length > 0;
   }
 
   get isInFixedTerm(): boolean {
@@ -708,6 +732,16 @@ export class Market extends ContractWrapper<WildcatMarket> {
       assert(this.version === MarketVersion.V2, `Can not push V2 lens data to V1 market!`);
       const config = this.hooksConfig;
       assert(config !== undefined, `V2 market has no hooksConfig!`);
+      if (!this.hooksInstance) {
+        this.hooksInstance = hooksInstanceFromLens(this.chainId, this.provider, data.hooks);
+      } else {
+        assert(
+          this.hooksInstance.address.toLowerCase() === data.hooks.hooksAddress.toLowerCase(),
+          `Can not push hooks data for ${data.hooks.hooksAddress} to ${this.hooksInstance.address}`
+        );
+        this.hooksInstance.updateWith(data.hooks);
+      }
+      config.template = this.hooksInstance.hooksTemplate;
       config.minimumDeposit = this.underlyingToken.getAmount(data.hooksConfig.minimumDeposit);
       if (config.kind === HooksKind.FixedTerm) {
         config.fixedTermEndTime = data.hooksConfig.fixedTermEndTime;
@@ -738,8 +772,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
       | "periodicTermUpdatedRecords"
       | "periodicTermClosedRecord"
       | "annualInterestBipsReductionProposalRecords"
-    >,
-    signerAddress?: string
+    > & {
+      latestDeposit?: Array<{ blockTimestamp: number }>;
+    },
+    signerAddress?: string,
+    hooksInstance?: HooksInstance
   ): Market {
     const underlyingToken = Token.fromSubgraphToken(chainId, data._asset, provider);
     const marketToken = Token.fromSubgraphMarketData(chainId, data, provider);
@@ -791,8 +828,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
           data.hooksConfig.useOnSetAnnualInterestAndReserveRatioBips,
         useOnSetProtocolFeeBips: data.hooksConfig.useOnSetProtocolFeeBips
       };
-      const { id, hooksTemplate: hooksTemplateData } = data.hooks;
-      const template = hooksTemplateFromSubgraph(chainId, provider, hooksTemplateData);
+      const { id } = data.hooks;
+      hooksInstance ??= hooksInstanceFromSubgraph(chainId, provider, data.hooks, signerAddress);
+      const template = hooksInstance.hooksTemplate;
       const minimumDeposit = _minimumDeposit
         ? underlyingToken.getAmount(_minimumDeposit)
         : undefined;
@@ -851,6 +889,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       provider,
       version: data.version,
       hooksConfig,
+      hooksInstance,
       marketToken,
       underlyingToken,
       borrower: data.borrower,
@@ -889,6 +928,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       totalDelinquencyFeesAccrued: underlyingToken.getAmount(data.totalDelinquencyFeesAccrued),
       totalProtocolFeesAccrued: underlyingToken.getAmount(data.totalProtocolFeesAccrued),
       totalDeposited: underlyingToken.getAmount(data.totalDeposited),
+      latestDepositTimestamp: data.latestDeposit?.[0]?.blockTimestamp,
       depositRecords: data.depositRecords,
       repaymentRecords: data.repaymentRecords,
       borrowRecords: data.borrowRecords,
@@ -971,6 +1011,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
   ): Market {
     const marketToken = Token.fromTokenMetadata(chainId, data.marketToken, provider);
     const underlyingToken = Token.fromTokenMetadata(chainId, data.underlyingToken, provider);
+    const hooksInstance = hooksInstanceFromLens(chainId, provider, hooks);
     const { hooksAddress } = hooks;
     let hooksConfig: HooksConfig;
     const allowForceBuyBacks =
@@ -1025,9 +1066,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
         `Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksConfigData.kind}`
       );
     }
+    hooksConfig.template = hooksInstance.hooksTemplate;
     return new Market({
       provider,
       hooksConfig,
+      hooksInstance,
       version: MarketVersion.V2,
       chainId: chainId,
       marketToken: marketToken,

@@ -32,6 +32,18 @@ fragment LenderHooksAccessData on LenderHooksAccess {
   addedTimestamp
 }
 
+fragment LenderHooksAccessWithKnownMarkets on LenderHooksAccess {
+  ...LenderHooksAccessData
+  hooks {
+    id
+  }
+  knownLenderStatuses(first: 1000) {
+    market {
+      id
+    }
+  }
+}
+
 # ========================================================================== #
 #                                Lender Views                                #
 # ========================================================================== #
@@ -58,6 +70,22 @@ fragment AccountDataForLenderView on LenderAccount {
     orderDirection: $directionDeposits
   ) {
     ...DepositData
+  }
+}
+
+fragment AccountDataForLenderCatalogue on LenderAccount {
+  ...LenderProperties
+
+  controllerAuthorization {
+    authorized
+  }
+
+  hooksAccess {
+    ...LenderHooksAccessData
+  }
+
+  knownLenderStatus {
+    id
   }
 }
 

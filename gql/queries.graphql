@@ -126,6 +126,7 @@ query getAllMarketsForLenderView(
   }
   controllerAuthorizations: lenderAuthorizations(
     where: { and: [{ lender: $lender }, { authorized: true }] }
+    first: 1000
   ) {
     lender
     authorized
@@ -134,6 +135,61 @@ query getAllMarketsForLenderView(
         id
       }
     }
+  }
+  lenderHooksAccesses(where: { lender: $lender }, first: 1000) {
+    ...LenderHooksAccessWithKnownMarkets
+  }
+}
+
+# Current market and lender state for catalogue views. Raw market and lender
+# history is intentionally excluded; only the latest market deposit is queried.
+query getLenderMarketCatalogue(
+  $lender: Bytes!
+  $marketFilter: Market_filter = { id_not: null }
+  $numMarkets: Int = 1000
+  $skipMarkets: Int = 0
+  $orderMarkets: Market_orderBy = createdAt
+  $directionMarkets: OrderDirection = desc
+) {
+  _meta {
+    block {
+      number
+      timestamp
+    }
+  }
+  markets(
+    where: $marketFilter
+    orderBy: $orderMarkets
+    orderDirection: $directionMarkets
+    first: $numMarkets
+    skip: $skipMarkets
+  ) {
+    ...MarketData
+    latestDeposit: depositRecords(
+      first: 1
+      orderBy: blockTimestamp
+      orderDirection: desc
+    ) {
+      blockTimestamp
+    }
+    lenders(where: { address: $lender }, first: 1) {
+      ...AccountDataForLenderCatalogue
+    }
+  }
+  controllerAuthorizations: lenderAuthorizations(
+    where: { and: [{ lender: $lender }, { authorized: true }] }
+    first: 1000
+  ) {
+    lender
+    authorized
+    controller {
+      markets {
+        id
+      }
+    }
+  }
+  lenderHooksAccesses(where: { lender: $lender }, first: 1000) {
+    ...LenderHooksAccessWithKnownMarkets
   }
 }
 

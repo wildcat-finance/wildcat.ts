@@ -15,7 +15,9 @@ import {
   HooksFactory,
   HooksFactory__factory,
   HooksInstanceDataStructOutput,
+  HooksInstanceDataV21StructOutput,
   HooksTemplateDataStructOutput,
+  HooksTemplateDataV21StructOutput,
   IOpenTermHooks,
   IOpenTermHooks__factory
 } from "../typechain";
@@ -39,19 +41,20 @@ import {
   parseFeeConfigurationV2,
   parseSubgraphRoleProvider
 } from "../utils";
-import { BigNumber, constants, ContractTransaction } from "ethers";
+import { constants, ContractTransaction } from "ethers";
 import {
   ChangeLenderRolePreview,
   ChangeLenderRoleStatus,
   DeployMarketPreview,
   DeployMarketStatus
 } from "./validation";
-import { encodeMarketHooksInstanceInputs } from "./utils";
+import { encodeMarketHooksInstanceInputs, roleProvidersFromLens } from "./utils";
+
+type HooksInstanceData = HooksInstanceDataStructOutput | HooksInstanceDataV21StructOutput;
+type HooksTemplateData = HooksTemplateDataStructOutput | HooksTemplateDataV21StructOutput;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface OpenTermHooks extends Omit<OpenTermHooksArgs, "roleProviders" | "constraints"> {}
-const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
-
 export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
   readonly kind: HooksKind.OpenTerm = HooksKind.OpenTerm;
   readonly contractFactory = IOpenTermHooks__factory;
@@ -75,21 +78,13 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
   }
 
   updateWith(
-    data: HooksInstanceDataStructOutput,
+    data: HooksInstanceData,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
   ): void {
     this.hooksTemplate.updateWith(data.hooksTemplate, signerAddress, isRegisteredBorrower);
     this.name = data.name;
-    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => ({
-      isApproved: true,
-      providerAddress: p.providerAddress,
-      isPullProvider: p.pullProviderIndex !== NullProviderIndex,
-      pullProviderIndex: p.pullProviderIndex,
-      isPushProvider: p.pushProviderIndex !== NullProviderIndex,
-      pushProviderIndex: p.pushProviderIndex,
-      timeToLive: p.timeToLive
-    }));
+    this.roleProviders = roleProvidersFromLens(data.pullProviders, data.pushProviders);
   }
 
   /* ========================================================================== */
@@ -198,7 +193,7 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
   static fromLensData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: HooksInstanceDataStructOutput,
+    data: HooksInstanceData,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
   ): OpenTermHooks {
@@ -217,15 +212,7 @@ export class OpenTermHooks extends ContractWrapper<IOpenTermHooks> {
       ),
       borrower: data.borrower,
       constraints: data.constraints,
-      roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => ({
-        isApproved: true,
-        providerAddress: p.providerAddress,
-        isPullProvider: p.pullProviderIndex !== NullProviderIndex,
-        pullProviderIndex: p.pullProviderIndex,
-        isPushProvider: p.pushProviderIndex !== NullProviderIndex,
-        pushProviderIndex: p.pushProviderIndex,
-        timeToLive: p.timeToLive
-      }))
+      roleProviders: roleProvidersFromLens(data.pullProviders, data.pushProviders)
     });
   }
 
@@ -299,7 +286,7 @@ export class OpenTermHooksTemplate extends ContractWrapper<HooksFactory> {
   }
 
   updateWith(
-    data: HooksTemplateDataStructOutput,
+    data: HooksTemplateData,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
   ): void {
