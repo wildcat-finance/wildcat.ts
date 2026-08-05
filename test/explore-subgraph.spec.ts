@@ -2,6 +2,8 @@ import { expect } from "chai";
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { BigNumber, providers } from "ethers";
 import { print } from "graphql";
+import { LenderRole, MarketAccount } from "../src/account";
+import * as sdkConstants from "../src/constants";
 import { SupportedChainId } from "../src/constants";
 import {
   getAllMarketsForLenderViewDocumentForChain,
@@ -17,7 +19,11 @@ import {
   SubgraphRoleProviderDataFragment
 } from "../src/gql/graphql";
 import { Market } from "../src/market";
-import { MarketDataV2StructOutput } from "../src/typechain";
+import {
+  LenderAccountDataStructOutput,
+  MarketDataV2StructOutput,
+  MarketLenderStatusStructOutput
+} from "../src/typechain";
 import { parseSubgraphLenderHooksAccess, parseSubgraphRoleProvider } from "../src/utils";
 
 const marketAddress = "0x0000000000000000000000000000000000000001";
@@ -33,6 +39,41 @@ const removedProviderAddress = "0x000000000000000000000000000000000000000a";
 const lenderAddress = "0x000000000000000000000000000000000000000b";
 const nullAddress = "0x0000000000000000000000000000000000000000";
 const nullProviderIndex = 2 ** 24 - 1;
+
+type V1LenderStateReader = (
+  lender: string,
+  markets: string[]
+) => Promise<MarketLenderStatusStructOutput[]>;
+type V2LenderStateReader = (
+  lender: string,
+  markets: string[]
+) => Promise<LenderAccountDataStructOutput[]>;
+
+const withStubbedLenderStateReaders = async <T>(
+  getV1Updates: V1LenderStateReader,
+  getV2Updates: V2LenderStateReader,
+  run: () => Promise<T>
+): Promise<T> => {
+  const constants = sdkConstants as {
+    getLensContract: typeof sdkConstants.getLensContract;
+    getLensV2Contract: typeof sdkConstants.getLensV2Contract;
+  };
+  const originalGetLensContract = constants.getLensContract;
+  const originalGetLensV2Contract = constants.getLensV2Contract;
+  constants.getLensContract = (() => ({
+    getMarketsLenderStatus: getV1Updates
+  })) as unknown as typeof sdkConstants.getLensContract;
+  constants.getLensV2Contract = (() => ({
+    "getLenderAccountData(address,address[])": getV2Updates
+  })) as unknown as typeof sdkConstants.getLensV2Contract;
+
+  try {
+    return await run();
+  } finally {
+    constants.getLensContract = originalGetLensContract;
+    constants.getLensV2Contract = originalGetLensV2Contract;
+  }
+};
 
 const makeMarketData = (totalAssets: string): SubgraphMarketDataWithEventsFragment => ({
   __typename: "Market",
@@ -320,6 +361,51 @@ const makeLensMarketUpdate = (market: Market): MarketDataV2StructOutput => {
   };
 };
 
+const makeV1LenderState = (): MarketLenderStatusStructOutput => ({
+  lender: lenderAddress,
+  isAuthorizedOnController: true,
+  role: LenderRole.DepositAndWithdraw,
+  scaledBalance: BigNumber.from(11),
+  normalizedBalance: BigNumber.from(12),
+  underlyingBalance: BigNumber.from(13),
+  underlyingApproval: BigNumber.from(14)
+});
+
+const makeV2LenderState = (): LenderAccountDataStructOutput => ({
+  lender: lenderAddress,
+  scaledBalance: BigNumber.from(21),
+  normalizedBalance: BigNumber.from(22),
+  underlyingBalance: BigNumber.from(23),
+  underlyingApproval: BigNumber.from(24),
+  isBlockedFromDeposits: true,
+  lastProvider: {
+    timeToLive: 3600,
+    providerAddress,
+    pullProviderIndex: 0,
+    pushProviderIndex: nullProviderIndex
+  },
+  canRefresh: true,
+  lastApprovalTimestamp: 1_700_000_000,
+  isKnownLender: true
+});
+
+const makeMixedMarketAccounts = () => {
+  const provider = new providers.JsonRpcProvider();
+  const v1Market = Market.fromSubgraphMarketData(
+    SupportedChainId.Sepolia,
+    provider,
+    makeMarketData("900000000000000000000")
+  );
+  const v2Market = Market.fromSubgraphMarketData(
+    SupportedChainId.Sepolia,
+    provider,
+    makeCatalogueMarket(secondMarketAddress)
+  );
+  const v1Account = MarketAccount.fromMarketDataOnly(v1Market, lenderAddress, false);
+  const v2Account = MarketAccount.fromMarketDataOnly(v2Market, lenderAddress, false);
+  return { provider, v1Account, v2Account };
+};
+
 describe("Explore subgraph hydration", () => {
   it("requests totalAssets from both periodic and legacy market queries", () => {
     const queries = [SupportedChainId.Sepolia, SupportedChainId.Mainnet].map((chainId) =>
@@ -464,5 +550,128 @@ describe("Explore subgraph hydration", () => {
       pushProviderAddress
     ]);
     expect(market.canSelfOnboard).to.equal(false);
+  });
+
+  it("refreshes mixed V1 and V2 lender state without replacing or reordering accounts", async () => {
+    const { provider, v1Account, v2Account } = makeMixedMarketAccounts();
+    const accounts = [v2Account, v1Account];
+    const v1TotalAssets = v1Account.market.totalAssets;
+    const v2TotalAssets = v2Account.market.totalAssets;
+    const calls: Array<{ version: string; lender: string; markets: string[] }> = [];
+
+    await withStubbedLenderStateReaders(
+      async (lender, markets) => {
+        calls.push({ version: "V1", lender, markets });
+        return [makeV1LenderState()];
+      },
+      async (lender, markets) => {
+        calls.push({ version: "V2", lender, markets });
+        return [makeV2LenderState()];
+      },
+      async () => {
+        const result = await MarketAccount.refreshLenderAccountState(
+          SupportedChainId.Sepolia,
+          provider,
+          lenderAddress,
+          accounts
+        );
+
+        expect(result).to.equal(accounts);
+        expect(result[0]).to.equal(v2Account);
+        expect(result[1]).to.equal(v1Account);
+      }
+    );
+
+    expect(calls).to.deep.equal([
+      { version: "V1", lender: lenderAddress, markets: [v1Account.market.address] },
+      { version: "V2", lender: lenderAddress, markets: [v2Account.market.address] }
+    ]);
+    expect(v1Account.isAuthorizedOnController).to.equal(true);
+    expect(v1Account.role).to.equal(LenderRole.DepositAndWithdraw);
+    expect(v1Account.marketBalance.raw.toString()).to.equal("12");
+    expect(v1Account.underlyingBalance.raw.toString()).to.equal("13");
+    expect(v1Account.underlyingApproval.toString()).to.equal("14");
+    expect(v2Account.credential?.isBlockedFromDeposits).to.equal(true);
+    expect(v2Account.credential?.lastProvider?.providerAddress).to.equal(providerAddress);
+    expect(v2Account.isKnownLender).to.equal(true);
+    expect(v2Account.marketBalance.raw.toString()).to.equal("22");
+    expect(v2Account.underlyingBalance.raw.toString()).to.equal("23");
+    expect(v2Account.underlyingApproval.toString()).to.equal("24");
+    expect(v1Account.market.totalAssets).to.equal(v1TotalAssets);
+    expect(v2Account.market.totalAssets).to.equal(v2TotalAssets);
+  });
+
+  it("retains access state but zeroes anonymous wallet balances and allowances", async () => {
+    const { provider, v1Account, v2Account } = makeMixedMarketAccounts();
+    const lensLenders: string[] = [];
+
+    await withStubbedLenderStateReaders(
+      async (lender) => {
+        lensLenders.push(lender);
+        return [makeV1LenderState()];
+      },
+      async (lender) => {
+        lensLenders.push(lender);
+        return [makeV2LenderState()];
+      },
+      () =>
+        MarketAccount.refreshLenderAccountState(SupportedChainId.Sepolia, provider, undefined, [
+          v1Account,
+          v2Account
+        ])
+    );
+
+    expect(lensLenders).to.deep.equal([nullAddress, nullAddress]);
+    expect(v1Account.isAuthorizedOnController).to.equal(true);
+    expect(v1Account.role).to.equal(LenderRole.DepositAndWithdraw);
+    expect(v2Account.credential?.isBlockedFromDeposits).to.equal(true);
+    expect(v2Account.isKnownLender).to.equal(true);
+    for (const account of [v1Account, v2Account]) {
+      expect(account.scaledMarketBalance.isZero()).to.equal(true);
+      expect(account.marketBalance.raw.isZero()).to.equal(true);
+      expect(account.underlyingBalance.raw.isZero()).to.equal(true);
+      expect(account.underlyingApproval.isZero()).to.equal(true);
+    }
+  });
+
+  it("returns the original empty collection without constructing a Lens", async () => {
+    const accounts: MarketAccount[] = [];
+    const result = await MarketAccount.refreshLenderAccountState(
+      SupportedChainId.PlasmaMainnet,
+      new providers.JsonRpcProvider(),
+      lenderAddress,
+      accounts
+    );
+
+    expect(result).to.equal(accounts);
+  });
+
+  it("does not partially apply mixed-version updates when either Lens read fails", async () => {
+    const { provider, v1Account, v2Account } = makeMixedMarketAccounts();
+    let error: Error | undefined;
+
+    await withStubbedLenderStateReaders(
+      async () => [makeV1LenderState()],
+      async () => {
+        throw new Error("V2 RPC unavailable");
+      },
+      async () => {
+        try {
+          await MarketAccount.refreshLenderAccountState(
+            SupportedChainId.Sepolia,
+            provider,
+            lenderAddress,
+            [v1Account, v2Account]
+          );
+        } catch (caught) {
+          error = caught as Error;
+        }
+      }
+    );
+
+    expect(error?.message).to.equal("V2 RPC unavailable");
+    expect(v1Account.role).to.equal(LenderRole.Null);
+    expect(v1Account.marketBalance.raw.isZero()).to.equal(true);
+    expect(v2Account.marketBalance.raw.isZero()).to.equal(true);
   });
 });

@@ -32,6 +32,7 @@ export const { getWithdrawalForLender } = LenderWithdrawalStatus;
 export const {
   getMarketAccount,
   getMarketAccountsForLender,
+  refreshLenderAccountState,
   getAllMarketAccountsForLender,
   getPaginatedMarketAccounts
 } = MarketAccount;

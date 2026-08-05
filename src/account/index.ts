@@ -1,4 +1,4 @@
-import { BigNumber, ContractReceipt, ContractTransaction } from "ethers";
+import { BigNumber, constants, ContractReceipt, ContractTransaction } from "ethers";
 import { Token, TokenAmount, minTokenAmount } from "../token";
 import { Market } from "../market";
 import {
@@ -75,6 +75,20 @@ export enum LenderRole {
 }
 
 const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
+
+type LenderAccountState =
+  | MarketLenderStatusStructOutput
+  | LenderAccountDataStructOutput
+  | LenderAccountDataV21StructOutput;
+
+const zeroLenderBalances = <T extends LenderAccountState>(state: T): T =>
+  ({
+    ...state,
+    scaledBalance: constants.Zero,
+    normalizedBalance: constants.Zero,
+    underlyingBalance: constants.Zero,
+    underlyingApproval: constants.Zero
+  } as T);
 
 export type MarketAccountArgs = {
   account: string;
@@ -1226,6 +1240,70 @@ export class MarketAccount {
           )
         );
     }
+  }
+
+  /**
+   * Refresh wallet-specific state on existing market accounts without fetching
+   * or replacing their market state. This is intended for catalogue views that
+   * already have current indexed market data and only need fresher authorization,
+   * credential, balance, and allowance state.
+   *
+   * The input account objects are mutated and the original array is returned in its original order.
+   * If `account` is undefined, access state is retained while wallet balances and
+   * allowances are forced to zero.
+   */
+  static async refreshLenderAccountState(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider,
+    account: string | undefined,
+    marketAccounts: MarketAccount[]
+  ): Promise<MarketAccount[]> {
+    if (marketAccounts.length === 0) return marketAccounts;
+
+    for (const marketAccount of marketAccounts) {
+      assert(
+        marketAccount.chainId === chainId,
+        `Can not refresh chain ${marketAccount.chainId} market account on chain ${chainId}`
+      );
+    }
+
+    const lender = account ?? constants.AddressZero;
+    const v1Accounts = marketAccounts.filter(({ market }) => market.version === MarketVersion.V1);
+    const v2Accounts = marketAccounts.filter(({ market }) => market.version === MarketVersion.V2);
+
+    const getV1Updates = async (): Promise<MarketLenderStatusStructOutput[]> => {
+      if (v1Accounts.length === 0) return [];
+      return getLensContract(chainId, provider).getMarketsLenderStatus(
+        lender,
+        v1Accounts.map(({ market }) => market.address)
+      );
+    };
+    const getV2Updates = async (): Promise<
+      Array<LenderAccountDataStructOutput | LenderAccountDataV21StructOutput>
+    > => {
+      if (v2Accounts.length === 0) return [];
+      return getLensV2Contract(chainId, provider)["getLenderAccountData(address,address[])"](
+        lender,
+        v2Accounts.map(({ market }) => market.address)
+      );
+    };
+
+    // Fetch every version before applying updates so an RPC failure does not
+    // leave callers with a partially refreshed mixed-version catalogue.
+    const [v1Updates, v2Updates] = await Promise.all([getV1Updates(), getV2Updates()]);
+    assert(v1Updates.length === v1Accounts.length, "V1 lender state update count mismatch");
+    assert(v2Updates.length === v2Accounts.length, "V2 lender state update count mismatch");
+
+    v1Accounts.forEach((marketAccount, index) => {
+      const update = v1Updates[index];
+      marketAccount.updateWith(account === undefined ? zeroLenderBalances(update) : update);
+    });
+    v2Accounts.forEach((marketAccount, index) => {
+      const update = v2Updates[index];
+      marketAccount.updateWith(account === undefined ? zeroLenderBalances(update) : update);
+    });
+
+    return marketAccounts;
   }
 
   /**
