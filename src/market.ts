@@ -672,8 +672,15 @@ export class Market extends ContractWrapper<WildcatMarket> {
   /* -------------------------------------------------------------------------- */
 
   async update(): Promise<void> {
-    const market = await getLensContract(this.chainId, this.provider).getMarketData(this.address);
-    this.updateWith(market);
+    if (this.version === MarketVersion.V2) {
+      const market = await getLensV2Contract(this.chainId, this.provider).getMarketData(
+        this.address
+      );
+      this.updateWith(market);
+    } else {
+      const market = await getLensContract(this.chainId, this.provider).getMarketData(this.address);
+      this.updateWith(market);
+    }
   }
 
   updateWith(
@@ -920,7 +927,9 @@ export class Market extends ContractWrapper<WildcatMarket> {
       isDelinquent: data.isDelinquent,
       timeDelinquent: data.timeDelinquent,
       lastInterestAccruedTimestamp: data.lastInterestAccruedTimestamp,
-      unpaidWithdrawalBatchExpiries: [] /* data.unpaidWithdrawalBatchExpiries */,
+      unpaidWithdrawalBatchExpiries: (data.unpaidWithdrawalBatches ?? []).map(
+        (batch) => +batch.expiry
+      ),
       coverageLiquidity: underlyingToken.getAmount(coverageLiquidity),
       totalBorrowed: underlyingToken.getAmount(data.totalBorrowed),
       totalRepaid: underlyingToken.getAmount(data.totalRepaid),

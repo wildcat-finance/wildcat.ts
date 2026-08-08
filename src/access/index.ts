@@ -9,7 +9,7 @@ import {
   HooksInstanceDataV21StructOutput,
   HooksTemplateDataStructOutput
 } from "../typechain";
-import { SignerOrProvider } from "../types";
+import { HooksKind, SignerOrProvider } from "../types";
 import { OpenTermHooks, OpenTermHooksTemplate } from "./access-control";
 import { FixedTermHooks, FixedTermHooksTemplate } from "./fixed-term";
 import { PeriodicTermHooks, PeriodicTermHooksTemplate } from "./periodic-term";
@@ -25,6 +25,32 @@ export type HooksTemplate =
   | PeriodicTermHooksTemplate;
 
 export type HooksInstance = OpenTermHooks | FixedTermHooks | PeriodicTermHooks;
+
+export function getEnabledHooksTemplatesForKind<Kind extends HooksKind>(
+  hooksTemplates: HooksTemplate[],
+  kind: Kind
+): Array<Extract<HooksTemplate, { kind: Kind }>> {
+  return hooksTemplates.filter((template) => template.kind === kind && template.enabled) as Array<
+    Extract<HooksTemplate, { kind: Kind }>
+  >;
+}
+
+export function getDeployableHooksTemplateForKind<Kind extends HooksKind>(
+  hooksTemplates: HooksTemplate[],
+  kind: Kind
+): Extract<HooksTemplate, { kind: Kind }> | undefined {
+  const enabledTemplates = getEnabledHooksTemplatesForKind(hooksTemplates, kind);
+
+  if (enabledTemplates.length > 1) {
+    throw Error(
+      `Multiple enabled hooks templates found for kind ${kind}: ${enabledTemplates
+        .map((template) => template.hooksTemplate)
+        .join(", ")}`
+    );
+  }
+
+  return enabledTemplates[0];
+}
 
 export function hooksTemplateFromSubgraph(
   chainId: SupportedChainId,

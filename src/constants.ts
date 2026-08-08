@@ -88,7 +88,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
   [SupportedChainId.Sepolia]: {
     HooksFactory: "0x10A64ABa0159720F8a23E1A552800CA4eb21576C",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
-    MarketLensV2: "0x860dCC10Dfc6B9f0Ef4f1aa3C0ff6FB034Fd5eb6",
+    MarketLensV2: "0xCb7839D03EBC1e628295b2FdE3b73Fc53412e87F",
     MockArchControllerOwner: "0xa476920af80B587f696734430227869795E2Ea78",
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
@@ -234,32 +234,47 @@ export const getWrapperFactoryContract = (
 };
 
 export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.1.2.3/gn`,
+  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.1.8/gn`,
   [SupportedChainId.Mainnet]:
-    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.22.3/gn",
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.30/gn",
   [SupportedChainId.PlasmaTestnet]:
-    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-testnet/v2.0.22.3/gn",
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-testnet/v2.0.30/gn",
   [SupportedChainId.PlasmaMainnet]:
-    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-mainnet/v2.0.22.3/gn"
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-mainnet/v2.0.30/gn"
 };
 
 export const SubgraphFeatures = {
   [SupportedChainId.Sepolia]: {
-    periodicTermHooks: true
+    periodicTermHooks: true,
+    analytics: true
   },
   [SupportedChainId.Mainnet]: {
-    periodicTermHooks: false
+    periodicTermHooks: false,
+    analytics: true
   },
   [SupportedChainId.PlasmaTestnet]: {
-    periodicTermHooks: false
+    periodicTermHooks: false,
+    analytics: true
   },
   [SupportedChainId.PlasmaMainnet]: {
-    periodicTermHooks: false
+    periodicTermHooks: false,
+    analytics: true
   }
 };
 
 export const supportsPeriodicTermHooks = (chainId: SupportedChainId): boolean =>
   SubgraphFeatures[chainId]?.periodicTermHooks === true;
+
+export const supportsSubgraphAnalytics = (chainId: SupportedChainId): boolean =>
+  SubgraphFeatures[chainId]?.analytics === true;
+
+/**
+ * Number of full periods after the response window ends during which a
+ * proposed periodic APR reduction remains executable. This matches the
+ * V2.1 template-v2 contract. First-generation instances do not enforce
+ * expiry, so applying this limit to them is conservative.
+ */
+export const APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS = 2;
 
 export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
   new ApolloClient({

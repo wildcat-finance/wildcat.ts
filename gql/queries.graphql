@@ -165,11 +165,7 @@ query getLenderMarketCatalogue(
     skip: $skipMarkets
   ) {
     ...MarketData
-    latestDeposit: depositRecords(
-      first: 1
-      orderBy: blockTimestamp
-      orderDirection: desc
-    ) {
+    latestDeposit: depositRecords(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
       blockTimestamp
     }
     lenders(where: { address: $lender }, first: 1) {
@@ -454,7 +450,9 @@ query getMarketEvents(
   $protocolFeeBipsUpdatedRecordsFilter: ProtocolFeeBipsUpdated_filter = { id_not: null }
   $fixedTermUpdatedRecordsFilter: FixedTermUpdated_filter = { id_not: null }
   $periodicTermUpdatedRecordsFilter: PeriodicTermUpdated_filter = { id_not: null }
-  $annualInterestBipsReductionProposalRecordsFilter: AnnualInterestBipsReductionProposed_filter = { id_not: null }
+  $annualInterestBipsReductionProposalRecordsFilter: AnnualInterestBipsReductionProposed_filter = {
+    id_not: null
+  }
 ) {
   market(id: $market) {
     marketClosedEvent {
@@ -1093,7 +1091,7 @@ query getCollateralContractEvents(
       first: $limit
     ) @include(if: $includeDeposits) {
       ...SimpleCollateralContractDepositData
-    } 
+    }
     reclaims(
       where: {
         and: [
@@ -1181,5 +1179,158 @@ query getMarketChartsData(
       totalBorrowed
       totalRepaid
     }
+  }
+}
+
+# -------------------------------------------------------------------------- #
+#                      V2.0 / V2.1 analytics reads                           #
+# -------------------------------------------------------------------------- #
+
+query getProtocolAnalyticsStats($block: Block_height) {
+  _meta(block: $block) {
+    ...AnalyticsQueryMetadata
+  }
+  protocolStats(id: "PROTOCOL_STATS", block: $block) {
+    ...AnalyticsProtocolStatsData
+  }
+}
+
+query getProtocolAnalyticsDailyPage(
+  $first: Int = 100
+  $filter: ProtocolDailyStats_filter = {}
+  $block: Block_height
+) {
+  _meta(block: $block) {
+    ...AnalyticsQueryMetadata
+  }
+  protocolDailyStats_collection(
+    first: $first
+    orderBy: id
+    orderDirection: asc
+    where: $filter
+    block: $block
+  ) {
+    ...AnalyticsProtocolDailyStatsData
+  }
+}
+
+query getBorrowerAnalyticsStats($borrower: Bytes!, $block: Block_height) {
+  _meta(block: $block) {
+    ...AnalyticsQueryMetadata
+  }
+  borrowerStats_collection(first: 1, where: { borrower: $borrower }, block: $block) {
+    ...AnalyticsBorrowerStatsData
+  }
+}
+
+query getBorrowerAnalyticsDailyPage(
+  $first: Int = 100
+  $filter: BorrowerDailyStats_filter = {}
+  $block: Block_height
+) {
+  _meta(block: $block) {
+    ...AnalyticsQueryMetadata
+  }
+  borrowerDailyStats_collection(
+    first: $first
+    orderBy: id
+    orderDirection: asc
+    where: $filter
+    block: $block
+  ) {
+    ...AnalyticsBorrowerDailyStatsData
+  }
+}
+
+query getLenderAnalyticsStats($lender: Bytes!, $block: Block_height) {
+  _meta(block: $block) {
+    ...AnalyticsQueryMetadata
+  }
+  lenderStats_collection(first: 1, where: { lender: $lender }, block: $block) {
+    ...AnalyticsLenderStatsData
+  }
+}
+
+query getLenderAnalyticsDailyPage(
+  $first: Int = 100
+  $filter: LenderDailyStats_filter = {}
+  $block: Block_height
+) {
+  _meta(block: $block) {
+    ...AnalyticsQueryMetadata
+  }
+  lenderDailyStats_collection(
+    first: $first
+    orderBy: id
+    orderDirection: asc
+    where: $filter
+    block: $block
+  ) {
+    ...AnalyticsLenderDailyStatsData
+  }
+}
+
+query getAnalyticsTokenPrices($tokens: [Bytes!]!, $first: Int = 1000, $block: Block_height) {
+  _meta(block: $block) {
+    ...AnalyticsQueryMetadata
+  }
+  tokens(first: $first, where: { address_in: $tokens }, block: $block) {
+    ...AnalyticsTokenData
+  }
+  tokenDailyPrices(
+    first: $first
+    orderBy: timestamp
+    orderDirection: desc
+    where: { token_: { address_in: $tokens } }
+    block: $block
+  ) {
+    ...AnalyticsTokenDailyPriceData
+  }
+}
+
+query getMarketAnalytics($market: ID!, $block: Block_height) {
+  _meta(block: $block) {
+    ...AnalyticsQueryMetadata
+  }
+  market(id: $market, block: $block) {
+    ...AnalyticsMarketData
+  }
+}
+
+query getMarketAnalyticsDailyPage(
+  $first: Int = 100
+  $filter: MarketDailyStats_filter = {}
+  $block: Block_height
+) {
+  _meta(block: $block) {
+    ...AnalyticsQueryMetadata
+  }
+  marketDailyStats_collection(
+    first: $first
+    orderBy: id
+    orderDirection: asc
+    where: $filter
+    block: $block
+  ) {
+    ...AnalyticsMarketDailyStatsData
+  }
+}
+
+query getBorrowerWithdrawalReliabilityPage(
+  $first: Int = 100
+  $filter: WithdrawalBatch_filter = {}
+  $block: Block_height
+) {
+  _meta(block: $block) {
+    ...AnalyticsQueryMetadata
+  }
+  withdrawalBatches(
+    first: $first
+    orderBy: id
+    orderDirection: asc
+    where: $filter
+    block: $block
+  ) {
+    ...AnalyticsWithdrawalBatchData
   }
 }

@@ -2,7 +2,12 @@ import { expect } from "chai";
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { BigNumber, providers } from "ethers";
 import { print } from "graphql";
-import { LenderRole, MarketAccount } from "../src/account";
+import { LenderRole, MarketAccount, SetAprStatus } from "../src/account";
+import {
+  getDeployableHooksTemplateForKind,
+  getEnabledHooksTemplatesForKind,
+  HooksTemplate
+} from "../src/access";
 import * as sdkConstants from "../src/constants";
 import { SupportedChainId } from "../src/constants";
 import {
@@ -20,11 +25,17 @@ import {
 } from "../src/gql/graphql";
 import { Market } from "../src/market";
 import {
+  PeriodicAprSettlementQuote,
+  PeriodicAprSettlementStatus,
+  populatePeriodicAprReductionPlan
+} from "../src/periodic-settlement";
+import {
   LenderAccountDataStructOutput,
   MarketDataV2StructOutput,
   MarketLenderStatusStructOutput
 } from "../src/typechain";
 import { parseSubgraphLenderHooksAccess, parseSubgraphRoleProvider } from "../src/utils";
+import { HooksKind } from "../src/types";
 
 const marketAddress = "0x0000000000000000000000000000000000000001";
 const borrowerAddress = "0x0000000000000000000000000000000000000002";
@@ -121,6 +132,7 @@ const makeMarketData = (totalAssets: string): SubgraphMarketDataWithEventsFragme
   originalReserveRatioBips: 0,
   temporaryReserveRatioExpiry: 0,
   temporaryReserveRatioActive: false,
+  unpaidWithdrawalBatches: [],
   totalBorrowed: "0",
   totalRepaid: "0",
   totalBaseInterestAccrued: "0",
@@ -243,6 +255,21 @@ const makeCatalogueMarket = (id: string, latestDepositTimestamp?: number): Catal
       : [],
     lenders: []
   };
+};
+
+const makePeriodicCatalogueMarket = (id: string): CatalogueMarket => {
+  const market = makeCatalogueMarket(id);
+  if (!market.hooks || !market.hooksConfig) throw Error("Missing hooks fixture");
+  market.hooks.kind = SubgraphHooksKind.PeriodicTerm;
+  market.hooks.hooksTemplate.name = "PeriodicTermHooks";
+  market.hooksConfig.firstWithdrawalWindowStart = 100;
+  market.hooksConfig.periodDuration = 100;
+  market.hooksConfig.withdrawalWindowDuration = 10;
+  market.hooksConfig.pendingAprChangeAnnualInterestBips = 900;
+  market.hooksConfig.pendingAprChangeProposalTimestamp = 100;
+  market.hooksConfig.pendingAprChangeResponseWindowStart = 150;
+  market.hooksConfig.pendingAprChangeResponseWindowEnd = 200;
+  return market;
 };
 
 const makeLensMarketUpdate = (market: Market): MarketDataV2StructOutput => {
@@ -443,6 +470,127 @@ describe("Explore subgraph hydration", () => {
 
     expect(market.totalAssets.raw.toString()).to.equal(totalAssets);
     expect(market.liquidReserves.raw.toString()).to.equal(totalAssets);
+  });
+
+  it("hydrates the stored unpaid withdrawal FIFO", () => {
+    const data = makeMarketData("1");
+    data.unpaidWithdrawalBatches = [
+      { __typename: "WithdrawalBatch", expiry: "100" },
+      { __typename: "WithdrawalBatch", expiry: "200" }
+    ];
+    const market = Market.fromSubgraphMarketData(
+      SupportedChainId.Mainnet,
+      new providers.JsonRpcProvider(),
+      data
+    );
+
+    expect(market.unpaidWithdrawalBatchExpiries).to.deep.equal([100, 200]);
+  });
+
+  it("refreshes V2 markets through the V2 lens", async () => {
+    const market = Market.fromSubgraphMarketData(
+      SupportedChainId.Sepolia,
+      new providers.JsonRpcProvider(),
+      makeCatalogueMarket(marketAddress)
+    );
+    const constants = sdkConstants as {
+      getLensContract: typeof sdkConstants.getLensContract;
+      getLensV2Contract: typeof sdkConstants.getLensV2Contract;
+    };
+    const originalGetLensContract = constants.getLensContract;
+    const originalGetLensV2Contract = constants.getLensV2Contract;
+    let v2Reads = 0;
+    constants.getLensContract = (() => {
+      throw Error("V1 lens must not be used for a V2 market");
+    }) as typeof sdkConstants.getLensContract;
+    constants.getLensV2Contract = (() => ({
+      getMarketData: async () => {
+        v2Reads += 1;
+        return makeLensMarketUpdate(market);
+      }
+    })) as unknown as typeof sdkConstants.getLensV2Contract;
+
+    try {
+      await market.update();
+    } finally {
+      constants.getLensContract = originalGetLensContract;
+      constants.getLensV2Contract = originalGetLensV2Contract;
+    }
+    expect(v2Reads).to.equal(1);
+  });
+
+  it("selects exactly one enabled deployable template per hooks kind", () => {
+    const templates = [
+      { kind: HooksKind.OpenTerm, enabled: false, hooksTemplate: "disabled" },
+      { kind: HooksKind.OpenTerm, enabled: true, hooksTemplate: "enabled" },
+      { kind: HooksKind.PeriodicTerm, enabled: true, hooksTemplate: "periodic" }
+    ] as unknown as HooksTemplate[];
+
+    expect(getEnabledHooksTemplatesForKind(templates, HooksKind.OpenTerm)).to.have.length(1);
+    expect(
+      getDeployableHooksTemplateForKind(templates, HooksKind.OpenTerm)?.hooksTemplate
+    ).to.equal("enabled");
+    expect(() =>
+      getDeployableHooksTemplateForKind(
+        [templates[1], { ...templates[1], hooksTemplate: "duplicate" }] as HooksTemplate[],
+        HooksKind.OpenTerm
+      )
+    ).to.throw("Multiple enabled hooks templates");
+  });
+
+  it("previews the V2.1 periodic APR execution gates in onchain order", () => {
+    const market = Market.fromSubgraphMarketData(
+      SupportedChainId.Sepolia,
+      new providers.JsonRpcProvider(),
+      makePeriodicCatalogueMarket(marketAddress)
+    );
+    const account = MarketAccount.fromMarketDataOnly(market, borrowerAddress, true);
+
+    expect(account.previewSetAPR(900, 199).status).to.equal(SetAprStatus.AprChangeNotReady);
+    expect(account.previewSetAPR(900, 400).status).to.equal(SetAprStatus.AprChangeExpired);
+
+    market.scaledPendingWithdrawals = BigNumber.from(1);
+    expect(account.previewSetAPR(900, 200).status).to.equal(SetAprStatus.UnpaidWithdrawalsExist);
+
+    market.scaledPendingWithdrawals = BigNumber.from(0);
+    market.totalAssets = market.underlyingToken.getAmount(1);
+    market.coverageLiquidity = market.underlyingToken.getAmount(2);
+    expect(account.previewSetAPR(900, 200).status).to.equal(SetAprStatus.InsufficientReserves);
+
+    market.totalAssets = market.underlyingToken.getAmount(2);
+    expect(account.previewSetAPR(900, 200).status).to.equal(SetAprStatus.Ready);
+    expect(account.previewSetAPR(1_100, 200)).to.include({
+      status: SetAprStatus.Ready,
+      willCancelPendingProposal: true
+    });
+  });
+
+  it("does not advertise borrower-only APR execution as batchable for another payer", async () => {
+    const market = Market.fromSubgraphMarketData(
+      SupportedChainId.Sepolia,
+      new providers.JsonRpcProvider(),
+      makePeriodicCatalogueMarket(marketAddress)
+    );
+    const payer = MarketAccount.fromMarketDataOnly(market, lenderAddress, true);
+    const zero = market.underlyingToken.getAmount(0);
+    const quote: PeriodicAprSettlementQuote = {
+      status: PeriodicAprSettlementStatus.Ready,
+      amountToSettle: zero,
+      suggestedApprovalAmount: zero,
+      needsRepayment: false,
+      needsBatchProcessing: false,
+      unpaidBatchCount: 0,
+      maxBatches: 0,
+      remainingBatchesAfterThisPass: 0,
+      settlementIsPermissionless: true,
+      isWithdrawalWindowOpen: false,
+      responseWindowEnd: 200,
+      proposedAprBips: 900
+    };
+
+    const plan = await populatePeriodicAprReductionPlan(payer, 900, quote);
+    expect(plan.transactions.map(({ kind }) => kind)).to.deep.equal(["executeApr"]);
+    expect(plan.safeBatchable).to.equal(false);
   });
 
   it("normalizes Graph BigInt provider TTLs to the public number type", () => {

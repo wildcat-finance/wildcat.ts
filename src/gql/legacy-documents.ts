@@ -302,6 +302,13 @@ const LegacyMarketDataFragmentDoc = gql`
     originalReserveRatioBips
     temporaryReserveRatioExpiry
     temporaryReserveRatioActive
+    unpaidWithdrawalBatches: withdrawalBatches(
+      where: { isExpired: true, isClosed: false }
+      orderBy: expiry
+      orderDirection: asc
+    ) {
+      expiry
+    }
     totalBorrowed
     totalRepaid
     totalBaseInterestAccrued

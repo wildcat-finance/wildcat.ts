@@ -212,6 +212,15 @@ fragment MarketData on Market {
   temporaryReserveRatioExpiry
   temporaryReserveRatioActive
 
+  # Stored unpaid withdrawal batch FIFO: expired but not fully paid.
+  unpaidWithdrawalBatches: withdrawalBatches(
+    where: { isExpired: true, isClosed: false }
+    orderBy: expiry
+    orderDirection: asc
+  ) {
+    expiry
+  }
+
   # ================================ Metadata ================================ #
   totalBorrowed
   totalRepaid
@@ -799,5 +808,281 @@ fragment SimpleCollateralContractDataWithEvents on SimpleCollateralContract {
   }
   fullResets {
     ...SimpleCollateralContractFullResetData
+  }
+}
+
+# ========================================================================== #
+#                          V2.0 / V2.1 analytics                             #
+# ========================================================================== #
+
+fragment AnalyticsQueryMetadata on _Meta_ {
+  deployment
+  hasIndexingErrors
+  block {
+    number
+    timestamp
+    hash
+  }
+}
+
+fragment AnalyticsTokenData on Token {
+  id
+  address
+  name
+  symbol
+  decimals
+  isMock
+  isUsdStablecoin
+  priceFeed0
+  priceFeed1
+  lastPriceFeedSearchDay
+}
+
+fragment AnalyticsTokenDailyPriceData on TokenDailyPrice {
+  id
+  timestamp
+  priceUSD
+  token {
+    ...AnalyticsTokenData
+  }
+}
+
+fragment AnalyticsProtocolStatsData on ProtocolStats {
+  id
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  usdTotalsComplete
+  numMarkets
+  numActiveMarkets
+  numDelinquentMarkets
+  numClosedMarkets
+  numActiveBorrowers
+  numActiveLenders
+  numActiveLenderAccounts
+}
+
+fragment AnalyticsProtocolDailyStatsData on ProtocolDailyStats {
+  id
+  startTimestamp
+  endTimestamp
+  dayDepositedUSD
+  dayBorrowedUSD
+  dayRepaidUSD
+  dayWithdrawalsRequestedUSD
+  dayWithdrawalsExecutedUSD
+  dayBaseInterestAccruedUSD
+  dayDelinquencyFeesAccruedUSD
+  dayProtocolFeesAccruedUSD
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  dayUsdTotalsComplete
+  cumulativeUsdTotalsComplete
+  numMarkets
+  numActiveMarkets
+  numDelinquentMarkets
+  numClosedMarkets
+  numActiveBorrowers
+  numActiveLenders
+  numActiveLenderAccounts
+}
+
+fragment AnalyticsBorrowerStatsData on BorrowerStats {
+  id
+  borrower
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  usdTotalsComplete
+  numMarkets
+  numActiveMarkets
+  numDelinquentMarkets
+  numClosedMarkets
+  numBatchesExpired
+  numBatchesExpiredUnpaid
+  numBatchesPaidLate
+}
+
+fragment AnalyticsBorrowerDailyStatsData on BorrowerDailyStats {
+  id
+  borrower
+  startTimestamp
+  endTimestamp
+  dayDepositedUSD
+  dayBorrowedUSD
+  dayRepaidUSD
+  dayWithdrawalsRequestedUSD
+  dayWithdrawalsExecutedUSD
+  dayBaseInterestAccruedUSD
+  dayDelinquencyFeesAccruedUSD
+  dayProtocolFeesAccruedUSD
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  dayUsdTotalsComplete
+  cumulativeUsdTotalsComplete
+  numMarkets
+  numActiveMarkets
+  numDelinquentMarkets
+  numClosedMarkets
+}
+
+fragment AnalyticsLenderStatsData on LenderStats {
+  id
+  lender
+  firstSeenTimestamp
+  totalDepositedUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalInterestEarnedUSD
+  usdTotalsComplete
+  numMarkets
+  numActiveMarkets
+}
+
+fragment AnalyticsLenderDailyStatsData on LenderDailyStats {
+  id
+  lender
+  startTimestamp
+  endTimestamp
+  dayDepositedUSD
+  dayWithdrawalsRequestedUSD
+  dayWithdrawalsExecutedUSD
+  dayInterestEarnedUSD
+  totalDepositedUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalInterestEarnedUSD
+  dayUsdTotalsComplete
+  cumulativeUsdTotalsComplete
+  numMarkets
+  numActiveMarkets
+}
+
+fragment AnalyticsMarketData on Market {
+  id
+  version
+  borrower
+  name
+  symbol
+  decimals
+  createdAt
+  isRegistered
+  isClosed
+  isDelinquent
+  annualInterestBips
+  originalAnnualInterestBips
+  delinquencyGracePeriod
+  maxTotalSupply
+  scaledTotalSupply
+  scaleFactor
+  totalDebtUSD
+  totalDeposited
+  totalBorrowed
+  totalRepaid
+  totalWithdrawalsRequested
+  totalWithdrawalsExecuted
+  totalBaseInterestAccrued
+  totalDelinquencyFeesAccrued
+  totalProtocolFeesAccrued
+  totalDepositedUSD
+  totalBorrowedUSD
+  totalRepaidUSD
+  totalWithdrawalsRequestedUSD
+  totalWithdrawalsExecutedUSD
+  totalBaseInterestAccruedUSD
+  totalDelinquencyFeesAccruedUSD
+  totalProtocolFeesAccruedUSD
+  usdTotalsComplete
+  asset {
+    ...AnalyticsTokenData
+  }
+}
+
+fragment AnalyticsMarketDailyStatsData on MarketDailyStats {
+  id
+  startTimestamp
+  endTimestamp
+  market {
+    ...AnalyticsMarketData
+  }
+  dayDeposited
+  dayWithdrawalsRequested
+  dayWithdrawalsExecuted
+  dayBorrowed
+  dayRepaid
+  dayBaseInterestAccrued
+  dayDelinquencyFeesAccrued
+  dayProtocolFeesAccrued
+  cumulativeDeposited
+  cumulativeWithdrawalsRequested
+  cumulativeWithdrawalsExecuted
+  cumulativeBorrowed
+  cumulativeRepaid
+  cumulativeBaseInterestAccrued
+  cumulativeDelinquencyFeesAccrued
+  cumulativeProtocolFeesAccrued
+  cumulativeDepositedUSD
+  cumulativeWithdrawalsRequestedUSD
+  cumulativeWithdrawalsExecutedUSD
+  cumulativeBorrowedUSD
+  cumulativeRepaidUSD
+  cumulativeBaseInterestAccruedUSD
+  cumulativeDelinquencyFeesAccruedUSD
+  cumulativeProtocolFeesAccruedUSD
+  cumulativeUsdTotalsComplete
+  scaledTotalSupply
+  scaleFactor
+  usdPrice
+}
+
+fragment AnalyticsWithdrawalBatchData on WithdrawalBatch {
+  id
+  expiry
+  scaledTotalAmount
+  scaledAmountBurned
+  normalizedAmountPaid
+  normalizedAmountClaimed
+  totalNormalizedRequests
+  isExpired
+  isClosed
+  isCompleted
+  lastScaleFactor
+  lastUpdatedTimestamp
+  totalInterestEarned
+  market {
+    ...AnalyticsMarketData
+  }
+  expiration {
+    id
+    scaledTotalAmount
+    scaledAmountBurned
+    normalizedAmountPaid
+    normalizedAmountOwed
+    blockNumber
+    blockTimestamp
+    transactionHash
+    blockLogIndex
   }
 }

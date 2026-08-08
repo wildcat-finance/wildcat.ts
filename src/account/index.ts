@@ -24,6 +24,7 @@ import {
   SECONDS_IN_365_DAYS
 } from "../utils";
 import {
+  APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS,
   SupportedChainId,
   getControllerContract,
   getLensContract,
@@ -315,10 +316,11 @@ export class MarketAccount {
     return { status: CloseMarketStatus.Ready };
   }
 
-  previewSetAPR(apr: number): SetAprPreview {
+  previewSetAPR(apr: number, timestampSec?: number): SetAprPreview {
     if (!this.isBorrower) return { status: SetAprStatus.NotBorrower };
     if (!(apr > 0 && apr <= 10000)) return { status: SetAprStatus.InvalidApr };
 
+    const now = timestampSec ?? Math.floor(Date.now() / 1_000);
     const config = this.market.hooksConfig;
     if (config?.kind === HooksKind.PeriodicTerm && apr < this.market.annualInterestBips) {
       if (config.pendingAprChangeProposalTimestamp === 0) {
@@ -327,17 +329,45 @@ export class MarketAccount {
       if (config.pendingAprChangeAnnualInterestBips !== apr) {
         return { status: SetAprStatus.AprChangeDoesNotMatchProposal };
       }
-      if (Math.floor(Date.now() / 1_000) < config.pendingAprChangeResponseWindowEnd) {
+      if (now < config.pendingAprChangeResponseWindowEnd) {
         return { status: SetAprStatus.AprChangeNotReady };
+      }
+      // Template v2+ hooks reject executions more than
+      // APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS periods past the response
+      // window. Applied uniformly here (conservative for v1 instances,
+      // which do not enforce expiry on-chain).
+      if (
+        now >=
+        config.pendingAprChangeResponseWindowEnd +
+          config.periodDuration * APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS
+      ) {
+        return { status: SetAprStatus.AprChangeExpired };
       }
       if (!this.market.scaledPendingWithdrawals.isZero()) {
         return { status: SetAprStatus.UnpaidWithdrawalsExist };
+      }
+      // Periodic reductions keep the reserve ratio unchanged, so the market
+      // still rejects execution while current assets are below required coverage.
+      if (this.market.totalAssets.lt(this.market.coverageLiquidity)) {
+        return {
+          status: SetAprStatus.InsufficientReserves,
+          newReserveRatio: this.market.reserveRatioBips,
+          newCoverageLiquidity: this.market.coverageLiquidity,
+          missingReserves: this.market.delinquentDebt,
+          changeCausedByReset: false
+        };
       }
       return {
         status: SetAprStatus.Ready,
         willChangeReserveRatio: false
       };
     }
+
+    // Increasing a periodic market's APR deletes any pending reduction proposal.
+    const willCancelPendingProposal =
+      config?.kind === HooksKind.PeriodicTerm &&
+      config.pendingAprChangeProposalTimestamp !== 0 &&
+      apr > this.market.annualInterestBips;
 
     const [originalReserveRatioBips, originalAnnualInterestBips] =
       this.market.originalReserveRatioAndAnnualInterestBips;
@@ -373,13 +403,15 @@ export class MarketAccount {
           willChangeReserveRatio: true,
           newCoverageLiquidity,
           newReserveRatio: newReserveRatioBips,
-          changeCausedByReset
+          changeCausedByReset,
+          willCancelPendingProposal
         };
       }
     } else {
       return {
         status: SetAprStatus.Ready,
-        willChangeReserveRatio: false
+        willChangeReserveRatio: false,
+        willCancelPendingProposal
       };
     }
   }

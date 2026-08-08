@@ -16,7 +16,7 @@ async function getSchema() {
     .split("\n")
     .map((x) => x.trim())
     .find((x) => x.startsWith("schema:"))
-    .replace(/(schema\s*:\s*)|(\s*'\s*)/g, "");
+    .replace(/(schema\s*:\s*)|(\s*['"]\s*)/g, "");
   const schema = await fetch(schemaUrl, {
     headers: {
       "content-type": "application/json"

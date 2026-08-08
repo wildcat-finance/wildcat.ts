@@ -798,6 +798,158 @@
         },
         {
           "__typename": "__Type",
+          "name": "BorrowerDailyStats",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "borrower",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "startTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "endTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayDepositedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayBorrowedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayRepaidUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayWithdrawalsRequestedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayWithdrawalsExecutedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayBaseInterestAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayDelinquencyFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayProtocolFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDepositedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalBorrowedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalRepaidUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsRequestedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsExecutedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalBaseInterestAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDelinquencyFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalProtocolFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayUsdTotalsComplete",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeUsdTotalsComplete",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numActiveMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numDelinquentMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numClosedMarkets",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "BorrowerDailyStats_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "BorrowerDailyStats_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
           "name": "BorrowerRegistrationChange",
           "description": null,
           "kind": "OBJECT",
@@ -849,6 +1001,118 @@
         {
           "__typename": "__Type",
           "name": "BorrowerRegistrationChange_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "BorrowerStats",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "borrower",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDepositedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalBorrowedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalRepaidUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsRequestedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsExecutedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalBaseInterestAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDelinquencyFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalProtocolFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "usdTotalsComplete",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numActiveMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numDelinquentMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numClosedMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numBatchesExpired",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numBatchesExpiredUnpaid",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numBatchesPaidLate",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "BorrowerStats_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "BorrowerStats_orderBy",
           "description": null,
           "kind": "ENUM",
           "fields": null
@@ -2898,6 +3162,108 @@
         },
         {
           "__typename": "__Type",
+          "name": "LenderDailyStats",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "lender",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "startTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "endTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayDepositedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayWithdrawalsRequestedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayWithdrawalsExecutedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayInterestEarnedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDepositedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsRequestedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsExecutedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalInterestEarnedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayUsdTotalsComplete",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeUsdTotalsComplete",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numActiveMarkets",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "LenderDailyStats_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "LenderDailyStats_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
           "name": "LenderHooksAccess",
           "description": null,
           "kind": "OBJECT",
@@ -3041,6 +3407,78 @@
         {
           "__typename": "__Type",
           "name": "LenderInterestAccrued_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "LenderStats",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "lender",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "firstSeenTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDepositedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsRequestedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsExecutedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalInterestEarnedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "usdTotalsComplete",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numActiveMarkets",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "LenderStats_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "LenderStats_orderBy",
           "description": null,
           "kind": "ENUM",
           "fields": null
@@ -3476,6 +3914,66 @@
             },
             {
               "__typename": "__Field",
+              "name": "totalWithdrawalsRequested",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsExecuted",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalBorrowedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalRepaidUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalBaseInterestAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDelinquencyFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalProtocolFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDepositedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsRequestedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsExecutedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "usdTotalsComplete",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDebtUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
               "name": "eventIndex",
               "description": null
             },
@@ -3678,6 +4176,11 @@
               "__typename": "__Field",
               "name": "dailyStats",
               "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "tokenDailyPrice",
+              "description": null
             }
           ]
         },
@@ -3694,7 +4197,22 @@
             },
             {
               "__typename": "__Field",
+              "name": "controllerAddress",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
               "name": "controller",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "hooksFactory",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "marketAddress",
               "description": null
             },
             {
@@ -3849,6 +4367,146 @@
             {
               "__typename": "__Field",
               "name": "totalRepaid",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayDeposited",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayWithdrawalsRequested",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayWithdrawalsExecuted",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayBorrowed",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayRepaid",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayBaseInterestAccrued",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayDelinquencyFeesAccrued",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayProtocolFeesAccrued",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeDeposited",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeWithdrawalsRequested",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeWithdrawalsExecuted",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeBorrowed",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeRepaid",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeBaseInterestAccrued",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeDelinquencyFeesAccrued",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeProtocolFeesAccrued",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeDepositedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeWithdrawalsRequestedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeWithdrawalsExecutedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeBorrowedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeRepaidUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeBaseInterestAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeDelinquencyFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeProtocolFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeUsdTotalsComplete",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "scaledTotalSupply",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "scaleFactor",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "usdPrice",
               "description": null
             }
           ]
@@ -4763,6 +5421,168 @@
         },
         {
           "__typename": "__Type",
+          "name": "ProtocolDailyStats",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "startTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "endTimestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayDepositedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayBorrowedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayRepaidUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayWithdrawalsRequestedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayWithdrawalsExecutedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayBaseInterestAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayDelinquencyFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayProtocolFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDepositedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalBorrowedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalRepaidUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsRequestedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsExecutedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalBaseInterestAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDelinquencyFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalProtocolFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "dayUsdTotalsComplete",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "cumulativeUsdTotalsComplete",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numActiveMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numDelinquentMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numClosedMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numActiveBorrowers",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numActiveLenders",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numActiveLenderAccounts",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "ProtocolDailyStats_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "ProtocolDailyStats_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
           "name": "ProtocolFeeBipsUpdated",
           "description": null,
           "kind": "OBJECT",
@@ -4829,6 +5649,113 @@
         {
           "__typename": "__Type",
           "name": "ProtocolFeeBipsUpdated_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "ProtocolStats",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDepositedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalBorrowedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalRepaidUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsRequestedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalWithdrawalsExecutedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalBaseInterestAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalDelinquencyFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "totalProtocolFeesAccruedUSD",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "usdTotalsComplete",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numActiveMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numDelinquentMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numClosedMarkets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numActiveBorrowers",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numActiveLenders",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "numActiveLenderAccounts",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "ProtocolStats_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "ProtocolStats_orderBy",
           "description": null,
           "kind": "ENUM",
           "fields": null
@@ -5401,12 +6328,82 @@
             },
             {
               "__typename": "__Field",
+              "name": "tokenDailyPrice",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "tokenDailyPrices",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
               "name": "market",
               "description": null
             },
             {
               "__typename": "__Field",
               "name": "markets",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "protocolStats",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "protocolStats_collection",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "protocolDailyStats",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "protocolDailyStats_collection",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "borrowerStats",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "borrowerStats_collection",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "borrowerDailyStats",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "borrowerDailyStats_collection",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "lenderStats",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "lenderStats_collection",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "lenderDailyStats",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "lenderDailyStats_collection",
               "description": null
             },
             {
@@ -5958,6 +6955,16 @@
             },
             {
               "__typename": "__Field",
+              "name": "addedEvents",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "removedEvents",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
               "name": "updatedEvents",
               "description": null
             }
@@ -6341,6 +7348,11 @@
             {
               "__typename": "__Field",
               "name": "account",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "expiry",
               "description": null
             },
             {
@@ -7185,8 +8197,70 @@
               "__typename": "__Field",
               "name": "isMock",
               "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "isUsdStablecoin",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "priceFeed0",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "priceFeed1",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "lastPriceFeedSearchDay",
+              "description": null
             }
           ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "TokenDailyPrice",
+          "description": null,
+          "kind": "OBJECT",
+          "fields": [
+            {
+              "__typename": "__Field",
+              "name": "id",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "token",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "timestamp",
+              "description": null
+            },
+            {
+              "__typename": "__Field",
+              "name": "priceUSD",
+              "description": null
+            }
+          ]
+        },
+        {
+          "__typename": "__Type",
+          "name": "TokenDailyPrice_filter",
+          "description": null,
+          "kind": "INPUT_OBJECT",
+          "fields": null
+        },
+        {
+          "__typename": "__Type",
+          "name": "TokenDailyPrice_orderBy",
+          "description": null,
+          "kind": "ENUM",
+          "fields": null
         },
         {
           "__typename": "__Type",
