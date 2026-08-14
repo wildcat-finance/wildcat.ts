@@ -930,12 +930,26 @@ fragment RoleProviderInstanceData on RoleProviderInstance {
   pendingAdministrator
   deployer
   salt
+  root
+  token
+  vault
+  minBalance
+  minAssets
+  tokenId
+  skipInterfaceCheck
   deployedAtBlock
   deployedAtTimestamp
   deployedAtTransaction
   deployedAtLogIndex
   deploymentFactory {
     address
+    kind
+    label
+    generation
+    configuredStartBlock
+    indexed
+    lifecycle
+    configured
   }
 }
 
@@ -983,6 +997,20 @@ fragment RoleProviderMembershipChangeData on RoleProviderMembershipChange {
   }
   account
   administrator
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment RoleProviderRootChangeData on RoleProviderRootChange {
+  id
+  provider {
+    address
+  }
+  administrator
+  previousRoot
+  newRoot
   blockNumber
   blockTimestamp
   transactionHash

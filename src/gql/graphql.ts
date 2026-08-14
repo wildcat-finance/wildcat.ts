@@ -23,64 +23,6 @@ export type Scalars = {
   Timestamp: { input: any; output: any; }
 };
 
-export type SubgraphAccessListRoleProviderFactory = {
-  __typename: 'AccessListRoleProviderFactory';
-  address: Scalars['Bytes']['output'];
-  eventIndex: Scalars['Int']['output'];
-  id: Scalars['ID']['output'];
-  providers: Array<SubgraphRoleProviderInstance>;
-};
-
-
-export type SubgraphAccessListRoleProviderFactoryProvidersArgs = {
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphRoleProviderInstance_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  where?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
-};
-
-export type SubgraphAccessListRoleProviderFactory_Filter = {
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
-  address?: InputMaybe<Scalars['Bytes']['input']>;
-  address_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  address_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  address_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  address_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  address_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  address_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  address_not?: InputMaybe<Scalars['Bytes']['input']>;
-  address_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  address_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  and?: InputMaybe<Array<InputMaybe<SubgraphAccessListRoleProviderFactory_Filter>>>;
-  eventIndex?: InputMaybe<Scalars['Int']['input']>;
-  eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
-  eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
-  eventIndex_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  eventIndex_lt?: InputMaybe<Scalars['Int']['input']>;
-  eventIndex_lte?: InputMaybe<Scalars['Int']['input']>;
-  eventIndex_not?: InputMaybe<Scalars['Int']['input']>;
-  eventIndex_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
-  id?: InputMaybe<Scalars['ID']['input']>;
-  id_gt?: InputMaybe<Scalars['ID']['input']>;
-  id_gte?: InputMaybe<Scalars['ID']['input']>;
-  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
-  id_lt?: InputMaybe<Scalars['ID']['input']>;
-  id_lte?: InputMaybe<Scalars['ID']['input']>;
-  id_not?: InputMaybe<Scalars['ID']['input']>;
-  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
-  or?: InputMaybe<Array<InputMaybe<SubgraphAccessListRoleProviderFactory_Filter>>>;
-  providers_?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
-};
-
-export enum SubgraphAccessListRoleProviderFactory_OrderBy {
-  address = 'address',
-  eventIndex = 'eventIndex',
-  id = 'id',
-  providers = 'providers'
-}
-
 export type SubgraphAccountAccessGranted = {
   __typename: 'AccountAccessGranted';
   account: SubgraphLenderHooksAccess;
@@ -21275,8 +21217,6 @@ export type SubgraphQuery = {
   __typename: 'Query';
   /** Access to subgraph metadata */
   _meta?: Maybe<Subgraph_Meta_>;
-  accessListRoleProviderFactories: Array<SubgraphAccessListRoleProviderFactory>;
-  accessListRoleProviderFactory?: Maybe<SubgraphAccessListRoleProviderFactory>;
   accountAccessGranted?: Maybe<SubgraphAccountAccessGranted>;
   accountAccessGranteds: Array<SubgraphAccountAccessGranted>;
   accountAccessRevoked?: Maybe<SubgraphAccountAccessRevoked>;
@@ -21474,6 +21414,8 @@ export type SubgraphQuery = {
   roleProviderAddeds: Array<SubgraphRoleProviderAdded>;
   roleProviderAdministratorChange?: Maybe<SubgraphRoleProviderAdministratorChange>;
   roleProviderAdministratorChanges: Array<SubgraphRoleProviderAdministratorChange>;
+  roleProviderFactories: Array<SubgraphRoleProviderFactory>;
+  roleProviderFactory?: Maybe<SubgraphRoleProviderFactory>;
   roleProviderInstance?: Maybe<SubgraphRoleProviderInstance>;
   roleProviderInstances: Array<SubgraphRoleProviderInstance>;
   roleProviderMember?: Maybe<SubgraphRoleProviderMember>;
@@ -21558,24 +21500,6 @@ export type SubgraphQuery = {
 
 export type SubgraphQuery_MetaArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
-};
-
-
-export type SubgraphQueryAccessListRoleProviderFactoriesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphAccessListRoleProviderFactory_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphAccessListRoleProviderFactory_Filter>;
-};
-
-
-export type SubgraphQueryAccessListRoleProviderFactoryArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
 };
 
 
@@ -23350,6 +23274,24 @@ export type SubgraphQueryRoleProviderAdministratorChangesArgs = {
 };
 
 
+export type SubgraphQueryRoleProviderFactoriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderFactory_Filter>;
+};
+
+
+export type SubgraphQueryRoleProviderFactoryArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
 export type SubgraphQueryRoleProviderInstanceArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
@@ -24997,6 +24939,85 @@ export enum SubgraphRoleProviderAdministratorChange_OrderBy {
   transactionHash = 'transactionHash'
 }
 
+export type SubgraphRoleProviderFactory = {
+  __typename: 'RoleProviderFactory';
+  address: Scalars['Bytes']['output'];
+  configured: Scalars['Boolean']['output'];
+  configuredStartBlock: Scalars['BigInt']['output'];
+  eventIndex: Scalars['Int']['output'];
+  generation: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  indexed: Scalars['Boolean']['output'];
+  kind: SubgraphRoleProviderKind;
+  label: Scalars['String']['output'];
+  lifecycle: SubgraphFactoryLifecycle;
+  providers: Array<SubgraphRoleProviderInstance>;
+};
+
+
+export type SubgraphRoleProviderFactoryProvidersArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderInstance_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
+};
+
+export type SubgraphRoleProviderFactory_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  address?: InputMaybe<Scalars['Bytes']['input']>;
+  address_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  address_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  address_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderFactory_Filter>>>;
+  configured?: InputMaybe<Scalars['Boolean']['input']>;
+  configuredStartBlock?: InputMaybe<Scalars['BigInt']['input']>;
+  eventIndex?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  eventIndex_lt?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_lte?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_not?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  generation?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  indexed?: InputMaybe<Scalars['Boolean']['input']>;
+  kind?: InputMaybe<SubgraphRoleProviderKind>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  lifecycle?: InputMaybe<SubgraphFactoryLifecycle>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderFactory_Filter>>>;
+  providers_?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
+};
+
+export enum SubgraphRoleProviderFactory_OrderBy {
+  address = 'address',
+  configured = 'configured',
+  configuredStartBlock = 'configuredStartBlock',
+  eventIndex = 'eventIndex',
+  generation = 'generation',
+  id = 'id',
+  indexed = 'indexed',
+  kind = 'kind',
+  label = 'label',
+  lifecycle = 'lifecycle',
+  providers = 'providers'
+}
+
 /** Reusable credential provider identity. Hook-specific TTL and indexes live on RoleProvider attachments. */
 export type SubgraphRoleProviderInstance = {
   __typename: 'RoleProviderInstance';
@@ -25009,13 +25030,21 @@ export type SubgraphRoleProviderInstance = {
   deployedAtTimestamp?: Maybe<Scalars['BigInt']['output']>;
   deployedAtTransaction?: Maybe<Scalars['Bytes']['output']>;
   deployer?: Maybe<Scalars['Bytes']['output']>;
-  deploymentFactory?: Maybe<SubgraphAccessListRoleProviderFactory>;
+  deploymentFactory?: Maybe<SubgraphRoleProviderFactory>;
   id: Scalars['ID']['output'];
   kind: SubgraphRoleProviderKind;
   members: Array<SubgraphRoleProviderMember>;
   membershipChanges: Array<SubgraphRoleProviderMembershipChange>;
+  minAssets?: Maybe<Scalars['BigInt']['output']>;
+  minBalance?: Maybe<Scalars['BigInt']['output']>;
   pendingAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  root?: Maybe<Scalars['Bytes']['output']>;
+  rootChanges: Array<SubgraphRoleProviderRootChange>;
   salt?: Maybe<Scalars['Bytes']['output']>;
+  skipInterfaceCheck?: Maybe<Scalars['Boolean']['output']>;
+  token?: Maybe<Scalars['Bytes']['output']>;
+  tokenId?: Maybe<Scalars['BigInt']['output']>;
+  vault?: Maybe<Scalars['Bytes']['output']>;
 };
 
 
@@ -25056,6 +25085,16 @@ export type SubgraphRoleProviderInstanceMembershipChangesArgs = {
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<SubgraphRoleProviderMembershipChange_Filter>;
+};
+
+
+/** Reusable credential provider identity. Hook-specific TTL and indexes live on RoleProvider attachments. */
+export type SubgraphRoleProviderInstanceRootChangesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderRootChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphRoleProviderRootChange_Filter>;
 };
 
 export type SubgraphRoleProviderInstance_Filter = {
@@ -25129,7 +25168,7 @@ export type SubgraphRoleProviderInstance_Filter = {
   deployer_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   deployer_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   deploymentFactory?: InputMaybe<Scalars['String']['input']>;
-  deploymentFactory_?: InputMaybe<SubgraphAccessListRoleProviderFactory_Filter>;
+  deploymentFactory_?: InputMaybe<SubgraphRoleProviderFactory_Filter>;
   deploymentFactory_contains?: InputMaybe<Scalars['String']['input']>;
   deploymentFactory_contains_nocase?: InputMaybe<Scalars['String']['input']>;
   deploymentFactory_ends_with?: InputMaybe<Scalars['String']['input']>;
@@ -25174,6 +25213,7 @@ export type SubgraphRoleProviderInstance_Filter = {
   pendingAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
   pendingAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   pendingAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  rootChanges_?: InputMaybe<SubgraphRoleProviderRootChange_Filter>;
   salt?: InputMaybe<Scalars['Bytes']['input']>;
   salt_contains?: InputMaybe<Scalars['Bytes']['input']>;
   salt_gt?: InputMaybe<Scalars['Bytes']['input']>;
@@ -25205,11 +25245,17 @@ export enum SubgraphRoleProviderInstance_OrderBy {
   members = 'members',
   membershipChanges = 'membershipChanges',
   pendingAdministrator = 'pendingAdministrator',
+  rootChanges = 'rootChanges',
   salt = 'salt'
 }
 
 export enum SubgraphRoleProviderKind {
   ACCESS_LIST = 'ACCESS_LIST',
+  ERC20 = 'ERC20',
+  ERC721 = 'ERC721',
+  ERC1155 = 'ERC1155',
+  ERC4626_ASSETS = 'ERC4626_ASSETS',
+  MERKLE = 'MERKLE',
   UNKNOWN = 'UNKNOWN'
 }
 
@@ -25692,6 +25738,32 @@ export enum SubgraphRoleProviderRemoved_OrderBy {
   pullProviderIndex = 'pullProviderIndex',
   pushProviderIndex = 'pushProviderIndex',
   timeToLive = 'timeToLive',
+  transactionHash = 'transactionHash'
+}
+
+export type SubgraphRoleProviderRootChange = {
+  __typename: 'RoleProviderRootChange';
+  administrator: Scalars['Bytes']['output'];
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  id: Scalars['ID']['output'];
+  newRoot: Scalars['Bytes']['output'];
+  previousRoot: Scalars['Bytes']['output'];
+  provider: SubgraphRoleProviderInstance;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphRoleProviderRootChange_Filter = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+  provider?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum SubgraphRoleProviderRootChange_OrderBy {
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  id = 'id',
   transactionHash = 'transactionHash'
 }
 
@@ -29640,8 +29712,6 @@ export type SubgraphSubscription = {
   __typename: 'Subscription';
   /** Access to subgraph metadata */
   _meta?: Maybe<Subgraph_Meta_>;
-  accessListRoleProviderFactories: Array<SubgraphAccessListRoleProviderFactory>;
-  accessListRoleProviderFactory?: Maybe<SubgraphAccessListRoleProviderFactory>;
   accountAccessGranted?: Maybe<SubgraphAccountAccessGranted>;
   accountAccessGranteds: Array<SubgraphAccountAccessGranted>;
   accountAccessRevoked?: Maybe<SubgraphAccountAccessRevoked>;
@@ -29839,6 +29909,8 @@ export type SubgraphSubscription = {
   roleProviderAddeds: Array<SubgraphRoleProviderAdded>;
   roleProviderAdministratorChange?: Maybe<SubgraphRoleProviderAdministratorChange>;
   roleProviderAdministratorChanges: Array<SubgraphRoleProviderAdministratorChange>;
+  roleProviderFactories: Array<SubgraphRoleProviderFactory>;
+  roleProviderFactory?: Maybe<SubgraphRoleProviderFactory>;
   roleProviderInstance?: Maybe<SubgraphRoleProviderInstance>;
   roleProviderInstances: Array<SubgraphRoleProviderInstance>;
   roleProviderMember?: Maybe<SubgraphRoleProviderMember>;
@@ -29923,24 +29995,6 @@ export type SubgraphSubscription = {
 
 export type SubgraphSubscription_MetaArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
-};
-
-
-export type SubgraphSubscriptionAccessListRoleProviderFactoriesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphAccessListRoleProviderFactory_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphAccessListRoleProviderFactory_Filter>;
-};
-
-
-export type SubgraphSubscriptionAccessListRoleProviderFactoryArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
 };
 
 
@@ -31712,6 +31766,24 @@ export type SubgraphSubscriptionRoleProviderAdministratorChangesArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
   where?: InputMaybe<SubgraphRoleProviderAdministratorChange_Filter>;
+};
+
+
+export type SubgraphSubscriptionRoleProviderFactoriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderFactory_Filter>;
+};
+
+
+export type SubgraphSubscriptionRoleProviderFactoryArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
 };
 
 
@@ -35618,13 +35690,15 @@ export type SubgraphRoleProviderAttachmentDataFragment = { __typename: 'RoleProv
 
 export type SubgraphRoleProviderMemberDataFragment = { __typename: 'RoleProviderMember', id: string, account: string, isMember: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string };
 
-export type SubgraphRoleProviderInstanceDataFragment = { __typename: 'RoleProviderInstance', id: string, address: string, kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null, deployer?: string | null, salt?: string | null, deployedAtBlock?: string | null, deployedAtTimestamp?: string | null, deployedAtTransaction?: string | null, deployedAtLogIndex?: string | null, deploymentFactory?: { __typename: 'AccessListRoleProviderFactory', address: string } | null };
+export type SubgraphRoleProviderInstanceDataFragment = { __typename: 'RoleProviderInstance', id: string, address: string, kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null, deployer?: string | null, salt?: string | null, root?: string | null, token?: string | null, vault?: string | null, minBalance?: string | null, minAssets?: string | null, tokenId?: string | null, skipInterfaceCheck?: boolean | null, deployedAtBlock?: string | null, deployedAtTimestamp?: string | null, deployedAtTransaction?: string | null, deployedAtLogIndex?: string | null, deploymentFactory?: { __typename: 'RoleProviderFactory', address: string, kind: SubgraphRoleProviderKind, label: string, generation: string, configuredStartBlock: string, indexed: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean } | null };
 
 export type SubgraphHookAdministratorChangeDataFragment = { __typename: 'HookAdministratorChange', id: string, kind: SubgraphAdministratorChangeKind, administrator?: string | null, previousAdministrator?: string | null, newAdministrator?: string | null, previousPendingAdministrator?: string | null, pendingAdministrator?: string | null, cancelledPendingAdministrator?: string | null, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, hooks: { __typename: 'HooksInstance', address: string } };
 
 export type SubgraphRoleProviderAdministratorChangeDataFragment = { __typename: 'RoleProviderAdministratorChange', id: string, kind: SubgraphAdministratorChangeKind, administrator?: string | null, previousAdministrator?: string | null, newAdministrator?: string | null, previousPendingAdministrator?: string | null, pendingAdministrator?: string | null, cancelledPendingAdministrator?: string | null, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, provider: { __typename: 'RoleProviderInstance', address: string } };
 
 export type SubgraphRoleProviderMembershipChangeDataFragment = { __typename: 'RoleProviderMembershipChange', id: string, kind: SubgraphMembershipChangeKind, account: string, administrator: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, provider: { __typename: 'RoleProviderInstance', address: string } };
+
+export type SubgraphRoleProviderRootChangeDataFragment = { __typename: 'RoleProviderRootChange', id: string, administrator: string, previousRoot: string, newRoot: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, provider: { __typename: 'RoleProviderInstance', address: string } };
 
 export type SubgraphHooksTemplateDataFragment = { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string };
 
@@ -35933,7 +36007,7 @@ export type SubgraphGetRoleProviderAuthorityQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetRoleProviderAuthorityQuery = { __typename: 'Query', roleProviderInstance?: { __typename: 'RoleProviderInstance', id: string, address: string, kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null, deployer?: string | null, salt?: string | null, deployedAtBlock?: string | null, deployedAtTimestamp?: string | null, deployedAtTransaction?: string | null, deployedAtLogIndex?: string | null, attachments: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, hooks: { __typename: 'HooksInstance', address: string, administrator: string, pendingAdministrator?: string | null } }>, members: Array<{ __typename: 'RoleProviderMember', id: string, account: string, isMember: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string }>, deploymentFactory?: { __typename: 'AccessListRoleProviderFactory', address: string } | null } | null };
+export type SubgraphGetRoleProviderAuthorityQuery = { __typename: 'Query', roleProviderInstance?: { __typename: 'RoleProviderInstance', id: string, address: string, kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null, deployer?: string | null, salt?: string | null, root?: string | null, token?: string | null, vault?: string | null, minBalance?: string | null, minAssets?: string | null, tokenId?: string | null, skipInterfaceCheck?: boolean | null, deployedAtBlock?: string | null, deployedAtTimestamp?: string | null, deployedAtTransaction?: string | null, deployedAtLogIndex?: string | null, attachments: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, hooks: { __typename: 'HooksInstance', address: string, administrator: string, pendingAdministrator?: string | null } }>, members: Array<{ __typename: 'RoleProviderMember', id: string, account: string, isMember: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string }>, rootChanges: Array<{ __typename: 'RoleProviderRootChange', id: string, administrator: string, previousRoot: string, newRoot: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, provider: { __typename: 'RoleProviderInstance', address: string } }>, deploymentFactory?: { __typename: 'RoleProviderFactory', address: string, kind: SubgraphRoleProviderKind, label: string, generation: string, configuredStartBlock: string, indexed: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean } | null } | null };
 
 export type SubgraphGetHookAdministratorChangesQueryVariables = Exact<{
   hooks: Scalars['String']['input'];
@@ -37490,12 +37564,26 @@ export const RoleProviderInstanceDataFragmentDoc = gql`
   pendingAdministrator
   deployer
   salt
+  root
+  token
+  vault
+  minBalance
+  minAssets
+  tokenId
+  skipInterfaceCheck
   deployedAtBlock
   deployedAtTimestamp
   deployedAtTransaction
   deployedAtLogIndex
   deploymentFactory {
     address
+    kind
+    label
+    generation
+    configuredStartBlock
+    indexed
+    lifecycle
+    configured
   }
 }
     `;
@@ -37546,6 +37634,21 @@ export const RoleProviderMembershipChangeDataFragmentDoc = gql`
   }
   account
   administrator
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const RoleProviderRootChangeDataFragmentDoc = gql`
+    fragment RoleProviderRootChangeData on RoleProviderRootChange {
+  id
+  provider {
+    address
+  }
+  administrator
+  previousRoot
+  newRoot
   blockNumber
   blockTimestamp
   transactionHash
@@ -38843,11 +38946,15 @@ export const GetRoleProviderAuthorityDocument = gql`
     members(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
       ...RoleProviderMemberData
     }
+    rootChanges(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+      ...RoleProviderRootChangeData
+    }
   }
 }
     ${RoleProviderInstanceDataFragmentDoc}
 ${RoleProviderAttachmentDataFragmentDoc}
-${RoleProviderMemberDataFragmentDoc}`;
+${RoleProviderMemberDataFragmentDoc}
+${RoleProviderRootChangeDataFragmentDoc}`;
 export type GetRoleProviderAuthorityQueryResult = Apollo.QueryResult<SubgraphGetRoleProviderAuthorityQuery, SubgraphGetRoleProviderAuthorityQueryVariables>;
 export const GetHookAdministratorChangesDocument = gql`
     query getHookAdministratorChanges($hooks: String!, $first: Int = 100, $skip: Int = 0) {

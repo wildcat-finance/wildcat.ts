@@ -1,4 +1,4 @@
-import { IndexedAt, parseHooksKind, parseRoleProviderKind } from "../domain";
+import { IndexedAt, parseFactoryLifecycle, parseHooksKind, parseRoleProviderKind } from "../domain";
 import {
   SubgraphAdministratorChangeKind,
   SubgraphHookAdministratorChangeDataFragment,
@@ -9,7 +9,8 @@ import {
   SubgraphRoleProviderAttachmentDataFragment,
   SubgraphRoleProviderInstanceDataFragment,
   SubgraphRoleProviderMemberDataFragment,
-  SubgraphRoleProviderMembershipChangeDataFragment
+  SubgraphRoleProviderMembershipChangeDataFragment,
+  SubgraphRoleProviderRootChangeDataFragment
 } from "../gql/graphql";
 import {
   AdministratorChange,
@@ -21,8 +22,11 @@ import {
   RoleProviderAdministratorChange,
   RoleProviderAttachment,
   RoleProviderAuthority,
+  RoleProviderConfiguration,
+  RoleProviderFactoryMetadata,
   RoleProviderMember,
-  RoleProviderMembershipChange
+  RoleProviderMembershipChange,
+  RoleProviderRootChange
 } from "./types";
 
 const indexedAt = (
@@ -39,6 +43,83 @@ const indexedAt = (
 
 const optional = <Key extends string>(key: Key, value: string | null | undefined) =>
   value === null || value === undefined ? {} : ({ [key]: value } as Record<Key, string>);
+
+const requiredProviderField = <Value>(
+  provider: string,
+  field: string,
+  value: Value | null | undefined
+): Value => {
+  if (value === null || value === undefined) {
+    throw new Error(`Role provider ${provider} is missing indexed ${field}`);
+  }
+  return value;
+};
+
+const normalizeRoleProviderFactory = (
+  data: NonNullable<SubgraphRoleProviderInstanceDataFragment["deploymentFactory"]>
+): RoleProviderFactoryMetadata => {
+  const kind = parseRoleProviderKind(data.kind);
+  return {
+    address: data.address,
+    kind,
+    label: data.label,
+    generation: data.generation,
+    configuredStartBlock: BigInt(data.configuredStartBlock),
+    indexed: data.indexed,
+    lifecycle: parseFactoryLifecycle(data.lifecycle),
+    configured: data.configured
+  };
+};
+
+const normalizeRoleProviderConfiguration = (
+  data: SubgraphRoleProviderInstanceDataFragment
+): RoleProviderConfiguration => {
+  const kind = parseRoleProviderKind(data.kind);
+  switch (kind) {
+    case "access-list":
+      return { kind };
+    case "merkle":
+      return {
+        kind,
+        root: requiredProviderField(data.address, "root", data.root)
+      };
+    case "erc20":
+      return {
+        kind,
+        token: requiredProviderField(data.address, "token", data.token),
+        minBalance: BigInt(requiredProviderField(data.address, "minBalance", data.minBalance))
+      };
+    case "erc4626-assets":
+      return {
+        kind,
+        vault: requiredProviderField(data.address, "vault", data.vault),
+        minAssets: BigInt(requiredProviderField(data.address, "minAssets", data.minAssets))
+      };
+    case "erc721":
+      return {
+        kind,
+        token: requiredProviderField(data.address, "token", data.token),
+        skipInterfaceCheck: requiredProviderField(
+          data.address,
+          "skipInterfaceCheck",
+          data.skipInterfaceCheck
+        )
+      };
+    case "erc1155":
+      return {
+        kind,
+        token: requiredProviderField(data.address, "token", data.token),
+        tokenId: BigInt(requiredProviderField(data.address, "tokenId", data.tokenId)),
+        skipInterfaceCheck: requiredProviderField(
+          data.address,
+          "skipInterfaceCheck",
+          data.skipInterfaceCheck
+        )
+      };
+    default:
+      return { kind: "unknown" };
+  }
+};
 
 export const parseProviderMetadataState = (
   state: SubgraphProviderMetadataState | string
@@ -135,6 +216,7 @@ export const normalizeRoleProviderAuthority = (
   data: SubgraphRoleProviderInstanceDataFragment & {
     attachments: SubgraphRoleProviderAttachmentDataFragment[];
     members: SubgraphRoleProviderMemberDataFragment[];
+    rootChanges: SubgraphRoleProviderRootChangeDataFragment[];
   }
 ): RoleProviderAuthority => {
   const hasDeploymentRecord =
@@ -146,14 +228,23 @@ export const normalizeRoleProviderAuthority = (
     data.deployedAtTransaction !== undefined &&
     data.deployedAtLogIndex !== null &&
     data.deployedAtLogIndex !== undefined;
+  const configuration = normalizeRoleProviderConfiguration(data);
+  const deploymentFactory = data.deploymentFactory
+    ? normalizeRoleProviderFactory(data.deploymentFactory)
+    : undefined;
+  if (deploymentFactory !== undefined && deploymentFactory.kind !== configuration.kind) {
+    throw new Error(
+      `Role provider ${data.address} kind does not match factory ${deploymentFactory.address}`
+    );
+  }
   return {
     id: data.id,
     address: data.address,
-    kind: parseRoleProviderKind(data.kind),
+    ...configuration,
     ...optional("administrator", data.administrator),
     ...optional("pendingAdministrator", data.pendingAdministrator),
     ...optional("deployer", data.deployer),
-    ...optional("deploymentFactory", data.deploymentFactory?.address),
+    ...(deploymentFactory === undefined ? {} : { deploymentFactory }),
     ...optional("salt", data.salt),
     ...(hasDeploymentRecord
       ? {
@@ -166,7 +257,8 @@ export const normalizeRoleProviderAuthority = (
         }
       : {}),
     attachments: data.attachments.map(normalizeRoleProviderAttachment),
-    members: data.members.map(normalizeRoleProviderMember)
+    members: data.members.map(normalizeRoleProviderMember),
+    rootChanges: data.rootChanges.map(normalizeRoleProviderRootChange)
   };
 };
 
@@ -208,5 +300,16 @@ export const normalizeRoleProviderMembershipChange = (
   kind: parseMembershipChangeKind(data.kind),
   account: data.account,
   administrator: data.administrator,
+  ...indexedAt(data.blockNumber, data.blockTimestamp, data.transactionHash, data.blockLogIndex)
+});
+
+export const normalizeRoleProviderRootChange = (
+  data: SubgraphRoleProviderRootChangeDataFragment
+): RoleProviderRootChange => ({
+  id: data.id,
+  provider: data.provider.address,
+  administrator: data.administrator,
+  previousRoot: data.previousRoot,
+  newRoot: data.newRoot,
   ...indexedAt(data.blockNumber, data.blockTimestamp, data.transactionHash, data.blockLogIndex)
 });
