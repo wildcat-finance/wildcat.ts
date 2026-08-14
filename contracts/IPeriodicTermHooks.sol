@@ -75,6 +75,7 @@ interface IPeriodicTermHooks {
   error AprReductionProposalOnClosedMarket();
   error CallerNotFactory();
   error CreateRoleProviderFailed();
+  error RoleProviderFactoryRequired();
   error GrantedCredentialExpired();
   error InvalidArrayLength();
   error InvalidCredentialReturned();

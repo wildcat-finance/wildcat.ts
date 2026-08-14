@@ -231,7 +231,8 @@ describe("generated viem ABIs", () => {
       "NotPendingAdministrator",
       "ProviderCanNotReplaceCredential",
       "ProviderCanNotRevokeCredential",
-      "ProviderNotFound"
+      "ProviderNotFound",
+      "RoleProviderFactoryRequired"
     ]);
   });
 });

@@ -48,6 +48,8 @@ interface IFixedTermHooks {
 
   error CreateRoleProviderFailed();
 
+  error RoleProviderFactoryRequired();
+
   error DelinquencyFeeBipsOutOfBounds();
 
   error DelinquencyGracePeriodOutOfBounds();

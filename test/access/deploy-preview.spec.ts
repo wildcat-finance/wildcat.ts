@@ -12,6 +12,7 @@ import {
   StandardReadyDeployMarketPreview,
   encodeRevolvingMarketData
 } from "../../src/access";
+import { encodeMarketHooksInstanceInputs } from "../../src/access/utils";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { MarketParameters } from "../../src/controller";
 import { HooksKind, HooksTemplateRegistrationMetadata } from "../../src/domain";
@@ -354,6 +355,51 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
 });
 
 describe("V2.5 hook deployment validation", () => {
+  it("treats the zero address as a missing role provider factory", () => {
+    const asset = makeToken();
+    const common = {
+      ...makeMarketParameters(asset),
+      hooksInstanceName: "HooksInstance",
+      roleProviderFactory: constants.AddressZero,
+      newProviderInputs: [{ data: "0x1234", timeToLive: 1_800 }],
+      salt: constants.HashZero,
+      minimumDeposit: asset.getAmount(0n),
+      transferAccess: TransferAccess.Open,
+      depositAccess: DepositAccess.Open,
+      withdrawalAccess: WithdrawalAccess.Open
+    };
+
+    expect(makeOpenTermTemplate().previewDeployMarket(common).status).to.equal(
+      DeployMarketStatus.CreateProviderInputsWithoutFactory
+    );
+    expect(
+      makeFixedTermTemplate().previewDeployMarket({
+        ...common,
+        fixedTermEndTime: 1_800_000_000,
+        allowClosureBeforeTerm: false,
+        allowTermReduction: false
+      }).status
+    ).to.equal(DeployMarketStatus.CreateProviderInputsWithoutFactory);
+    expect(
+      makePeriodicTermTemplate().previewDeployMarket({
+        ...common,
+        firstWithdrawalWindowStart: 1_800_000_000,
+        periodDuration: 30 * 24 * 60 * 60,
+        withdrawalWindowDuration: 7 * 24 * 60 * 60
+      }).status
+    ).to.equal(DeployMarketStatus.CreateProviderInputsWithoutFactory);
+  });
+
+  it("rejects zero-address factories when encoding new provider inputs directly", () => {
+    expect(() =>
+      encodeMarketHooksInstanceInputs({
+        hooksInstanceName: "HooksInstance",
+        roleProviderFactory: constants.AddressZero,
+        newProviderInputs: [{ data: "0x1234", timeToLive: 1_800 }]
+      })
+    ).to.throw("Can not create new providers without a factory");
+  });
+
   it("fails closed without indexed registration metadata or a live factory check", () => {
     const asset = makeToken();
     const template = makeOpenTermTemplate();

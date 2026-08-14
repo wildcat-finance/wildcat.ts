@@ -42,6 +42,8 @@ interface IOpenTermHooks {
 
   error CreateRoleProviderFailed();
 
+  error RoleProviderFactoryRequired();
+
   error DelinquencyFeeBipsOutOfBounds();
 
   error DelinquencyGracePeriodOutOfBounds();

@@ -52,6 +52,7 @@ import {
   encodeMarketHooksInstanceInputs,
   getHooksAdministrator,
   getHooksPendingAdministrator,
+  hasRoleProviderFactory,
   roleProviderFromLensData,
   HooksFactoryContractFacade
 } from "./utils";
@@ -392,7 +393,11 @@ export class OpenTermHooksTemplate extends ContractWrapper {
         }
       }
     }
-    if (!hooksAddress && !roleProviderFactory && newProviderInputs?.length) {
+    if (
+      !hooksAddress &&
+      !hasRoleProviderFactory(roleProviderFactory) &&
+      newProviderInputs?.length
+    ) {
       return { status: DeployMarketStatus.CreateProviderInputsWithoutFactory };
     }
     if (

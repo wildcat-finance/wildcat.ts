@@ -48719,6 +48719,11 @@ export const baseAccessControlsErrorAbi = [
     "inputs": [],
     "name": "ProviderNotFound",
     "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RoleProviderFactoryRequired",
+    "type": "error"
   }
 ] as const satisfies Abi;
 

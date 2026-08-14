@@ -17,6 +17,9 @@ import { assert, toNumber } from "../utils";
 
 const NullProviderIndex = 2 ** 24 - 1;
 
+export const hasRoleProviderFactory = (roleProviderFactory?: string): boolean =>
+  !!roleProviderFactory && roleProviderFactory.toLowerCase() !== zeroAddress;
+
 export const getHooksAdministrator = (data: AnyHooksInstanceDataStructOutput): string =>
   "administrator" in data ? data.administrator : data.borrower;
 
@@ -148,7 +151,10 @@ export function encodeMarketHooksInstanceInputs(args: MarketHooksInstanceInputs)
     hooksInstanceName = ""
   } = args;
   if (newProviderInputs.length) {
-    assert(roleProviderFactory !== undefined, `Can not create new providers without a factory`);
+    assert(
+      hasRoleProviderFactory(roleProviderFactory),
+      `Can not create new providers without a factory`
+    );
   }
   const encodedNewProviderInputs = newProviderInputs.map(({ data, timeToLive }) => ({
     timeToLive,

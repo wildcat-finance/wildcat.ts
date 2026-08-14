@@ -128,7 +128,8 @@
       "NotPendingAdministrator",
       "ProviderCanNotReplaceCredential",
       "ProviderCanNotRevokeCredential",
-      "ProviderNotFound"
+      "ProviderNotFound",
+      "RoleProviderFactoryRequired"
     ]
   },
   {
