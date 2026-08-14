@@ -9,6 +9,7 @@ import { SignerOrProvider } from "../types";
 import { HooksTemplate, hooksTemplateFromSubgraph } from "../access";
 import { getEthersSignerAddress } from "../internal/ethers-signer";
 import { HooksKind, parseHooksKind } from "../domain";
+import { hasRegisteredBorrowerAccountPrincipal } from "./borrower-eligibility";
 
 export type GetAllHooksTemplatesOptions = {
   chainId: SupportedChainId;
@@ -42,13 +43,15 @@ export async function getAllHooksTemplates(
       includeBorrower: !!borrower
     }
   });
+  const indexedBorrowerEligibility =
+    (result.data.registeredBorrowers?.[0]?.isRegistered ?? false) ||
+    hasRegisteredBorrowerAccountPrincipal(result.data.borrowerAccounts ?? []);
   return result.data.hooksTemplateRegistrations
     .filter((registration) => parseHooksKind(registration.hooksTemplate.kind) !== HooksKind.Unknown)
     .map((template) =>
       hooksTemplateFromSubgraph(chainId, signerOrProvider, template, {
         signerAddress: borrower,
-        isRegisteredBorrower:
-          result.data.registeredBorrowers?.[0]?.isRegistered ?? isRegisteredBorrower
+        isRegisteredBorrower: indexedBorrowerEligibility || isRegisteredBorrower
       })
     );
 }

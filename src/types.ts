@@ -3,7 +3,7 @@ import { Token, TokenAmount } from "./token";
 import { SubgraphMarketVersion } from "./gql/graphql";
 import { HooksTemplate } from "./access";
 import { isEthersSigner } from "./internal/ethers-signer";
-import { HooksKind } from "./domain";
+import { HooksKind, RoleProviderKind } from "./domain";
 
 export * from "./domain";
 
@@ -252,6 +252,7 @@ export type PeriodicTermHooksConfig = {
 export type HooksConfig = OpenTermHooksConfig | FixedTermHooksConfig | PeriodicTermHooksConfig;
 
 export type RoleProvider = {
+  kind?: RoleProviderKind;
   providerAddress: string;
   timeToLive: number;
   isPullProvider: boolean;
@@ -259,6 +260,9 @@ export type RoleProvider = {
   pushProviderIndex: number;
   pullProviderIndex: number;
   isApproved: boolean;
+  isManaged?: boolean;
+  administrator?: string;
+  pendingAdministrator?: string;
 };
 
 export type HooksCredential = {
@@ -315,12 +319,3 @@ export enum WithdrawalAccess {
    */
   Open
 }
-
-export type AddLenderInput = {
-  lender: string;
-  credentialTimestamp?: number;
-};
-
-export type TimestampedAddLenderInput = AddLenderInput & {
-  credentialTimestamp: number;
-};

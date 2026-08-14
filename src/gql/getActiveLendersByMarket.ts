@@ -15,9 +15,11 @@ import {
   parseSubgraphLenderStatus,
   toNumber
 } from "../utils";
-import type { LenderAccountDataStructOutput } from "../lens-types";
-
-const NullProviderIndex = 2 ** 24 - 1;
+import type {
+  LenderAccountDataStructOutput,
+  LenderAccountDataV2_5StructOutput
+} from "../lens-types";
+import { roleProviderFromLensData } from "../access/utils";
 
 export type GetActiveLendersByMarketOptions = Omit<
   SubgraphGetActiveLendersByMarketQueryVariables,
@@ -136,22 +138,14 @@ export class BasicLenderData {
     }
   }
 
-  updateWith(data: LenderAccountDataStructOutput): void {
+  updateWith(data: LenderAccountDataStructOutput | LenderAccountDataV2_5StructOutput): void {
     this.scaledBalance = toRawAmount(data.scaledBalance);
     this.isKnownLender = data.isKnownLender;
     this.credential = {
       canRefresh: data.canRefresh,
       isBlockedFromDeposits: data.isBlockedFromDeposits,
       lastApprovalTimestamp: toNumber(data.lastApprovalTimestamp),
-      lastProvider: {
-        isApproved: true,
-        providerAddress: data.lastProvider.providerAddress,
-        isPullProvider: toNumber(data.lastProvider.pullProviderIndex) !== NullProviderIndex,
-        pullProviderIndex: toNumber(data.lastProvider.pullProviderIndex),
-        isPushProvider: toNumber(data.lastProvider.pushProviderIndex) !== NullProviderIndex,
-        pushProviderIndex: toNumber(data.lastProvider.pushProviderIndex),
-        timeToLive: toNumber(data.lastProvider.timeToLive)
-      }
+      lastProvider: roleProviderFromLensData(data.lastProvider)
     };
   }
 }

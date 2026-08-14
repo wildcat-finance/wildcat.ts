@@ -12,7 +12,8 @@ import {
   SubgraphHookedMarketAbi,
   SubgraphHooksKind,
   SubgraphLenderHooksAccessDataFragment,
-  SubgraphMarketKind
+  SubgraphMarketKind,
+  SubgraphRoleProviderKind
 } from "../../src/gql/graphql";
 import { HooksKind, Provider } from "../../src/types";
 import { parseSubgraphLenderHooksAccess } from "../../src/utils";
@@ -114,6 +115,8 @@ const makeHooksInstance = (kind: SubgraphHooksKind, templateName: string, suffix
     id: makeAddress(1_000 + suffix),
     address: makeAddress(1_000 + suffix),
     borrower,
+    administrator: borrower,
+    pendingAdministrator: null,
     name: `${templateName}Instance`,
     kind,
     marketKind: SubgraphMarketKind.STANDARD,
@@ -129,6 +132,12 @@ const makeHooksInstance = (kind: SubgraphHooksKind, templateName: string, suffix
         __typename: "RoleProvider" as const,
         id: makeAddress(4_000 + suffix),
         providerAddress: borrower,
+        providerInstance: {
+          __typename: "RoleProviderInstance" as const,
+          kind: SubgraphRoleProviderKind.ACCESS_LIST,
+          administrator: borrower,
+          pendingAdministrator: null
+        },
         timeToLive: "4294967295",
         isPullProvider: false,
         pullProviderIndex: 2 ** 24 - 1,
@@ -139,6 +148,30 @@ const makeHooksInstance = (kind: SubgraphHooksKind, templateName: string, suffix
     ]
   };
 };
+
+const makeBorrowerAccountEligibility = (isPrincipalRegistered: boolean) => ({
+  __typename: "BorrowerAccount" as const,
+  registry: {
+    __typename: "BorrowerIdentityRegistry" as const,
+    archController: {
+      __typename: "ArchController" as const,
+      id: getDeploymentAddress(chainId, "WildcatArchController")
+    }
+  },
+  principal: {
+    __typename: "Borrower" as const,
+    registrations: [
+      {
+        __typename: "RegisteredBorrower" as const,
+        archController: {
+          __typename: "ArchController" as const,
+          id: getDeploymentAddress(chainId, "WildcatArchController")
+        },
+        isRegistered: isPrincipalRegistered
+      }
+    ]
+  }
+});
 
 describe("subgraph hooks helpers", () => {
   it("includes supported templates from historical factories discovered by the subgraph", async () => {
@@ -249,6 +282,30 @@ describe("subgraph hooks helpers", () => {
     ).to.deep.equal([false, false, false]);
   });
 
+  it("treats a registered account's principal as deployment eligibility", async () => {
+    const subgraphClient = makeSubgraphClient({
+      hooksTemplateRegistrations: [
+        makeTemplateRegistration(SubgraphHooksKind.OpenTerm, "OpenTermHooks", 31)
+      ],
+      hooksInstances: [],
+      registeredBorrowers: [],
+      borrowerAccounts: [makeBorrowerAccountEligibility(true)],
+      controllers: []
+    });
+
+    const result = await getAllHooksDataForBorrower(subgraphClient, {
+      chainId,
+      signerOrProvider: provider,
+      fetchPolicy: "no-cache",
+      borrower
+    });
+
+    expect(result.isRegisteredBorrower).to.equal(true);
+    expect(result.hooksTemplates).to.have.length(1);
+    expect(result.hooksTemplates[0].isRegisteredBorrower).to.equal(true);
+    expect(result.hooksInstances).to.deep.equal([]);
+  });
+
   it("normalizes Graph BigInt TTLs in lender credential metadata", () => {
     const hooksAccess: SubgraphLenderHooksAccessDataFragment = {
       __typename: "LenderHooksAccess",
@@ -262,6 +319,12 @@ describe("subgraph hooks helpers", () => {
         __typename: "RoleProvider",
         id: "borrower-role-provider",
         providerAddress: borrower,
+        providerInstance: {
+          __typename: "RoleProviderInstance",
+          kind: SubgraphRoleProviderKind.UNKNOWN,
+          administrator: null,
+          pendingAdministrator: null
+        },
         timeToLive: "4294967295",
         isPullProvider: false,
         pullProviderIndex: 2 ** 24 - 1,

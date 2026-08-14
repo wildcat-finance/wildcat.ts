@@ -4,7 +4,12 @@ import path from "path";
 import { encodeFunctionData, getAddress } from "viem";
 import * as generatedAbis from "../../src/abi";
 import {
+  accessListRoleProviderAbi,
+  accessListRoleProviderFactoryAbi,
   baseAccessControlsErrorAbi,
+  borrowerIdentityRegistryAbi,
+  hooksFactoryAbi,
+  hooksFactoryRevolvingAbi,
   iFixedTermHooksAbi,
   iOpenTermHooksAbi,
   iPeriodicTermHooksAbi,
@@ -131,7 +136,14 @@ describe("generated viem ABIs", () => {
 
   it("exposes the V2.5 market and wrapper compatibility surface", () => {
     expect(functionNames(wildcatMarketV2Abi)).to.include.members([
+      "acceptBorrowerTransfer",
+      "borrowerIdentityRegistry",
+      "borrowerPrincipal",
+      "cancelBorrowerTransfer",
+      "pendingBorrower",
+      "pendingBorrowerPrincipal",
       "registerWrapper",
+      "requestBorrowerTransfer",
       "registeredWrapper",
       "scaledTransferRounding",
       "wrapperFactory"
@@ -167,14 +179,56 @@ describe("generated viem ABIs", () => {
     }
   });
 
+  it("exports the v2.5 identity and independent authority surfaces", () => {
+    expect(functionNames(borrowerIdentityRegistryAbi)).to.include.members([
+      "acceptBorrowerAccountPrincipalTransfer",
+      "principalOf",
+      "requestBorrowerAccountPrincipalTransfer",
+      "resolveBorrower"
+    ]);
+    expect(functionNames(accessListRoleProviderAbi)).to.include.members([
+      "acceptAdministratorTransfer",
+      "addMembers",
+      "removeMembers",
+      "requestAdministratorTransfer"
+    ]);
+    expect(functionNames(accessListRoleProviderFactoryAbi)).to.include.members([
+      "computeRoleProviderAddress",
+      "createAccessListRoleProvider"
+    ]);
+    for (const abi of [iOpenTermHooksAbi, iFixedTermHooksAbi, iPeriodicTermHooksAbi]) {
+      expect(functionNames(abi as readonly unknown[])).to.include.members([
+        "acceptAdministratorTransfer",
+        "addRoleProvider",
+        "createRoleProvider",
+        "removeRoleProvider",
+        "requestAdministratorTransfer"
+      ]);
+    }
+    for (const abi of [hooksFactoryAbi, hooksFactoryRevolvingAbi]) {
+      expect(functionNames(abi as readonly unknown[])).to.include.members([
+        "borrowerIdentityRegistry",
+        "getHooksAdministrator",
+        "getHooksInstancesForAdministrator",
+        "onHooksAdministratorTransferred"
+      ]);
+    }
+  });
+
   it("exports access-control errors needed for viem revert decoding", () => {
     expect(errorNames(baseAccessControlsErrorAbi as readonly unknown[])).to.have.members([
+      "AdministratorNotRegistered",
+      "CallerNotAdministrator",
       "CallerNotBorrower",
+      "CreateRoleProviderFailed",
       "GrantedCredentialExpired",
+      "InvalidAdministratorTransferTarget",
       "InvalidArrayLength",
       "InvalidCredentialReturned",
       "InvalidCredentialTimestamp",
+      "NoPendingAdministratorTransfer",
       "NotApprovedLender",
+      "NotPendingAdministrator",
       "ProviderCanNotReplaceCredential",
       "ProviderCanNotRevokeCredential",
       "ProviderNotFound"

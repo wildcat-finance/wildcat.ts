@@ -28,6 +28,16 @@ interface IOpenTermHooks {
 
   error CallerNotBorrower();
 
+  error CallerNotAdministrator();
+
+  error InvalidAdministratorTransferTarget();
+
+  error AdministratorNotRegistered();
+
+  error NoPendingAdministratorTransfer();
+
+  error NotPendingAdministrator();
+
   error CallerNotFactory();
 
   error CreateRoleProviderFailed();
@@ -88,6 +98,24 @@ interface IOpenTermHooks {
 
   event NameUpdated(string name);
 
+  event NameUpdated(address indexed administrator, string previousName, string newName);
+
+  event AdministratorTransferRequested(
+    address indexed administrator,
+    address indexed previousPendingAdministrator,
+    address indexed pendingAdministrator
+  );
+
+  event AdministratorTransferCancelled(
+    address indexed administrator,
+    address indexed cancelledPendingAdministrator
+  );
+
+  event AdministratorTransferred(
+    address indexed previousAdministrator,
+    address indexed newAdministrator
+  );
+
   event RoleProviderAdded(
     address indexed providerAddress,
     uint32 timeToLive,
@@ -133,6 +161,16 @@ interface IOpenTermHooks {
   function blockFromDeposits(address[] calldata accounts) external;
 
   function borrower() external view returns (address);
+
+  function administrator() external view returns (address);
+
+  function pendingAdministrator() external view returns (address);
+
+  function requestAdministratorTransfer(address newAdministrator) external;
+
+  function cancelAdministratorTransfer() external;
+
+  function acceptAdministratorTransfer() external;
 
   function config() external view returns (HooksDeploymentConfig param0);
 

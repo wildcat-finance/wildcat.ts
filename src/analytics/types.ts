@@ -83,7 +83,7 @@ export type IndexedAnalyticsMarket = {
   scaleFactor: bigint;
   isDelinquent: boolean;
   isIncurringPenalties: boolean;
-  totalDebtUSD: UsdValue;
+  totalDebtUSD?: UsdValue;
   term: IndexedAnalyticsMarketTerm;
   snapshot?: IndexedMarketSnapshot;
   asset: IndexedAnalyticsToken;

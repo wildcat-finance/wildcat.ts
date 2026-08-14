@@ -55,6 +55,12 @@ interface WildcatMarketV2 {
 
   error InsufficientReservesForOldLiquidityRatio();
 
+  error InvalidBorrower();
+
+  error InvalidBorrowerIdentityRegistry();
+
+  error InvalidBorrowerTransferTarget();
+
   error InvalidArrayLength();
 
   error MarketAlreadyClosed();
@@ -63,11 +69,15 @@ interface WildcatMarketV2 {
 
   error NoReentrantCalls();
 
+  error NoPendingBorrowerTransfer();
+
   error NotApprovedBorrower();
 
   error NotApprovedLender();
 
   error NotFactory();
+
+  error NotPendingBorrower();
 
   error NullBurnAmount();
 
@@ -87,6 +97,12 @@ interface WildcatMarketV2 {
 
   error ProtocolFeeTooHigh();
 
+  error PendingBorrowerPrincipalChanged(address expectedPrincipal, address actualPrincipal);
+
+  error BorrowerPrincipalNotRegistered();
+
+  error BorrowerTransferWhileSanctioned(address account);
+
   error RepayToClosedMarket();
 
   error ReserveRatioBipsTooHigh();
@@ -102,6 +118,29 @@ interface WildcatMarketV2 {
   event Approval(address indexed owner, address indexed spender, uint256 value);
 
   event Borrow(uint256 assetAmount);
+
+  event BorrowerTransferRequested(
+    address indexed borrower,
+    address indexed previousPendingBorrower,
+    address indexed pendingBorrower,
+    address borrowerPrincipal,
+    address previousPendingBorrowerPrincipal,
+    address pendingBorrowerPrincipal
+  );
+
+  event BorrowerTransferCancelled(
+    address indexed borrower,
+    address indexed cancelledPendingBorrower,
+    address borrowerPrincipal,
+    address cancelledPendingBorrowerPrincipal
+  );
+
+  event BorrowerTransferred(
+    address indexed previousBorrower,
+    address indexed newBorrower,
+    address previousBorrowerPrincipal,
+    address indexed newBorrowerPrincipal
+  );
 
   event ChangedSpherexEngineAddress(address oldEngineAddress, address newEngineAddress);
 
@@ -201,6 +240,22 @@ interface WildcatMarketV2 {
   function borrow(uint256 amount) external;
 
   function borrowableAssets() external view returns (uint256 param0);
+
+  function borrower() external view returns (address);
+
+  function borrowerPrincipal() external view returns (address);
+
+  function pendingBorrower() external view returns (address);
+
+  function pendingBorrowerPrincipal() external view returns (address);
+
+  function borrowerIdentityRegistry() external view returns (address);
+
+  function requestBorrowerTransfer(address newBorrower) external;
+
+  function cancelBorrowerTransfer() external;
+
+  function acceptBorrowerTransfer() external;
 
   function changeSphereXEngine(address newSphereXEngine) external;
 

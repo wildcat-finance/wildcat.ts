@@ -15,6 +15,7 @@ import {
 import { MarketController } from "../controller";
 import { getEthersSignerAddress } from "../internal/ethers-signer";
 import { HooksKind, parseHooksKind } from "../domain";
+import { hasRegisteredBorrowerAccountPrincipal } from "./borrower-eligibility";
 
 export type GetAllHooksDataForBorrowerOptions = {
   chainId: SupportedChainId;
@@ -50,7 +51,9 @@ export async function getAllHooksDataForBorrower(
       borrower
     }
   });
-  const isRegisteredBorrower = result.data.registeredBorrowers?.[0]?.isRegistered ?? false;
+  const isRegisteredBorrower =
+    (result.data.registeredBorrowers?.[0]?.isRegistered ?? false) ||
+    hasRegisteredBorrowerAccountPrincipal(result.data.borrowerAccounts ?? []);
   const hooksTemplates = result.data.hooksTemplateRegistrations
     .filter((registration) => parseHooksKind(registration.hooksTemplate.kind) !== HooksKind.Unknown)
     .map((template) =>

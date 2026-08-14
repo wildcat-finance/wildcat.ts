@@ -163,7 +163,7 @@ export const readyRevolvingDeployMarketPreview = (
 
 export enum ChangeLenderRoleStatus {
   Ready = "Ready",
-  NotBorrower = "NotBorrower"
+  NotAdministrator = "NotAdministrator"
 }
 
 export type ChangeLenderRolePreview = {

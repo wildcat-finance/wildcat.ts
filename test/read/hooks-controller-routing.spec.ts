@@ -2,6 +2,8 @@ import { expect } from "chai";
 import { BigNumber, constants, providers } from "ethers";
 import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
 import {
+  borrowerIdentityRegistryAbi,
+  hooksFactoryAbi,
   marketLensAbi,
   marketLensV2Abi,
   marketLensV2_5Abi,
@@ -141,6 +143,18 @@ const makeHooksInstance = (borrower: string, template: ReturnType<typeof makeHoo
   pushProviders: [],
   totalMarkets: BigNumber.from(1)
 });
+
+const makeV2_5HooksInstance = (
+  administrator: string,
+  template: ReturnType<typeof makeHooksTemplate>
+) => {
+  const hooksInstance = makeHooksInstance(administrator, template);
+  return {
+    ...hooksInstance,
+    administrator,
+    pendingAdministrator: constants.AddressZero
+  };
+};
 
 const makeTemplateRegistration = (
   hooksFactory: string,
@@ -320,7 +334,7 @@ describe("Hooks and controller read routing", () => {
 
       const isCanonicalRevolving = hooksFactory.toLowerCase() === revolvingFactory.toLowerCase();
       const instances = isCanonicalRevolving
-        ? [makeHooksInstance(borrower, makeHooksTemplate(sharedTemplate))]
+        ? [makeV2_5HooksInstance(borrower, makeHooksTemplate(sharedTemplate))]
         : [];
 
       return encodeLensResult(marketLensV2_5Abi as Abi, "getHooksInstancesForBorrower", instances);
@@ -413,6 +427,71 @@ describe("Hooks and controller read routing", () => {
       hooksFactory.toLowerCase()
     );
     expect(result.hooksInstances).to.have.lengthOf(1);
+  });
+
+  it("resolves a borrower account through the factory identity registry", async () => {
+    const account = makeAddress(23);
+    const principal = makeAddress(24);
+    const registry = makeAddress(25);
+    const hooksTemplate = makeAddress(26);
+    const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
+    const archController = getDeploymentAddress(SupportedChainId.Sepolia, "WildcatArchController");
+    const templates = [
+      {
+        hooksFactory,
+        hooksTemplateData: makeHooksTemplate(hooksTemplate, "Open term")
+      }
+    ];
+    const registrations = [
+      makeTemplateRegistration(hooksFactory, hooksTemplate, HooksKind.OpenTerm, "standard", true)
+    ];
+
+    const viemProvider = new FakeViemProvider((call) => {
+      const target = call.to?.toLowerCase();
+      if (target === archController.toLowerCase()) {
+        const decoded = decodeLensCall(wildcatArchControllerAbi as Abi, call);
+        return encodeLensResult(
+          wildcatArchControllerAbi as Abi,
+          decoded.functionName,
+          decoded.functionName === "isRegisteredController"
+        );
+      }
+      if (target === hooksFactory.toLowerCase()) {
+        const decoded = decodeLensCall(hooksFactoryAbi as Abi, call);
+        expect(decoded.functionName).to.equal("borrowerIdentityRegistry");
+        return encodeLensResult(hooksFactoryAbi as Abi, decoded.functionName, registry);
+      }
+      if (target === registry.toLowerCase()) {
+        const decoded = decodeLensCall(borrowerIdentityRegistryAbi as Abi, call);
+        expect(decoded.functionName).to.equal("resolveBorrower");
+        expect((decoded.args as [string])[0].toLowerCase()).to.equal(account);
+        return encodeLensResult(
+          borrowerIdentityRegistryAbi as Abi,
+          decoded.functionName,
+          principal
+        );
+      }
+
+      expect(target).to.equal(lensAddress.toLowerCase());
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      if (decoded.functionName === "getAggregatedHooksTemplatesForBorrowerWithFactory") {
+        return encodeLensResult(marketLensV2_5Abi as Abi, decoded.functionName, templates);
+      }
+      expect(decoded.functionName).to.equal("getHooksInstancesForBorrower");
+      return encodeLensResult(marketLensV2_5Abi as Abi, decoded.functionName, []);
+    });
+
+    const result = await getBorrowerHooksData({
+      chainId: SupportedChainId.Sepolia,
+      signerOrProvider: viemProvider as unknown as providers.Provider,
+      hooksTemplateRegistrations: registrations,
+      borrower: account
+    });
+
+    expect(result.isRegisteredBorrower).to.equal(true);
+    expect(result.hooksTemplates).to.have.length(1);
+    expect(result.hooksTemplates[0].isRegisteredBorrower).to.equal(true);
   });
 
   it("uses the legacy lens for borrower controller data", async () => {

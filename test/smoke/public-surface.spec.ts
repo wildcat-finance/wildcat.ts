@@ -78,6 +78,12 @@ describe("SDK public surface smoke", () => {
     expect(typeof sdk.getHooksFactoryDeploymentTargetIssues).to.equal("function");
     expect(typeof sdk.getBorrowerHooksData).to.equal("function");
     expect(typeof sdk.getMarketOnboardingMode).to.equal("function");
+    expect(typeof sdk.getBorrowerPrincipalIdentity).to.equal("function");
+    expect(typeof sdk.getMarketBorrowerChanges).to.equal("function");
+    expect(typeof sdk.getHookAuthority).to.equal("function");
+    expect(typeof sdk.getRoleProviderAuthority).to.equal("function");
+    expect(typeof sdk.prepareRequestMarketBorrowerTransfer).to.equal("function");
+    expect(typeof sdk.prepareAddAccessListMembers).to.equal("function");
     expect(sdk.MarketOnboardingMode.SelfOnboard).to.equal("self-onboard");
     expect(sdk.MarketOnboardingMode.BorrowerApproval).to.equal("borrower-approval");
     expect("MarketTypes" in sdk).to.equal(false);

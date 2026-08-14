@@ -102,6 +102,14 @@ export const normalizeSubgraphMarketProvenance = (
   abiFamily: data.abiFamily,
   archController: data.archController.id,
   borrower: data.borrower,
+  borrowerPrincipal: data.borrowerPrincipal,
+  ...(data.pendingBorrower ? { pendingBorrower: data.pendingBorrower } : {}),
+  ...(data.pendingBorrowerPrincipal
+    ? { pendingBorrowerPrincipal: data.pendingBorrowerPrincipal }
+    : {}),
+  ...(data.borrowerIdentityRegistryAddress
+    ? { borrowerIdentityRegistry: data.borrowerIdentityRegistryAddress }
+    : {}),
   sentinel: data.sentinel,
   controller: data.controller?.id,
   hooksFactory: data.hooksFactory

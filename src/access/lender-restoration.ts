@@ -1,7 +1,7 @@
 import type { Address, PublicClient } from "viem";
 import { iOpenTermHooksAbi } from "../abi";
-import type { AddLenderInput, PartialTransaction, TimestampedAddLenderInput } from "../types";
-import { toNumber } from "../utils";
+import { prepareAddAccessListMembers } from "../authority/actions";
+import type { PartialTransaction } from "../types";
 
 export type StoredLenderStatus = {
   isBlockedFromDeposits: boolean;
@@ -12,7 +12,6 @@ export type StoredLenderStatus = {
 
 export type LenderRestorationHooks = {
   address: string;
-  populateAddLenders: (inputs: TimestampedAddLenderInput[]) => PartialTransaction;
   populateUnblockLender: (lender: string) => PartialTransaction;
 };
 
@@ -21,40 +20,6 @@ export type LenderRestorationPlan = {
   blockTimestamp: number;
   blockedLenders: string[];
   transactions: PartialTransaction[];
-};
-
-const validateCredentialTimestamp = (credentialTimestamp: number): number => {
-  if (
-    !Number.isInteger(credentialTimestamp) ||
-    credentialTimestamp <= 0 ||
-    credentialTimestamp > 0xffffffff
-  ) {
-    throw new Error("credentialTimestamp must be a non-zero uint32");
-  }
-  return credentialTimestamp;
-};
-
-export const getCredentialTimestamps = (inputs: TimestampedAddLenderInput[]): number[] => {
-  return inputs.map(({ credentialTimestamp }) => validateCredentialTimestamp(credentialTimestamp));
-};
-
-export const timestampAddLenderInputs = async (
-  publicClient: PublicClient,
-  inputs: AddLenderInput[]
-): Promise<TimestampedAddLenderInput[]> => {
-  const requiresBlockTimestamp = inputs.some(({ credentialTimestamp }) => {
-    return credentialTimestamp === undefined;
-  });
-  const blockTimestamp = requiresBlockTimestamp
-    ? toNumber((await publicClient.getBlock()).timestamp)
-    : undefined;
-
-  return inputs.map((input) => ({
-    ...input,
-    credentialTimestamp: validateCredentialTimestamp(
-      input.credentialTimestamp ?? (blockTimestamp as number)
-    )
-  }));
 };
 
 const readStoredLenderStatus = async (
@@ -74,38 +39,33 @@ const readStoredLenderStatus = async (
 
 /**
  * Builds the ordered transactions required to restore lenders on existing hooks:
- * grant credentials first, then clear the independent deposit block where set.
+ * update the selected access list first, then clear each independent hook-local
+ * deposit block. The hook resolves the pull credential when the lender next acts.
  */
 export const prepareLenderRestoration = async (
   publicClient: PublicClient,
   hooks: LenderRestorationHooks,
-  inputs: AddLenderInput[]
+  provider: string,
+  lenders: string[]
 ): Promise<LenderRestorationPlan> => {
-  if (inputs.length === 0) {
+  if (lenders.length === 0) {
     throw new Error("At least one lender is required");
   }
 
   const block = await publicClient.getBlock();
-  const blockTimestamp = toNumber(block.timestamp);
-  const timestampedInputs = inputs.map((input) => ({
-    ...input,
-    credentialTimestamp: validateCredentialTimestamp(input.credentialTimestamp ?? blockTimestamp)
-  }));
   const statuses = await Promise.all(
-    inputs.map(({ lender }) =>
+    lenders.map((lender) =>
       readStoredLenderStatus(publicClient, hooks.address, lender, block.number)
     )
   );
-  const blockedLenders = inputs
-    .filter((_, index) => statuses[index].isBlockedFromDeposits)
-    .map(({ lender }) => lender);
+  const blockedLenders = lenders.filter((_, index) => statuses[index].isBlockedFromDeposits);
 
   return {
     blockNumber: block.number,
-    blockTimestamp,
+    blockTimestamp: Number(block.timestamp),
     blockedLenders,
     transactions: [
-      hooks.populateAddLenders(timestampedInputs),
+      prepareAddAccessListMembers(provider, lenders),
       ...blockedLenders.map((lender) => hooks.populateUnblockLender(lender))
     ]
   };

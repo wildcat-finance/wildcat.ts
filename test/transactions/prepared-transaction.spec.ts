@@ -182,6 +182,7 @@ describe("prepared transaction encoding", () => {
       address: makeAddress(14),
       hooksTemplate,
       borrower: makeAddress(15),
+      administrator: makeAddress(15),
       name: "OpenTermHooksInstance"
     });
     const wrapperFactory = new WrapperFactory(SupportedChainId.Sepolia, makeAddress(16), provider);

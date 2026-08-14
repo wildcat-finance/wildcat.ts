@@ -33,6 +33,7 @@ import { SupportedChainId } from "../constants";
 import { assert } from "./assert";
 import { SubgraphLenderHooksAccessDataFragment, SubgraphLenderStatus } from "../gql/graphql";
 import { LenderRole } from "../account";
+import { parseRoleProviderKind } from "../domain";
 
 export const parseMarketParameterConstraints = (
   constraints: MarketParameterConstraintsStructOutput
@@ -294,8 +295,23 @@ export const parseSubgraphLenderHooksAccess = ({
     lastApprovalTimestamp,
     lastProvider: lastProvider
       ? {
-          ...lastProvider,
-          timeToLive: toNumber(lastProvider.timeToLive)
+          kind: parseRoleProviderKind(lastProvider.providerInstance.kind),
+          providerAddress: lastProvider.providerAddress,
+          timeToLive: toNumber(lastProvider.timeToLive),
+          isPullProvider: lastProvider.isPullProvider,
+          pullProviderIndex: lastProvider.pullProviderIndex,
+          isPushProvider: lastProvider.isPushProvider,
+          pushProviderIndex: lastProvider.pushProviderIndex,
+          isApproved: lastProvider.isApproved,
+          ...(lastProvider.providerInstance.administrator
+            ? {
+                isManaged: true,
+                administrator: lastProvider.providerInstance.administrator,
+                ...(lastProvider.providerInstance.pendingAdministrator
+                  ? { pendingAdministrator: lastProvider.providerInstance.pendingAdministrator }
+                  : {})
+              }
+            : {})
         }
       : undefined
   };

@@ -70,6 +70,9 @@ struct RoleProviderDataV2_5 {
   address providerAddress;
   uint24 pullProviderIndex;
   uint24 pushProviderIndex;
+  bool isManaged;
+  address administrator;
+  address pendingAdministrator;
 }
 
 struct HooksTemplateDataV2_5 {
@@ -84,7 +87,8 @@ struct HooksTemplateDataV2_5 {
 
 struct HooksInstanceDataV2_5 {
   address hooksAddress;
-  address borrower;
+  address administrator;
+  address pendingAdministrator;
   string name;
   HooksInstanceKindV2_5 kind;
   HooksTemplateDataV2_5 hooksTemplate;
@@ -180,6 +184,10 @@ struct OptionalUintDataV2_5 {
 
 struct MarketDataV2_5 {
   MarketDataBaseV2_5 market;
+  address borrowerPrincipal;
+  address pendingBorrower;
+  address pendingBorrowerPrincipal;
+  address borrowerIdentityRegistry;
   OptionalUintDataV2_5 commitmentFeeBips;
   OptionalUintDataV2_5 drawnAmount;
 }

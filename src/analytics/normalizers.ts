@@ -143,7 +143,9 @@ export const normalizeAnalyticsMarket = (
     scaleFactor: BigInt(data.scaleFactor),
     isDelinquent: data.isDelinquent,
     isIncurringPenalties: data.isIncurringPenalties,
-    totalDebtUSD: usd(data.totalDebtUSD),
+    ...(data.totalDebtUSD !== null && data.totalDebtUSD !== undefined
+      ? { totalDebtUSD: usd(data.totalDebtUSD) }
+      : {}),
     term: {
       kind,
       ...(kind === HooksKind.FixedTerm && data.hooksConfig
