@@ -315,6 +315,8 @@ interface WildcatMarketV2 {
 
   function queueWithdrawal(uint256 amount) external returns (uint32 expiry);
 
+  function queueWithdrawalScaled(uint256 scaledAmount) external returns (uint32 expiry);
+
   function repay(uint256 amount) external;
 
   function repayAndProcessUnpaidWithdrawalBatches(uint256 repayAmount, uint256 maxBatches) external;
