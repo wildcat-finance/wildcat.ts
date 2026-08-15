@@ -568,6 +568,9 @@ query getRoleProviderAuthority($provider: ID!, $first: Int = 1000, $skip: Int = 
     members(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
       ...RoleProviderMemberData
     }
+    rootChanges(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+      ...RoleProviderRootChangeData
+    }
   }
 }
 

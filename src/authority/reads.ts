@@ -81,6 +81,9 @@ export const getRoleProviderAuthority = async (
   const members: NonNullable<
     SubgraphGetRoleProviderAuthorityQuery["roleProviderInstance"]
   >["members"] = [];
+  const rootChanges: NonNullable<
+    SubgraphGetRoleProviderAuthorityQuery["roleProviderInstance"]
+  >["rootChanges"] = [];
   let providerInstance:
     | NonNullable<SubgraphGetRoleProviderAuthorityQuery["roleProviderInstance"]>
     | undefined;
@@ -98,11 +101,18 @@ export const getRoleProviderAuthority = async (
     providerInstance ??= data.roleProviderInstance;
     attachments.push(...data.roleProviderInstance.attachments);
     members.push(...data.roleProviderInstance.members);
+    rootChanges.push(...data.roleProviderInstance.rootChanges);
     if (
       data.roleProviderInstance.attachments.length < AuthorityPageSize &&
-      data.roleProviderInstance.members.length < AuthorityPageSize
+      data.roleProviderInstance.members.length < AuthorityPageSize &&
+      data.roleProviderInstance.rootChanges.length < AuthorityPageSize
     ) {
-      return normalizeRoleProviderAuthority({ ...providerInstance, attachments, members });
+      return normalizeRoleProviderAuthority({
+        ...providerInstance,
+        attachments,
+        members,
+        rootChanges
+      });
     }
   }
 };

@@ -3924,6 +3924,25 @@ export const wildcatMarketV2Abi = [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "scaledAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "queueWithdrawalScaled",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "wrapper",
         "type": "address"

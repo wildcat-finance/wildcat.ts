@@ -67,7 +67,14 @@ export type HookedMarketAbiKind = "base" | "force-buyback" | "unknown";
 export type PricingMode = "chainlink" | "synthetic-testnet" | "none" | "unknown";
 export type SnapshotSource = "event-projection" | "event-and-contract-call" | "unknown";
 export type ReadStateSource = "indexed" | "live";
-export type RoleProviderKind = "access-list" | "unknown";
+export type RoleProviderKind =
+  | "access-list"
+  | "merkle"
+  | "erc20"
+  | "erc4626-assets"
+  | "erc721"
+  | "erc1155"
+  | "unknown";
 
 export const parseHooksKind = (value: string | null | undefined): HooksKind => {
   switch (normalizeEnumValue(value)) {
@@ -133,8 +140,24 @@ export const parseSnapshotSource = (value: string | null | undefined): SnapshotS
   }
 };
 
-export const parseRoleProviderKind = (value: string | null | undefined): RoleProviderKind =>
-  normalizeEnumValue(value) === "accesslist" ? "access-list" : "unknown";
+export const parseRoleProviderKind = (value: string | null | undefined): RoleProviderKind => {
+  switch (normalizeEnumValue(value)) {
+    case "accesslist":
+      return "access-list";
+    case "merkle":
+      return "merkle";
+    case "erc20":
+      return "erc20";
+    case "erc4626assets":
+      return "erc4626-assets";
+    case "erc721":
+      return "erc721";
+    case "erc1155":
+      return "erc1155";
+    default:
+      return "unknown";
+  }
+};
 
 export const parseMarketOriginKind = (
   value: string | null | undefined

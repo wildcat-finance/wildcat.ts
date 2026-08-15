@@ -142,12 +142,20 @@ describe("generated viem ABIs", () => {
       "cancelBorrowerTransfer",
       "pendingBorrower",
       "pendingBorrowerPrincipal",
+      "queueWithdrawalScaled",
       "registerWrapper",
       "requestBorrowerTransfer",
       "registeredWrapper",
       "scaledTransferRounding",
       "wrapperFactory"
     ]);
+    expect(
+      encodeFunctionData({
+        abi: wildcatMarketV2Abi,
+        functionName: "queueWithdrawalScaled",
+        args: [123n]
+      }).slice(0, 10)
+    ).to.equal("0x5ee883f8");
     expect(functionNames(wildcat4626WrapperFactoryAbi)).to.include.members([
       "isFloorRoundingMarket",
       "v1Factory",

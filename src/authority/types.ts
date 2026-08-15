@@ -1,4 +1,4 @@
-import { HooksKind, IndexedAt, RoleProviderKind } from "../domain";
+import { FactoryLifecycle, HooksKind, IndexedAt, RoleProviderKind } from "../domain";
 
 export type ProviderMetadataState = "available" | "unavailable" | "unknown";
 export type AdministratorChangeKind =
@@ -46,19 +46,46 @@ export type RoleProviderMember = {
   updatedAt: IndexedAt;
 };
 
-export type RoleProviderAuthority = {
-  id: string;
+export type RoleProviderFactoryMetadata = {
   address: string;
   kind: RoleProviderKind;
+  label: string;
+  generation: string;
+  configuredStartBlock: bigint;
+  indexed: boolean;
+  lifecycle: FactoryLifecycle;
+  configured: boolean;
+};
+
+type RoleProviderAuthorityBase = {
+  id: string;
+  address: string;
   administrator?: string;
   pendingAdministrator?: string;
   deployer?: string;
-  deploymentFactory?: string;
+  deploymentFactory?: RoleProviderFactoryMetadata;
   salt?: string;
   deployedAt?: IndexedAt;
   attachments: RoleProviderAttachment[];
   members: RoleProviderMember[];
+  rootChanges: RoleProviderRootChange[];
 };
+
+export type RoleProviderConfiguration =
+  | { kind: "access-list" }
+  | { kind: "merkle"; root: string }
+  | { kind: "erc20"; token: string; minBalance: bigint }
+  | { kind: "erc4626-assets"; vault: string; minAssets: bigint }
+  | { kind: "erc721"; token: string; skipInterfaceCheck: boolean }
+  | {
+      kind: "erc1155";
+      token: string;
+      tokenId: bigint;
+      skipInterfaceCheck: boolean;
+    }
+  | { kind: "unknown" };
+
+export type RoleProviderAuthority = RoleProviderAuthorityBase & RoleProviderConfiguration;
 
 export type AdministratorChange = IndexedAt & {
   id: string;
@@ -85,4 +112,12 @@ export type RoleProviderMembershipChange = IndexedAt & {
   kind: MembershipChangeKind;
   account: string;
   administrator: string;
+};
+
+export type RoleProviderRootChange = IndexedAt & {
+  id: string;
+  provider: string;
+  administrator: string;
+  previousRoot: string;
+  newRoot: string;
 };

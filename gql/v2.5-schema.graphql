@@ -12,10 +12,17 @@ directive @entity on OBJECT
 "Defined a Subgraph ID for an object type"
 directive @subgraphId(id: String!) on OBJECT
 
-type AccessListRoleProviderFactory {
+type RoleProviderFactory {
   address: Bytes!
+  configured: Boolean!
+  configuredStartBlock: BigInt!
   eventIndex: Int!
+  generation: String!
   id: ID!
+  indexed: Boolean!
+  kind: RoleProviderKind!
+  label: String!
+  lifecycle: FactoryLifecycle!
   providers(
     first: Int = 100
     orderBy: RoleProviderInstance_orderBy
@@ -25,7 +32,7 @@ type AccessListRoleProviderFactory {
   ): [RoleProviderInstance!]!
 }
 
-input AccessListRoleProviderFactory_filter {
+input RoleProviderFactory_filter {
   """
   Filter for the block changed event.
   """
@@ -40,7 +47,9 @@ input AccessListRoleProviderFactory_filter {
   address_not: Bytes
   address_not_contains: Bytes
   address_not_in: [Bytes!]
-  and: [AccessListRoleProviderFactory_filter]
+  and: [RoleProviderFactory_filter]
+  configured: Boolean
+  configuredStartBlock: BigInt
   eventIndex: Int
   eventIndex_gt: Int
   eventIndex_gte: Int
@@ -49,6 +58,7 @@ input AccessListRoleProviderFactory_filter {
   eventIndex_lte: Int
   eventIndex_not: Int
   eventIndex_not_in: [Int!]
+  generation: String
   id: ID
   id_gt: ID
   id_gte: ID
@@ -57,14 +67,25 @@ input AccessListRoleProviderFactory_filter {
   id_lte: ID
   id_not: ID
   id_not_in: [ID!]
-  or: [AccessListRoleProviderFactory_filter]
+  indexed: Boolean
+  kind: RoleProviderKind
+  label: String
+  lifecycle: FactoryLifecycle
+  or: [RoleProviderFactory_filter]
   providers_: RoleProviderInstance_filter
 }
 
-enum AccessListRoleProviderFactory_orderBy {
+enum RoleProviderFactory_orderBy {
   address
+  configured
+  configuredStartBlock
   eventIndex
+  generation
   id
+  indexed
+  kind
+  label
+  lifecycle
   providers
 }
 
@@ -21125,22 +21146,22 @@ type Query {
   Access to subgraph metadata
   """
   _meta(block: Block_height): _Meta_
-  accessListRoleProviderFactories(
+  roleProviderFactories(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
     block: Block_height
     first: Int = 100
-    orderBy: AccessListRoleProviderFactory_orderBy
+    orderBy: RoleProviderFactory_orderBy
     orderDirection: OrderDirection
     skip: Int = 0
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-    where: AccessListRoleProviderFactory_filter
-  ): [AccessListRoleProviderFactory!]!
-  accessListRoleProviderFactory(
+    where: RoleProviderFactory_filter
+  ): [RoleProviderFactory!]!
+  roleProviderFactory(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
@@ -21150,7 +21171,7 @@ type Query {
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): AccessListRoleProviderFactory
+  ): RoleProviderFactory
   accountAccessGranted(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -25693,9 +25714,11 @@ type RoleProviderInstance {
   deployedAtTimestamp: BigInt
   deployedAtTransaction: Bytes
   deployer: Bytes
-  deploymentFactory: AccessListRoleProviderFactory
+  deploymentFactory: RoleProviderFactory
   id: ID!
   kind: RoleProviderKind!
+  minAssets: BigInt
+  minBalance: BigInt
   members(
     first: Int = 100
     orderBy: RoleProviderMember_orderBy
@@ -25711,7 +25734,19 @@ type RoleProviderInstance {
     where: RoleProviderMembershipChange_filter
   ): [RoleProviderMembershipChange!]!
   pendingAdministrator: Bytes
+  root: Bytes
+  rootChanges(
+    first: Int = 100
+    orderBy: RoleProviderRootChange_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: RoleProviderRootChange_filter
+  ): [RoleProviderRootChange!]!
   salt: Bytes
+  skipInterfaceCheck: Boolean
+  token: Bytes
+  tokenId: BigInt
+  vault: Bytes
 }
 
 input RoleProviderInstance_filter {
@@ -25787,7 +25822,7 @@ input RoleProviderInstance_filter {
   deployer_not_contains: Bytes
   deployer_not_in: [Bytes!]
   deploymentFactory: String
-  deploymentFactory_: AccessListRoleProviderFactory_filter
+  deploymentFactory_: RoleProviderFactory_filter
   deploymentFactory_contains: String
   deploymentFactory_contains_nocase: String
   deploymentFactory_ends_with: String
@@ -25832,6 +25867,7 @@ input RoleProviderInstance_filter {
   pendingAdministrator_not: Bytes
   pendingAdministrator_not_contains: Bytes
   pendingAdministrator_not_in: [Bytes!]
+  rootChanges_: RoleProviderRootChange_filter
   salt: Bytes
   salt_contains: Bytes
   salt_gt: Bytes
@@ -25863,11 +25899,17 @@ enum RoleProviderInstance_orderBy {
   members
   membershipChanges
   pendingAdministrator
+  rootChanges
   salt
 }
 
 enum RoleProviderKind {
   ACCESS_LIST
+  ERC1155
+  ERC20
+  ERC4626_ASSETS
+  ERC721
+  MERKLE
   UNKNOWN
 }
 
@@ -26157,6 +26199,31 @@ enum RoleProviderMembershipChange_orderBy {
   provider__kind
   provider__pendingAdministrator
   provider__salt
+  transactionHash
+}
+
+type RoleProviderRootChange {
+  administrator: Bytes!
+  blockLogIndex: BigInt!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  id: ID!
+  newRoot: Bytes!
+  previousRoot: Bytes!
+  provider: RoleProviderInstance!
+  transactionHash: Bytes!
+}
+
+input RoleProviderRootChange_filter {
+  id: ID
+  provider: String
+}
+
+enum RoleProviderRootChange_orderBy {
+  blockLogIndex
+  blockNumber
+  blockTimestamp
+  id
   transactionHash
 }
 
@@ -30281,22 +30348,22 @@ type Subscription {
   Access to subgraph metadata
   """
   _meta(block: Block_height): _Meta_
-  accessListRoleProviderFactories(
+  roleProviderFactories(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
     block: Block_height
     first: Int = 100
-    orderBy: AccessListRoleProviderFactory_orderBy
+    orderBy: RoleProviderFactory_orderBy
     orderDirection: OrderDirection
     skip: Int = 0
     """
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-    where: AccessListRoleProviderFactory_filter
-  ): [AccessListRoleProviderFactory!]!
-  accessListRoleProviderFactory(
+    where: RoleProviderFactory_filter
+  ): [RoleProviderFactory!]!
+  roleProviderFactory(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
     """
@@ -30306,7 +30373,7 @@ type Subscription {
     Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
     """
     subgraphError: _SubgraphErrorPolicy_! = deny
-  ): AccessListRoleProviderFactory
+  ): RoleProviderFactory
   accountAccessGranted(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
