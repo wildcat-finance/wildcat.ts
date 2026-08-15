@@ -537,6 +537,29 @@ export class TokenWrapper extends ContractWrapper {
     });
   }
 
+  /**
+   * Prepare the v2.5 Safe batch for exact wrapped-share queueing.
+   *
+   * Both transactions must execute atomically from `account`. The market call
+   * uses the raw wrapper share amount without converting it to normalized
+   * assets. Markets deployed before the v2.5 scaled-queue change do not expose
+   * the second selector.
+   */
+  populateRedeemAndQueueWithdrawalScaledBatch(
+    shares: TokenAmount,
+    account: string
+  ): [PartialTransaction, PartialTransaction] {
+    return [
+      this.populateRedeem(shares, account, account),
+      prepareTransaction({
+        to: this.marketAddress,
+        abi: wildcatMarketV2Abi,
+        functionName: "queueWithdrawalScaled",
+        args: [shares.raw]
+      })
+    ];
+  }
+
   async sweep(token: string, to: string): Promise<TransactionHash> {
     return submitPreparedTransaction(this.signer, this.populateSweep(token, to));
   }

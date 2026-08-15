@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { providers } from "ethers";
-import { encodeFunctionData, type Address } from "viem";
+import { decodeFunctionData, encodeFunctionData, type Address } from "viem";
 import {
   iERC20Abi,
   iOpenTermHooksAbi,
@@ -243,6 +243,29 @@ describe("prepared transaction encoding", () => {
         args: [makeAddress(20)]
       })
     );
+
+    const account = makeAddress(21);
+    const shares = wrapper.shareToken.getAmount(123n);
+    const [redeem, queue] = wrapper.populateRedeemAndQueueWithdrawalScaledBatch(shares, account);
+    expect([redeem.to, queue.to]).to.deep.equal([wrapper.address, market]);
+    expect(
+      decodeFunctionData({
+        abi: wildcat4626WrapperAbi,
+        data: redeem.data as `0x${string}`
+      })
+    ).to.deep.equal({
+      functionName: "redeem",
+      args: [123n, account, account]
+    });
+    expect(
+      decodeFunctionData({
+        abi: wildcatMarketV2Abi,
+        data: queue.data as `0x${string}`
+      })
+    ).to.deep.equal({
+      functionName: "queueWithdrawalScaled",
+      args: [123n]
+    });
   });
 
   it("uses viem encoding through token approval helpers", () => {
