@@ -29,8 +29,10 @@ export * from "./access-control";
 export * from "./context";
 export * from "./fixed-term";
 export * from "./lender-restoration";
+export * from "./market-salt";
 export * from "./periodic-term";
 export * from "./revolving";
+export * from "./transfer-policy";
 export * from "./validation";
 
 export type HooksTemplate =

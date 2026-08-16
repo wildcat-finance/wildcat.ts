@@ -45,9 +45,11 @@ import {
 } from "./validation";
 import { encodeRevolvingMarketData } from "./revolving";
 import { HooksAccountContext, HooksLensReadContext } from "./context";
+import { isMarketSaltFormatValid } from "./market-salt";
 import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iPeriodicTermHooksAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
 import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
+import { readMarketTransferRecipientAllowed } from "./transfer-policy";
 import { parseRoleProviderKind } from "../domain";
 import {
   createHooksFactoryContractFacade,
@@ -96,6 +98,15 @@ export class PeriodicTermHooks extends ContractWrapper {
 
   get hooksFactory(): string {
     return this.hooksTemplate.hooksFactory;
+  }
+
+  isMarketTransferRecipientAllowed(marketAddress: string, recipient: string): Promise<boolean> {
+    return readMarketTransferRecipientAllowed(
+      this.provider,
+      this.address,
+      marketAddress,
+      recipient
+    );
   }
 
   previewBlockLenders(_: string[]): ChangeLenderRolePreview {
@@ -368,8 +379,15 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
     ...otherParameters
   }: PeriodicTermMarketDeploymentArgs): DeployMarketPreview {
     const targetMarketKind = marketKind ?? "standard";
-    const deploymentStatus = getHooksTemplateDeploymentStatus(this, targetMarketKind);
+    const deploymentStatus = getHooksTemplateDeploymentStatus(
+      this,
+      targetMarketKind,
+      !!hooksAddress
+    );
     if (deploymentStatus) return { status: deploymentStatus };
+    if (!isMarketSaltFormatValid(salt)) {
+      return { status: DeployMarketStatus.InvalidMarketSaltFormat };
+    }
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -503,7 +521,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
 }
 
 type PeriodicTermCommonMarketDeploymentArgs = MarketParameters & {
-  /** Create2 salt to use for the market deployment */
+  /** CREATE2 salt encoded as immediate factory caller followed by a 12-byte nonce. */
   salt: string;
   /** First timestamp at which lenders can queue withdrawals */
   firstWithdrawalWindowStart: number;

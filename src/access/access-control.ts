@@ -45,7 +45,9 @@ import {
 } from "./validation";
 import { encodeRevolvingMarketData } from "./revolving";
 import { HooksAccountContext, HooksLensReadContext } from "./context";
+import { isMarketSaltFormatValid } from "./market-salt";
 import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
+import { readMarketTransferRecipientAllowed } from "./transfer-policy";
 import { parseRoleProviderKind } from "../domain";
 import {
   createHooksFactoryContractFacade,
@@ -93,6 +95,15 @@ export class OpenTermHooks extends ContractWrapper {
 
   get hooksFactory(): string {
     return this.hooksTemplate.hooksFactory;
+  }
+
+  isMarketTransferRecipientAllowed(marketAddress: string, recipient: string): Promise<boolean> {
+    return readMarketTransferRecipientAllowed(
+      this.provider,
+      this.address,
+      marketAddress,
+      recipient
+    );
   }
 
   /* ========================================================================== */
@@ -373,8 +384,15 @@ export class OpenTermHooksTemplate extends ContractWrapper {
     ...otherParameters
   }: OpenTermMarketDeploymentArgs): DeployMarketPreview {
     const targetMarketKind = marketKind ?? "standard";
-    const deploymentStatus = getHooksTemplateDeploymentStatus(this, targetMarketKind);
+    const deploymentStatus = getHooksTemplateDeploymentStatus(
+      this,
+      targetMarketKind,
+      !!hooksAddress
+    );
     if (deploymentStatus) return { status: deploymentStatus };
+    if (!isMarketSaltFormatValid(salt)) {
+      return { status: DeployMarketStatus.InvalidMarketSaltFormat };
+    }
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -494,7 +512,7 @@ export class OpenTermHooksTemplate extends ContractWrapper {
 }
 
 type OpenTermCommonMarketDeploymentArgs = MarketParameters & {
-  /** Create2 salt to use for the market deployment */
+  /** CREATE2 salt encoded as immediate factory caller followed by a 12-byte nonce. */
   salt: string;
 
   /** Minimum deposit lenders can make */

@@ -209,6 +209,7 @@ describe("generated viem ABIs", () => {
         "acceptAdministratorTransfer",
         "addRoleProvider",
         "createRoleProvider",
+        "isMarketTransferRecipientAllowed",
         "removeRoleProvider",
         "requestAdministratorTransfer"
       ]);

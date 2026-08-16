@@ -82,6 +82,10 @@ describe("SDK public surface smoke", () => {
     expect(typeof sdk.getMarketBorrowerChanges).to.equal("function");
     expect(typeof sdk.getHookAuthority).to.equal("function");
     expect(typeof sdk.getRoleProviderAuthority).to.equal("function");
+    expect(typeof sdk.encodeMarketSalt).to.equal("function");
+    expect(typeof sdk.isMarketSaltFormatValid).to.equal("function");
+    expect(typeof sdk.isMarketSaltForFactoryCaller).to.equal("function");
+    expect(typeof sdk.readMarketTransferRecipientAllowed).to.equal("function");
     expect(typeof sdk.prepareRequestMarketBorrowerTransfer).to.equal("function");
     expect(typeof sdk.prepareAddAccessListMembers).to.equal("function");
     expect(sdk.MarketOnboardingMode.SelfOnboard).to.equal("self-onboard");

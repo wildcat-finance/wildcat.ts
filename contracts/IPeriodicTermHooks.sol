@@ -208,6 +208,11 @@ interface IPeriodicTermHooks {
 
   function isMarketTransferDisabled(address marketAddress) external view returns (bool);
 
+  function isMarketTransferRecipientAllowed(
+    address marketAddress,
+    address recipient
+  ) external view returns (bool);
+
   function isWithdrawalWindowOpen(address marketAddress) external view returns (bool);
 
   function name() external view returns (string memory);

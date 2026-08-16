@@ -244,6 +244,11 @@ interface IFixedTermHooks {
 
   function isMarketTransferDisabled(address marketAddress) external view returns (bool);
 
+  function isMarketTransferRecipientAllowed(
+    address marketAddress,
+    address recipient
+  ) external view returns (bool);
+
   function MaximumLoanTerm() external view returns (uint32);
 
   function name() external view returns (string memory);

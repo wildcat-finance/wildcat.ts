@@ -916,14 +916,12 @@ export class Market extends ContractWrapper {
     if (annualInterestBips < originalAnnualInterestBips) {
       let doubleRelativeDiff: number;
       if (this.version === MarketVersion.V2) {
-        const relativeDiff = Number(
-          (10_000n * BigInt(originalAnnualInterestBips - annualInterestBips)) /
-            BigInt(originalAnnualInterestBips)
-        );
-        if (relativeDiff <= 2_500) {
-          // In v2, if the relative diff is 25% or less, the reserve ratio is not changed
+        const reduction = BigInt(originalAnnualInterestBips - annualInterestBips);
+        if (reduction * 10_000n <= BigInt(originalAnnualInterestBips) * 2_500n) {
+          // v2 only raises the reserve ratio when the exact reduction exceeds 25%.
           return originalReserveRatioBips;
         }
+        const relativeDiff = Number((10_000n * reduction) / BigInt(originalAnnualInterestBips));
         doubleRelativeDiff = 2 * relativeDiff;
       } else {
         doubleRelativeDiff = Number(

@@ -224,6 +224,11 @@ interface IOpenTermHooks {
 
   function isMarketTransferDisabled(address marketAddress) external view returns (bool);
 
+  function isMarketTransferRecipientAllowed(
+    address marketAddress,
+    address recipient
+  ) external view returns (bool);
+
   function name() external view returns (string memory);
 
   function onBorrow(uint256 param0, MarketStateV2 calldata param1, bytes calldata param2) external;

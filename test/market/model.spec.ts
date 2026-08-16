@@ -1395,6 +1395,23 @@ describe("Market model routing metadata", () => {
   });
 });
 
+describe("Market reserve ratio previews", () => {
+  const makeV2Market = (annualInterestBips: number): Market => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
+    const data = makeUnifiedMarketDataV2(hooksFactory);
+    data.market.annualInterestBips = BigNumber.from(annualInterestBips);
+    data.market.originalAnnualInterestBips = BigNumber.from(annualInterestBips);
+    data.market.reserveRatioBips = BigNumber.from(1_000);
+    data.market.originalReserveRatioBips = BigNumber.from(1_000);
+    return Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
+  };
+
+  it("compares the exact v2 APR reduction before rounding to bips", () => {
+    expect(makeV2Market(10_000).getReserveRatioForNewAPR(7_500)).to.equal(1_000);
+    expect(makeV2Market(9_999).getReserveRatioForNewAPR(7_499)).to.equal(5_000);
+  });
+});
+
 describe("Market revolving APR helpers", () => {
   it("computes exact-current revolving APR metrics from raw SDK state", () => {
     const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryRevolving");
