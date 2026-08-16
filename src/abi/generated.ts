@@ -44808,6 +44808,111 @@ export const iOpenTermHooksAbi = [
     "inputs": [
       {
         "internalType": "address",
+        "name": "lender",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint128",
+        "name": "normalizedAmountWithdrawn",
+        "type": "uint128"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint128",
+            "name": "maxTotalSupply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "accruedProtocolFees",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "normalizedUnclaimedWithdrawals",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint104",
+            "name": "scaledTotalSupply",
+            "type": "uint104"
+          },
+          {
+            "internalType": "uint104",
+            "name": "scaledPendingWithdrawals",
+            "type": "uint104"
+          },
+          {
+            "internalType": "uint32",
+            "name": "pendingWithdrawalExpiry",
+            "type": "uint32"
+          },
+          {
+            "internalType": "bool",
+            "name": "isDelinquent",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timeDelinquent",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "protocolFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "annualInterestBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reserveRatioBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint112",
+            "name": "scaleFactor",
+            "type": "uint112"
+          },
+          {
+            "internalType": "uint32",
+            "name": "lastInterestAccruedTimestamp",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct MarketStateV2",
+        "name": "state",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "hooksData",
+        "type": "bytes"
+      }
+    ],
+    "name": "onExecuteWithdrawal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "param0",
         "type": "address"
       },
@@ -46821,6 +46926,111 @@ export const iFixedTermHooksAbi = [
         ],
         "internalType": "struct MarketStateV2",
         "name": "param2",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "hooksData",
+        "type": "bytes"
+      }
+    ],
+    "name": "onExecuteWithdrawal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lender",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint128",
+        "name": "normalizedAmountWithdrawn",
+        "type": "uint128"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint128",
+            "name": "maxTotalSupply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "accruedProtocolFees",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "normalizedUnclaimedWithdrawals",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint104",
+            "name": "scaledTotalSupply",
+            "type": "uint104"
+          },
+          {
+            "internalType": "uint104",
+            "name": "scaledPendingWithdrawals",
+            "type": "uint104"
+          },
+          {
+            "internalType": "uint32",
+            "name": "pendingWithdrawalExpiry",
+            "type": "uint32"
+          },
+          {
+            "internalType": "bool",
+            "name": "isDelinquent",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timeDelinquent",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "protocolFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "annualInterestBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reserveRatioBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint112",
+            "name": "scaleFactor",
+            "type": "uint112"
+          },
+          {
+            "internalType": "uint32",
+            "name": "lastInterestAccruedTimestamp",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct MarketStateV2",
+        "name": "state",
         "type": "tuple"
       },
       {

@@ -249,10 +249,20 @@ interface IOpenTermHooks {
     bytes calldata hooksData
   ) external;
 
+  // Legacy callback retained so this consumer ABI can decode v2 and v2.1 calldata.
   function onExecuteWithdrawal(
     address lender,
     uint128 param1,
     MarketStateV2 calldata param2,
+    bytes calldata hooksData
+  ) external;
+
+  // v2.5 passes the exact withdrawal-batch expiry through to the hook.
+  function onExecuteWithdrawal(
+    address lender,
+    uint32 expiry,
+    uint128 normalizedAmountWithdrawn,
+    MarketStateV2 calldata state,
     bytes calldata hooksData
   ) external;
 

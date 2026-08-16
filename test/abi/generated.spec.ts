@@ -85,6 +85,18 @@ const functionNames = (abi: readonly unknown[]): string[] => {
     .map((entry) => entry.name);
 };
 
+const functionInputTypes = (abi: readonly unknown[], functionName: string): string[][] => {
+  return abi
+    .filter(
+      (entry): entry is { type: "function"; name: string; inputs: Array<{ type: string }> } =>
+        typeof entry === "object" &&
+        entry !== null &&
+        (entry as { type?: string }).type === "function" &&
+        (entry as { name?: string }).name === functionName
+    )
+    .map((entry) => entry.inputs.map(({ type }) => type));
+};
+
 const errorNames = (abi: readonly unknown[]): string[] => {
   return abi
     .filter(
@@ -184,6 +196,10 @@ describe("generated viem ABIs", () => {
         expect(hasNamedComponent(getter, "allowForceBuyBacks")).to.equal(false);
       }
       expect(functionNames(abi as readonly unknown[])).to.include("revokeRoles");
+      expect(functionInputTypes(abi as readonly unknown[], "onExecuteWithdrawal")).to.deep.equal([
+        ["address", "uint128", "tuple", "bytes"],
+        ["address", "uint32", "uint128", "tuple", "bytes"]
+      ]);
     }
   });
 
