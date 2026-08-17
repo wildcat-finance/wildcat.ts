@@ -33,6 +33,7 @@ import {
   getProtocolDailyStatsPage,
   getTokenPriceObservationPage
 } from "../../src/analytics";
+import { normalizeAnalyticsMarket } from "../../src/analytics/normalizers";
 import {
   SubgraphFeatureUnavailableError,
   SubgraphDeploymentRequirementsByChain,
@@ -193,6 +194,15 @@ const borrowerTotals = {
 };
 
 describe("V2.5 indexed analytics reads", () => {
+  it("represents unpriced nonzero market debt as unavailable", () => {
+    const normalized = normalizeAnalyticsMarket({
+      ...market,
+      totalDebtUSD: null
+    } as unknown as Parameters<typeof normalizeAnalyticsMarket>[0]);
+
+    expect(normalized.totalDebtUSD).to.equal(undefined);
+  });
+
   it("normalizes borrower, lender, market, and protocol read models losslessly", async () => {
     const { client, operations } = createClient(metadataFor(SupportedChainId.Sepolia), {
       getBorrowerAnalyticsProfile: () => ({

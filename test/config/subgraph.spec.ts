@@ -82,8 +82,14 @@ const close = (server: Server): Promise<void> =>
 describe("V2.5 subgraph endpoint compatibility", () => {
   it("pins the replacement Sepolia V2.5 endpoint", () => {
     expect(SubgraphUrls[SupportedChainId.Sepolia]).to.equal(
-      "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.5.3/gn"
+      "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.5.8/gn"
     );
+  });
+
+  it("keeps the production and Plasma endpoints on V2.0.22", () => {
+    expect(SubgraphUrls[SupportedChainId.Mainnet]).to.include("/mainnet/v2.0.22/gn");
+    expect(SubgraphUrls[SupportedChainId.PlasmaTestnet]).to.include("/plasma-testnet/v2.0.22/gn");
+    expect(SubgraphUrls[SupportedChainId.PlasmaMainnet]).to.include("/plasma-mainnet/v2.0.22/gn");
   });
 
   it("accepts metadata matching the configured chain contract", () => {

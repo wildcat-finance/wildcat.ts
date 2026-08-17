@@ -704,6 +704,7 @@ enum AccountMadeFirstDeposit_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -721,6 +722,7 @@ enum AccountMadeFirstDeposit_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -1088,6 +1090,7 @@ enum AnnualInterestBipsReductionExecuted_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -1105,6 +1108,7 @@ enum AnnualInterestBipsReductionExecuted_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -1300,6 +1304,7 @@ enum AnnualInterestBipsReductionProposalCancelled_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -1317,6 +1322,7 @@ enum AnnualInterestBipsReductionProposalCancelled_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -1549,6 +1555,7 @@ enum AnnualInterestBipsReductionProposed_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -1566,6 +1573,7 @@ enum AnnualInterestBipsReductionProposed_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -1755,6 +1763,7 @@ enum AnnualInterestBipsUpdated_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -1772,6 +1781,7 @@ enum AnnualInterestBipsUpdated_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -1953,6 +1963,7 @@ enum Approval_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -1970,6 +1981,7 @@ enum Approval_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -2392,6 +2404,7 @@ enum Borrow_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -2409,6 +2422,7 @@ enum Borrow_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -2469,12 +2483,14 @@ type Borrower {
 
 type BorrowerDailyStats {
   borrower: Bytes!
+  cumulativeUsdTotalsComplete: Boolean!
   dayBaseInterestAccruedUSD: BigDecimal!
   dayBorrowedUSD: BigDecimal!
   dayDelinquencyFeesAccruedUSD: BigDecimal!
   dayDepositedUSD: BigDecimal!
   dayProtocolFeesAccruedUSD: BigDecimal!
   dayRepaidUSD: BigDecimal!
+  dayUsdTotalsComplete: Boolean!
   dayWithdrawalsExecutedUSD: BigDecimal!
   dayWithdrawalsRequestedUSD: BigDecimal!
   endTimestamp: Int!
@@ -2511,6 +2527,10 @@ input BorrowerDailyStats_filter {
   borrower_not: Bytes
   borrower_not_contains: Bytes
   borrower_not_in: [Bytes!]
+  cumulativeUsdTotalsComplete: Boolean
+  cumulativeUsdTotalsComplete_in: [Boolean!]
+  cumulativeUsdTotalsComplete_not: Boolean
+  cumulativeUsdTotalsComplete_not_in: [Boolean!]
   dayBaseInterestAccruedUSD: BigDecimal
   dayBaseInterestAccruedUSD_gt: BigDecimal
   dayBaseInterestAccruedUSD_gte: BigDecimal
@@ -2559,6 +2579,10 @@ input BorrowerDailyStats_filter {
   dayRepaidUSD_lte: BigDecimal
   dayRepaidUSD_not: BigDecimal
   dayRepaidUSD_not_in: [BigDecimal!]
+  dayUsdTotalsComplete: Boolean
+  dayUsdTotalsComplete_in: [Boolean!]
+  dayUsdTotalsComplete_not: Boolean
+  dayUsdTotalsComplete_not_in: [Boolean!]
   dayWithdrawalsExecutedUSD: BigDecimal
   dayWithdrawalsExecutedUSD_gt: BigDecimal
   dayWithdrawalsExecutedUSD_gte: BigDecimal
@@ -2721,12 +2745,14 @@ input BorrowerDailyStats_filter {
 
 enum BorrowerDailyStats_orderBy {
   borrower
+  cumulativeUsdTotalsComplete
   dayBaseInterestAccruedUSD
   dayBorrowedUSD
   dayDelinquencyFeesAccruedUSD
   dayDepositedUSD
   dayProtocolFeesAccruedUSD
   dayRepaidUSD
+  dayUsdTotalsComplete
   dayWithdrawalsExecutedUSD
   dayWithdrawalsRequestedUSD
   endTimestamp
@@ -2875,6 +2901,7 @@ type BorrowerStats {
   totalRepaidUSD: BigDecimal!
   totalWithdrawalsExecutedUSD: BigDecimal!
   totalWithdrawalsRequestedUSD: BigDecimal!
+  usdTotalsComplete: Boolean!
 }
 
 input BorrowerStats_filter {
@@ -3043,6 +3070,10 @@ input BorrowerStats_filter {
   totalWithdrawalsRequestedUSD_lte: BigDecimal
   totalWithdrawalsRequestedUSD_not: BigDecimal
   totalWithdrawalsRequestedUSD_not_in: [BigDecimal!]
+  usdTotalsComplete: Boolean
+  usdTotalsComplete_in: [Boolean!]
+  usdTotalsComplete_not: Boolean
+  usdTotalsComplete_not_in: [Boolean!]
 }
 
 enum BorrowerStats_orderBy {
@@ -3074,6 +3105,7 @@ enum BorrowerStats_orderBy {
   totalRepaidUSD
   totalWithdrawalsExecutedUSD
   totalWithdrawalsRequestedUSD
+  usdTotalsComplete
 }
 
 input Borrower_filter {
@@ -3211,6 +3243,7 @@ enum Borrower_orderBy {
   stats__totalRepaidUSD
   stats__totalWithdrawalsExecutedUSD
   stats__totalWithdrawalsRequestedUSD
+  stats__usdTotalsComplete
 }
 
 scalar Bytes
@@ -4016,6 +4049,7 @@ enum ControllerFactory_orderBy {
   originationFeeAsset__id
   originationFeeAsset__isMock
   originationFeeAsset__isUsdStablecoin
+  originationFeeAsset__lastPriceFeedSearchDay
   originationFeeAsset__name
   originationFeeAsset__priceFeed0
   originationFeeAsset__priceFeed1
@@ -4431,6 +4465,7 @@ enum DebtRepaid_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -4448,6 +4483,7 @@ enum DebtRepaid_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -4641,6 +4677,7 @@ enum DelinquencyStatusChanged_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -4658,6 +4695,7 @@ enum DelinquencyStatusChanged_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -4880,6 +4918,7 @@ enum Deposit_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -4897,6 +4936,7 @@ enum Deposit_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -5093,6 +5133,7 @@ enum DisabledForceBuyBacks_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -5110,6 +5151,7 @@ enum DisabledForceBuyBacks_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -5636,6 +5678,7 @@ enum FeesCollected_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -5653,6 +5696,7 @@ enum FeesCollected_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -5876,6 +5920,7 @@ enum FixedTermUpdated_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -5893,6 +5938,7 @@ enum FixedTermUpdated_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -6124,6 +6170,7 @@ enum ForceBuyBack_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -6141,6 +6188,7 @@ enum ForceBuyBack_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -6476,6 +6524,7 @@ enum HooksConfig_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -6493,6 +6542,7 @@ enum HooksConfig_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -7824,6 +7874,7 @@ enum HooksTemplateRegistrationEvent_orderBy {
   originationFeeAsset__id
   originationFeeAsset__isMock
   originationFeeAsset__isUsdStablecoin
+  originationFeeAsset__lastPriceFeedSearchDay
   originationFeeAsset__name
   originationFeeAsset__priceFeed0
   originationFeeAsset__priceFeed1
@@ -8103,6 +8154,7 @@ enum HooksTemplateRegistration_orderBy {
   originationFeeAsset__id
   originationFeeAsset__isMock
   originationFeeAsset__isUsdStablecoin
+  originationFeeAsset__lastPriceFeedSearchDay
   originationFeeAsset__name
   originationFeeAsset__priceFeed0
   originationFeeAsset__priceFeed1
@@ -8719,6 +8771,7 @@ enum KnownLenderStatus_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -8736,6 +8789,7 @@ enum KnownLenderStatus_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -9209,6 +9263,7 @@ enum LenderAccount_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -9226,6 +9281,7 @@ enum LenderAccount_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -9490,8 +9546,10 @@ enum LenderAuthorization_orderBy {
 }
 
 type LenderDailyStats {
+  cumulativeUsdTotalsComplete: Boolean!
   dayDepositedUSD: BigDecimal!
   dayInterestEarnedUSD: BigDecimal!
+  dayUsdTotalsComplete: Boolean!
   dayWithdrawalsExecutedUSD: BigDecimal!
   dayWithdrawalsRequestedUSD: BigDecimal!
   endTimestamp: Int!
@@ -9512,6 +9570,10 @@ input LenderDailyStats_filter {
   """
   _change_block: BlockChangedFilter
   and: [LenderDailyStats_filter]
+  cumulativeUsdTotalsComplete: Boolean
+  cumulativeUsdTotalsComplete_in: [Boolean!]
+  cumulativeUsdTotalsComplete_not: Boolean
+  cumulativeUsdTotalsComplete_not_in: [Boolean!]
   dayDepositedUSD: BigDecimal
   dayDepositedUSD_gt: BigDecimal
   dayDepositedUSD_gte: BigDecimal
@@ -9528,6 +9590,10 @@ input LenderDailyStats_filter {
   dayInterestEarnedUSD_lte: BigDecimal
   dayInterestEarnedUSD_not: BigDecimal
   dayInterestEarnedUSD_not_in: [BigDecimal!]
+  dayUsdTotalsComplete: Boolean
+  dayUsdTotalsComplete_in: [Boolean!]
+  dayUsdTotalsComplete_not: Boolean
+  dayUsdTotalsComplete_not_in: [Boolean!]
   dayWithdrawalsExecutedUSD: BigDecimal
   dayWithdrawalsExecutedUSD_gt: BigDecimal
   dayWithdrawalsExecutedUSD_gte: BigDecimal
@@ -9630,8 +9696,10 @@ input LenderDailyStats_filter {
 }
 
 enum LenderDailyStats_orderBy {
+  cumulativeUsdTotalsComplete
   dayDepositedUSD
   dayInterestEarnedUSD
+  dayUsdTotalsComplete
   dayWithdrawalsExecutedUSD
   dayWithdrawalsRequestedUSD
   endTimestamp
@@ -10013,6 +10081,7 @@ enum LenderInterestAccrued_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -10030,6 +10099,7 @@ enum LenderInterestAccrued_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -10046,6 +10116,7 @@ type LenderStats {
   totalInterestEarnedUSD: BigDecimal!
   totalWithdrawalsExecutedUSD: BigDecimal!
   totalWithdrawalsRequestedUSD: BigDecimal!
+  usdTotalsComplete: Boolean!
 }
 
 input LenderStats_filter {
@@ -10129,6 +10200,10 @@ input LenderStats_filter {
   totalWithdrawalsRequestedUSD_lte: BigDecimal
   totalWithdrawalsRequestedUSD_not: BigDecimal
   totalWithdrawalsRequestedUSD_not_in: [BigDecimal!]
+  usdTotalsComplete: Boolean
+  usdTotalsComplete_in: [Boolean!]
+  usdTotalsComplete_not: Boolean
+  usdTotalsComplete_not_in: [Boolean!]
 }
 
 enum LenderStats_orderBy {
@@ -10141,6 +10216,7 @@ enum LenderStats_orderBy {
   totalInterestEarnedUSD
   totalWithdrawalsExecutedUSD
   totalWithdrawalsRequestedUSD
+  usdTotalsComplete
 }
 
 enum LenderStatus {
@@ -10826,11 +10902,12 @@ type Market {
   timeDelinquent: Int!
   tokenDailyPrice: TokenDailyPrice
   tokenWrapper: Wildcat4626Wrapper
+  totalAssets: BigInt!
   totalBaseInterestAccrued: BigInt!
   totalBaseInterestAccruedUSD: BigDecimal!
   totalBorrowed: BigInt!
   totalBorrowedUSD: BigDecimal!
-  totalDebtUSD: BigDecimal!
+  totalDebtUSD: BigDecimal
   totalDelinquencyFeesAccrued: BigInt!
   totalDelinquencyFeesAccruedUSD: BigDecimal!
   totalDeposited: BigInt!
@@ -10843,6 +10920,7 @@ type Market {
   totalWithdrawalsExecutedUSD: BigDecimal!
   totalWithdrawalsRequested: BigInt!
   totalWithdrawalsRequestedUSD: BigDecimal!
+  usdTotalsComplete: Boolean!
   version: MarketVersion!
   withdrawalBatchDuration: Int!
   withdrawalBatches(
@@ -10866,9 +10944,12 @@ type MarketAdded {
   blockLogIndex: Int!
   blockNumber: Int!
   blockTimestamp: Int!
-  controller: Controller!
+  controller: Controller
+  controllerAddress: Bytes!
+  hooksFactory: HooksFactory
   id: ID!
-  market: Market!
+  market: Market
+  marketAddress: Bytes!
   transactionHash: Bytes!
 }
 
@@ -10903,6 +10984,16 @@ input MarketAdded_filter {
   blockTimestamp_not: Int
   blockTimestamp_not_in: [Int!]
   controller: String
+  controllerAddress: Bytes
+  controllerAddress_contains: Bytes
+  controllerAddress_gt: Bytes
+  controllerAddress_gte: Bytes
+  controllerAddress_in: [Bytes!]
+  controllerAddress_lt: Bytes
+  controllerAddress_lte: Bytes
+  controllerAddress_not: Bytes
+  controllerAddress_not_contains: Bytes
+  controllerAddress_not_in: [Bytes!]
   controller_: Controller_filter
   controller_contains: String
   controller_contains_nocase: String
@@ -10923,6 +11014,27 @@ input MarketAdded_filter {
   controller_not_starts_with_nocase: String
   controller_starts_with: String
   controller_starts_with_nocase: String
+  hooksFactory: String
+  hooksFactory_: HooksFactory_filter
+  hooksFactory_contains: String
+  hooksFactory_contains_nocase: String
+  hooksFactory_ends_with: String
+  hooksFactory_ends_with_nocase: String
+  hooksFactory_gt: String
+  hooksFactory_gte: String
+  hooksFactory_in: [String!]
+  hooksFactory_lt: String
+  hooksFactory_lte: String
+  hooksFactory_not: String
+  hooksFactory_not_contains: String
+  hooksFactory_not_contains_nocase: String
+  hooksFactory_not_ends_with: String
+  hooksFactory_not_ends_with_nocase: String
+  hooksFactory_not_in: [String!]
+  hooksFactory_not_starts_with: String
+  hooksFactory_not_starts_with_nocase: String
+  hooksFactory_starts_with: String
+  hooksFactory_starts_with_nocase: String
   id: ID
   id_gt: ID
   id_gte: ID
@@ -10932,6 +11044,16 @@ input MarketAdded_filter {
   id_not: ID
   id_not_in: [ID!]
   market: String
+  marketAddress: Bytes
+  marketAddress_contains: Bytes
+  marketAddress_gt: Bytes
+  marketAddress_gte: Bytes
+  marketAddress_in: [Bytes!]
+  marketAddress_lt: Bytes
+  marketAddress_lte: Bytes
+  marketAddress_not: Bytes
+  marketAddress_not_contains: Bytes
+  marketAddress_not_in: [Bytes!]
   market_: Market_filter
   market_contains: String
   market_contains_nocase: String
@@ -10970,12 +11092,32 @@ enum MarketAdded_orderBy {
   blockNumber
   blockTimestamp
   controller
+  controllerAddress
   controller__borrower
   controller__id
   controller__isRegistered
   controller__numMarkets
+  hooksFactory
+  hooksFactory__abiFamily
+  hooksFactory__address
+  hooksFactory__configured
+  hooksFactory__configuredStartBlock
+  hooksFactory__deploymentTarget
+  hooksFactory__eventIndex
+  hooksFactory__generation
+  hooksFactory__hookedMarketAbi
+  hooksFactory__id
+  hooksFactory__indexed
+  hooksFactory__isRegistered
+  hooksFactory__label
+  hooksFactory__lifecycle
+  hooksFactory__marketKind
+  hooksFactory__registrationUpdatedAtBlock
+  hooksFactory__registrationUpdatedAtTimestamp
+  hooksFactory__sentinel
   id
   market
+  marketAddress
   market__abiFamily
   market__address
   market__annualInterestBips
@@ -11031,6 +11173,7 @@ enum MarketAdded_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -11048,6 +11191,7 @@ enum MarketAdded_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -11215,6 +11359,7 @@ enum MarketClosed_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -11232,6 +11377,7 @@ enum MarketClosed_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -11240,12 +11386,14 @@ enum MarketClosed_orderBy {
 }
 
 type MarketDailyStats {
+  cumulativeUsdTotalsComplete: Boolean!
   dayBaseInterestAccrued: BigInt!
   dayBorrowed: BigInt!
   dayDelinquencyFeesAccrued: BigInt!
   dayDeposited: BigInt!
   dayProtocolFeesAccrued: BigInt!
   dayRepaid: BigInt!
+  dayUsdTotalsComplete: Boolean!
   dayWithdrawalsExecuted: BigInt!
   dayWithdrawalsRequested: BigInt!
   endTimestamp: Int!
@@ -11279,6 +11427,10 @@ input MarketDailyStats_filter {
   """
   _change_block: BlockChangedFilter
   and: [MarketDailyStats_filter]
+  cumulativeUsdTotalsComplete: Boolean
+  cumulativeUsdTotalsComplete_in: [Boolean!]
+  cumulativeUsdTotalsComplete_not: Boolean
+  cumulativeUsdTotalsComplete_not_in: [Boolean!]
   dayBaseInterestAccrued: BigInt
   dayBaseInterestAccrued_gt: BigInt
   dayBaseInterestAccrued_gte: BigInt
@@ -11327,6 +11479,10 @@ input MarketDailyStats_filter {
   dayRepaid_lte: BigInt
   dayRepaid_not: BigInt
   dayRepaid_not_in: [BigInt!]
+  dayUsdTotalsComplete: Boolean
+  dayUsdTotalsComplete_in: [Boolean!]
+  dayUsdTotalsComplete_not: Boolean
+  dayUsdTotalsComplete_not_in: [Boolean!]
   dayWithdrawalsExecuted: BigInt
   dayWithdrawalsExecuted_gt: BigInt
   dayWithdrawalsExecuted_gte: BigInt
@@ -11544,12 +11700,14 @@ input MarketDailyStats_filter {
 }
 
 enum MarketDailyStats_orderBy {
+  cumulativeUsdTotalsComplete
   dayBaseInterestAccrued
   dayBorrowed
   dayDelinquencyFeesAccrued
   dayDeposited
   dayProtocolFeesAccrued
   dayRepaid
+  dayUsdTotalsComplete
   dayWithdrawalsExecuted
   dayWithdrawalsRequested
   endTimestamp
@@ -11610,6 +11768,7 @@ enum MarketDailyStats_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -11627,6 +11786,7 @@ enum MarketDailyStats_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -11794,6 +11954,7 @@ enum MarketDeployed_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -11811,6 +11972,7 @@ enum MarketDeployed_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -11944,6 +12106,7 @@ enum MarketEventCursor_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -11961,6 +12124,7 @@ enum MarketEventCursor_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -12158,6 +12322,7 @@ enum MarketEvent_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -12175,6 +12340,7 @@ enum MarketEvent_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -12401,6 +12567,7 @@ enum MarketInterestAccrued_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -12418,6 +12585,7 @@ enum MarketInterestAccrued_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -12580,6 +12748,7 @@ enum MarketRemoved_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -12597,6 +12766,7 @@ enum MarketRemoved_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -12632,6 +12802,7 @@ type MarketSnapshot {
   temporaryReserveRatioActive: Boolean!
   temporaryReserveRatioExpiry: Int!
   timeDelinquent: Int!
+  totalAssets: BigInt!
   updatedAtBlock: BigInt!
   updatedAtLogIndex: BigInt!
   updatedAtTimestamp: BigInt!
@@ -12838,6 +13009,14 @@ input MarketSnapshot_filter {
   timeDelinquent_lte: Int
   timeDelinquent_not: Int
   timeDelinquent_not_in: [Int!]
+  totalAssets: BigInt
+  totalAssets_gt: BigInt
+  totalAssets_gte: BigInt
+  totalAssets_in: [BigInt!]
+  totalAssets_lt: BigInt
+  totalAssets_lte: BigInt
+  totalAssets_not: BigInt
+  totalAssets_not_in: [BigInt!]
   updatedAtBlock: BigInt
   updatedAtBlock_gt: BigInt
   updatedAtBlock_gte: BigInt
@@ -12940,6 +13119,7 @@ enum MarketSnapshot_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -12957,6 +13137,7 @@ enum MarketSnapshot_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -12975,6 +13156,7 @@ enum MarketSnapshot_orderBy {
   temporaryReserveRatioActive
   temporaryReserveRatioExpiry
   timeDelinquent
+  totalAssets
   updatedAtBlock
   updatedAtLogIndex
   updatedAtTimestamp
@@ -13680,6 +13862,14 @@ input Market_filter {
   tokenWrapper_not_starts_with_nocase: String
   tokenWrapper_starts_with: String
   tokenWrapper_starts_with_nocase: String
+  totalAssets: BigInt
+  totalAssets_gt: BigInt
+  totalAssets_gte: BigInt
+  totalAssets_in: [BigInt!]
+  totalAssets_lt: BigInt
+  totalAssets_lte: BigInt
+  totalAssets_not: BigInt
+  totalAssets_not_in: [BigInt!]
   totalBaseInterestAccrued: BigInt
   totalBaseInterestAccruedUSD: BigDecimal
   totalBaseInterestAccruedUSD_gt: BigDecimal
@@ -13816,6 +14006,10 @@ input Market_filter {
   totalWithdrawalsRequested_lte: BigInt
   totalWithdrawalsRequested_not: BigInt
   totalWithdrawalsRequested_not_in: [BigInt!]
+  usdTotalsComplete: Boolean
+  usdTotalsComplete_in: [Boolean!]
+  usdTotalsComplete_not: Boolean
+  usdTotalsComplete_not_in: [Boolean!]
   version: MarketVersion
   version_in: [MarketVersion!]
   version_not: MarketVersion
@@ -13858,6 +14052,7 @@ enum Market_orderBy {
   asset__id
   asset__isMock
   asset__isUsdStablecoin
+  asset__lastPriceFeedSearchDay
   asset__name
   asset__priceFeed0
   asset__priceFeed1
@@ -14065,6 +14260,7 @@ enum Market_orderBy {
   snapshot__temporaryReserveRatioActive
   snapshot__temporaryReserveRatioExpiry
   snapshot__timeDelinquent
+  snapshot__totalAssets
   snapshot__updatedAtBlock
   snapshot__updatedAtLogIndex
   snapshot__updatedAtTimestamp
@@ -14074,6 +14270,8 @@ enum Market_orderBy {
   temporaryReserveRatioExpiry
   timeDelinquent
   tokenDailyPrice
+  tokenDailyPrice__feed0
+  tokenDailyPrice__feed1
   tokenDailyPrice__id
   tokenDailyPrice__observedAtBlock
   tokenDailyPrice__observedAtLogIndex
@@ -14090,6 +14288,7 @@ enum Market_orderBy {
   tokenWrapper__id
   tokenWrapper__marketAddress
   tokenWrapper__transactionHash
+  totalAssets
   totalBaseInterestAccrued
   totalBaseInterestAccruedUSD
   totalBorrowed
@@ -14107,6 +14306,7 @@ enum Market_orderBy {
   totalWithdrawalsExecutedUSD
   totalWithdrawalsRequested
   totalWithdrawalsRequestedUSD
+  usdTotalsComplete
   version
   withdrawalBatchDuration
   withdrawalBatches
@@ -14293,6 +14493,7 @@ enum MaxTotalSupplyUpdated_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -14310,6 +14511,7 @@ enum MaxTotalSupplyUpdated_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -14535,6 +14737,7 @@ enum MinimumDepositUpdated_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -14552,6 +14755,7 @@ enum MinimumDepositUpdated_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -15436,6 +15640,7 @@ enum PeriodicTermClosed_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -15453,6 +15658,7 @@ enum PeriodicTermClosed_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -15702,6 +15908,7 @@ enum PeriodicTermUpdated_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -15719,6 +15926,7 @@ enum PeriodicTermUpdated_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -15742,15 +15950,18 @@ enum PricingMode {
   CHAINLINK
   NONE
   SYNTHETIC_TESTNET
+  USD_PEG
 }
 
 type ProtocolDailyStats {
+  cumulativeUsdTotalsComplete: Boolean!
   dayBaseInterestAccruedUSD: BigDecimal!
   dayBorrowedUSD: BigDecimal!
   dayDelinquencyFeesAccruedUSD: BigDecimal!
   dayDepositedUSD: BigDecimal!
   dayProtocolFeesAccruedUSD: BigDecimal!
   dayRepaidUSD: BigDecimal!
+  dayUsdTotalsComplete: Boolean!
   dayWithdrawalsExecutedUSD: BigDecimal!
   dayWithdrawalsRequestedUSD: BigDecimal!
   endTimestamp: Int!
@@ -15779,6 +15990,10 @@ input ProtocolDailyStats_filter {
   """
   _change_block: BlockChangedFilter
   and: [ProtocolDailyStats_filter]
+  cumulativeUsdTotalsComplete: Boolean
+  cumulativeUsdTotalsComplete_in: [Boolean!]
+  cumulativeUsdTotalsComplete_not: Boolean
+  cumulativeUsdTotalsComplete_not_in: [Boolean!]
   dayBaseInterestAccruedUSD: BigDecimal
   dayBaseInterestAccruedUSD_gt: BigDecimal
   dayBaseInterestAccruedUSD_gte: BigDecimal
@@ -15827,6 +16042,10 @@ input ProtocolDailyStats_filter {
   dayRepaidUSD_lte: BigDecimal
   dayRepaidUSD_not: BigDecimal
   dayRepaidUSD_not_in: [BigDecimal!]
+  dayUsdTotalsComplete: Boolean
+  dayUsdTotalsComplete_in: [Boolean!]
+  dayUsdTotalsComplete_not: Boolean
+  dayUsdTotalsComplete_not_in: [Boolean!]
   dayWithdrawalsExecutedUSD: BigDecimal
   dayWithdrawalsExecutedUSD_gt: BigDecimal
   dayWithdrawalsExecutedUSD_gte: BigDecimal
@@ -15991,12 +16210,14 @@ input ProtocolDailyStats_filter {
 }
 
 enum ProtocolDailyStats_orderBy {
+  cumulativeUsdTotalsComplete
   dayBaseInterestAccruedUSD
   dayBorrowedUSD
   dayDelinquencyFeesAccruedUSD
   dayDepositedUSD
   dayProtocolFeesAccruedUSD
   dayRepaidUSD
+  dayUsdTotalsComplete
   dayWithdrawalsExecutedUSD
   dayWithdrawalsRequestedUSD
   endTimestamp
@@ -16198,6 +16419,7 @@ enum ProtocolFeeBipsUpdated_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -16215,6 +16437,7 @@ enum ProtocolFeeBipsUpdated_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -16241,6 +16464,7 @@ type ProtocolStats {
   totalRepaidUSD: BigDecimal!
   totalWithdrawalsExecutedUSD: BigDecimal!
   totalWithdrawalsRequestedUSD: BigDecimal!
+  usdTotalsComplete: Boolean!
 }
 
 input ProtocolStats_filter {
@@ -16378,6 +16602,10 @@ input ProtocolStats_filter {
   totalWithdrawalsRequestedUSD_lte: BigDecimal
   totalWithdrawalsRequestedUSD_not: BigDecimal
   totalWithdrawalsRequestedUSD_not_in: [BigDecimal!]
+  usdTotalsComplete: Boolean
+  usdTotalsComplete_in: [Boolean!]
+  usdTotalsComplete_not: Boolean
+  usdTotalsComplete_not_in: [Boolean!]
 }
 
 enum ProtocolStats_orderBy {
@@ -16397,6 +16625,7 @@ enum ProtocolStats_orderBy {
   totalRepaidUSD
   totalWithdrawalsExecutedUSD
   totalWithdrawalsRequestedUSD
+  usdTotalsComplete
 }
 
 type Query {
@@ -19795,6 +20024,7 @@ enum ReserveRatioBipsUpdated_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -19812,6 +20042,7 @@ enum ReserveRatioBipsUpdated_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -19822,6 +20053,13 @@ enum ReserveRatioBipsUpdated_orderBy {
 
 type RoleProvider {
   addedEvent: RoleProviderAdded
+  addedEvents(
+    first: Int = 100
+    orderBy: RoleProviderAdded_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: RoleProviderAdded_filter
+  ): [RoleProviderAdded!]!
   hooks: HooksInstance!
   id: ID!
   isApproved: Boolean!
@@ -19831,6 +20069,13 @@ type RoleProvider {
   pullProviderIndex: Int!
   pushProviderIndex: Int!
   removedEvent: RoleProviderRemoved
+  removedEvents(
+    first: Int = 100
+    orderBy: RoleProviderRemoved_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: RoleProviderRemoved_filter
+  ): [RoleProviderRemoved!]!
   timeToLive: BigInt!
   updatedEvents(
     first: Int = 100
@@ -20365,7 +20610,28 @@ input RoleProvider_filter {
   Filter for the block changed event.
   """
   _change_block: BlockChangedFilter
+  addedEvent: String
   addedEvent_: RoleProviderAdded_filter
+  addedEvent_contains: String
+  addedEvent_contains_nocase: String
+  addedEvent_ends_with: String
+  addedEvent_ends_with_nocase: String
+  addedEvent_gt: String
+  addedEvent_gte: String
+  addedEvent_in: [String!]
+  addedEvent_lt: String
+  addedEvent_lte: String
+  addedEvent_not: String
+  addedEvent_not_contains: String
+  addedEvent_not_contains_nocase: String
+  addedEvent_not_ends_with: String
+  addedEvent_not_ends_with_nocase: String
+  addedEvent_not_in: [String!]
+  addedEvent_not_starts_with: String
+  addedEvent_not_starts_with_nocase: String
+  addedEvent_starts_with: String
+  addedEvent_starts_with_nocase: String
+  addedEvents_: RoleProviderAdded_filter
   and: [RoleProvider_filter]
   hooks: String
   hooks_: HooksInstance_filter
@@ -20435,7 +20701,28 @@ input RoleProvider_filter {
   pushProviderIndex_lte: Int
   pushProviderIndex_not: Int
   pushProviderIndex_not_in: [Int!]
+  removedEvent: String
   removedEvent_: RoleProviderRemoved_filter
+  removedEvent_contains: String
+  removedEvent_contains_nocase: String
+  removedEvent_ends_with: String
+  removedEvent_ends_with_nocase: String
+  removedEvent_gt: String
+  removedEvent_gte: String
+  removedEvent_in: [String!]
+  removedEvent_lt: String
+  removedEvent_lte: String
+  removedEvent_not: String
+  removedEvent_not_contains: String
+  removedEvent_not_contains_nocase: String
+  removedEvent_not_ends_with: String
+  removedEvent_not_ends_with_nocase: String
+  removedEvent_not_in: [String!]
+  removedEvent_not_starts_with: String
+  removedEvent_not_starts_with_nocase: String
+  removedEvent_starts_with: String
+  removedEvent_starts_with_nocase: String
+  removedEvents_: RoleProviderRemoved_filter
   timeToLive: BigInt
   timeToLive_gt: BigInt
   timeToLive_gte: BigInt
@@ -20460,6 +20747,7 @@ enum RoleProvider_orderBy {
   addedEvent__pushProviderIndex
   addedEvent__timeToLive
   addedEvent__transactionHash
+  addedEvents
   hooks
   hooks__abiFamily
   hooks__address
@@ -20489,6 +20777,7 @@ enum RoleProvider_orderBy {
   removedEvent__eventIndex
   removedEvent__id
   removedEvent__transactionHash
+  removedEvents
   timeToLive
   updatedEvents
 }
@@ -21136,6 +21425,7 @@ enum SanctionedAccountAssetsQueuedForWithdrawal_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -21153,6 +21443,7 @@ enum SanctionedAccountAssetsQueuedForWithdrawal_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -21337,6 +21628,7 @@ enum SanctionedAccountAssetsSentToEscrow_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -21354,6 +21646,7 @@ enum SanctionedAccountAssetsSentToEscrow_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -21546,6 +21839,7 @@ enum SanctionedAccountWithdrawalSentToEscrow_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -21563,6 +21857,7 @@ enum SanctionedAccountWithdrawalSentToEscrow_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -21989,6 +22284,7 @@ enum SimpleCollateralContractCreated_orderBy {
   collateralAsset__id
   collateralAsset__isMock
   collateralAsset__isUsdStablecoin
+  collateralAsset__lastPriceFeedSearchDay
   collateralAsset__name
   collateralAsset__priceFeed0
   collateralAsset__priceFeed1
@@ -22080,6 +22376,7 @@ enum SimpleCollateralContractCreated_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -22097,6 +22394,7 @@ enum SimpleCollateralContractCreated_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -23519,6 +23817,7 @@ enum SimpleCollateralContract_orderBy {
   collateralAsset__id
   collateralAsset__isMock
   collateralAsset__isUsdStablecoin
+  collateralAsset__lastPriceFeedSearchDay
   collateralAsset__name
   collateralAsset__priceFeed0
   collateralAsset__priceFeed1
@@ -23612,6 +23911,7 @@ enum SimpleCollateralContract_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -23629,6 +23929,7 @@ enum SimpleCollateralContract_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -23903,6 +24204,7 @@ type Token {
   id: ID!
   isMock: Boolean!
   isUsdStablecoin: Boolean!
+  lastPriceFeedSearchDay: Int!
   name: String!
   priceFeed0: Bytes
   priceFeed1: Bytes
@@ -23914,6 +24216,8 @@ type Token {
 First price observation used for a token on a UTC day; analytics only.
 """
 type TokenDailyPrice {
+  feed0: Bytes
+  feed1: Bytes
   id: ID!
   observedAtBlock: BigInt!
   observedAtLogIndex: BigInt!
@@ -23931,6 +24235,26 @@ input TokenDailyPrice_filter {
   """
   _change_block: BlockChangedFilter
   and: [TokenDailyPrice_filter]
+  feed0: Bytes
+  feed0_contains: Bytes
+  feed0_gt: Bytes
+  feed0_gte: Bytes
+  feed0_in: [Bytes!]
+  feed0_lt: Bytes
+  feed0_lte: Bytes
+  feed0_not: Bytes
+  feed0_not_contains: Bytes
+  feed0_not_in: [Bytes!]
+  feed1: Bytes
+  feed1_contains: Bytes
+  feed1_gt: Bytes
+  feed1_gte: Bytes
+  feed1_in: [Bytes!]
+  feed1_lt: Bytes
+  feed1_lte: Bytes
+  feed1_not: Bytes
+  feed1_not_contains: Bytes
+  feed1_not_in: [Bytes!]
   id: ID
   id_gt: ID
   id_gte: ID
@@ -24018,6 +24342,8 @@ input TokenDailyPrice_filter {
 }
 
 enum TokenDailyPrice_orderBy {
+  feed0
+  feed1
   id
   observedAtBlock
   observedAtLogIndex
@@ -24032,6 +24358,7 @@ enum TokenDailyPrice_orderBy {
   token__id
   token__isMock
   token__isUsdStablecoin
+  token__lastPriceFeedSearchDay
   token__name
   token__priceFeed0
   token__priceFeed1
@@ -24079,6 +24406,14 @@ input Token_filter {
   isUsdStablecoin_in: [Boolean!]
   isUsdStablecoin_not: Boolean
   isUsdStablecoin_not_in: [Boolean!]
+  lastPriceFeedSearchDay: Int
+  lastPriceFeedSearchDay_gt: Int
+  lastPriceFeedSearchDay_gte: Int
+  lastPriceFeedSearchDay_in: [Int!]
+  lastPriceFeedSearchDay_lt: Int
+  lastPriceFeedSearchDay_lte: Int
+  lastPriceFeedSearchDay_not: Int
+  lastPriceFeedSearchDay_not_in: [Int!]
   name: String
   name_contains: String
   name_contains_nocase: String
@@ -24152,6 +24487,7 @@ enum Token_orderBy {
   id
   isMock
   isUsdStablecoin
+  lastPriceFeedSearchDay
   name
   priceFeed0
   priceFeed1
@@ -24376,6 +24712,7 @@ enum Transfer_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -24393,6 +24730,7 @@ enum Transfer_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -24535,6 +24873,7 @@ enum UpdateProtocolFeeConfiguration_orderBy {
   originationFeeAsset__id
   originationFeeAsset__isMock
   originationFeeAsset__isUsdStablecoin
+  originationFeeAsset__lastPriceFeedSearchDay
   originationFeeAsset__name
   originationFeeAsset__priceFeed0
   originationFeeAsset__priceFeed1
@@ -24779,6 +25118,7 @@ enum Wildcat4626WrapperDeployed_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -24796,6 +25136,7 @@ enum Wildcat4626WrapperDeployed_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -25167,6 +25508,7 @@ enum Wildcat4626Wrapper_orderBy {
   marketToken__id
   marketToken__isMock
   marketToken__isUsdStablecoin
+  marketToken__lastPriceFeedSearchDay
   marketToken__name
   marketToken__priceFeed0
   marketToken__priceFeed1
@@ -25227,6 +25569,7 @@ enum Wildcat4626Wrapper_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -25244,6 +25587,7 @@ enum Wildcat4626Wrapper_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -25253,6 +25597,7 @@ enum Wildcat4626Wrapper_orderBy {
   token__id
   token__isMock
   token__isUsdStablecoin
+  token__lastPriceFeedSearchDay
   token__name
   token__priceFeed0
   token__priceFeed1
@@ -25767,6 +26112,7 @@ enum WithdrawalBatchInterestAccrued_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -25784,6 +26130,7 @@ enum WithdrawalBatchInterestAccrued_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -26211,6 +26558,7 @@ enum WithdrawalBatch_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -26228,6 +26576,7 @@ enum WithdrawalBatch_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
@@ -26723,6 +27072,7 @@ enum WithdrawalRequest_orderBy {
   market__temporaryReserveRatioActive
   market__temporaryReserveRatioExpiry
   market__timeDelinquent
+  market__totalAssets
   market__totalBaseInterestAccrued
   market__totalBaseInterestAccruedUSD
   market__totalBorrowed
@@ -26740,6 +27090,7 @@ enum WithdrawalRequest_orderBy {
   market__totalWithdrawalsExecutedUSD
   market__totalWithdrawalsRequested
   market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex

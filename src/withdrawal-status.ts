@@ -81,6 +81,11 @@ export class LenderWithdrawalStatus {
     return this.batch.isConcluded;
   }
 
+  /** Whether the batch can currently be passed to `executeWithdrawal`. */
+  get isExecutable(): boolean {
+    return this.status !== BatchStatus.Pending && this.availableWithdrawalAmount.gt(0);
+  }
+
   get effectiveStatus(): BatchStatus {
     return this.batch.effectiveStatus;
   }
