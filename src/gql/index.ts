@@ -7,6 +7,7 @@ export * from "./getAuthorizedLendersByMarket";
 export * from "./getBasicBorrowerData";
 export * from "./getLenderAccountForMarket";
 export * from "./getLenderAccountsForAllMarkets";
+export * from "./getLenderMarketCatalogue";
 export * from "./getMarket";
 export * from "./getMarketChartsData";
 export * from "./getMarketRecords";
@@ -15,5 +16,6 @@ export * from "./getMarketsWithEvents";
 export * from "./getPolicyLenders";
 export * from "./getPolicyMarketsAndLenders";
 export * from "./graphql";
+export * from "./document-selectors";
 
 export { MakeOptional } from "../utils/misc";

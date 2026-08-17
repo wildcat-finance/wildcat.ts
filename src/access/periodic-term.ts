@@ -18,8 +18,8 @@ import {
   HooksInstanceDataV21StructOutput,
   HooksTemplateDataStructOutput,
   HooksTemplateDataV21StructOutput,
-  IFixedTermHooks,
-  IFixedTermHooks__factory
+  IPeriodicTermHooks,
+  IPeriodicTermHooks__factory
 } from "../typechain";
 import {
   AddLenderInput,
@@ -54,11 +54,12 @@ type HooksInstanceData = HooksInstanceDataStructOutput | HooksInstanceDataV21Str
 type HooksTemplateData = HooksTemplateDataStructOutput | HooksTemplateDataV21StructOutput;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface FixedTermHooks extends Omit<FixedTermHooksArgs, "roleProviders" | "constraints"> {}
+export interface PeriodicTermHooks
+  extends Omit<PeriodicTermHooksArgs, "roleProviders" | "constraints"> {}
 
-export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
-  readonly kind: HooksKind.FixedTerm = HooksKind.FixedTerm;
-  readonly contractFactory = IFixedTermHooks__factory;
+export class PeriodicTermHooks extends ContractWrapper<IPeriodicTermHooks> {
+  readonly kind: HooksKind.PeriodicTerm = HooksKind.PeriodicTerm;
+  readonly contractFactory = IPeriodicTermHooks__factory;
   public roleProviders: RoleProvider[];
   public constraints: MarketParameterConstraints;
 
@@ -71,7 +72,7 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
     roleProviders = [],
     constraints = DefaultV2ParameterConstraints,
     ...args
-  }: FixedTermHooksArgs) {
+  }: PeriodicTermHooksArgs) {
     super(provider);
     Object.assign(this, args);
     this.roleProviders = roleProviders;
@@ -88,17 +89,11 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
     this.roleProviders = roleProvidersFromLens(data.pullProviders, data.pushProviders);
   }
 
-  /* ========================================================================== */
-  /*                                 addLenders                                 */
-  /* ========================================================================== */
-
   previewAddLenders(_: AddLenderInput[]): ChangeLenderRolePreview {
     if (this.signerAddress?.toLowerCase() !== this.borrower.toLowerCase()) {
       return { status: ChangeLenderRoleStatus.NotBorrower };
     }
-    return {
-      status: ChangeLenderRoleStatus.Ready
-    };
+    return { status: ChangeLenderRoleStatus.Ready };
   }
 
   populateAddLenders(inputs: AddLenderInput[]): PartialTransaction {
@@ -135,17 +130,11 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
       : this.contract.grantRoles(lenders, credentialTimestamps);
   }
 
-  /* ========================================================================== */
-  /*                                blockLenders                                */
-  /* ========================================================================== */
-
   previewBlockLenders(_: string[]): ChangeLenderRolePreview {
     if (this.signerAddress?.toLowerCase() !== this.borrower.toLowerCase()) {
       return { status: ChangeLenderRoleStatus.NotBorrower };
     }
-    return {
-      status: ChangeLenderRoleStatus.Ready
-    };
+    return { status: ChangeLenderRoleStatus.Ready };
   }
 
   populateBlockLenders(lenders: string[]): PartialTransaction {
@@ -163,9 +152,7 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
     if (this.signerAddress?.toLowerCase() !== this.borrower.toLowerCase()) {
       return { status: ChangeLenderRoleStatus.NotBorrower };
     }
-    return {
-      status: ChangeLenderRoleStatus.Ready
-    };
+    return { status: ChangeLenderRoleStatus.Ready };
   }
 
   blockLenders(lenders: string[]): Promise<ContractTransaction> {
@@ -187,24 +174,20 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
     };
   }
 
-  /* ========================================================================== */
-  /*                               static builders                              */
-  /* ========================================================================== */
-
   static fromLensData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
     data: HooksInstanceData,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
-  ): FixedTermHooks {
-    return new FixedTermHooks({
+  ): PeriodicTermHooks {
+    return new PeriodicTermHooks({
       chainId,
       provider,
       address: data.hooksAddress,
       name: data.name,
       signerAddress,
-      hooksTemplate: FixedTermHooksTemplate.fromLensData(
+      hooksTemplate: PeriodicTermHooksTemplate.fromLensData(
         chainId,
         provider,
         data.hooksTemplate,
@@ -223,13 +206,13 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
     data: SubgraphHooksInstanceDataFragment,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
-  ): FixedTermHooks {
-    return new FixedTermHooks({
+  ): PeriodicTermHooks {
+    return new PeriodicTermHooks({
       chainId,
       provider,
       borrower: data.borrower,
       address: data.id,
-      hooksTemplate: FixedTermHooksTemplate.fromSubgraphData(
+      hooksTemplate: PeriodicTermHooksTemplate.fromSubgraphData(
         chainId,
         provider,
         data.hooksTemplate,
@@ -244,11 +227,11 @@ export class FixedTermHooks extends ContractWrapper<IFixedTermHooks> {
   }
 }
 
-export type FixedTermHooksArgs = {
+export type PeriodicTermHooksArgs = {
   chainId: SupportedChainId;
   provider: SignerOrProvider;
   address: string;
-  hooksTemplate: FixedTermHooksTemplate;
+  hooksTemplate: PeriodicTermHooksTemplate;
   constraints?: MarketParameterConstraints;
   borrower: string;
   roleProviders?: RoleProvider[];
@@ -257,7 +240,7 @@ export type FixedTermHooksArgs = {
   signerAddress?: string;
 };
 
-export type FixedTermHooksTemplateArgs = {
+export type PeriodicTermHooksTemplateArgs = {
   signerAddress?: string;
   isRegisteredBorrower?: boolean;
   hooksTemplate: string;
@@ -269,17 +252,17 @@ export type FixedTermHooksTemplateArgs = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface FixedTermHooksTemplate extends FixedTermHooksTemplateArgs {}
+export interface PeriodicTermHooksTemplate extends PeriodicTermHooksTemplateArgs {}
 
-export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
-  readonly kind: HooksKind.FixedTerm = HooksKind.FixedTerm;
+export class PeriodicTermHooksTemplate extends ContractWrapper<HooksFactory> {
+  readonly kind: HooksKind.PeriodicTerm = HooksKind.PeriodicTerm;
   readonly contractFactory = HooksFactory__factory;
   protected _contractAddress: string;
 
   constructor(
     public chainId: SupportedChainId,
     provider: SignerOrProvider,
-    args: FixedTermHooksTemplateArgs
+    args: PeriodicTermHooksTemplateArgs
   ) {
     super(provider);
     Object.assign(this, args);
@@ -303,11 +286,11 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
   static fromLensData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: HooksTemplateDataStructOutput,
+    data: HooksTemplateData,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
-  ): FixedTermHooksTemplate {
-    return new FixedTermHooksTemplate(chainId, provider, {
+  ): PeriodicTermHooksTemplate {
+    return new PeriodicTermHooksTemplate(chainId, provider, {
       enabled: data.enabled,
       fees: parseFeeConfigurationV2(chainId, provider, data.fees),
       hooksTemplate: data.hooksTemplate,
@@ -333,12 +316,12 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     }: SubgraphHooksTemplateDataFragment,
     signerAddress?: string,
     isRegisteredBorrower?: boolean
-  ): FixedTermHooksTemplate {
+  ): PeriodicTermHooksTemplate {
     const originationFeeToken = originationFeeAsset
       ? Token.fromSubgraphToken(chainId, originationFeeAsset, provider)
       : undefined;
 
-    return new FixedTermHooksTemplate(chainId, provider, {
+    return new PeriodicTermHooksTemplate(chainId, provider, {
       hooksTemplate: id,
       fees: {
         feeRecipient,
@@ -346,14 +329,14 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
         ...(originationFeeToken
           ? {
               originationFeeToken,
-              originationFeeAmount: originationFeeToken!.getAmount(originationFeeAmount)
+              originationFeeAmount: originationFeeToken.getAmount(originationFeeAmount)
             }
           : {})
       } as FeeConfigurationV2,
       enabled: !disabled,
-      index: 0, // @todo
+      index: 0,
       name,
-      totalMarkets: 0, // @todo
+      totalMarkets: 0,
       signerAddress,
       isRegisteredBorrower
     });
@@ -372,12 +355,11 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     asset,
     maxTotalSupply,
     salt,
-    fixedTermEndTime,
-    allowClosureBeforeTerm,
-    allowTermReduction,
-    allowForceBuyBacks,
+    firstWithdrawalWindowStart,
+    periodDuration,
+    withdrawalWindowDuration,
     ...otherParameters
-  }: FixedTermMarketDeploymentArgs): DeployMarketPreview {
+  }: PeriodicTermMarketDeploymentArgs): DeployMarketPreview {
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -401,32 +383,20 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
     }
 
     const hooksConfig = encodeHooksConfig({
-      hooksAddress: hooksAddress,
+      hooksAddress,
       useOnDeposit: depositAccess === DepositAccess.RequiresCredential,
       useOnQueueWithdrawal: withdrawalAccess === WithdrawalAccess.RequiresCredential,
       useOnTransfer: transferAccess === TransferAccess.RequiresCredential
     });
     const hooksData = defaultAbiCoder.encode(
-      this.chainId === SupportedChainId.Sepolia
-        ? ["uint32", "uint128", "bool", "bool", "bool", "bool"]
-        : ["uint32", "uint128", "bool", "bool", "bool"],
-
-      this.chainId === SupportedChainId.Sepolia
-        ? [
-            fixedTermEndTime,
-            minimumDeposit?.raw ?? 0,
-            transferAccess === TransferAccess.Disabled,
-            allowForceBuyBacks ?? false,
-            allowClosureBeforeTerm ?? false,
-            allowTermReduction ?? false
-          ]
-        : [
-            fixedTermEndTime,
-            minimumDeposit?.raw ?? 0,
-            transferAccess === TransferAccess.Disabled,
-            allowClosureBeforeTerm ?? false,
-            allowTermReduction ?? false
-          ]
+      ["uint32", "uint32", "uint32", "uint128", "bool"],
+      [
+        firstWithdrawalWindowStart,
+        periodDuration,
+        withdrawalWindowDuration,
+        minimumDeposit?.raw ?? 0,
+        transferAccess === TransferAccess.Disabled
+      ]
     );
     const parameters = {
       ...otherParameters,
@@ -442,46 +412,48 @@ export class FixedTermHooksTemplate extends ContractWrapper<HooksFactory> {
         fn: "deployMarket",
         args: [parameters, hooksData, salt, originationFeeToken, originationFeeAmount]
       };
-    } else {
-      return {
-        status: DeployMarketStatus.Ready,
-        fn: "deployMarketAndHooks",
-        args: [
-          this.hooksTemplate,
-          encodeMarketHooksInstanceInputs({
-            existingProviders,
-            newProviderInputs,
-            hooksInstanceName,
-            roleProviderFactory
-          }),
-          parameters,
-          hooksData,
-          salt,
-          originationFeeToken,
-          originationFeeAmount
-        ]
-      };
     }
+    return {
+      status: DeployMarketStatus.Ready,
+      fn: "deployMarketAndHooks",
+      args: [
+        this.hooksTemplate,
+        encodeMarketHooksInstanceInputs({
+          existingProviders,
+          newProviderInputs,
+          hooksInstanceName,
+          roleProviderFactory
+        }),
+        parameters,
+        hooksData,
+        salt,
+        originationFeeToken,
+        originationFeeAmount
+      ]
+    };
   }
 
   deployMarket({
     ...otherParameters
-  }: FixedTermMarketDeploymentArgs): Promise<ContractTransaction> {
+  }: PeriodicTermMarketDeploymentArgs): Promise<ContractTransaction> {
     const result = this.previewDeployMarket(otherParameters);
     assert(result.status === DeployMarketStatus.Ready, `Can not deploy market: ${result.status}`);
     if (result.fn === "deployMarket") {
       return this.contract.deployMarket(...result.args);
-    } else {
-      return this.contract.deployMarketAndHooks(...result.args);
     }
+    return this.contract.deployMarketAndHooks(...result.args);
   }
 }
 
-export type FixedTermMarketDeploymentArgs = MarketParameters & {
+export type PeriodicTermMarketDeploymentArgs = MarketParameters & {
   /** Create2 salt to use for the market deployment */
   salt: string;
-  /** Time at which the market converts to open-term */
-  fixedTermEndTime: number;
+  /** First timestamp at which lenders can queue withdrawals */
+  firstWithdrawalWindowStart: number;
+  /** Length of each repeating withdrawal period in seconds */
+  periodDuration: number;
+  /** Length of the withdrawal window inside each period in seconds */
+  withdrawalWindowDuration: number;
   /** Minimum deposit lenders can make */
   minimumDeposit?: TokenAmount;
   /** Level of access required for accounts to receive a transfer */
@@ -490,10 +462,4 @@ export type FixedTermMarketDeploymentArgs = MarketParameters & {
   depositAccess: DepositAccess;
   /** Level of access required for a lender to make a withdrawal request */
   withdrawalAccess: WithdrawalAccess;
-  /** Whether the borrower can close a loan before the term expires */
-  allowClosureBeforeTerm?: boolean;
-  /** Whether borrower can reduce the duration of the loan */
-  allowTermReduction?: boolean;
-  /** Whether borrower can force buyback market tokens */
-  allowForceBuyBacks?: boolean;
 } & MarketHooksInstanceInputs;

@@ -1,4 +1,4 @@
-import { BigNumber, ContractReceipt, ContractTransaction } from "ethers";
+import { BigNumber, constants, ContractReceipt, ContractTransaction } from "ethers";
 import { Token, TokenAmount, minTokenAmount } from "../token";
 import { Market } from "../market";
 import {
@@ -7,8 +7,11 @@ import {
   WildcatMarketV2__factory,
   LenderAccountDataStructOutput,
   MarketDataWithLenderStatusV2StructOutput,
+  LenderAccountDataV21StructOutput,
+  MarketDataWithLenderStatusV21StructOutput,
   IOpenTermHooks__factory,
-  IFixedTermHooks__factory
+  IFixedTermHooks__factory,
+  IPeriodicTermHooks__factory
 } from "../typechain";
 import { WithdrawalQueuedEvent } from "../typechain/WildcatMarket";
 import {
@@ -21,6 +24,7 @@ import {
   SECONDS_IN_365_DAYS
 } from "../utils";
 import {
+  APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS,
   SupportedChainId,
   getControllerContract,
   getLensContract,
@@ -35,6 +39,7 @@ import {
 } from "../types";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 import {
+  SubgraphAccountDataForLenderCatalogueFragment,
   SubgraphAccountDataForLenderViewFragment,
   SubgraphDepositDataFragment
 } from "../gql/graphql";
@@ -57,7 +62,9 @@ import {
   SetMinimumDepositPreview,
   SetMinimumDepositStatus,
   SetFixedTermEndTimeStatus,
-  SetFixedTermEndTimePreview
+  SetFixedTermEndTimePreview,
+  ProposeAnnualInterestBipsPreview,
+  ProposeAnnualInterestBipsStatus
 } from "./validation";
 export * from "./validation";
 
@@ -69,6 +76,20 @@ export enum LenderRole {
 }
 
 const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
+
+type LenderAccountState =
+  | MarketLenderStatusStructOutput
+  | LenderAccountDataStructOutput
+  | LenderAccountDataV21StructOutput;
+
+const zeroLenderBalances = <T extends LenderAccountState>(state: T): T =>
+  ({
+    ...state,
+    scaledBalance: constants.Zero,
+    normalizedBalance: constants.Zero,
+    underlyingBalance: constants.Zero,
+    underlyingApproval: constants.Zero
+  } as T);
 
 export type MarketAccountArgs = {
   account: string;
@@ -97,6 +118,8 @@ export type MarketAccountArgs = {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MarketAccount extends Omit<MarketAccountArgs, "deposits" | "hadSubgraphEntry"> {}
+
+export type MarketAccountAccess = Pick<MarketAccountArgs, "credential" | "isKnownLender">;
 
 /**
  * Class to provide information about a market user's account
@@ -216,6 +239,9 @@ export class MarketAccount {
       if (!config.flags!.useOnQueueWithdrawal) return QueueWithdrawalStatus.Ready;
       // Can not withdraw if market in fixed term
       if (this.market.isInFixedTerm) return QueueWithdrawalStatus.MarketInClosedTerm;
+      if (config.kind === HooksKind.PeriodicTerm && !this.market.isPeriodicWithdrawalWindowOpen) {
+        return QueueWithdrawalStatus.WithdrawalWindowClosed;
+      }
       // Can not withdraw if market requires access and lender has no credential and is not a known lender
       if (
         config.flags.useOnQueueWithdrawal &&
@@ -290,9 +316,58 @@ export class MarketAccount {
     return { status: CloseMarketStatus.Ready };
   }
 
-  previewSetAPR(apr: number): SetAprPreview {
+  previewSetAPR(apr: number, timestampSec?: number): SetAprPreview {
     if (!this.isBorrower) return { status: SetAprStatus.NotBorrower };
     if (!(apr > 0 && apr <= 10000)) return { status: SetAprStatus.InvalidApr };
+
+    const now = timestampSec ?? Math.floor(Date.now() / 1_000);
+    const config = this.market.hooksConfig;
+    if (config?.kind === HooksKind.PeriodicTerm && apr < this.market.annualInterestBips) {
+      if (config.pendingAprChangeProposalTimestamp === 0) {
+        return { status: SetAprStatus.AprReductionNotProposed };
+      }
+      if (config.pendingAprChangeAnnualInterestBips !== apr) {
+        return { status: SetAprStatus.AprChangeDoesNotMatchProposal };
+      }
+      if (now < config.pendingAprChangeResponseWindowEnd) {
+        return { status: SetAprStatus.AprChangeNotReady };
+      }
+      // Template v2+ hooks reject executions more than
+      // APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS periods past the response
+      // window. Applied uniformly here (conservative for v1 instances,
+      // which do not enforce expiry on-chain).
+      if (
+        now >=
+        config.pendingAprChangeResponseWindowEnd +
+          config.periodDuration * APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS
+      ) {
+        return { status: SetAprStatus.AprChangeExpired };
+      }
+      if (!this.market.scaledPendingWithdrawals.isZero()) {
+        return { status: SetAprStatus.UnpaidWithdrawalsExist };
+      }
+      // Periodic reductions keep the reserve ratio unchanged, so the market
+      // still rejects execution while current assets are below required coverage.
+      if (this.market.totalAssets.lt(this.market.coverageLiquidity)) {
+        return {
+          status: SetAprStatus.InsufficientReserves,
+          newReserveRatio: this.market.reserveRatioBips,
+          newCoverageLiquidity: this.market.coverageLiquidity,
+          missingReserves: this.market.delinquentDebt,
+          changeCausedByReset: false
+        };
+      }
+      return {
+        status: SetAprStatus.Ready,
+        willChangeReserveRatio: false
+      };
+    }
+
+    // Increasing a periodic market's APR deletes any pending reduction proposal.
+    const willCancelPendingProposal =
+      config?.kind === HooksKind.PeriodicTerm &&
+      config.pendingAprChangeProposalTimestamp !== 0 &&
+      apr > this.market.annualInterestBips;
 
     const [originalReserveRatioBips, originalAnnualInterestBips] =
       this.market.originalReserveRatioAndAnnualInterestBips;
@@ -328,15 +403,39 @@ export class MarketAccount {
           willChangeReserveRatio: true,
           newCoverageLiquidity,
           newReserveRatio: newReserveRatioBips,
-          changeCausedByReset
+          changeCausedByReset,
+          willCancelPendingProposal
         };
       }
     } else {
       return {
         status: SetAprStatus.Ready,
-        willChangeReserveRatio: false
+        willChangeReserveRatio: false,
+        willCancelPendingProposal
       };
     }
+  }
+
+  previewProposeAnnualInterestBips(apr: number): ProposeAnnualInterestBipsPreview {
+    if (this.market.version !== MarketVersion.V2) {
+      return { status: ProposeAnnualInterestBipsStatus.NotV2Market };
+    }
+    if (!this.isBorrower) return { status: ProposeAnnualInterestBipsStatus.NotBorrower };
+    if (!(apr > 0 && apr <= 10000)) {
+      return { status: ProposeAnnualInterestBipsStatus.InvalidApr };
+    }
+
+    const config = this.market.hooksConfig;
+    if (config?.kind !== HooksKind.PeriodicTerm) {
+      return { status: ProposeAnnualInterestBipsStatus.NotPeriodicTermMarket };
+    }
+    if (apr >= this.market.annualInterestBips) {
+      return { status: ProposeAnnualInterestBipsStatus.NotReduction };
+    }
+    if (this.market.isPeriodicWithdrawalWindowOpen) {
+      return { status: ProposeAnnualInterestBipsStatus.WithdrawalWindowOpen };
+    }
+    return { status: ProposeAnnualInterestBipsStatus.Ready };
   }
 
   previewSetMaxTotalSupply(amount: TokenAmount): SetMaxTotalSupplyPreview {
@@ -379,7 +478,7 @@ export class MarketAccount {
     assert(config !== undefined, `V2 market missing hooksConfig`);
     const iface = IOpenTermHooks__factory.createInterface();
     return {
-      to: this.market.address,
+      to: config.hooksAddress,
       data: iface.encodeFunctionData("setMinimumDeposit", [this.market.address, amount.raw]),
       value: "0"
     };
@@ -392,7 +491,7 @@ export class MarketAccount {
     assert(config !== undefined, `V2 market missing hooksConfig`);
     const iface = IFixedTermHooks__factory.createInterface();
     return {
-      to: this.market.address,
+      to: config.hooksAddress,
       data: iface.encodeFunctionData("setFixedTermEndTime", [this.market.address, endTime]),
       value: "0"
     };
@@ -414,6 +513,34 @@ export class MarketAccount {
     assert(config !== undefined, `V2 market missing hooksConfig`);
     const contract = IFixedTermHooks__factory.connect(config.hooksAddress, this.market.signer);
     return contract.setFixedTermEndTime(this.market.address, endTime);
+  }
+
+  populateProposeAnnualInterestBips(apr: number): PartialTransaction {
+    const { status } = this.previewProposeAnnualInterestBips(apr);
+    assert(
+      status === ProposeAnnualInterestBipsStatus.Ready,
+      `Cannot propose annual interest bips: ${status}`
+    );
+    const config = this.market.hooksConfig;
+    assert(config?.kind === HooksKind.PeriodicTerm, `Market is not periodic term`);
+    const iface = IPeriodicTermHooks__factory.createInterface();
+    return {
+      to: config.hooksAddress,
+      data: iface.encodeFunctionData("proposeAnnualInterestBips", [this.market.address, apr]),
+      value: "0"
+    };
+  }
+
+  async proposeAnnualInterestBips(apr: number): Promise<ContractTransaction> {
+    const { status } = this.previewProposeAnnualInterestBips(apr);
+    assert(
+      status === ProposeAnnualInterestBipsStatus.Ready,
+      `Cannot propose annual interest bips: ${status}`
+    );
+    const config = this.market.hooksConfig;
+    assert(config?.kind === HooksKind.PeriodicTerm, `Market is not periodic term`);
+    const contract = IPeriodicTermHooks__factory.connect(config.hooksAddress, this.market.signer);
+    return contract.proposeAnnualInterestBips(this.market.address, apr);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -868,7 +995,12 @@ export class MarketAccount {
     this.updateWith(acccountMarketInfo);
   }
 
-  updateWith(info: MarketLenderStatusStructOutput | LenderAccountDataStructOutput): void {
+  updateWith(
+    info:
+      | MarketLenderStatusStructOutput
+      | LenderAccountDataStructOutput
+      | LenderAccountDataV21StructOutput
+  ): void {
     if ("isAuthorizedOnController" in info) {
       assert(
         this.market.version === MarketVersion.V1,
@@ -932,7 +1064,8 @@ export class MarketAccount {
 
   static fromSubgraphAccountData(
     market: Market,
-    data: SubgraphAccountDataForLenderViewFragment
+    data: SubgraphAccountDataForLenderViewFragment | SubgraphAccountDataForLenderCatalogueFragment,
+    access?: MarketAccountAccess
   ): MarketAccount {
     const scaledBalance = BigNumber.from(data.scaledBalance);
 
@@ -945,14 +1078,16 @@ export class MarketAccount {
       underlyingBalance: market.underlyingToken.getAmount(0),
       underlyingApproval: BigNumber.from(0),
       market,
-      deposits: data.deposits,
+      deposits: "deposits" in data ? data.deposits : undefined,
       totalDeposited: market.underlyingToken.getAmount(data.totalDeposited),
       lastScaleFactor: BigNumber.from(data.lastScaleFactor),
       lastUpdatedTimestamp: data.lastUpdatedTimestamp,
       totalInterestEarned: market.underlyingToken.getAmount(data.totalInterestEarned),
       numPendingWithdrawalBatches: data.numPendingWithdrawalBatches,
-      credential: data.hooksAccess ? parseSubgraphLenderHooksAccess(data.hooksAccess) : undefined,
-      isKnownLender: !!data.knownLenderStatus?.id,
+      credential:
+        access?.credential ??
+        (data.hooksAccess ? parseSubgraphLenderHooksAccess(data.hooksAccess) : undefined),
+      isKnownLender: access?.isKnownLender ?? !!data.knownLenderStatus?.id,
       hadSubgraphEntry: true
     });
     account.processInterestAccrued();
@@ -976,7 +1111,10 @@ export class MarketAccount {
     });
   }
 
-  static fromLenderAccountData(market: Market, data: LenderAccountDataStructOutput): MarketAccount {
+  static fromLenderAccountData(
+    market: Market,
+    data: LenderAccountDataStructOutput | LenderAccountDataV21StructOutput
+  ): MarketAccount {
     return new MarketAccount({
       account: data.lender,
       market,
@@ -1008,7 +1146,10 @@ export class MarketAccount {
     chainId: SupportedChainId,
     provider: SignerOrProvider,
     account: string,
-    info: MarketDataWithLenderStatusStructOutput | MarketDataWithLenderStatusV2StructOutput
+    info:
+      | MarketDataWithLenderStatusStructOutput
+      | MarketDataWithLenderStatusV2StructOutput
+      | MarketDataWithLenderStatusV21StructOutput
   ): MarketAccount {
     if ("controller" in info.market) {
       info = info as MarketDataWithLenderStatusStructOutput;
@@ -1018,7 +1159,9 @@ export class MarketAccount {
         Market.fromMarketData(chainId, info.market, provider)
       );
     } else {
-      info = info as MarketDataWithLenderStatusV2StructOutput;
+      info = info as
+        | MarketDataWithLenderStatusV2StructOutput
+        | MarketDataWithLenderStatusV21StructOutput;
       return MarketAccount.fromLenderAccountData(
         Market.fromMarketDataV2(chainId, provider, info.market),
         info.lenderStatus
@@ -1029,7 +1172,8 @@ export class MarketAccount {
   static fromMarketDataOnly(
     market: Market,
     account: string,
-    isAuthorizedOnController: boolean
+    isAuthorizedOnController: boolean,
+    access?: MarketAccountAccess
   ): MarketAccount {
     return new MarketAccount({
       account,
@@ -1039,6 +1183,8 @@ export class MarketAccount {
       marketBalance: market.marketToken.getAmount(0),
       underlyingBalance: market.underlyingToken.getAmount(0),
       underlyingApproval: BigNumber.from(0),
+      credential: access?.credential,
+      isKnownLender: access?.isKnownLender,
       market
     });
   }
@@ -1126,6 +1272,70 @@ export class MarketAccount {
           )
         );
     }
+  }
+
+  /**
+   * Refresh wallet-specific state on existing market accounts without fetching
+   * or replacing their market state. This is intended for catalogue views that
+   * already have current indexed market data and only need fresher authorization,
+   * credential, balance, and allowance state.
+   *
+   * The input account objects are mutated and the original array is returned in its original order.
+   * If `account` is undefined, access state is retained while wallet balances and
+   * allowances are forced to zero.
+   */
+  static async refreshLenderAccountState(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider,
+    account: string | undefined,
+    marketAccounts: MarketAccount[]
+  ): Promise<MarketAccount[]> {
+    if (marketAccounts.length === 0) return marketAccounts;
+
+    for (const marketAccount of marketAccounts) {
+      assert(
+        marketAccount.chainId === chainId,
+        `Can not refresh chain ${marketAccount.chainId} market account on chain ${chainId}`
+      );
+    }
+
+    const lender = account ?? constants.AddressZero;
+    const v1Accounts = marketAccounts.filter(({ market }) => market.version === MarketVersion.V1);
+    const v2Accounts = marketAccounts.filter(({ market }) => market.version === MarketVersion.V2);
+
+    const getV1Updates = async (): Promise<MarketLenderStatusStructOutput[]> => {
+      if (v1Accounts.length === 0) return [];
+      return getLensContract(chainId, provider).getMarketsLenderStatus(
+        lender,
+        v1Accounts.map(({ market }) => market.address)
+      );
+    };
+    const getV2Updates = async (): Promise<
+      Array<LenderAccountDataStructOutput | LenderAccountDataV21StructOutput>
+    > => {
+      if (v2Accounts.length === 0) return [];
+      return getLensV2Contract(chainId, provider)["getLenderAccountData(address,address[])"](
+        lender,
+        v2Accounts.map(({ market }) => market.address)
+      );
+    };
+
+    // Fetch every version before applying updates so an RPC failure does not
+    // leave callers with a partially refreshed mixed-version catalogue.
+    const [v1Updates, v2Updates] = await Promise.all([getV1Updates(), getV2Updates()]);
+    assert(v1Updates.length === v1Accounts.length, "V1 lender state update count mismatch");
+    assert(v2Updates.length === v2Accounts.length, "V2 lender state update count mismatch");
+
+    v1Accounts.forEach((marketAccount, index) => {
+      const update = v1Updates[index];
+      marketAccount.updateWith(account === undefined ? zeroLenderBalances(update) : update);
+    });
+    v2Accounts.forEach((marketAccount, index) => {
+      const update = v2Updates[index];
+      marketAccount.updateWith(account === undefined ? zeroLenderBalances(update) : update);
+    });
+
+    return marketAccounts;
   }
 
   /**

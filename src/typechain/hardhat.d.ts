@@ -53,6 +53,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IOpenTermHooks__factory>;
     getContractFactory(
+      name: "IPeriodicTermHooks",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPeriodicTermHooks__factory>;
+    getContractFactory(
       name: "ISafe",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISafe__factory>;
@@ -64,6 +68,10 @@ declare module "hardhat/types/runtime" {
       name: "MarketLensV2",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MarketLensV2__factory>;
+    getContractFactory(
+      name: "MarketLensV21",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MarketLensV21__factory>;
     getContractFactory(
       name: "MockArchControllerOwner",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -168,6 +176,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IOpenTermHooks>;
     getContractAt(
+      name: "IPeriodicTermHooks",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPeriodicTermHooks>;
+    getContractAt(
       name: "ISafe",
       address: string,
       signer?: ethers.Signer
@@ -182,6 +195,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.MarketLensV2>;
+    getContractAt(
+      name: "MarketLensV21",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MarketLensV21>;
     getContractAt(
       name: "MockArchControllerOwner",
       address: string,

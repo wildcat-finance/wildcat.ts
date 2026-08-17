@@ -168,28 +168,33 @@ export type FixedTermHooksConfig = {
   template?: HooksTemplate;
 };
 
-export type HooksConfig = OpenTermHooksConfig | FixedTermHooksConfig;
-
-/* export type HooksConfig = {
+export type PeriodicTermHooksConfig = {
   hooksAddress: string;
-  hooksKind: HooksKind;
+  kind: HooksKind.PeriodicTerm;
   flags: HooksFlags;
-  transferRequiresAccess?: boolean;
-  depositRequiresAccess?: boolean;
+  transferRequiresAccess: boolean;
+  depositRequiresAccess: boolean;
   minimumDeposit?: TokenAmount;
-  transfersDisabled?: boolean;
-  allowForceBuyBacks?: boolean;
-  queueWithdrawalRequiresAccess?: boolean;
-  fixedTermEndTime?: number;
-  allowClosureBeforeTerm?: boolean;
-  allowTermReduction?: boolean;
+  transfersDisabled: boolean;
+  queueWithdrawalRequiresAccess: boolean;
+  firstWithdrawalWindowStart: number;
+  periodDuration: number;
+  withdrawalWindowDuration: number;
+  periodicTermClosed: boolean;
+  pendingAprChangeAnnualInterestBips: number;
+  pendingAprChangeProposalTimestamp: number;
+  pendingAprChangeResponseWindowStart: number;
+  pendingAprChangeResponseWindowEnd: number;
   template?: HooksTemplate;
-}; */
+};
+
+export type HooksConfig = OpenTermHooksConfig | FixedTermHooksConfig | PeriodicTermHooksConfig;
 
 export enum HooksKind {
   Unknown = "Unknown",
   OpenTerm = "OpenTerm",
-  FixedTerm = "FixedTerm"
+  FixedTerm = "FixedTerm",
+  PeriodicTerm = "PeriodicTerm"
 }
 
 export type RoleProvider = {
