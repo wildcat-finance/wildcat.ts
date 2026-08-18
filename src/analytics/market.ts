@@ -1,5 +1,5 @@
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
-import { requireSubgraphFeature } from "../config";
+import { getSubgraphClientSchemaFamily, requireSubgraphFeature } from "../config";
 import {
   GetAnnualInterestBipsUpdatePageDocument,
   GetDelinquencyStatusChangePageDocument,
@@ -58,8 +58,21 @@ import {
   MarketInterestAccrual,
   MaxTotalSupplyUpdate
 } from "./types";
+import {
+  LegacyGetAnnualInterestBipsUpdatePageDocument,
+  LegacyGetDelinquencyStatusChangePageDocument,
+  LegacyGetMarketAggregatePageDocument,
+  LegacyGetMarketBorrowPageDocument,
+  LegacyGetMarketDailyStatsPageDocument,
+  LegacyGetMarketDebtRepaymentPageDocument,
+  LegacyGetMarketInterestAccrualPageDocument,
+  LegacyGetMaxTotalSupplyUpdatePageDocument
+} from "./legacy";
 
 export type GetMarketAnalyticsPageOptions = IndexedReadOptions & MarketAnalyticsFilter;
+
+const usesLegacyAnalyticsSchema = (client: ApolloClient<NormalizedCacheObject>): boolean =>
+  getSubgraphClientSchemaFamily(client) === "legacy-v2";
 
 const marketScope = (markets?: readonly string[], borrower?: string) => ({
   ...(markets ? { market_in: normalizeAddresses(markets) } : {}),
@@ -83,6 +96,7 @@ export const getMarketDailyStatsPage = async (
   }: GetMarketAnalyticsPageOptions = {}
 ): Promise<IndexedPage<IndexedMarketDailyStats>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphMarketDailyStats_Filter = {
     id_gt: afterId,
@@ -94,7 +108,7 @@ export const getMarketDailyStatsPage = async (
     SubgraphGetMarketDailyStatsPageQuery,
     SubgraphGetMarketDailyStatsPageQueryVariables
   >({
-    query: GetMarketDailyStatsPageDocument,
+    query: legacySchema ? LegacyGetMarketDailyStatsPageDocument : GetMarketDailyStatsPageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -117,6 +131,7 @@ export const getDelinquencyStatusChangePage = async (
   }: GetMarketAnalyticsPageOptions = {}
 ): Promise<IndexedPage<DelinquencyStatusChange>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphDelinquencyStatusChanged_Filter = {
     id_gt: afterId,
@@ -128,7 +143,9 @@ export const getDelinquencyStatusChangePage = async (
     SubgraphGetDelinquencyStatusChangePageQuery,
     SubgraphGetDelinquencyStatusChangePageQueryVariables
   >({
-    query: GetDelinquencyStatusChangePageDocument,
+    query: legacySchema
+      ? LegacyGetDelinquencyStatusChangePageDocument
+      : GetDelinquencyStatusChangePageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -151,6 +168,7 @@ export const getMarketInterestAccrualPage = async (
   }: GetMarketAnalyticsPageOptions = {}
 ): Promise<IndexedPage<MarketInterestAccrual>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphMarketInterestAccrued_Filter = {
     id_gt: afterId,
@@ -162,7 +180,9 @@ export const getMarketInterestAccrualPage = async (
     SubgraphGetMarketInterestAccrualPageQuery,
     SubgraphGetMarketInterestAccrualPageQueryVariables
   >({
-    query: GetMarketInterestAccrualPageDocument,
+    query: legacySchema
+      ? LegacyGetMarketInterestAccrualPageDocument
+      : GetMarketInterestAccrualPageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -185,6 +205,7 @@ export const getAnnualInterestBipsUpdatePage = async (
   }: GetMarketAnalyticsPageOptions = {}
 ): Promise<IndexedPage<AnnualInterestBipsUpdate>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphAnnualInterestBipsUpdated_Filter = {
     id_gt: afterId,
@@ -196,7 +217,9 @@ export const getAnnualInterestBipsUpdatePage = async (
     SubgraphGetAnnualInterestBipsUpdatePageQuery,
     SubgraphGetAnnualInterestBipsUpdatePageQueryVariables
   >({
-    query: GetAnnualInterestBipsUpdatePageDocument,
+    query: legacySchema
+      ? LegacyGetAnnualInterestBipsUpdatePageDocument
+      : GetAnnualInterestBipsUpdatePageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -219,6 +242,7 @@ export const getMarketBorrowPage = async (
   }: GetMarketAnalyticsPageOptions = {}
 ): Promise<IndexedPage<MarketBorrow>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphBorrow_Filter = {
     id_gt: afterId,
@@ -229,7 +253,7 @@ export const getMarketBorrowPage = async (
     SubgraphGetMarketBorrowPageQuery,
     SubgraphGetMarketBorrowPageQueryVariables
   >({
-    query: GetMarketBorrowPageDocument,
+    query: legacySchema ? LegacyGetMarketBorrowPageDocument : GetMarketBorrowPageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -252,6 +276,7 @@ export const getMarketDebtRepaymentPage = async (
   }: GetMarketAnalyticsPageOptions = {}
 ): Promise<IndexedPage<MarketDebtRepayment>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphDebtRepaid_Filter = {
     id_gt: afterId,
@@ -262,7 +287,9 @@ export const getMarketDebtRepaymentPage = async (
     SubgraphGetMarketDebtRepaymentPageQuery,
     SubgraphGetMarketDebtRepaymentPageQueryVariables
   >({
-    query: GetMarketDebtRepaymentPageDocument,
+    query: legacySchema
+      ? LegacyGetMarketDebtRepaymentPageDocument
+      : GetMarketDebtRepaymentPageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -285,6 +312,7 @@ export const getMaxTotalSupplyUpdatePage = async (
   }: GetMarketAnalyticsPageOptions = {}
 ): Promise<IndexedPage<MaxTotalSupplyUpdate>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphMaxTotalSupplyUpdated_Filter = {
     id_gt: afterId,
@@ -295,7 +323,9 @@ export const getMaxTotalSupplyUpdatePage = async (
     SubgraphGetMaxTotalSupplyUpdatePageQuery,
     SubgraphGetMaxTotalSupplyUpdatePageQueryVariables
   >({
-    query: GetMaxTotalSupplyUpdatePageDocument,
+    query: legacySchema
+      ? LegacyGetMaxTotalSupplyUpdatePageDocument
+      : GetMaxTotalSupplyUpdatePageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -317,6 +347,7 @@ export const getMarketAggregatePage = async (
   { markets, borrower, fetchPolicy = "cache-first", ...request }: GetMarketAggregatePageOptions = {}
 ): Promise<IndexedPage<IndexedMarketAggregate>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphMarket_Filter = {
     id_gt: afterId,
@@ -327,8 +358,18 @@ export const getMarketAggregatePage = async (
     SubgraphGetMarketAggregatePageQuery,
     SubgraphGetMarketAggregatePageQueryVariables
   >({
-    query: GetMarketAggregatePageDocument,
-    variables: { filter, first, block },
+    query: legacySchema ? LegacyGetMarketAggregatePageDocument : GetMarketAggregatePageDocument,
+    variables: {
+      filter: legacySchema
+        ? ({
+            ...filter,
+            ...(filter.address_in ? { id_in: filter.address_in } : {}),
+            address_in: undefined
+          } as unknown as SubgraphMarket_Filter)
+        : filter,
+      first,
+      block
+    },
     fetchPolicy
   });
   return toIndexedPage(

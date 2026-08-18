@@ -11,6 +11,17 @@ import {
 import { MarketAccount } from "../account";
 import { SupportedChainId } from "../constants";
 import { SignerOrProvider } from "../types";
+import { usesLegacySubgraphSchema } from "../config";
+import { parseSubgraphLenderHooksAccess } from "../utils";
+import {
+  LegacyGetAllMarketsForLenderViewDocument,
+  LegacyLenderMarketsQueryData,
+  legacyMarketFilterCanMatch,
+  normalizeLegacyLenderAccountData,
+  normalizeLegacyMarketData,
+  toLegacyMarketFilter,
+  toLegacyMarketOrder
+} from "./legacy-subgraph";
 
 type GetLenderAccountsForAllMarketsOptions = SubgraphGetAllMarketsForLenderViewQueryVariables & {
   lender: string;
@@ -61,6 +72,65 @@ export async function getLenderAccountsForAllMarkets(
     ...variables
   }: GetLenderAccountsForAllMarketsOptions
 ): Promise<MarketAccount[]> {
+  if (usesLegacySubgraphSchema(chainId)) {
+    if (!legacyMarketFilterCanMatch(variables.marketFilter)) return [];
+    const { data } = await subgraphClient.query<LegacyLenderMarketsQueryData>({
+      query: LegacyGetAllMarketsForLenderViewDocument,
+      variables: {
+        lender: lender.toLowerCase(),
+        ...variables,
+        marketFilter: toLegacyMarketFilter(variables.marketFilter),
+        orderMarkets: toLegacyMarketOrder(variables.orderMarkets)
+      },
+      fetchPolicy
+    });
+    const authorizedMarkets = new Set(
+      data.controllerAuthorizations
+        .filter((authorization) => !!authorization.controller)
+        .flatMap((authorization) => authorization.controller!.markets)
+        .map(({ id }) => id.toLowerCase())
+    );
+    const hooksAccessByInstance = new Map(
+      data.lenderHooksAccesses.map((access) => [access.hooks.id.toLowerCase(), access])
+    );
+
+    return data.markets.map((marketData) => {
+      const market = Market.fromSubgraphMarketData(
+        chainId,
+        signerOrProvider,
+        normalizeLegacyMarketData(chainId, marketData)
+      );
+      const hooksAccess = marketData.hooks
+        ? hooksAccessByInstance.get(marketData.hooks.id.toLowerCase())
+        : undefined;
+      const access = hooksAccess
+        ? {
+            credential: parseSubgraphLenderHooksAccess(
+              hooksAccess as unknown as Parameters<typeof parseSubgraphLenderHooksAccess>[0]
+            ),
+            isKnownLender: hooksAccess.knownLenderStatuses.some(
+              ({ market: knownMarket }) =>
+                knownMarket.id.toLowerCase() === market.address.toLowerCase()
+            )
+          }
+        : undefined;
+      const lenderData = marketData.lenders[0];
+      if (!lenderData) {
+        return MarketAccount.fromMarketDataOnly(
+          market,
+          lender,
+          authorizedMarkets.has(market.address.toLowerCase()),
+          access
+        );
+      }
+      return MarketAccount.fromSubgraphAccountData(
+        market,
+        normalizeLegacyLenderAccountData(lenderData),
+        access
+      );
+    });
+  }
+
   const {
     data: { markets: _markets, controllerAuthorizations }
   } = await subgraphClient.query<

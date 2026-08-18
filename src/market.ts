@@ -23,7 +23,8 @@ import {
   getUnifiedMarketDataV2,
   getUnifiedMarketsDataV2,
   getUnifiedMarketsLiveDataV2,
-  getV2MarketData
+  getV2MarketData,
+  getV2MarketsData
 } from "./internal/market-lens";
 import { TokenAmount, Token, toRawAmount } from "./token";
 import {
@@ -1272,7 +1273,7 @@ export class Market extends ContractWrapper {
           minimumDeposit,
           transferRequiresAccess,
           depositRequiresAccess,
-          allowForceBuyBacks: false,
+          allowForceBuyBacks: data.hooksConfig.allowForceBuyBacks,
           transfersDisabled
         };
       } else if (template.kind === HooksKind.FixedTerm) {
@@ -1286,7 +1287,7 @@ export class Market extends ContractWrapper {
           depositRequiresAccess,
           queueWithdrawalRequiresAccess,
           allowClosureBeforeTerm,
-          allowForceBuyBacks: false,
+          allowForceBuyBacks: data.hooksConfig.allowForceBuyBacks,
           allowTermReduction,
           fixedTermEndTime,
           transfersDisabled
@@ -1736,12 +1737,8 @@ export class Market extends ContractWrapper {
         // Fall back to the pre-2.5 V2 lens for chains that have not fully migrated.
       }
     }
-    return Promise.all(
-      markets.map(async (market) => {
-        const data = await getV2MarketData(chainId, provider, market);
-        return Market.fromMarketDataV2(chainId, provider, data, signerAddress);
-      })
-    );
+    const data = await getV2MarketsData(chainId, provider, markets);
+    return data.map((market) => Market.fromMarketDataV2(chainId, provider, market, signerAddress));
   }
 
   /**

@@ -211,6 +211,38 @@ const makeWithdrawalBatchLenderStatus = (lender: string) => ({
 });
 
 describe("Withdrawal read routing", () => {
+  it("distinguishes a concluded closed-market batch from an executable withdrawal", () => {
+    const hooksFactory = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "HooksFactoryStandard"
+    );
+    const marketData = makeFactoryBackedMarketData(hooksFactory);
+    marketData.isClosed = true;
+    const market = Market.fromMarketDataV2(
+      constantsModule.SupportedChainId.Sepolia,
+      provider,
+      marketData
+    );
+    const batch = WithdrawalBatch.fromWithdrawalBatchData(
+      market,
+      makeWithdrawalBatchData(BatchStatus.Pending),
+      true
+    );
+    const lender = makeAddress(30);
+    const withdrawal = LenderWithdrawalStatus.fromWithdrawalBatchLenderStatus(market, batch, {
+      ...makeWithdrawalBatchLenderStatus(lender),
+      normalizedAmountWithdrawn: BigNumber.from(5)
+    });
+
+    expect(withdrawal.isConcluded).to.equal(true);
+    expect(withdrawal.availableWithdrawalAmount.raw.toString()).to.equal("5");
+    expect(withdrawal.isExecutable).to.equal(false);
+
+    batch.applyLensUpdate(makeWithdrawalBatchData(BatchStatus.Expired), true);
+
+    expect(withdrawal.isExecutable).to.equal(true);
+  });
+
   it("preserves the explicit V2.5 Expired status on lens updates", () => {
     const hooksFactory = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,

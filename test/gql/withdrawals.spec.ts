@@ -1,7 +1,7 @@
 import { ApolloClient, DocumentNode, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
 import { providers } from "ethers";
-import { print } from "graphql";
+import { getOperationAST, print } from "graphql";
 import { SupportedChainId } from "../../src/constants";
 import {
   getActiveLendersByMarket,
@@ -228,6 +228,45 @@ describe("withdrawal subgraph reads", () => {
     expect(withdrawals[0].lender).to.equal(lender);
     expect(withdrawals[0].requests.map(({ id }) => id)).to.deep.equal([request.id]);
     expect(withdrawals[0].executions.map(({ id }) => id)).to.deep.equal([execution.id]);
+  });
+
+  it("uses the V2.0 lender-withdrawal ordering on legacy chains", async () => {
+    const legacyMarket = {
+      ...market,
+      chainId: SupportedChainId.Mainnet
+    } as Market;
+    const response = {
+      market: {
+        __typename: "Market",
+        lenders: [
+          {
+            __typename: "LenderAccount",
+            incompleteWithdrawals: [],
+            completeWithdrawals: []
+          }
+        ]
+      }
+    };
+    const historyClient = createClient(response);
+    const incompleteClient = createClient(response);
+
+    await getLenderWithdrawalsForMarket(historyClient.client, {
+      market: legacyMarket,
+      lender
+    });
+    await getIncompleteLenderWithdrawalsForMarket(incompleteClient.client, {
+      market: legacyMarket,
+      lender
+    });
+
+    expect(getOperationAST(historyClient.calls[0].query)?.name?.value).to.equal(
+      "legacyGetLenderWithdrawalsForMarket"
+    );
+    expect(historyClient.calls[0].variables?.orderWithdrawals).to.equal("batch__expiry");
+    expect(getOperationAST(incompleteClient.calls[0].query)?.name?.value).to.equal(
+      "legacyGetIncompleteLenderWithdrawalsForMarket"
+    );
+    expect(incompleteClient.calls[0].variables?.orderWithdrawals).to.equal("batch__expiry");
   });
 
   it("accepts a Market in the active-lender options without a cast", async () => {

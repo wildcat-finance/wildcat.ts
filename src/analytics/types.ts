@@ -83,7 +83,8 @@ export type IndexedAnalyticsMarket = {
   scaleFactor: bigint;
   isDelinquent: boolean;
   isIncurringPenalties: boolean;
-  totalDebtUSD: UsdValue;
+  /** Undefined when nonzero debt could not be priced by the indexer. */
+  totalDebtUSD?: UsdValue;
   term: IndexedAnalyticsMarketTerm;
   snapshot?: IndexedMarketSnapshot;
   asset: IndexedAnalyticsToken;

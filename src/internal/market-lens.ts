@@ -124,6 +124,21 @@ export const getV2MarketData = (
   );
 };
 
+export const getV2MarketsData = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  markets: string[]
+): Promise<MarketDataV2StructOutput[]> => {
+  return readMarketLens<MarketDataV2StructOutput[]>(
+    chainId,
+    provider,
+    "MarketLensV2",
+    marketLensV2Abi as Abi,
+    "getMarketsData",
+    [markets as Address[]]
+  );
+};
+
 export const getUnifiedMarketDataV2 = (
   chainId: SupportedChainId,
   provider: SignerOrProvider,
@@ -299,9 +314,21 @@ export const getLatestLenderAccountsData = (
   account: string,
   markets: string[]
 ): Promise<Array<LenderAccountDataStructOutput | LenderAccountDataV2_5StructOutput>> => {
-  return readLatestMarketLens<
-    Array<LenderAccountDataStructOutput | LenderAccountDataV2_5StructOutput>
-  >(chainId, provider, "getLenderAccountData", [account as Address, markets as Address[]]);
+  const { deploymentName, abi } = getLatestLensTarget(chainId);
+  const batchLenderAccountAbi = abi.filter(
+    (item) =>
+      item.type === "function" &&
+      item.name === "getLenderAccountData" &&
+      item.inputs[1]?.type === "address[]"
+  ) as Abi;
+  return readMarketLens<Array<LenderAccountDataStructOutput | LenderAccountDataV2_5StructOutput>>(
+    chainId,
+    provider,
+    deploymentName,
+    batchLenderAccountAbi,
+    "getLenderAccountData",
+    [account as Address, markets as Address[]]
+  );
 };
 
 export const getLatestMarketDataWithLenderStatus = (

@@ -570,6 +570,60 @@ describe("Account and token read routing", () => {
     expect(marketAccount.stateSource).to.equal("live");
   });
 
+  it("batch-refreshes a singleton legacy V2 account without ambiguous lens overloads", async () => {
+    const chainId = constantsModule.SupportedChainId.Mainnet;
+    const account = makeAddress(44);
+    const hooksFactory = constantsModule.getDeploymentAddress(chainId, "HooksFactoryStandard");
+    const marketData = makeFactoryBackedMarketData(hooksFactory);
+    const market = Market.fromMarketDataV2(chainId, provider, marketData);
+    const marketAccount = MarketAccount.fromLenderAccountData(
+      market,
+      makeLenderAccountData(account)
+    );
+    const lensAddress = constantsModule.getDeploymentAddress(chainId, "MarketLensV2");
+    const seenFunctions: string[] = [];
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2Abi as Abi, call);
+
+      expect(call.to).to.equal(lensAddress);
+      seenFunctions.push(decoded.functionName);
+      if (decoded.functionName === "getMarketsData") {
+        expect(
+          (decoded.args as [string[]])[0].map((address) => address.toLowerCase())
+        ).to.deep.equal([market.address.toLowerCase()]);
+        return encodeLensResult(marketLensV2Abi as Abi, "getMarketsData", [marketData]);
+      }
+      if (decoded.functionName === "getLenderAccountData") {
+        const [lender, markets] = decoded.args as [string, string[]];
+        expect(lender.toLowerCase()).to.equal(account);
+        expect(markets.map((address) => address.toLowerCase())).to.deep.equal([
+          market.address.toLowerCase()
+        ]);
+        const batchLenderAccountAbi = (marketLensV2Abi as Abi).filter(
+          (item) =>
+            item.type === "function" &&
+            item.name === "getLenderAccountData" &&
+            item.inputs[1]?.type === "address[]"
+        ) as Abi;
+        return encodeLensResult(batchLenderAccountAbi, "getLenderAccountData", [
+          makeLenderAccountData(account)
+        ]);
+      }
+      throw new Error(`Unexpected legacy V2 lens read: ${decoded.functionName}`);
+    });
+
+    const result = await MarketAccount.refreshMarketAccountsV2LiveData(
+      chainId,
+      viemProvider as unknown as providers.Provider,
+      account,
+      [marketAccount]
+    );
+
+    expect(result).to.deep.equal([marketAccount]);
+    expect(seenFunctions.sort()).to.deep.equal(["getLenderAccountData", "getMarketsData"].sort());
+    expect(marketAccount.marketBalance.raw.toString()).to.equal("50");
+  });
+
   it("falls back to the legacy lens for direct account reads when the latest lens rejects the market", async () => {
     const account = makeAddress(41);
     const marketAddress = makeAddress(42);

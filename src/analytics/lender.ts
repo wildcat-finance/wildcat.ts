@@ -1,5 +1,5 @@
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
-import { requireSubgraphFeature } from "../config";
+import { getSubgraphClientSchemaFamily, requireSubgraphFeature } from "../config";
 import {
   GetLenderAnalyticsProfileDocument,
   GetLenderDailyStatsPageDocument,
@@ -42,7 +42,8 @@ import {
   normalizeLenderTransfer,
   normalizeLenderWithdrawalExecution,
   normalizeLenderWithdrawalRequest,
-  normalizeLenderWithdrawalStatus
+  normalizeLenderWithdrawalStatus,
+  normalizeAnalyticsMarket
 } from "./normalizers";
 import { normalizeIndexedPageRequest, toIndexedPage } from "./pagination";
 import { IndexedReadOptions, IndexedTimeRange, normalizeAddresses } from "./read-options";
@@ -57,6 +58,56 @@ import {
   LenderWithdrawalExecution,
   LenderWithdrawalRequest
 } from "./types";
+import {
+  LegacyGetLenderDepositPageDocument,
+  LegacyGetLenderPositionPageDocument,
+  LegacyGetLenderTransferPageDocument,
+  LegacyGetLenderWithdrawalExecutionPageDocument,
+  LegacyGetLenderWithdrawalRequestPageDocument,
+  LegacyGetLenderWithdrawalStatusPageDocument,
+  LegacyIndexedAtData,
+  LegacyLenderWithdrawalStatusData
+} from "./legacy";
+
+const usesLegacyAnalyticsSchema = (client: ApolloClient<NormalizedCacheObject>): boolean =>
+  getSubgraphClientSchemaFamily(client) === "legacy-v2";
+
+const indexedAtFromLegacy = (data: LegacyIndexedAtData) => ({
+  blockNumber: BigInt(data.blockNumber),
+  blockTimestamp: BigInt(data.blockTimestamp),
+  transactionHash: data.transactionHash,
+  logIndex: BigInt(data.blockLogIndex)
+});
+
+const normalizeLegacyLenderWithdrawalStatus = (
+  data: LegacyLenderWithdrawalStatusData
+): IndexedLenderWithdrawalStatus => {
+  const updateEvents = [data.batch.creation, ...data.requests, ...data.executions];
+  const updatedAt = updateEvents.reduce((latest, event) =>
+    event.blockTimestamp >= latest.blockTimestamp ? event : latest
+  );
+  return {
+    id: data.id,
+    accountId: data.account.id,
+    lender: data.account.address,
+    market: normalizeAnalyticsMarket(
+      data.account.market as Parameters<typeof normalizeAnalyticsMarket>[0]
+    ),
+    batch: {
+      id: data.batch.id,
+      expiry: BigInt(data.batch.expiry),
+      isClosed: data.batch.isClosed,
+      isExpired: data.batch.isExpired,
+      isCompleted: data.batch.isCompleted,
+      createdAt: indexedAtFromLegacy(data.batch.creation)
+    },
+    scaledAmount: BigInt(data.scaledAmount),
+    normalizedAmountWithdrawn: BigInt(data.normalizedAmountWithdrawn),
+    totalNormalizedRequests: BigInt(data.totalNormalizedRequests),
+    isCompleted: data.isCompleted,
+    updatedAt: indexedAtFromLegacy(updatedAt)
+  };
+};
 
 export const getLenderAccountId = (market: string, lender: string): string =>
   `LENDER-${market.toLowerCase()}-${lender.toLowerCase()}`;
@@ -104,6 +155,7 @@ export const getLenderPositionPage = async (
   }: GetLenderPositionPageOptions
 ): Promise<IndexedPage<LenderPosition>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphLenderAccount_Filter = {
     id_gt: afterId,
@@ -115,7 +167,7 @@ export const getLenderPositionPage = async (
     SubgraphGetLenderPositionPageQuery,
     SubgraphGetLenderPositionPageQueryVariables
   >({
-    query: GetLenderPositionPageDocument,
+    query: legacySchema ? LegacyGetLenderPositionPageDocument : GetLenderPositionPageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -195,6 +247,7 @@ export const getLenderDepositPage = async (
   }: GetLenderActivityPageOptions
 ): Promise<IndexedPage<LenderDeposit>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphDeposit_Filter = {
     id_gt: afterId,
@@ -205,7 +258,7 @@ export const getLenderDepositPage = async (
     SubgraphGetLenderDepositPageQuery,
     SubgraphGetLenderDepositPageQueryVariables
   >({
-    query: GetLenderDepositPageDocument,
+    query: legacySchema ? LegacyGetLenderDepositPageDocument : GetLenderDepositPageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -228,6 +281,7 @@ export const getLenderWithdrawalRequestPage = async (
   }: GetLenderActivityPageOptions
 ): Promise<IndexedPage<LenderWithdrawalRequest>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphWithdrawalRequest_Filter = {
     id_gt: afterId,
@@ -238,7 +292,9 @@ export const getLenderWithdrawalRequestPage = async (
     SubgraphGetLenderWithdrawalRequestPageQuery,
     SubgraphGetLenderWithdrawalRequestPageQueryVariables
   >({
-    query: GetLenderWithdrawalRequestPageDocument,
+    query: legacySchema
+      ? LegacyGetLenderWithdrawalRequestPageDocument
+      : GetLenderWithdrawalRequestPageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -261,6 +317,7 @@ export const getLenderWithdrawalExecutionPage = async (
   }: GetLenderActivityPageOptions
 ): Promise<IndexedPage<LenderWithdrawalExecution>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphWithdrawalExecution_Filter = {
     id_gt: afterId,
@@ -271,7 +328,9 @@ export const getLenderWithdrawalExecutionPage = async (
     SubgraphGetLenderWithdrawalExecutionPageQuery,
     SubgraphGetLenderWithdrawalExecutionPageQueryVariables
   >({
-    query: GetLenderWithdrawalExecutionPageDocument,
+    query: legacySchema
+      ? LegacyGetLenderWithdrawalExecutionPageDocument
+      : GetLenderWithdrawalExecutionPageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -299,25 +358,30 @@ export const getLenderTransferPage = async (
   }: GetLenderTransferPageOptions
 ): Promise<IndexedPage<LenderTransfer>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const accountFilter = lenderAccountFilter(lender, markets);
-  const partyFilter: SubgraphTransfer_Filter =
-    direction === "in"
-      ? { to_: accountFilter }
-      : direction === "out"
-      ? { from_: accountFilter }
-      : { or: [{ from_: accountFilter }, { to_: accountFilter }] };
-  const filter: SubgraphTransfer_Filter = {
+  const commonFilter: SubgraphTransfer_Filter = {
     id_gt: afterId,
-    ...partyFilter,
     ...(markets ? { market_in: normalizeAddresses(markets) } : {}),
     ...blockTimeRange(fromTimestamp, toTimestamp)
   };
+  const filter: SubgraphTransfer_Filter =
+    direction === "in"
+      ? { ...commonFilter, to_: accountFilter }
+      : direction === "out"
+      ? { ...commonFilter, from_: accountFilter }
+      : {
+          or: [
+            { ...commonFilter, from_: accountFilter },
+            { ...commonFilter, to_: accountFilter }
+          ]
+        };
   const { data } = await client.query<
     SubgraphGetLenderTransferPageQuery,
     SubgraphGetLenderTransferPageQueryVariables
   >({
-    query: GetLenderTransferPageDocument,
+    query: legacySchema ? LegacyGetLenderTransferPageDocument : GetLenderTransferPageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -338,6 +402,7 @@ export const getLenderWithdrawalStatusPage = async (
   }: Omit<GetLenderActivityPageOptions, keyof IndexedTimeRange>
 ): Promise<IndexedPage<IndexedLenderWithdrawalStatus>> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphLenderWithdrawalStatus_Filter = {
     id_gt: afterId,
@@ -347,12 +412,18 @@ export const getLenderWithdrawalStatusPage = async (
     SubgraphGetLenderWithdrawalStatusPageQuery,
     SubgraphGetLenderWithdrawalStatusPageQueryVariables
   >({
-    query: GetLenderWithdrawalStatusPageDocument,
+    query: legacySchema
+      ? LegacyGetLenderWithdrawalStatusPageDocument
+      : GetLenderWithdrawalStatusPageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
   return toIndexedPage(
-    data.lenderWithdrawalStatuses.map(normalizeLenderWithdrawalStatus),
+    legacySchema
+      ? (data.lenderWithdrawalStatuses as unknown as LegacyLenderWithdrawalStatusData[]).map(
+          normalizeLegacyLenderWithdrawalStatus
+        )
+      : data.lenderWithdrawalStatuses.map(normalizeLenderWithdrawalStatus),
     first,
     normalizeIndexedQueryMetadata(data._meta)
   );
