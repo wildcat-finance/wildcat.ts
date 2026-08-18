@@ -1,5 +1,6 @@
 import { Market } from "../market";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
+import { usesLegacySubgraphSchema } from "../config";
 import {
   SubgraphDelinquencyStatusChanged_Filter,
   SubgraphBorrow_Filter,
@@ -26,6 +27,7 @@ import {
   assert,
   parseMarketRecord
 } from "../utils";
+import { LegacyGetMarketEventsDocument } from "./legacy-subgraph";
 
 export type GetMarketRecordsOptions = {
   market: Market;
@@ -77,6 +79,7 @@ export async function getMarketRecords(
     endEventIndex = market.eventIndex;
   }
   const startEventIndex = endEventIndex ? Math.max(0, endEventIndex - limit) : 0;
+  const legacySchema = usesLegacySubgraphSchema(market.chainId);
   const variables: SubgraphGetMarketEventsQueryVariables = {
     market: marketAddress,
     endEventIndex,
@@ -92,16 +95,18 @@ export async function getMarketRecords(
     forceBuyBackRecordsFilter: additionalFilter,
     minimumDepositUpdateRecordsFilter: additionalFilter,
     protocolFeeBipsUpdatedRecordsFilter: additionalFilter,
-    fixedTermUpdatedRecordsFilter: additionalFilter,
-    periodicTermUpdatedRecordsFilter: additionalFilter,
-    annualInterestBipsReductionProposalRecordsFilter: additionalFilter
+    fixedTermUpdatedRecordsFilter: additionalFilter
   };
+  if (!legacySchema) {
+    variables.periodicTermUpdatedRecordsFilter = additionalFilter;
+    variables.annualInterestBipsReductionProposalRecordsFilter = additionalFilter;
+  }
 
   const result = await subgraphClient.query<
     SubgraphGetMarketEventsQuery,
     SubgraphGetMarketEventsQueryVariables
   >({
-    query: GetMarketEventsDocument,
+    query: legacySchema ? LegacyGetMarketEventsDocument : GetMarketEventsDocument,
     variables,
     fetchPolicy
   });

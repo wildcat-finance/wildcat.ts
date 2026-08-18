@@ -1272,7 +1272,7 @@ export class Market extends ContractWrapper {
           minimumDeposit,
           transferRequiresAccess,
           depositRequiresAccess,
-          allowForceBuyBacks: false,
+          allowForceBuyBacks: data.hooksConfig.allowForceBuyBacks,
           transfersDisabled
         };
       } else if (template.kind === HooksKind.FixedTerm) {
@@ -1286,7 +1286,7 @@ export class Market extends ContractWrapper {
           depositRequiresAccess,
           queueWithdrawalRequiresAccess,
           allowClosureBeforeTerm,
-          allowForceBuyBacks: false,
+          allowForceBuyBacks: data.hooksConfig.allowForceBuyBacks,
           allowTermReduction,
           fixedTermEndTime,
           transfersDisabled

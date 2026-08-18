@@ -100,12 +100,27 @@ export const SubgraphUrls: Record<SupportedChainId, string> = {
   [SupportedChainId.Sepolia]:
     "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.5.8/gn",
   [SupportedChainId.Mainnet]:
-    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.22/gn",
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.30/gn",
   [SupportedChainId.PlasmaTestnet]:
-    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-testnet/v2.0.22/gn",
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-testnet/v2.0.30/gn",
   [SupportedChainId.PlasmaMainnet]:
-    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-mainnet/v2.0.22/gn"
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-mainnet/v2.0.30/gn"
 };
+
+export type SubgraphSchemaFamily = "legacy-v2" | "v2.5";
+
+export const SubgraphSchemaFamilies: Record<SupportedChainId, SubgraphSchemaFamily> = {
+  [SupportedChainId.Mainnet]: "legacy-v2",
+  [SupportedChainId.Sepolia]: "v2.5",
+  [SupportedChainId.PlasmaTestnet]: "legacy-v2",
+  [SupportedChainId.PlasmaMainnet]: "legacy-v2"
+};
+
+export const getSubgraphSchemaFamily = (chainId: SupportedChainId): SubgraphSchemaFamily =>
+  SubgraphSchemaFamilies[chainId];
+
+export const usesLegacySubgraphSchema = (chainId: SupportedChainId): boolean =>
+  getSubgraphSchemaFamily(chainId) === "legacy-v2";
 
 export type SubgraphDeploymentRequirements = {
   chainId: SupportedChainId;
@@ -137,7 +152,7 @@ const requirements = (
   ...features
 });
 
-/** Endpoint facts the SDK relies on before issuing any first-party V2.5 query. */
+/** Endpoint facts used by V2.5 validation and by consumers for feature gating. */
 export const SubgraphDeploymentRequirementsByChain: Record<
   SupportedChainId,
   SubgraphDeploymentRequirements
@@ -323,6 +338,10 @@ export const validateSubgraphEndpoint = (
 };
 
 const subgraphClients = new Map<string, ApolloClient<NormalizedCacheObject>>();
+const subgraphClientSchemaFamilies = new WeakMap<
+  ApolloClient<NormalizedCacheObject>,
+  SubgraphSchemaFamily
+>();
 const subgraphClientMetadataResolvers = new WeakMap<
   ApolloClient<NormalizedCacheObject>,
   () => Promise<IndexerDeploymentMetadata>
@@ -386,11 +405,24 @@ export const requireSubgraphFeature = async (
   return metadata;
 };
 
-/** Construct a V2.5 client whose operations wait for endpoint compatibility validation. */
+export const getSubgraphClientSchemaFamily = (
+  client: ApolloClient<NormalizedCacheObject>
+): SubgraphSchemaFamily | undefined => subgraphClientSchemaFamilies.get(client);
+
+/** Construct a client for the chain's configured schema family. */
 export const createSubgraphClient = (
   chainId: SupportedChainId,
   endpoint: string = SubgraphUrls[chainId]
 ): ApolloClient<NormalizedCacheObject> => {
+  if (usesLegacySubgraphSchema(chainId)) {
+    const client = new ApolloClient({
+      cache: new InMemoryCache(),
+      link: new HttpLink({ uri: endpoint })
+    });
+    subgraphClientSchemaFamilies.set(client, "legacy-v2");
+    return client;
+  }
+
   const validationLink = new ApolloLink(
     (operation, forward) =>
       new Observable((observer) => {
@@ -421,6 +453,7 @@ export const createSubgraphClient = (
     cache: new InMemoryCache(),
     link: validationLink.concat(new HttpLink({ uri: endpoint }))
   });
+  subgraphClientSchemaFamilies.set(client, "v2.5");
   subgraphClientMetadataResolvers.set(client, () => validateSubgraphEndpoint(chainId, endpoint));
   return client;
 };

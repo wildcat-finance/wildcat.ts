@@ -7,6 +7,12 @@ import {
 } from "./graphql";
 import { SupportedChainId } from "../constants";
 import { SignerOrProvider } from "../types";
+import { usesLegacySubgraphSchema } from "../config";
+import {
+  LegacyGetMarketDocument,
+  LegacyMarketData,
+  normalizeLegacyMarketData
+} from "./legacy-subgraph";
 
 export type GetMarketOptions = SubgraphGetMarketQueryVariables & {
   chainId: SupportedChainId;
@@ -18,6 +24,24 @@ export async function getMarket(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   { chainId, fetchPolicy, market, signerOrProvider, ...variables }: GetMarketOptions
 ): Promise<Market | undefined> {
+  if (usesLegacySubgraphSchema(chainId)) {
+    const result = await subgraphClient.query<{ market?: LegacyMarketData | null }>({
+      query: LegacyGetMarketDocument,
+      variables: {
+        market: market.toLowerCase(),
+        ...variables
+      },
+      fetchPolicy
+    });
+    return result.data.market
+      ? Market.fromSubgraphMarketData(
+          chainId,
+          signerOrProvider,
+          normalizeLegacyMarketData(chainId, result.data.market)
+        )
+      : undefined;
+  }
+
   const result = await subgraphClient.query<
     SubgraphGetMarketQuery,
     SubgraphGetMarketQueryVariables

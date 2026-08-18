@@ -1,4 +1,5 @@
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
+import { usesLegacySubgraphSchema } from "../config";
 import { Market } from "../market";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 import { WithdrawalBatch } from "../withdrawal-batch";
@@ -11,6 +12,7 @@ import {
   SubgraphLenderWithdrawalStatus_OrderBy,
   SubgraphOrderDirection
 } from "./graphql";
+import { LegacyGetLenderWithdrawalsForMarketDocument } from "./legacy-subgraph";
 
 export type GetLenderWithdrawalsForMarketOptions = {
   market: Market;
@@ -54,17 +56,23 @@ export async function getLenderWithdrawalsForMarket(
   );
   assert(Number.isSafeInteger(skip) && skip >= 0, "Invalid lender withdrawal page offset");
 
+  const legacySchema = usesLegacySubgraphSchema(market.chainId);
+
   const { data } = await subgraphClient.query<
     SubgraphGetLenderWithdrawalsForMarketQuery,
     SubgraphGetLenderWithdrawalsForMarketQueryVariables
   >({
-    query: GetLenderWithdrawalsForMarketDocument,
+    query: legacySchema
+      ? LegacyGetLenderWithdrawalsForMarketDocument
+      : GetLenderWithdrawalsForMarketDocument,
     variables: {
       market: market.address.toLowerCase(),
       lender: lender.toLowerCase(),
       numWithdrawals: first,
       skipWithdrawals: skip,
-      orderWithdrawals: SubgraphLenderWithdrawalStatus_OrderBy.batchExpiry,
+      orderWithdrawals: (legacySchema
+        ? "batch__expiry"
+        : SubgraphLenderWithdrawalStatus_OrderBy.batchExpiry) as SubgraphLenderWithdrawalStatus_OrderBy,
       directionWithdrawals: SubgraphOrderDirection.desc
     },
     fetchPolicy

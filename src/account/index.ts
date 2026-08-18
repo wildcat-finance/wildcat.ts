@@ -164,6 +164,8 @@ export type MarketAccountArgs = {
   stateSource?: ReadStateSource;
 };
 
+export type MarketAccountAccess = Pick<MarketAccountArgs, "credential" | "isKnownLender">;
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MarketAccount extends Omit<MarketAccountArgs, "deposits" | "hadSubgraphEntry"> {
   stateSource: ReadStateSource;
@@ -1023,7 +1025,8 @@ export class MarketAccount {
 
   static fromSubgraphAccountData(
     market: Market,
-    data: SubgraphAccountDataForLenderViewFragment | SubgraphAccountDataForLenderListViewFragment
+    data: SubgraphAccountDataForLenderViewFragment | SubgraphAccountDataForLenderListViewFragment,
+    access?: MarketAccountAccess
   ): MarketAccount {
     const indexedSnapshot = normalizeSubgraphLenderAccountSnapshot(data.snapshot);
     const indexedState = data.snapshot ?? data;
@@ -1044,8 +1047,10 @@ export class MarketAccount {
       lastUpdatedTimestamp: indexedState.lastUpdatedTimestamp,
       totalInterestEarned: market.underlyingToken.getAmount(indexedState.totalInterestEarned),
       numPendingWithdrawalBatches: indexedState.numPendingWithdrawalBatches,
-      credential: data.hooksAccess ? parseSubgraphLenderHooksAccess(data.hooksAccess) : undefined,
-      isKnownLender: !!data.knownLenderStatus?.id,
+      credential:
+        access?.credential ??
+        (data.hooksAccess ? parseSubgraphLenderHooksAccess(data.hooksAccess) : undefined),
+      isKnownLender: access?.isKnownLender ?? !!data.knownLenderStatus?.id,
       hadSubgraphEntry: true,
       indexedSnapshot,
       stateSource: "indexed"
@@ -1144,7 +1149,8 @@ export class MarketAccount {
   static fromMarketDataOnly(
     market: Market,
     account: string,
-    isAuthorizedOnController: boolean
+    isAuthorizedOnController: boolean,
+    access?: MarketAccountAccess
   ): MarketAccount {
     return new MarketAccount({
       account,
@@ -1154,6 +1160,8 @@ export class MarketAccount {
       marketBalance: market.marketToken.getAmount(0),
       underlyingBalance: market.underlyingToken.getAmount(0),
       underlyingApproval: 0n,
+      credential: access?.credential,
+      isKnownLender: access?.isKnownLender,
       market
     });
   }
