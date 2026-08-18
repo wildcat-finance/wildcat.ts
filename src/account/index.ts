@@ -164,6 +164,8 @@ export type MarketAccountArgs = {
   stateSource?: ReadStateSource;
 };
 
+export type MarketAccountAccess = Pick<MarketAccountArgs, "credential" | "isKnownLender">;
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MarketAccount extends Omit<MarketAccountArgs, "deposits" | "hadSubgraphEntry"> {
   stateSource: ReadStateSource;
@@ -365,6 +367,12 @@ export class MarketAccount {
     if (!this.isBorrower) return { status: SetAprStatus.NotBorrower };
     if (!(apr > 0 && apr <= 10000)) return { status: SetAprStatus.InvalidApr };
 
+    const config = this.market.hooksConfig;
+    const willCancelPendingProposal =
+      config?.kind === HooksKind.PeriodicTerm &&
+      config.pendingAprChangeProposalTimestamp !== 0 &&
+      apr > this.market.annualInterestBips;
+
     const [originalReserveRatioBips, originalAnnualInterestBips] =
       this.market.originalReserveRatioAndAnnualInterestBips;
 
@@ -399,13 +407,15 @@ export class MarketAccount {
           willChangeReserveRatio: true,
           newCoverageLiquidity,
           newReserveRatio: newReserveRatioBips,
-          changeCausedByReset
+          changeCausedByReset,
+          willCancelPendingProposal
         };
       }
     } else {
       return {
         status: SetAprStatus.Ready,
-        willChangeReserveRatio: false
+        willChangeReserveRatio: false,
+        willCancelPendingProposal
       };
     }
   }
@@ -1023,7 +1033,8 @@ export class MarketAccount {
 
   static fromSubgraphAccountData(
     market: Market,
-    data: SubgraphAccountDataForLenderViewFragment | SubgraphAccountDataForLenderListViewFragment
+    data: SubgraphAccountDataForLenderViewFragment | SubgraphAccountDataForLenderListViewFragment,
+    access?: MarketAccountAccess
   ): MarketAccount {
     const indexedSnapshot = normalizeSubgraphLenderAccountSnapshot(data.snapshot);
     const indexedState = data.snapshot ?? data;
@@ -1044,8 +1055,10 @@ export class MarketAccount {
       lastUpdatedTimestamp: indexedState.lastUpdatedTimestamp,
       totalInterestEarned: market.underlyingToken.getAmount(indexedState.totalInterestEarned),
       numPendingWithdrawalBatches: indexedState.numPendingWithdrawalBatches,
-      credential: data.hooksAccess ? parseSubgraphLenderHooksAccess(data.hooksAccess) : undefined,
-      isKnownLender: !!data.knownLenderStatus?.id,
+      credential:
+        access?.credential ??
+        (data.hooksAccess ? parseSubgraphLenderHooksAccess(data.hooksAccess) : undefined),
+      isKnownLender: access?.isKnownLender ?? !!data.knownLenderStatus?.id,
       hadSubgraphEntry: true,
       indexedSnapshot,
       stateSource: "indexed"
@@ -1144,7 +1157,8 @@ export class MarketAccount {
   static fromMarketDataOnly(
     market: Market,
     account: string,
-    isAuthorizedOnController: boolean
+    isAuthorizedOnController: boolean,
+    access?: MarketAccountAccess
   ): MarketAccount {
     return new MarketAccount({
       account,
@@ -1154,6 +1168,8 @@ export class MarketAccount {
       marketBalance: market.marketToken.getAmount(0),
       underlyingBalance: market.underlyingToken.getAmount(0),
       underlyingApproval: 0n,
+      credential: access?.credential,
+      isKnownLender: access?.isKnownLender,
       market
     });
   }

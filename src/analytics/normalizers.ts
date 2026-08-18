@@ -109,18 +109,33 @@ const indexedAt = (
 
 export const normalizeAnalyticsToken = (
   data: SubgraphAnalyticsTokenDataFragment
-): IndexedAnalyticsToken => ({
-  id: data.id,
-  address: data.address,
-  name: data.name,
-  symbol: data.symbol,
-  decimals: data.decimals,
-  isMock: data.isMock,
-  isUsdStablecoin: data.isUsdStablecoin,
-  priceSource: parsePriceSource(data.priceSource),
-  ...(data.priceFeed0 ? { priceFeed0: data.priceFeed0 } : {}),
-  ...(data.priceFeed1 ? { priceFeed1: data.priceFeed1 } : {})
-});
+): IndexedAnalyticsToken => {
+  const legacyData = data as SubgraphAnalyticsTokenDataFragment & {
+    priceSource?: string | null;
+  };
+  const inferredLegacyPriceSource = legacyData.isUsdStablecoin
+    ? "usd-peg"
+    : legacyData.priceFeed0 && legacyData.priceFeed1
+    ? "chainlink-two-hop"
+    : legacyData.priceFeed0
+    ? "chainlink-direct"
+    : "unknown";
+  return {
+    id: data.id,
+    address: data.address,
+    name: data.name,
+    symbol: data.symbol,
+    decimals: data.decimals,
+    isMock: data.isMock,
+    isUsdStablecoin: data.isUsdStablecoin,
+    priceSource:
+      legacyData.priceSource === undefined || legacyData.priceSource === null
+        ? inferredLegacyPriceSource
+        : parsePriceSource(legacyData.priceSource),
+    ...(data.priceFeed0 ? { priceFeed0: data.priceFeed0 } : {}),
+    ...(data.priceFeed1 ? { priceFeed1: data.priceFeed1 } : {})
+  };
+};
 
 export const normalizeAnalyticsMarket = (
   data: SubgraphAnalyticsMarketReferenceDataFragment

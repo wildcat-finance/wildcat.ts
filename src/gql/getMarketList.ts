@@ -13,6 +13,15 @@ import { SupportedChainId } from "../constants";
 import { SignerOrProvider } from "../types";
 import { MarketKind } from "../domain";
 import { assert } from "../utils";
+import { usesLegacySubgraphSchema } from "../config";
+import {
+  LegacyGetMarketListDocument,
+  LegacyMarketData,
+  legacyMarketFilterCanMatch,
+  normalizeLegacyMarketData,
+  toLegacyMarketFilter,
+  toLegacyMarketOrder
+} from "./legacy-subgraph";
 
 export type MarketListItem = SubgraphGetMarketListQuery["markets"][number];
 
@@ -45,6 +54,26 @@ export async function getMarketListAsMarkets(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   { chainId, fetchPolicy, signerOrProvider, ...variables }: GetMarketListAsMarketsOptions
 ): Promise<Market[]> {
+  if (usesLegacySubgraphSchema(chainId)) {
+    if (!legacyMarketFilterCanMatch(variables.marketFilter)) return [];
+    const result = await subgraphClient.query<{ markets: LegacyMarketData[] }>({
+      query: LegacyGetMarketListDocument,
+      variables: {
+        ...variables,
+        marketFilter: toLegacyMarketFilter(variables.marketFilter),
+        orderMarkets: toLegacyMarketOrder(variables.orderMarkets)
+      },
+      fetchPolicy
+    });
+    return result.data.markets.map((market) =>
+      Market.fromSubgraphMarketData(
+        chainId,
+        signerOrProvider,
+        normalizeLegacyMarketData(chainId, market)
+      )
+    );
+  }
+
   const markets = await getMarketList(subgraphClient, {
     fetchPolicy,
     ...variables

@@ -1,5 +1,5 @@
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
-import { requireSubgraphFeature } from "../config";
+import { getSubgraphClientSchemaFamily, requireSubgraphFeature } from "../config";
 import {
   GetBorrowerAnalyticsProfileDocument,
   GetBorrowerDailyStatsPageDocument,
@@ -19,6 +19,7 @@ import {
   normalizeBorrowerDailyStats,
   normalizeBorrowerIdentity,
   normalizeBorrowerWithdrawalReliability,
+  normalizeAnalyticsMarket,
   normalizeIndexedQueryMetadata
 } from "./normalizers";
 import { IndexedReadOptions, IndexedTimeRange, normalizeAddresses } from "./read-options";
@@ -29,6 +30,12 @@ import {
   IndexedPage
 } from "./types";
 import { normalizeIndexedPageRequest, toIndexedPage } from "./pagination";
+import {
+  LegacyBorrowerWithdrawalReliabilityData,
+  LegacyGetBorrowerAnalyticsProfileDocument,
+  LegacyGetBorrowerWithdrawalReliabilityPageDocument,
+  LegacyIndexedAtData
+} from "./legacy";
 
 export type GetBorrowerAnalyticsProfileOptions = {
   borrower: string;
@@ -41,19 +48,26 @@ export const getBorrowerAnalyticsProfile = async (
   { borrower, fetchPolicy = "cache-first" }: GetBorrowerAnalyticsProfileOptions
 ): Promise<BorrowerAnalyticsProfile> => {
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = getSubgraphClientSchemaFamily(client) === "legacy-v2";
   const normalizedBorrower = borrower.toLowerCase();
   const { data } = await client.query<
     SubgraphGetBorrowerAnalyticsProfileQuery,
     SubgraphGetBorrowerAnalyticsProfileQueryVariables
   >({
-    query: GetBorrowerAnalyticsProfileDocument,
-    variables: { borrowerId: normalizedBorrower, borrower: normalizedBorrower },
+    query: legacySchema
+      ? LegacyGetBorrowerAnalyticsProfileDocument
+      : GetBorrowerAnalyticsProfileDocument,
+    variables: legacySchema
+      ? ({ borrower: normalizedBorrower } as SubgraphGetBorrowerAnalyticsProfileQueryVariables)
+      : { borrowerId: normalizedBorrower, borrower: normalizedBorrower },
     fetchPolicy
   });
   const stats = data.borrowerStats_collection[0];
   return {
     indexedAt: normalizeIndexedQueryMetadata(data._meta),
-    ...(data.borrower ? { identity: normalizeBorrowerIdentity(data.borrower) } : {}),
+    ...(!legacySchema && data.borrower
+      ? { identity: normalizeBorrowerIdentity(data.borrower) }
+      : {}),
     ...(stats ? { stats: normalizeBorrowerAggregateStats(stats) } : {})
   };
 };
@@ -101,6 +115,46 @@ export type GetBorrowerWithdrawalReliabilityPageOptions = IndexedReadOptions & {
   markets?: readonly string[];
 };
 
+const indexedAtFromLegacy = (data: LegacyIndexedAtData) => ({
+  blockNumber: BigInt(data.blockNumber),
+  blockTimestamp: BigInt(data.blockTimestamp),
+  transactionHash: data.transactionHash,
+  logIndex: BigInt(data.blockLogIndex)
+});
+
+const normalizeLegacyBorrowerWithdrawalReliability = (
+  data: LegacyBorrowerWithdrawalReliabilityData
+): BorrowerWithdrawalReliability => {
+  const updateEvents = [
+    data.creation,
+    ...(data.expiration ? [data.expiration] : []),
+    ...data.requests,
+    ...data.payments
+  ];
+  const updatedAt = updateEvents.reduce((latest, event) =>
+    event.blockTimestamp >= latest.blockTimestamp ? event : latest
+  );
+  return {
+    id: data.id,
+    market: normalizeAnalyticsMarket(data.market as Parameters<typeof normalizeAnalyticsMarket>[0]),
+    expiry: BigInt(data.expiry),
+    totalNormalizedRequests: BigInt(data.totalNormalizedRequests),
+    isExpired: data.isExpired,
+    isClosed: data.isClosed,
+    isCompleted: data.isCompleted,
+    updatedAt: indexedAtFromLegacy(updatedAt),
+    ...(data.expiration
+      ? {
+          expiration: {
+            normalizedAmountPaid: BigInt(data.expiration.normalizedAmountPaid),
+            normalizedAmountOwed: BigInt(data.expiration.normalizedAmountOwed),
+            observedAt: indexedAtFromLegacy(data.expiration)
+          }
+        }
+      : {})
+  };
+};
+
 /** Withdrawal-batch outcomes used to derive borrower payment reliability. */
 export const getBorrowerWithdrawalReliabilityPage = async (
   client: ApolloClient<NormalizedCacheObject>,
@@ -113,6 +167,7 @@ export const getBorrowerWithdrawalReliabilityPage = async (
 ): Promise<IndexedPage<BorrowerWithdrawalReliability>> => {
   assert(borrower !== undefined || markets !== undefined, "Missing borrower reliability scope");
   await requireSubgraphFeature(client, "analytics");
+  const legacySchema = getSubgraphClientSchemaFamily(client) === "legacy-v2";
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphWithdrawalBatch_Filter = {
     id_gt: afterId,
@@ -123,12 +178,18 @@ export const getBorrowerWithdrawalReliabilityPage = async (
     SubgraphGetBorrowerWithdrawalReliabilityPageQuery,
     SubgraphGetBorrowerWithdrawalReliabilityPageQueryVariables
   >({
-    query: GetBorrowerWithdrawalReliabilityPageDocument,
+    query: legacySchema
+      ? LegacyGetBorrowerWithdrawalReliabilityPageDocument
+      : GetBorrowerWithdrawalReliabilityPageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
   return toIndexedPage(
-    data.withdrawalBatches.map(normalizeBorrowerWithdrawalReliability),
+    legacySchema
+      ? (data.withdrawalBatches as unknown as LegacyBorrowerWithdrawalReliabilityData[]).map(
+          normalizeLegacyBorrowerWithdrawalReliability
+        )
+      : data.withdrawalBatches.map(normalizeBorrowerWithdrawalReliability),
     first,
     normalizeIndexedQueryMetadata(data._meta)
   );

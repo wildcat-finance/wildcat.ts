@@ -5,6 +5,7 @@ import { expect } from "chai";
 import {
   SubgraphCompatibilityError,
   SubgraphDeploymentRequirementsByChain,
+  SubgraphSchemaFamilies,
   SubgraphUrls,
   SupportedChainId,
   createSubgraphClient,
@@ -86,10 +87,19 @@ describe("V2.5 subgraph endpoint compatibility", () => {
     );
   });
 
-  it("keeps the production and Plasma endpoints on V2.0.22", () => {
-    expect(SubgraphUrls[SupportedChainId.Mainnet]).to.include("/mainnet/v2.0.22/gn");
-    expect(SubgraphUrls[SupportedChainId.PlasmaTestnet]).to.include("/plasma-testnet/v2.0.22/gn");
-    expect(SubgraphUrls[SupportedChainId.PlasmaMainnet]).to.include("/plasma-mainnet/v2.0.22/gn");
+  it("pins production and Plasma to the 3.1.17-compatible V2.0.30 endpoints", () => {
+    expect(SubgraphUrls[SupportedChainId.Mainnet]).to.include("/mainnet/v2.0.30/gn");
+    expect(SubgraphUrls[SupportedChainId.PlasmaTestnet]).to.include("/plasma-testnet/v2.0.30/gn");
+    expect(SubgraphUrls[SupportedChainId.PlasmaMainnet]).to.include("/plasma-mainnet/v2.0.30/gn");
+  });
+
+  it("routes only Sepolia through the native V2.5 schema", () => {
+    expect(SubgraphSchemaFamilies).to.deep.equal({
+      [SupportedChainId.Mainnet]: "legacy-v2",
+      [SupportedChainId.Sepolia]: "v2.5",
+      [SupportedChainId.PlasmaTestnet]: "legacy-v2",
+      [SupportedChainId.PlasmaMainnet]: "legacy-v2"
+    });
   });
 
   it("accepts metadata matching the configured chain contract", () => {
@@ -215,7 +225,7 @@ describe("V2.5 subgraph endpoint compatibility", () => {
   });
 
   it("does not forward a client operation until metadata validation succeeds", async () => {
-    const metadata = metadataFor(SupportedChainId.PlasmaMainnet);
+    const metadata = metadataFor(SupportedChainId.Sepolia);
     const operations: string[] = [];
     const server = createServer((request, response) => {
       let body = "";
@@ -236,7 +246,7 @@ describe("V2.5 subgraph endpoint compatibility", () => {
       });
     });
     const endpoint = await listen(server);
-    const client = createSubgraphClient(SupportedChainId.PlasmaMainnet, endpoint);
+    const client = createSubgraphClient(SupportedChainId.Sepolia, endpoint);
 
     try {
       const { data } = await client.query<{ __typename: string }>({
@@ -250,6 +260,39 @@ describe("V2.5 subgraph endpoint compatibility", () => {
 
       expect(data.__typename).to.equal("Query");
       expect(operations).to.deep.equal(["getIndexerDeployment", "testEndpointGate"]);
+    } finally {
+      client.stop();
+      await close(server);
+    }
+  });
+
+  it("does not issue V2.5 metadata queries to legacy-schema clients", async () => {
+    const operations: string[] = [];
+    const server = createServer((request, response) => {
+      let body = "";
+      request.on("data", (chunk) => {
+        body += String(chunk);
+      });
+      request.on("end", () => {
+        operations.push(JSON.parse(body).operationName as string);
+        response.writeHead(200, { "content-type": "application/json" });
+        response.end(JSON.stringify({ data: { __typename: "Query" } }));
+      });
+    });
+    const endpoint = await listen(server);
+    const client = createSubgraphClient(SupportedChainId.Mainnet, endpoint);
+
+    try {
+      await client.query<{ __typename: string }>({
+        query: gql`
+          query testLegacyEndpoint {
+            __typename
+          }
+        `,
+        fetchPolicy: "no-cache"
+      });
+
+      expect(operations).to.deep.equal(["testLegacyEndpoint"]);
     } finally {
       client.stop();
       await close(server);
