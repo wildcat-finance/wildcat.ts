@@ -2,6 +2,7 @@ import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client
 import {
   getSubgraphClientDeploymentMetadata,
   getSubgraphFeatureAvailability,
+  getSubgraphClientSchemaFamily,
   requireSubgraphFeature
 } from "../config";
 import {
@@ -32,6 +33,38 @@ import {
   IndexedTokenUsdPrices,
   TokenPriceObservation
 } from "./types";
+import {
+  LegacyGetAnalyticsTokensDocument,
+  LegacyGetLatestTokenPriceObservationDocument,
+  LegacyGetTokenPriceObservationPageDocument,
+  LegacyTokenPriceObservationData
+} from "./legacy";
+
+const ZERO_TRANSACTION_HASH = `0x${"0".repeat(64)}`;
+
+const usesLegacyAnalyticsSchema = (client: ApolloClient<NormalizedCacheObject>): boolean =>
+  getSubgraphClientSchemaFamily(client) === "legacy-v2";
+
+const normalizeLegacyTokenPriceObservation = (
+  data: LegacyTokenPriceObservationData
+): TokenPriceObservation => {
+  const token = normalizeAnalyticsToken(
+    data.token as Parameters<typeof normalizeAnalyticsToken>[0]
+  );
+  return {
+    id: data.id,
+    token,
+    timestamp: data.timestamp,
+    priceUSD: data.priceUSD,
+    source: token.priceSource,
+    observedAt: {
+      blockNumber: 0n,
+      blockTimestamp: BigInt(data.timestamp),
+      transactionHash: ZERO_TRANSACTION_HASH,
+      logIndex: 0n
+    }
+  };
+};
 
 export type GetAnalyticsTokenPageOptions = IndexedReadOptions & {
   addresses?: readonly string[];
@@ -41,6 +74,7 @@ export const getAnalyticsTokenPage = async (
   client: ApolloClient<NormalizedCacheObject>,
   { addresses, fetchPolicy = "cache-first", ...request }: GetAnalyticsTokenPageOptions = {}
 ): Promise<IndexedPage<IndexedAnalyticsToken>> => {
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphToken_Filter = {
     id_gt: afterId,
@@ -50,7 +84,7 @@ export const getAnalyticsTokenPage = async (
     SubgraphGetAnalyticsTokensQuery,
     SubgraphGetAnalyticsTokensQueryVariables
   >({
-    query: GetAnalyticsTokensDocument,
+    query: legacySchema ? LegacyGetAnalyticsTokensDocument : GetAnalyticsTokensDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
@@ -78,6 +112,7 @@ export const getTokenPriceObservationPage = async (
   }: GetTokenPriceObservationPageOptions = {}
 ): Promise<IndexedPage<TokenPriceObservation>> => {
   await requireSubgraphFeature(client, "pricing");
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const { first, afterId, block } = normalizeIndexedPageRequest(request);
   const filter: SubgraphTokenDailyPrice_Filter = {
     id_gt: afterId,
@@ -89,12 +124,18 @@ export const getTokenPriceObservationPage = async (
     SubgraphGetTokenPriceObservationPageQuery,
     SubgraphGetTokenPriceObservationPageQueryVariables
   >({
-    query: GetTokenPriceObservationPageDocument,
+    query: legacySchema
+      ? LegacyGetTokenPriceObservationPageDocument
+      : GetTokenPriceObservationPageDocument,
     variables: { filter, first, block },
     fetchPolicy
   });
   return toIndexedPage(
-    data.tokenDailyPrices.map(normalizeTokenPriceObservation),
+    legacySchema
+      ? (data.tokenDailyPrices as unknown as LegacyTokenPriceObservationData[]).map(
+          normalizeLegacyTokenPriceObservation
+        )
+      : data.tokenDailyPrices.map(normalizeTokenPriceObservation),
     first,
     normalizeIndexedQueryMetadata(data._meta)
   );
@@ -110,6 +151,7 @@ export const getLatestTokenUsdPrices = async (
   client: ApolloClient<NormalizedCacheObject>,
   { tokens, fetchPolicy = "cache-first" }: GetLatestTokenUsdPricesOptions
 ): Promise<IndexedTokenUsdPrices> => {
+  const legacySchema = usesLegacyAnalyticsSchema(client);
   const addresses = normalizeAddresses(tokens);
   assert(addresses.length <= MAX_INDEXED_PAGE_SIZE, "Too many token price targets");
 
@@ -172,7 +214,9 @@ export const getLatestTokenUsdPrices = async (
         SubgraphGetLatestTokenPriceObservationQuery,
         SubgraphGetLatestTokenPriceObservationQueryVariables
       >({
-        query: GetLatestTokenPriceObservationDocument,
+        query: legacySchema
+          ? LegacyGetLatestTokenPriceObservationDocument
+          : GetLatestTokenPriceObservationDocument,
         variables: { filter, block: priceBlock },
         fetchPolicy
       });
@@ -182,7 +226,11 @@ export const getLatestTokenUsdPrices = async (
         results.set(address, { status: "unpriced", address, token, reason: "no-observation" });
         return;
       }
-      const observation = normalizeTokenPriceObservation(rawObservation);
+      const observation = legacySchema
+        ? normalizeLegacyTokenPriceObservation(
+            rawObservation as unknown as LegacyTokenPriceObservationData
+          )
+        : normalizeTokenPriceObservation(rawObservation);
       results.set(address, {
         status: "priced",
         address,

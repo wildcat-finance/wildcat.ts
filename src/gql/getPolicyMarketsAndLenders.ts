@@ -11,6 +11,16 @@ import { Market } from "../market";
 import { parsePolicyLender, PolicyLender } from "./utils";
 import { SupportedChainId } from "../constants";
 import { MarketController } from "../controller";
+import { getSubgraphClientSchemaFamily } from "../config";
+import {
+  LegacyGetMarketsAndLendersByHooksInstanceOrControllerDocument,
+  LegacyHooksInstanceData,
+  LegacyMarketData,
+  normalizeLegacyHooksInstanceData,
+  normalizeLegacyMarketData,
+  toLegacyMarketFilter,
+  toLegacyMarketOrder
+} from "./legacy-subgraph";
 
 export type GetPolicyMarketsAndLendersOptions =
   SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables & {
@@ -26,6 +36,23 @@ export type PolicyMarketsAndLenders = {
   controller?: MarketController;
 };
 
+type CurrentPolicyData = SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery;
+type CurrentPolicyHooksInstance = NonNullable<CurrentPolicyData["hooksInstance"]>;
+type CurrentPolicyController = NonNullable<CurrentPolicyData["controller"]>;
+type LegacyPolicyData = {
+  hooksInstance?:
+    | (LegacyHooksInstanceData & {
+        markets: LegacyMarketData[];
+        lenders: CurrentPolicyHooksInstance["lenders"];
+      })
+    | null;
+  controller?:
+    | (Omit<CurrentPolicyController, "markets"> & {
+        markets: LegacyMarketData[];
+      })
+    | null;
+};
+
 export async function getPolicyMarketsAndLenders(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   {
@@ -36,20 +63,55 @@ export async function getPolicyMarketsAndLenders(
     ...otherVariables
   }: GetPolicyMarketsAndLendersOptions
 ): Promise<PolicyMarketsAndLenders> {
+  const legacySchema = getSubgraphClientSchemaFamily(subgraphClient) === "legacy-v2";
   const result = await subgraphClient.query<
-    SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery,
+    CurrentPolicyData | LegacyPolicyData,
     SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables
   >({
-    query: GetMarketsAndLendersByHooksInstanceOrControllerDocument,
+    query: legacySchema
+      ? LegacyGetMarketsAndLendersByHooksInstanceOrControllerDocument
+      : GetMarketsAndLendersByHooksInstanceOrControllerDocument,
     variables: {
       contractAddress,
-      ...otherVariables
-    },
+      ...otherVariables,
+      ...(legacySchema && otherVariables.marketFilter
+        ? { marketFilter: toLegacyMarketFilter(otherVariables.marketFilter) }
+        : {}),
+      ...(legacySchema && otherVariables.orderMarkets
+        ? { orderMarkets: toLegacyMarketOrder(otherVariables.orderMarkets) }
+        : {})
+    } as unknown as SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables,
     fetchPolicy
   });
 
-  if (result.data.controller) {
-    const controller = result.data.controller;
+  const data: CurrentPolicyData = legacySchema
+    ? {
+        __typename: "Query",
+        hooksInstance: (result.data as LegacyPolicyData).hooksInstance
+          ? ({
+              ...normalizeLegacyHooksInstanceData(
+                chainId,
+                (result.data as LegacyPolicyData).hooksInstance!
+              ),
+              markets: (result.data as LegacyPolicyData).hooksInstance!.markets.map((market) =>
+                normalizeLegacyMarketData(chainId, market)
+              ),
+              lenders: (result.data as LegacyPolicyData).hooksInstance!.lenders
+            } as CurrentPolicyHooksInstance)
+          : null,
+        controller: (result.data as LegacyPolicyData).controller
+          ? ({
+              ...(result.data as LegacyPolicyData).controller!,
+              markets: (result.data as LegacyPolicyData).controller!.markets.map((market) =>
+                normalizeLegacyMarketData(chainId, market)
+              )
+            } as CurrentPolicyController)
+          : null
+      }
+    : (result.data as CurrentPolicyData);
+
+  if (data.controller) {
+    const controller = data.controller;
     assert(
       controller !== undefined && controller !== null,
       "Controller not found in subgraph query"
@@ -65,7 +127,7 @@ export async function getPolicyMarketsAndLenders(
     };
   }
 
-  const hooksInstance = result.data.hooksInstance;
+  const hooksInstance = data.hooksInstance;
   assert(
     hooksInstance !== undefined && hooksInstance !== null,
     "Hooks instance not found in subgraph query"
