@@ -75,6 +75,8 @@ import {
   ForceBuyBackStatus,
   SetMinimumDepositPreview,
   SetMinimumDepositStatus,
+  ProposeAnnualInterestBipsPreview,
+  ProposeAnnualInterestBipsStatus,
   SetFixedTermEndTimeStatus,
   SetFixedTermEndTimePreview
 } from "./validation";
@@ -82,6 +84,7 @@ import {
   iERC20Abi,
   iFixedTermHooksAbi,
   iOpenTermHooksAbi,
+  iPeriodicTermHooksAbi,
   wildcatMarketAbi,
   wildcatMarketControllerAbi,
   wildcatMarketV2Abi
@@ -420,6 +423,28 @@ export class MarketAccount {
     }
   }
 
+  previewProposeAnnualInterestBips(apr: number): ProposeAnnualInterestBipsPreview {
+    if (this.market.version !== MarketVersion.V2) {
+      return { status: ProposeAnnualInterestBipsStatus.NotV2Market };
+    }
+    if (!this.isBorrower) return { status: ProposeAnnualInterestBipsStatus.NotBorrower };
+    if (!(apr > 0 && apr <= 10_000)) {
+      return { status: ProposeAnnualInterestBipsStatus.InvalidApr };
+    }
+
+    const config = this.market.hooksConfig;
+    if (config?.kind !== HooksKind.PeriodicTerm) {
+      return { status: ProposeAnnualInterestBipsStatus.NotPeriodicTermMarket };
+    }
+    if (apr >= this.market.annualInterestBips) {
+      return { status: ProposeAnnualInterestBipsStatus.NotReduction };
+    }
+    if (this.market.isPeriodicWithdrawalWindowOpen) {
+      return { status: ProposeAnnualInterestBipsStatus.WithdrawalWindowOpen };
+    }
+    return { status: ProposeAnnualInterestBipsStatus.Ready };
+  }
+
   previewSetMaxTotalSupply(amount: TokenAmount): SetMaxTotalSupplyPreview {
     if (!this.isBorrower) return { status: SetMaxTotalSupplyStatus.NotBorrower };
     if (this.market.version === MarketVersion.V1 && amount.lt(this.market.totalSupply)) {
@@ -487,6 +512,22 @@ export class MarketAccount {
     });
   }
 
+  populateProposeAnnualInterestBips(apr: number): PartialTransaction {
+    const { status } = this.previewProposeAnnualInterestBips(apr);
+    assert(
+      status === ProposeAnnualInterestBipsStatus.Ready,
+      `Cannot propose annual interest bips: ${status}`
+    );
+    const config = this.market.hooksConfig;
+    assert(config?.kind === HooksKind.PeriodicTerm, `Market is not periodic term`);
+    return prepareTransaction({
+      to: config.hooksAddress,
+      abi: iPeriodicTermHooksAbi,
+      functionName: "proposeAnnualInterestBips",
+      args: [this.market.address, apr]
+    });
+  }
+
   async setMinimumDeposit(amount: TokenAmount): Promise<TransactionHash> {
     return submitPreparedTransaction(
       this.market.signer,
@@ -498,6 +539,13 @@ export class MarketAccount {
     return submitPreparedTransaction(
       this.market.signer,
       await this.populateSetFixedTermEndTime(endTime)
+    );
+  }
+
+  async proposeAnnualInterestBips(apr: number): Promise<TransactionHash> {
+    return submitPreparedTransaction(
+      this.market.signer,
+      this.populateProposeAnnualInterestBips(apr)
     );
   }
 
