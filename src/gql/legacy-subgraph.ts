@@ -1,10 +1,14 @@
 import { gql } from "@apollo/client";
 import { SupportedChainId } from "../config/chains";
 import { Deployments, getHooksFactoryAddress } from "../config/deployments";
+import { parseHooksKind } from "../domain";
 import {
   SubgraphFactoryLifecycle,
   SubgraphAccountDataForLenderViewFragment,
   SubgraphHookedMarketAbi,
+  SubgraphHooksFactoryDataFragment,
+  SubgraphHooksInstanceDataFragment,
+  SubgraphHooksTemplateRegistrationDataFragment,
   SubgraphMarketDataWithEventsFragment,
   SubgraphMarket_Filter,
   SubgraphMarketKind,
@@ -53,6 +57,14 @@ export type LegacyRoleProviderData = {
   isApproved: boolean;
 };
 
+export type LegacyHooksFactoryData = {
+  __typename?: "HooksFactory";
+  id: string;
+  archController?: { __typename?: "ArchController"; id: string } | null;
+  sentinel?: string | null;
+  isRegistered?: boolean | null;
+};
+
 export type LegacyHooksTemplateData = {
   __typename?: "HooksTemplate";
   id: string;
@@ -62,6 +74,7 @@ export type LegacyHooksTemplateData = {
   originationFeeAsset?: LegacyTokenData | null;
   originationFeeAmount: string;
   disabled: boolean;
+  hooksFactory?: LegacyHooksFactoryData | null;
 };
 
 export type LegacyHooksInstanceData = {
@@ -71,6 +84,7 @@ export type LegacyHooksInstanceData = {
   name: string;
   kind: string;
   numMarkets: number;
+  hooksFactory?: LegacyHooksFactoryData | null;
   hooksTemplate: LegacyHooksTemplateData;
   providers: LegacyRoleProviderData[];
   eventIndex: number;
@@ -120,7 +134,7 @@ export type LegacyMarketData = {
   withdrawalBatchDuration: number;
   numCollateralContracts: number;
   _asset: LegacyTokenData;
-  hooksFactory?: { __typename?: "HooksFactory"; id: string } | null;
+  hooksFactory?: LegacyHooksFactoryData | null;
   archController?: { __typename?: "ArchController"; id: string } | null;
   hooksConfig?: LegacyHooksConfigData | null;
   hooks?: LegacyHooksInstanceData | null;
@@ -324,6 +338,17 @@ const LegacyLenderAccountSummaryFragment = gql`
   ${LegacyLenderHooksAccessDataFragment}
 `;
 
+const LegacyHooksFactoryDataFragment = gql`
+  fragment LegacyHooksFactoryData on HooksFactory {
+    id
+    archController {
+      id
+    }
+    sentinel
+    isRegistered
+  }
+`;
+
 const LegacyHooksTemplateDataFragment = gql`
   fragment LegacyHooksTemplateData on HooksTemplate {
     id
@@ -335,8 +360,12 @@ const LegacyHooksTemplateDataFragment = gql`
     }
     originationFeeAmount
     disabled
+    hooksFactory {
+      ...LegacyHooksFactoryData
+    }
   }
   ${LegacyTokenDataFragment}
+  ${LegacyHooksFactoryDataFragment}
 `;
 
 const LegacyHooksInstanceDataFragment = gql`
@@ -346,16 +375,117 @@ const LegacyHooksInstanceDataFragment = gql`
     name
     kind
     numMarkets
+    hooksFactory {
+      ...LegacyHooksFactoryData
+    }
     hooksTemplate {
       ...LegacyHooksTemplateData
     }
-    providers {
+    providers(where: { isApproved: true }) {
       ...LegacyRoleProviderData
     }
     eventIndex
   }
   ${LegacyHooksTemplateDataFragment}
+  ${LegacyHooksFactoryDataFragment}
   ${LegacyRoleProviderDataFragment}
+`;
+
+const LegacyParameterConstraintsDataFragment = gql`
+  fragment LegacyParameterConstraintsData on ParameterConstraints {
+    minimumDelinquencyGracePeriod
+    maximumDelinquencyGracePeriod
+    minimumReserveRatioBips
+    maximumReserveRatioBips
+    minimumDelinquencyFeeBips
+    maximumDelinquencyFeeBips
+    minimumWithdrawalBatchDuration
+    maximumWithdrawalBatchDuration
+    minimumAnnualInterestBips
+    maximumAnnualInterestBips
+  }
+`;
+
+const LegacyMinimalControllerDataFragment = gql`
+  fragment LegacyMinimalControllerData on Controller {
+    id
+    borrower
+    numMarkets
+    controllerFactory {
+      id
+      constraints {
+        ...LegacyParameterConstraintsData
+      }
+      feeRecipient
+      protocolFeeBips
+      originationFeeAsset {
+        ...LegacyTokenData
+      }
+      originationFeeAmount
+    }
+    archController {
+      id
+    }
+    isRegistered
+  }
+  ${LegacyParameterConstraintsDataFragment}
+  ${LegacyTokenDataFragment}
+`;
+
+const LegacyV1LenderWithActiveMarketsFragment = gql`
+  fragment LegacyV1LenderWithActiveMarkets on LenderAuthorization {
+    lender
+    authorized
+    addedTimestamp
+    marketAccounts(first: $numMarketAccountsPerLender, skip: $skipMarketAccountsPerLender) {
+      role
+      market {
+        id
+        name
+      }
+    }
+  }
+`;
+
+const LegacyV2LenderWithActiveMarketsFragment = gql`
+  fragment LegacyV2LenderWithActiveMarkets on LenderHooksAccess {
+    ...LegacyLenderHooksAccessData
+    addedTimestamp
+    marketAccounts(first: $numMarketAccountsPerLender, skip: $skipMarketAccountsPerLender) {
+      knownLenderStatus {
+        id
+      }
+      market {
+        id
+        name
+      }
+    }
+  }
+  ${LegacyLenderHooksAccessDataFragment}
+`;
+
+const LegacyControllerAuthorizedLendersWithActiveMarketsFragment = gql`
+  fragment LegacyControllerAuthorizedLendersWithActiveMarkets on Controller {
+    authorizedLenders(first: $numLenders, skip: $skipLenders, where: $lenderAuthorizationFilter) {
+      ...LegacyV1LenderWithActiveMarkets
+    }
+  }
+  ${LegacyV1LenderWithActiveMarketsFragment}
+`;
+
+const LegacyHooksInstanceLendersWithActiveMarketsFragment = gql`
+  fragment LegacyHooksInstanceLendersWithActiveMarkets on HooksInstance {
+    lenders(
+      first: $numLenders
+      skip: $skipLenders
+      orderBy: $orderLenderHooksAccess
+      orderDirection: $directionLenders
+      where: $lenderHooksAccessFilter
+    ) {
+      ...LegacyV2LenderWithActiveMarkets
+    }
+  }
+  ${LegacyV2LenderWithActiveMarketsFragment}
 `;
 
 const LegacyHooksConfigDataFragment = gql`
@@ -408,7 +538,7 @@ const LegacyMarketDataFragment = gql`
       ...LegacyTokenData
     }
     hooksFactory {
-      id
+      ...LegacyHooksFactoryData
     }
     archController {
       id
@@ -450,8 +580,59 @@ const LegacyMarketDataFragment = gql`
     }
   }
   ${LegacyTokenDataFragment}
+  ${LegacyHooksFactoryDataFragment}
   ${LegacyHooksConfigDataFragment}
   ${LegacyHooksInstanceDataFragment}
+`;
+
+export const LegacyGetHooksFactoriesDocument = gql`
+  query legacyGetHooksFactories($first: Int!, $skip: Int!) {
+    hooksFactories(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+      ...LegacyHooksFactoryData
+    }
+  }
+  ${LegacyHooksFactoryDataFragment}
+`;
+
+export const LegacyGetHooksTemplateRegistrationsDocument = gql`
+  query legacyGetHooksTemplateRegistrations($first: Int!, $skip: Int!) {
+    hooksTemplates(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+      ...LegacyHooksTemplateData
+    }
+  }
+  ${LegacyHooksTemplateDataFragment}
+`;
+
+export const LegacyGetAllHooksTemplatesDocument = gql`
+  query legacyGetAllHooksTemplates($borrower: Bytes, $includeBorrower: Boolean!) {
+    hooksTemplates(first: 1000) {
+      ...LegacyHooksTemplateData
+    }
+    registeredBorrowers(where: { borrower: $borrower }, first: 1) @include(if: $includeBorrower) {
+      isRegistered
+    }
+  }
+  ${LegacyHooksTemplateDataFragment}
+`;
+
+export const LegacyGetAllHooksDataForBorrowerDocument = gql`
+  query legacyGetAllHooksDataForBorrower($borrower: Bytes!) {
+    hooksTemplates(first: 1000) {
+      ...LegacyHooksTemplateData
+    }
+    hooksInstances(where: { borrower: $borrower }, first: 1000) {
+      ...LegacyHooksInstanceData
+    }
+    registeredBorrowers(where: { borrower: $borrower }, first: 1) {
+      isRegistered
+    }
+    controllers(where: { borrower: $borrower }, first: 1) {
+      ...LegacyMinimalControllerData
+    }
+  }
+  ${LegacyHooksTemplateDataFragment}
+  ${LegacyHooksInstanceDataFragment}
+  ${LegacyMinimalControllerDataFragment}
 `;
 
 export const LegacyGetMarketListDocument = gql`
@@ -842,14 +1023,67 @@ export const LegacyGetAllMarketsForLenderViewDocument = gql`
   ${LegacyLenderHooksAccessDataFragment}
 `;
 
+export const LegacyGetMarketsAndLendersByHooksInstanceOrControllerDocument = gql`
+  query legacyGetMarketsAndLendersByHooksInstanceOrController(
+    $contractAddress: ID!
+    $marketFilter: Market_filter = { id_not: null }
+    $numMarkets: Int = 1000
+    $skipMarkets: Int = 0
+    $orderMarkets: Market_orderBy = createdAt
+    $directionMarkets: OrderDirection = desc
+    $lenderHooksAccessFilter: LenderHooksAccess_filter = { id_not: null }
+    $lenderAuthorizationFilter: LenderAuthorization_filter = { id_not: null }
+    $numMarketAccountsPerLender: Int = 100
+    $skipMarketAccountsPerLender: Int = 0
+    $numLenders: Int = 1000
+    $skipLenders: Int = 0
+    $orderLenderHooksAccess: LenderHooksAccess_orderBy = lastApprovalTimestamp
+    $directionLenders: OrderDirection = desc
+  ) {
+    hooksInstance(id: $contractAddress) {
+      ...LegacyHooksInstanceData
+      markets(
+        where: $marketFilter
+        first: $numMarkets
+        skip: $skipMarkets
+        orderBy: $orderMarkets
+        orderDirection: $directionMarkets
+      ) {
+        ...LegacyMarketData
+      }
+      ...LegacyHooksInstanceLendersWithActiveMarkets
+    }
+    controller(id: $contractAddress) {
+      ...LegacyMinimalControllerData
+      markets(
+        where: $marketFilter
+        first: $numMarkets
+        skip: $skipMarkets
+        orderBy: $orderMarkets
+        orderDirection: $directionMarkets
+      ) {
+        ...LegacyMarketData
+      }
+      ...LegacyControllerAuthorizedLendersWithActiveMarkets
+    }
+  }
+  ${LegacyHooksInstanceDataFragment}
+  ${LegacyMarketDataFragment}
+  ${LegacyHooksInstanceLendersWithActiveMarketsFragment}
+  ${LegacyMinimalControllerDataFragment}
+  ${LegacyControllerAuthorizedLendersWithActiveMarketsFragment}
+`;
+
 const ZERO_TRANSACTION_HASH = `0x${"0".repeat(64)}`;
 
-const legacyFactoryData = (
+export const normalizeLegacyHooksFactoryData = (
   chainId: SupportedChainId,
-  market: LegacyMarketData,
-  address: string
-) => {
+  factory: LegacyHooksFactoryData | null | undefined,
+  fallback?: Pick<LegacyMarketData, "archController" | "sentinel">
+): SubgraphHooksFactoryDataFragment => {
   const deployments = Deployments[chainId];
+  const address = factory?.id ?? getHooksFactoryAddress(chainId, "standard");
+  const isRegistered = factory?.isRegistered ?? true;
   const isDeploymentTarget =
     address.toLowerCase() === getHooksFactoryAddress(chainId, "standard").toLowerCase();
   return {
@@ -859,9 +1093,12 @@ const legacyFactoryData = (
     label: "Legacy V2 hooks factory",
     archController: {
       __typename: "ArchController" as const,
-      id: market.archController?.id ?? deployments.WildcatArchController
+      id:
+        factory?.archController?.id ??
+        fallback?.archController?.id ??
+        deployments.WildcatArchController
     },
-    sentinel: market.sentinel,
+    sentinel: factory?.sentinel ?? fallback?.sentinel ?? deployments.WildcatSanctionsSentinel,
     marketKind: SubgraphMarketKind.STANDARD,
     generation: "legacy-v2",
     abiFamily: "legacy-v2",
@@ -869,14 +1106,80 @@ const legacyFactoryData = (
     configuredStartBlock: "0",
     indexed: true,
     deploymentTarget: isDeploymentTarget,
-    lifecycle: isDeploymentTarget
-      ? SubgraphFactoryLifecycle.ACTIVE
-      : SubgraphFactoryLifecycle.HISTORICAL,
+    lifecycle:
+      isDeploymentTarget && isRegistered
+        ? SubgraphFactoryLifecycle.ACTIVE
+        : SubgraphFactoryLifecycle.HISTORICAL,
     configured: true,
-    isRegistered: true,
+    isRegistered,
     registrationUpdatedAtBlock: null,
     registrationUpdatedAtTimestamp: null
+  } as SubgraphHooksFactoryDataFragment;
+};
+
+export const normalizeLegacyHooksTemplateRegistrationData = (
+  chainId: SupportedChainId,
+  template: LegacyHooksTemplateData,
+  instanceKind?: string
+): SubgraphHooksTemplateRegistrationDataFragment => {
+  const kind = parseHooksKind(instanceKind ?? template.name);
+  const hooksFactory = normalizeLegacyHooksFactoryData(chainId, template.hooksFactory);
+  const hooksTemplate = {
+    __typename: "HooksTemplate" as const,
+    id: template.id,
+    address: template.id,
+    kind,
+    version: "legacy-v2",
+    abiFamily: "legacy-v2"
   };
+  return {
+    __typename: "HooksTemplateRegistration",
+    id: `${hooksFactory.address}-${template.id}`,
+    templateAddress: template.id,
+    name: template.name,
+    feeRecipient: template.feeRecipient,
+    protocolFeeBips: template.protocolFeeBips,
+    originationFeeAsset: template.originationFeeAsset ?? null,
+    originationFeeAmount: template.originationFeeAmount,
+    isEnabled: !template.disabled,
+    createdAtBlock: "0",
+    createdAtTimestamp: "0",
+    createdAtTransaction: ZERO_TRANSACTION_HASH,
+    createdAtLogIndex: "0",
+    updatedAtBlock: "0",
+    updatedAtTimestamp: "0",
+    updatedAtTransaction: ZERO_TRANSACTION_HASH,
+    updatedAtLogIndex: "0",
+    hooksTemplate,
+    hooksFactory
+  } as unknown as SubgraphHooksTemplateRegistrationDataFragment;
+};
+
+export const normalizeLegacyHooksInstanceData = (
+  chainId: SupportedChainId,
+  instance: LegacyHooksInstanceData
+): SubgraphHooksInstanceDataFragment => {
+  const template = {
+    ...instance.hooksTemplate,
+    hooksFactory: instance.hooksTemplate.hooksFactory ?? instance.hooksFactory
+  };
+  const registration = normalizeLegacyHooksTemplateRegistrationData(
+    chainId,
+    template,
+    instance.kind
+  );
+  return {
+    ...instance,
+    __typename: "HooksInstance",
+    address: instance.id,
+    kind: parseHooksKind(instance.kind),
+    marketKind: SubgraphMarketKind.STANDARD,
+    generation: "legacy-v2",
+    abiFamily: "legacy-v2",
+    hooksTemplate: registration.hooksTemplate,
+    templateRegistration: registration,
+    hooksFactory: registration.hooksFactory
+  } as unknown as SubgraphHooksInstanceDataFragment;
 };
 
 export const normalizeLegacyMarketData = (
@@ -893,56 +1196,22 @@ export const normalizeLegacyMarketData = (
     ? market.hooksFactory?.id ?? getHooksFactoryAddress(chainId, "standard")
     : undefined;
   const hooksFactory = hooksFactoryAddress
-    ? legacyFactoryData(chainId, market, hooksFactoryAddress)
+    ? normalizeLegacyHooksFactoryData(
+        chainId,
+        market.hooksFactory ?? { id: hooksFactoryAddress },
+        market
+      )
     : null;
-  const hooks =
-    market.hooks && hooksFactory
-      ? {
-          ...market.hooks,
-          __typename: "HooksInstance" as const,
-          address: market.hooks.id,
-          marketKind: SubgraphMarketKind.STANDARD,
-          generation: "legacy-v2",
-          abiFamily: "legacy-v2",
-          hooksTemplate: {
-            __typename: "HooksTemplate" as const,
-            id: market.hooks.hooksTemplate.id,
-            address: market.hooks.hooksTemplate.id,
-            kind: market.hooks.kind,
-            version: "legacy-v2",
-            abiFamily: "legacy-v2"
-          },
-          templateRegistration: {
-            __typename: "HooksTemplateRegistration" as const,
-            id: `${hooksFactory.address}-${market.hooks.hooksTemplate.id}`,
-            templateAddress: market.hooks.hooksTemplate.id,
-            name: market.hooks.hooksTemplate.name,
-            feeRecipient: market.hooks.hooksTemplate.feeRecipient,
-            protocolFeeBips: market.hooks.hooksTemplate.protocolFeeBips,
-            originationFeeAsset: market.hooks.hooksTemplate.originationFeeAsset ?? null,
-            originationFeeAmount: market.hooks.hooksTemplate.originationFeeAmount,
-            isEnabled: !market.hooks.hooksTemplate.disabled,
-            createdAtBlock: String(deployedEvent.blockNumber),
-            createdAtTimestamp: String(deployedEvent.blockTimestamp),
-            createdAtTransaction: deployedEvent.transactionHash,
-            createdAtLogIndex: "0",
-            updatedAtBlock: String(deployedEvent.blockNumber),
-            updatedAtTimestamp: String(deployedEvent.blockTimestamp),
-            updatedAtTransaction: deployedEvent.transactionHash,
-            updatedAtLogIndex: "0",
-            hooksTemplate: {
-              __typename: "HooksTemplate" as const,
-              id: market.hooks.hooksTemplate.id,
-              address: market.hooks.hooksTemplate.id,
-              kind: market.hooks.kind,
-              version: "legacy-v2",
-              abiFamily: "legacy-v2"
-            },
-            hooksFactory
-          },
-          hooksFactory
+  const hooks = market.hooks
+    ? normalizeLegacyHooksInstanceData(chainId, {
+        ...market.hooks,
+        hooksFactory: market.hooks.hooksFactory ?? market.hooksFactory,
+        hooksTemplate: {
+          ...market.hooks.hooksTemplate,
+          hooksFactory: market.hooks.hooksTemplate.hooksFactory ?? market.hooksFactory
         }
-      : null;
+      })
+    : null;
 
   return {
     ...market,

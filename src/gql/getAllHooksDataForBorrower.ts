@@ -15,6 +15,14 @@ import {
 import { MarketController } from "../controller";
 import { getEthersSignerAddress } from "../internal/ethers-signer";
 import { HooksKind, parseHooksKind } from "../domain";
+import { getSubgraphClientSchemaFamily } from "../config";
+import {
+  LegacyGetAllHooksDataForBorrowerDocument,
+  LegacyHooksInstanceData,
+  LegacyHooksTemplateData,
+  normalizeLegacyHooksInstanceData,
+  normalizeLegacyHooksTemplateRegistrationData
+} from "./legacy-subgraph";
 
 export type GetAllHooksDataForBorrowerOptions = {
   chainId: SupportedChainId;
@@ -30,6 +38,13 @@ export type GetAllHooksDataForBorrowerResult = {
   controller?: MarketController;
 };
 
+type LegacyGetAllHooksDataForBorrowerData = {
+  hooksTemplates: LegacyHooksTemplateData[];
+  hooksInstances: LegacyHooksInstanceData[];
+  registeredBorrowers?: Array<{ isRegistered: boolean }>;
+  controllers: SubgraphGetAllHooksDataForBorrowerQuery["controllers"];
+};
+
 export async function getAllHooksDataForBorrower(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   { chainId, fetchPolicy, signerOrProvider, borrower }: GetAllHooksDataForBorrowerOptions
@@ -40,18 +55,31 @@ export async function getAllHooksDataForBorrower(
       borrower = signerAddress;
     }
   }
+  const legacySchema = getSubgraphClientSchemaFamily(subgraphClient) === "legacy-v2";
   const result = await subgraphClient.query<
-    SubgraphGetAllHooksDataForBorrowerQuery,
+    SubgraphGetAllHooksDataForBorrowerQuery | LegacyGetAllHooksDataForBorrowerData,
     SubgraphGetAllHooksDataForBorrowerQueryVariables
   >({
-    query: GetAllHooksDataForBorrowerDocument,
+    query: legacySchema
+      ? LegacyGetAllHooksDataForBorrowerDocument
+      : GetAllHooksDataForBorrowerDocument,
     fetchPolicy,
     variables: {
       borrower
     }
   });
   const isRegisteredBorrower = result.data.registeredBorrowers?.[0]?.isRegistered ?? false;
-  const hooksTemplates = result.data.hooksTemplateRegistrations
+  const hooksTemplateRegistrations = legacySchema
+    ? (result.data as LegacyGetAllHooksDataForBorrowerData).hooksTemplates.map((template) =>
+        normalizeLegacyHooksTemplateRegistrationData(chainId, template)
+      )
+    : (result.data as SubgraphGetAllHooksDataForBorrowerQuery).hooksTemplateRegistrations;
+  const subgraphHooksInstances = legacySchema
+    ? (result.data as LegacyGetAllHooksDataForBorrowerData).hooksInstances.map((instance) =>
+        normalizeLegacyHooksInstanceData(chainId, instance)
+      )
+    : (result.data as SubgraphGetAllHooksDataForBorrowerQuery).hooksInstances;
+  const hooksTemplates = hooksTemplateRegistrations
     .filter((registration) => parseHooksKind(registration.hooksTemplate.kind) !== HooksKind.Unknown)
     .map((template) =>
       hooksTemplateFromSubgraph(chainId, signerOrProvider, template, {
@@ -59,7 +87,7 @@ export async function getAllHooksDataForBorrower(
         isRegisteredBorrower
       })
     );
-  const hooksInstances = result.data.hooksInstances
+  const hooksInstances = subgraphHooksInstances
     .filter((instance) => parseHooksKind(instance.kind) !== HooksKind.Unknown)
     .map((instance) =>
       hooksInstanceFromSubgraph(chainId, signerOrProvider, instance, {

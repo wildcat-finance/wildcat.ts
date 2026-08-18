@@ -367,6 +367,12 @@ export class MarketAccount {
     if (!this.isBorrower) return { status: SetAprStatus.NotBorrower };
     if (!(apr > 0 && apr <= 10000)) return { status: SetAprStatus.InvalidApr };
 
+    const config = this.market.hooksConfig;
+    const willCancelPendingProposal =
+      config?.kind === HooksKind.PeriodicTerm &&
+      config.pendingAprChangeProposalTimestamp !== 0 &&
+      apr > this.market.annualInterestBips;
+
     const [originalReserveRatioBips, originalAnnualInterestBips] =
       this.market.originalReserveRatioAndAnnualInterestBips;
 
@@ -401,13 +407,15 @@ export class MarketAccount {
           willChangeReserveRatio: true,
           newCoverageLiquidity,
           newReserveRatio: newReserveRatioBips,
-          changeCausedByReset
+          changeCausedByReset,
+          willCancelPendingProposal
         };
       }
     } else {
       return {
         status: SetAprStatus.Ready,
-        willChangeReserveRatio: false
+        willChangeReserveRatio: false,
+        willCancelPendingProposal
       };
     }
   }

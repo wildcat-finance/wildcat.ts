@@ -342,6 +342,7 @@ const subgraphClientSchemaFamilies = new WeakMap<
   ApolloClient<NormalizedCacheObject>,
   SubgraphSchemaFamily
 >();
+const subgraphClientChainIds = new WeakMap<ApolloClient<NormalizedCacheObject>, SupportedChainId>();
 const subgraphClientMetadataResolvers = new WeakMap<
   ApolloClient<NormalizedCacheObject>,
   () => Promise<IndexerDeploymentMetadata>
@@ -409,6 +410,24 @@ export const getSubgraphClientSchemaFamily = (
   client: ApolloClient<NormalizedCacheObject>
 ): SubgraphSchemaFamily | undefined => subgraphClientSchemaFamilies.get(client);
 
+export const getSubgraphClientChainId = (
+  client: ApolloClient<NormalizedCacheObject>
+): SupportedChainId | undefined => subgraphClientChainIds.get(client);
+
+const getLegacySubgraphDeploymentMetadata = (
+  chainId: SupportedChainId
+): IndexerDeploymentMetadata => ({
+  ...SubgraphDeploymentRequirementsByChain[chainId],
+  schemaRelease: "legacy-v2",
+  configDigest: "",
+  firstObserved: {
+    blockNumber: 0n,
+    blockTimestamp: 0n,
+    transactionHash: `0x${"0".repeat(64)}`,
+    logIndex: 0n
+  }
+});
+
 /** Construct a client for the chain's configured schema family. */
 export const createSubgraphClient = (
   chainId: SupportedChainId,
@@ -420,6 +439,10 @@ export const createSubgraphClient = (
       link: new HttpLink({ uri: endpoint })
     });
     subgraphClientSchemaFamilies.set(client, "legacy-v2");
+    subgraphClientChainIds.set(client, chainId);
+    subgraphClientMetadataResolvers.set(client, async () =>
+      getLegacySubgraphDeploymentMetadata(chainId)
+    );
     return client;
   }
 
@@ -454,6 +477,7 @@ export const createSubgraphClient = (
     link: validationLink.concat(new HttpLink({ uri: endpoint }))
   });
   subgraphClientSchemaFamilies.set(client, "v2.5");
+  subgraphClientChainIds.set(client, chainId);
   subgraphClientMetadataResolvers.set(client, () => validateSubgraphEndpoint(chainId, endpoint));
   return client;
 };
