@@ -95,6 +95,7 @@ import {
 } from "../internal/viem-write";
 import { parseEventLogs, type TransactionReceipt } from "viem";
 import { normalizeSubgraphLenderAccountSnapshot } from "../gql/normalizers";
+import { roleProviderFromLensData } from "../access/utils";
 export * from "./validation";
 
 export enum LenderRole {
@@ -104,7 +105,6 @@ export enum LenderRole {
   DepositAndWithdraw = 3
 }
 
-const NullProviderIndex = 2 ** 24 - 1;
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 const hasUnifiedLatestLensForAccountReads = (chainId: SupportedChainId): boolean => {
@@ -1033,15 +1033,7 @@ export class MarketAccount {
         canRefresh: info.canRefresh,
         isBlockedFromDeposits: info.isBlockedFromDeposits,
         lastApprovalTimestamp: toNumber(info.lastApprovalTimestamp),
-        lastProvider: {
-          isApproved: true,
-          providerAddress: info.lastProvider.providerAddress,
-          isPullProvider: toNumber(info.lastProvider.pullProviderIndex) !== NullProviderIndex,
-          isPushProvider: toNumber(info.lastProvider.pushProviderIndex) !== NullProviderIndex,
-          pullProviderIndex: toNumber(info.lastProvider.pullProviderIndex),
-          pushProviderIndex: toNumber(info.lastProvider.pushProviderIndex),
-          timeToLive: toNumber(info.lastProvider.timeToLive)
-        }
+        lastProvider: roleProviderFromLensData(info.lastProvider)
       };
       this.isKnownLender = info.isKnownLender;
     }
@@ -1150,15 +1142,7 @@ export class MarketAccount {
         canRefresh: data.canRefresh,
         isBlockedFromDeposits: data.isBlockedFromDeposits,
         lastApprovalTimestamp: toNumber(data.lastApprovalTimestamp),
-        lastProvider: {
-          isApproved: true,
-          providerAddress: data.lastProvider.providerAddress,
-          isPullProvider: toNumber(data.lastProvider.pullProviderIndex) !== NullProviderIndex,
-          pullProviderIndex: toNumber(data.lastProvider.pullProviderIndex),
-          isPushProvider: toNumber(data.lastProvider.pushProviderIndex) !== NullProviderIndex,
-          pushProviderIndex: toNumber(data.lastProvider.pushProviderIndex),
-          timeToLive: toNumber(data.lastProvider.timeToLive)
-        }
+        lastProvider: roleProviderFromLensData(data.lastProvider)
       }
     });
   }

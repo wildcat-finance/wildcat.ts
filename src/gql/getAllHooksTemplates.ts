@@ -15,6 +15,7 @@ import {
   LegacyHooksTemplateData,
   normalizeLegacyHooksTemplateRegistrationData
 } from "./legacy-subgraph";
+import { hasRegisteredBorrowerAccountPrincipal } from "./borrower-eligibility";
 
 export type GetAllHooksTemplatesOptions = {
   chainId: SupportedChainId;
@@ -59,13 +60,18 @@ export async function getAllHooksTemplates(
         normalizeLegacyHooksTemplateRegistrationData(chainId, template)
       )
     : (result.data as SubgraphGetAllHooksTemplatesQuery).hooksTemplateRegistrations;
-  const registeredBorrowers = result.data.registeredBorrowers;
+  const indexedBorrowerEligibility =
+    (result.data.registeredBorrowers?.[0]?.isRegistered ?? false) ||
+    (!legacySchema &&
+      hasRegisteredBorrowerAccountPrincipal(
+        (result.data as SubgraphGetAllHooksTemplatesQuery).borrowerAccounts ?? []
+      ));
   return hooksTemplateRegistrations
     .filter((registration) => parseHooksKind(registration.hooksTemplate.kind) !== HooksKind.Unknown)
     .map((template) =>
       hooksTemplateFromSubgraph(chainId, signerOrProvider, template, {
         signerAddress: borrower,
-        isRegisteredBorrower: registeredBorrowers?.[0]?.isRegistered ?? isRegisteredBorrower
+        isRegisteredBorrower: indexedBorrowerEligibility || isRegisteredBorrower
       })
     );
 }

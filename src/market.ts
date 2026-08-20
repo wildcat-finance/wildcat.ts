@@ -1,11 +1,12 @@
-import { encodeFunctionData } from "viem";
+import { encodeFunctionData, zeroAddress } from "viem";
 import {
   MarketDataBaseV2_5StructOutput,
   MarketDataStructOutput,
   MarketDataV2_5StructOutput,
   MarketDataV2StructOutput,
   MarketLiveDataV2_5StructOutput,
-  RoleProviderDataStructOutput
+  RoleProviderDataStructOutput,
+  RoleProviderDataV2_5StructOutput
 } from "./lens-types";
 import {
   SupportedChainId,
@@ -47,6 +48,7 @@ import {
 } from "./types";
 import { MarketAccount } from "./account";
 import { LenderWithdrawalStatus } from "./withdrawal-status";
+import { parseRoleProviderKind } from "./domain";
 
 import {
   SubgraphBorrowDataFragment,
@@ -78,6 +80,7 @@ import {
   toNumber
 } from "./utils";
 import { hooksTemplateFromSubgraph } from "./access";
+import { roleProviderFromLensData } from "./access/utils";
 import { wildcatMarketAbi } from "./abi";
 import { submitPreparedTransaction } from "./internal/viem-write";
 import { getEthersSignerAddress } from "./internal/ethers-signer";
@@ -167,6 +170,10 @@ const toUnifiedMarketDataV2 = (
 
   return {
     market: data,
+    borrowerPrincipal: zeroAddress,
+    pendingBorrower: zeroAddress,
+    pendingBorrowerPrincipal: zeroAddress,
+    borrowerIdentityRegistry: zeroAddress,
     commitmentFeeBips: {
       isPresent: false,
       value: 0n
@@ -197,37 +204,32 @@ const hasSubgraphMarketRecords = (
 ): data is SubgraphMarketDataWithEventsFragment => "depositRecords" in data;
 
 const roleProviderFromSubgraph = (provider: SubgraphRoleProviderDataFragment): RoleProvider => ({
+  kind: parseRoleProviderKind(provider.providerInstance.kind),
   providerAddress: provider.providerAddress,
   timeToLive: toNumber(provider.timeToLive),
   isPullProvider: provider.isPullProvider,
   pullProviderIndex: provider.pullProviderIndex,
   isPushProvider: provider.isPushProvider,
   pushProviderIndex: provider.pushProviderIndex,
-  isApproved: provider.isApproved
+  isApproved: provider.isApproved,
+  ...(provider.providerInstance.administrator
+    ? {
+        isManaged: true,
+        administrator: provider.providerInstance.administrator,
+        ...(provider.providerInstance.pendingAdministrator
+          ? { pendingAdministrator: provider.providerInstance.pendingAdministrator }
+          : {})
+      }
+    : {})
 });
-
-const NullProviderIndex = 2 ** 24 - 1;
 
 const roleProvidersFromLens = ({
   pullProviders,
   pushProviders
 }: {
-  pullProviders: readonly RoleProviderDataStructOutput[];
-  pushProviders: readonly RoleProviderDataStructOutput[];
-}): RoleProvider[] =>
-  [...pullProviders, ...pushProviders].map((provider) => {
-    const pullProviderIndex = toNumber(provider.pullProviderIndex);
-    const pushProviderIndex = toNumber(provider.pushProviderIndex);
-    return {
-      providerAddress: provider.providerAddress,
-      timeToLive: toNumber(provider.timeToLive),
-      isPullProvider: pullProviderIndex !== NullProviderIndex,
-      pullProviderIndex,
-      isPushProvider: pushProviderIndex !== NullProviderIndex,
-      pushProviderIndex,
-      isApproved: true
-    };
-  });
+  pullProviders: ReadonlyArray<RoleProviderDataStructOutput | RoleProviderDataV2_5StructOutput>;
+  pushProviders: ReadonlyArray<RoleProviderDataStructOutput | RoleProviderDataV2_5StructOutput>;
+}): RoleProvider[] => [...pullProviders, ...pushProviders].map(roleProviderFromLensData);
 
 export type MarketArgs = {
   provider: SignerOrProvider;
@@ -246,6 +248,10 @@ export type MarketArgs = {
    */
   roleProviders?: RoleProvider[];
   borrower: string;
+  borrowerPrincipal?: string;
+  pendingBorrower?: string;
+  pendingBorrowerPrincipal?: string;
+  borrowerIdentityRegistry?: string;
   controller?: string;
   feeRecipient: string;
   protocolFeeBips: number;
@@ -407,6 +413,7 @@ export class Market extends ContractWrapper {
     marketKind: MarketKind;
     hooksFactory?: string;
     borrower: string;
+    borrowerPrincipal?: string;
   } {
     return {
       type: "Market",
@@ -418,7 +425,8 @@ export class Market extends ContractWrapper {
       version: this.version,
       marketKind: this.marketKind,
       hooksFactory: this.hooksFactory,
-      borrower: this.borrower
+      borrower: this.borrower,
+      borrowerPrincipal: this.borrowerPrincipal
     };
   }
 
@@ -909,14 +917,12 @@ export class Market extends ContractWrapper {
     if (annualInterestBips < originalAnnualInterestBips) {
       let doubleRelativeDiff: number;
       if (this.version === MarketVersion.V2) {
-        const relativeDiff = Number(
-          (10_000n * BigInt(originalAnnualInterestBips - annualInterestBips)) /
-            BigInt(originalAnnualInterestBips)
-        );
-        if (relativeDiff <= 2_500) {
-          // In v2, if the relative diff is 25% or less, the reserve ratio is not changed
+        const reduction = BigInt(originalAnnualInterestBips - annualInterestBips);
+        if (reduction * 10_000n <= BigInt(originalAnnualInterestBips) * 2_500n) {
+          // v2 only raises the reserve ratio when the exact reduction exceeds 25%.
           return originalReserveRatioBips;
         }
+        const relativeDiff = Number((10_000n * reduction) / BigInt(originalAnnualInterestBips));
         doubleRelativeDiff = 2 * relativeDiff;
       } else {
         doubleRelativeDiff = Number(
@@ -1030,6 +1036,21 @@ export class Market extends ContractWrapper {
       this.totalProtocolFeesAccrued = this.totalProtocolFeesAccrued.add(
         nextLastAccruedProtocolFees - this.lastAccruedProtocolFees.raw
       );
+    }
+    this.borrower = baseData.borrower;
+    if ("market" in data) {
+      this.borrowerPrincipal =
+        data.borrowerPrincipal.toLowerCase() === zeroAddress ? undefined : data.borrowerPrincipal;
+      this.pendingBorrower =
+        data.pendingBorrower.toLowerCase() === zeroAddress ? undefined : data.pendingBorrower;
+      this.pendingBorrowerPrincipal =
+        data.pendingBorrowerPrincipal.toLowerCase() === zeroAddress
+          ? undefined
+          : data.pendingBorrowerPrincipal;
+      this.borrowerIdentityRegistry =
+        data.borrowerIdentityRegistry.toLowerCase() === zeroAddress
+          ? undefined
+          : data.borrowerIdentityRegistry;
     }
     this.feeRecipient = baseData.feeRecipient;
     this.protocolFeeBips = toNumber(baseData.protocolFeeBips);
@@ -1326,6 +1347,14 @@ export class Market extends ContractWrapper {
       marketToken,
       underlyingToken,
       borrower: data.borrower,
+      borrowerPrincipal: data.borrowerPrincipal,
+      ...(data.pendingBorrower ? { pendingBorrower: data.pendingBorrower } : {}),
+      ...(data.pendingBorrowerPrincipal
+        ? { pendingBorrowerPrincipal: data.pendingBorrowerPrincipal }
+        : {}),
+      ...(data.borrowerIdentityRegistryAddress
+        ? { borrowerIdentityRegistry: data.borrowerIdentityRegistryAddress }
+        : {}),
       controller: data.controller?.id,
       feeRecipient: data.feeRecipient,
       protocolFeeBips: indexedState.protocolFeeBips,
@@ -1403,6 +1432,7 @@ export class Market extends ContractWrapper {
       marketToken: marketToken,
       underlyingToken: underlyingToken,
       borrower: data.borrower,
+      borrowerPrincipal: data.borrower,
       controller: data.controller,
       feeRecipient: data.feeRecipient,
       protocolFeeBips: toNumber(data.protocolFeeBips),
@@ -1518,6 +1548,7 @@ export class Market extends ContractWrapper {
       marketToken: marketToken,
       underlyingToken: underlyingToken,
       borrower: data.borrower,
+      borrowerPrincipal: data.borrower,
       feeRecipient: data.feeRecipient,
       protocolFeeBips: toNumber(data.protocolFeeBips),
       delinquencyFeeBips: toNumber(data.delinquencyFeeBips),
@@ -1554,7 +1585,15 @@ export class Market extends ContractWrapper {
   static fromMarketDataV2_5(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    { market, commitmentFeeBips, drawnAmount }: MarketDataV2_5StructOutput,
+    {
+      market,
+      borrowerPrincipal,
+      pendingBorrower,
+      pendingBorrowerPrincipal,
+      borrowerIdentityRegistry,
+      commitmentFeeBips,
+      drawnAmount
+    }: MarketDataV2_5StructOutput,
     allowForceBuyBacks: boolean,
     signerAddress?: string
   ): Market {
@@ -1624,6 +1663,14 @@ export class Market extends ContractWrapper {
       marketToken,
       underlyingToken,
       borrower: data.borrower,
+      ...(borrowerPrincipal.toLowerCase() !== zeroAddress ? { borrowerPrincipal } : {}),
+      ...(pendingBorrower.toLowerCase() !== zeroAddress ? { pendingBorrower } : {}),
+      ...(pendingBorrowerPrincipal.toLowerCase() !== zeroAddress
+        ? { pendingBorrowerPrincipal }
+        : {}),
+      ...(borrowerIdentityRegistry.toLowerCase() !== zeroAddress
+        ? { borrowerIdentityRegistry }
+        : {}),
       feeRecipient: data.feeRecipient,
       protocolFeeBips: toNumber(data.protocolFeeBips),
       delinquencyFeeBips: toNumber(data.delinquencyFeeBips),

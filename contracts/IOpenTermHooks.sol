@@ -28,9 +28,21 @@ interface IOpenTermHooks {
 
   error CallerNotBorrower();
 
+  error CallerNotAdministrator();
+
+  error InvalidAdministratorTransferTarget();
+
+  error AdministratorNotRegistered();
+
+  error NoPendingAdministratorTransfer();
+
+  error NotPendingAdministrator();
+
   error CallerNotFactory();
 
   error CreateRoleProviderFailed();
+
+  error RoleProviderFactoryRequired();
 
   error DelinquencyFeeBipsOutOfBounds();
 
@@ -88,6 +100,24 @@ interface IOpenTermHooks {
 
   event NameUpdated(string name);
 
+  event NameUpdated(address indexed administrator, string previousName, string newName);
+
+  event AdministratorTransferRequested(
+    address indexed administrator,
+    address indexed previousPendingAdministrator,
+    address indexed pendingAdministrator
+  );
+
+  event AdministratorTransferCancelled(
+    address indexed administrator,
+    address indexed cancelledPendingAdministrator
+  );
+
+  event AdministratorTransferred(
+    address indexed previousAdministrator,
+    address indexed newAdministrator
+  );
+
   event RoleProviderAdded(
     address indexed providerAddress,
     uint32 timeToLive,
@@ -133,6 +163,16 @@ interface IOpenTermHooks {
   function blockFromDeposits(address[] calldata accounts) external;
 
   function borrower() external view returns (address);
+
+  function administrator() external view returns (address);
+
+  function pendingAdministrator() external view returns (address);
+
+  function requestAdministratorTransfer(address newAdministrator) external;
+
+  function cancelAdministratorTransfer() external;
+
+  function acceptAdministratorTransfer() external;
 
   function config() external view returns (HooksDeploymentConfig param0);
 
@@ -184,6 +224,11 @@ interface IOpenTermHooks {
 
   function isMarketTransferDisabled(address marketAddress) external view returns (bool);
 
+  function isMarketTransferRecipientAllowed(
+    address marketAddress,
+    address recipient
+  ) external view returns (bool);
+
   function name() external view returns (string memory);
 
   function onBorrow(uint256 param0, MarketStateV2 calldata param1, bytes calldata param2) external;
@@ -204,10 +249,20 @@ interface IOpenTermHooks {
     bytes calldata hooksData
   ) external;
 
+  // Legacy callback retained so this consumer ABI can decode v2 and v2.1 calldata.
   function onExecuteWithdrawal(
     address lender,
     uint128 param1,
     MarketStateV2 calldata param2,
+    bytes calldata hooksData
+  ) external;
+
+  // v2.5 passes the exact withdrawal-batch expiry through to the hook.
+  function onExecuteWithdrawal(
+    address lender,
+    uint32 expiry,
+    uint128 normalizedAmountWithdrawn,
+    MarketStateV2 calldata state,
     bytes calldata hooksData
   ) external;
 

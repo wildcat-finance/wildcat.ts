@@ -10,8 +10,10 @@ import {
   REVOLVING_MARKET_DATA_VERSION,
   RevolvingReadyDeployMarketPreview,
   StandardReadyDeployMarketPreview,
+  encodeMarketSalt,
   encodeRevolvingMarketData
 } from "../../src/access";
+import { encodeMarketHooksInstanceInputs } from "../../src/access/utils";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { MarketParameters } from "../../src/controller";
 import { HooksKind, HooksTemplateRegistrationMetadata } from "../../src/domain";
@@ -29,6 +31,8 @@ const provider = new providers.JsonRpcProvider();
 const makeAddress = (suffix: number): string => {
   return `0x${suffix.toString(16).padStart(40, "0")}`;
 };
+
+const marketSalt = encodeMarketSalt(makeAddress(1), "0x000000000000000000000001");
 
 const makeFees = (): FeeConfigurationV2 => {
   return {
@@ -246,7 +250,7 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
       template.previewDeployMarket({
         ...makeMarketParameters(asset),
         hooksAddress: makeAddress(20),
-        salt: constants.HashZero,
+        salt: marketSalt,
         minimumDeposit: asset.parseAmount("100"),
         transferAccess: TransferAccess.Disabled,
         depositAccess: DepositAccess.RequiresCredential,
@@ -279,7 +283,7 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
         marketKind: "revolving",
         commitmentFeeBips: 175,
         hooksAddress: makeAddress(21),
-        salt: constants.HashZero,
+        salt: marketSalt,
         minimumDeposit: asset.parseAmount("25"),
         transferAccess: TransferAccess.Open,
         depositAccess: DepositAccess.Open,
@@ -320,7 +324,7 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
       marketKind: "revolving",
       commitmentFeeBips: 175,
       hooksAddress: makeAddress(21),
-      salt: constants.HashZero,
+      salt: marketSalt,
       minimumDeposit: asset.parseAmount("25"),
       transferAccess: TransferAccess.Open,
       depositAccess: DepositAccess.Open,
@@ -343,7 +347,7 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
         marketKind: "revolving",
         commitmentFeeBips: 10_001,
         hooksAddress: makeAddress(22),
-        salt: constants.HashZero,
+        salt: marketSalt,
         minimumDeposit: asset.parseAmount("10"),
         transferAccess: TransferAccess.Open,
         depositAccess: DepositAccess.Open,
@@ -354,13 +358,73 @@ describe("OpenTermHooksTemplate.previewDeployMarket", () => {
 });
 
 describe("V2.5 hook deployment validation", () => {
+  it("rejects market salts without an immediate factory caller", () => {
+    const asset = makeToken();
+    const preview = makeOpenTermTemplate().previewDeployMarket({
+      ...makeMarketParameters(asset),
+      hooksAddress: makeAddress(29),
+      salt: constants.HashZero,
+      minimumDeposit: asset.getAmount(0n),
+      transferAccess: TransferAccess.Open,
+      depositAccess: DepositAccess.Open,
+      withdrawalAccess: WithdrawalAccess.Open
+    });
+
+    expect(preview.status).to.equal(DeployMarketStatus.InvalidMarketSaltFormat);
+  });
+
+  it("treats the zero address as a missing role provider factory", () => {
+    const asset = makeToken();
+    const common = {
+      ...makeMarketParameters(asset),
+      hooksInstanceName: "HooksInstance",
+      roleProviderFactory: constants.AddressZero,
+      newProviderInputs: [{ data: "0x1234", timeToLive: 1_800 }],
+      salt: marketSalt,
+      minimumDeposit: asset.getAmount(0n),
+      transferAccess: TransferAccess.Open,
+      depositAccess: DepositAccess.Open,
+      withdrawalAccess: WithdrawalAccess.Open
+    };
+
+    expect(makeOpenTermTemplate().previewDeployMarket(common).status).to.equal(
+      DeployMarketStatus.CreateProviderInputsWithoutFactory
+    );
+    expect(
+      makeFixedTermTemplate().previewDeployMarket({
+        ...common,
+        fixedTermEndTime: 1_800_000_000,
+        allowClosureBeforeTerm: false,
+        allowTermReduction: false
+      }).status
+    ).to.equal(DeployMarketStatus.CreateProviderInputsWithoutFactory);
+    expect(
+      makePeriodicTermTemplate().previewDeployMarket({
+        ...common,
+        firstWithdrawalWindowStart: 1_800_000_000,
+        periodDuration: 30 * 24 * 60 * 60,
+        withdrawalWindowDuration: 7 * 24 * 60 * 60
+      }).status
+    ).to.equal(DeployMarketStatus.CreateProviderInputsWithoutFactory);
+  });
+
+  it("rejects zero-address factories when encoding new provider inputs directly", () => {
+    expect(() =>
+      encodeMarketHooksInstanceInputs({
+        hooksInstanceName: "HooksInstance",
+        roleProviderFactory: constants.AddressZero,
+        newProviderInputs: [{ data: "0x1234", timeToLive: 1_800 }]
+      })
+    ).to.throw("Can not create new providers without a factory");
+  });
+
   it("fails closed without indexed registration metadata or a live factory check", () => {
     const asset = makeToken();
     const template = makeOpenTermTemplate();
     const args = {
       ...makeMarketParameters(asset),
       hooksAddress: makeAddress(37),
-      salt: constants.HashZero,
+      salt: marketSalt,
       minimumDeposit: asset.getAmount(0n),
       transferAccess: TransferAccess.Open,
       depositAccess: DepositAccess.Open,
@@ -392,7 +456,7 @@ describe("V2.5 hook deployment validation", () => {
       template.previewDeployMarket({
         ...makeMarketParameters(asset),
         hooksAddress: makeAddress(38),
-        salt: constants.HashZero,
+        salt: marketSalt,
         minimumDeposit: asset.getAmount(0n),
         transferAccess: TransferAccess.Open,
         depositAccess: DepositAccess.Open,
@@ -401,12 +465,49 @@ describe("V2.5 hook deployment validation", () => {
     ).to.equal(DeployMarketStatus.HooksFactoryNotRegistered);
   });
 
-  it("rejects live-disabled templates for every supported hook kind", () => {
+  it("allows existing hook instances after their template is disabled", () => {
     const asset = makeToken();
     const common = {
       ...makeMarketParameters(asset),
       hooksAddress: makeAddress(39),
-      salt: constants.HashZero,
+      salt: marketSalt,
+      minimumDeposit: asset.getAmount(0n),
+      transferAccess: TransferAccess.Open,
+      depositAccess: DepositAccess.Open,
+      withdrawalAccess: WithdrawalAccess.Open
+    };
+    const open = makeOpenTermTemplate();
+    const fixed = makeFixedTermTemplate();
+    const periodic = makePeriodicTermTemplate();
+    open.enabled = false;
+    fixed.enabled = false;
+    periodic.enabled = false;
+
+    expect(open.previewDeployMarket(common).status).to.equal(DeployMarketStatus.Ready);
+    expect(
+      fixed.previewDeployMarket({
+        ...common,
+        fixedTermEndTime: 1_800_000_000,
+        allowClosureBeforeTerm: false,
+        allowTermReduction: false
+      }).status
+    ).to.equal(DeployMarketStatus.Ready);
+    expect(
+      periodic.previewDeployMarket({
+        ...common,
+        firstWithdrawalWindowStart: 1_800_000_000,
+        periodDuration: 30 * 24 * 60 * 60,
+        withdrawalWindowDuration: 7 * 24 * 60 * 60
+      }).status
+    ).to.equal(DeployMarketStatus.Ready);
+  });
+
+  it("rejects new hook instances after their template is disabled", () => {
+    const asset = makeToken();
+    const common = {
+      ...makeMarketParameters(asset),
+      hooksInstanceName: "Disabled template instance",
+      salt: marketSalt,
       minimumDeposit: asset.getAmount(0n),
       transferAccess: TransferAccess.Open,
       depositAccess: DepositAccess.Open,
@@ -452,7 +553,7 @@ describe("V2.5 hook deployment validation", () => {
     const args = {
       ...makeMarketParameters(asset),
       hooksAddress: makeAddress(40),
-      salt: constants.HashZero,
+      salt: marketSalt,
       minimumDeposit: asset.getAmount(0n),
       transferAccess: TransferAccess.Open,
       depositAccess: DepositAccess.Open,
@@ -493,7 +594,7 @@ describe("V2.5 hook deployment validation", () => {
     const common = {
       ...makeMarketParameters(asset),
       hooksAddress: makeAddress(40),
-      salt: constants.HashZero,
+      salt: marketSalt,
       minimumDeposit: asset.getAmount(0n),
       transferAccess: TransferAccess.Disabled,
       depositAccess: DepositAccess.Open,
@@ -526,7 +627,7 @@ describe("V2.5 hook deployment validation", () => {
     const preview = makeOpenTermTemplate().previewDeployMarket({
       ...makeMarketParameters(asset),
       hooksAddress: makeAddress(41),
-      salt: constants.HashZero,
+      salt: marketSalt,
       minimumDeposit: asset.getAmount(0n),
       transferAccess: TransferAccess.Open,
       depositAccess: DepositAccess.RequiresCredential,
@@ -541,7 +642,7 @@ describe("V2.5 hook deployment validation", () => {
     const preview = makePeriodicTermTemplate().previewDeployMarket({
       ...makeMarketParameters(asset),
       hooksAddress: makeAddress(42),
-      salt: constants.HashZero,
+      salt: marketSalt,
       minimumDeposit: asset.getAmount(1n << 96n),
       transferAccess: TransferAccess.Open,
       depositAccess: DepositAccess.Open,
@@ -577,7 +678,7 @@ describe("FixedTermHooksTemplate.previewDeployMarket", () => {
             timeToLive: 3600
           }
         ],
-        salt: constants.HashZero,
+        salt: marketSalt,
         fixedTermEndTime: 1_800_000_000,
         minimumDeposit: asset.parseAmount("50"),
         transferAccess: TransferAccess.Disabled,
@@ -639,7 +740,7 @@ describe("FixedTermHooksTemplate.previewDeployMarket", () => {
             timeToLive: 7200
           }
         ],
-        salt: constants.HashZero,
+        salt: marketSalt,
         fixedTermEndTime: 1_800_000_000,
         minimumDeposit: asset.parseAmount("75"),
         transferAccess: TransferAccess.Open,

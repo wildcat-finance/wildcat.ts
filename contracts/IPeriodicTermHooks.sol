@@ -2,8 +2,10 @@
 pragma solidity ^0.8.20;
 
 import { MarketParameterConstraints } from "./MarketLensStructs.sol";
+import "./CommonHooksStructs.sol";
 
 type HooksDeploymentConfig is uint256;
+type RoleProvider is uint256;
 
 struct PeriodicTermHookedMarket {
   bool isHooked;
@@ -43,6 +45,16 @@ struct MarketState {
 
 interface IPeriodicTermHooks {
   error CallerNotBorrower();
+
+  error CallerNotAdministrator();
+
+  error InvalidAdministratorTransferTarget();
+
+  error AdministratorNotRegistered();
+
+  error NoPendingAdministratorTransfer();
+
+  error NotPendingAdministrator();
   error NotHookedMarket();
   error DepositBelowMinimum();
   error TransfersDisabled();
@@ -61,6 +73,17 @@ interface IPeriodicTermHooks {
   error InvalidAccessConfiguration();
   error AprReductionProposalExpired();
   error AprReductionProposalOnClosedMarket();
+  error CallerNotFactory();
+  error CreateRoleProviderFailed();
+  error RoleProviderFactoryRequired();
+  error GrantedCredentialExpired();
+  error InvalidArrayLength();
+  error InvalidCredentialReturned();
+  error InvalidCredentialTimestamp();
+  error NotApprovedLender();
+  error ProviderCanNotReplaceCredential();
+  error ProviderCanNotRevokeCredential();
+  error ProviderNotFound();
 
   event AccountAccessGranted(
     address indexed providerAddress,
@@ -79,6 +102,24 @@ interface IPeriodicTermHooks {
   event MinimumDepositUpdated(address market, uint128 newMinimumDeposit);
 
   event NameUpdated(string name);
+
+  event NameUpdated(address indexed administrator, string previousName, string newName);
+
+  event AdministratorTransferRequested(
+    address indexed administrator,
+    address indexed previousPendingAdministrator,
+    address indexed pendingAdministrator
+  );
+
+  event AdministratorTransferCancelled(
+    address indexed administrator,
+    address indexed cancelledPendingAdministrator
+  );
+
+  event AdministratorTransferred(
+    address indexed previousAdministrator,
+    address indexed newAdministrator
+  );
 
   event PeriodicTermClosed(address market);
 
@@ -101,13 +142,31 @@ interface IPeriodicTermHooks {
 
   event AnnualInterestBipsReductionExecuted(address indexed market, uint16 annualInterestBips);
 
+  function addRoleProvider(address providerAddress, uint32 timeToLive) external;
+
   function blockFromDeposits(address account) external;
 
   function blockFromDeposits(address[] calldata accounts) external;
 
   function borrower() external view returns (address);
 
+  function administrator() external view returns (address);
+
+  function pendingAdministrator() external view returns (address);
+
+  function requestAdministratorTransfer(address newAdministrator) external;
+
+  function cancelAdministratorTransfer() external;
+
+  function acceptAdministratorTransfer() external;
+
   function config() external view returns (HooksDeploymentConfig);
+
+  function createRoleProvider(
+    address providerFactory,
+    uint32 timeToLive,
+    bytes calldata data
+  ) external;
 
   function factory() external view returns (address);
 
@@ -124,6 +183,20 @@ interface IPeriodicTermHooks {
     pure
     returns (MarketParameterConstraints memory constraints);
 
+  function getLenderStatus(
+    address accountAddress
+  ) external view returns (LenderStatus memory status);
+
+  function getPreviousLenderStatus(
+    address accountAddress
+  ) external view returns (LenderStatus memory status);
+
+  function getPullProviders() external view returns (RoleProvider[] memory);
+
+  function getPushProviders() external view returns (RoleProvider[] memory);
+
+  function getRoleProvider(address providerAddress) external view returns (RoleProvider);
+
   function grantRole(address account, uint32 roleGrantedTimestamp) external;
 
   function grantRoles(
@@ -134,6 +207,11 @@ interface IPeriodicTermHooks {
   function isKnownLenderOnMarket(address lender, address market) external view returns (bool);
 
   function isMarketTransferDisabled(address marketAddress) external view returns (bool);
+
+  function isMarketTransferRecipientAllowed(
+    address marketAddress,
+    address recipient
+  ) external view returns (bool);
 
   function isWithdrawalWindowOpen(address marketAddress) external view returns (bool);
 
@@ -159,6 +237,12 @@ interface IPeriodicTermHooks {
   ) external returns (uint16 annualInterestBips);
 
   function proposeAnnualInterestBips(address market, uint16 annualInterestBips) external;
+
+  function removeRoleProvider(address providerAddress) external;
+
+  function revokeRole(address account) external;
+
+  function revokeRoles(address[] calldata accounts) external;
 
   function setMinimumDeposit(address market, uint128 newMinimumDeposit) external;
 

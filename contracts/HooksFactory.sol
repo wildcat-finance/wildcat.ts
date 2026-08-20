@@ -76,45 +76,86 @@ interface HooksFactory {
   error NameOrSymbolTooLong();
   error AssetBlacklisted();
   error SetProtocolFeeBipsFailed();
+  error InvalidHooksAdministrator();
+  error InvalidHooksInstanceAssociation();
 
-  event HooksInstanceDeployed(address hooksInstance, address hooksTemplate);
+  event HooksInstanceDeployed(
+    address indexed hooksInstance,
+    address indexed hooksTemplate,
+    address indexed administrator,
+    address deployer,
+    string name,
+    string version
+  );
+  event HooksInstanceRoleProviders(
+    address indexed hooksInstance,
+    bool metadataAvailable,
+    uint256[] pullProviders,
+    uint256[] pushProviders
+  );
+  event HooksInstanceAdministratorTransferred(
+    address indexed hooksInstance,
+    address indexed previousAdministrator,
+    address indexed newAdministrator
+  );
   event HooksTemplateAdded(
-    address hooksTemplate,
+    address indexed hooksTemplate,
+    address indexed caller,
     string name,
     address feeRecipient,
     address originationFeeAsset,
     uint80 originationFeeAmount,
     uint16 protocolFeeBips
   );
-  event HooksTemplateDisabled(address hooksTemplate);
+  event HooksTemplateDisabled(address indexed hooksTemplate, address indexed caller);
   event HooksTemplateFeesUpdated(
-    address hooksTemplate,
-    address feeRecipient,
-    address originationFeeAsset,
-    uint80 originationFeeAmount,
-    uint16 protocolFeeBips
+    address indexed hooksTemplate,
+    address indexed caller,
+    address previousFeeRecipient,
+    address newFeeRecipient,
+    address previousOriginationFeeAsset,
+    address newOriginationFeeAsset,
+    uint80 previousOriginationFeeAmount,
+    uint80 newOriginationFeeAmount,
+    uint16 previousProtocolFeeBips,
+    uint16 newProtocolFeeBips
   );
 
   event MarketDeployed(
     address indexed hooksTemplate,
+    address indexed hooksInstance,
     address indexed market,
+    address borrower,
+    address borrowerPrincipal,
+    address borrowerIdentityRegistry,
     string name,
     string symbol,
     address asset,
+    HooksConfig requestedHooks,
+    HooksConfig hooks
+  );
+  event MarketDeploymentConfig(
+    address indexed market,
     uint256 maxTotalSupply,
     uint256 annualInterestBips,
     uint256 delinquencyFeeBips,
     uint256 withdrawalBatchDuration,
     uint256 reserveRatioBips,
     uint256 delinquencyGracePeriod,
-    HooksConfig hooks
+    address feeRecipient,
+    uint256 protocolFeeBips,
+    address originationFeeAsset,
+    uint256 originationFeeAmount
   );
+  event MarketHooksData(address indexed market, bytes hooksData);
 
   function archController() external view returns (address);
 
   function sanctionsSentinel() external view returns (address);
 
   function wrapperFactory() external view returns (address);
+
+  function borrowerIdentityRegistry() external view returns (address);
 
   function marketInitCodeStorage() external view returns (address);
 
@@ -230,9 +271,32 @@ interface HooksFactory {
     bytes calldata constructorArgs
   ) external returns (address hooksDeployment);
 
+  function getHooksAdministrator(address hooks) external view returns (address);
+
+  function getHooksInstanceDeploymentNonce(address administrator) external view returns (uint256);
+
+  function getHooksInstancesForAdministrator(
+    address administrator
+  ) external view returns (address[] memory);
+
+  function getHooksInstancesForAdministrator(
+    address administrator,
+    uint256 start,
+    uint256 end
+  ) external view returns (address[] memory);
+
+  function getHooksInstancesCountForAdministrator(
+    address administrator
+  ) external view returns (uint256);
+
   function getHooksInstancesForBorrower(address borrower) external view returns (address[] memory);
 
   function getHooksInstancesCountForBorrower(address borrower) external view returns (uint256);
+
+  function onHooksAdministratorTransferred(
+    address previousAdministrator,
+    address newAdministrator
+  ) external;
 
   /// @dev Check if a hooks instance was deployed by the factory.
   function isHooksInstance(address hooks) external view returns (bool);

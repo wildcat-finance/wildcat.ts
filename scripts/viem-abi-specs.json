@@ -70,6 +70,21 @@
     "types": ["function"]
   },
   {
+    "exportName": "borrowerIdentityRegistryAbi",
+    "artifact": "artifacts/contracts/BorrowerIdentityRegistry.sol/BorrowerIdentityRegistry.json",
+    "types": ["function", "event"]
+  },
+  {
+    "exportName": "accessListRoleProviderAbi",
+    "artifact": "artifacts/contracts/AccessListRoleProvider.sol/AccessListRoleProvider.json",
+    "types": ["function", "event"]
+  },
+  {
+    "exportName": "accessListRoleProviderFactoryAbi",
+    "artifact": "artifacts/contracts/AccessListRoleProviderFactory.sol/AccessListRoleProviderFactory.json",
+    "types": ["function", "event"]
+  },
+  {
     "exportName": "hooksFactoryAbi",
     "artifact": "artifacts/contracts/HooksFactory.sol/HooksFactory.json",
     "types": ["function"]
@@ -99,15 +114,22 @@
     "artifact": "artifacts/contracts/IOpenTermHooks.sol/IOpenTermHooks.json",
     "types": ["error"],
     "names": [
+      "AdministratorNotRegistered",
+      "CallerNotAdministrator",
       "CallerNotBorrower",
+      "CreateRoleProviderFailed",
       "GrantedCredentialExpired",
+      "InvalidAdministratorTransferTarget",
       "InvalidArrayLength",
       "InvalidCredentialReturned",
       "InvalidCredentialTimestamp",
+      "NoPendingAdministratorTransfer",
       "NotApprovedLender",
+      "NotPendingAdministrator",
       "ProviderCanNotReplaceCredential",
       "ProviderCanNotRevokeCredential",
-      "ProviderNotFound"
+      "ProviderNotFound",
+      "RoleProviderFactoryRequired"
     ]
   },
   {

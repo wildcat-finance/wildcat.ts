@@ -1,14 +1,12 @@
 import { expect } from "chai";
 import type { PublicClient } from "viem";
 import type { LenderRestorationHooks } from "../../src/access/lender-restoration";
-import {
-  getCredentialTimestamps,
-  prepareLenderRestoration,
-  timestampAddLenderInputs
-} from "../../src/access/lender-restoration";
-import type { TimestampedAddLenderInput } from "../../src/types";
+import { prepareLenderRestoration } from "../../src/access/lender-restoration";
+import { accessListRoleProviderAbi } from "../../src/abi";
+import { encodeFunctionData } from "viem";
 
-const policyAddress = "0x0000000000000000000000000000000000000010";
+const hooksAddress = "0x0000000000000000000000000000000000000010";
+const providerAddress = "0x0000000000000000000000000000000000000020";
 const lenderA = "0x0000000000000000000000000000000000000011";
 const lenderB = "0x0000000000000000000000000000000000000012";
 
@@ -38,63 +36,33 @@ const makeClient = (blocked: Record<string, boolean>) => {
 };
 
 describe("lender restoration planning", () => {
-  it("uses chain time for inputs that do not provide a credential timestamp", async () => {
-    const { publicClient, getBlockCalls } = makeClient({});
-
-    const inputs = await timestampAddLenderInputs(publicClient, [{ lender: lenderA }]);
-
-    expect(inputs).to.deep.equal([{ lender: lenderA, credentialTimestamp: 456 }]);
-    expect(getBlockCalls()).to.equal(1);
-  });
-
-  it("does not read a block when all timestamps are already explicit", async () => {
-    const { publicClient, getBlockCalls } = makeClient({});
-
-    const inputs = await timestampAddLenderInputs(publicClient, [
-      { lender: lenderA, credentialTimestamp: 123 }
-    ]);
-
-    expect(inputs).to.deep.equal([{ lender: lenderA, credentialTimestamp: 123 }]);
-    expect(getBlockCalls()).to.equal(0);
-  });
-
-  it("rejects missing timestamps at the synchronous calldata boundary", () => {
-    const missingTimestamp = [{ lender: lenderA }] as TimestampedAddLenderInput[];
-
-    expect(() => getCredentialTimestamps(missingTimestamp)).to.throw(
-      "credentialTimestamp must be a non-zero uint32"
-    );
-  });
-
-  it("orders the grant before unblocks selected from stored onchain state", async () => {
+  it("orders provider membership before unblocks selected from stored hook state", async () => {
     const { publicClient, getBlockCalls, readCalls } = makeClient({
       [lenderA]: true,
       [lenderB]: false
     });
     const hooks = {
-      address: policyAddress,
-      populateAddLenders: (inputs: TimestampedAddLenderInput[]) => ({
-        to: policyAddress,
-        data: `grant:${inputs.map(({ credentialTimestamp }) => credentialTimestamp).join(",")}`,
-        value: "0"
-      }),
+      address: hooksAddress,
       populateUnblockLender: (lender: string) => ({
-        to: policyAddress,
+        to: hooksAddress,
         data: `unblock:${lender}`,
         value: "0"
       })
     } satisfies LenderRestorationHooks;
-
-    const plan = await prepareLenderRestoration(publicClient, hooks, [
-      { lender: lenderA },
-      { lender: lenderB }
+    const plan = await prepareLenderRestoration(publicClient, hooks, providerAddress, [
+      lenderA,
+      lenderB
     ]);
 
     expect(plan.blockNumber).to.equal(123n);
     expect(plan.blockTimestamp).to.equal(456);
     expect(plan.blockedLenders).to.deep.equal([lenderA]);
     expect(plan.transactions.map(({ data }) => data)).to.deep.equal([
-      "grant:456,456",
+      encodeFunctionData({
+        abi: accessListRoleProviderAbi,
+        functionName: "addMembers",
+        args: [[lenderA, lenderB]]
+      }),
       `unblock:${lenderA}`
     ]);
     expect(getBlockCalls()).to.equal(1);

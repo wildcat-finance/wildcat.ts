@@ -29,6 +29,7 @@ export type SubgraphAccountAccessGranted = {
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  caller?: Maybe<Scalars['Bytes']['output']>;
   credentialTimestamp: Scalars['Int']['output'];
   eventIndex: Scalars['Int']['output'];
   hooks: SubgraphHooksInstance;
@@ -86,6 +87,16 @@ export type SubgraphAccountAccessGranted_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  caller?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  caller_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   credentialTimestamp?: InputMaybe<Scalars['Int']['input']>;
   credentialTimestamp_gt?: InputMaybe<Scalars['Int']['input']>;
   credentialTimestamp_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -176,16 +187,20 @@ export enum SubgraphAccountAccessGranted_OrderBy {
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  caller = 'caller',
   credentialTimestamp = 'credentialTimestamp',
   eventIndex = 'eventIndex',
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -193,6 +208,9 @@ export enum SubgraphAccountAccessGranted_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   provider = 'provider',
   provider__id = 'provider__id',
@@ -212,9 +230,11 @@ export type SubgraphAccountAccessRevoked = {
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  caller?: Maybe<Scalars['Bytes']['output']>;
   eventIndex: Scalars['Int']['output'];
   hooks: SubgraphHooksInstance;
   id: Scalars['ID']['output'];
+  provider?: Maybe<SubgraphRoleProvider>;
   transactionHash: Scalars['Bytes']['output'];
 };
 
@@ -267,6 +287,16 @@ export type SubgraphAccountAccessRevoked_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  caller?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  caller_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -305,6 +335,27 @@ export type SubgraphAccountAccessRevoked_Filter = {
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   or?: InputMaybe<Array<InputMaybe<SubgraphAccountAccessRevoked_Filter>>>;
+  provider?: InputMaybe<Scalars['String']['input']>;
+  provider_?: InputMaybe<SubgraphRoleProvider_Filter>;
+  provider_contains?: InputMaybe<Scalars['String']['input']>;
+  provider_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_ends_with?: InputMaybe<Scalars['String']['input']>;
+  provider_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_gt?: InputMaybe<Scalars['String']['input']>;
+  provider_gte?: InputMaybe<Scalars['String']['input']>;
+  provider_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  provider_lt?: InputMaybe<Scalars['String']['input']>;
+  provider_lte?: InputMaybe<Scalars['String']['input']>;
+  provider_not?: InputMaybe<Scalars['String']['input']>;
+  provider_not_contains?: InputMaybe<Scalars['String']['input']>;
+  provider_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  provider_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  provider_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  provider_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_starts_with?: InputMaybe<Scalars['String']['input']>;
+  provider_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
@@ -328,15 +379,19 @@ export enum SubgraphAccountAccessRevoked_OrderBy {
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  caller = 'caller',
   eventIndex = 'eventIndex',
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -344,13 +399,26 @@ export enum SubgraphAccountAccessRevoked_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
+  provider = 'provider',
+  provider__id = 'provider__id',
+  provider__isApproved = 'provider__isApproved',
+  provider__isPullProvider = 'provider__isPullProvider',
+  provider__isPushProvider = 'provider__isPushProvider',
+  provider__providerAddress = 'provider__providerAddress',
+  provider__pullProviderIndex = 'provider__pullProviderIndex',
+  provider__pushProviderIndex = 'provider__pushProviderIndex',
+  provider__timeToLive = 'provider__timeToLive',
   transactionHash = 'transactionHash'
 }
 
 export type SubgraphAccountBlockedFromDeposits = {
   __typename: 'AccountBlockedFromDeposits';
   account: SubgraphLenderHooksAccess;
+  administrator?: Maybe<Scalars['Bytes']['output']>;
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
@@ -384,6 +452,16 @@ export type SubgraphAccountBlockedFromDeposits_Filter = {
   account_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   account_starts_with?: InputMaybe<Scalars['String']['input']>;
   account_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphAccountBlockedFromDeposits_Filter>>>;
   blockLogIndex?: InputMaybe<Scalars['Int']['input']>;
   blockLogIndex_gt?: InputMaybe<Scalars['Int']['input']>;
@@ -467,6 +545,7 @@ export enum SubgraphAccountBlockedFromDeposits_OrderBy {
   account__isBlockedFromDeposits = 'account__isBlockedFromDeposits',
   account__lastApprovalTimestamp = 'account__lastApprovalTimestamp',
   account__lender = 'account__lender',
+  administrator = 'administrator',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
@@ -474,11 +553,14 @@ export enum SubgraphAccountBlockedFromDeposits_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -486,6 +568,9 @@ export enum SubgraphAccountBlockedFromDeposits_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   transactionHash = 'transactionHash'
 }
@@ -631,11 +716,14 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -643,6 +731,9 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   lenderAccount = 'lenderAccount',
   lenderAccount__addedTimestamp = 'lenderAccount__addedTimestamp',
@@ -663,6 +754,8 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -676,13 +769,18 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -699,10 +797,14 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -740,6 +842,7 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
 export type SubgraphAccountUnblockedFromDeposits = {
   __typename: 'AccountUnblockedFromDeposits';
   account: SubgraphLenderHooksAccess;
+  administrator?: Maybe<Scalars['Bytes']['output']>;
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
@@ -773,6 +876,16 @@ export type SubgraphAccountUnblockedFromDeposits_Filter = {
   account_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   account_starts_with?: InputMaybe<Scalars['String']['input']>;
   account_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphAccountUnblockedFromDeposits_Filter>>>;
   blockLogIndex?: InputMaybe<Scalars['Int']['input']>;
   blockLogIndex_gt?: InputMaybe<Scalars['Int']['input']>;
@@ -856,6 +969,7 @@ export enum SubgraphAccountUnblockedFromDeposits_OrderBy {
   account__isBlockedFromDeposits = 'account__isBlockedFromDeposits',
   account__lastApprovalTimestamp = 'account__lastApprovalTimestamp',
   account__lender = 'account__lender',
+  administrator = 'administrator',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
@@ -863,11 +977,14 @@ export enum SubgraphAccountUnblockedFromDeposits_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -875,16 +992,17 @@ export enum SubgraphAccountUnblockedFromDeposits_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   transactionHash = 'transactionHash'
 }
 
-/** Indicates whether the current, partially filled bucket should be included in the response. Defaults to `exclude` */
-export enum SubgraphAggregation_Current {
-  /** Exclude the current, partially filled bucket from the response */
-  exclude = 'exclude',
-  /** Include the current, partially filled bucket in the response */
-  include = 'include'
+export enum SubgraphAdministratorChangeKind {
+  TRANSFERRED = 'TRANSFERRED',
+  TRANSFER_CANCELLED = 'TRANSFER_CANCELLED',
+  TRANSFER_REQUESTED = 'TRANSFER_REQUESTED'
 }
 
 export enum SubgraphAggregation_Interval {
@@ -1021,11 +1139,14 @@ export enum SubgraphAnnualInterestBipsReductionExecuted_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -1033,6 +1154,9 @@ export enum SubgraphAnnualInterestBipsReductionExecuted_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   market = 'market',
   market__abiFamily = 'market__abiFamily',
@@ -1041,6 +1165,8 @@ export enum SubgraphAnnualInterestBipsReductionExecuted_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -1054,13 +1180,18 @@ export enum SubgraphAnnualInterestBipsReductionExecuted_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -1077,10 +1208,14 @@ export enum SubgraphAnnualInterestBipsReductionExecuted_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -1234,11 +1369,14 @@ export enum SubgraphAnnualInterestBipsReductionProposalCancelled_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -1246,6 +1384,9 @@ export enum SubgraphAnnualInterestBipsReductionProposalCancelled_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   market = 'market',
   market__abiFamily = 'market__abiFamily',
@@ -1254,6 +1395,8 @@ export enum SubgraphAnnualInterestBipsReductionProposalCancelled_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -1267,13 +1410,18 @@ export enum SubgraphAnnualInterestBipsReductionProposalCancelled_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -1290,10 +1438,14 @@ export enum SubgraphAnnualInterestBipsReductionProposalCancelled_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -1484,11 +1636,14 @@ export enum SubgraphAnnualInterestBipsReductionProposed_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -1496,6 +1651,9 @@ export enum SubgraphAnnualInterestBipsReductionProposed_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   market = 'market',
   market__abiFamily = 'market__abiFamily',
@@ -1504,6 +1662,8 @@ export enum SubgraphAnnualInterestBipsReductionProposed_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -1517,13 +1677,18 @@ export enum SubgraphAnnualInterestBipsReductionProposed_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -1540,10 +1705,14 @@ export enum SubgraphAnnualInterestBipsReductionProposed_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -1587,6 +1756,7 @@ export type SubgraphAnnualInterestBipsUpdated = {
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  caller?: Maybe<Scalars['Bytes']['output']>;
   eventIndex: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
   market: SubgraphMarket;
@@ -1631,6 +1801,16 @@ export type SubgraphAnnualInterestBipsUpdated_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  caller?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  caller_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -1702,6 +1882,7 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  caller = 'caller',
   eventIndex = 'eventIndex',
   id = 'id',
   market = 'market',
@@ -1711,6 +1892,8 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -1724,13 +1907,18 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -1747,10 +1935,14 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -1910,6 +2102,8 @@ export enum SubgraphApproval_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -1923,13 +2117,18 @@ export enum SubgraphApproval_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -1946,10 +2145,14 @@ export enum SubgraphApproval_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -2135,6 +2338,7 @@ export enum SubgraphApprovedLiquidator_OrderBy {
 
 export type SubgraphArchController = {
   __typename: 'ArchController';
+  borrowerIdentityRegistries: Array<SubgraphBorrowerIdentityRegistry>;
   borrowers: Array<SubgraphRegisteredBorrower>;
   controllerFactories: Array<SubgraphControllerFactory>;
   controllers: Array<SubgraphController>;
@@ -2142,6 +2346,15 @@ export type SubgraphArchController = {
   hooksFactories: Array<SubgraphHooksFactory>;
   id: Scalars['ID']['output'];
   markets: Array<SubgraphMarket>;
+};
+
+
+export type SubgraphArchControllerBorrowerIdentityRegistriesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerIdentityRegistry_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphBorrowerIdentityRegistry_Filter>;
 };
 
 
@@ -2202,6 +2415,7 @@ export type SubgraphArchController_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<SubgraphArchController_Filter>>>;
+  borrowerIdentityRegistries_?: InputMaybe<SubgraphBorrowerIdentityRegistry_Filter>;
   borrowers_?: InputMaybe<SubgraphRegisteredBorrower_Filter>;
   controllerFactories_?: InputMaybe<SubgraphControllerFactory_Filter>;
   controllers_?: InputMaybe<SubgraphController_Filter>;
@@ -2220,6 +2434,7 @@ export type SubgraphArchController_Filter = {
 };
 
 export enum SubgraphArchController_OrderBy {
+  borrowerIdentityRegistries = 'borrowerIdentityRegistries',
   borrowers = 'borrowers',
   controllerFactories = 'controllerFactories',
   controllers = 'controllers',
@@ -2246,6 +2461,7 @@ export type SubgraphBorrow = {
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
   borrowIndex: Scalars['Int']['output'];
+  borrower?: Maybe<Scalars['Bytes']['output']>;
   eventIndex: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
   market: SubgraphMarket;
@@ -2296,6 +2512,16 @@ export type SubgraphBorrow_Filter = {
   borrowIndex_lte?: InputMaybe<Scalars['Int']['input']>;
   borrowIndex_not?: InputMaybe<Scalars['Int']['input']>;
   borrowIndex_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  borrower?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrower_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -2352,6 +2578,7 @@ export enum SubgraphBorrow_OrderBy {
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
   borrowIndex = 'borrowIndex',
+  borrower = 'borrower',
   eventIndex = 'eventIndex',
   id = 'id',
   market = 'market',
@@ -2361,6 +2588,8 @@ export enum SubgraphBorrow_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -2374,13 +2603,18 @@ export enum SubgraphBorrow_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -2397,10 +2631,14 @@ export enum SubgraphBorrow_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -2438,6 +2676,7 @@ export enum SubgraphBorrow_OrderBy {
 /** Canonical on-chain borrower identity joining registration, markets, and analytics. */
 export type SubgraphBorrower = {
   __typename: 'Borrower';
+  accounts: Array<SubgraphBorrowerAccount>;
   address: Scalars['Bytes']['output'];
   dailyStats: Array<SubgraphBorrowerDailyStats>;
   firstSeenBlock: Scalars['BigInt']['output'];
@@ -2450,10 +2689,21 @@ export type SubgraphBorrower = {
   lastSeenTimestamp: Scalars['BigInt']['output'];
   lastSeenTransaction: Scalars['Bytes']['output'];
   markets: Array<SubgraphMarket>;
+  pendingAccounts: Array<SubgraphBorrowerAccount>;
   registrations: Array<SubgraphRegisteredBorrower>;
   sanctionOverrideStatuses: Array<SubgraphSanctionOverrideStatus>;
   sanctionsEscrows: Array<SubgraphSanctionsEscrow>;
   stats?: Maybe<SubgraphBorrowerStats>;
+};
+
+
+/** Canonical on-chain borrower identity joining registration, markets, and analytics. */
+export type SubgraphBorrowerAccountsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccount_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphBorrowerAccount_Filter>;
 };
 
 
@@ -2474,6 +2724,16 @@ export type SubgraphBorrowerMarketsArgs = {
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<SubgraphMarket_Filter>;
+};
+
+
+/** Canonical on-chain borrower identity joining registration, markets, and analytics. */
+export type SubgraphBorrowerPendingAccountsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccount_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphBorrowerAccount_Filter>;
 };
 
 
@@ -2505,6 +2765,864 @@ export type SubgraphBorrowerSanctionsEscrowsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<SubgraphSanctionsEscrow_Filter>;
 };
+
+/** A contract account registered to one current legal principal. */
+export type SubgraphBorrowerAccount = {
+  __typename: 'BorrowerAccount';
+  accountFactory: SubgraphBorrowerAccountFactory;
+  address: Scalars['Bytes']['output'];
+  changes: Array<SubgraphBorrowerAccountPrincipalChange>;
+  id: Scalars['ID']['output'];
+  markets: Array<SubgraphMarket>;
+  pendingPrincipal?: Maybe<SubgraphBorrower>;
+  pendingPrincipalAddress?: Maybe<Scalars['Bytes']['output']>;
+  principal: SubgraphBorrower;
+  principalAddress: Scalars['Bytes']['output'];
+  registeredAtBlock: Scalars['BigInt']['output'];
+  registeredAtLogIndex: Scalars['BigInt']['output'];
+  registeredAtTimestamp: Scalars['BigInt']['output'];
+  registeredAtTransaction: Scalars['Bytes']['output'];
+  registry: SubgraphBorrowerIdentityRegistry;
+};
+
+
+/** A contract account registered to one current legal principal. */
+export type SubgraphBorrowerAccountChangesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccountPrincipalChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphBorrowerAccountPrincipalChange_Filter>;
+};
+
+
+/** A contract account registered to one current legal principal. */
+export type SubgraphBorrowerAccountMarketsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarket_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphMarket_Filter>;
+};
+
+/** Current approval state for one account factory in one identity registry. */
+export type SubgraphBorrowerAccountFactory = {
+  __typename: 'BorrowerAccountFactory';
+  accounts: Array<SubgraphBorrowerAccount>;
+  address: Scalars['Bytes']['output'];
+  changes: Array<SubgraphBorrowerAccountFactoryChange>;
+  id: Scalars['ID']['output'];
+  isApproved: Scalars['Boolean']['output'];
+  registry: SubgraphBorrowerIdentityRegistry;
+};
+
+
+/** Current approval state for one account factory in one identity registry. */
+export type SubgraphBorrowerAccountFactoryAccountsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccount_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphBorrowerAccount_Filter>;
+};
+
+
+/** Current approval state for one account factory in one identity registry. */
+export type SubgraphBorrowerAccountFactoryChangesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccountFactoryChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphBorrowerAccountFactoryChange_Filter>;
+};
+
+export type SubgraphBorrowerAccountFactoryChange = {
+  __typename: 'BorrowerAccountFactoryChange';
+  accountFactory: SubgraphBorrowerAccountFactory;
+  administrator: Scalars['Bytes']['output'];
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  id: Scalars['ID']['output'];
+  isApproved: Scalars['Boolean']['output'];
+  registry: SubgraphBorrowerIdentityRegistry;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphBorrowerAccountFactoryChange_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  accountFactory?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_?: InputMaybe<SubgraphBorrowerAccountFactory_Filter>;
+  accountFactory_contains?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_ends_with?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_gt?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_gte?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  accountFactory_lt?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_lte?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not_contains?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  accountFactory_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_starts_with?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphBorrowerAccountFactoryChange_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  isApproved?: InputMaybe<Scalars['Boolean']['input']>;
+  isApproved_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  isApproved_not?: InputMaybe<Scalars['Boolean']['input']>;
+  isApproved_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphBorrowerAccountFactoryChange_Filter>>>;
+  registry?: InputMaybe<Scalars['String']['input']>;
+  registry_?: InputMaybe<SubgraphBorrowerIdentityRegistry_Filter>;
+  registry_contains?: InputMaybe<Scalars['String']['input']>;
+  registry_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_ends_with?: InputMaybe<Scalars['String']['input']>;
+  registry_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_gt?: InputMaybe<Scalars['String']['input']>;
+  registry_gte?: InputMaybe<Scalars['String']['input']>;
+  registry_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  registry_lt?: InputMaybe<Scalars['String']['input']>;
+  registry_lte?: InputMaybe<Scalars['String']['input']>;
+  registry_not?: InputMaybe<Scalars['String']['input']>;
+  registry_not_contains?: InputMaybe<Scalars['String']['input']>;
+  registry_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  registry_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  registry_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  registry_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_starts_with?: InputMaybe<Scalars['String']['input']>;
+  registry_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphBorrowerAccountFactoryChange_OrderBy {
+  accountFactory = 'accountFactory',
+  accountFactory__address = 'accountFactory__address',
+  accountFactory__id = 'accountFactory__id',
+  accountFactory__isApproved = 'accountFactory__isApproved',
+  administrator = 'administrator',
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  id = 'id',
+  isApproved = 'isApproved',
+  registry = 'registry',
+  registry__address = 'registry__address',
+  registry__eventIndex = 'registry__eventIndex',
+  registry__id = 'registry__id',
+  transactionHash = 'transactionHash'
+}
+
+export type SubgraphBorrowerAccountFactory_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  accounts_?: InputMaybe<SubgraphBorrowerAccount_Filter>;
+  address?: InputMaybe<Scalars['Bytes']['input']>;
+  address_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  address_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  address_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphBorrowerAccountFactory_Filter>>>;
+  changes_?: InputMaybe<SubgraphBorrowerAccountFactoryChange_Filter>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  isApproved?: InputMaybe<Scalars['Boolean']['input']>;
+  isApproved_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  isApproved_not?: InputMaybe<Scalars['Boolean']['input']>;
+  isApproved_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphBorrowerAccountFactory_Filter>>>;
+  registry?: InputMaybe<Scalars['String']['input']>;
+  registry_?: InputMaybe<SubgraphBorrowerIdentityRegistry_Filter>;
+  registry_contains?: InputMaybe<Scalars['String']['input']>;
+  registry_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_ends_with?: InputMaybe<Scalars['String']['input']>;
+  registry_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_gt?: InputMaybe<Scalars['String']['input']>;
+  registry_gte?: InputMaybe<Scalars['String']['input']>;
+  registry_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  registry_lt?: InputMaybe<Scalars['String']['input']>;
+  registry_lte?: InputMaybe<Scalars['String']['input']>;
+  registry_not?: InputMaybe<Scalars['String']['input']>;
+  registry_not_contains?: InputMaybe<Scalars['String']['input']>;
+  registry_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  registry_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  registry_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  registry_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_starts_with?: InputMaybe<Scalars['String']['input']>;
+  registry_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum SubgraphBorrowerAccountFactory_OrderBy {
+  accounts = 'accounts',
+  address = 'address',
+  changes = 'changes',
+  id = 'id',
+  isApproved = 'isApproved',
+  registry = 'registry',
+  registry__address = 'registry__address',
+  registry__eventIndex = 'registry__eventIndex',
+  registry__id = 'registry__id'
+}
+
+export type SubgraphBorrowerAccountPrincipalChange = {
+  __typename: 'BorrowerAccountPrincipalChange';
+  account: SubgraphBorrowerAccount;
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  cancelledPendingPrincipal?: Maybe<SubgraphBorrower>;
+  cancelledPendingPrincipalAddress?: Maybe<Scalars['Bytes']['output']>;
+  currentPrincipal?: Maybe<SubgraphBorrower>;
+  currentPrincipalAddress?: Maybe<Scalars['Bytes']['output']>;
+  id: Scalars['ID']['output'];
+  kind: SubgraphBorrowerAccountPrincipalChangeKind;
+  newPrincipal?: Maybe<SubgraphBorrower>;
+  newPrincipalAddress?: Maybe<Scalars['Bytes']['output']>;
+  pendingPrincipal?: Maybe<SubgraphBorrower>;
+  pendingPrincipalAddress?: Maybe<Scalars['Bytes']['output']>;
+  previousPendingPrincipal?: Maybe<SubgraphBorrower>;
+  previousPendingPrincipalAddress?: Maybe<Scalars['Bytes']['output']>;
+  previousPrincipal?: Maybe<SubgraphBorrower>;
+  previousPrincipalAddress?: Maybe<Scalars['Bytes']['output']>;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export enum SubgraphBorrowerAccountPrincipalChangeKind {
+  REGISTERED = 'REGISTERED',
+  TRANSFERRED = 'TRANSFERRED',
+  TRANSFER_CANCELLED = 'TRANSFER_CANCELLED',
+  TRANSFER_REQUESTED = 'TRANSFER_REQUESTED'
+}
+
+export type SubgraphBorrowerAccountPrincipalChange_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  account?: InputMaybe<Scalars['String']['input']>;
+  account_?: InputMaybe<SubgraphBorrowerAccount_Filter>;
+  account_contains?: InputMaybe<Scalars['String']['input']>;
+  account_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_ends_with?: InputMaybe<Scalars['String']['input']>;
+  account_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_gt?: InputMaybe<Scalars['String']['input']>;
+  account_gte?: InputMaybe<Scalars['String']['input']>;
+  account_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  account_lt?: InputMaybe<Scalars['String']['input']>;
+  account_lte?: InputMaybe<Scalars['String']['input']>;
+  account_not?: InputMaybe<Scalars['String']['input']>;
+  account_not_contains?: InputMaybe<Scalars['String']['input']>;
+  account_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  account_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  account_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  account_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_starts_with?: InputMaybe<Scalars['String']['input']>;
+  account_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphBorrowerAccountPrincipalChange_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  cancelledPendingPrincipal?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipalAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingPrincipalAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingPrincipalAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingPrincipalAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingPrincipalAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  cancelledPendingPrincipalAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingPrincipalAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingPrincipalAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingPrincipalAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingPrincipalAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  cancelledPendingPrincipal_?: InputMaybe<SubgraphBorrower_Filter>;
+  cancelledPendingPrincipal_contains?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_ends_with?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_gt?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_gte?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  cancelledPendingPrincipal_lt?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_lte?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_not?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_not_contains?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  cancelledPendingPrincipal_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_starts_with?: InputMaybe<Scalars['String']['input']>;
+  cancelledPendingPrincipal_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipalAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  currentPrincipalAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  currentPrincipalAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  currentPrincipalAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  currentPrincipalAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  currentPrincipalAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  currentPrincipalAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  currentPrincipalAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  currentPrincipalAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  currentPrincipalAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  currentPrincipal_?: InputMaybe<SubgraphBorrower_Filter>;
+  currentPrincipal_contains?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_ends_with?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_gt?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_gte?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  currentPrincipal_lt?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_lte?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_not?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_not_contains?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  currentPrincipal_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_starts_with?: InputMaybe<Scalars['String']['input']>;
+  currentPrincipal_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  kind?: InputMaybe<SubgraphBorrowerAccountPrincipalChangeKind>;
+  kind_in?: InputMaybe<Array<SubgraphBorrowerAccountPrincipalChangeKind>>;
+  kind_not?: InputMaybe<SubgraphBorrowerAccountPrincipalChangeKind>;
+  kind_not_in?: InputMaybe<Array<SubgraphBorrowerAccountPrincipalChangeKind>>;
+  newPrincipal?: InputMaybe<Scalars['String']['input']>;
+  newPrincipalAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  newPrincipalAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  newPrincipalAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  newPrincipalAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  newPrincipalAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  newPrincipalAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  newPrincipalAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  newPrincipalAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  newPrincipalAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  newPrincipalAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  newPrincipal_?: InputMaybe<SubgraphBorrower_Filter>;
+  newPrincipal_contains?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_ends_with?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_gt?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_gte?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  newPrincipal_lt?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_lte?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_not?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_not_contains?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  newPrincipal_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_starts_with?: InputMaybe<Scalars['String']['input']>;
+  newPrincipal_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphBorrowerAccountPrincipalChange_Filter>>>;
+  pendingPrincipal?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipalAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingPrincipalAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingPrincipal_?: InputMaybe<SubgraphBorrower_Filter>;
+  pendingPrincipal_contains?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_ends_with?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_gt?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_gte?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  pendingPrincipal_lt?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_lte?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not_contains?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  pendingPrincipal_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_starts_with?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipalAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingPrincipalAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingPrincipalAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingPrincipalAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingPrincipalAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousPendingPrincipalAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingPrincipalAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingPrincipalAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingPrincipalAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingPrincipalAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousPendingPrincipal_?: InputMaybe<SubgraphBorrower_Filter>;
+  previousPendingPrincipal_contains?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_ends_with?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_gt?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_gte?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  previousPendingPrincipal_lt?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_lte?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_not?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_not_contains?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  previousPendingPrincipal_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_starts_with?: InputMaybe<Scalars['String']['input']>;
+  previousPendingPrincipal_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipalAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPrincipalAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPrincipalAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPrincipalAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPrincipalAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousPrincipalAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPrincipalAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPrincipalAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPrincipalAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPrincipalAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousPrincipal_?: InputMaybe<SubgraphBorrower_Filter>;
+  previousPrincipal_contains?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_ends_with?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_gt?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_gte?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  previousPrincipal_lt?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_lte?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_not?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_not_contains?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  previousPrincipal_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_starts_with?: InputMaybe<Scalars['String']['input']>;
+  previousPrincipal_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphBorrowerAccountPrincipalChange_OrderBy {
+  account = 'account',
+  account__address = 'account__address',
+  account__id = 'account__id',
+  account__pendingPrincipalAddress = 'account__pendingPrincipalAddress',
+  account__principalAddress = 'account__principalAddress',
+  account__registeredAtBlock = 'account__registeredAtBlock',
+  account__registeredAtLogIndex = 'account__registeredAtLogIndex',
+  account__registeredAtTimestamp = 'account__registeredAtTimestamp',
+  account__registeredAtTransaction = 'account__registeredAtTransaction',
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  cancelledPendingPrincipal = 'cancelledPendingPrincipal',
+  cancelledPendingPrincipalAddress = 'cancelledPendingPrincipalAddress',
+  cancelledPendingPrincipal__address = 'cancelledPendingPrincipal__address',
+  cancelledPendingPrincipal__firstSeenBlock = 'cancelledPendingPrincipal__firstSeenBlock',
+  cancelledPendingPrincipal__firstSeenLogIndex = 'cancelledPendingPrincipal__firstSeenLogIndex',
+  cancelledPendingPrincipal__firstSeenTimestamp = 'cancelledPendingPrincipal__firstSeenTimestamp',
+  cancelledPendingPrincipal__firstSeenTransaction = 'cancelledPendingPrincipal__firstSeenTransaction',
+  cancelledPendingPrincipal__id = 'cancelledPendingPrincipal__id',
+  cancelledPendingPrincipal__lastSeenBlock = 'cancelledPendingPrincipal__lastSeenBlock',
+  cancelledPendingPrincipal__lastSeenLogIndex = 'cancelledPendingPrincipal__lastSeenLogIndex',
+  cancelledPendingPrincipal__lastSeenTimestamp = 'cancelledPendingPrincipal__lastSeenTimestamp',
+  cancelledPendingPrincipal__lastSeenTransaction = 'cancelledPendingPrincipal__lastSeenTransaction',
+  currentPrincipal = 'currentPrincipal',
+  currentPrincipalAddress = 'currentPrincipalAddress',
+  currentPrincipal__address = 'currentPrincipal__address',
+  currentPrincipal__firstSeenBlock = 'currentPrincipal__firstSeenBlock',
+  currentPrincipal__firstSeenLogIndex = 'currentPrincipal__firstSeenLogIndex',
+  currentPrincipal__firstSeenTimestamp = 'currentPrincipal__firstSeenTimestamp',
+  currentPrincipal__firstSeenTransaction = 'currentPrincipal__firstSeenTransaction',
+  currentPrincipal__id = 'currentPrincipal__id',
+  currentPrincipal__lastSeenBlock = 'currentPrincipal__lastSeenBlock',
+  currentPrincipal__lastSeenLogIndex = 'currentPrincipal__lastSeenLogIndex',
+  currentPrincipal__lastSeenTimestamp = 'currentPrincipal__lastSeenTimestamp',
+  currentPrincipal__lastSeenTransaction = 'currentPrincipal__lastSeenTransaction',
+  id = 'id',
+  kind = 'kind',
+  newPrincipal = 'newPrincipal',
+  newPrincipalAddress = 'newPrincipalAddress',
+  newPrincipal__address = 'newPrincipal__address',
+  newPrincipal__firstSeenBlock = 'newPrincipal__firstSeenBlock',
+  newPrincipal__firstSeenLogIndex = 'newPrincipal__firstSeenLogIndex',
+  newPrincipal__firstSeenTimestamp = 'newPrincipal__firstSeenTimestamp',
+  newPrincipal__firstSeenTransaction = 'newPrincipal__firstSeenTransaction',
+  newPrincipal__id = 'newPrincipal__id',
+  newPrincipal__lastSeenBlock = 'newPrincipal__lastSeenBlock',
+  newPrincipal__lastSeenLogIndex = 'newPrincipal__lastSeenLogIndex',
+  newPrincipal__lastSeenTimestamp = 'newPrincipal__lastSeenTimestamp',
+  newPrincipal__lastSeenTransaction = 'newPrincipal__lastSeenTransaction',
+  pendingPrincipal = 'pendingPrincipal',
+  pendingPrincipalAddress = 'pendingPrincipalAddress',
+  pendingPrincipal__address = 'pendingPrincipal__address',
+  pendingPrincipal__firstSeenBlock = 'pendingPrincipal__firstSeenBlock',
+  pendingPrincipal__firstSeenLogIndex = 'pendingPrincipal__firstSeenLogIndex',
+  pendingPrincipal__firstSeenTimestamp = 'pendingPrincipal__firstSeenTimestamp',
+  pendingPrincipal__firstSeenTransaction = 'pendingPrincipal__firstSeenTransaction',
+  pendingPrincipal__id = 'pendingPrincipal__id',
+  pendingPrincipal__lastSeenBlock = 'pendingPrincipal__lastSeenBlock',
+  pendingPrincipal__lastSeenLogIndex = 'pendingPrincipal__lastSeenLogIndex',
+  pendingPrincipal__lastSeenTimestamp = 'pendingPrincipal__lastSeenTimestamp',
+  pendingPrincipal__lastSeenTransaction = 'pendingPrincipal__lastSeenTransaction',
+  previousPendingPrincipal = 'previousPendingPrincipal',
+  previousPendingPrincipalAddress = 'previousPendingPrincipalAddress',
+  previousPendingPrincipal__address = 'previousPendingPrincipal__address',
+  previousPendingPrincipal__firstSeenBlock = 'previousPendingPrincipal__firstSeenBlock',
+  previousPendingPrincipal__firstSeenLogIndex = 'previousPendingPrincipal__firstSeenLogIndex',
+  previousPendingPrincipal__firstSeenTimestamp = 'previousPendingPrincipal__firstSeenTimestamp',
+  previousPendingPrincipal__firstSeenTransaction = 'previousPendingPrincipal__firstSeenTransaction',
+  previousPendingPrincipal__id = 'previousPendingPrincipal__id',
+  previousPendingPrincipal__lastSeenBlock = 'previousPendingPrincipal__lastSeenBlock',
+  previousPendingPrincipal__lastSeenLogIndex = 'previousPendingPrincipal__lastSeenLogIndex',
+  previousPendingPrincipal__lastSeenTimestamp = 'previousPendingPrincipal__lastSeenTimestamp',
+  previousPendingPrincipal__lastSeenTransaction = 'previousPendingPrincipal__lastSeenTransaction',
+  previousPrincipal = 'previousPrincipal',
+  previousPrincipalAddress = 'previousPrincipalAddress',
+  previousPrincipal__address = 'previousPrincipal__address',
+  previousPrincipal__firstSeenBlock = 'previousPrincipal__firstSeenBlock',
+  previousPrincipal__firstSeenLogIndex = 'previousPrincipal__firstSeenLogIndex',
+  previousPrincipal__firstSeenTimestamp = 'previousPrincipal__firstSeenTimestamp',
+  previousPrincipal__firstSeenTransaction = 'previousPrincipal__firstSeenTransaction',
+  previousPrincipal__id = 'previousPrincipal__id',
+  previousPrincipal__lastSeenBlock = 'previousPrincipal__lastSeenBlock',
+  previousPrincipal__lastSeenLogIndex = 'previousPrincipal__lastSeenLogIndex',
+  previousPrincipal__lastSeenTimestamp = 'previousPrincipal__lastSeenTimestamp',
+  previousPrincipal__lastSeenTransaction = 'previousPrincipal__lastSeenTransaction',
+  transactionHash = 'transactionHash'
+}
+
+export type SubgraphBorrowerAccount_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  accountFactory?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_?: InputMaybe<SubgraphBorrowerAccountFactory_Filter>;
+  accountFactory_contains?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_ends_with?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_gt?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_gte?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  accountFactory_lt?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_lte?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not_contains?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  accountFactory_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_starts_with?: InputMaybe<Scalars['String']['input']>;
+  accountFactory_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  address?: InputMaybe<Scalars['Bytes']['input']>;
+  address_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  address_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  address_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphBorrowerAccount_Filter>>>;
+  changes_?: InputMaybe<SubgraphBorrowerAccountPrincipalChange_Filter>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  markets_?: InputMaybe<SubgraphMarket_Filter>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphBorrowerAccount_Filter>>>;
+  pendingPrincipal?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipalAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingPrincipalAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingPrincipalAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingPrincipal_?: InputMaybe<SubgraphBorrower_Filter>;
+  pendingPrincipal_contains?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_ends_with?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_gt?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_gte?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  pendingPrincipal_lt?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_lte?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not_contains?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  pendingPrincipal_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_starts_with?: InputMaybe<Scalars['String']['input']>;
+  pendingPrincipal_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  principal?: InputMaybe<Scalars['String']['input']>;
+  principalAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  principalAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  principalAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  principalAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  principalAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  principalAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  principalAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  principalAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  principalAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  principalAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  principal_?: InputMaybe<SubgraphBorrower_Filter>;
+  principal_contains?: InputMaybe<Scalars['String']['input']>;
+  principal_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  principal_ends_with?: InputMaybe<Scalars['String']['input']>;
+  principal_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  principal_gt?: InputMaybe<Scalars['String']['input']>;
+  principal_gte?: InputMaybe<Scalars['String']['input']>;
+  principal_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  principal_lt?: InputMaybe<Scalars['String']['input']>;
+  principal_lte?: InputMaybe<Scalars['String']['input']>;
+  principal_not?: InputMaybe<Scalars['String']['input']>;
+  principal_not_contains?: InputMaybe<Scalars['String']['input']>;
+  principal_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  principal_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  principal_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  principal_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  principal_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  principal_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  principal_starts_with?: InputMaybe<Scalars['String']['input']>;
+  principal_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registeredAtBlock?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtBlock_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtBlock_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtBlock_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  registeredAtBlock_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtBlock_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtBlock_not?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtBlock_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  registeredAtLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  registeredAtLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  registeredAtTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  registeredAtTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  registeredAtTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  registeredAtTransaction?: InputMaybe<Scalars['Bytes']['input']>;
+  registeredAtTransaction_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  registeredAtTransaction_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  registeredAtTransaction_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  registeredAtTransaction_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  registeredAtTransaction_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  registeredAtTransaction_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  registeredAtTransaction_not?: InputMaybe<Scalars['Bytes']['input']>;
+  registeredAtTransaction_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  registeredAtTransaction_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  registry?: InputMaybe<Scalars['String']['input']>;
+  registry_?: InputMaybe<SubgraphBorrowerIdentityRegistry_Filter>;
+  registry_contains?: InputMaybe<Scalars['String']['input']>;
+  registry_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_ends_with?: InputMaybe<Scalars['String']['input']>;
+  registry_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_gt?: InputMaybe<Scalars['String']['input']>;
+  registry_gte?: InputMaybe<Scalars['String']['input']>;
+  registry_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  registry_lt?: InputMaybe<Scalars['String']['input']>;
+  registry_lte?: InputMaybe<Scalars['String']['input']>;
+  registry_not?: InputMaybe<Scalars['String']['input']>;
+  registry_not_contains?: InputMaybe<Scalars['String']['input']>;
+  registry_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  registry_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  registry_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  registry_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registry_starts_with?: InputMaybe<Scalars['String']['input']>;
+  registry_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum SubgraphBorrowerAccount_OrderBy {
+  accountFactory = 'accountFactory',
+  accountFactory__address = 'accountFactory__address',
+  accountFactory__id = 'accountFactory__id',
+  accountFactory__isApproved = 'accountFactory__isApproved',
+  address = 'address',
+  changes = 'changes',
+  id = 'id',
+  markets = 'markets',
+  pendingPrincipal = 'pendingPrincipal',
+  pendingPrincipalAddress = 'pendingPrincipalAddress',
+  pendingPrincipal__address = 'pendingPrincipal__address',
+  pendingPrincipal__firstSeenBlock = 'pendingPrincipal__firstSeenBlock',
+  pendingPrincipal__firstSeenLogIndex = 'pendingPrincipal__firstSeenLogIndex',
+  pendingPrincipal__firstSeenTimestamp = 'pendingPrincipal__firstSeenTimestamp',
+  pendingPrincipal__firstSeenTransaction = 'pendingPrincipal__firstSeenTransaction',
+  pendingPrincipal__id = 'pendingPrincipal__id',
+  pendingPrincipal__lastSeenBlock = 'pendingPrincipal__lastSeenBlock',
+  pendingPrincipal__lastSeenLogIndex = 'pendingPrincipal__lastSeenLogIndex',
+  pendingPrincipal__lastSeenTimestamp = 'pendingPrincipal__lastSeenTimestamp',
+  pendingPrincipal__lastSeenTransaction = 'pendingPrincipal__lastSeenTransaction',
+  principal = 'principal',
+  principalAddress = 'principalAddress',
+  principal__address = 'principal__address',
+  principal__firstSeenBlock = 'principal__firstSeenBlock',
+  principal__firstSeenLogIndex = 'principal__firstSeenLogIndex',
+  principal__firstSeenTimestamp = 'principal__firstSeenTimestamp',
+  principal__firstSeenTransaction = 'principal__firstSeenTransaction',
+  principal__id = 'principal__id',
+  principal__lastSeenBlock = 'principal__lastSeenBlock',
+  principal__lastSeenLogIndex = 'principal__lastSeenLogIndex',
+  principal__lastSeenTimestamp = 'principal__lastSeenTimestamp',
+  principal__lastSeenTransaction = 'principal__lastSeenTransaction',
+  registeredAtBlock = 'registeredAtBlock',
+  registeredAtLogIndex = 'registeredAtLogIndex',
+  registeredAtTimestamp = 'registeredAtTimestamp',
+  registeredAtTransaction = 'registeredAtTransaction',
+  registry = 'registry',
+  registry__address = 'registry__address',
+  registry__eventIndex = 'registry__eventIndex',
+  registry__id = 'registry__id'
+}
 
 export type SubgraphBorrowerDailyStats = {
   __typename: 'BorrowerDailyStats';
@@ -2805,6 +3923,116 @@ export enum SubgraphBorrowerDailyStats_OrderBy {
   totalRepaidUSD = 'totalRepaidUSD',
   totalWithdrawalsExecutedUSD = 'totalWithdrawalsExecutedUSD',
   totalWithdrawalsRequestedUSD = 'totalWithdrawalsRequestedUSD'
+}
+
+/** Registry that resolves operational borrower accounts to legal principals. */
+export type SubgraphBorrowerIdentityRegistry = {
+  __typename: 'BorrowerIdentityRegistry';
+  accountFactories: Array<SubgraphBorrowerAccountFactory>;
+  accounts: Array<SubgraphBorrowerAccount>;
+  address: Scalars['Bytes']['output'];
+  archController: SubgraphArchController;
+  eventIndex: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  markets: Array<SubgraphMarket>;
+};
+
+
+/** Registry that resolves operational borrower accounts to legal principals. */
+export type SubgraphBorrowerIdentityRegistryAccountFactoriesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccountFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphBorrowerAccountFactory_Filter>;
+};
+
+
+/** Registry that resolves operational borrower accounts to legal principals. */
+export type SubgraphBorrowerIdentityRegistryAccountsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccount_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphBorrowerAccount_Filter>;
+};
+
+
+/** Registry that resolves operational borrower accounts to legal principals. */
+export type SubgraphBorrowerIdentityRegistryMarketsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarket_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphMarket_Filter>;
+};
+
+export type SubgraphBorrowerIdentityRegistry_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  accountFactories_?: InputMaybe<SubgraphBorrowerAccountFactory_Filter>;
+  accounts_?: InputMaybe<SubgraphBorrowerAccount_Filter>;
+  address?: InputMaybe<Scalars['Bytes']['input']>;
+  address_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  address_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  address_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphBorrowerIdentityRegistry_Filter>>>;
+  archController?: InputMaybe<Scalars['String']['input']>;
+  archController_?: InputMaybe<SubgraphArchController_Filter>;
+  archController_contains?: InputMaybe<Scalars['String']['input']>;
+  archController_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  archController_ends_with?: InputMaybe<Scalars['String']['input']>;
+  archController_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  archController_gt?: InputMaybe<Scalars['String']['input']>;
+  archController_gte?: InputMaybe<Scalars['String']['input']>;
+  archController_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  archController_lt?: InputMaybe<Scalars['String']['input']>;
+  archController_lte?: InputMaybe<Scalars['String']['input']>;
+  archController_not?: InputMaybe<Scalars['String']['input']>;
+  archController_not_contains?: InputMaybe<Scalars['String']['input']>;
+  archController_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  archController_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  archController_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  archController_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  archController_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  archController_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  archController_starts_with?: InputMaybe<Scalars['String']['input']>;
+  archController_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  eventIndex?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  eventIndex_lt?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_lte?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_not?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  markets_?: InputMaybe<SubgraphMarket_Filter>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphBorrowerIdentityRegistry_Filter>>>;
+};
+
+export enum SubgraphBorrowerIdentityRegistry_OrderBy {
+  accountFactories = 'accountFactories',
+  accounts = 'accounts',
+  address = 'address',
+  archController = 'archController',
+  archController__id = 'archController__id',
+  eventIndex = 'eventIndex',
+  id = 'id',
+  markets = 'markets'
 }
 
 export type SubgraphBorrowerRegistrationChange = {
@@ -3133,6 +4361,7 @@ export enum SubgraphBorrowerStats_OrderBy {
 export type SubgraphBorrower_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  accounts_?: InputMaybe<SubgraphBorrowerAccount_Filter>;
   address?: InputMaybe<Scalars['Bytes']['input']>;
   address_contains?: InputMaybe<Scalars['Bytes']['input']>;
   address_gt?: InputMaybe<Scalars['Bytes']['input']>;
@@ -3223,6 +4452,7 @@ export type SubgraphBorrower_Filter = {
   lastSeenTransaction_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   markets_?: InputMaybe<SubgraphMarket_Filter>;
   or?: InputMaybe<Array<InputMaybe<SubgraphBorrower_Filter>>>;
+  pendingAccounts_?: InputMaybe<SubgraphBorrowerAccount_Filter>;
   registrations_?: InputMaybe<SubgraphRegisteredBorrower_Filter>;
   sanctionOverrideStatuses_?: InputMaybe<SubgraphSanctionOverrideStatus_Filter>;
   sanctionsEscrows_?: InputMaybe<SubgraphSanctionsEscrow_Filter>;
@@ -3230,6 +4460,7 @@ export type SubgraphBorrower_Filter = {
 };
 
 export enum SubgraphBorrower_OrderBy {
+  accounts = 'accounts',
   address = 'address',
   dailyStats = 'dailyStats',
   firstSeenBlock = 'firstSeenBlock',
@@ -3242,6 +4473,7 @@ export enum SubgraphBorrower_OrderBy {
   lastSeenTimestamp = 'lastSeenTimestamp',
   lastSeenTransaction = 'lastSeenTransaction',
   markets = 'markets',
+  pendingAccounts = 'pendingAccounts',
   registrations = 'registrations',
   sanctionOverrideStatuses = 'sanctionOverrideStatuses',
   sanctionsEscrows = 'sanctionsEscrows',
@@ -4437,6 +5669,8 @@ export enum SubgraphDebtRepaid_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -4450,13 +5684,18 @@ export enum SubgraphDebtRepaid_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -4473,10 +5712,14 @@ export enum SubgraphDebtRepaid_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -4648,6 +5891,8 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -4661,13 +5906,18 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -4684,10 +5934,14 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -4888,6 +6142,8 @@ export enum SubgraphDeposit_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -4901,13 +6157,18 @@ export enum SubgraphDeposit_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -4924,10 +6185,14 @@ export enum SubgraphDeposit_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -5082,11 +6347,14 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -5094,6 +6362,9 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   market = 'market',
   market__abiFamily = 'market__abiFamily',
@@ -5102,6 +6373,8 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -5115,13 +6388,18 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -5138,10 +6416,14 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -5174,6 +6456,208 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
+}
+
+export type SubgraphDrawnAmountUpdate = {
+  __typename: 'DrawnAmountUpdate';
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  id: Scalars['ID']['output'];
+  market: SubgraphMarket;
+  newDrawnAmount: Scalars['BigInt']['output'];
+  previousDrawnAmount: Scalars['BigInt']['output'];
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphDrawnAmountUpdate_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphDrawnAmountUpdate_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  market?: InputMaybe<Scalars['String']['input']>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars['String']['input']>;
+  market_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_gt?: InputMaybe<Scalars['String']['input']>;
+  market_gte?: InputMaybe<Scalars['String']['input']>;
+  market_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_lt?: InputMaybe<Scalars['String']['input']>;
+  market_lte?: InputMaybe<Scalars['String']['input']>;
+  market_not?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  newDrawnAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  newDrawnAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  newDrawnAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  newDrawnAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  newDrawnAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  newDrawnAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  newDrawnAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  newDrawnAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphDrawnAmountUpdate_Filter>>>;
+  previousDrawnAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  previousDrawnAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  previousDrawnAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  previousDrawnAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  previousDrawnAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  previousDrawnAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  previousDrawnAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  previousDrawnAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphDrawnAmountUpdate_OrderBy {
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  id = 'id',
+  market = 'market',
+  market__abiFamily = 'market__abiFamily',
+  market__address = 'market__address',
+  market__annualInterestBips = 'market__annualInterestBips',
+  market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
+  market__borrowIndex = 'market__borrowIndex',
+  market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__commitmentFeeBips = 'market__commitmentFeeBips',
+  market__createdAt = 'market__createdAt',
+  market__createdAtBlock = 'market__createdAtBlock',
+  market__createdAtLogIndex = 'market__createdAtLogIndex',
+  market__createdAtTimestamp = 'market__createdAtTimestamp',
+  market__createdAtTransaction = 'market__createdAtTransaction',
+  market__debtRepaidIndex = 'market__debtRepaidIndex',
+  market__decimals = 'market__decimals',
+  market__delinquencyFeeBips = 'market__delinquencyFeeBips',
+  market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
+  market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
+  market__depositIndex = 'market__depositIndex',
+  market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
+  market__eventIndex = 'market__eventIndex',
+  market__feeRecipient = 'market__feeRecipient',
+  market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
+  market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
+  market__forceBuyBackIndex = 'market__forceBuyBackIndex',
+  market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
+  market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
+  market__isClosed = 'market__isClosed',
+  market__isDelinquent = 'market__isDelinquent',
+  market__isIncurringPenalties = 'market__isIncurringPenalties',
+  market__isRegistered = 'market__isRegistered',
+  market__lastInterestAccruedBlockNumber = 'market__lastInterestAccruedBlockNumber',
+  market__lastInterestAccruedTimestamp = 'market__lastInterestAccruedTimestamp',
+  market__marketKind = 'market__marketKind',
+  market__maxTotalSupply = 'market__maxTotalSupply',
+  market__maxTotalSupplyUpdatedIndex = 'market__maxTotalSupplyUpdatedIndex',
+  market__minimumDepositUpdatedIndex = 'market__minimumDepositUpdatedIndex',
+  market__name = 'market__name',
+  market__normalizedUnclaimedWithdrawals = 'market__normalizedUnclaimedWithdrawals',
+  market__numCollateralContracts = 'market__numCollateralContracts',
+  market__originKind = 'market__originKind',
+  market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
+  market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
+  market__pendingProtocolFees = 'market__pendingProtocolFees',
+  market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
+  market__protocolFeeBips = 'market__protocolFeeBips',
+  market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
+  market__reserveRatioBips = 'market__reserveRatioBips',
+  market__scaleFactor = 'market__scaleFactor',
+  market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
+  market__scaledTotalSupply = 'market__scaledTotalSupply',
+  market__sentinel = 'market__sentinel',
+  market__symbol = 'market__symbol',
+  market__temporaryReserveRatioActive = 'market__temporaryReserveRatioActive',
+  market__temporaryReserveRatioExpiry = 'market__temporaryReserveRatioExpiry',
+  market__timeDelinquent = 'market__timeDelinquent',
+  market__totalAssets = 'market__totalAssets',
+  market__totalBaseInterestAccrued = 'market__totalBaseInterestAccrued',
+  market__totalBaseInterestAccruedUSD = 'market__totalBaseInterestAccruedUSD',
+  market__totalBorrowed = 'market__totalBorrowed',
+  market__totalBorrowedUSD = 'market__totalBorrowedUSD',
+  market__totalDebtUSD = 'market__totalDebtUSD',
+  market__totalDelinquencyFeesAccrued = 'market__totalDelinquencyFeesAccrued',
+  market__totalDelinquencyFeesAccruedUSD = 'market__totalDelinquencyFeesAccruedUSD',
+  market__totalDeposited = 'market__totalDeposited',
+  market__totalDepositedUSD = 'market__totalDepositedUSD',
+  market__totalProtocolFeesAccrued = 'market__totalProtocolFeesAccrued',
+  market__totalProtocolFeesAccruedUSD = 'market__totalProtocolFeesAccruedUSD',
+  market__totalRepaid = 'market__totalRepaid',
+  market__totalRepaidUSD = 'market__totalRepaidUSD',
+  market__totalWithdrawalsExecuted = 'market__totalWithdrawalsExecuted',
+  market__totalWithdrawalsExecutedUSD = 'market__totalWithdrawalsExecutedUSD',
+  market__totalWithdrawalsRequested = 'market__totalWithdrawalsRequested',
+  market__totalWithdrawalsRequestedUSD = 'market__totalWithdrawalsRequestedUSD',
+  market__usdTotalsComplete = 'market__usdTotalsComplete',
+  market__version = 'market__version',
+  market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
+  newDrawnAmount = 'newDrawnAmount',
+  previousDrawnAmount = 'previousDrawnAmount',
+  transactionHash = 'transactionHash'
+}
+
+export enum SubgraphEventGeneration {
+  LEGACY = 'LEGACY',
+  V2_5 = 'V2_5'
 }
 
 export enum SubgraphFactoryKind {
@@ -5501,6 +6985,7 @@ export enum SubgraphFactoryRegistration_OrderBy {
   hooksFactory__configured = 'hooksFactory__configured',
   hooksFactory__configuredStartBlock = 'hooksFactory__configuredStartBlock',
   hooksFactory__deploymentTarget = 'hooksFactory__deploymentTarget',
+  hooksFactory__eventGeneration = 'hooksFactory__eventGeneration',
   hooksFactory__eventIndex = 'hooksFactory__eventIndex',
   hooksFactory__generation = 'hooksFactory__generation',
   hooksFactory__hookedMarketAbi = 'hooksFactory__hookedMarketAbi',
@@ -5527,7 +7012,9 @@ export type SubgraphFeesCollected = {
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  collector?: Maybe<Scalars['Bytes']['output']>;
   eventIndex: Scalars['Int']['output'];
+  feeRecipient?: Maybe<Scalars['Bytes']['output']>;
   feesCollected: Scalars['BigInt']['output'];
   feesCollectedIndex: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
@@ -5563,6 +7050,16 @@ export type SubgraphFeesCollected_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  collector?: InputMaybe<Scalars['Bytes']['input']>;
+  collector_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  collector_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  collector_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  collector_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  collector_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  collector_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  collector_not?: InputMaybe<Scalars['Bytes']['input']>;
+  collector_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  collector_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -5571,6 +7068,16 @@ export type SubgraphFeesCollected_Filter = {
   eventIndex_lte?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_not?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  feeRecipient?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  feeRecipient_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_not?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   feesCollected?: InputMaybe<Scalars['BigInt']['input']>;
   feesCollectedIndex?: InputMaybe<Scalars['Int']['input']>;
   feesCollectedIndex_gt?: InputMaybe<Scalars['Int']['input']>;
@@ -5633,7 +7140,9 @@ export enum SubgraphFeesCollected_OrderBy {
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  collector = 'collector',
   eventIndex = 'eventIndex',
+  feeRecipient = 'feeRecipient',
   feesCollected = 'feesCollected',
   feesCollectedIndex = 'feesCollectedIndex',
   id = 'id',
@@ -5644,6 +7153,8 @@ export enum SubgraphFeesCollected_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -5657,13 +7168,18 @@ export enum SubgraphFeesCollected_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -5680,10 +7196,14 @@ export enum SubgraphFeesCollected_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -5723,6 +7243,7 @@ export type SubgraphFixedTermUpdated = {
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  caller?: Maybe<Scalars['Bytes']['output']>;
   eventIndex: Scalars['Int']['output'];
   fixedTermUpdatedIndex: Scalars['Int']['output'];
   hooks: SubgraphHooksInstance;
@@ -5761,6 +7282,16 @@ export type SubgraphFixedTermUpdated_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  caller?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  caller_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -5860,16 +7391,20 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  caller = 'caller',
   eventIndex = 'eventIndex',
   fixedTermUpdatedIndex = 'fixedTermUpdatedIndex',
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -5877,6 +7412,9 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   market = 'market',
   market__abiFamily = 'market__abiFamily',
@@ -5885,6 +7423,8 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -5898,13 +7438,18 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -5921,10 +7466,14 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -6134,6 +7683,8 @@ export enum SubgraphForceBuyBack_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -6147,13 +7698,18 @@ export enum SubgraphForceBuyBack_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -6170,10 +7726,14 @@ export enum SubgraphForceBuyBack_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -6209,6 +7769,193 @@ export enum SubgraphForceBuyBack_OrderBy {
   scaledAmount = 'scaledAmount',
   transactionHash = 'transactionHash',
   withdrawalExpiry = 'withdrawalExpiry'
+}
+
+export type SubgraphHookAdministratorChange = {
+  __typename: 'HookAdministratorChange';
+  administrator?: Maybe<Scalars['Bytes']['output']>;
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  cancelledPendingAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  hooks: SubgraphHooksInstance;
+  id: Scalars['ID']['output'];
+  kind: SubgraphAdministratorChangeKind;
+  newAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  pendingAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  previousAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  previousPendingAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphHookAdministratorChange_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphHookAdministratorChange_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  cancelledPendingAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  cancelledPendingAdministrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  hooks?: InputMaybe<Scalars['String']['input']>;
+  hooks_?: InputMaybe<SubgraphHooksInstance_Filter>;
+  hooks_contains?: InputMaybe<Scalars['String']['input']>;
+  hooks_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_gt?: InputMaybe<Scalars['String']['input']>;
+  hooks_gte?: InputMaybe<Scalars['String']['input']>;
+  hooks_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooks_lt?: InputMaybe<Scalars['String']['input']>;
+  hooks_lte?: InputMaybe<Scalars['String']['input']>;
+  hooks_not?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_contains?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooks_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  kind?: InputMaybe<SubgraphAdministratorChangeKind>;
+  kind_in?: InputMaybe<Array<SubgraphAdministratorChangeKind>>;
+  kind_not?: InputMaybe<SubgraphAdministratorChangeKind>;
+  kind_not_in?: InputMaybe<Array<SubgraphAdministratorChangeKind>>;
+  newAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  newAdministrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphHookAdministratorChange_Filter>>>;
+  pendingAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingAdministrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousAdministrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousPendingAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousPendingAdministrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphHookAdministratorChange_OrderBy {
+  administrator = 'administrator',
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  cancelledPendingAdministrator = 'cancelledPendingAdministrator',
+  hooks = 'hooks',
+  hooks__abiFamily = 'hooks__abiFamily',
+  hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
+  hooks__borrower = 'hooks__borrower',
+  hooks__deployedAtBlock = 'hooks__deployedAtBlock',
+  hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
+  hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
+  hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
+  hooks__eventIndex = 'hooks__eventIndex',
+  hooks__generation = 'hooks__generation',
+  hooks__id = 'hooks__id',
+  hooks__kind = 'hooks__kind',
+  hooks__marketKind = 'hooks__marketKind',
+  hooks__name = 'hooks__name',
+  hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
+  id = 'id',
+  kind = 'kind',
+  newAdministrator = 'newAdministrator',
+  pendingAdministrator = 'pendingAdministrator',
+  previousAdministrator = 'previousAdministrator',
+  previousPendingAdministrator = 'previousPendingAdministrator',
+  transactionHash = 'transactionHash'
 }
 
 export enum SubgraphHookedMarketAbi {
@@ -6467,11 +8214,14 @@ export enum SubgraphHooksConfig_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -6479,6 +8229,9 @@ export enum SubgraphHooksConfig_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   market = 'market',
   market__abiFamily = 'market__abiFamily',
@@ -6487,6 +8240,8 @@ export enum SubgraphHooksConfig_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -6500,13 +8255,18 @@ export enum SubgraphHooksConfig_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -6523,10 +8283,14 @@ export enum SubgraphHooksConfig_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -6590,6 +8354,7 @@ export type SubgraphHooksFactory = {
   configured: Scalars['Boolean']['output'];
   configuredStartBlock: Scalars['BigInt']['output'];
   deploymentTarget: Scalars['Boolean']['output'];
+  eventGeneration: SubgraphEventGeneration;
   eventIndex: Scalars['Int']['output'];
   generation: Scalars['String']['output'];
   hookedMarketAbi: SubgraphHookedMarketAbi;
@@ -6600,6 +8365,7 @@ export type SubgraphHooksFactory = {
   label: Scalars['String']['output'];
   lifecycle: SubgraphFactoryLifecycle;
   marketKind: SubgraphMarketKind;
+  markets: Array<SubgraphMarket>;
   registrationUpdatedAtBlock?: Maybe<Scalars['BigInt']['output']>;
   registrationUpdatedAtTimestamp?: Maybe<Scalars['BigInt']['output']>;
   registryState?: Maybe<SubgraphFactoryRegistration>;
@@ -6614,6 +8380,15 @@ export type SubgraphHooksFactoryHooksInstancesArgs = {
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<SubgraphHooksInstance_Filter>;
+};
+
+
+export type SubgraphHooksFactoryMarketsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarket_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphMarket_Filter>;
 };
 
 
@@ -6696,6 +8471,10 @@ export type SubgraphHooksFactory_Filter = {
   deploymentTarget_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
   deploymentTarget_not?: InputMaybe<Scalars['Boolean']['input']>;
   deploymentTarget_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  eventGeneration?: InputMaybe<SubgraphEventGeneration>;
+  eventGeneration_in?: InputMaybe<Array<SubgraphEventGeneration>>;
+  eventGeneration_not?: InputMaybe<SubgraphEventGeneration>;
+  eventGeneration_not_in?: InputMaybe<Array<SubgraphEventGeneration>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -6773,6 +8552,7 @@ export type SubgraphHooksFactory_Filter = {
   marketKind_in?: InputMaybe<Array<SubgraphMarketKind>>;
   marketKind_not?: InputMaybe<SubgraphMarketKind>;
   marketKind_not_in?: InputMaybe<Array<SubgraphMarketKind>>;
+  markets_?: InputMaybe<SubgraphMarket_Filter>;
   or?: InputMaybe<Array<InputMaybe<SubgraphHooksFactory_Filter>>>;
   registrationUpdatedAtBlock?: InputMaybe<Scalars['BigInt']['input']>;
   registrationUpdatedAtBlock_gt?: InputMaybe<Scalars['BigInt']['input']>;
@@ -6812,6 +8592,7 @@ export enum SubgraphHooksFactory_OrderBy {
   configured = 'configured',
   configuredStartBlock = 'configuredStartBlock',
   deploymentTarget = 'deploymentTarget',
+  eventGeneration = 'eventGeneration',
   eventIndex = 'eventIndex',
   generation = 'generation',
   hookedMarketAbi = 'hookedMarketAbi',
@@ -6822,6 +8603,7 @@ export enum SubgraphHooksFactory_OrderBy {
   label = 'label',
   lifecycle = 'lifecycle',
   marketKind = 'marketKind',
+  markets = 'markets',
   registrationUpdatedAtBlock = 'registrationUpdatedAtBlock',
   registrationUpdatedAtTimestamp = 'registrationUpdatedAtTimestamp',
   registryState = 'registryState',
@@ -6844,12 +8626,16 @@ export type SubgraphHooksInstance = {
   accountAccessRevokedRecords: Array<SubgraphAccountAccessRevoked>;
   accountUnblockFromDepositsRecords: Array<SubgraphAccountUnblockedFromDeposits>;
   address: Scalars['Bytes']['output'];
+  administrator: Scalars['Bytes']['output'];
+  administratorChanges: Array<SubgraphHookAdministratorChange>;
   borrower: Scalars['Bytes']['output'];
   deployedAtBlock: Scalars['BigInt']['output'];
   deployedAtLogIndex: Scalars['BigInt']['output'];
   deployedAtTimestamp: Scalars['BigInt']['output'];
   deployedAtTransaction: Scalars['Bytes']['output'];
+  deployer: Scalars['Bytes']['output'];
   deployment?: Maybe<SubgraphHooksInstanceDeployed>;
+  eventGeneration: SubgraphEventGeneration;
   eventIndex: Scalars['Int']['output'];
   generation: Scalars['String']['output'];
   hooksFactory: SubgraphHooksFactory;
@@ -6862,11 +8648,15 @@ export type SubgraphHooksInstance = {
   name: Scalars['String']['output'];
   nameUpdatedRecords: Array<SubgraphHooksNameUpdated>;
   numMarkets: Scalars['Int']['output'];
+  pendingAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  providerMetadataState: SubgraphProviderMetadataState;
   providers: Array<SubgraphRoleProvider>;
   roleProviderAddedRecords: Array<SubgraphRoleProviderAdded>;
   roleProviderRemovedRecords: Array<SubgraphRoleProviderRemoved>;
+  roleProviderSnapshots: Array<SubgraphHooksInstanceRoleProviderSnapshot>;
   roleProviderUpdatedRecords: Array<SubgraphRoleProviderUpdated>;
   templateRegistration: SubgraphHooksTemplateRegistration;
+  version: Scalars['String']['output'];
 };
 
 
@@ -6894,6 +8684,15 @@ export type SubgraphHooksInstanceAccountUnblockFromDepositsRecordsArgs = {
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<SubgraphAccountUnblockedFromDeposits_Filter>;
+};
+
+
+export type SubgraphHooksInstanceAdministratorChangesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHookAdministratorChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphHookAdministratorChange_Filter>;
 };
 
 
@@ -6951,6 +8750,15 @@ export type SubgraphHooksInstanceRoleProviderRemovedRecordsArgs = {
 };
 
 
+export type SubgraphHooksInstanceRoleProviderSnapshotsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_Filter>;
+};
+
+
 export type SubgraphHooksInstanceRoleProviderUpdatedRecordsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<SubgraphRoleProviderUpdated_OrderBy>;
@@ -6961,19 +8769,33 @@ export type SubgraphHooksInstanceRoleProviderUpdatedRecordsArgs = {
 
 export type SubgraphHooksInstanceDeployed = {
   __typename: 'HooksInstanceDeployed';
+  administrator?: Maybe<Scalars['Bytes']['output']>;
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  deployer?: Maybe<Scalars['Bytes']['output']>;
   hooks: SubgraphHooksInstance;
   hooksTemplate: SubgraphHooksTemplate;
   id: Scalars['ID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
   templateRegistration: SubgraphHooksTemplateRegistration;
   transactionHash: Scalars['Bytes']['output'];
+  version?: Maybe<Scalars['String']['output']>;
 };
 
 export type SubgraphHooksInstanceDeployed_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphHooksInstanceDeployed_Filter>>>;
   blockLogIndex?: InputMaybe<Scalars['Int']['input']>;
   blockLogIndex_gt?: InputMaybe<Scalars['Int']['input']>;
@@ -6999,6 +8821,16 @@ export type SubgraphHooksInstanceDeployed_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  deployer?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  deployer_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_not?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   hooks?: InputMaybe<Scalars['String']['input']>;
   hooksTemplate?: InputMaybe<Scalars['String']['input']>;
   hooksTemplate_?: InputMaybe<SubgraphHooksTemplate_Filter>;
@@ -7049,6 +8881,26 @@ export type SubgraphHooksInstanceDeployed_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>;
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  name_contains?: InputMaybe<Scalars['String']['input']>;
+  name_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_ends_with?: InputMaybe<Scalars['String']['input']>;
+  name_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_gt?: InputMaybe<Scalars['String']['input']>;
+  name_gte?: InputMaybe<Scalars['String']['input']>;
+  name_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  name_lt?: InputMaybe<Scalars['String']['input']>;
+  name_lte?: InputMaybe<Scalars['String']['input']>;
+  name_not?: InputMaybe<Scalars['String']['input']>;
+  name_not_contains?: InputMaybe<Scalars['String']['input']>;
+  name_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  name_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  name_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  name_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_starts_with?: InputMaybe<Scalars['String']['input']>;
+  name_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   or?: InputMaybe<Array<InputMaybe<SubgraphHooksInstanceDeployed_Filter>>>;
   templateRegistration?: InputMaybe<Scalars['String']['input']>;
   templateRegistration_?: InputMaybe<SubgraphHooksTemplateRegistration_Filter>;
@@ -7081,12 +8933,34 @@ export type SubgraphHooksInstanceDeployed_Filter = {
   transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  version?: InputMaybe<Scalars['String']['input']>;
+  version_contains?: InputMaybe<Scalars['String']['input']>;
+  version_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  version_ends_with?: InputMaybe<Scalars['String']['input']>;
+  version_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  version_gt?: InputMaybe<Scalars['String']['input']>;
+  version_gte?: InputMaybe<Scalars['String']['input']>;
+  version_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  version_lt?: InputMaybe<Scalars['String']['input']>;
+  version_lte?: InputMaybe<Scalars['String']['input']>;
+  version_not?: InputMaybe<Scalars['String']['input']>;
+  version_not_contains?: InputMaybe<Scalars['String']['input']>;
+  version_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  version_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  version_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  version_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  version_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  version_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  version_starts_with?: InputMaybe<Scalars['String']['input']>;
+  version_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum SubgraphHooksInstanceDeployed_OrderBy {
+  administrator = 'administrator',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  deployer = 'deployer',
   hooks = 'hooks',
   hooksTemplate = 'hooksTemplate',
   hooksTemplate__abiFamily = 'hooksTemplate__abiFamily',
@@ -7096,11 +8970,14 @@ export enum SubgraphHooksInstanceDeployed_OrderBy {
   hooksTemplate__version = 'hooksTemplate__version',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -7108,7 +8985,11 @@ export enum SubgraphHooksInstanceDeployed_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
+  name = 'name',
   templateRegistration = 'templateRegistration',
   templateRegistration__createdAtBlock = 'templateRegistration__createdAtBlock',
   templateRegistration__createdAtLogIndex = 'templateRegistration__createdAtLogIndex',
@@ -7125,6 +9006,138 @@ export enum SubgraphHooksInstanceDeployed_OrderBy {
   templateRegistration__updatedAtLogIndex = 'templateRegistration__updatedAtLogIndex',
   templateRegistration__updatedAtTimestamp = 'templateRegistration__updatedAtTimestamp',
   templateRegistration__updatedAtTransaction = 'templateRegistration__updatedAtTransaction',
+  transactionHash = 'transactionHash',
+  version = 'version'
+}
+
+export type SubgraphHooksInstanceRoleProviderSnapshot = {
+  __typename: 'HooksInstanceRoleProviderSnapshot';
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  hooks: SubgraphHooksInstance;
+  id: Scalars['ID']['output'];
+  metadataAvailable: Scalars['Boolean']['output'];
+  pullProviders: Array<Scalars['BigInt']['output']>;
+  pushProviders: Array<Scalars['BigInt']['output']>;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphHooksInstanceRoleProviderSnapshot_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  hooks?: InputMaybe<Scalars['String']['input']>;
+  hooks_?: InputMaybe<SubgraphHooksInstance_Filter>;
+  hooks_contains?: InputMaybe<Scalars['String']['input']>;
+  hooks_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_gt?: InputMaybe<Scalars['String']['input']>;
+  hooks_gte?: InputMaybe<Scalars['String']['input']>;
+  hooks_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooks_lt?: InputMaybe<Scalars['String']['input']>;
+  hooks_lte?: InputMaybe<Scalars['String']['input']>;
+  hooks_not?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_contains?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooks_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  metadataAvailable?: InputMaybe<Scalars['Boolean']['input']>;
+  metadataAvailable_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  metadataAvailable_not?: InputMaybe<Scalars['Boolean']['input']>;
+  metadataAvailable_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_Filter>>>;
+  pullProviders?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pullProviders_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pullProviders_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pullProviders_not?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pullProviders_not_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pullProviders_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pushProviders?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pushProviders_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pushProviders_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pushProviders_not?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pushProviders_not_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pushProviders_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphHooksInstanceRoleProviderSnapshot_OrderBy {
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  hooks = 'hooks',
+  hooks__abiFamily = 'hooks__abiFamily',
+  hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
+  hooks__borrower = 'hooks__borrower',
+  hooks__deployedAtBlock = 'hooks__deployedAtBlock',
+  hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
+  hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
+  hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
+  hooks__eventIndex = 'hooks__eventIndex',
+  hooks__generation = 'hooks__generation',
+  hooks__id = 'hooks__id',
+  hooks__kind = 'hooks__kind',
+  hooks__marketKind = 'hooks__marketKind',
+  hooks__name = 'hooks__name',
+  hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
+  id = 'id',
+  metadataAvailable = 'metadataAvailable',
+  pullProviders = 'pullProviders',
+  pushProviders = 'pushProviders',
   transactionHash = 'transactionHash'
 }
 
@@ -7164,6 +9177,17 @@ export type SubgraphHooksInstance_Filter = {
   address_not?: InputMaybe<Scalars['Bytes']['input']>;
   address_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   address_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administratorChanges_?: InputMaybe<SubgraphHookAdministratorChange_Filter>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphHooksInstance_Filter>>>;
   borrower?: InputMaybe<Scalars['Bytes']['input']>;
   borrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
@@ -7209,7 +9233,21 @@ export type SubgraphHooksInstance_Filter = {
   deployedAtTransaction_not?: InputMaybe<Scalars['Bytes']['input']>;
   deployedAtTransaction_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   deployedAtTransaction_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  deployer?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  deployer_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_not?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   deployment_?: InputMaybe<SubgraphHooksInstanceDeployed_Filter>;
+  eventGeneration?: InputMaybe<SubgraphEventGeneration>;
+  eventGeneration_in?: InputMaybe<Array<SubgraphEventGeneration>>;
+  eventGeneration_not?: InputMaybe<SubgraphEventGeneration>;
+  eventGeneration_not_in?: InputMaybe<Array<SubgraphEventGeneration>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -7328,9 +9366,24 @@ export type SubgraphHooksInstance_Filter = {
   numMarkets_not?: InputMaybe<Scalars['Int']['input']>;
   numMarkets_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   or?: InputMaybe<Array<InputMaybe<SubgraphHooksInstance_Filter>>>;
+  pendingAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingAdministrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  providerMetadataState?: InputMaybe<SubgraphProviderMetadataState>;
+  providerMetadataState_in?: InputMaybe<Array<SubgraphProviderMetadataState>>;
+  providerMetadataState_not?: InputMaybe<SubgraphProviderMetadataState>;
+  providerMetadataState_not_in?: InputMaybe<Array<SubgraphProviderMetadataState>>;
   providers_?: InputMaybe<SubgraphRoleProvider_Filter>;
   roleProviderAddedRecords_?: InputMaybe<SubgraphRoleProviderAdded_Filter>;
   roleProviderRemovedRecords_?: InputMaybe<SubgraphRoleProviderRemoved_Filter>;
+  roleProviderSnapshots_?: InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_Filter>;
   roleProviderUpdatedRecords_?: InputMaybe<SubgraphRoleProviderUpdated_Filter>;
   templateRegistration?: InputMaybe<Scalars['String']['input']>;
   templateRegistration_?: InputMaybe<SubgraphHooksTemplateRegistration_Filter>;
@@ -7353,6 +9406,26 @@ export type SubgraphHooksInstance_Filter = {
   templateRegistration_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   templateRegistration_starts_with?: InputMaybe<Scalars['String']['input']>;
   templateRegistration_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  version?: InputMaybe<Scalars['String']['input']>;
+  version_contains?: InputMaybe<Scalars['String']['input']>;
+  version_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  version_ends_with?: InputMaybe<Scalars['String']['input']>;
+  version_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  version_gt?: InputMaybe<Scalars['String']['input']>;
+  version_gte?: InputMaybe<Scalars['String']['input']>;
+  version_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  version_lt?: InputMaybe<Scalars['String']['input']>;
+  version_lte?: InputMaybe<Scalars['String']['input']>;
+  version_not?: InputMaybe<Scalars['String']['input']>;
+  version_not_contains?: InputMaybe<Scalars['String']['input']>;
+  version_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  version_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  version_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  version_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  version_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  version_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  version_starts_with?: InputMaybe<Scalars['String']['input']>;
+  version_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum SubgraphHooksInstance_OrderBy {
@@ -7361,17 +9434,25 @@ export enum SubgraphHooksInstance_OrderBy {
   accountAccessRevokedRecords = 'accountAccessRevokedRecords',
   accountUnblockFromDepositsRecords = 'accountUnblockFromDepositsRecords',
   address = 'address',
+  administrator = 'administrator',
+  administratorChanges = 'administratorChanges',
   borrower = 'borrower',
   deployedAtBlock = 'deployedAtBlock',
   deployedAtLogIndex = 'deployedAtLogIndex',
   deployedAtTimestamp = 'deployedAtTimestamp',
   deployedAtTransaction = 'deployedAtTransaction',
+  deployer = 'deployer',
   deployment = 'deployment',
+  deployment__administrator = 'deployment__administrator',
   deployment__blockLogIndex = 'deployment__blockLogIndex',
   deployment__blockNumber = 'deployment__blockNumber',
   deployment__blockTimestamp = 'deployment__blockTimestamp',
+  deployment__deployer = 'deployment__deployer',
   deployment__id = 'deployment__id',
+  deployment__name = 'deployment__name',
   deployment__transactionHash = 'deployment__transactionHash',
+  deployment__version = 'deployment__version',
+  eventGeneration = 'eventGeneration',
   eventIndex = 'eventIndex',
   generation = 'generation',
   hooksFactory = 'hooksFactory',
@@ -7380,6 +9461,7 @@ export enum SubgraphHooksInstance_OrderBy {
   hooksFactory__configured = 'hooksFactory__configured',
   hooksFactory__configuredStartBlock = 'hooksFactory__configuredStartBlock',
   hooksFactory__deploymentTarget = 'hooksFactory__deploymentTarget',
+  hooksFactory__eventGeneration = 'hooksFactory__eventGeneration',
   hooksFactory__eventIndex = 'hooksFactory__eventIndex',
   hooksFactory__generation = 'hooksFactory__generation',
   hooksFactory__hookedMarketAbi = 'hooksFactory__hookedMarketAbi',
@@ -7406,9 +9488,12 @@ export enum SubgraphHooksInstance_OrderBy {
   name = 'name',
   nameUpdatedRecords = 'nameUpdatedRecords',
   numMarkets = 'numMarkets',
+  pendingAdministrator = 'pendingAdministrator',
+  providerMetadataState = 'providerMetadataState',
   providers = 'providers',
   roleProviderAddedRecords = 'roleProviderAddedRecords',
   roleProviderRemovedRecords = 'roleProviderRemovedRecords',
+  roleProviderSnapshots = 'roleProviderSnapshots',
   roleProviderUpdatedRecords = 'roleProviderUpdatedRecords',
   templateRegistration = 'templateRegistration',
   templateRegistration__createdAtBlock = 'templateRegistration__createdAtBlock',
@@ -7425,7 +9510,8 @@ export enum SubgraphHooksInstance_OrderBy {
   templateRegistration__updatedAtBlock = 'templateRegistration__updatedAtBlock',
   templateRegistration__updatedAtLogIndex = 'templateRegistration__updatedAtLogIndex',
   templateRegistration__updatedAtTimestamp = 'templateRegistration__updatedAtTimestamp',
-  templateRegistration__updatedAtTransaction = 'templateRegistration__updatedAtTransaction'
+  templateRegistration__updatedAtTransaction = 'templateRegistration__updatedAtTransaction',
+  version = 'version'
 }
 
 export enum SubgraphHooksKind {
@@ -7437,6 +9523,7 @@ export enum SubgraphHooksKind {
 
 export type SubgraphHooksNameUpdated = {
   __typename: 'HooksNameUpdated';
+  administrator?: Maybe<Scalars['Bytes']['output']>;
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
@@ -7451,6 +9538,16 @@ export type SubgraphHooksNameUpdated = {
 export type SubgraphHooksNameUpdated_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphHooksNameUpdated_Filter>>>;
   blockLogIndex?: InputMaybe<Scalars['Int']['input']>;
   blockLogIndex_gt?: InputMaybe<Scalars['Int']['input']>;
@@ -7567,6 +9664,7 @@ export type SubgraphHooksNameUpdated_Filter = {
 };
 
 export enum SubgraphHooksNameUpdated_OrderBy {
+  administrator = 'administrator',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
@@ -7574,11 +9672,14 @@ export enum SubgraphHooksNameUpdated_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -7586,6 +9687,9 @@ export enum SubgraphHooksNameUpdated_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   newName = 'newName',
   oldName = 'oldName',
@@ -7692,6 +9796,7 @@ export type SubgraphHooksTemplateRegistrationEvent = {
   blockLogIndex: Scalars['BigInt']['output'];
   blockNumber: Scalars['BigInt']['output'];
   blockTimestamp: Scalars['BigInt']['output'];
+  caller?: Maybe<Scalars['Bytes']['output']>;
   change: SubgraphHooksTemplateRegistrationChangeKind;
   feeRecipient: Scalars['Bytes']['output'];
   hooksFactory: SubgraphHooksFactory;
@@ -7701,6 +9806,10 @@ export type SubgraphHooksTemplateRegistrationEvent = {
   name: Scalars['String']['output'];
   originationFeeAmount: Scalars['BigInt']['output'];
   originationFeeAsset?: Maybe<SubgraphToken>;
+  previousFeeRecipient?: Maybe<Scalars['Bytes']['output']>;
+  previousOriginationFeeAmount?: Maybe<Scalars['BigInt']['output']>;
+  previousOriginationFeeAsset?: Maybe<SubgraphToken>;
+  previousProtocolFeeBips?: Maybe<Scalars['BigInt']['output']>;
   protocolFeeBips: Scalars['Int']['output'];
   registration: SubgraphHooksTemplateRegistration;
   transactionHash: Scalars['Bytes']['output'];
@@ -7734,6 +9843,16 @@ export type SubgraphHooksTemplateRegistrationEvent_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  caller?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  caller_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   change?: InputMaybe<SubgraphHooksTemplateRegistrationChangeKind>;
   change_in?: InputMaybe<Array<SubgraphHooksTemplateRegistrationChangeKind>>;
   change_not?: InputMaybe<SubgraphHooksTemplateRegistrationChangeKind>;
@@ -7852,6 +9971,53 @@ export type SubgraphHooksTemplateRegistrationEvent_Filter = {
   originationFeeAsset_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   originationFeeAsset_starts_with?: InputMaybe<Scalars['String']['input']>;
   originationFeeAsset_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousFeeRecipient?: InputMaybe<Scalars['Bytes']['input']>;
+  previousFeeRecipient_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousFeeRecipient_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousFeeRecipient_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousFeeRecipient_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousFeeRecipient_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousFeeRecipient_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousFeeRecipient_not?: InputMaybe<Scalars['Bytes']['input']>;
+  previousFeeRecipient_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousFeeRecipient_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousOriginationFeeAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  previousOriginationFeeAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  previousOriginationFeeAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  previousOriginationFeeAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  previousOriginationFeeAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  previousOriginationFeeAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  previousOriginationFeeAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  previousOriginationFeeAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  previousOriginationFeeAsset?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_?: InputMaybe<SubgraphToken_Filter>;
+  previousOriginationFeeAsset_contains?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_ends_with?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_gt?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_gte?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  previousOriginationFeeAsset_lt?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_lte?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_not?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_not_contains?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  previousOriginationFeeAsset_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_starts_with?: InputMaybe<Scalars['String']['input']>;
+  previousOriginationFeeAsset_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  previousProtocolFeeBips?: InputMaybe<Scalars['BigInt']['input']>;
+  previousProtocolFeeBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  previousProtocolFeeBips_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  previousProtocolFeeBips_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  previousProtocolFeeBips_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  previousProtocolFeeBips_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  previousProtocolFeeBips_not?: InputMaybe<Scalars['BigInt']['input']>;
+  previousProtocolFeeBips_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   protocolFeeBips?: InputMaybe<Scalars['Int']['input']>;
   protocolFeeBips_gt?: InputMaybe<Scalars['Int']['input']>;
   protocolFeeBips_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -7897,6 +10063,7 @@ export enum SubgraphHooksTemplateRegistrationEvent_OrderBy {
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  caller = 'caller',
   change = 'change',
   feeRecipient = 'feeRecipient',
   hooksFactory = 'hooksFactory',
@@ -7905,6 +10072,7 @@ export enum SubgraphHooksTemplateRegistrationEvent_OrderBy {
   hooksFactory__configured = 'hooksFactory__configured',
   hooksFactory__configuredStartBlock = 'hooksFactory__configuredStartBlock',
   hooksFactory__deploymentTarget = 'hooksFactory__deploymentTarget',
+  hooksFactory__eventGeneration = 'hooksFactory__eventGeneration',
   hooksFactory__eventIndex = 'hooksFactory__eventIndex',
   hooksFactory__generation = 'hooksFactory__generation',
   hooksFactory__hookedMarketAbi = 'hooksFactory__hookedMarketAbi',
@@ -7939,6 +10107,21 @@ export enum SubgraphHooksTemplateRegistrationEvent_OrderBy {
   originationFeeAsset__priceFeed1 = 'originationFeeAsset__priceFeed1',
   originationFeeAsset__priceSource = 'originationFeeAsset__priceSource',
   originationFeeAsset__symbol = 'originationFeeAsset__symbol',
+  previousFeeRecipient = 'previousFeeRecipient',
+  previousOriginationFeeAmount = 'previousOriginationFeeAmount',
+  previousOriginationFeeAsset = 'previousOriginationFeeAsset',
+  previousOriginationFeeAsset__address = 'previousOriginationFeeAsset__address',
+  previousOriginationFeeAsset__decimals = 'previousOriginationFeeAsset__decimals',
+  previousOriginationFeeAsset__id = 'previousOriginationFeeAsset__id',
+  previousOriginationFeeAsset__isMock = 'previousOriginationFeeAsset__isMock',
+  previousOriginationFeeAsset__isUsdStablecoin = 'previousOriginationFeeAsset__isUsdStablecoin',
+  previousOriginationFeeAsset__lastPriceFeedSearchDay = 'previousOriginationFeeAsset__lastPriceFeedSearchDay',
+  previousOriginationFeeAsset__name = 'previousOriginationFeeAsset__name',
+  previousOriginationFeeAsset__priceFeed0 = 'previousOriginationFeeAsset__priceFeed0',
+  previousOriginationFeeAsset__priceFeed1 = 'previousOriginationFeeAsset__priceFeed1',
+  previousOriginationFeeAsset__priceSource = 'previousOriginationFeeAsset__priceSource',
+  previousOriginationFeeAsset__symbol = 'previousOriginationFeeAsset__symbol',
+  previousProtocolFeeBips = 'previousProtocolFeeBips',
   protocolFeeBips = 'protocolFeeBips',
   registration = 'registration',
   registration__createdAtBlock = 'registration__createdAtBlock',
@@ -8182,6 +10365,7 @@ export enum SubgraphHooksTemplateRegistration_OrderBy {
   hooksFactory__configured = 'hooksFactory__configured',
   hooksFactory__configuredStartBlock = 'hooksFactory__configuredStartBlock',
   hooksFactory__deploymentTarget = 'hooksFactory__deploymentTarget',
+  hooksFactory__eventGeneration = 'hooksFactory__eventGeneration',
   hooksFactory__eventIndex = 'hooksFactory__eventIndex',
   hooksFactory__generation = 'hooksFactory__generation',
   hooksFactory__hookedMarketAbi = 'hooksFactory__hookedMarketAbi',
@@ -8765,6 +10949,8 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -8778,13 +10964,18 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -8801,10 +10992,14 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -9262,6 +11457,8 @@ export enum SubgraphLenderAccount_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -9275,13 +11472,18 @@ export enum SubgraphLenderAccount_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -9298,10 +11500,14 @@ export enum SubgraphLenderAccount_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -9944,11 +12150,14 @@ export enum SubgraphLenderHooksAccess_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -9956,6 +12165,9 @@ export enum SubgraphLenderHooksAccess_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   isBlockedFromDeposits = 'isBlockedFromDeposits',
   knownLenderStatuses = 'knownLenderStatuses',
@@ -10099,6 +12311,8 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -10112,13 +12326,18 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -10135,10 +12354,14 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -10759,6 +12982,11 @@ export type SubgraphMarket = {
   borrowIndex: Scalars['Int']['output'];
   borrowRecords: Array<SubgraphBorrow>;
   borrower: Scalars['Bytes']['output'];
+  borrowerAccount?: Maybe<SubgraphBorrowerAccount>;
+  borrowerChanges: Array<SubgraphMarketBorrowerChange>;
+  borrowerIdentityRegistry?: Maybe<SubgraphBorrowerIdentityRegistry>;
+  borrowerIdentityRegistryAddress?: Maybe<Scalars['Bytes']['output']>;
+  borrowerPrincipal: Scalars['Bytes']['output'];
   borrowerProfile?: Maybe<SubgraphBorrower>;
   collateralContracts: Array<SubgraphSimpleCollateralContract>;
   commitmentFeeBips?: Maybe<Scalars['BigInt']['output']>;
@@ -10777,14 +13005,19 @@ export type SubgraphMarket = {
   delinquencyRecords: Array<SubgraphDelinquencyStatusChanged>;
   delinquencyStatusChangedIndex: Scalars['Int']['output'];
   deployedEvent: SubgraphMarketDeployed;
+  deploymentConfig?: Maybe<SubgraphMarketDeploymentConfig>;
+  deploymentHooksData?: Maybe<SubgraphMarketHooksData>;
   depositIndex: Scalars['Int']['output'];
   depositRecords: Array<SubgraphDeposit>;
   drawnAmount?: Maybe<Scalars['BigInt']['output']>;
+  drawnAmountUpdates: Array<SubgraphDrawnAmountUpdate>;
+  eventGeneration: SubgraphEventGeneration;
   eventIndex: Scalars['Int']['output'];
   events: Array<SubgraphMarketEvent>;
   feeCollectionRecords: Array<SubgraphFeesCollected>;
   feeRecipient: Scalars['Bytes']['output'];
   feesCollectedIndex: Scalars['Int']['output'];
+  finalHooks?: Maybe<Scalars['BigInt']['output']>;
   fixedTermUpdatedIndex: Scalars['Int']['output'];
   fixedTermUpdatedRecords: Array<SubgraphFixedTermUpdated>;
   forceBuyBackDisabledRecord?: Maybe<SubgraphDisabledForceBuyBacks>;
@@ -10793,8 +13026,11 @@ export type SubgraphMarket = {
   generation: Scalars['String']['output'];
   hooks?: Maybe<SubgraphHooksInstance>;
   hooksConfig?: Maybe<SubgraphHooksConfig>;
+  hooksData?: Maybe<Scalars['Bytes']['output']>;
   hooksFactory?: Maybe<SubgraphHooksFactory>;
   id: Scalars['ID']['output'];
+  initialBorrower: Scalars['Bytes']['output'];
+  initialBorrowerPrincipal: Scalars['Bytes']['output'];
   interestAccrualRecords: Array<SubgraphMarketInterestAccrued>;
   isClosed: Scalars['Boolean']['output'];
   isDelinquent: Scalars['Boolean']['output'];
@@ -10816,6 +13052,10 @@ export type SubgraphMarket = {
   originKind: SubgraphMarketOriginKind;
   originalAnnualInterestBips: Scalars['Int']['output'];
   originalReserveRatioBips: Scalars['Int']['output'];
+  originationFeeAmount: Scalars['BigInt']['output'];
+  originationFeeAsset?: Maybe<SubgraphToken>;
+  pendingBorrower?: Maybe<Scalars['Bytes']['output']>;
+  pendingBorrowerPrincipal?: Maybe<Scalars['Bytes']['output']>;
   pendingProtocolFees: Scalars['BigInt']['output'];
   pendingWithdrawalExpiry: Scalars['BigInt']['output'];
   periodicTermClosedRecord?: Maybe<SubgraphPeriodicTermClosed>;
@@ -10825,8 +13065,10 @@ export type SubgraphMarket = {
   protocolFeeBipsUpdatedRecords: Array<SubgraphProtocolFeeBipsUpdated>;
   removal?: Maybe<SubgraphMarketRemoved>;
   repaymentRecords: Array<SubgraphDebtRepaid>;
+  requestedHooks?: Maybe<Scalars['BigInt']['output']>;
   reserveRatioBips: Scalars['Int']['output'];
   reserveRatioBipsUpdatedRecords: Array<SubgraphReserveRatioBipsUpdated>;
+  revolvingDeployment?: Maybe<SubgraphRevolvingMarketDeployment>;
   scaleFactor: Scalars['BigInt']['output'];
   scaledPendingWithdrawals: Scalars['BigInt']['output'];
   scaledTotalSupply: Scalars['BigInt']['output'];
@@ -10862,6 +13104,7 @@ export type SubgraphMarket = {
   withdrawalBatches: Array<SubgraphWithdrawalBatch>;
   withdrawalRequestRecords: Array<SubgraphWithdrawalRequest>;
   withdrawalRequestsIndex: Scalars['Int']['output'];
+  wrapperRegistrations: Array<SubgraphMarketWrapperRegistration>;
 };
 
 
@@ -10919,6 +13162,15 @@ export type SubgraphMarketBorrowRecordsArgs = {
 };
 
 
+export type SubgraphMarketBorrowerChangesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketBorrowerChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphMarketBorrowerChange_Filter>;
+};
+
+
 export type SubgraphMarketCollateralContractsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<SubgraphSimpleCollateralContract_OrderBy>;
@@ -10952,6 +13204,15 @@ export type SubgraphMarketDepositRecordsArgs = {
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<SubgraphDeposit_Filter>;
+};
+
+
+export type SubgraphMarketDrawnAmountUpdatesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphDrawnAmountUpdate_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphDrawnAmountUpdate_Filter>;
 };
 
 
@@ -11078,6 +13339,15 @@ export type SubgraphMarketWithdrawalRequestRecordsArgs = {
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<SubgraphWithdrawalRequest_Filter>;
+};
+
+
+export type SubgraphMarketWrapperRegistrationsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketWrapperRegistration_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphMarketWrapperRegistration_Filter>;
 };
 
 export type SubgraphMarketAdded = {
@@ -11242,6 +13512,7 @@ export enum SubgraphMarketAdded_OrderBy {
   hooksFactory__configured = 'hooksFactory__configured',
   hooksFactory__configuredStartBlock = 'hooksFactory__configuredStartBlock',
   hooksFactory__deploymentTarget = 'hooksFactory__deploymentTarget',
+  hooksFactory__eventGeneration = 'hooksFactory__eventGeneration',
   hooksFactory__eventIndex = 'hooksFactory__eventIndex',
   hooksFactory__generation = 'hooksFactory__generation',
   hooksFactory__hookedMarketAbi = 'hooksFactory__hookedMarketAbi',
@@ -11263,6 +13534,8 @@ export enum SubgraphMarketAdded_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -11276,13 +13549,18 @@ export enum SubgraphMarketAdded_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -11299,10 +13577,14 @@ export enum SubgraphMarketAdded_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -11337,11 +13619,345 @@ export enum SubgraphMarketAdded_OrderBy {
   transactionHash = 'transactionHash'
 }
 
+export type SubgraphMarketBorrowerChange = {
+  __typename: 'MarketBorrowerChange';
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  borrower?: Maybe<Scalars['Bytes']['output']>;
+  borrowerPrincipal?: Maybe<Scalars['Bytes']['output']>;
+  cancelledPendingBorrower?: Maybe<Scalars['Bytes']['output']>;
+  cancelledPendingBorrowerPrincipal?: Maybe<Scalars['Bytes']['output']>;
+  id: Scalars['ID']['output'];
+  kind: SubgraphMarketBorrowerChangeKind;
+  market: SubgraphMarket;
+  newBorrower?: Maybe<Scalars['Bytes']['output']>;
+  newBorrowerPrincipal?: Maybe<Scalars['Bytes']['output']>;
+  pendingBorrower?: Maybe<Scalars['Bytes']['output']>;
+  pendingBorrowerPrincipal?: Maybe<Scalars['Bytes']['output']>;
+  previousBorrower?: Maybe<Scalars['Bytes']['output']>;
+  previousBorrowerPrincipal?: Maybe<Scalars['Bytes']['output']>;
+  previousPendingBorrower?: Maybe<Scalars['Bytes']['output']>;
+  previousPendingBorrowerPrincipal?: Maybe<Scalars['Bytes']['output']>;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export enum SubgraphMarketBorrowerChangeKind {
+  TRANSFERRED = 'TRANSFERRED',
+  TRANSFER_CANCELLED = 'TRANSFER_CANCELLED',
+  TRANSFER_REQUESTED = 'TRANSFER_REQUESTED'
+}
+
+export type SubgraphMarketBorrowerChange_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphMarketBorrowerChange_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  borrower?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrowerPrincipal_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_not?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrower_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  cancelledPendingBorrower?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrowerPrincipal?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrowerPrincipal_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrowerPrincipal_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrowerPrincipal_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrowerPrincipal_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  cancelledPendingBorrowerPrincipal_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrowerPrincipal_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrowerPrincipal_not?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrowerPrincipal_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrowerPrincipal_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  cancelledPendingBorrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrower_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrower_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrower_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  cancelledPendingBorrower_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrower_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrower_not?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingBorrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  kind?: InputMaybe<SubgraphMarketBorrowerChangeKind>;
+  kind_in?: InputMaybe<Array<SubgraphMarketBorrowerChangeKind>>;
+  kind_not?: InputMaybe<SubgraphMarketBorrowerChangeKind>;
+  kind_not_in?: InputMaybe<Array<SubgraphMarketBorrowerChangeKind>>;
+  market?: InputMaybe<Scalars['String']['input']>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars['String']['input']>;
+  market_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_gt?: InputMaybe<Scalars['String']['input']>;
+  market_gte?: InputMaybe<Scalars['String']['input']>;
+  market_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_lt?: InputMaybe<Scalars['String']['input']>;
+  market_lte?: InputMaybe<Scalars['String']['input']>;
+  market_not?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  newBorrower?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrowerPrincipal?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrowerPrincipal_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrowerPrincipal_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrowerPrincipal_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrowerPrincipal_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  newBorrowerPrincipal_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrowerPrincipal_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrowerPrincipal_not?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrowerPrincipal_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrowerPrincipal_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  newBorrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrower_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrower_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrower_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  newBorrower_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrower_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrower_not?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  newBorrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphMarketBorrowerChange_Filter>>>;
+  pendingBorrower?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingBorrowerPrincipal_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_not?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingBorrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingBorrower_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_not?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousBorrower?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrowerPrincipal?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrowerPrincipal_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrowerPrincipal_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrowerPrincipal_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrowerPrincipal_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousBorrowerPrincipal_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrowerPrincipal_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrowerPrincipal_not?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrowerPrincipal_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrowerPrincipal_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousBorrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrower_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrower_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrower_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousBorrower_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrower_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrower_not?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousBorrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousPendingBorrower?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrowerPrincipal?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrowerPrincipal_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrowerPrincipal_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrowerPrincipal_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrowerPrincipal_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousPendingBorrowerPrincipal_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrowerPrincipal_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrowerPrincipal_not?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrowerPrincipal_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrowerPrincipal_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousPendingBorrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrower_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrower_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrower_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousPendingBorrower_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrower_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrower_not?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingBorrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphMarketBorrowerChange_OrderBy {
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  borrower = 'borrower',
+  borrowerPrincipal = 'borrowerPrincipal',
+  cancelledPendingBorrower = 'cancelledPendingBorrower',
+  cancelledPendingBorrowerPrincipal = 'cancelledPendingBorrowerPrincipal',
+  id = 'id',
+  kind = 'kind',
+  market = 'market',
+  market__abiFamily = 'market__abiFamily',
+  market__address = 'market__address',
+  market__annualInterestBips = 'market__annualInterestBips',
+  market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
+  market__borrowIndex = 'market__borrowIndex',
+  market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__commitmentFeeBips = 'market__commitmentFeeBips',
+  market__createdAt = 'market__createdAt',
+  market__createdAtBlock = 'market__createdAtBlock',
+  market__createdAtLogIndex = 'market__createdAtLogIndex',
+  market__createdAtTimestamp = 'market__createdAtTimestamp',
+  market__createdAtTransaction = 'market__createdAtTransaction',
+  market__debtRepaidIndex = 'market__debtRepaidIndex',
+  market__decimals = 'market__decimals',
+  market__delinquencyFeeBips = 'market__delinquencyFeeBips',
+  market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
+  market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
+  market__depositIndex = 'market__depositIndex',
+  market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
+  market__eventIndex = 'market__eventIndex',
+  market__feeRecipient = 'market__feeRecipient',
+  market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
+  market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
+  market__forceBuyBackIndex = 'market__forceBuyBackIndex',
+  market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
+  market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
+  market__isClosed = 'market__isClosed',
+  market__isDelinquent = 'market__isDelinquent',
+  market__isIncurringPenalties = 'market__isIncurringPenalties',
+  market__isRegistered = 'market__isRegistered',
+  market__lastInterestAccruedBlockNumber = 'market__lastInterestAccruedBlockNumber',
+  market__lastInterestAccruedTimestamp = 'market__lastInterestAccruedTimestamp',
+  market__marketKind = 'market__marketKind',
+  market__maxTotalSupply = 'market__maxTotalSupply',
+  market__maxTotalSupplyUpdatedIndex = 'market__maxTotalSupplyUpdatedIndex',
+  market__minimumDepositUpdatedIndex = 'market__minimumDepositUpdatedIndex',
+  market__name = 'market__name',
+  market__normalizedUnclaimedWithdrawals = 'market__normalizedUnclaimedWithdrawals',
+  market__numCollateralContracts = 'market__numCollateralContracts',
+  market__originKind = 'market__originKind',
+  market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
+  market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
+  market__pendingProtocolFees = 'market__pendingProtocolFees',
+  market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
+  market__protocolFeeBips = 'market__protocolFeeBips',
+  market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
+  market__reserveRatioBips = 'market__reserveRatioBips',
+  market__scaleFactor = 'market__scaleFactor',
+  market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
+  market__scaledTotalSupply = 'market__scaledTotalSupply',
+  market__sentinel = 'market__sentinel',
+  market__symbol = 'market__symbol',
+  market__temporaryReserveRatioActive = 'market__temporaryReserveRatioActive',
+  market__temporaryReserveRatioExpiry = 'market__temporaryReserveRatioExpiry',
+  market__timeDelinquent = 'market__timeDelinquent',
+  market__totalAssets = 'market__totalAssets',
+  market__totalBaseInterestAccrued = 'market__totalBaseInterestAccrued',
+  market__totalBaseInterestAccruedUSD = 'market__totalBaseInterestAccruedUSD',
+  market__totalBorrowed = 'market__totalBorrowed',
+  market__totalBorrowedUSD = 'market__totalBorrowedUSD',
+  market__totalDebtUSD = 'market__totalDebtUSD',
+  market__totalDelinquencyFeesAccrued = 'market__totalDelinquencyFeesAccrued',
+  market__totalDelinquencyFeesAccruedUSD = 'market__totalDelinquencyFeesAccruedUSD',
+  market__totalDeposited = 'market__totalDeposited',
+  market__totalDepositedUSD = 'market__totalDepositedUSD',
+  market__totalProtocolFeesAccrued = 'market__totalProtocolFeesAccrued',
+  market__totalProtocolFeesAccruedUSD = 'market__totalProtocolFeesAccruedUSD',
+  market__totalRepaid = 'market__totalRepaid',
+  market__totalRepaidUSD = 'market__totalRepaidUSD',
+  market__totalWithdrawalsExecuted = 'market__totalWithdrawalsExecuted',
+  market__totalWithdrawalsExecutedUSD = 'market__totalWithdrawalsExecutedUSD',
+  market__totalWithdrawalsRequested = 'market__totalWithdrawalsRequested',
+  market__totalWithdrawalsRequestedUSD = 'market__totalWithdrawalsRequestedUSD',
+  market__usdTotalsComplete = 'market__usdTotalsComplete',
+  market__version = 'market__version',
+  market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
+  newBorrower = 'newBorrower',
+  newBorrowerPrincipal = 'newBorrowerPrincipal',
+  pendingBorrower = 'pendingBorrower',
+  pendingBorrowerPrincipal = 'pendingBorrowerPrincipal',
+  previousBorrower = 'previousBorrower',
+  previousBorrowerPrincipal = 'previousBorrowerPrincipal',
+  previousPendingBorrower = 'previousPendingBorrower',
+  previousPendingBorrowerPrincipal = 'previousPendingBorrowerPrincipal',
+  transactionHash = 'transactionHash'
+}
+
 export type SubgraphMarketClosed = {
   __typename: 'MarketClosed';
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  borrower?: Maybe<Scalars['Bytes']['output']>;
   eventIndex: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
   market: SubgraphMarket;
@@ -11377,6 +13993,16 @@ export type SubgraphMarketClosed_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  borrower?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrower_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -11439,6 +14065,7 @@ export enum SubgraphMarketClosed_OrderBy {
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  borrower = 'borrower',
   eventIndex = 'eventIndex',
   id = 'id',
   market = 'market',
@@ -11448,6 +14075,8 @@ export enum SubgraphMarketClosed_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -11461,13 +14090,18 @@ export enum SubgraphMarketClosed_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -11484,10 +14118,14 @@ export enum SubgraphMarketClosed_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -11856,6 +14494,8 @@ export enum SubgraphMarketDailyStats_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -11869,13 +14509,18 @@ export enum SubgraphMarketDailyStats_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -11892,10 +14537,14 @@ export enum SubgraphMarketDailyStats_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -11951,11 +14600,23 @@ export enum SubgraphMarketDailyStats_OrderBy {
 
 export type SubgraphMarketDeployed = {
   __typename: 'MarketDeployed';
+  assetAddress?: Maybe<Scalars['Bytes']['output']>;
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  borrower?: Maybe<Scalars['Bytes']['output']>;
+  borrowerIdentityRegistry?: Maybe<SubgraphBorrowerIdentityRegistry>;
+  borrowerIdentityRegistryAddress?: Maybe<Scalars['Bytes']['output']>;
+  borrowerPrincipal?: Maybe<Scalars['Bytes']['output']>;
+  finalHooks?: Maybe<Scalars['BigInt']['output']>;
+  hooks?: Maybe<SubgraphHooksInstance>;
+  hooksFactory?: Maybe<SubgraphHooksFactory>;
+  hooksTemplate?: Maybe<SubgraphHooksTemplate>;
   id: Scalars['ID']['output'];
   market: SubgraphMarket;
+  name?: Maybe<Scalars['String']['output']>;
+  requestedHooks?: Maybe<Scalars['BigInt']['output']>;
+  symbol?: Maybe<Scalars['String']['output']>;
   transactionHash: Scalars['Bytes']['output'];
 };
 
@@ -11963,6 +14624,16 @@ export type SubgraphMarketDeployed_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<SubgraphMarketDeployed_Filter>>>;
+  assetAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  assetAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   blockLogIndex?: InputMaybe<Scalars['Int']['input']>;
   blockLogIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   blockLogIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -11987,6 +14658,128 @@ export type SubgraphMarketDeployed_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  borrower?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistry?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistryAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrowerIdentityRegistryAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrowerIdentityRegistry_?: InputMaybe<SubgraphBorrowerIdentityRegistry_Filter>;
+  borrowerIdentityRegistry_contains?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_ends_with?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_gt?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_gte?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  borrowerIdentityRegistry_lt?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_lte?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not_contains?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  borrowerIdentityRegistry_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_starts_with?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerPrincipal?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrowerPrincipal_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_not?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrower_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  finalHooks?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  finalHooks_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_not?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  hooks?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_?: InputMaybe<SubgraphHooksFactory_Filter>;
+  hooksFactory_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_gt?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_gte?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksFactory_lt?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_lte?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksFactory_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_?: InputMaybe<SubgraphHooksTemplate_Filter>;
+  hooksTemplate_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_gt?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_gte?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksTemplate_lt?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_lte?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksTemplate_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_?: InputMaybe<SubgraphHooksInstance_Filter>;
+  hooks_contains?: InputMaybe<Scalars['String']['input']>;
+  hooks_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_gt?: InputMaybe<Scalars['String']['input']>;
+  hooks_gte?: InputMaybe<Scalars['String']['input']>;
+  hooks_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooks_lt?: InputMaybe<Scalars['String']['input']>;
+  hooks_lte?: InputMaybe<Scalars['String']['input']>;
+  hooks_not?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_contains?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooks_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
   id_gte?: InputMaybe<Scalars['ID']['input']>;
@@ -12016,7 +14809,55 @@ export type SubgraphMarketDeployed_Filter = {
   market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   market_starts_with?: InputMaybe<Scalars['String']['input']>;
   market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  name_contains?: InputMaybe<Scalars['String']['input']>;
+  name_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_ends_with?: InputMaybe<Scalars['String']['input']>;
+  name_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_gt?: InputMaybe<Scalars['String']['input']>;
+  name_gte?: InputMaybe<Scalars['String']['input']>;
+  name_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  name_lt?: InputMaybe<Scalars['String']['input']>;
+  name_lte?: InputMaybe<Scalars['String']['input']>;
+  name_not?: InputMaybe<Scalars['String']['input']>;
+  name_not_contains?: InputMaybe<Scalars['String']['input']>;
+  name_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  name_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  name_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  name_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_starts_with?: InputMaybe<Scalars['String']['input']>;
+  name_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   or?: InputMaybe<Array<InputMaybe<SubgraphMarketDeployed_Filter>>>;
+  requestedHooks?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  requestedHooks_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_not?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  symbol?: InputMaybe<Scalars['String']['input']>;
+  symbol_contains?: InputMaybe<Scalars['String']['input']>;
+  symbol_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  symbol_ends_with?: InputMaybe<Scalars['String']['input']>;
+  symbol_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  symbol_gt?: InputMaybe<Scalars['String']['input']>;
+  symbol_gte?: InputMaybe<Scalars['String']['input']>;
+  symbol_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  symbol_lt?: InputMaybe<Scalars['String']['input']>;
+  symbol_lte?: InputMaybe<Scalars['String']['input']>;
+  symbol_not?: InputMaybe<Scalars['String']['input']>;
+  symbol_not_contains?: InputMaybe<Scalars['String']['input']>;
+  symbol_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  symbol_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  symbol_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  symbol_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  symbol_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  symbol_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  symbol_starts_with?: InputMaybe<Scalars['String']['input']>;
+  symbol_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
@@ -12030,9 +14871,64 @@ export type SubgraphMarketDeployed_Filter = {
 };
 
 export enum SubgraphMarketDeployed_OrderBy {
+  assetAddress = 'assetAddress',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  borrower = 'borrower',
+  borrowerIdentityRegistry = 'borrowerIdentityRegistry',
+  borrowerIdentityRegistryAddress = 'borrowerIdentityRegistryAddress',
+  borrowerIdentityRegistry__address = 'borrowerIdentityRegistry__address',
+  borrowerIdentityRegistry__eventIndex = 'borrowerIdentityRegistry__eventIndex',
+  borrowerIdentityRegistry__id = 'borrowerIdentityRegistry__id',
+  borrowerPrincipal = 'borrowerPrincipal',
+  finalHooks = 'finalHooks',
+  hooks = 'hooks',
+  hooksFactory = 'hooksFactory',
+  hooksFactory__abiFamily = 'hooksFactory__abiFamily',
+  hooksFactory__address = 'hooksFactory__address',
+  hooksFactory__configured = 'hooksFactory__configured',
+  hooksFactory__configuredStartBlock = 'hooksFactory__configuredStartBlock',
+  hooksFactory__deploymentTarget = 'hooksFactory__deploymentTarget',
+  hooksFactory__eventGeneration = 'hooksFactory__eventGeneration',
+  hooksFactory__eventIndex = 'hooksFactory__eventIndex',
+  hooksFactory__generation = 'hooksFactory__generation',
+  hooksFactory__hookedMarketAbi = 'hooksFactory__hookedMarketAbi',
+  hooksFactory__id = 'hooksFactory__id',
+  hooksFactory__indexed = 'hooksFactory__indexed',
+  hooksFactory__isRegistered = 'hooksFactory__isRegistered',
+  hooksFactory__label = 'hooksFactory__label',
+  hooksFactory__lifecycle = 'hooksFactory__lifecycle',
+  hooksFactory__marketKind = 'hooksFactory__marketKind',
+  hooksFactory__registrationUpdatedAtBlock = 'hooksFactory__registrationUpdatedAtBlock',
+  hooksFactory__registrationUpdatedAtTimestamp = 'hooksFactory__registrationUpdatedAtTimestamp',
+  hooksFactory__sentinel = 'hooksFactory__sentinel',
+  hooksTemplate = 'hooksTemplate',
+  hooksTemplate__abiFamily = 'hooksTemplate__abiFamily',
+  hooksTemplate__address = 'hooksTemplate__address',
+  hooksTemplate__id = 'hooksTemplate__id',
+  hooksTemplate__kind = 'hooksTemplate__kind',
+  hooksTemplate__version = 'hooksTemplate__version',
+  hooks__abiFamily = 'hooks__abiFamily',
+  hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
+  hooks__borrower = 'hooks__borrower',
+  hooks__deployedAtBlock = 'hooks__deployedAtBlock',
+  hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
+  hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
+  hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
+  hooks__eventIndex = 'hooks__eventIndex',
+  hooks__generation = 'hooks__generation',
+  hooks__id = 'hooks__id',
+  hooks__kind = 'hooks__kind',
+  hooks__marketKind = 'hooks__marketKind',
+  hooks__name = 'hooks__name',
+  hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   market = 'market',
   market__abiFamily = 'market__abiFamily',
@@ -12041,6 +14937,8 @@ export enum SubgraphMarketDeployed_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -12054,13 +14952,18 @@ export enum SubgraphMarketDeployed_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -12077,10 +14980,14 @@ export enum SubgraphMarketDeployed_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -12112,7 +15019,325 @@ export enum SubgraphMarketDeployed_OrderBy {
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
+  name = 'name',
+  requestedHooks = 'requestedHooks',
+  symbol = 'symbol',
   transactionHash = 'transactionHash'
+}
+
+export type SubgraphMarketDeploymentConfig = {
+  __typename: 'MarketDeploymentConfig';
+  annualInterestBips: Scalars['BigInt']['output'];
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  delinquencyFeeBips: Scalars['BigInt']['output'];
+  delinquencyGracePeriod: Scalars['BigInt']['output'];
+  feeRecipient: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
+  market: SubgraphMarket;
+  maxTotalSupply: Scalars['BigInt']['output'];
+  originationFeeAmount: Scalars['BigInt']['output'];
+  originationFeeAsset?: Maybe<SubgraphToken>;
+  originationFeeAssetAddress: Scalars['Bytes']['output'];
+  protocolFeeBips: Scalars['BigInt']['output'];
+  reserveRatioBips: Scalars['BigInt']['output'];
+  transactionHash: Scalars['Bytes']['output'];
+  withdrawalBatchDuration: Scalars['BigInt']['output'];
+};
+
+export type SubgraphMarketDeploymentConfig_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphMarketDeploymentConfig_Filter>>>;
+  annualInterestBips?: InputMaybe<Scalars['BigInt']['input']>;
+  annualInterestBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  annualInterestBips_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  annualInterestBips_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  annualInterestBips_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  annualInterestBips_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  annualInterestBips_not?: InputMaybe<Scalars['BigInt']['input']>;
+  annualInterestBips_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  delinquencyFeeBips?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyFeeBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyFeeBips_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyFeeBips_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  delinquencyFeeBips_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyFeeBips_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyFeeBips_not?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyFeeBips_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  delinquencyGracePeriod?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyGracePeriod_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyGracePeriod_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyGracePeriod_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  delinquencyGracePeriod_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyGracePeriod_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyGracePeriod_not?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyGracePeriod_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  feeRecipient?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  feeRecipient_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_not?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  market?: InputMaybe<Scalars['String']['input']>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars['String']['input']>;
+  market_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_gt?: InputMaybe<Scalars['String']['input']>;
+  market_gte?: InputMaybe<Scalars['String']['input']>;
+  market_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_lt?: InputMaybe<Scalars['String']['input']>;
+  market_lte?: InputMaybe<Scalars['String']['input']>;
+  market_not?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  maxTotalSupply?: InputMaybe<Scalars['BigInt']['input']>;
+  maxTotalSupply_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  maxTotalSupply_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  maxTotalSupply_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  maxTotalSupply_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  maxTotalSupply_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  maxTotalSupply_not?: InputMaybe<Scalars['BigInt']['input']>;
+  maxTotalSupply_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphMarketDeploymentConfig_Filter>>>;
+  originationFeeAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  originationFeeAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  originationFeeAsset?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAssetAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  originationFeeAssetAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  originationFeeAsset_?: InputMaybe<SubgraphToken_Filter>;
+  originationFeeAsset_contains?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_ends_with?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_gt?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_gte?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  originationFeeAsset_lt?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_lte?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not_contains?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  originationFeeAsset_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_starts_with?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  protocolFeeBips?: InputMaybe<Scalars['BigInt']['input']>;
+  protocolFeeBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  protocolFeeBips_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  protocolFeeBips_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  protocolFeeBips_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  protocolFeeBips_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  protocolFeeBips_not?: InputMaybe<Scalars['BigInt']['input']>;
+  protocolFeeBips_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  reserveRatioBips?: InputMaybe<Scalars['BigInt']['input']>;
+  reserveRatioBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  reserveRatioBips_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  reserveRatioBips_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  reserveRatioBips_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  reserveRatioBips_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  reserveRatioBips_not?: InputMaybe<Scalars['BigInt']['input']>;
+  reserveRatioBips_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  withdrawalBatchDuration?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalBatchDuration_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalBatchDuration_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalBatchDuration_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  withdrawalBatchDuration_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalBatchDuration_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalBatchDuration_not?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalBatchDuration_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+};
+
+export enum SubgraphMarketDeploymentConfig_OrderBy {
+  annualInterestBips = 'annualInterestBips',
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  delinquencyFeeBips = 'delinquencyFeeBips',
+  delinquencyGracePeriod = 'delinquencyGracePeriod',
+  feeRecipient = 'feeRecipient',
+  id = 'id',
+  market = 'market',
+  market__abiFamily = 'market__abiFamily',
+  market__address = 'market__address',
+  market__annualInterestBips = 'market__annualInterestBips',
+  market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
+  market__borrowIndex = 'market__borrowIndex',
+  market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__commitmentFeeBips = 'market__commitmentFeeBips',
+  market__createdAt = 'market__createdAt',
+  market__createdAtBlock = 'market__createdAtBlock',
+  market__createdAtLogIndex = 'market__createdAtLogIndex',
+  market__createdAtTimestamp = 'market__createdAtTimestamp',
+  market__createdAtTransaction = 'market__createdAtTransaction',
+  market__debtRepaidIndex = 'market__debtRepaidIndex',
+  market__decimals = 'market__decimals',
+  market__delinquencyFeeBips = 'market__delinquencyFeeBips',
+  market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
+  market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
+  market__depositIndex = 'market__depositIndex',
+  market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
+  market__eventIndex = 'market__eventIndex',
+  market__feeRecipient = 'market__feeRecipient',
+  market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
+  market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
+  market__forceBuyBackIndex = 'market__forceBuyBackIndex',
+  market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
+  market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
+  market__isClosed = 'market__isClosed',
+  market__isDelinquent = 'market__isDelinquent',
+  market__isIncurringPenalties = 'market__isIncurringPenalties',
+  market__isRegistered = 'market__isRegistered',
+  market__lastInterestAccruedBlockNumber = 'market__lastInterestAccruedBlockNumber',
+  market__lastInterestAccruedTimestamp = 'market__lastInterestAccruedTimestamp',
+  market__marketKind = 'market__marketKind',
+  market__maxTotalSupply = 'market__maxTotalSupply',
+  market__maxTotalSupplyUpdatedIndex = 'market__maxTotalSupplyUpdatedIndex',
+  market__minimumDepositUpdatedIndex = 'market__minimumDepositUpdatedIndex',
+  market__name = 'market__name',
+  market__normalizedUnclaimedWithdrawals = 'market__normalizedUnclaimedWithdrawals',
+  market__numCollateralContracts = 'market__numCollateralContracts',
+  market__originKind = 'market__originKind',
+  market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
+  market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
+  market__pendingProtocolFees = 'market__pendingProtocolFees',
+  market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
+  market__protocolFeeBips = 'market__protocolFeeBips',
+  market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
+  market__reserveRatioBips = 'market__reserveRatioBips',
+  market__scaleFactor = 'market__scaleFactor',
+  market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
+  market__scaledTotalSupply = 'market__scaledTotalSupply',
+  market__sentinel = 'market__sentinel',
+  market__symbol = 'market__symbol',
+  market__temporaryReserveRatioActive = 'market__temporaryReserveRatioActive',
+  market__temporaryReserveRatioExpiry = 'market__temporaryReserveRatioExpiry',
+  market__timeDelinquent = 'market__timeDelinquent',
+  market__totalAssets = 'market__totalAssets',
+  market__totalBaseInterestAccrued = 'market__totalBaseInterestAccrued',
+  market__totalBaseInterestAccruedUSD = 'market__totalBaseInterestAccruedUSD',
+  market__totalBorrowed = 'market__totalBorrowed',
+  market__totalBorrowedUSD = 'market__totalBorrowedUSD',
+  market__totalDebtUSD = 'market__totalDebtUSD',
+  market__totalDelinquencyFeesAccrued = 'market__totalDelinquencyFeesAccrued',
+  market__totalDelinquencyFeesAccruedUSD = 'market__totalDelinquencyFeesAccruedUSD',
+  market__totalDeposited = 'market__totalDeposited',
+  market__totalDepositedUSD = 'market__totalDepositedUSD',
+  market__totalProtocolFeesAccrued = 'market__totalProtocolFeesAccrued',
+  market__totalProtocolFeesAccruedUSD = 'market__totalProtocolFeesAccruedUSD',
+  market__totalRepaid = 'market__totalRepaid',
+  market__totalRepaidUSD = 'market__totalRepaidUSD',
+  market__totalWithdrawalsExecuted = 'market__totalWithdrawalsExecuted',
+  market__totalWithdrawalsExecutedUSD = 'market__totalWithdrawalsExecutedUSD',
+  market__totalWithdrawalsRequested = 'market__totalWithdrawalsRequested',
+  market__totalWithdrawalsRequestedUSD = 'market__totalWithdrawalsRequestedUSD',
+  market__usdTotalsComplete = 'market__usdTotalsComplete',
+  market__version = 'market__version',
+  market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
+  maxTotalSupply = 'maxTotalSupply',
+  originationFeeAmount = 'originationFeeAmount',
+  originationFeeAsset = 'originationFeeAsset',
+  originationFeeAssetAddress = 'originationFeeAssetAddress',
+  originationFeeAsset__address = 'originationFeeAsset__address',
+  originationFeeAsset__decimals = 'originationFeeAsset__decimals',
+  originationFeeAsset__id = 'originationFeeAsset__id',
+  originationFeeAsset__isMock = 'originationFeeAsset__isMock',
+  originationFeeAsset__isUsdStablecoin = 'originationFeeAsset__isUsdStablecoin',
+  originationFeeAsset__lastPriceFeedSearchDay = 'originationFeeAsset__lastPriceFeedSearchDay',
+  originationFeeAsset__name = 'originationFeeAsset__name',
+  originationFeeAsset__priceFeed0 = 'originationFeeAsset__priceFeed0',
+  originationFeeAsset__priceFeed1 = 'originationFeeAsset__priceFeed1',
+  originationFeeAsset__priceSource = 'originationFeeAsset__priceSource',
+  originationFeeAsset__symbol = 'originationFeeAsset__symbol',
+  protocolFeeBips = 'protocolFeeBips',
+  reserveRatioBips = 'reserveRatioBips',
+  transactionHash = 'transactionHash',
+  withdrawalBatchDuration = 'withdrawalBatchDuration'
 }
 
 /** One normalized, monotonically ordered entry for every indexed market lifecycle event. */
@@ -12189,6 +15414,8 @@ export enum SubgraphMarketEventCursor_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -12202,13 +15429,18 @@ export enum SubgraphMarketEventCursor_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -12225,10 +15457,14 @@ export enum SubgraphMarketEventCursor_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -12265,6 +15501,7 @@ export enum SubgraphMarketEventCursor_OrderBy {
 
 export enum SubgraphMarketEventKind {
   ACCOUNT_FIRST_DEPOSIT = 'ACCOUNT_FIRST_DEPOSIT',
+  ANNUAL_INTEREST_AND_RESERVE_RATIO_BIPS_UPDATED = 'ANNUAL_INTEREST_AND_RESERVE_RATIO_BIPS_UPDATED',
   ANNUAL_INTEREST_BIPS_UPDATED = 'ANNUAL_INTEREST_BIPS_UPDATED',
   APPROVAL = 'APPROVAL',
   APR_REDUCTION_CANCELLED = 'APR_REDUCTION_CANCELLED',
@@ -12272,8 +15509,12 @@ export enum SubgraphMarketEventKind {
   APR_REDUCTION_PROPOSED = 'APR_REDUCTION_PROPOSED',
   AUTHORIZATION_STATUS_UPDATED = 'AUTHORIZATION_STATUS_UPDATED',
   BORROW = 'BORROW',
+  BORROWER_TRANSFERRED = 'BORROWER_TRANSFERRED',
+  BORROWER_TRANSFER_CANCELLED = 'BORROWER_TRANSFER_CANCELLED',
+  BORROWER_TRANSFER_REQUESTED = 'BORROWER_TRANSFER_REQUESTED',
   DEBT_REPAID = 'DEBT_REPAID',
   DEPOSIT = 'DEPOSIT',
+  DRAWN_AMOUNT_UPDATED = 'DRAWN_AMOUNT_UPDATED',
   FEES_COLLECTED = 'FEES_COLLECTED',
   FIXED_TERM_UPDATED = 'FIXED_TERM_UPDATED',
   FORCE_BUYBACK = 'FORCE_BUYBACK',
@@ -12305,7 +15546,8 @@ export enum SubgraphMarketEventKind {
   WITHDRAWAL_BATCH_EXPIRED = 'WITHDRAWAL_BATCH_EXPIRED',
   WITHDRAWAL_BATCH_PAYMENT = 'WITHDRAWAL_BATCH_PAYMENT',
   WITHDRAWAL_EXECUTED = 'WITHDRAWAL_EXECUTED',
-  WITHDRAWAL_QUEUED = 'WITHDRAWAL_QUEUED'
+  WITHDRAWAL_QUEUED = 'WITHDRAWAL_QUEUED',
+  WRAPPER_REGISTERED = 'WRAPPER_REGISTERED'
 }
 
 export type SubgraphMarketEvent_Filter = {
@@ -12403,6 +15645,8 @@ export enum SubgraphMarketEvent_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -12416,13 +15660,18 @@ export enum SubgraphMarketEvent_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -12439,10 +15688,14 @@ export enum SubgraphMarketEvent_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -12475,6 +15728,195 @@ export enum SubgraphMarketEvent_OrderBy {
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   sequence = 'sequence',
+  transactionHash = 'transactionHash'
+}
+
+export type SubgraphMarketHooksData = {
+  __typename: 'MarketHooksData';
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  hooksData: Scalars['Bytes']['output'];
+  id: Scalars['ID']['output'];
+  market: SubgraphMarket;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphMarketHooksData_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphMarketHooksData_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  hooksData?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  hooksData_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_not?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  market?: InputMaybe<Scalars['String']['input']>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars['String']['input']>;
+  market_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_gt?: InputMaybe<Scalars['String']['input']>;
+  market_gte?: InputMaybe<Scalars['String']['input']>;
+  market_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_lt?: InputMaybe<Scalars['String']['input']>;
+  market_lte?: InputMaybe<Scalars['String']['input']>;
+  market_not?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphMarketHooksData_Filter>>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphMarketHooksData_OrderBy {
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  hooksData = 'hooksData',
+  id = 'id',
+  market = 'market',
+  market__abiFamily = 'market__abiFamily',
+  market__address = 'market__address',
+  market__annualInterestBips = 'market__annualInterestBips',
+  market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
+  market__borrowIndex = 'market__borrowIndex',
+  market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__commitmentFeeBips = 'market__commitmentFeeBips',
+  market__createdAt = 'market__createdAt',
+  market__createdAtBlock = 'market__createdAtBlock',
+  market__createdAtLogIndex = 'market__createdAtLogIndex',
+  market__createdAtTimestamp = 'market__createdAtTimestamp',
+  market__createdAtTransaction = 'market__createdAtTransaction',
+  market__debtRepaidIndex = 'market__debtRepaidIndex',
+  market__decimals = 'market__decimals',
+  market__delinquencyFeeBips = 'market__delinquencyFeeBips',
+  market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
+  market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
+  market__depositIndex = 'market__depositIndex',
+  market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
+  market__eventIndex = 'market__eventIndex',
+  market__feeRecipient = 'market__feeRecipient',
+  market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
+  market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
+  market__forceBuyBackIndex = 'market__forceBuyBackIndex',
+  market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
+  market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
+  market__isClosed = 'market__isClosed',
+  market__isDelinquent = 'market__isDelinquent',
+  market__isIncurringPenalties = 'market__isIncurringPenalties',
+  market__isRegistered = 'market__isRegistered',
+  market__lastInterestAccruedBlockNumber = 'market__lastInterestAccruedBlockNumber',
+  market__lastInterestAccruedTimestamp = 'market__lastInterestAccruedTimestamp',
+  market__marketKind = 'market__marketKind',
+  market__maxTotalSupply = 'market__maxTotalSupply',
+  market__maxTotalSupplyUpdatedIndex = 'market__maxTotalSupplyUpdatedIndex',
+  market__minimumDepositUpdatedIndex = 'market__minimumDepositUpdatedIndex',
+  market__name = 'market__name',
+  market__normalizedUnclaimedWithdrawals = 'market__normalizedUnclaimedWithdrawals',
+  market__numCollateralContracts = 'market__numCollateralContracts',
+  market__originKind = 'market__originKind',
+  market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
+  market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
+  market__pendingProtocolFees = 'market__pendingProtocolFees',
+  market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
+  market__protocolFeeBips = 'market__protocolFeeBips',
+  market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
+  market__reserveRatioBips = 'market__reserveRatioBips',
+  market__scaleFactor = 'market__scaleFactor',
+  market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
+  market__scaledTotalSupply = 'market__scaledTotalSupply',
+  market__sentinel = 'market__sentinel',
+  market__symbol = 'market__symbol',
+  market__temporaryReserveRatioActive = 'market__temporaryReserveRatioActive',
+  market__temporaryReserveRatioExpiry = 'market__temporaryReserveRatioExpiry',
+  market__timeDelinquent = 'market__timeDelinquent',
+  market__totalAssets = 'market__totalAssets',
+  market__totalBaseInterestAccrued = 'market__totalBaseInterestAccrued',
+  market__totalBaseInterestAccruedUSD = 'market__totalBaseInterestAccruedUSD',
+  market__totalBorrowed = 'market__totalBorrowed',
+  market__totalBorrowedUSD = 'market__totalBorrowedUSD',
+  market__totalDebtUSD = 'market__totalDebtUSD',
+  market__totalDelinquencyFeesAccrued = 'market__totalDelinquencyFeesAccrued',
+  market__totalDelinquencyFeesAccruedUSD = 'market__totalDelinquencyFeesAccruedUSD',
+  market__totalDeposited = 'market__totalDeposited',
+  market__totalDepositedUSD = 'market__totalDepositedUSD',
+  market__totalProtocolFeesAccrued = 'market__totalProtocolFeesAccrued',
+  market__totalProtocolFeesAccruedUSD = 'market__totalProtocolFeesAccruedUSD',
+  market__totalRepaid = 'market__totalRepaid',
+  market__totalRepaidUSD = 'market__totalRepaidUSD',
+  market__totalWithdrawalsExecuted = 'market__totalWithdrawalsExecuted',
+  market__totalWithdrawalsExecutedUSD = 'market__totalWithdrawalsExecutedUSD',
+  market__totalWithdrawalsRequested = 'market__totalWithdrawalsRequested',
+  market__totalWithdrawalsRequestedUSD = 'market__totalWithdrawalsRequestedUSD',
+  market__usdTotalsComplete = 'market__usdTotalsComplete',
+  market__version = 'market__version',
+  market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
 
@@ -12647,6 +16089,8 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -12660,13 +16104,18 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -12683,10 +16132,14 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -12827,6 +16280,8 @@ export enum SubgraphMarketRemoved_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -12840,13 +16295,18 @@ export enum SubgraphMarketRemoved_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -12863,10 +16323,14 @@ export enum SubgraphMarketRemoved_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -13195,6 +16659,8 @@ export enum SubgraphMarketSnapshot_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -13208,13 +16674,18 @@ export enum SubgraphMarketSnapshot_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -13231,10 +16702,14 @@ export enum SubgraphMarketSnapshot_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -13291,6 +16766,195 @@ export enum SubgraphMarketSnapshot_OrderBy {
 export enum SubgraphMarketVersion {
   V1 = 'V1',
   V2 = 'V2'
+}
+
+export type SubgraphMarketWrapperRegistration = {
+  __typename: 'MarketWrapperRegistration';
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  id: Scalars['ID']['output'];
+  market: SubgraphMarket;
+  transactionHash: Scalars['Bytes']['output'];
+  wrapper: Scalars['Bytes']['output'];
+};
+
+export type SubgraphMarketWrapperRegistration_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphMarketWrapperRegistration_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  market?: InputMaybe<Scalars['String']['input']>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars['String']['input']>;
+  market_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_gt?: InputMaybe<Scalars['String']['input']>;
+  market_gte?: InputMaybe<Scalars['String']['input']>;
+  market_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_lt?: InputMaybe<Scalars['String']['input']>;
+  market_lte?: InputMaybe<Scalars['String']['input']>;
+  market_not?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphMarketWrapperRegistration_Filter>>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  wrapper?: InputMaybe<Scalars['Bytes']['input']>;
+  wrapper_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  wrapper_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  wrapper_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  wrapper_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  wrapper_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  wrapper_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  wrapper_not?: InputMaybe<Scalars['Bytes']['input']>;
+  wrapper_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  wrapper_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphMarketWrapperRegistration_OrderBy {
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  id = 'id',
+  market = 'market',
+  market__abiFamily = 'market__abiFamily',
+  market__address = 'market__address',
+  market__annualInterestBips = 'market__annualInterestBips',
+  market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
+  market__borrowIndex = 'market__borrowIndex',
+  market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__commitmentFeeBips = 'market__commitmentFeeBips',
+  market__createdAt = 'market__createdAt',
+  market__createdAtBlock = 'market__createdAtBlock',
+  market__createdAtLogIndex = 'market__createdAtLogIndex',
+  market__createdAtTimestamp = 'market__createdAtTimestamp',
+  market__createdAtTransaction = 'market__createdAtTransaction',
+  market__debtRepaidIndex = 'market__debtRepaidIndex',
+  market__decimals = 'market__decimals',
+  market__delinquencyFeeBips = 'market__delinquencyFeeBips',
+  market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
+  market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
+  market__depositIndex = 'market__depositIndex',
+  market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
+  market__eventIndex = 'market__eventIndex',
+  market__feeRecipient = 'market__feeRecipient',
+  market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
+  market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
+  market__forceBuyBackIndex = 'market__forceBuyBackIndex',
+  market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
+  market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
+  market__isClosed = 'market__isClosed',
+  market__isDelinquent = 'market__isDelinquent',
+  market__isIncurringPenalties = 'market__isIncurringPenalties',
+  market__isRegistered = 'market__isRegistered',
+  market__lastInterestAccruedBlockNumber = 'market__lastInterestAccruedBlockNumber',
+  market__lastInterestAccruedTimestamp = 'market__lastInterestAccruedTimestamp',
+  market__marketKind = 'market__marketKind',
+  market__maxTotalSupply = 'market__maxTotalSupply',
+  market__maxTotalSupplyUpdatedIndex = 'market__maxTotalSupplyUpdatedIndex',
+  market__minimumDepositUpdatedIndex = 'market__minimumDepositUpdatedIndex',
+  market__name = 'market__name',
+  market__normalizedUnclaimedWithdrawals = 'market__normalizedUnclaimedWithdrawals',
+  market__numCollateralContracts = 'market__numCollateralContracts',
+  market__originKind = 'market__originKind',
+  market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
+  market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
+  market__pendingProtocolFees = 'market__pendingProtocolFees',
+  market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
+  market__protocolFeeBips = 'market__protocolFeeBips',
+  market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
+  market__reserveRatioBips = 'market__reserveRatioBips',
+  market__scaleFactor = 'market__scaleFactor',
+  market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
+  market__scaledTotalSupply = 'market__scaledTotalSupply',
+  market__sentinel = 'market__sentinel',
+  market__symbol = 'market__symbol',
+  market__temporaryReserveRatioActive = 'market__temporaryReserveRatioActive',
+  market__temporaryReserveRatioExpiry = 'market__temporaryReserveRatioExpiry',
+  market__timeDelinquent = 'market__timeDelinquent',
+  market__totalAssets = 'market__totalAssets',
+  market__totalBaseInterestAccrued = 'market__totalBaseInterestAccrued',
+  market__totalBaseInterestAccruedUSD = 'market__totalBaseInterestAccruedUSD',
+  market__totalBorrowed = 'market__totalBorrowed',
+  market__totalBorrowedUSD = 'market__totalBorrowedUSD',
+  market__totalDebtUSD = 'market__totalDebtUSD',
+  market__totalDelinquencyFeesAccrued = 'market__totalDelinquencyFeesAccrued',
+  market__totalDelinquencyFeesAccruedUSD = 'market__totalDelinquencyFeesAccruedUSD',
+  market__totalDeposited = 'market__totalDeposited',
+  market__totalDepositedUSD = 'market__totalDepositedUSD',
+  market__totalProtocolFeesAccrued = 'market__totalProtocolFeesAccrued',
+  market__totalProtocolFeesAccruedUSD = 'market__totalProtocolFeesAccruedUSD',
+  market__totalRepaid = 'market__totalRepaid',
+  market__totalRepaidUSD = 'market__totalRepaidUSD',
+  market__totalWithdrawalsExecuted = 'market__totalWithdrawalsExecuted',
+  market__totalWithdrawalsExecutedUSD = 'market__totalWithdrawalsExecutedUSD',
+  market__totalWithdrawalsRequested = 'market__totalWithdrawalsRequested',
+  market__totalWithdrawalsRequestedUSD = 'market__totalWithdrawalsRequestedUSD',
+  market__usdTotalsComplete = 'market__usdTotalsComplete',
+  market__version = 'market__version',
+  market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
+  transactionHash = 'transactionHash',
+  wrapper = 'wrapper'
 }
 
 export type SubgraphMarket_Filter = {
@@ -13400,6 +17064,69 @@ export type SubgraphMarket_Filter = {
   borrowIndex_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   borrowRecords_?: InputMaybe<SubgraphBorrow_Filter>;
   borrower?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerAccount?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_?: InputMaybe<SubgraphBorrowerAccount_Filter>;
+  borrowerAccount_contains?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_ends_with?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_gt?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_gte?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  borrowerAccount_lt?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_lte?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_not?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_not_contains?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  borrowerAccount_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_starts_with?: InputMaybe<Scalars['String']['input']>;
+  borrowerAccount_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerChanges_?: InputMaybe<SubgraphMarketBorrowerChange_Filter>;
+  borrowerIdentityRegistry?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistryAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrowerIdentityRegistryAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrowerIdentityRegistry_?: InputMaybe<SubgraphBorrowerIdentityRegistry_Filter>;
+  borrowerIdentityRegistry_contains?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_ends_with?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_gt?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_gte?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  borrowerIdentityRegistry_lt?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_lte?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not_contains?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  borrowerIdentityRegistry_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_starts_with?: InputMaybe<Scalars['String']['input']>;
+  borrowerIdentityRegistry_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  borrowerPrincipal?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrowerPrincipal_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_not?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   borrowerProfile?: InputMaybe<Scalars['String']['input']>;
   borrowerProfile_?: InputMaybe<SubgraphBorrower_Filter>;
   borrowerProfile_contains?: InputMaybe<Scalars['String']['input']>;
@@ -13565,6 +17292,8 @@ export type SubgraphMarket_Filter = {
   deployedEvent_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   deployedEvent_starts_with?: InputMaybe<Scalars['String']['input']>;
   deployedEvent_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  deploymentConfig_?: InputMaybe<SubgraphMarketDeploymentConfig_Filter>;
+  deploymentHooksData_?: InputMaybe<SubgraphMarketHooksData_Filter>;
   depositIndex?: InputMaybe<Scalars['Int']['input']>;
   depositIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   depositIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -13575,6 +17304,7 @@ export type SubgraphMarket_Filter = {
   depositIndex_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   depositRecords_?: InputMaybe<SubgraphDeposit_Filter>;
   drawnAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  drawnAmountUpdates_?: InputMaybe<SubgraphDrawnAmountUpdate_Filter>;
   drawnAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
   drawnAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
   drawnAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
@@ -13582,6 +17312,10 @@ export type SubgraphMarket_Filter = {
   drawnAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
   drawnAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
   drawnAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  eventGeneration?: InputMaybe<SubgraphEventGeneration>;
+  eventGeneration_in?: InputMaybe<Array<SubgraphEventGeneration>>;
+  eventGeneration_not?: InputMaybe<SubgraphEventGeneration>;
+  eventGeneration_not_in?: InputMaybe<Array<SubgraphEventGeneration>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -13610,6 +17344,14 @@ export type SubgraphMarket_Filter = {
   feesCollectedIndex_lte?: InputMaybe<Scalars['Int']['input']>;
   feesCollectedIndex_not?: InputMaybe<Scalars['Int']['input']>;
   feesCollectedIndex_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  finalHooks?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  finalHooks_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_not?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   fixedTermUpdatedIndex?: InputMaybe<Scalars['Int']['input']>;
   fixedTermUpdatedIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   fixedTermUpdatedIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -13651,6 +17393,16 @@ export type SubgraphMarket_Filter = {
   generation_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   hooks?: InputMaybe<Scalars['String']['input']>;
   hooksConfig_?: InputMaybe<SubgraphHooksConfig_Filter>;
+  hooksData?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  hooksData_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_not?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   hooksFactory?: InputMaybe<Scalars['String']['input']>;
   hooksFactory_?: InputMaybe<SubgraphHooksFactory_Filter>;
   hooksFactory_contains?: InputMaybe<Scalars['String']['input']>;
@@ -13700,6 +17452,26 @@ export type SubgraphMarket_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>;
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  initialBorrower?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrowerPrincipal?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrowerPrincipal_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrowerPrincipal_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrowerPrincipal_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrowerPrincipal_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  initialBorrowerPrincipal_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrowerPrincipal_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrowerPrincipal_not?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrowerPrincipal_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrowerPrincipal_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  initialBorrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrower_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrower_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrower_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  initialBorrower_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrower_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrower_not?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  initialBorrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   interestAccrualRecords_?: InputMaybe<SubgraphMarketInterestAccrued_Filter>;
   isClosed?: InputMaybe<Scalars['Boolean']['input']>;
   isClosed_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
@@ -13822,6 +17594,55 @@ export type SubgraphMarket_Filter = {
   originalReserveRatioBips_lte?: InputMaybe<Scalars['Int']['input']>;
   originalReserveRatioBips_not?: InputMaybe<Scalars['Int']['input']>;
   originalReserveRatioBips_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  originationFeeAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  originationFeeAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  originationFeeAsset?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_?: InputMaybe<SubgraphToken_Filter>;
+  originationFeeAsset_contains?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_ends_with?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_gt?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_gte?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  originationFeeAsset_lt?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_lte?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not_contains?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  originationFeeAsset_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_starts_with?: InputMaybe<Scalars['String']['input']>;
+  originationFeeAsset_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingBorrower?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingBorrowerPrincipal_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_not?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrowerPrincipal_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingBorrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingBorrower_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_not?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingBorrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   pendingProtocolFees?: InputMaybe<Scalars['BigInt']['input']>;
   pendingProtocolFees_gt?: InputMaybe<Scalars['BigInt']['input']>;
   pendingProtocolFees_gte?: InputMaybe<Scalars['BigInt']['input']>;
@@ -13859,6 +17680,14 @@ export type SubgraphMarket_Filter = {
   protocolFeeBips_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   removal_?: InputMaybe<SubgraphMarketRemoved_Filter>;
   repaymentRecords_?: InputMaybe<SubgraphDebtRepaid_Filter>;
+  requestedHooks?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  requestedHooks_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_not?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   reserveRatioBips?: InputMaybe<Scalars['Int']['input']>;
   reserveRatioBipsUpdatedRecords_?: InputMaybe<SubgraphReserveRatioBipsUpdated_Filter>;
   reserveRatioBips_gt?: InputMaybe<Scalars['Int']['input']>;
@@ -13868,6 +17697,7 @@ export type SubgraphMarket_Filter = {
   reserveRatioBips_lte?: InputMaybe<Scalars['Int']['input']>;
   reserveRatioBips_not?: InputMaybe<Scalars['Int']['input']>;
   reserveRatioBips_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  revolvingDeployment_?: InputMaybe<SubgraphRevolvingMarketDeployment_Filter>;
   scaleFactor?: InputMaybe<Scalars['BigInt']['input']>;
   scaleFactor_gt?: InputMaybe<Scalars['BigInt']['input']>;
   scaleFactor_gte?: InputMaybe<Scalars['BigInt']['input']>;
@@ -14155,6 +17985,7 @@ export type SubgraphMarket_Filter = {
   withdrawalRequestsIndex_lte?: InputMaybe<Scalars['Int']['input']>;
   withdrawalRequestsIndex_not?: InputMaybe<Scalars['Int']['input']>;
   withdrawalRequestsIndex_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  wrapperRegistrations_?: InputMaybe<SubgraphMarketWrapperRegistration_Filter>;
 };
 
 export enum SubgraphMarket_OrderBy {
@@ -14184,6 +18015,22 @@ export enum SubgraphMarket_OrderBy {
   borrowIndex = 'borrowIndex',
   borrowRecords = 'borrowRecords',
   borrower = 'borrower',
+  borrowerAccount = 'borrowerAccount',
+  borrowerAccount__address = 'borrowerAccount__address',
+  borrowerAccount__id = 'borrowerAccount__id',
+  borrowerAccount__pendingPrincipalAddress = 'borrowerAccount__pendingPrincipalAddress',
+  borrowerAccount__principalAddress = 'borrowerAccount__principalAddress',
+  borrowerAccount__registeredAtBlock = 'borrowerAccount__registeredAtBlock',
+  borrowerAccount__registeredAtLogIndex = 'borrowerAccount__registeredAtLogIndex',
+  borrowerAccount__registeredAtTimestamp = 'borrowerAccount__registeredAtTimestamp',
+  borrowerAccount__registeredAtTransaction = 'borrowerAccount__registeredAtTransaction',
+  borrowerChanges = 'borrowerChanges',
+  borrowerIdentityRegistry = 'borrowerIdentityRegistry',
+  borrowerIdentityRegistryAddress = 'borrowerIdentityRegistryAddress',
+  borrowerIdentityRegistry__address = 'borrowerIdentityRegistry__address',
+  borrowerIdentityRegistry__eventIndex = 'borrowerIdentityRegistry__eventIndex',
+  borrowerIdentityRegistry__id = 'borrowerIdentityRegistry__id',
+  borrowerPrincipal = 'borrowerPrincipal',
   borrowerProfile = 'borrowerProfile',
   borrowerProfile__address = 'borrowerProfile__address',
   borrowerProfile__firstSeenBlock = 'borrowerProfile__firstSeenBlock',
@@ -14215,19 +18062,53 @@ export enum SubgraphMarket_OrderBy {
   delinquencyRecords = 'delinquencyRecords',
   delinquencyStatusChangedIndex = 'delinquencyStatusChangedIndex',
   deployedEvent = 'deployedEvent',
+  deployedEvent__assetAddress = 'deployedEvent__assetAddress',
   deployedEvent__blockLogIndex = 'deployedEvent__blockLogIndex',
   deployedEvent__blockNumber = 'deployedEvent__blockNumber',
   deployedEvent__blockTimestamp = 'deployedEvent__blockTimestamp',
+  deployedEvent__borrower = 'deployedEvent__borrower',
+  deployedEvent__borrowerIdentityRegistryAddress = 'deployedEvent__borrowerIdentityRegistryAddress',
+  deployedEvent__borrowerPrincipal = 'deployedEvent__borrowerPrincipal',
+  deployedEvent__finalHooks = 'deployedEvent__finalHooks',
   deployedEvent__id = 'deployedEvent__id',
+  deployedEvent__name = 'deployedEvent__name',
+  deployedEvent__requestedHooks = 'deployedEvent__requestedHooks',
+  deployedEvent__symbol = 'deployedEvent__symbol',
   deployedEvent__transactionHash = 'deployedEvent__transactionHash',
+  deploymentConfig = 'deploymentConfig',
+  deploymentConfig__annualInterestBips = 'deploymentConfig__annualInterestBips',
+  deploymentConfig__blockLogIndex = 'deploymentConfig__blockLogIndex',
+  deploymentConfig__blockNumber = 'deploymentConfig__blockNumber',
+  deploymentConfig__blockTimestamp = 'deploymentConfig__blockTimestamp',
+  deploymentConfig__delinquencyFeeBips = 'deploymentConfig__delinquencyFeeBips',
+  deploymentConfig__delinquencyGracePeriod = 'deploymentConfig__delinquencyGracePeriod',
+  deploymentConfig__feeRecipient = 'deploymentConfig__feeRecipient',
+  deploymentConfig__id = 'deploymentConfig__id',
+  deploymentConfig__maxTotalSupply = 'deploymentConfig__maxTotalSupply',
+  deploymentConfig__originationFeeAmount = 'deploymentConfig__originationFeeAmount',
+  deploymentConfig__originationFeeAssetAddress = 'deploymentConfig__originationFeeAssetAddress',
+  deploymentConfig__protocolFeeBips = 'deploymentConfig__protocolFeeBips',
+  deploymentConfig__reserveRatioBips = 'deploymentConfig__reserveRatioBips',
+  deploymentConfig__transactionHash = 'deploymentConfig__transactionHash',
+  deploymentConfig__withdrawalBatchDuration = 'deploymentConfig__withdrawalBatchDuration',
+  deploymentHooksData = 'deploymentHooksData',
+  deploymentHooksData__blockLogIndex = 'deploymentHooksData__blockLogIndex',
+  deploymentHooksData__blockNumber = 'deploymentHooksData__blockNumber',
+  deploymentHooksData__blockTimestamp = 'deploymentHooksData__blockTimestamp',
+  deploymentHooksData__hooksData = 'deploymentHooksData__hooksData',
+  deploymentHooksData__id = 'deploymentHooksData__id',
+  deploymentHooksData__transactionHash = 'deploymentHooksData__transactionHash',
   depositIndex = 'depositIndex',
   depositRecords = 'depositRecords',
   drawnAmount = 'drawnAmount',
+  drawnAmountUpdates = 'drawnAmountUpdates',
+  eventGeneration = 'eventGeneration',
   eventIndex = 'eventIndex',
   events = 'events',
   feeCollectionRecords = 'feeCollectionRecords',
   feeRecipient = 'feeRecipient',
   feesCollectedIndex = 'feesCollectedIndex',
+  finalHooks = 'finalHooks',
   fixedTermUpdatedIndex = 'fixedTermUpdatedIndex',
   fixedTermUpdatedRecords = 'fixedTermUpdatedRecords',
   forceBuyBackDisabledRecord = 'forceBuyBackDisabledRecord',
@@ -14271,12 +18152,14 @@ export enum SubgraphMarket_OrderBy {
   hooksConfig__useOnSetProtocolFeeBips = 'hooksConfig__useOnSetProtocolFeeBips',
   hooksConfig__useOnTransfer = 'hooksConfig__useOnTransfer',
   hooksConfig__withdrawalWindowDuration = 'hooksConfig__withdrawalWindowDuration',
+  hooksData = 'hooksData',
   hooksFactory = 'hooksFactory',
   hooksFactory__abiFamily = 'hooksFactory__abiFamily',
   hooksFactory__address = 'hooksFactory__address',
   hooksFactory__configured = 'hooksFactory__configured',
   hooksFactory__configuredStartBlock = 'hooksFactory__configuredStartBlock',
   hooksFactory__deploymentTarget = 'hooksFactory__deploymentTarget',
+  hooksFactory__eventGeneration = 'hooksFactory__eventGeneration',
   hooksFactory__eventIndex = 'hooksFactory__eventIndex',
   hooksFactory__generation = 'hooksFactory__generation',
   hooksFactory__hookedMarketAbi = 'hooksFactory__hookedMarketAbi',
@@ -14291,11 +18174,14 @@ export enum SubgraphMarket_OrderBy {
   hooksFactory__sentinel = 'hooksFactory__sentinel',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -14303,7 +18189,12 @@ export enum SubgraphMarket_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
+  initialBorrower = 'initialBorrower',
+  initialBorrowerPrincipal = 'initialBorrowerPrincipal',
   interestAccrualRecords = 'interestAccrualRecords',
   isClosed = 'isClosed',
   isDelinquent = 'isDelinquent',
@@ -14316,6 +18207,7 @@ export enum SubgraphMarket_OrderBy {
   marketClosedEvent__blockLogIndex = 'marketClosedEvent__blockLogIndex',
   marketClosedEvent__blockNumber = 'marketClosedEvent__blockNumber',
   marketClosedEvent__blockTimestamp = 'marketClosedEvent__blockTimestamp',
+  marketClosedEvent__borrower = 'marketClosedEvent__borrower',
   marketClosedEvent__eventIndex = 'marketClosedEvent__eventIndex',
   marketClosedEvent__id = 'marketClosedEvent__id',
   marketClosedEvent__timestamp = 'marketClosedEvent__timestamp',
@@ -14332,6 +18224,21 @@ export enum SubgraphMarket_OrderBy {
   originKind = 'originKind',
   originalAnnualInterestBips = 'originalAnnualInterestBips',
   originalReserveRatioBips = 'originalReserveRatioBips',
+  originationFeeAmount = 'originationFeeAmount',
+  originationFeeAsset = 'originationFeeAsset',
+  originationFeeAsset__address = 'originationFeeAsset__address',
+  originationFeeAsset__decimals = 'originationFeeAsset__decimals',
+  originationFeeAsset__id = 'originationFeeAsset__id',
+  originationFeeAsset__isMock = 'originationFeeAsset__isMock',
+  originationFeeAsset__isUsdStablecoin = 'originationFeeAsset__isUsdStablecoin',
+  originationFeeAsset__lastPriceFeedSearchDay = 'originationFeeAsset__lastPriceFeedSearchDay',
+  originationFeeAsset__name = 'originationFeeAsset__name',
+  originationFeeAsset__priceFeed0 = 'originationFeeAsset__priceFeed0',
+  originationFeeAsset__priceFeed1 = 'originationFeeAsset__priceFeed1',
+  originationFeeAsset__priceSource = 'originationFeeAsset__priceSource',
+  originationFeeAsset__symbol = 'originationFeeAsset__symbol',
+  pendingBorrower = 'pendingBorrower',
+  pendingBorrowerPrincipal = 'pendingBorrowerPrincipal',
   pendingProtocolFees = 'pendingProtocolFees',
   pendingWithdrawalExpiry = 'pendingWithdrawalExpiry',
   periodicTermClosedRecord = 'periodicTermClosedRecord',
@@ -14352,8 +18259,16 @@ export enum SubgraphMarket_OrderBy {
   removal__id = 'removal__id',
   removal__transactionHash = 'removal__transactionHash',
   repaymentRecords = 'repaymentRecords',
+  requestedHooks = 'requestedHooks',
   reserveRatioBips = 'reserveRatioBips',
   reserveRatioBipsUpdatedRecords = 'reserveRatioBipsUpdatedRecords',
+  revolvingDeployment = 'revolvingDeployment',
+  revolvingDeployment__blockLogIndex = 'revolvingDeployment__blockLogIndex',
+  revolvingDeployment__blockNumber = 'revolvingDeployment__blockNumber',
+  revolvingDeployment__blockTimestamp = 'revolvingDeployment__blockTimestamp',
+  revolvingDeployment__commitmentFeeBips = 'revolvingDeployment__commitmentFeeBips',
+  revolvingDeployment__id = 'revolvingDeployment__id',
+  revolvingDeployment__transactionHash = 'revolvingDeployment__transactionHash',
   scaleFactor = 'scaleFactor',
   scaledPendingWithdrawals = 'scaledPendingWithdrawals',
   scaledTotalSupply = 'scaledTotalSupply',
@@ -14434,7 +18349,8 @@ export enum SubgraphMarket_OrderBy {
   withdrawalBatchDuration = 'withdrawalBatchDuration',
   withdrawalBatches = 'withdrawalBatches',
   withdrawalRequestRecords = 'withdrawalRequestRecords',
-  withdrawalRequestsIndex = 'withdrawalRequestsIndex'
+  withdrawalRequestsIndex = 'withdrawalRequestsIndex',
+  wrapperRegistrations = 'wrapperRegistrations'
 }
 
 export type SubgraphMaxTotalSupplyUpdated = {
@@ -14442,6 +18358,7 @@ export type SubgraphMaxTotalSupplyUpdated = {
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  caller?: Maybe<Scalars['Bytes']['output']>;
   eventIndex: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
   market: SubgraphMarket;
@@ -14479,6 +18396,16 @@ export type SubgraphMaxTotalSupplyUpdated_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  caller?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  caller_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -14557,6 +18484,7 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  caller = 'caller',
   eventIndex = 'eventIndex',
   id = 'id',
   market = 'market',
@@ -14566,6 +18494,8 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -14579,13 +18509,18 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -14602,10 +18537,14 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -14643,11 +18582,17 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   transactionHash = 'transactionHash'
 }
 
+export enum SubgraphMembershipChangeKind {
+  ADDED = 'ADDED',
+  REMOVED = 'REMOVED'
+}
+
 export type SubgraphMinimumDepositUpdated = {
   __typename: 'MinimumDepositUpdated';
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  caller?: Maybe<Scalars['Bytes']['output']>;
   eventIndex: Scalars['Int']['output'];
   hooks: SubgraphHooksInstance;
   id: Scalars['ID']['output'];
@@ -14686,6 +18631,16 @@ export type SubgraphMinimumDepositUpdated_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  caller?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  caller_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -14785,15 +18740,19 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  caller = 'caller',
   eventIndex = 'eventIndex',
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -14801,6 +18760,9 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   market = 'market',
   market__abiFamily = 'market__abiFamily',
@@ -14809,6 +18771,8 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -14822,13 +18786,18 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -14845,10 +18814,14 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -15564,6 +19537,435 @@ export enum SubgraphParameterConstraints_OrderBy {
   minimumWithdrawalBatchDuration = 'minimumWithdrawalBatchDuration'
 }
 
+/** Internal assembly state for the v2.5 factory deployment event bundle. */
+export type SubgraphPendingMarketDeployment = {
+  __typename: 'PendingMarketDeployment';
+  annualInterestBips?: Maybe<Scalars['BigInt']['output']>;
+  assetAddress: Scalars['Bytes']['output'];
+  borrower: Scalars['Bytes']['output'];
+  borrowerIdentityRegistryAddress: Scalars['Bytes']['output'];
+  borrowerPrincipal: Scalars['Bytes']['output'];
+  commitmentFeeBips?: Maybe<Scalars['BigInt']['output']>;
+  delinquencyFeeBips?: Maybe<Scalars['BigInt']['output']>;
+  delinquencyGracePeriod?: Maybe<Scalars['BigInt']['output']>;
+  deployedEvent: SubgraphMarketDeployed;
+  factory: SubgraphHooksFactory;
+  feeRecipient?: Maybe<Scalars['Bytes']['output']>;
+  finalHooks: Scalars['BigInt']['output'];
+  hasDeploymentConfig: Scalars['Boolean']['output'];
+  hasHooksData: Scalars['Boolean']['output'];
+  hasRevolvingConfig: Scalars['Boolean']['output'];
+  hooks: SubgraphHooksInstance;
+  hooksData?: Maybe<Scalars['Bytes']['output']>;
+  hooksTemplate: SubgraphHooksTemplate;
+  id: Scalars['ID']['output'];
+  maxTotalSupply?: Maybe<Scalars['BigInt']['output']>;
+  name: Scalars['String']['output'];
+  originationFeeAmount?: Maybe<Scalars['BigInt']['output']>;
+  originationFeeAssetAddress?: Maybe<Scalars['Bytes']['output']>;
+  protocolFeeBips?: Maybe<Scalars['BigInt']['output']>;
+  requestedHooks: Scalars['BigInt']['output'];
+  reserveRatioBips?: Maybe<Scalars['BigInt']['output']>;
+  symbol: Scalars['String']['output'];
+  withdrawalBatchDuration?: Maybe<Scalars['BigInt']['output']>;
+};
+
+export type SubgraphPendingMarketDeployment_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphPendingMarketDeployment_Filter>>>;
+  annualInterestBips?: InputMaybe<Scalars['BigInt']['input']>;
+  annualInterestBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  annualInterestBips_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  annualInterestBips_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  annualInterestBips_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  annualInterestBips_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  annualInterestBips_not?: InputMaybe<Scalars['BigInt']['input']>;
+  annualInterestBips_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  assetAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  assetAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  assetAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrower?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrowerIdentityRegistryAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerIdentityRegistryAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrowerPrincipal?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrowerPrincipal_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_not?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrowerPrincipal_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrower_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  borrower_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  borrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  commitmentFeeBips?: InputMaybe<Scalars['BigInt']['input']>;
+  commitmentFeeBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  commitmentFeeBips_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  commitmentFeeBips_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  commitmentFeeBips_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  commitmentFeeBips_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  commitmentFeeBips_not?: InputMaybe<Scalars['BigInt']['input']>;
+  commitmentFeeBips_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  delinquencyFeeBips?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyFeeBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyFeeBips_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyFeeBips_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  delinquencyFeeBips_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyFeeBips_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyFeeBips_not?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyFeeBips_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  delinquencyGracePeriod?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyGracePeriod_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyGracePeriod_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyGracePeriod_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  delinquencyGracePeriod_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyGracePeriod_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyGracePeriod_not?: InputMaybe<Scalars['BigInt']['input']>;
+  delinquencyGracePeriod_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  deployedEvent?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_?: InputMaybe<SubgraphMarketDeployed_Filter>;
+  deployedEvent_contains?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_ends_with?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_gt?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_gte?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  deployedEvent_lt?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_lte?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_not?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_not_contains?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  deployedEvent_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_starts_with?: InputMaybe<Scalars['String']['input']>;
+  deployedEvent_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  factory?: InputMaybe<Scalars['String']['input']>;
+  factory_?: InputMaybe<SubgraphHooksFactory_Filter>;
+  factory_contains?: InputMaybe<Scalars['String']['input']>;
+  factory_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  factory_ends_with?: InputMaybe<Scalars['String']['input']>;
+  factory_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  factory_gt?: InputMaybe<Scalars['String']['input']>;
+  factory_gte?: InputMaybe<Scalars['String']['input']>;
+  factory_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  factory_lt?: InputMaybe<Scalars['String']['input']>;
+  factory_lte?: InputMaybe<Scalars['String']['input']>;
+  factory_not?: InputMaybe<Scalars['String']['input']>;
+  factory_not_contains?: InputMaybe<Scalars['String']['input']>;
+  factory_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  factory_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  factory_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  factory_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  factory_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  factory_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  factory_starts_with?: InputMaybe<Scalars['String']['input']>;
+  factory_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  feeRecipient?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  feeRecipient_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_not?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  feeRecipient_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  finalHooks?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  finalHooks_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_not?: InputMaybe<Scalars['BigInt']['input']>;
+  finalHooks_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  hasDeploymentConfig?: InputMaybe<Scalars['Boolean']['input']>;
+  hasDeploymentConfig_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  hasDeploymentConfig_not?: InputMaybe<Scalars['Boolean']['input']>;
+  hasDeploymentConfig_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  hasHooksData?: InputMaybe<Scalars['Boolean']['input']>;
+  hasHooksData_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  hasHooksData_not?: InputMaybe<Scalars['Boolean']['input']>;
+  hasHooksData_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  hasRevolvingConfig?: InputMaybe<Scalars['Boolean']['input']>;
+  hasRevolvingConfig_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  hasRevolvingConfig_not?: InputMaybe<Scalars['Boolean']['input']>;
+  hasRevolvingConfig_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  hooks?: InputMaybe<Scalars['String']['input']>;
+  hooksData?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  hooksData_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_not?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  hooksData_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  hooksTemplate?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_?: InputMaybe<SubgraphHooksTemplate_Filter>;
+  hooksTemplate_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_gt?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_gte?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksTemplate_lt?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_lte?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksTemplate_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_?: InputMaybe<SubgraphHooksInstance_Filter>;
+  hooks_contains?: InputMaybe<Scalars['String']['input']>;
+  hooks_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_gt?: InputMaybe<Scalars['String']['input']>;
+  hooks_gte?: InputMaybe<Scalars['String']['input']>;
+  hooks_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooks_lt?: InputMaybe<Scalars['String']['input']>;
+  hooks_lte?: InputMaybe<Scalars['String']['input']>;
+  hooks_not?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_contains?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooks_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooks_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooks_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  maxTotalSupply?: InputMaybe<Scalars['BigInt']['input']>;
+  maxTotalSupply_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  maxTotalSupply_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  maxTotalSupply_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  maxTotalSupply_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  maxTotalSupply_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  maxTotalSupply_not?: InputMaybe<Scalars['BigInt']['input']>;
+  maxTotalSupply_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  name_contains?: InputMaybe<Scalars['String']['input']>;
+  name_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_ends_with?: InputMaybe<Scalars['String']['input']>;
+  name_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_gt?: InputMaybe<Scalars['String']['input']>;
+  name_gte?: InputMaybe<Scalars['String']['input']>;
+  name_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  name_lt?: InputMaybe<Scalars['String']['input']>;
+  name_lte?: InputMaybe<Scalars['String']['input']>;
+  name_not?: InputMaybe<Scalars['String']['input']>;
+  name_not_contains?: InputMaybe<Scalars['String']['input']>;
+  name_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  name_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  name_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  name_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  name_starts_with?: InputMaybe<Scalars['String']['input']>;
+  name_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphPendingMarketDeployment_Filter>>>;
+  originationFeeAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  originationFeeAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  originationFeeAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  originationFeeAssetAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  originationFeeAssetAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  originationFeeAssetAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  protocolFeeBips?: InputMaybe<Scalars['BigInt']['input']>;
+  protocolFeeBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  protocolFeeBips_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  protocolFeeBips_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  protocolFeeBips_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  protocolFeeBips_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  protocolFeeBips_not?: InputMaybe<Scalars['BigInt']['input']>;
+  protocolFeeBips_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  requestedHooks?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  requestedHooks_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_not?: InputMaybe<Scalars['BigInt']['input']>;
+  requestedHooks_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  reserveRatioBips?: InputMaybe<Scalars['BigInt']['input']>;
+  reserveRatioBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  reserveRatioBips_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  reserveRatioBips_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  reserveRatioBips_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  reserveRatioBips_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  reserveRatioBips_not?: InputMaybe<Scalars['BigInt']['input']>;
+  reserveRatioBips_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  symbol?: InputMaybe<Scalars['String']['input']>;
+  symbol_contains?: InputMaybe<Scalars['String']['input']>;
+  symbol_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  symbol_ends_with?: InputMaybe<Scalars['String']['input']>;
+  symbol_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  symbol_gt?: InputMaybe<Scalars['String']['input']>;
+  symbol_gte?: InputMaybe<Scalars['String']['input']>;
+  symbol_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  symbol_lt?: InputMaybe<Scalars['String']['input']>;
+  symbol_lte?: InputMaybe<Scalars['String']['input']>;
+  symbol_not?: InputMaybe<Scalars['String']['input']>;
+  symbol_not_contains?: InputMaybe<Scalars['String']['input']>;
+  symbol_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  symbol_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  symbol_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  symbol_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  symbol_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  symbol_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  symbol_starts_with?: InputMaybe<Scalars['String']['input']>;
+  symbol_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  withdrawalBatchDuration?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalBatchDuration_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalBatchDuration_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalBatchDuration_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  withdrawalBatchDuration_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalBatchDuration_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalBatchDuration_not?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalBatchDuration_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+};
+
+export enum SubgraphPendingMarketDeployment_OrderBy {
+  annualInterestBips = 'annualInterestBips',
+  assetAddress = 'assetAddress',
+  borrower = 'borrower',
+  borrowerIdentityRegistryAddress = 'borrowerIdentityRegistryAddress',
+  borrowerPrincipal = 'borrowerPrincipal',
+  commitmentFeeBips = 'commitmentFeeBips',
+  delinquencyFeeBips = 'delinquencyFeeBips',
+  delinquencyGracePeriod = 'delinquencyGracePeriod',
+  deployedEvent = 'deployedEvent',
+  deployedEvent__assetAddress = 'deployedEvent__assetAddress',
+  deployedEvent__blockLogIndex = 'deployedEvent__blockLogIndex',
+  deployedEvent__blockNumber = 'deployedEvent__blockNumber',
+  deployedEvent__blockTimestamp = 'deployedEvent__blockTimestamp',
+  deployedEvent__borrower = 'deployedEvent__borrower',
+  deployedEvent__borrowerIdentityRegistryAddress = 'deployedEvent__borrowerIdentityRegistryAddress',
+  deployedEvent__borrowerPrincipal = 'deployedEvent__borrowerPrincipal',
+  deployedEvent__finalHooks = 'deployedEvent__finalHooks',
+  deployedEvent__id = 'deployedEvent__id',
+  deployedEvent__name = 'deployedEvent__name',
+  deployedEvent__requestedHooks = 'deployedEvent__requestedHooks',
+  deployedEvent__symbol = 'deployedEvent__symbol',
+  deployedEvent__transactionHash = 'deployedEvent__transactionHash',
+  factory = 'factory',
+  factory__abiFamily = 'factory__abiFamily',
+  factory__address = 'factory__address',
+  factory__configured = 'factory__configured',
+  factory__configuredStartBlock = 'factory__configuredStartBlock',
+  factory__deploymentTarget = 'factory__deploymentTarget',
+  factory__eventGeneration = 'factory__eventGeneration',
+  factory__eventIndex = 'factory__eventIndex',
+  factory__generation = 'factory__generation',
+  factory__hookedMarketAbi = 'factory__hookedMarketAbi',
+  factory__id = 'factory__id',
+  factory__indexed = 'factory__indexed',
+  factory__isRegistered = 'factory__isRegistered',
+  factory__label = 'factory__label',
+  factory__lifecycle = 'factory__lifecycle',
+  factory__marketKind = 'factory__marketKind',
+  factory__registrationUpdatedAtBlock = 'factory__registrationUpdatedAtBlock',
+  factory__registrationUpdatedAtTimestamp = 'factory__registrationUpdatedAtTimestamp',
+  factory__sentinel = 'factory__sentinel',
+  feeRecipient = 'feeRecipient',
+  finalHooks = 'finalHooks',
+  hasDeploymentConfig = 'hasDeploymentConfig',
+  hasHooksData = 'hasHooksData',
+  hasRevolvingConfig = 'hasRevolvingConfig',
+  hooks = 'hooks',
+  hooksData = 'hooksData',
+  hooksTemplate = 'hooksTemplate',
+  hooksTemplate__abiFamily = 'hooksTemplate__abiFamily',
+  hooksTemplate__address = 'hooksTemplate__address',
+  hooksTemplate__id = 'hooksTemplate__id',
+  hooksTemplate__kind = 'hooksTemplate__kind',
+  hooksTemplate__version = 'hooksTemplate__version',
+  hooks__abiFamily = 'hooks__abiFamily',
+  hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
+  hooks__borrower = 'hooks__borrower',
+  hooks__deployedAtBlock = 'hooks__deployedAtBlock',
+  hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
+  hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
+  hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
+  hooks__eventIndex = 'hooks__eventIndex',
+  hooks__generation = 'hooks__generation',
+  hooks__id = 'hooks__id',
+  hooks__kind = 'hooks__kind',
+  hooks__marketKind = 'hooks__marketKind',
+  hooks__name = 'hooks__name',
+  hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
+  id = 'id',
+  maxTotalSupply = 'maxTotalSupply',
+  name = 'name',
+  originationFeeAmount = 'originationFeeAmount',
+  originationFeeAssetAddress = 'originationFeeAssetAddress',
+  protocolFeeBips = 'protocolFeeBips',
+  requestedHooks = 'requestedHooks',
+  reserveRatioBips = 'reserveRatioBips',
+  symbol = 'symbol',
+  withdrawalBatchDuration = 'withdrawalBatchDuration'
+}
+
 export type SubgraphPeriodicTermClosed = {
   __typename: 'PeriodicTermClosed';
   blockLogIndex: Scalars['Int']['output'];
@@ -15683,11 +20085,14 @@ export enum SubgraphPeriodicTermClosed_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -15695,6 +20100,9 @@ export enum SubgraphPeriodicTermClosed_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   market = 'market',
   market__abiFamily = 'market__abiFamily',
@@ -15703,6 +20111,8 @@ export enum SubgraphPeriodicTermClosed_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -15716,13 +20126,18 @@ export enum SubgraphPeriodicTermClosed_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -15739,10 +20154,14 @@ export enum SubgraphPeriodicTermClosed_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -15779,6 +20198,7 @@ export enum SubgraphPeriodicTermClosed_OrderBy {
 
 export type SubgraphPeriodicTermUpdated = {
   __typename: 'PeriodicTermUpdated';
+  administrator?: Maybe<Scalars['Bytes']['output']>;
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
@@ -15798,6 +20218,16 @@ export type SubgraphPeriodicTermUpdated = {
 export type SubgraphPeriodicTermUpdated_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphPeriodicTermUpdated_Filter>>>;
   blockLogIndex?: InputMaybe<Scalars['Int']['input']>;
   blockLogIndex_gt?: InputMaybe<Scalars['Int']['input']>;
@@ -15943,6 +20373,7 @@ export type SubgraphPeriodicTermUpdated_Filter = {
 };
 
 export enum SubgraphPeriodicTermUpdated_OrderBy {
+  administrator = 'administrator',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
@@ -15950,11 +20381,14 @@ export enum SubgraphPeriodicTermUpdated_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -15962,6 +20396,9 @@ export enum SubgraphPeriodicTermUpdated_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   market = 'market',
   market__abiFamily = 'market__abiFamily',
@@ -15970,6 +20407,8 @@ export enum SubgraphPeriodicTermUpdated_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -15983,13 +20422,18 @@ export enum SubgraphPeriodicTermUpdated_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -16006,10 +20450,14 @@ export enum SubgraphPeriodicTermUpdated_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -16355,6 +20803,7 @@ export type SubgraphProtocolFeeBipsUpdated = {
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  caller?: Maybe<Scalars['Bytes']['output']>;
   eventIndex: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
   market: SubgraphMarket;
@@ -16392,6 +20841,16 @@ export type SubgraphProtocolFeeBipsUpdated_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  caller?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  caller_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -16470,6 +20929,7 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  caller = 'caller',
   eventIndex = 'eventIndex',
   id = 'id',
   market = 'market',
@@ -16479,6 +20939,8 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -16492,13 +20954,18 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -16515,10 +20982,14 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -16736,6 +21207,12 @@ export enum SubgraphProtocolStats_OrderBy {
   usdTotalsComplete = 'usdTotalsComplete'
 }
 
+export enum SubgraphProviderMetadataState {
+  AVAILABLE = 'AVAILABLE',
+  UNAVAILABLE = 'UNAVAILABLE',
+  UNKNOWN = 'UNKNOWN'
+}
+
 export type SubgraphQuery = {
   __typename: 'Query';
   /** Access to subgraph metadata */
@@ -16768,8 +21245,18 @@ export type SubgraphQuery = {
   archControllers: Array<SubgraphArchController>;
   borrow?: Maybe<SubgraphBorrow>;
   borrower?: Maybe<SubgraphBorrower>;
+  borrowerAccount?: Maybe<SubgraphBorrowerAccount>;
+  borrowerAccountFactories: Array<SubgraphBorrowerAccountFactory>;
+  borrowerAccountFactory?: Maybe<SubgraphBorrowerAccountFactory>;
+  borrowerAccountFactoryChange?: Maybe<SubgraphBorrowerAccountFactoryChange>;
+  borrowerAccountFactoryChanges: Array<SubgraphBorrowerAccountFactoryChange>;
+  borrowerAccountPrincipalChange?: Maybe<SubgraphBorrowerAccountPrincipalChange>;
+  borrowerAccountPrincipalChanges: Array<SubgraphBorrowerAccountPrincipalChange>;
+  borrowerAccounts: Array<SubgraphBorrowerAccount>;
   borrowerDailyStats?: Maybe<SubgraphBorrowerDailyStats>;
   borrowerDailyStats_collection: Array<SubgraphBorrowerDailyStats>;
+  borrowerIdentityRegistries: Array<SubgraphBorrowerIdentityRegistry>;
+  borrowerIdentityRegistry?: Maybe<SubgraphBorrowerIdentityRegistry>;
   borrowerRegistrationChange?: Maybe<SubgraphBorrowerRegistrationChange>;
   borrowerRegistrationChanges: Array<SubgraphBorrowerRegistrationChange>;
   borrowerStats?: Maybe<SubgraphBorrowerStats>;
@@ -16800,6 +21287,8 @@ export type SubgraphQuery = {
   deposits: Array<SubgraphDeposit>;
   disabledForceBuyBacks?: Maybe<SubgraphDisabledForceBuyBacks>;
   disabledForceBuyBacks_collection: Array<SubgraphDisabledForceBuyBacks>;
+  drawnAmountUpdate?: Maybe<SubgraphDrawnAmountUpdate>;
+  drawnAmountUpdates: Array<SubgraphDrawnAmountUpdate>;
   factoryRegistration?: Maybe<SubgraphFactoryRegistration>;
   factoryRegistrationEvent?: Maybe<SubgraphFactoryRegistrationEvent>;
   factoryRegistrationEvents: Array<SubgraphFactoryRegistrationEvent>;
@@ -16810,6 +21299,8 @@ export type SubgraphQuery = {
   fixedTermUpdateds: Array<SubgraphFixedTermUpdated>;
   forceBuyBack?: Maybe<SubgraphForceBuyBack>;
   forceBuyBacks: Array<SubgraphForceBuyBack>;
+  hookAdministratorChange?: Maybe<SubgraphHookAdministratorChange>;
+  hookAdministratorChanges: Array<SubgraphHookAdministratorChange>;
   hooksConfig?: Maybe<SubgraphHooksConfig>;
   hooksConfigs: Array<SubgraphHooksConfig>;
   hooksFactories: Array<SubgraphHooksFactory>;
@@ -16817,6 +21308,8 @@ export type SubgraphQuery = {
   hooksInstance?: Maybe<SubgraphHooksInstance>;
   hooksInstanceDeployed?: Maybe<SubgraphHooksInstanceDeployed>;
   hooksInstanceDeployeds: Array<SubgraphHooksInstanceDeployed>;
+  hooksInstanceRoleProviderSnapshot?: Maybe<SubgraphHooksInstanceRoleProviderSnapshot>;
+  hooksInstanceRoleProviderSnapshots: Array<SubgraphHooksInstanceRoleProviderSnapshot>;
   hooksInstances: Array<SubgraphHooksInstance>;
   hooksNameUpdated?: Maybe<SubgraphHooksNameUpdated>;
   hooksNameUpdateds: Array<SubgraphHooksNameUpdated>;
@@ -16857,22 +21350,30 @@ export type SubgraphQuery = {
   market?: Maybe<SubgraphMarket>;
   marketAdded?: Maybe<SubgraphMarketAdded>;
   marketAddeds: Array<SubgraphMarketAdded>;
+  marketBorrowerChange?: Maybe<SubgraphMarketBorrowerChange>;
+  marketBorrowerChanges: Array<SubgraphMarketBorrowerChange>;
   marketClosed?: Maybe<SubgraphMarketClosed>;
   marketCloseds: Array<SubgraphMarketClosed>;
   marketDailyStats?: Maybe<SubgraphMarketDailyStats>;
   marketDailyStats_collection: Array<SubgraphMarketDailyStats>;
   marketDeployed?: Maybe<SubgraphMarketDeployed>;
   marketDeployeds: Array<SubgraphMarketDeployed>;
+  marketDeploymentConfig?: Maybe<SubgraphMarketDeploymentConfig>;
+  marketDeploymentConfigs: Array<SubgraphMarketDeploymentConfig>;
   marketEvent?: Maybe<SubgraphMarketEvent>;
   marketEventCursor?: Maybe<SubgraphMarketEventCursor>;
   marketEventCursors: Array<SubgraphMarketEventCursor>;
   marketEvents: Array<SubgraphMarketEvent>;
+  marketHooksData?: Maybe<SubgraphMarketHooksData>;
+  marketHooksDatas: Array<SubgraphMarketHooksData>;
   marketInterestAccrued?: Maybe<SubgraphMarketInterestAccrued>;
   marketInterestAccrueds: Array<SubgraphMarketInterestAccrued>;
   marketRemoved?: Maybe<SubgraphMarketRemoved>;
   marketRemoveds: Array<SubgraphMarketRemoved>;
   marketSnapshot?: Maybe<SubgraphMarketSnapshot>;
   marketSnapshots: Array<SubgraphMarketSnapshot>;
+  marketWrapperRegistration?: Maybe<SubgraphMarketWrapperRegistration>;
+  marketWrapperRegistrations: Array<SubgraphMarketWrapperRegistration>;
   markets: Array<SubgraphMarket>;
   maxTotalSupplyUpdated?: Maybe<SubgraphMaxTotalSupplyUpdated>;
   maxTotalSupplyUpdateds: Array<SubgraphMaxTotalSupplyUpdated>;
@@ -16890,6 +21391,8 @@ export type SubgraphQuery = {
   ownershipTransferreds: Array<SubgraphOwnershipTransferred>;
   parameterConstraints?: Maybe<SubgraphParameterConstraints>;
   parameterConstraints_collection: Array<SubgraphParameterConstraints>;
+  pendingMarketDeployment?: Maybe<SubgraphPendingMarketDeployment>;
+  pendingMarketDeployments: Array<SubgraphPendingMarketDeployment>;
   periodicTermClosed?: Maybe<SubgraphPeriodicTermClosed>;
   periodicTermCloseds: Array<SubgraphPeriodicTermClosed>;
   periodicTermUpdated?: Maybe<SubgraphPeriodicTermUpdated>;
@@ -16904,9 +21407,21 @@ export type SubgraphQuery = {
   registeredBorrowers: Array<SubgraphRegisteredBorrower>;
   reserveRatioBipsUpdated?: Maybe<SubgraphReserveRatioBipsUpdated>;
   reserveRatioBipsUpdateds: Array<SubgraphReserveRatioBipsUpdated>;
+  revolvingMarketDeployment?: Maybe<SubgraphRevolvingMarketDeployment>;
+  revolvingMarketDeployments: Array<SubgraphRevolvingMarketDeployment>;
   roleProvider?: Maybe<SubgraphRoleProvider>;
   roleProviderAdded?: Maybe<SubgraphRoleProviderAdded>;
   roleProviderAddeds: Array<SubgraphRoleProviderAdded>;
+  roleProviderAdministratorChange?: Maybe<SubgraphRoleProviderAdministratorChange>;
+  roleProviderAdministratorChanges: Array<SubgraphRoleProviderAdministratorChange>;
+  roleProviderFactories: Array<SubgraphRoleProviderFactory>;
+  roleProviderFactory?: Maybe<SubgraphRoleProviderFactory>;
+  roleProviderInstance?: Maybe<SubgraphRoleProviderInstance>;
+  roleProviderInstances: Array<SubgraphRoleProviderInstance>;
+  roleProviderMember?: Maybe<SubgraphRoleProviderMember>;
+  roleProviderMembers: Array<SubgraphRoleProviderMember>;
+  roleProviderMembershipChange?: Maybe<SubgraphRoleProviderMembershipChange>;
+  roleProviderMembershipChanges: Array<SubgraphRoleProviderMembershipChange>;
   roleProviderRemoved?: Maybe<SubgraphRoleProviderRemoved>;
   roleProviderRemoveds: Array<SubgraphRoleProviderRemoved>;
   roleProviderUpdated?: Maybe<SubgraphRoleProviderUpdated>;
@@ -17236,6 +21751,78 @@ export type SubgraphQueryBorrowerArgs = {
 };
 
 
+export type SubgraphQueryBorrowerAccountArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryBorrowerAccountFactoriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccountFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerAccountFactory_Filter>;
+};
+
+
+export type SubgraphQueryBorrowerAccountFactoryArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryBorrowerAccountFactoryChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryBorrowerAccountFactoryChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccountFactoryChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerAccountFactoryChange_Filter>;
+};
+
+
+export type SubgraphQueryBorrowerAccountPrincipalChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryBorrowerAccountPrincipalChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccountPrincipalChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerAccountPrincipalChange_Filter>;
+};
+
+
+export type SubgraphQueryBorrowerAccountsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccount_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerAccount_Filter>;
+};
+
+
 export type SubgraphQueryBorrowerDailyStatsArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
@@ -17251,6 +21838,24 @@ export type SubgraphQueryBorrowerDailyStats_CollectionArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
   where?: InputMaybe<SubgraphBorrowerDailyStats_Filter>;
+};
+
+
+export type SubgraphQueryBorrowerIdentityRegistriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerIdentityRegistry_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerIdentityRegistry_Filter>;
+};
+
+
+export type SubgraphQueryBorrowerIdentityRegistryArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
 };
 
 
@@ -17528,6 +22133,24 @@ export type SubgraphQueryDisabledForceBuyBacks_CollectionArgs = {
 };
 
 
+export type SubgraphQueryDrawnAmountUpdateArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryDrawnAmountUpdatesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphDrawnAmountUpdate_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphDrawnAmountUpdate_Filter>;
+};
+
+
 export type SubgraphQueryFactoryRegistrationArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
@@ -17618,6 +22241,24 @@ export type SubgraphQueryForceBuyBacksArgs = {
 };
 
 
+export type SubgraphQueryHookAdministratorChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryHookAdministratorChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHookAdministratorChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHookAdministratorChange_Filter>;
+};
+
+
 export type SubgraphQueryHooksConfigArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
@@ -17676,6 +22317,24 @@ export type SubgraphQueryHooksInstanceDeployedsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
   where?: InputMaybe<SubgraphHooksInstanceDeployed_Filter>;
+};
+
+
+export type SubgraphQueryHooksInstanceRoleProviderSnapshotArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryHooksInstanceRoleProviderSnapshotsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_Filter>;
 };
 
 
@@ -18039,6 +22698,24 @@ export type SubgraphQueryMarketAddedsArgs = {
 };
 
 
+export type SubgraphQueryMarketBorrowerChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryMarketBorrowerChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketBorrowerChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketBorrowerChange_Filter>;
+};
+
+
 export type SubgraphQueryMarketClosedArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
@@ -18093,6 +22770,24 @@ export type SubgraphQueryMarketDeployedsArgs = {
 };
 
 
+export type SubgraphQueryMarketDeploymentConfigArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryMarketDeploymentConfigsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketDeploymentConfig_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketDeploymentConfig_Filter>;
+};
+
+
 export type SubgraphQueryMarketEventArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
@@ -18126,6 +22821,24 @@ export type SubgraphQueryMarketEventsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
   where?: InputMaybe<SubgraphMarketEvent_Filter>;
+};
+
+
+export type SubgraphQueryMarketHooksDataArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryMarketHooksDatasArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketHooksData_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketHooksData_Filter>;
 };
 
 
@@ -18180,6 +22893,24 @@ export type SubgraphQueryMarketSnapshotsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
   where?: InputMaybe<SubgraphMarketSnapshot_Filter>;
+};
+
+
+export type SubgraphQueryMarketWrapperRegistrationArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryMarketWrapperRegistrationsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketWrapperRegistration_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketWrapperRegistration_Filter>;
 };
 
 
@@ -18338,6 +23069,24 @@ export type SubgraphQueryParameterConstraints_CollectionArgs = {
 };
 
 
+export type SubgraphQueryPendingMarketDeploymentArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryPendingMarketDeploymentsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphPendingMarketDeployment_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphPendingMarketDeployment_Filter>;
+};
+
+
 export type SubgraphQueryPeriodicTermClosedArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
@@ -18464,6 +23213,24 @@ export type SubgraphQueryReserveRatioBipsUpdatedsArgs = {
 };
 
 
+export type SubgraphQueryRevolvingMarketDeploymentArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryRevolvingMarketDeploymentsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRevolvingMarketDeployment_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRevolvingMarketDeployment_Filter>;
+};
+
+
 export type SubgraphQueryRoleProviderArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
@@ -18486,6 +23253,96 @@ export type SubgraphQueryRoleProviderAddedsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
   where?: InputMaybe<SubgraphRoleProviderAdded_Filter>;
+};
+
+
+export type SubgraphQueryRoleProviderAdministratorChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryRoleProviderAdministratorChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderAdministratorChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderAdministratorChange_Filter>;
+};
+
+
+export type SubgraphQueryRoleProviderFactoriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderFactory_Filter>;
+};
+
+
+export type SubgraphQueryRoleProviderFactoryArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryRoleProviderInstanceArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryRoleProviderInstancesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderInstance_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
+};
+
+
+export type SubgraphQueryRoleProviderMemberArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryRoleProviderMembersArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderMember_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderMember_Filter>;
+};
+
+
+export type SubgraphQueryRoleProviderMembershipChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryRoleProviderMembershipChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderMembershipChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderMembershipChange_Filter>;
 };
 
 
@@ -19263,6 +24120,7 @@ export type SubgraphReserveRatioBipsUpdated = {
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  caller?: Maybe<Scalars['Bytes']['output']>;
   id: Scalars['ID']['output'];
   market: SubgraphMarket;
   newReserveRatioBips: Scalars['Int']['output'];
@@ -19298,6 +24156,16 @@ export type SubgraphReserveRatioBipsUpdated_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  caller?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  caller_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
   id_gte?: InputMaybe<Scalars['ID']['input']>;
@@ -19360,6 +24228,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  caller = 'caller',
   id = 'id',
   market = 'market',
   market__abiFamily = 'market__abiFamily',
@@ -19368,6 +24237,8 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -19381,13 +24252,18 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -19404,10 +24280,14 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -19444,6 +24324,193 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   transactionHash = 'transactionHash'
 }
 
+export type SubgraphRevolvingMarketDeployment = {
+  __typename: 'RevolvingMarketDeployment';
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  commitmentFeeBips: Scalars['BigInt']['output'];
+  id: Scalars['ID']['output'];
+  market: SubgraphMarket;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphRevolvingMarketDeployment_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphRevolvingMarketDeployment_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  commitmentFeeBips?: InputMaybe<Scalars['BigInt']['input']>;
+  commitmentFeeBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  commitmentFeeBips_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  commitmentFeeBips_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  commitmentFeeBips_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  commitmentFeeBips_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  commitmentFeeBips_not?: InputMaybe<Scalars['BigInt']['input']>;
+  commitmentFeeBips_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  market?: InputMaybe<Scalars['String']['input']>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars['String']['input']>;
+  market_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_gt?: InputMaybe<Scalars['String']['input']>;
+  market_gte?: InputMaybe<Scalars['String']['input']>;
+  market_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_lt?: InputMaybe<Scalars['String']['input']>;
+  market_lte?: InputMaybe<Scalars['String']['input']>;
+  market_not?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphRevolvingMarketDeployment_Filter>>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphRevolvingMarketDeployment_OrderBy {
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  commitmentFeeBips = 'commitmentFeeBips',
+  id = 'id',
+  market = 'market',
+  market__abiFamily = 'market__abiFamily',
+  market__address = 'market__address',
+  market__annualInterestBips = 'market__annualInterestBips',
+  market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
+  market__borrowIndex = 'market__borrowIndex',
+  market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__commitmentFeeBips = 'market__commitmentFeeBips',
+  market__createdAt = 'market__createdAt',
+  market__createdAtBlock = 'market__createdAtBlock',
+  market__createdAtLogIndex = 'market__createdAtLogIndex',
+  market__createdAtTimestamp = 'market__createdAtTimestamp',
+  market__createdAtTransaction = 'market__createdAtTransaction',
+  market__debtRepaidIndex = 'market__debtRepaidIndex',
+  market__decimals = 'market__decimals',
+  market__delinquencyFeeBips = 'market__delinquencyFeeBips',
+  market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
+  market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
+  market__depositIndex = 'market__depositIndex',
+  market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
+  market__eventIndex = 'market__eventIndex',
+  market__feeRecipient = 'market__feeRecipient',
+  market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
+  market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
+  market__forceBuyBackIndex = 'market__forceBuyBackIndex',
+  market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
+  market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
+  market__isClosed = 'market__isClosed',
+  market__isDelinquent = 'market__isDelinquent',
+  market__isIncurringPenalties = 'market__isIncurringPenalties',
+  market__isRegistered = 'market__isRegistered',
+  market__lastInterestAccruedBlockNumber = 'market__lastInterestAccruedBlockNumber',
+  market__lastInterestAccruedTimestamp = 'market__lastInterestAccruedTimestamp',
+  market__marketKind = 'market__marketKind',
+  market__maxTotalSupply = 'market__maxTotalSupply',
+  market__maxTotalSupplyUpdatedIndex = 'market__maxTotalSupplyUpdatedIndex',
+  market__minimumDepositUpdatedIndex = 'market__minimumDepositUpdatedIndex',
+  market__name = 'market__name',
+  market__normalizedUnclaimedWithdrawals = 'market__normalizedUnclaimedWithdrawals',
+  market__numCollateralContracts = 'market__numCollateralContracts',
+  market__originKind = 'market__originKind',
+  market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
+  market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
+  market__pendingProtocolFees = 'market__pendingProtocolFees',
+  market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
+  market__protocolFeeBips = 'market__protocolFeeBips',
+  market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
+  market__reserveRatioBips = 'market__reserveRatioBips',
+  market__scaleFactor = 'market__scaleFactor',
+  market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
+  market__scaledTotalSupply = 'market__scaledTotalSupply',
+  market__sentinel = 'market__sentinel',
+  market__symbol = 'market__symbol',
+  market__temporaryReserveRatioActive = 'market__temporaryReserveRatioActive',
+  market__temporaryReserveRatioExpiry = 'market__temporaryReserveRatioExpiry',
+  market__timeDelinquent = 'market__timeDelinquent',
+  market__totalAssets = 'market__totalAssets',
+  market__totalBaseInterestAccrued = 'market__totalBaseInterestAccrued',
+  market__totalBaseInterestAccruedUSD = 'market__totalBaseInterestAccruedUSD',
+  market__totalBorrowed = 'market__totalBorrowed',
+  market__totalBorrowedUSD = 'market__totalBorrowedUSD',
+  market__totalDebtUSD = 'market__totalDebtUSD',
+  market__totalDelinquencyFeesAccrued = 'market__totalDelinquencyFeesAccrued',
+  market__totalDelinquencyFeesAccruedUSD = 'market__totalDelinquencyFeesAccruedUSD',
+  market__totalDeposited = 'market__totalDeposited',
+  market__totalDepositedUSD = 'market__totalDepositedUSD',
+  market__totalProtocolFeesAccrued = 'market__totalProtocolFeesAccrued',
+  market__totalProtocolFeesAccruedUSD = 'market__totalProtocolFeesAccruedUSD',
+  market__totalRepaid = 'market__totalRepaid',
+  market__totalRepaidUSD = 'market__totalRepaidUSD',
+  market__totalWithdrawalsExecuted = 'market__totalWithdrawalsExecuted',
+  market__totalWithdrawalsExecutedUSD = 'market__totalWithdrawalsExecutedUSD',
+  market__totalWithdrawalsRequested = 'market__totalWithdrawalsRequested',
+  market__totalWithdrawalsRequestedUSD = 'market__totalWithdrawalsRequestedUSD',
+  market__usdTotalsComplete = 'market__usdTotalsComplete',
+  market__version = 'market__version',
+  market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
+  transactionHash = 'transactionHash'
+}
+
 export type SubgraphRoleProvider = {
   __typename: 'RoleProvider';
   addedEvent?: Maybe<SubgraphRoleProviderAdded>;
@@ -19454,6 +24521,7 @@ export type SubgraphRoleProvider = {
   isPullProvider: Scalars['Boolean']['output'];
   isPushProvider: Scalars['Boolean']['output'];
   providerAddress: Scalars['Bytes']['output'];
+  providerInstance: SubgraphRoleProviderInstance;
   pullProviderIndex: Scalars['Int']['output'];
   pushProviderIndex: Scalars['Int']['output'];
   removedEvent?: Maybe<SubgraphRoleProviderRemoved>;
@@ -19491,6 +24559,7 @@ export type SubgraphRoleProviderUpdatedEventsArgs = {
 
 export type SubgraphRoleProviderAdded = {
   __typename: 'RoleProviderAdded';
+  administrator?: Maybe<Scalars['Bytes']['output']>;
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
@@ -19509,6 +24578,16 @@ export type SubgraphRoleProviderAdded = {
 export type SubgraphRoleProviderAdded_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderAdded_Filter>>>;
   blockLogIndex?: InputMaybe<Scalars['Int']['input']>;
   blockLogIndex_gt?: InputMaybe<Scalars['Int']['input']>;
@@ -19638,6 +24717,7 @@ export type SubgraphRoleProviderAdded_Filter = {
 };
 
 export enum SubgraphRoleProviderAdded_OrderBy {
+  administrator = 'administrator',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
@@ -19645,11 +24725,14 @@ export enum SubgraphRoleProviderAdded_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -19657,6 +24740,9 @@ export enum SubgraphRoleProviderAdded_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   isPullProvider = 'isPullProvider',
   isPushProvider = 'isPushProvider',
@@ -19675,8 +24761,797 @@ export enum SubgraphRoleProviderAdded_OrderBy {
   transactionHash = 'transactionHash'
 }
 
+export type SubgraphRoleProviderAdministratorChange = {
+  __typename: 'RoleProviderAdministratorChange';
+  administrator?: Maybe<Scalars['Bytes']['output']>;
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  cancelledPendingAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  id: Scalars['ID']['output'];
+  kind: SubgraphAdministratorChangeKind;
+  newAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  pendingAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  previousAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  previousPendingAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  provider: SubgraphRoleProviderInstance;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphRoleProviderAdministratorChange_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderAdministratorChange_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  cancelledPendingAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  cancelledPendingAdministrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  cancelledPendingAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  kind?: InputMaybe<SubgraphAdministratorChangeKind>;
+  kind_in?: InputMaybe<Array<SubgraphAdministratorChangeKind>>;
+  kind_not?: InputMaybe<SubgraphAdministratorChangeKind>;
+  kind_not_in?: InputMaybe<Array<SubgraphAdministratorChangeKind>>;
+  newAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  newAdministrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  newAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderAdministratorChange_Filter>>>;
+  pendingAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingAdministrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousAdministrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousPendingAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousPendingAdministrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousPendingAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  provider?: InputMaybe<Scalars['String']['input']>;
+  provider_?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
+  provider_contains?: InputMaybe<Scalars['String']['input']>;
+  provider_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_ends_with?: InputMaybe<Scalars['String']['input']>;
+  provider_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_gt?: InputMaybe<Scalars['String']['input']>;
+  provider_gte?: InputMaybe<Scalars['String']['input']>;
+  provider_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  provider_lt?: InputMaybe<Scalars['String']['input']>;
+  provider_lte?: InputMaybe<Scalars['String']['input']>;
+  provider_not?: InputMaybe<Scalars['String']['input']>;
+  provider_not_contains?: InputMaybe<Scalars['String']['input']>;
+  provider_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  provider_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  provider_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  provider_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_starts_with?: InputMaybe<Scalars['String']['input']>;
+  provider_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphRoleProviderAdministratorChange_OrderBy {
+  administrator = 'administrator',
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  cancelledPendingAdministrator = 'cancelledPendingAdministrator',
+  id = 'id',
+  kind = 'kind',
+  newAdministrator = 'newAdministrator',
+  pendingAdministrator = 'pendingAdministrator',
+  previousAdministrator = 'previousAdministrator',
+  previousPendingAdministrator = 'previousPendingAdministrator',
+  provider = 'provider',
+  provider__address = 'provider__address',
+  provider__administrator = 'provider__administrator',
+  provider__deployedAtBlock = 'provider__deployedAtBlock',
+  provider__deployedAtLogIndex = 'provider__deployedAtLogIndex',
+  provider__deployedAtTimestamp = 'provider__deployedAtTimestamp',
+  provider__deployedAtTransaction = 'provider__deployedAtTransaction',
+  provider__deployer = 'provider__deployer',
+  provider__id = 'provider__id',
+  provider__kind = 'provider__kind',
+  provider__pendingAdministrator = 'provider__pendingAdministrator',
+  provider__salt = 'provider__salt',
+  transactionHash = 'transactionHash'
+}
+
+export type SubgraphRoleProviderFactory = {
+  __typename: 'RoleProviderFactory';
+  address: Scalars['Bytes']['output'];
+  configured: Scalars['Boolean']['output'];
+  configuredStartBlock: Scalars['BigInt']['output'];
+  eventIndex: Scalars['Int']['output'];
+  generation: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  indexed: Scalars['Boolean']['output'];
+  kind: SubgraphRoleProviderKind;
+  label: Scalars['String']['output'];
+  lifecycle: SubgraphFactoryLifecycle;
+  providers: Array<SubgraphRoleProviderInstance>;
+};
+
+
+export type SubgraphRoleProviderFactoryProvidersArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderInstance_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
+};
+
+export type SubgraphRoleProviderFactory_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  address?: InputMaybe<Scalars['Bytes']['input']>;
+  address_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  address_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  address_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderFactory_Filter>>>;
+  configured?: InputMaybe<Scalars['Boolean']['input']>;
+  configuredStartBlock?: InputMaybe<Scalars['BigInt']['input']>;
+  eventIndex?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  eventIndex_lt?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_lte?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_not?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  generation?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  indexed?: InputMaybe<Scalars['Boolean']['input']>;
+  kind?: InputMaybe<SubgraphRoleProviderKind>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  lifecycle?: InputMaybe<SubgraphFactoryLifecycle>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderFactory_Filter>>>;
+  providers_?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
+};
+
+export enum SubgraphRoleProviderFactory_OrderBy {
+  address = 'address',
+  configured = 'configured',
+  configuredStartBlock = 'configuredStartBlock',
+  eventIndex = 'eventIndex',
+  generation = 'generation',
+  id = 'id',
+  indexed = 'indexed',
+  kind = 'kind',
+  label = 'label',
+  lifecycle = 'lifecycle',
+  providers = 'providers'
+}
+
+/** Reusable credential provider identity. Hook-specific TTL and indexes live on RoleProvider attachments. */
+export type SubgraphRoleProviderInstance = {
+  __typename: 'RoleProviderInstance';
+  address: Scalars['Bytes']['output'];
+  administrator?: Maybe<Scalars['Bytes']['output']>;
+  administratorChanges: Array<SubgraphRoleProviderAdministratorChange>;
+  attachments: Array<SubgraphRoleProvider>;
+  deployedAtBlock?: Maybe<Scalars['BigInt']['output']>;
+  deployedAtLogIndex?: Maybe<Scalars['BigInt']['output']>;
+  deployedAtTimestamp?: Maybe<Scalars['BigInt']['output']>;
+  deployedAtTransaction?: Maybe<Scalars['Bytes']['output']>;
+  deployer?: Maybe<Scalars['Bytes']['output']>;
+  deploymentFactory?: Maybe<SubgraphRoleProviderFactory>;
+  id: Scalars['ID']['output'];
+  kind: SubgraphRoleProviderKind;
+  members: Array<SubgraphRoleProviderMember>;
+  membershipChanges: Array<SubgraphRoleProviderMembershipChange>;
+  minAssets?: Maybe<Scalars['BigInt']['output']>;
+  minBalance?: Maybe<Scalars['BigInt']['output']>;
+  pendingAdministrator?: Maybe<Scalars['Bytes']['output']>;
+  root?: Maybe<Scalars['Bytes']['output']>;
+  rootChanges: Array<SubgraphRoleProviderRootChange>;
+  salt?: Maybe<Scalars['Bytes']['output']>;
+  skipInterfaceCheck?: Maybe<Scalars['Boolean']['output']>;
+  token?: Maybe<Scalars['Bytes']['output']>;
+  tokenId?: Maybe<Scalars['BigInt']['output']>;
+  vault?: Maybe<Scalars['Bytes']['output']>;
+};
+
+
+/** Reusable credential provider identity. Hook-specific TTL and indexes live on RoleProvider attachments. */
+export type SubgraphRoleProviderInstanceAdministratorChangesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderAdministratorChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphRoleProviderAdministratorChange_Filter>;
+};
+
+
+/** Reusable credential provider identity. Hook-specific TTL and indexes live on RoleProvider attachments. */
+export type SubgraphRoleProviderInstanceAttachmentsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProvider_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphRoleProvider_Filter>;
+};
+
+
+/** Reusable credential provider identity. Hook-specific TTL and indexes live on RoleProvider attachments. */
+export type SubgraphRoleProviderInstanceMembersArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderMember_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphRoleProviderMember_Filter>;
+};
+
+
+/** Reusable credential provider identity. Hook-specific TTL and indexes live on RoleProvider attachments. */
+export type SubgraphRoleProviderInstanceMembershipChangesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderMembershipChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphRoleProviderMembershipChange_Filter>;
+};
+
+
+/** Reusable credential provider identity. Hook-specific TTL and indexes live on RoleProvider attachments. */
+export type SubgraphRoleProviderInstanceRootChangesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderRootChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphRoleProviderRootChange_Filter>;
+};
+
+export type SubgraphRoleProviderInstance_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  address?: InputMaybe<Scalars['Bytes']['input']>;
+  address_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  address_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  address_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administratorChanges_?: InputMaybe<SubgraphRoleProviderAdministratorChange_Filter>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderInstance_Filter>>>;
+  attachments_?: InputMaybe<SubgraphRoleProvider_Filter>;
+  deployedAtBlock?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtBlock_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtBlock_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtBlock_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  deployedAtBlock_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtBlock_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtBlock_not?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtBlock_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  deployedAtLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  deployedAtLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  deployedAtTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  deployedAtTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  deployedAtTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  deployedAtTransaction?: InputMaybe<Scalars['Bytes']['input']>;
+  deployedAtTransaction_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  deployedAtTransaction_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  deployedAtTransaction_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  deployedAtTransaction_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  deployedAtTransaction_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  deployedAtTransaction_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  deployedAtTransaction_not?: InputMaybe<Scalars['Bytes']['input']>;
+  deployedAtTransaction_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  deployedAtTransaction_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  deployer?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  deployer_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_not?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  deployer_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  deploymentFactory?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_?: InputMaybe<SubgraphRoleProviderFactory_Filter>;
+  deploymentFactory_contains?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_ends_with?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_gt?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_gte?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  deploymentFactory_lt?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_lte?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_not?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_not_contains?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  deploymentFactory_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_starts_with?: InputMaybe<Scalars['String']['input']>;
+  deploymentFactory_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  kind?: InputMaybe<SubgraphRoleProviderKind>;
+  kind_in?: InputMaybe<Array<SubgraphRoleProviderKind>>;
+  kind_not?: InputMaybe<SubgraphRoleProviderKind>;
+  kind_not_in?: InputMaybe<Array<SubgraphRoleProviderKind>>;
+  members_?: InputMaybe<SubgraphRoleProviderMember_Filter>;
+  membershipChanges_?: InputMaybe<SubgraphRoleProviderMembershipChange_Filter>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderInstance_Filter>>>;
+  pendingAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  pendingAdministrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  pendingAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  rootChanges_?: InputMaybe<SubgraphRoleProviderRootChange_Filter>;
+  salt?: InputMaybe<Scalars['Bytes']['input']>;
+  salt_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  salt_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  salt_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  salt_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  salt_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  salt_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  salt_not?: InputMaybe<Scalars['Bytes']['input']>;
+  salt_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  salt_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphRoleProviderInstance_OrderBy {
+  address = 'address',
+  administrator = 'administrator',
+  administratorChanges = 'administratorChanges',
+  attachments = 'attachments',
+  deployedAtBlock = 'deployedAtBlock',
+  deployedAtLogIndex = 'deployedAtLogIndex',
+  deployedAtTimestamp = 'deployedAtTimestamp',
+  deployedAtTransaction = 'deployedAtTransaction',
+  deployer = 'deployer',
+  deploymentFactory = 'deploymentFactory',
+  deploymentFactory__address = 'deploymentFactory__address',
+  deploymentFactory__eventIndex = 'deploymentFactory__eventIndex',
+  deploymentFactory__id = 'deploymentFactory__id',
+  id = 'id',
+  kind = 'kind',
+  members = 'members',
+  membershipChanges = 'membershipChanges',
+  pendingAdministrator = 'pendingAdministrator',
+  rootChanges = 'rootChanges',
+  salt = 'salt'
+}
+
+export enum SubgraphRoleProviderKind {
+  ACCESS_LIST = 'ACCESS_LIST',
+  ERC20 = 'ERC20',
+  ERC721 = 'ERC721',
+  ERC1155 = 'ERC1155',
+  ERC4626_ASSETS = 'ERC4626_ASSETS',
+  MERKLE = 'MERKLE',
+  UNKNOWN = 'UNKNOWN'
+}
+
+export type SubgraphRoleProviderMember = {
+  __typename: 'RoleProviderMember';
+  account: Scalars['Bytes']['output'];
+  changes: Array<SubgraphRoleProviderMembershipChange>;
+  id: Scalars['ID']['output'];
+  isMember: Scalars['Boolean']['output'];
+  provider: SubgraphRoleProviderInstance;
+  updatedAtBlock: Scalars['BigInt']['output'];
+  updatedAtLogIndex: Scalars['BigInt']['output'];
+  updatedAtTimestamp: Scalars['BigInt']['output'];
+  updatedAtTransaction: Scalars['Bytes']['output'];
+};
+
+
+export type SubgraphRoleProviderMemberChangesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderMembershipChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphRoleProviderMembershipChange_Filter>;
+};
+
+export type SubgraphRoleProviderMember_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  account?: InputMaybe<Scalars['Bytes']['input']>;
+  account_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  account_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  account_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  account_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  account_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  account_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  account_not?: InputMaybe<Scalars['Bytes']['input']>;
+  account_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  account_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderMember_Filter>>>;
+  changes_?: InputMaybe<SubgraphRoleProviderMembershipChange_Filter>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  isMember?: InputMaybe<Scalars['Boolean']['input']>;
+  isMember_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  isMember_not?: InputMaybe<Scalars['Boolean']['input']>;
+  isMember_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderMember_Filter>>>;
+  provider?: InputMaybe<Scalars['String']['input']>;
+  provider_?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
+  provider_contains?: InputMaybe<Scalars['String']['input']>;
+  provider_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_ends_with?: InputMaybe<Scalars['String']['input']>;
+  provider_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_gt?: InputMaybe<Scalars['String']['input']>;
+  provider_gte?: InputMaybe<Scalars['String']['input']>;
+  provider_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  provider_lt?: InputMaybe<Scalars['String']['input']>;
+  provider_lte?: InputMaybe<Scalars['String']['input']>;
+  provider_not?: InputMaybe<Scalars['String']['input']>;
+  provider_not_contains?: InputMaybe<Scalars['String']['input']>;
+  provider_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  provider_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  provider_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  provider_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_starts_with?: InputMaybe<Scalars['String']['input']>;
+  provider_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  updatedAtBlock?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtBlock_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtBlock_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtBlock_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  updatedAtBlock_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtBlock_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtBlock_not?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtBlock_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  updatedAtLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  updatedAtLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  updatedAtTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  updatedAtTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  updatedAtTransaction?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  updatedAtTransaction_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_not?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphRoleProviderMember_OrderBy {
+  account = 'account',
+  changes = 'changes',
+  id = 'id',
+  isMember = 'isMember',
+  provider = 'provider',
+  provider__address = 'provider__address',
+  provider__administrator = 'provider__administrator',
+  provider__deployedAtBlock = 'provider__deployedAtBlock',
+  provider__deployedAtLogIndex = 'provider__deployedAtLogIndex',
+  provider__deployedAtTimestamp = 'provider__deployedAtTimestamp',
+  provider__deployedAtTransaction = 'provider__deployedAtTransaction',
+  provider__deployer = 'provider__deployer',
+  provider__id = 'provider__id',
+  provider__kind = 'provider__kind',
+  provider__pendingAdministrator = 'provider__pendingAdministrator',
+  provider__salt = 'provider__salt',
+  updatedAtBlock = 'updatedAtBlock',
+  updatedAtLogIndex = 'updatedAtLogIndex',
+  updatedAtTimestamp = 'updatedAtTimestamp',
+  updatedAtTransaction = 'updatedAtTransaction'
+}
+
+export type SubgraphRoleProviderMembershipChange = {
+  __typename: 'RoleProviderMembershipChange';
+  account: Scalars['Bytes']['output'];
+  administrator: Scalars['Bytes']['output'];
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  id: Scalars['ID']['output'];
+  kind: SubgraphMembershipChangeKind;
+  member: SubgraphRoleProviderMember;
+  provider: SubgraphRoleProviderInstance;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphRoleProviderMembershipChange_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  account?: InputMaybe<Scalars['Bytes']['input']>;
+  account_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  account_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  account_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  account_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  account_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  account_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  account_not?: InputMaybe<Scalars['Bytes']['input']>;
+  account_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  account_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderMembershipChange_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  kind?: InputMaybe<SubgraphMembershipChangeKind>;
+  kind_in?: InputMaybe<Array<SubgraphMembershipChangeKind>>;
+  kind_not?: InputMaybe<SubgraphMembershipChangeKind>;
+  kind_not_in?: InputMaybe<Array<SubgraphMembershipChangeKind>>;
+  member?: InputMaybe<Scalars['String']['input']>;
+  member_?: InputMaybe<SubgraphRoleProviderMember_Filter>;
+  member_contains?: InputMaybe<Scalars['String']['input']>;
+  member_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  member_ends_with?: InputMaybe<Scalars['String']['input']>;
+  member_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  member_gt?: InputMaybe<Scalars['String']['input']>;
+  member_gte?: InputMaybe<Scalars['String']['input']>;
+  member_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  member_lt?: InputMaybe<Scalars['String']['input']>;
+  member_lte?: InputMaybe<Scalars['String']['input']>;
+  member_not?: InputMaybe<Scalars['String']['input']>;
+  member_not_contains?: InputMaybe<Scalars['String']['input']>;
+  member_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  member_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  member_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  member_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  member_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  member_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  member_starts_with?: InputMaybe<Scalars['String']['input']>;
+  member_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderMembershipChange_Filter>>>;
+  provider?: InputMaybe<Scalars['String']['input']>;
+  provider_?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
+  provider_contains?: InputMaybe<Scalars['String']['input']>;
+  provider_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_ends_with?: InputMaybe<Scalars['String']['input']>;
+  provider_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_gt?: InputMaybe<Scalars['String']['input']>;
+  provider_gte?: InputMaybe<Scalars['String']['input']>;
+  provider_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  provider_lt?: InputMaybe<Scalars['String']['input']>;
+  provider_lte?: InputMaybe<Scalars['String']['input']>;
+  provider_not?: InputMaybe<Scalars['String']['input']>;
+  provider_not_contains?: InputMaybe<Scalars['String']['input']>;
+  provider_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  provider_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  provider_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  provider_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_starts_with?: InputMaybe<Scalars['String']['input']>;
+  provider_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphRoleProviderMembershipChange_OrderBy {
+  account = 'account',
+  administrator = 'administrator',
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  id = 'id',
+  kind = 'kind',
+  member = 'member',
+  member__account = 'member__account',
+  member__id = 'member__id',
+  member__isMember = 'member__isMember',
+  member__updatedAtBlock = 'member__updatedAtBlock',
+  member__updatedAtLogIndex = 'member__updatedAtLogIndex',
+  member__updatedAtTimestamp = 'member__updatedAtTimestamp',
+  member__updatedAtTransaction = 'member__updatedAtTransaction',
+  provider = 'provider',
+  provider__address = 'provider__address',
+  provider__administrator = 'provider__administrator',
+  provider__deployedAtBlock = 'provider__deployedAtBlock',
+  provider__deployedAtLogIndex = 'provider__deployedAtLogIndex',
+  provider__deployedAtTimestamp = 'provider__deployedAtTimestamp',
+  provider__deployedAtTransaction = 'provider__deployedAtTransaction',
+  provider__deployer = 'provider__deployer',
+  provider__id = 'provider__id',
+  provider__kind = 'provider__kind',
+  provider__pendingAdministrator = 'provider__pendingAdministrator',
+  provider__salt = 'provider__salt',
+  transactionHash = 'transactionHash'
+}
+
 export type SubgraphRoleProviderRemoved = {
   __typename: 'RoleProviderRemoved';
+  administrator?: Maybe<Scalars['Bytes']['output']>;
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
@@ -19684,12 +25559,25 @@ export type SubgraphRoleProviderRemoved = {
   hooks: SubgraphHooksInstance;
   id: Scalars['ID']['output'];
   provider: SubgraphRoleProvider;
+  pullProviderIndex?: Maybe<Scalars['BigInt']['output']>;
+  pushProviderIndex?: Maybe<Scalars['BigInt']['output']>;
+  timeToLive?: Maybe<Scalars['BigInt']['output']>;
   transactionHash: Scalars['Bytes']['output'];
 };
 
 export type SubgraphRoleProviderRemoved_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderRemoved_Filter>>>;
   blockLogIndex?: InputMaybe<Scalars['Int']['input']>;
   blockLogIndex_gt?: InputMaybe<Scalars['Int']['input']>;
@@ -19774,6 +25662,30 @@ export type SubgraphRoleProviderRemoved_Filter = {
   provider_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   provider_starts_with?: InputMaybe<Scalars['String']['input']>;
   provider_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pullProviderIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  pullProviderIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  pullProviderIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  pullProviderIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pullProviderIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  pullProviderIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  pullProviderIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  pullProviderIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pushProviderIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  pushProviderIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  pushProviderIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  pushProviderIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pushProviderIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  pushProviderIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  pushProviderIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  pushProviderIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  timeToLive?: InputMaybe<Scalars['BigInt']['input']>;
+  timeToLive_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  timeToLive_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  timeToLive_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  timeToLive_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  timeToLive_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  timeToLive_not?: InputMaybe<Scalars['BigInt']['input']>;
+  timeToLive_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
@@ -19787,6 +25699,7 @@ export type SubgraphRoleProviderRemoved_Filter = {
 };
 
 export enum SubgraphRoleProviderRemoved_OrderBy {
+  administrator = 'administrator',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
@@ -19794,11 +25707,14 @@ export enum SubgraphRoleProviderRemoved_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -19806,6 +25722,9 @@ export enum SubgraphRoleProviderRemoved_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   provider = 'provider',
   provider__id = 'provider__id',
@@ -19816,11 +25735,41 @@ export enum SubgraphRoleProviderRemoved_OrderBy {
   provider__pullProviderIndex = 'provider__pullProviderIndex',
   provider__pushProviderIndex = 'provider__pushProviderIndex',
   provider__timeToLive = 'provider__timeToLive',
+  pullProviderIndex = 'pullProviderIndex',
+  pushProviderIndex = 'pushProviderIndex',
+  timeToLive = 'timeToLive',
+  transactionHash = 'transactionHash'
+}
+
+export type SubgraphRoleProviderRootChange = {
+  __typename: 'RoleProviderRootChange';
+  administrator: Scalars['Bytes']['output'];
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  id: Scalars['ID']['output'];
+  newRoot: Scalars['Bytes']['output'];
+  previousRoot: Scalars['Bytes']['output'];
+  provider: SubgraphRoleProviderInstance;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphRoleProviderRootChange_Filter = {
+  id?: InputMaybe<Scalars['ID']['input']>;
+  provider?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum SubgraphRoleProviderRootChange_OrderBy {
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  id = 'id',
   transactionHash = 'transactionHash'
 }
 
 export type SubgraphRoleProviderUpdated = {
   __typename: 'RoleProviderUpdated';
+  administrator?: Maybe<Scalars['Bytes']['output']>;
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
@@ -19829,6 +25778,9 @@ export type SubgraphRoleProviderUpdated = {
   id: Scalars['ID']['output'];
   isPullProvider: Scalars['Boolean']['output'];
   isPushProvider: Scalars['Boolean']['output'];
+  previousPullProviderIndex?: Maybe<Scalars['BigInt']['output']>;
+  previousPushProviderIndex?: Maybe<Scalars['BigInt']['output']>;
+  previousTimeToLive?: Maybe<Scalars['BigInt']['output']>;
   provider: SubgraphRoleProvider;
   pullProviderIndex: Scalars['Int']['output'];
   pushProviderIndex: Scalars['Int']['output'];
@@ -19839,6 +25791,16 @@ export type SubgraphRoleProviderUpdated = {
 export type SubgraphRoleProviderUpdated_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderUpdated_Filter>>>;
   blockLogIndex?: InputMaybe<Scalars['Int']['input']>;
   blockLogIndex_gt?: InputMaybe<Scalars['Int']['input']>;
@@ -19910,6 +25872,30 @@ export type SubgraphRoleProviderUpdated_Filter = {
   isPushProvider_not?: InputMaybe<Scalars['Boolean']['input']>;
   isPushProvider_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
   or?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderUpdated_Filter>>>;
+  previousPullProviderIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  previousPullProviderIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  previousPullProviderIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  previousPullProviderIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  previousPullProviderIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  previousPullProviderIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  previousPullProviderIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  previousPullProviderIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  previousPushProviderIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  previousPushProviderIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  previousPushProviderIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  previousPushProviderIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  previousPushProviderIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  previousPushProviderIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  previousPushProviderIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  previousPushProviderIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  previousTimeToLive?: InputMaybe<Scalars['BigInt']['input']>;
+  previousTimeToLive_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  previousTimeToLive_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  previousTimeToLive_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  previousTimeToLive_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  previousTimeToLive_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  previousTimeToLive_not?: InputMaybe<Scalars['BigInt']['input']>;
+  previousTimeToLive_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   provider?: InputMaybe<Scalars['String']['input']>;
   provider_?: InputMaybe<SubgraphRoleProvider_Filter>;
   provider_contains?: InputMaybe<Scalars['String']['input']>;
@@ -19968,6 +25954,7 @@ export type SubgraphRoleProviderUpdated_Filter = {
 };
 
 export enum SubgraphRoleProviderUpdated_OrderBy {
+  administrator = 'administrator',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
@@ -19975,11 +25962,14 @@ export enum SubgraphRoleProviderUpdated_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -19987,9 +25977,15 @@ export enum SubgraphRoleProviderUpdated_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   isPullProvider = 'isPullProvider',
   isPushProvider = 'isPushProvider',
+  previousPullProviderIndex = 'previousPullProviderIndex',
+  previousPushProviderIndex = 'previousPushProviderIndex',
+  previousTimeToLive = 'previousTimeToLive',
   provider = 'provider',
   provider__id = 'provider__id',
   provider__isApproved = 'provider__isApproved',
@@ -20083,6 +26079,27 @@ export type SubgraphRoleProvider_Filter = {
   providerAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
   providerAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   providerAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  providerInstance?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
+  providerInstance_contains?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_ends_with?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_gt?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_gte?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  providerInstance_lt?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_lte?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_not?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_not_contains?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  providerInstance_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_starts_with?: InputMaybe<Scalars['String']['input']>;
+  providerInstance_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   pullProviderIndex?: InputMaybe<Scalars['Int']['input']>;
   pullProviderIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   pullProviderIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -20134,6 +26151,7 @@ export type SubgraphRoleProvider_Filter = {
 
 export enum SubgraphRoleProvider_OrderBy {
   addedEvent = 'addedEvent',
+  addedEvent__administrator = 'addedEvent__administrator',
   addedEvent__blockLogIndex = 'addedEvent__blockLogIndex',
   addedEvent__blockNumber = 'addedEvent__blockNumber',
   addedEvent__blockTimestamp = 'addedEvent__blockTimestamp',
@@ -20149,11 +26167,14 @@ export enum SubgraphRoleProvider_OrderBy {
   hooks = 'hooks',
   hooks__abiFamily = 'hooks__abiFamily',
   hooks__address = 'hooks__address',
+  hooks__administrator = 'hooks__administrator',
   hooks__borrower = 'hooks__borrower',
   hooks__deployedAtBlock = 'hooks__deployedAtBlock',
   hooks__deployedAtLogIndex = 'hooks__deployedAtLogIndex',
   hooks__deployedAtTimestamp = 'hooks__deployedAtTimestamp',
   hooks__deployedAtTransaction = 'hooks__deployedAtTransaction',
+  hooks__deployer = 'hooks__deployer',
+  hooks__eventGeneration = 'hooks__eventGeneration',
   hooks__eventIndex = 'hooks__eventIndex',
   hooks__generation = 'hooks__generation',
   hooks__id = 'hooks__id',
@@ -20161,19 +26182,38 @@ export enum SubgraphRoleProvider_OrderBy {
   hooks__marketKind = 'hooks__marketKind',
   hooks__name = 'hooks__name',
   hooks__numMarkets = 'hooks__numMarkets',
+  hooks__pendingAdministrator = 'hooks__pendingAdministrator',
+  hooks__providerMetadataState = 'hooks__providerMetadataState',
+  hooks__version = 'hooks__version',
   id = 'id',
   isApproved = 'isApproved',
   isPullProvider = 'isPullProvider',
   isPushProvider = 'isPushProvider',
   providerAddress = 'providerAddress',
+  providerInstance = 'providerInstance',
+  providerInstance__address = 'providerInstance__address',
+  providerInstance__administrator = 'providerInstance__administrator',
+  providerInstance__deployedAtBlock = 'providerInstance__deployedAtBlock',
+  providerInstance__deployedAtLogIndex = 'providerInstance__deployedAtLogIndex',
+  providerInstance__deployedAtTimestamp = 'providerInstance__deployedAtTimestamp',
+  providerInstance__deployedAtTransaction = 'providerInstance__deployedAtTransaction',
+  providerInstance__deployer = 'providerInstance__deployer',
+  providerInstance__id = 'providerInstance__id',
+  providerInstance__kind = 'providerInstance__kind',
+  providerInstance__pendingAdministrator = 'providerInstance__pendingAdministrator',
+  providerInstance__salt = 'providerInstance__salt',
   pullProviderIndex = 'pullProviderIndex',
   pushProviderIndex = 'pushProviderIndex',
   removedEvent = 'removedEvent',
+  removedEvent__administrator = 'removedEvent__administrator',
   removedEvent__blockLogIndex = 'removedEvent__blockLogIndex',
   removedEvent__blockNumber = 'removedEvent__blockNumber',
   removedEvent__blockTimestamp = 'removedEvent__blockTimestamp',
   removedEvent__eventIndex = 'removedEvent__eventIndex',
   removedEvent__id = 'removedEvent__id',
+  removedEvent__pullProviderIndex = 'removedEvent__pullProviderIndex',
+  removedEvent__pushProviderIndex = 'removedEvent__pushProviderIndex',
+  removedEvent__timeToLive = 'removedEvent__timeToLive',
   removedEvent__transactionHash = 'removedEvent__transactionHash',
   removedEvents = 'removedEvents',
   timeToLive = 'timeToLive',
@@ -20776,6 +26816,8 @@ export enum SubgraphSanctionedAccountAssetsQueuedForWithdrawal_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -20789,13 +26831,18 @@ export enum SubgraphSanctionedAccountAssetsQueuedForWithdrawal_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -20812,10 +26859,14 @@ export enum SubgraphSanctionedAccountAssetsQueuedForWithdrawal_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -20978,6 +27029,8 @@ export enum SubgraphSanctionedAccountAssetsSentToEscrow_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -20991,13 +27044,18 @@ export enum SubgraphSanctionedAccountAssetsSentToEscrow_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -21014,10 +27072,14 @@ export enum SubgraphSanctionedAccountAssetsSentToEscrow_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -21188,6 +27250,8 @@ export enum SubgraphSanctionedAccountWithdrawalSentToEscrow_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -21201,13 +27265,18 @@ export enum SubgraphSanctionedAccountWithdrawalSentToEscrow_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -21224,10 +27293,14 @@ export enum SubgraphSanctionedAccountWithdrawalSentToEscrow_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -21740,6 +27813,8 @@ export enum SubgraphSimpleCollateralContractCreated_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -21753,13 +27828,18 @@ export enum SubgraphSimpleCollateralContractCreated_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -21776,10 +27856,14 @@ export enum SubgraphSimpleCollateralContractCreated_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -23273,6 +29357,8 @@ export enum SubgraphSimpleCollateralContract_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -23286,13 +29372,18 @@ export enum SubgraphSimpleCollateralContract_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -23309,10 +29400,14 @@ export enum SubgraphSimpleCollateralContract_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -23584,6 +29679,7 @@ export enum SubgraphSimpleCollateralMarketIndex_OrderBy {
 
 export enum SubgraphSnapshotSource {
   EVENT_AND_CONTRACT_CALL = 'EVENT_AND_CONTRACT_CALL',
+  EVENT_DEPLOYMENT_SNAPSHOT = 'EVENT_DEPLOYMENT_SNAPSHOT',
   EVENT_PROJECTION = 'EVENT_PROJECTION'
 }
 
@@ -23611,6 +29707,2797 @@ export type SubgraphSubgraphVersion_Filter = {
 export enum SubgraphSubgraphVersion_OrderBy {
   id = 'id'
 }
+
+export type SubgraphSubscription = {
+  __typename: 'Subscription';
+  /** Access to subgraph metadata */
+  _meta?: Maybe<Subgraph_Meta_>;
+  accountAccessGranted?: Maybe<SubgraphAccountAccessGranted>;
+  accountAccessGranteds: Array<SubgraphAccountAccessGranted>;
+  accountAccessRevoked?: Maybe<SubgraphAccountAccessRevoked>;
+  accountAccessRevokeds: Array<SubgraphAccountAccessRevoked>;
+  accountBlockedFromDeposits?: Maybe<SubgraphAccountBlockedFromDeposits>;
+  accountBlockedFromDeposits_collection: Array<SubgraphAccountBlockedFromDeposits>;
+  accountMadeFirstDeposit?: Maybe<SubgraphAccountMadeFirstDeposit>;
+  accountMadeFirstDeposits: Array<SubgraphAccountMadeFirstDeposit>;
+  accountUnblockedFromDeposits?: Maybe<SubgraphAccountUnblockedFromDeposits>;
+  accountUnblockedFromDeposits_collection: Array<SubgraphAccountUnblockedFromDeposits>;
+  annualInterestBipsReductionExecuted?: Maybe<SubgraphAnnualInterestBipsReductionExecuted>;
+  annualInterestBipsReductionExecuteds: Array<SubgraphAnnualInterestBipsReductionExecuted>;
+  annualInterestBipsReductionProposalCancelled?: Maybe<SubgraphAnnualInterestBipsReductionProposalCancelled>;
+  annualInterestBipsReductionProposalCancelleds: Array<SubgraphAnnualInterestBipsReductionProposalCancelled>;
+  annualInterestBipsReductionProposed?: Maybe<SubgraphAnnualInterestBipsReductionProposed>;
+  annualInterestBipsReductionProposeds: Array<SubgraphAnnualInterestBipsReductionProposed>;
+  annualInterestBipsUpdated?: Maybe<SubgraphAnnualInterestBipsUpdated>;
+  annualInterestBipsUpdateds: Array<SubgraphAnnualInterestBipsUpdated>;
+  approval?: Maybe<SubgraphApproval>;
+  approvals: Array<SubgraphApproval>;
+  approvedCollateralExchange?: Maybe<SubgraphApprovedCollateralExchange>;
+  approvedCollateralExchanges: Array<SubgraphApprovedCollateralExchange>;
+  approvedLiquidator?: Maybe<SubgraphApprovedLiquidator>;
+  approvedLiquidators: Array<SubgraphApprovedLiquidator>;
+  archController?: Maybe<SubgraphArchController>;
+  archControllers: Array<SubgraphArchController>;
+  borrow?: Maybe<SubgraphBorrow>;
+  borrower?: Maybe<SubgraphBorrower>;
+  borrowerAccount?: Maybe<SubgraphBorrowerAccount>;
+  borrowerAccountFactories: Array<SubgraphBorrowerAccountFactory>;
+  borrowerAccountFactory?: Maybe<SubgraphBorrowerAccountFactory>;
+  borrowerAccountFactoryChange?: Maybe<SubgraphBorrowerAccountFactoryChange>;
+  borrowerAccountFactoryChanges: Array<SubgraphBorrowerAccountFactoryChange>;
+  borrowerAccountPrincipalChange?: Maybe<SubgraphBorrowerAccountPrincipalChange>;
+  borrowerAccountPrincipalChanges: Array<SubgraphBorrowerAccountPrincipalChange>;
+  borrowerAccounts: Array<SubgraphBorrowerAccount>;
+  borrowerDailyStats?: Maybe<SubgraphBorrowerDailyStats>;
+  borrowerDailyStats_collection: Array<SubgraphBorrowerDailyStats>;
+  borrowerIdentityRegistries: Array<SubgraphBorrowerIdentityRegistry>;
+  borrowerIdentityRegistry?: Maybe<SubgraphBorrowerIdentityRegistry>;
+  borrowerRegistrationChange?: Maybe<SubgraphBorrowerRegistrationChange>;
+  borrowerRegistrationChanges: Array<SubgraphBorrowerRegistrationChange>;
+  borrowerStats?: Maybe<SubgraphBorrowerStats>;
+  borrowerStats_collection: Array<SubgraphBorrowerStats>;
+  borrowers: Array<SubgraphBorrower>;
+  borrows: Array<SubgraphBorrow>;
+  collateralExchangeApproved?: Maybe<SubgraphCollateralExchangeApproved>;
+  collateralExchangeApproveds: Array<SubgraphCollateralExchangeApproved>;
+  collateralExchangeRemoved?: Maybe<SubgraphCollateralExchangeRemoved>;
+  collateralExchangeRemoveds: Array<SubgraphCollateralExchangeRemoved>;
+  controller?: Maybe<SubgraphController>;
+  controllerAdded?: Maybe<SubgraphControllerAdded>;
+  controllerAddeds: Array<SubgraphControllerAdded>;
+  controllerFactories: Array<SubgraphControllerFactory>;
+  controllerFactory?: Maybe<SubgraphControllerFactory>;
+  controllerFactoryAdded?: Maybe<SubgraphControllerFactoryAdded>;
+  controllerFactoryAddeds: Array<SubgraphControllerFactoryAdded>;
+  controllerFactoryRemoved?: Maybe<SubgraphControllerFactoryRemoved>;
+  controllerFactoryRemoveds: Array<SubgraphControllerFactoryRemoved>;
+  controllerRemoved?: Maybe<SubgraphControllerRemoved>;
+  controllerRemoveds: Array<SubgraphControllerRemoved>;
+  controllers: Array<SubgraphController>;
+  debtRepaid?: Maybe<SubgraphDebtRepaid>;
+  debtRepaids: Array<SubgraphDebtRepaid>;
+  delinquencyStatusChanged?: Maybe<SubgraphDelinquencyStatusChanged>;
+  delinquencyStatusChangeds: Array<SubgraphDelinquencyStatusChanged>;
+  deposit?: Maybe<SubgraphDeposit>;
+  deposits: Array<SubgraphDeposit>;
+  disabledForceBuyBacks?: Maybe<SubgraphDisabledForceBuyBacks>;
+  disabledForceBuyBacks_collection: Array<SubgraphDisabledForceBuyBacks>;
+  drawnAmountUpdate?: Maybe<SubgraphDrawnAmountUpdate>;
+  drawnAmountUpdates: Array<SubgraphDrawnAmountUpdate>;
+  factoryRegistration?: Maybe<SubgraphFactoryRegistration>;
+  factoryRegistrationEvent?: Maybe<SubgraphFactoryRegistrationEvent>;
+  factoryRegistrationEvents: Array<SubgraphFactoryRegistrationEvent>;
+  factoryRegistrations: Array<SubgraphFactoryRegistration>;
+  feesCollected?: Maybe<SubgraphFeesCollected>;
+  feesCollecteds: Array<SubgraphFeesCollected>;
+  fixedTermUpdated?: Maybe<SubgraphFixedTermUpdated>;
+  fixedTermUpdateds: Array<SubgraphFixedTermUpdated>;
+  forceBuyBack?: Maybe<SubgraphForceBuyBack>;
+  forceBuyBacks: Array<SubgraphForceBuyBack>;
+  hookAdministratorChange?: Maybe<SubgraphHookAdministratorChange>;
+  hookAdministratorChanges: Array<SubgraphHookAdministratorChange>;
+  hooksConfig?: Maybe<SubgraphHooksConfig>;
+  hooksConfigs: Array<SubgraphHooksConfig>;
+  hooksFactories: Array<SubgraphHooksFactory>;
+  hooksFactory?: Maybe<SubgraphHooksFactory>;
+  hooksInstance?: Maybe<SubgraphHooksInstance>;
+  hooksInstanceDeployed?: Maybe<SubgraphHooksInstanceDeployed>;
+  hooksInstanceDeployeds: Array<SubgraphHooksInstanceDeployed>;
+  hooksInstanceRoleProviderSnapshot?: Maybe<SubgraphHooksInstanceRoleProviderSnapshot>;
+  hooksInstanceRoleProviderSnapshots: Array<SubgraphHooksInstanceRoleProviderSnapshot>;
+  hooksInstances: Array<SubgraphHooksInstance>;
+  hooksNameUpdated?: Maybe<SubgraphHooksNameUpdated>;
+  hooksNameUpdateds: Array<SubgraphHooksNameUpdated>;
+  hooksTemplate?: Maybe<SubgraphHooksTemplate>;
+  hooksTemplateRegistration?: Maybe<SubgraphHooksTemplateRegistration>;
+  hooksTemplateRegistrationEvent?: Maybe<SubgraphHooksTemplateRegistrationEvent>;
+  hooksTemplateRegistrationEvents: Array<SubgraphHooksTemplateRegistrationEvent>;
+  hooksTemplateRegistrations: Array<SubgraphHooksTemplateRegistration>;
+  hooksTemplates: Array<SubgraphHooksTemplate>;
+  indexerDeployment?: Maybe<SubgraphIndexerDeployment>;
+  indexerDeployments: Array<SubgraphIndexerDeployment>;
+  indexerDiagnostic?: Maybe<SubgraphIndexerDiagnostic>;
+  indexerDiagnostics: Array<SubgraphIndexerDiagnostic>;
+  knownLenderStatus?: Maybe<SubgraphKnownLenderStatus>;
+  knownLenderStatuses: Array<SubgraphKnownLenderStatus>;
+  lenderAccount?: Maybe<SubgraphLenderAccount>;
+  lenderAccountSnapshot?: Maybe<SubgraphLenderAccountSnapshot>;
+  lenderAccountSnapshots: Array<SubgraphLenderAccountSnapshot>;
+  lenderAccounts: Array<SubgraphLenderAccount>;
+  lenderAuthorization?: Maybe<SubgraphLenderAuthorization>;
+  lenderAuthorizationChange?: Maybe<SubgraphLenderAuthorizationChange>;
+  lenderAuthorizationChanges: Array<SubgraphLenderAuthorizationChange>;
+  lenderAuthorizations: Array<SubgraphLenderAuthorization>;
+  lenderDailyStats?: Maybe<SubgraphLenderDailyStats>;
+  lenderDailyStats_collection: Array<SubgraphLenderDailyStats>;
+  lenderHooksAccess?: Maybe<SubgraphLenderHooksAccess>;
+  lenderHooksAccesses: Array<SubgraphLenderHooksAccess>;
+  lenderInterestAccrued?: Maybe<SubgraphLenderInterestAccrued>;
+  lenderInterestAccrueds: Array<SubgraphLenderInterestAccrued>;
+  lenderStats?: Maybe<SubgraphLenderStats>;
+  lenderStats_collection: Array<SubgraphLenderStats>;
+  lenderWithdrawalStatus?: Maybe<SubgraphLenderWithdrawalStatus>;
+  lenderWithdrawalStatuses: Array<SubgraphLenderWithdrawalStatus>;
+  liquidatorApproved?: Maybe<SubgraphLiquidatorApproved>;
+  liquidatorApproveds: Array<SubgraphLiquidatorApproved>;
+  liquidatorRemoved?: Maybe<SubgraphLiquidatorRemoved>;
+  liquidatorRemoveds: Array<SubgraphLiquidatorRemoved>;
+  market?: Maybe<SubgraphMarket>;
+  marketAdded?: Maybe<SubgraphMarketAdded>;
+  marketAddeds: Array<SubgraphMarketAdded>;
+  marketBorrowerChange?: Maybe<SubgraphMarketBorrowerChange>;
+  marketBorrowerChanges: Array<SubgraphMarketBorrowerChange>;
+  marketClosed?: Maybe<SubgraphMarketClosed>;
+  marketCloseds: Array<SubgraphMarketClosed>;
+  marketDailyStats?: Maybe<SubgraphMarketDailyStats>;
+  marketDailyStats_collection: Array<SubgraphMarketDailyStats>;
+  marketDeployed?: Maybe<SubgraphMarketDeployed>;
+  marketDeployeds: Array<SubgraphMarketDeployed>;
+  marketDeploymentConfig?: Maybe<SubgraphMarketDeploymentConfig>;
+  marketDeploymentConfigs: Array<SubgraphMarketDeploymentConfig>;
+  marketEvent?: Maybe<SubgraphMarketEvent>;
+  marketEventCursor?: Maybe<SubgraphMarketEventCursor>;
+  marketEventCursors: Array<SubgraphMarketEventCursor>;
+  marketEvents: Array<SubgraphMarketEvent>;
+  marketHooksData?: Maybe<SubgraphMarketHooksData>;
+  marketHooksDatas: Array<SubgraphMarketHooksData>;
+  marketInterestAccrued?: Maybe<SubgraphMarketInterestAccrued>;
+  marketInterestAccrueds: Array<SubgraphMarketInterestAccrued>;
+  marketRemoved?: Maybe<SubgraphMarketRemoved>;
+  marketRemoveds: Array<SubgraphMarketRemoved>;
+  marketSnapshot?: Maybe<SubgraphMarketSnapshot>;
+  marketSnapshots: Array<SubgraphMarketSnapshot>;
+  marketWrapperRegistration?: Maybe<SubgraphMarketWrapperRegistration>;
+  marketWrapperRegistrations: Array<SubgraphMarketWrapperRegistration>;
+  markets: Array<SubgraphMarket>;
+  maxTotalSupplyUpdated?: Maybe<SubgraphMaxTotalSupplyUpdated>;
+  maxTotalSupplyUpdateds: Array<SubgraphMaxTotalSupplyUpdated>;
+  minimumDepositUpdated?: Maybe<SubgraphMinimumDepositUpdated>;
+  minimumDepositUpdateds: Array<SubgraphMinimumDepositUpdated>;
+  newController?: Maybe<SubgraphNewController>;
+  newControllers: Array<SubgraphNewController>;
+  newSanctionsEscrow?: Maybe<SubgraphNewSanctionsEscrow>;
+  newSanctionsEscrows: Array<SubgraphNewSanctionsEscrow>;
+  ownershipHandoverCanceled?: Maybe<SubgraphOwnershipHandoverCanceled>;
+  ownershipHandoverCanceleds: Array<SubgraphOwnershipHandoverCanceled>;
+  ownershipHandoverRequested?: Maybe<SubgraphOwnershipHandoverRequested>;
+  ownershipHandoverRequesteds: Array<SubgraphOwnershipHandoverRequested>;
+  ownershipTransferred?: Maybe<SubgraphOwnershipTransferred>;
+  ownershipTransferreds: Array<SubgraphOwnershipTransferred>;
+  parameterConstraints?: Maybe<SubgraphParameterConstraints>;
+  parameterConstraints_collection: Array<SubgraphParameterConstraints>;
+  pendingMarketDeployment?: Maybe<SubgraphPendingMarketDeployment>;
+  pendingMarketDeployments: Array<SubgraphPendingMarketDeployment>;
+  periodicTermClosed?: Maybe<SubgraphPeriodicTermClosed>;
+  periodicTermCloseds: Array<SubgraphPeriodicTermClosed>;
+  periodicTermUpdated?: Maybe<SubgraphPeriodicTermUpdated>;
+  periodicTermUpdateds: Array<SubgraphPeriodicTermUpdated>;
+  protocolDailyStats?: Maybe<SubgraphProtocolDailyStats>;
+  protocolDailyStats_collection: Array<SubgraphProtocolDailyStats>;
+  protocolFeeBipsUpdated?: Maybe<SubgraphProtocolFeeBipsUpdated>;
+  protocolFeeBipsUpdateds: Array<SubgraphProtocolFeeBipsUpdated>;
+  protocolStats?: Maybe<SubgraphProtocolStats>;
+  protocolStats_collection: Array<SubgraphProtocolStats>;
+  registeredBorrower?: Maybe<SubgraphRegisteredBorrower>;
+  registeredBorrowers: Array<SubgraphRegisteredBorrower>;
+  reserveRatioBipsUpdated?: Maybe<SubgraphReserveRatioBipsUpdated>;
+  reserveRatioBipsUpdateds: Array<SubgraphReserveRatioBipsUpdated>;
+  revolvingMarketDeployment?: Maybe<SubgraphRevolvingMarketDeployment>;
+  revolvingMarketDeployments: Array<SubgraphRevolvingMarketDeployment>;
+  roleProvider?: Maybe<SubgraphRoleProvider>;
+  roleProviderAdded?: Maybe<SubgraphRoleProviderAdded>;
+  roleProviderAddeds: Array<SubgraphRoleProviderAdded>;
+  roleProviderAdministratorChange?: Maybe<SubgraphRoleProviderAdministratorChange>;
+  roleProviderAdministratorChanges: Array<SubgraphRoleProviderAdministratorChange>;
+  roleProviderFactories: Array<SubgraphRoleProviderFactory>;
+  roleProviderFactory?: Maybe<SubgraphRoleProviderFactory>;
+  roleProviderInstance?: Maybe<SubgraphRoleProviderInstance>;
+  roleProviderInstances: Array<SubgraphRoleProviderInstance>;
+  roleProviderMember?: Maybe<SubgraphRoleProviderMember>;
+  roleProviderMembers: Array<SubgraphRoleProviderMember>;
+  roleProviderMembershipChange?: Maybe<SubgraphRoleProviderMembershipChange>;
+  roleProviderMembershipChanges: Array<SubgraphRoleProviderMembershipChange>;
+  roleProviderRemoved?: Maybe<SubgraphRoleProviderRemoved>;
+  roleProviderRemoveds: Array<SubgraphRoleProviderRemoved>;
+  roleProviderUpdated?: Maybe<SubgraphRoleProviderUpdated>;
+  roleProviderUpdateds: Array<SubgraphRoleProviderUpdated>;
+  roleProviders: Array<SubgraphRoleProvider>;
+  sanctionOverride?: Maybe<SubgraphSanctionOverride>;
+  sanctionOverrideRemoved?: Maybe<SubgraphSanctionOverrideRemoved>;
+  sanctionOverrideRemoveds: Array<SubgraphSanctionOverrideRemoved>;
+  sanctionOverrideStatus?: Maybe<SubgraphSanctionOverrideStatus>;
+  sanctionOverrideStatuses: Array<SubgraphSanctionOverrideStatus>;
+  sanctionOverrides: Array<SubgraphSanctionOverride>;
+  sanctionedAccountAssetsQueuedForWithdrawal?: Maybe<SubgraphSanctionedAccountAssetsQueuedForWithdrawal>;
+  sanctionedAccountAssetsQueuedForWithdrawals: Array<SubgraphSanctionedAccountAssetsQueuedForWithdrawal>;
+  sanctionedAccountAssetsSentToEscrow?: Maybe<SubgraphSanctionedAccountAssetsSentToEscrow>;
+  sanctionedAccountAssetsSentToEscrows: Array<SubgraphSanctionedAccountAssetsSentToEscrow>;
+  sanctionedAccountWithdrawalSentToEscrow?: Maybe<SubgraphSanctionedAccountWithdrawalSentToEscrow>;
+  sanctionedAccountWithdrawalSentToEscrows: Array<SubgraphSanctionedAccountWithdrawalSentToEscrow>;
+  sanctionsEscrow?: Maybe<SubgraphSanctionsEscrow>;
+  sanctionsEscrows: Array<SubgraphSanctionsEscrow>;
+  simpleCollateralContract?: Maybe<SubgraphSimpleCollateralContract>;
+  simpleCollateralContractCreated?: Maybe<SubgraphSimpleCollateralContractCreated>;
+  simpleCollateralContractCreateds: Array<SubgraphSimpleCollateralContractCreated>;
+  simpleCollateralContractDeposit?: Maybe<SubgraphSimpleCollateralContractDeposit>;
+  simpleCollateralContractDepositor?: Maybe<SubgraphSimpleCollateralContractDepositor>;
+  simpleCollateralContractDepositors: Array<SubgraphSimpleCollateralContractDepositor>;
+  simpleCollateralContractDeposits: Array<SubgraphSimpleCollateralContractDeposit>;
+  simpleCollateralContractFullReset?: Maybe<SubgraphSimpleCollateralContractFullReset>;
+  simpleCollateralContractFullResets: Array<SubgraphSimpleCollateralContractFullReset>;
+  simpleCollateralContractLiquidatedSharesReset?: Maybe<SubgraphSimpleCollateralContractLiquidatedSharesReset>;
+  simpleCollateralContractLiquidatedSharesResets: Array<SubgraphSimpleCollateralContractLiquidatedSharesReset>;
+  simpleCollateralContractLiquidation?: Maybe<SubgraphSimpleCollateralContractLiquidation>;
+  simpleCollateralContractLiquidations: Array<SubgraphSimpleCollateralContractLiquidation>;
+  simpleCollateralContractReclaim?: Maybe<SubgraphSimpleCollateralContractReclaim>;
+  simpleCollateralContractReclaims: Array<SubgraphSimpleCollateralContractReclaim>;
+  simpleCollateralContractSnapshot?: Maybe<SubgraphSimpleCollateralContractSnapshot>;
+  simpleCollateralContractSnapshots: Array<SubgraphSimpleCollateralContractSnapshot>;
+  simpleCollateralContracts: Array<SubgraphSimpleCollateralContract>;
+  simpleCollateralFactories: Array<SubgraphSimpleCollateralFactory>;
+  simpleCollateralFactory?: Maybe<SubgraphSimpleCollateralFactory>;
+  simpleCollateralMarketIndex?: Maybe<SubgraphSimpleCollateralMarketIndex>;
+  simpleCollateralMarketIndexes: Array<SubgraphSimpleCollateralMarketIndex>;
+  subgraphVersion?: Maybe<SubgraphSubgraphVersion>;
+  subgraphVersions: Array<SubgraphSubgraphVersion>;
+  token?: Maybe<SubgraphToken>;
+  tokenDailyPrice?: Maybe<SubgraphTokenDailyPrice>;
+  tokenDailyPrices: Array<SubgraphTokenDailyPrice>;
+  tokens: Array<SubgraphToken>;
+  transfer?: Maybe<SubgraphTransfer>;
+  transfers: Array<SubgraphTransfer>;
+  updateProtocolFeeConfiguration?: Maybe<SubgraphUpdateProtocolFeeConfiguration>;
+  updateProtocolFeeConfigurations: Array<SubgraphUpdateProtocolFeeConfiguration>;
+  wildcat4626Wrapper?: Maybe<SubgraphWildcat4626Wrapper>;
+  wildcat4626WrapperDeployed?: Maybe<SubgraphWildcat4626WrapperDeployed>;
+  wildcat4626WrapperDeployeds: Array<SubgraphWildcat4626WrapperDeployed>;
+  wildcat4626WrapperFactories: Array<SubgraphWildcat4626WrapperFactory>;
+  wildcat4626WrapperFactory?: Maybe<SubgraphWildcat4626WrapperFactory>;
+  wildcat4626Wrappers: Array<SubgraphWildcat4626Wrapper>;
+  withdrawalBatch?: Maybe<SubgraphWithdrawalBatch>;
+  withdrawalBatchCreated?: Maybe<SubgraphWithdrawalBatchCreated>;
+  withdrawalBatchCreateds: Array<SubgraphWithdrawalBatchCreated>;
+  withdrawalBatchExpired?: Maybe<SubgraphWithdrawalBatchExpired>;
+  withdrawalBatchExpireds: Array<SubgraphWithdrawalBatchExpired>;
+  withdrawalBatchInterestAccrued?: Maybe<SubgraphWithdrawalBatchInterestAccrued>;
+  withdrawalBatchInterestAccrueds: Array<SubgraphWithdrawalBatchInterestAccrued>;
+  withdrawalBatchPayment?: Maybe<SubgraphWithdrawalBatchPayment>;
+  withdrawalBatchPayments: Array<SubgraphWithdrawalBatchPayment>;
+  withdrawalBatches: Array<SubgraphWithdrawalBatch>;
+  withdrawalExecution?: Maybe<SubgraphWithdrawalExecution>;
+  withdrawalExecutions: Array<SubgraphWithdrawalExecution>;
+  withdrawalRequest?: Maybe<SubgraphWithdrawalRequest>;
+  withdrawalRequests: Array<SubgraphWithdrawalRequest>;
+  wrapperMarketIndex?: Maybe<SubgraphWrapperMarketIndex>;
+  wrapperMarketIndexes: Array<SubgraphWrapperMarketIndex>;
+};
+
+
+export type SubgraphSubscription_MetaArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+};
+
+
+export type SubgraphSubscriptionAccountAccessGrantedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionAccountAccessGrantedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphAccountAccessGranted_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphAccountAccessGranted_Filter>;
+};
+
+
+export type SubgraphSubscriptionAccountAccessRevokedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionAccountAccessRevokedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphAccountAccessRevoked_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphAccountAccessRevoked_Filter>;
+};
+
+
+export type SubgraphSubscriptionAccountBlockedFromDepositsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionAccountBlockedFromDeposits_CollectionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphAccountBlockedFromDeposits_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphAccountBlockedFromDeposits_Filter>;
+};
+
+
+export type SubgraphSubscriptionAccountMadeFirstDepositArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionAccountMadeFirstDepositsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphAccountMadeFirstDeposit_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphAccountMadeFirstDeposit_Filter>;
+};
+
+
+export type SubgraphSubscriptionAccountUnblockedFromDepositsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionAccountUnblockedFromDeposits_CollectionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphAccountUnblockedFromDeposits_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphAccountUnblockedFromDeposits_Filter>;
+};
+
+
+export type SubgraphSubscriptionAnnualInterestBipsReductionExecutedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionAnnualInterestBipsReductionExecutedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphAnnualInterestBipsReductionExecuted_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphAnnualInterestBipsReductionExecuted_Filter>;
+};
+
+
+export type SubgraphSubscriptionAnnualInterestBipsReductionProposalCancelledArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionAnnualInterestBipsReductionProposalCancelledsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphAnnualInterestBipsReductionProposalCancelled_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphAnnualInterestBipsReductionProposalCancelled_Filter>;
+};
+
+
+export type SubgraphSubscriptionAnnualInterestBipsReductionProposedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionAnnualInterestBipsReductionProposedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphAnnualInterestBipsReductionProposed_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphAnnualInterestBipsReductionProposed_Filter>;
+};
+
+
+export type SubgraphSubscriptionAnnualInterestBipsUpdatedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionAnnualInterestBipsUpdatedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphAnnualInterestBipsUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphAnnualInterestBipsUpdated_Filter>;
+};
+
+
+export type SubgraphSubscriptionApprovalArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionApprovalsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphApproval_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphApproval_Filter>;
+};
+
+
+export type SubgraphSubscriptionApprovedCollateralExchangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionApprovedCollateralExchangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphApprovedCollateralExchange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphApprovedCollateralExchange_Filter>;
+};
+
+
+export type SubgraphSubscriptionApprovedLiquidatorArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionApprovedLiquidatorsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphApprovedLiquidator_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphApprovedLiquidator_Filter>;
+};
+
+
+export type SubgraphSubscriptionArchControllerArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionArchControllersArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphArchController_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphArchController_Filter>;
+};
+
+
+export type SubgraphSubscriptionBorrowArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionBorrowerArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionBorrowerAccountArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionBorrowerAccountFactoriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccountFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerAccountFactory_Filter>;
+};
+
+
+export type SubgraphSubscriptionBorrowerAccountFactoryArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionBorrowerAccountFactoryChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionBorrowerAccountFactoryChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccountFactoryChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerAccountFactoryChange_Filter>;
+};
+
+
+export type SubgraphSubscriptionBorrowerAccountPrincipalChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionBorrowerAccountPrincipalChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccountPrincipalChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerAccountPrincipalChange_Filter>;
+};
+
+
+export type SubgraphSubscriptionBorrowerAccountsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerAccount_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerAccount_Filter>;
+};
+
+
+export type SubgraphSubscriptionBorrowerDailyStatsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionBorrowerDailyStats_CollectionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerDailyStats_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerDailyStats_Filter>;
+};
+
+
+export type SubgraphSubscriptionBorrowerIdentityRegistriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerIdentityRegistry_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerIdentityRegistry_Filter>;
+};
+
+
+export type SubgraphSubscriptionBorrowerIdentityRegistryArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionBorrowerRegistrationChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionBorrowerRegistrationChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerRegistrationChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerRegistrationChange_Filter>;
+};
+
+
+export type SubgraphSubscriptionBorrowerStatsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionBorrowerStats_CollectionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrowerStats_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrowerStats_Filter>;
+};
+
+
+export type SubgraphSubscriptionBorrowersArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrower_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrower_Filter>;
+};
+
+
+export type SubgraphSubscriptionBorrowsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphBorrow_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphBorrow_Filter>;
+};
+
+
+export type SubgraphSubscriptionCollateralExchangeApprovedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionCollateralExchangeApprovedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphCollateralExchangeApproved_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphCollateralExchangeApproved_Filter>;
+};
+
+
+export type SubgraphSubscriptionCollateralExchangeRemovedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionCollateralExchangeRemovedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphCollateralExchangeRemoved_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphCollateralExchangeRemoved_Filter>;
+};
+
+
+export type SubgraphSubscriptionControllerArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionControllerAddedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionControllerAddedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphControllerAdded_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphControllerAdded_Filter>;
+};
+
+
+export type SubgraphSubscriptionControllerFactoriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphControllerFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphControllerFactory_Filter>;
+};
+
+
+export type SubgraphSubscriptionControllerFactoryArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionControllerFactoryAddedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionControllerFactoryAddedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphControllerFactoryAdded_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphControllerFactoryAdded_Filter>;
+};
+
+
+export type SubgraphSubscriptionControllerFactoryRemovedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionControllerFactoryRemovedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphControllerFactoryRemoved_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphControllerFactoryRemoved_Filter>;
+};
+
+
+export type SubgraphSubscriptionControllerRemovedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionControllerRemovedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphControllerRemoved_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphControllerRemoved_Filter>;
+};
+
+
+export type SubgraphSubscriptionControllersArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphController_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphController_Filter>;
+};
+
+
+export type SubgraphSubscriptionDebtRepaidArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionDebtRepaidsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphDebtRepaid_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphDebtRepaid_Filter>;
+};
+
+
+export type SubgraphSubscriptionDelinquencyStatusChangedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionDelinquencyStatusChangedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphDelinquencyStatusChanged_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphDelinquencyStatusChanged_Filter>;
+};
+
+
+export type SubgraphSubscriptionDepositArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionDepositsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphDeposit_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphDeposit_Filter>;
+};
+
+
+export type SubgraphSubscriptionDisabledForceBuyBacksArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionDisabledForceBuyBacks_CollectionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphDisabledForceBuyBacks_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphDisabledForceBuyBacks_Filter>;
+};
+
+
+export type SubgraphSubscriptionDrawnAmountUpdateArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionDrawnAmountUpdatesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphDrawnAmountUpdate_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphDrawnAmountUpdate_Filter>;
+};
+
+
+export type SubgraphSubscriptionFactoryRegistrationArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionFactoryRegistrationEventArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionFactoryRegistrationEventsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphFactoryRegistrationEvent_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphFactoryRegistrationEvent_Filter>;
+};
+
+
+export type SubgraphSubscriptionFactoryRegistrationsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphFactoryRegistration_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphFactoryRegistration_Filter>;
+};
+
+
+export type SubgraphSubscriptionFeesCollectedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionFeesCollectedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphFeesCollected_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphFeesCollected_Filter>;
+};
+
+
+export type SubgraphSubscriptionFixedTermUpdatedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionFixedTermUpdatedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphFixedTermUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphFixedTermUpdated_Filter>;
+};
+
+
+export type SubgraphSubscriptionForceBuyBackArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionForceBuyBacksArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphForceBuyBack_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphForceBuyBack_Filter>;
+};
+
+
+export type SubgraphSubscriptionHookAdministratorChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionHookAdministratorChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHookAdministratorChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHookAdministratorChange_Filter>;
+};
+
+
+export type SubgraphSubscriptionHooksConfigArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionHooksConfigsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHooksConfig_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHooksConfig_Filter>;
+};
+
+
+export type SubgraphSubscriptionHooksFactoriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHooksFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHooksFactory_Filter>;
+};
+
+
+export type SubgraphSubscriptionHooksFactoryArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionHooksInstanceArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionHooksInstanceDeployedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionHooksInstanceDeployedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHooksInstanceDeployed_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHooksInstanceDeployed_Filter>;
+};
+
+
+export type SubgraphSubscriptionHooksInstanceRoleProviderSnapshotArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionHooksInstanceRoleProviderSnapshotsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_Filter>;
+};
+
+
+export type SubgraphSubscriptionHooksInstancesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHooksInstance_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHooksInstance_Filter>;
+};
+
+
+export type SubgraphSubscriptionHooksNameUpdatedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionHooksNameUpdatedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHooksNameUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHooksNameUpdated_Filter>;
+};
+
+
+export type SubgraphSubscriptionHooksTemplateArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionHooksTemplateRegistrationArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionHooksTemplateRegistrationEventArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionHooksTemplateRegistrationEventsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHooksTemplateRegistrationEvent_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHooksTemplateRegistrationEvent_Filter>;
+};
+
+
+export type SubgraphSubscriptionHooksTemplateRegistrationsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHooksTemplateRegistration_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHooksTemplateRegistration_Filter>;
+};
+
+
+export type SubgraphSubscriptionHooksTemplatesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHooksTemplate_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHooksTemplate_Filter>;
+};
+
+
+export type SubgraphSubscriptionIndexerDeploymentArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionIndexerDeploymentsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphIndexerDeployment_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphIndexerDeployment_Filter>;
+};
+
+
+export type SubgraphSubscriptionIndexerDiagnosticArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionIndexerDiagnosticsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphIndexerDiagnostic_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphIndexerDiagnostic_Filter>;
+};
+
+
+export type SubgraphSubscriptionKnownLenderStatusArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionKnownLenderStatusesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphKnownLenderStatus_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphKnownLenderStatus_Filter>;
+};
+
+
+export type SubgraphSubscriptionLenderAccountArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionLenderAccountSnapshotArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionLenderAccountSnapshotsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphLenderAccountSnapshot_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphLenderAccountSnapshot_Filter>;
+};
+
+
+export type SubgraphSubscriptionLenderAccountsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphLenderAccount_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphLenderAccount_Filter>;
+};
+
+
+export type SubgraphSubscriptionLenderAuthorizationArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionLenderAuthorizationChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionLenderAuthorizationChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphLenderAuthorizationChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphLenderAuthorizationChange_Filter>;
+};
+
+
+export type SubgraphSubscriptionLenderAuthorizationsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphLenderAuthorization_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphLenderAuthorization_Filter>;
+};
+
+
+export type SubgraphSubscriptionLenderDailyStatsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionLenderDailyStats_CollectionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphLenderDailyStats_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphLenderDailyStats_Filter>;
+};
+
+
+export type SubgraphSubscriptionLenderHooksAccessArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionLenderHooksAccessesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphLenderHooksAccess_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphLenderHooksAccess_Filter>;
+};
+
+
+export type SubgraphSubscriptionLenderInterestAccruedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionLenderInterestAccruedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphLenderInterestAccrued_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphLenderInterestAccrued_Filter>;
+};
+
+
+export type SubgraphSubscriptionLenderStatsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionLenderStats_CollectionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphLenderStats_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphLenderStats_Filter>;
+};
+
+
+export type SubgraphSubscriptionLenderWithdrawalStatusArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionLenderWithdrawalStatusesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphLenderWithdrawalStatus_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphLenderWithdrawalStatus_Filter>;
+};
+
+
+export type SubgraphSubscriptionLiquidatorApprovedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionLiquidatorApprovedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphLiquidatorApproved_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphLiquidatorApproved_Filter>;
+};
+
+
+export type SubgraphSubscriptionLiquidatorRemovedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionLiquidatorRemovedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphLiquidatorRemoved_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphLiquidatorRemoved_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketAddedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketAddedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketAdded_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketAdded_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketBorrowerChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketBorrowerChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketBorrowerChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketBorrowerChange_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketClosedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketClosedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketClosed_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketClosed_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketDailyStatsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketDailyStats_CollectionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketDailyStats_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketDailyStats_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketDeployedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketDeployedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketDeployed_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketDeployed_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketDeploymentConfigArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketDeploymentConfigsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketDeploymentConfig_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketDeploymentConfig_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketEventArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketEventCursorArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketEventCursorsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketEventCursor_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketEventCursor_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketEventsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketEvent_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketEvent_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketHooksDataArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketHooksDatasArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketHooksData_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketHooksData_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketInterestAccruedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketInterestAccruedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketInterestAccrued_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketInterestAccrued_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketRemovedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketRemovedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketRemoved_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketRemoved_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketSnapshotArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketSnapshotsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketSnapshot_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketSnapshot_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketWrapperRegistrationArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMarketWrapperRegistrationsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketWrapperRegistration_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketWrapperRegistration_Filter>;
+};
+
+
+export type SubgraphSubscriptionMarketsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarket_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarket_Filter>;
+};
+
+
+export type SubgraphSubscriptionMaxTotalSupplyUpdatedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMaxTotalSupplyUpdatedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMaxTotalSupplyUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMaxTotalSupplyUpdated_Filter>;
+};
+
+
+export type SubgraphSubscriptionMinimumDepositUpdatedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionMinimumDepositUpdatedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMinimumDepositUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMinimumDepositUpdated_Filter>;
+};
+
+
+export type SubgraphSubscriptionNewControllerArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionNewControllersArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphNewController_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphNewController_Filter>;
+};
+
+
+export type SubgraphSubscriptionNewSanctionsEscrowArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionNewSanctionsEscrowsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphNewSanctionsEscrow_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphNewSanctionsEscrow_Filter>;
+};
+
+
+export type SubgraphSubscriptionOwnershipHandoverCanceledArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionOwnershipHandoverCanceledsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphOwnershipHandoverCanceled_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphOwnershipHandoverCanceled_Filter>;
+};
+
+
+export type SubgraphSubscriptionOwnershipHandoverRequestedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionOwnershipHandoverRequestedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphOwnershipHandoverRequested_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphOwnershipHandoverRequested_Filter>;
+};
+
+
+export type SubgraphSubscriptionOwnershipTransferredArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionOwnershipTransferredsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphOwnershipTransferred_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphOwnershipTransferred_Filter>;
+};
+
+
+export type SubgraphSubscriptionParameterConstraintsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionParameterConstraints_CollectionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphParameterConstraints_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphParameterConstraints_Filter>;
+};
+
+
+export type SubgraphSubscriptionPendingMarketDeploymentArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionPendingMarketDeploymentsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphPendingMarketDeployment_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphPendingMarketDeployment_Filter>;
+};
+
+
+export type SubgraphSubscriptionPeriodicTermClosedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionPeriodicTermClosedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphPeriodicTermClosed_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphPeriodicTermClosed_Filter>;
+};
+
+
+export type SubgraphSubscriptionPeriodicTermUpdatedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionPeriodicTermUpdatedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphPeriodicTermUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphPeriodicTermUpdated_Filter>;
+};
+
+
+export type SubgraphSubscriptionProtocolDailyStatsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionProtocolDailyStats_CollectionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphProtocolDailyStats_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphProtocolDailyStats_Filter>;
+};
+
+
+export type SubgraphSubscriptionProtocolFeeBipsUpdatedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionProtocolFeeBipsUpdatedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphProtocolFeeBipsUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphProtocolFeeBipsUpdated_Filter>;
+};
+
+
+export type SubgraphSubscriptionProtocolStatsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionProtocolStats_CollectionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphProtocolStats_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphProtocolStats_Filter>;
+};
+
+
+export type SubgraphSubscriptionRegisteredBorrowerArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionRegisteredBorrowersArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRegisteredBorrower_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRegisteredBorrower_Filter>;
+};
+
+
+export type SubgraphSubscriptionReserveRatioBipsUpdatedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionReserveRatioBipsUpdatedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphReserveRatioBipsUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphReserveRatioBipsUpdated_Filter>;
+};
+
+
+export type SubgraphSubscriptionRevolvingMarketDeploymentArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionRevolvingMarketDeploymentsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRevolvingMarketDeployment_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRevolvingMarketDeployment_Filter>;
+};
+
+
+export type SubgraphSubscriptionRoleProviderArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionRoleProviderAddedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionRoleProviderAddedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderAdded_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderAdded_Filter>;
+};
+
+
+export type SubgraphSubscriptionRoleProviderAdministratorChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionRoleProviderAdministratorChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderAdministratorChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderAdministratorChange_Filter>;
+};
+
+
+export type SubgraphSubscriptionRoleProviderFactoriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderFactory_Filter>;
+};
+
+
+export type SubgraphSubscriptionRoleProviderFactoryArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionRoleProviderInstanceArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionRoleProviderInstancesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderInstance_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
+};
+
+
+export type SubgraphSubscriptionRoleProviderMemberArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionRoleProviderMembersArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderMember_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderMember_Filter>;
+};
+
+
+export type SubgraphSubscriptionRoleProviderMembershipChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionRoleProviderMembershipChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderMembershipChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderMembershipChange_Filter>;
+};
+
+
+export type SubgraphSubscriptionRoleProviderRemovedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionRoleProviderRemovedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderRemoved_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderRemoved_Filter>;
+};
+
+
+export type SubgraphSubscriptionRoleProviderUpdatedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionRoleProviderUpdatedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderUpdated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderUpdated_Filter>;
+};
+
+
+export type SubgraphSubscriptionRoleProvidersArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProvider_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProvider_Filter>;
+};
+
+
+export type SubgraphSubscriptionSanctionOverrideArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSanctionOverrideRemovedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSanctionOverrideRemovedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSanctionOverrideRemoved_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSanctionOverrideRemoved_Filter>;
+};
+
+
+export type SubgraphSubscriptionSanctionOverrideStatusArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSanctionOverrideStatusesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSanctionOverrideStatus_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSanctionOverrideStatus_Filter>;
+};
+
+
+export type SubgraphSubscriptionSanctionOverridesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSanctionOverride_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSanctionOverride_Filter>;
+};
+
+
+export type SubgraphSubscriptionSanctionedAccountAssetsQueuedForWithdrawalArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSanctionedAccountAssetsQueuedForWithdrawalsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSanctionedAccountAssetsQueuedForWithdrawal_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSanctionedAccountAssetsQueuedForWithdrawal_Filter>;
+};
+
+
+export type SubgraphSubscriptionSanctionedAccountAssetsSentToEscrowArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSanctionedAccountAssetsSentToEscrowsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSanctionedAccountAssetsSentToEscrow_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSanctionedAccountAssetsSentToEscrow_Filter>;
+};
+
+
+export type SubgraphSubscriptionSanctionedAccountWithdrawalSentToEscrowArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSanctionedAccountWithdrawalSentToEscrowsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSanctionedAccountWithdrawalSentToEscrow_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSanctionedAccountWithdrawalSentToEscrow_Filter>;
+};
+
+
+export type SubgraphSubscriptionSanctionsEscrowArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSanctionsEscrowsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSanctionsEscrow_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSanctionsEscrow_Filter>;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractCreatedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractCreatedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSimpleCollateralContractCreated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSimpleCollateralContractCreated_Filter>;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractDepositArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractDepositorArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractDepositorsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSimpleCollateralContractDepositor_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSimpleCollateralContractDepositor_Filter>;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractDepositsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSimpleCollateralContractDeposit_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSimpleCollateralContractDeposit_Filter>;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractFullResetArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractFullResetsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSimpleCollateralContractFullReset_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSimpleCollateralContractFullReset_Filter>;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractLiquidatedSharesResetArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractLiquidatedSharesResetsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSimpleCollateralContractLiquidatedSharesReset_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSimpleCollateralContractLiquidatedSharesReset_Filter>;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractLiquidationArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractLiquidationsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSimpleCollateralContractLiquidation_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSimpleCollateralContractLiquidation_Filter>;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractReclaimArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractReclaimsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSimpleCollateralContractReclaim_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSimpleCollateralContractReclaim_Filter>;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractSnapshotArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractSnapshotsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSimpleCollateralContractSnapshot_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSimpleCollateralContractSnapshot_Filter>;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralContractsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSimpleCollateralContract_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSimpleCollateralContract_Filter>;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralFactoriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSimpleCollateralFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSimpleCollateralFactory_Filter>;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralFactoryArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralMarketIndexArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSimpleCollateralMarketIndexesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSimpleCollateralMarketIndex_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSimpleCollateralMarketIndex_Filter>;
+};
+
+
+export type SubgraphSubscriptionSubgraphVersionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionSubgraphVersionsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphSubgraphVersion_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphSubgraphVersion_Filter>;
+};
+
+
+export type SubgraphSubscriptionTokenArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionTokenDailyPriceArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionTokenDailyPricesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphTokenDailyPrice_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphTokenDailyPrice_Filter>;
+};
+
+
+export type SubgraphSubscriptionTokensArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphToken_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphToken_Filter>;
+};
+
+
+export type SubgraphSubscriptionTransferArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionTransfersArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphTransfer_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphTransfer_Filter>;
+};
+
+
+export type SubgraphSubscriptionUpdateProtocolFeeConfigurationArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionUpdateProtocolFeeConfigurationsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphUpdateProtocolFeeConfiguration_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphUpdateProtocolFeeConfiguration_Filter>;
+};
+
+
+export type SubgraphSubscriptionWildcat4626WrapperArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionWildcat4626WrapperDeployedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionWildcat4626WrapperDeployedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWildcat4626WrapperDeployed_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWildcat4626WrapperDeployed_Filter>;
+};
+
+
+export type SubgraphSubscriptionWildcat4626WrapperFactoriesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWildcat4626WrapperFactory_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWildcat4626WrapperFactory_Filter>;
+};
+
+
+export type SubgraphSubscriptionWildcat4626WrapperFactoryArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionWildcat4626WrappersArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWildcat4626Wrapper_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
+};
+
+
+export type SubgraphSubscriptionWithdrawalBatchArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionWithdrawalBatchCreatedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionWithdrawalBatchCreatedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWithdrawalBatchCreated_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWithdrawalBatchCreated_Filter>;
+};
+
+
+export type SubgraphSubscriptionWithdrawalBatchExpiredArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionWithdrawalBatchExpiredsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWithdrawalBatchExpired_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWithdrawalBatchExpired_Filter>;
+};
+
+
+export type SubgraphSubscriptionWithdrawalBatchInterestAccruedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionWithdrawalBatchInterestAccruedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWithdrawalBatchInterestAccrued_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWithdrawalBatchInterestAccrued_Filter>;
+};
+
+
+export type SubgraphSubscriptionWithdrawalBatchPaymentArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionWithdrawalBatchPaymentsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWithdrawalBatchPayment_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWithdrawalBatchPayment_Filter>;
+};
+
+
+export type SubgraphSubscriptionWithdrawalBatchesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWithdrawalBatch_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWithdrawalBatch_Filter>;
+};
+
+
+export type SubgraphSubscriptionWithdrawalExecutionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionWithdrawalExecutionsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWithdrawalExecution_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWithdrawalExecution_Filter>;
+};
+
+
+export type SubgraphSubscriptionWithdrawalRequestArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionWithdrawalRequestsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWithdrawalRequest_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWithdrawalRequest_Filter>;
+};
+
+
+export type SubgraphSubscriptionWrapperMarketIndexArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphSubscriptionWrapperMarketIndexesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWrapperMarketIndex_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWrapperMarketIndex_Filter>;
+};
 
 export type SubgraphToken = {
   __typename: 'Token';
@@ -24072,6 +32959,8 @@ export enum SubgraphTransfer_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -24085,13 +32974,18 @@ export enum SubgraphTransfer_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -24108,10 +33002,14 @@ export enum SubgraphTransfer_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -24477,6 +33375,8 @@ export enum SubgraphWildcat4626WrapperDeployed_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -24490,13 +33390,18 @@ export enum SubgraphWildcat4626WrapperDeployed_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -24513,10 +33418,14 @@ export enum SubgraphWildcat4626WrapperDeployed_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -24931,6 +33840,8 @@ export enum SubgraphWildcat4626Wrapper_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -24944,13 +33855,18 @@ export enum SubgraphWildcat4626Wrapper_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -24967,10 +33883,14 @@ export enum SubgraphWildcat4626Wrapper_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -25487,6 +34407,8 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -25500,13 +34422,18 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -25523,10 +34450,14 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -25930,6 +34861,8 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -25943,13 +34876,18 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -25966,10 +34904,14 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -26442,6 +35384,8 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
   market__borrowIndex = 'market__borrowIndex',
   market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -26455,13 +35399,18 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
   market__depositIndex = 'market__depositIndex',
   market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
   market__eventIndex = 'market__eventIndex',
   market__feeRecipient = 'market__feeRecipient',
   market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
   market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
   market__forceBuyBackIndex = 'market__forceBuyBackIndex',
   market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
   market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
   market__isClosed = 'market__isClosed',
   market__isDelinquent = 'market__isDelinquent',
   market__isIncurringPenalties = 'market__isIncurringPenalties',
@@ -26478,10 +35427,14 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   market__originKind = 'market__originKind',
   market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
   market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
   market__pendingProtocolFees = 'market__pendingProtocolFees',
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
   market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
@@ -26637,15 +35590,15 @@ export enum Subgraph_SubgraphErrorPolicy_ {
 
 export type SubgraphTokenDataFragment = { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean };
 
-export type SubgraphRoleProviderDataFragment = { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean };
+export type SubgraphRoleProviderDataFragment = { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } };
 
-export type SubgraphLenderHooksAccessDataFragment = { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null };
+export type SubgraphLenderHooksAccessDataFragment = { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null };
 
-export type SubgraphAccountDataForLenderViewFragment = { __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
+export type SubgraphAccountDataForLenderViewFragment = { __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
 
-export type SubgraphAccountDataForLenderListViewFragment = { __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
+export type SubgraphAccountDataForLenderListViewFragment = { __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
 
-export type SubgraphBasicLenderDataFragment = { __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, addedTimestamp: number, role: SubgraphLenderStatus, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean, addedTimestamp: number } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null };
+export type SubgraphBasicLenderDataFragment = { __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, addedTimestamp: number, role: SubgraphLenderStatus, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean, addedTimestamp: number } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null };
 
 export type SubgraphLenderPropertiesFragment = { __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
 
@@ -26655,7 +35608,7 @@ export type SubgraphAllAuthorizedLendersViewFragment = { __typename: 'LenderAuth
 
 export type SubgraphMinimalControllerDataFragment = { __typename: 'Controller', id: string, borrower: string, numMarkets: number, isRegistered: boolean, controllerFactory: { __typename: 'ControllerFactory', id: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, constraints: { __typename: 'ParameterConstraints', minimumDelinquencyGracePeriod: number, maximumDelinquencyGracePeriod: number, minimumReserveRatioBips: number, maximumReserveRatioBips: number, minimumDelinquencyFeeBips: number, maximumDelinquencyFeeBips: number, minimumWithdrawalBatchDuration: number, maximumWithdrawalBatchDuration: number, minimumAnnualInterestBips: number, maximumAnnualInterestBips: number }, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null }, archController: { __typename: 'ArchController', id: string } };
 
-export type SubgraphMarketDataFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
+export type SubgraphMarketDataFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
 
 export type SubgraphParameterConstraintsDataFragment = { __typename: 'ParameterConstraints', minimumDelinquencyGracePeriod: number, maximumDelinquencyGracePeriod: number, minimumReserveRatioBips: number, maximumReserveRatioBips: number, minimumDelinquencyFeeBips: number, maximumDelinquencyFeeBips: number, minimumWithdrawalBatchDuration: number, maximumWithdrawalBatchDuration: number, minimumAnnualInterestBips: number, maximumAnnualInterestBips: number };
 
@@ -26667,9 +35620,9 @@ export type SubgraphMarketDeployedEventFragment = { __typename: 'MarketDeployed'
 
 export type SubgraphMarketEventDataFragment = { __typename: 'MarketEvent', id: string, sequence: number, kind: SubgraphMarketEventKind, blockNumber: string, blockTimestamp: string, transactionHash: string, logIndex: string, market: { __typename: 'Market', address: string } };
 
-export type SubgraphMarketDataWithEventsFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> };
+export type SubgraphMarketDataWithEventsFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> };
 
-export type SubgraphMarketListDataFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } } } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
+export type SubgraphMarketListDataFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } } } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
 
 export type SubgraphMarketSnapshotDataFragment = { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string };
 
@@ -26719,7 +35672,33 @@ export type SubgraphMarketClosedDataFragment = { __typename: 'MarketClosed', eve
 
 export type SubgraphHooksConfigDataForMarketFragment = { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number };
 
-export type SubgraphHooksInstanceDataFragment = { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> };
+export type SubgraphHooksInstanceDataFragment = { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> };
+
+export type SubgraphBorrowerAccountIdentityDataFragment = { __typename: 'BorrowerAccount', id: string, address: string, principalAddress: string, pendingPrincipalAddress?: string | null, registeredAtBlock: string, registeredAtTimestamp: string, registeredAtTransaction: string, registeredAtLogIndex: string, registry: { __typename: 'BorrowerIdentityRegistry', id: string, address: string }, accountFactory: { __typename: 'BorrowerAccountFactory', id: string, address: string, isApproved: boolean } };
+
+export type SubgraphBorrowerPrincipalIdentityDataFragment = { __typename: 'Borrower', id: string, address: string, firstSeenBlock: string, firstSeenTimestamp: string, firstSeenTransaction: string, firstSeenLogIndex: string, lastSeenBlock: string, lastSeenTimestamp: string, lastSeenTransaction: string, lastSeenLogIndex: string, registrations: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean, archController: { __typename: 'ArchController', id: string } }> };
+
+export type SubgraphMarketBorrowerIdentityDataFragment = { __typename: 'Market', id: string, address: string, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null };
+
+export type SubgraphBorrowerAccountPrincipalChangeDataFragment = { __typename: 'BorrowerAccountPrincipalChange', id: string, kind: SubgraphBorrowerAccountPrincipalChangeKind, currentPrincipalAddress?: string | null, previousPrincipalAddress?: string | null, newPrincipalAddress?: string | null, previousPendingPrincipalAddress?: string | null, pendingPrincipalAddress?: string | null, cancelledPendingPrincipalAddress?: string | null, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, account: { __typename: 'BorrowerAccount', address: string, registry: { __typename: 'BorrowerIdentityRegistry', address: string } } };
+
+export type SubgraphMarketBorrowerChangeDataFragment = { __typename: 'MarketBorrowerChange', id: string, kind: SubgraphMarketBorrowerChangeKind, borrower?: string | null, borrowerPrincipal?: string | null, previousBorrower?: string | null, previousBorrowerPrincipal?: string | null, newBorrower?: string | null, newBorrowerPrincipal?: string | null, previousPendingBorrower?: string | null, previousPendingBorrowerPrincipal?: string | null, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, cancelledPendingBorrower?: string | null, cancelledPendingBorrowerPrincipal?: string | null, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, market: { __typename: 'Market', address: string } };
+
+export type SubgraphHookAuthorityDataFragment = { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, providerMetadataState: SubgraphProviderMetadataState, hooksFactory: { __typename: 'HooksFactory', address: string }, hooksTemplate: { __typename: 'HooksTemplate', address: string, kind: SubgraphHooksKind, version: string } };
+
+export type SubgraphRoleProviderAttachmentDataFragment = { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, hooks: { __typename: 'HooksInstance', address: string, administrator: string, pendingAdministrator?: string | null } };
+
+export type SubgraphRoleProviderMemberDataFragment = { __typename: 'RoleProviderMember', id: string, account: string, isMember: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string };
+
+export type SubgraphRoleProviderInstanceDataFragment = { __typename: 'RoleProviderInstance', id: string, address: string, kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null, deployer?: string | null, salt?: string | null, root?: string | null, token?: string | null, vault?: string | null, minBalance?: string | null, minAssets?: string | null, tokenId?: string | null, skipInterfaceCheck?: boolean | null, deployedAtBlock?: string | null, deployedAtTimestamp?: string | null, deployedAtTransaction?: string | null, deployedAtLogIndex?: string | null, deploymentFactory?: { __typename: 'RoleProviderFactory', address: string, kind: SubgraphRoleProviderKind, label: string, generation: string, configuredStartBlock: string, indexed: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean } | null };
+
+export type SubgraphHookAdministratorChangeDataFragment = { __typename: 'HookAdministratorChange', id: string, kind: SubgraphAdministratorChangeKind, administrator?: string | null, previousAdministrator?: string | null, newAdministrator?: string | null, previousPendingAdministrator?: string | null, pendingAdministrator?: string | null, cancelledPendingAdministrator?: string | null, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, hooks: { __typename: 'HooksInstance', address: string } };
+
+export type SubgraphRoleProviderAdministratorChangeDataFragment = { __typename: 'RoleProviderAdministratorChange', id: string, kind: SubgraphAdministratorChangeKind, administrator?: string | null, previousAdministrator?: string | null, newAdministrator?: string | null, previousPendingAdministrator?: string | null, pendingAdministrator?: string | null, cancelledPendingAdministrator?: string | null, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, provider: { __typename: 'RoleProviderInstance', address: string } };
+
+export type SubgraphRoleProviderMembershipChangeDataFragment = { __typename: 'RoleProviderMembershipChange', id: string, kind: SubgraphMembershipChangeKind, account: string, administrator: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, provider: { __typename: 'RoleProviderInstance', address: string } };
+
+export type SubgraphRoleProviderRootChangeDataFragment = { __typename: 'RoleProviderRootChange', id: string, administrator: string, previousRoot: string, newRoot: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, provider: { __typename: 'RoleProviderInstance', address: string } };
 
 export type SubgraphHooksTemplateDataFragment = { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string };
 
@@ -26803,7 +35782,7 @@ export type SubgraphGetLenderAccountForMarketQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetLenderAccountForMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> } | null };
+export type SubgraphGetLenderAccountForMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> } | null };
 
 export type SubgraphGetIndexedLenderAccountSummaryForMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -26811,7 +35790,7 @@ export type SubgraphGetIndexedLenderAccountSummaryForMarketQueryVariables = Exac
 }>;
 
 
-export type SubgraphGetIndexedLenderAccountSummaryForMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> } | null };
+export type SubgraphGetIndexedLenderAccountSummaryForMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> } | null };
 
 export type SubgraphGetLenderAccountWithMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -26831,14 +35810,14 @@ export type SubgraphGetLenderAccountWithMarketQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetLenderAccountWithMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null } | null };
+export type SubgraphGetLenderAccountWithMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null } | null };
 
 export type SubgraphGetBasicBorrowerDataQueryVariables = Exact<{
   borrower: Scalars['Bytes']['input'];
 }>;
 
 
-export type SubgraphGetBasicBorrowerDataQuery = { __typename: 'Query', registeredBorrowers: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean }>, markets: Array<{ __typename: 'Market', id: string }> };
+export type SubgraphGetBasicBorrowerDataQuery = { __typename: 'Query', registeredBorrowers: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean }>, markets: Array<{ __typename: 'Market', id: string }>, borrowerAccounts: Array<{ __typename: 'BorrowerAccount', registry: { __typename: 'BorrowerIdentityRegistry', archController: { __typename: 'ArchController', id: string } }, principal: { __typename: 'Borrower', registrations: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean, archController: { __typename: 'ArchController', id: string } }> } }> };
 
 export type SubgraphGetAllMarketsForLenderViewQueryVariables = Exact<{
   lender?: InputMaybe<Scalars['Bytes']['input']>;
@@ -26862,7 +35841,7 @@ export type SubgraphGetAllMarketsForLenderViewQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetAllMarketsForLenderViewQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerAuthorizations: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, controller: { __typename: 'Controller', markets: Array<{ __typename: 'Market', id: string }> } }> };
+export type SubgraphGetAllMarketsForLenderViewQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerAuthorizations: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, controller: { __typename: 'Controller', markets: Array<{ __typename: 'Market', id: string }> } }> };
 
 export type SubgraphGetAllMarketsForLenderListViewQueryVariables = Exact<{
   lender?: InputMaybe<Scalars['Bytes']['input']>;
@@ -26874,7 +35853,7 @@ export type SubgraphGetAllMarketsForLenderListViewQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetAllMarketsForLenderListViewQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } } } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerAuthorizations: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, controller: { __typename: 'Controller', markets: Array<{ __typename: 'Market', id: string }> } }> };
+export type SubgraphGetAllMarketsForLenderListViewQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } } } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerAuthorizations: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, controller: { __typename: 'Controller', markets: Array<{ __typename: 'Market', id: string }> } }> };
 
 export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables = Exact<{
   lender: Scalars['Bytes']['input'];
@@ -26894,7 +35873,7 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables = Exa
 }>;
 
 
-export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = { __typename: 'Query', lenderAccounts: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerAuthorizations: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, controller: { __typename: 'Controller', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> } }> };
+export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = { __typename: 'Query', lenderAccounts: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerAuthorizations: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, controller: { __typename: 'Controller', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> } }> };
 
 export type SubgraphGetLenderWithdrawalsForMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -26953,21 +35932,109 @@ export type SubgraphGetAllHooksTemplatesQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetAllHooksTemplatesQuery = { __typename: 'Query', hooksTemplateRegistrations: Array<{ __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }>, registeredBorrowers?: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean }> };
+export type SubgraphGetAllHooksTemplatesQuery = { __typename: 'Query', hooksTemplateRegistrations: Array<{ __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }>, registeredBorrowers?: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean }>, borrowerAccounts?: Array<{ __typename: 'BorrowerAccount', registry: { __typename: 'BorrowerIdentityRegistry', archController: { __typename: 'ArchController', id: string } }, principal: { __typename: 'Borrower', registrations: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean, archController: { __typename: 'ArchController', id: string } }> } }> };
 
 export type SubgraphGetHooksInstancesForBorrowerQueryVariables = Exact<{
   borrower: Scalars['Bytes']['input'];
 }>;
 
 
-export type SubgraphGetHooksInstancesForBorrowerQuery = { __typename: 'Query', hooksInstances: Array<{ __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> }> };
+export type SubgraphGetHooksInstancesForBorrowerQuery = { __typename: 'Query', hooksInstances: Array<{ __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> }> };
 
 export type SubgraphGetAllHooksDataForBorrowerQueryVariables = Exact<{
   borrower: Scalars['Bytes']['input'];
 }>;
 
 
-export type SubgraphGetAllHooksDataForBorrowerQuery = { __typename: 'Query', hooksTemplateRegistrations: Array<{ __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }>, hooksInstances: Array<{ __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> }>, registeredBorrowers: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean }>, controllers: Array<{ __typename: 'Controller', id: string, borrower: string, numMarkets: number, isRegistered: boolean, controllerFactory: { __typename: 'ControllerFactory', id: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, constraints: { __typename: 'ParameterConstraints', minimumDelinquencyGracePeriod: number, maximumDelinquencyGracePeriod: number, minimumReserveRatioBips: number, maximumReserveRatioBips: number, minimumDelinquencyFeeBips: number, maximumDelinquencyFeeBips: number, minimumWithdrawalBatchDuration: number, maximumWithdrawalBatchDuration: number, minimumAnnualInterestBips: number, maximumAnnualInterestBips: number }, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null }, archController: { __typename: 'ArchController', id: string } }> };
+export type SubgraphGetAllHooksDataForBorrowerQuery = { __typename: 'Query', hooksTemplateRegistrations: Array<{ __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }>, hooksInstances: Array<{ __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> }>, registeredBorrowers: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean }>, borrowerAccounts: Array<{ __typename: 'BorrowerAccount', registry: { __typename: 'BorrowerIdentityRegistry', archController: { __typename: 'ArchController', id: string } }, principal: { __typename: 'Borrower', registrations: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean, archController: { __typename: 'ArchController', id: string } }> } }>, controllers: Array<{ __typename: 'Controller', id: string, borrower: string, numMarkets: number, isRegistered: boolean, controllerFactory: { __typename: 'ControllerFactory', id: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, constraints: { __typename: 'ParameterConstraints', minimumDelinquencyGracePeriod: number, maximumDelinquencyGracePeriod: number, minimumReserveRatioBips: number, maximumReserveRatioBips: number, minimumDelinquencyFeeBips: number, maximumDelinquencyFeeBips: number, minimumWithdrawalBatchDuration: number, maximumWithdrawalBatchDuration: number, minimumAnnualInterestBips: number, maximumAnnualInterestBips: number }, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null }, archController: { __typename: 'ArchController', id: string } }> };
+
+export type SubgraphGetBorrowerPrincipalIdentityQueryVariables = Exact<{
+  principal: Scalars['ID']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SubgraphGetBorrowerPrincipalIdentityQuery = { __typename: 'Query', borrower?: { __typename: 'Borrower', id: string, address: string, firstSeenBlock: string, firstSeenTimestamp: string, firstSeenTransaction: string, firstSeenLogIndex: string, lastSeenBlock: string, lastSeenTimestamp: string, lastSeenTransaction: string, lastSeenLogIndex: string, accounts: Array<{ __typename: 'BorrowerAccount', id: string, address: string, principalAddress: string, pendingPrincipalAddress?: string | null, registeredAtBlock: string, registeredAtTimestamp: string, registeredAtTransaction: string, registeredAtLogIndex: string, registry: { __typename: 'BorrowerIdentityRegistry', id: string, address: string }, accountFactory: { __typename: 'BorrowerAccountFactory', id: string, address: string, isApproved: boolean } }>, pendingAccounts: Array<{ __typename: 'BorrowerAccount', id: string, address: string, principalAddress: string, pendingPrincipalAddress?: string | null, registeredAtBlock: string, registeredAtTimestamp: string, registeredAtTransaction: string, registeredAtLogIndex: string, registry: { __typename: 'BorrowerIdentityRegistry', id: string, address: string }, accountFactory: { __typename: 'BorrowerAccountFactory', id: string, address: string, isApproved: boolean } }>, registrations: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean, archController: { __typename: 'ArchController', id: string } }> } | null };
+
+export type SubgraphGetBorrowerAccountIdentitiesQueryVariables = Exact<{
+  account: Scalars['Bytes']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SubgraphGetBorrowerAccountIdentitiesQuery = { __typename: 'Query', borrowerAccounts: Array<{ __typename: 'BorrowerAccount', id: string, address: string, principalAddress: string, pendingPrincipalAddress?: string | null, registeredAtBlock: string, registeredAtTimestamp: string, registeredAtTransaction: string, registeredAtLogIndex: string, registry: { __typename: 'BorrowerIdentityRegistry', id: string, address: string }, accountFactory: { __typename: 'BorrowerAccountFactory', id: string, address: string, isApproved: boolean } }> };
+
+export type SubgraphGetMarketBorrowerIdentityQueryVariables = Exact<{
+  market: Scalars['ID']['input'];
+}>;
+
+
+export type SubgraphGetMarketBorrowerIdentityQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, address: string, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null } | null };
+
+export type SubgraphGetBorrowerAccountPrincipalChangesQueryVariables = Exact<{
+  account: Scalars['Bytes']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SubgraphGetBorrowerAccountPrincipalChangesQuery = { __typename: 'Query', borrowerAccountPrincipalChanges: Array<{ __typename: 'BorrowerAccountPrincipalChange', id: string, kind: SubgraphBorrowerAccountPrincipalChangeKind, currentPrincipalAddress?: string | null, previousPrincipalAddress?: string | null, newPrincipalAddress?: string | null, previousPendingPrincipalAddress?: string | null, pendingPrincipalAddress?: string | null, cancelledPendingPrincipalAddress?: string | null, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, account: { __typename: 'BorrowerAccount', address: string, registry: { __typename: 'BorrowerIdentityRegistry', address: string } } }> };
+
+export type SubgraphGetMarketBorrowerChangesQueryVariables = Exact<{
+  market: Scalars['String']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SubgraphGetMarketBorrowerChangesQuery = { __typename: 'Query', marketBorrowerChanges: Array<{ __typename: 'MarketBorrowerChange', id: string, kind: SubgraphMarketBorrowerChangeKind, borrower?: string | null, borrowerPrincipal?: string | null, previousBorrower?: string | null, previousBorrowerPrincipal?: string | null, newBorrower?: string | null, newBorrowerPrincipal?: string | null, previousPendingBorrower?: string | null, previousPendingBorrowerPrincipal?: string | null, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, cancelledPendingBorrower?: string | null, cancelledPendingBorrowerPrincipal?: string | null, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, market: { __typename: 'Market', address: string } }> };
+
+export type SubgraphGetHooksAuthorityQueryVariables = Exact<{
+  hooks: Scalars['ID']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SubgraphGetHooksAuthorityQuery = { __typename: 'Query', hooksInstance?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, providerMetadataState: SubgraphProviderMetadataState, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, hooks: { __typename: 'HooksInstance', address: string, administrator: string, pendingAdministrator?: string | null } }>, hooksFactory: { __typename: 'HooksFactory', address: string }, hooksTemplate: { __typename: 'HooksTemplate', address: string, kind: SubgraphHooksKind, version: string } } | null };
+
+export type SubgraphGetRoleProviderAuthorityQueryVariables = Exact<{
+  provider: Scalars['ID']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SubgraphGetRoleProviderAuthorityQuery = { __typename: 'Query', roleProviderInstance?: { __typename: 'RoleProviderInstance', id: string, address: string, kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null, deployer?: string | null, salt?: string | null, root?: string | null, token?: string | null, vault?: string | null, minBalance?: string | null, minAssets?: string | null, tokenId?: string | null, skipInterfaceCheck?: boolean | null, deployedAtBlock?: string | null, deployedAtTimestamp?: string | null, deployedAtTransaction?: string | null, deployedAtLogIndex?: string | null, attachments: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, hooks: { __typename: 'HooksInstance', address: string, administrator: string, pendingAdministrator?: string | null } }>, members: Array<{ __typename: 'RoleProviderMember', id: string, account: string, isMember: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string }>, rootChanges: Array<{ __typename: 'RoleProviderRootChange', id: string, administrator: string, previousRoot: string, newRoot: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, provider: { __typename: 'RoleProviderInstance', address: string } }>, deploymentFactory?: { __typename: 'RoleProviderFactory', address: string, kind: SubgraphRoleProviderKind, label: string, generation: string, configuredStartBlock: string, indexed: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean } | null } | null };
+
+export type SubgraphGetHookAdministratorChangesQueryVariables = Exact<{
+  hooks: Scalars['String']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SubgraphGetHookAdministratorChangesQuery = { __typename: 'Query', hookAdministratorChanges: Array<{ __typename: 'HookAdministratorChange', id: string, kind: SubgraphAdministratorChangeKind, administrator?: string | null, previousAdministrator?: string | null, newAdministrator?: string | null, previousPendingAdministrator?: string | null, pendingAdministrator?: string | null, cancelledPendingAdministrator?: string | null, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, hooks: { __typename: 'HooksInstance', address: string } }> };
+
+export type SubgraphGetRoleProviderAdministratorChangesQueryVariables = Exact<{
+  provider: Scalars['String']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SubgraphGetRoleProviderAdministratorChangesQuery = { __typename: 'Query', roleProviderAdministratorChanges: Array<{ __typename: 'RoleProviderAdministratorChange', id: string, kind: SubgraphAdministratorChangeKind, administrator?: string | null, previousAdministrator?: string | null, newAdministrator?: string | null, previousPendingAdministrator?: string | null, pendingAdministrator?: string | null, cancelledPendingAdministrator?: string | null, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, provider: { __typename: 'RoleProviderInstance', address: string } }> };
+
+export type SubgraphGetRoleProviderMembershipChangesQueryVariables = Exact<{
+  provider: Scalars['String']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SubgraphGetRoleProviderMembershipChangesQuery = { __typename: 'Query', roleProviderMembershipChanges: Array<{ __typename: 'RoleProviderMembershipChange', id: string, kind: SubgraphMembershipChangeKind, account: string, administrator: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, provider: { __typename: 'RoleProviderInstance', address: string } }> };
 
 export type SubgraphGetIndexerDeploymentQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -27040,7 +36107,7 @@ export type SubgraphGetMarketsWithEventsQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMarketsWithEventsQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> }> };
+export type SubgraphGetMarketsWithEventsQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> }> };
 
 export type SubgraphGetMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -27064,7 +36131,7 @@ export type SubgraphGetMarketQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> } | null };
+export type SubgraphGetMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> } | null };
 
 export type SubgraphGetMarketEventPageQueryVariables = Exact<{
   market: Scalars['String']['input'];
@@ -27107,7 +36174,7 @@ export type SubgraphGetIncompleteWithdrawalsForMarketQuery = { __typename: 'Quer
 export type SubgraphGetAllMarketsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SubgraphGetAllMarketsQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> };
+export type SubgraphGetAllMarketsQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> };
 
 export type SubgraphGetMarketListQueryVariables = Exact<{
   marketFilter?: InputMaybe<SubgraphMarket_Filter>;
@@ -27118,7 +36185,7 @@ export type SubgraphGetMarketListQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMarketListQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } } } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> };
+export type SubgraphGetMarketListQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } } } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> };
 
 export type SubgraphGetAuthorizedLendersByMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -27132,7 +36199,7 @@ export type SubgraphGetAllAuthorizedLendersQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetAllAuthorizedLendersQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, name: string, controller?: { __typename: 'Controller', authorizedLenders: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, changes: Array<{ __typename: 'LenderAuthorizationChange', blockTimestamp: number }> }> } | null, hooks?: { __typename: 'HooksInstance', lenders: Array<{ __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null }> } | null }> };
+export type SubgraphGetAllAuthorizedLendersQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, name: string, controller?: { __typename: 'Controller', authorizedLenders: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, changes: Array<{ __typename: 'LenderAuthorizationChange', blockTimestamp: number }> }> } | null, hooks?: { __typename: 'HooksInstance', lenders: Array<{ __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null }> } | null }> };
 
 export type SubgraphGetV1AuthorizedLendersQueryVariables = Exact<{
   borrower: Scalars['Bytes']['input'];
@@ -27147,11 +36214,11 @@ export type SubgraphGetV1AuthorizedLendersQuery = { __typename: 'Query', control
 
 export type SubgraphV1LenderWithActiveMarketsFragment = { __typename: 'LenderAuthorization', lender: string, authorized: boolean, addedTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', role: SubgraphLenderStatus, market: { __typename: 'Market', id: string, name: string } }> };
 
-export type SubgraphV2LenderWithActiveMarketsFragment = { __typename: 'LenderHooksAccess', addedTimestamp: number, id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, market: { __typename: 'Market', id: string, name: string } }>, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null };
+export type SubgraphV2LenderWithActiveMarketsFragment = { __typename: 'LenderHooksAccess', addedTimestamp: number, id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, market: { __typename: 'Market', id: string, name: string } }>, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null };
 
 export type SubgraphControllerAuthorizedLendersWithActiveMarketsFragment = { __typename: 'Controller', authorizedLenders: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, addedTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', role: SubgraphLenderStatus, market: { __typename: 'Market', id: string, name: string } }> }> };
 
-export type SubgraphHooksInstanceLendersWithActiveMarketsFragment = { __typename: 'HooksInstance', lenders: Array<{ __typename: 'LenderHooksAccess', addedTimestamp: number, id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, market: { __typename: 'Market', id: string, name: string } }>, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null }> };
+export type SubgraphHooksInstanceLendersWithActiveMarketsFragment = { __typename: 'HooksInstance', lenders: Array<{ __typename: 'LenderHooksAccess', addedTimestamp: number, id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, market: { __typename: 'Market', id: string, name: string } }>, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null }> };
 
 export type SubgraphGetLendersByHooksInstanceOrControllerQueryVariables = Exact<{
   contractAddress: Scalars['ID']['input'];
@@ -27167,7 +36234,7 @@ export type SubgraphGetLendersByHooksInstanceOrControllerQueryVariables = Exact<
 }>;
 
 
-export type SubgraphGetLendersByHooksInstanceOrControllerQuery = { __typename: 'Query', hooksInstance?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }>, lenders: Array<{ __typename: 'LenderHooksAccess', addedTimestamp: number, id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, market: { __typename: 'Market', id: string, name: string } }>, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null }> } | null, controller?: { __typename: 'Controller', authorizedLenders: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, addedTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', role: SubgraphLenderStatus, market: { __typename: 'Market', id: string, name: string } }> }> } | null };
+export type SubgraphGetLendersByHooksInstanceOrControllerQuery = { __typename: 'Query', hooksInstance?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }>, lenders: Array<{ __typename: 'LenderHooksAccess', addedTimestamp: number, id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, market: { __typename: 'Market', id: string, name: string } }>, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null }> } | null, controller?: { __typename: 'Controller', authorizedLenders: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, addedTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', role: SubgraphLenderStatus, market: { __typename: 'Market', id: string, name: string } }> }> } | null };
 
 export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables = Exact<{
   contractAddress: Scalars['ID']['input'];
@@ -27187,7 +36254,7 @@ export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariable
 }>;
 
 
-export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery = { __typename: 'Query', hooksInstance?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }>, lenders: Array<{ __typename: 'LenderHooksAccess', addedTimestamp: number, id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, market: { __typename: 'Market', id: string, name: string } }>, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null }> } | null, controller?: { __typename: 'Controller', id: string, borrower: string, numMarkets: number, isRegistered: boolean, markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerFactory: { __typename: 'ControllerFactory', id: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, constraints: { __typename: 'ParameterConstraints', minimumDelinquencyGracePeriod: number, maximumDelinquencyGracePeriod: number, minimumReserveRatioBips: number, maximumReserveRatioBips: number, minimumDelinquencyFeeBips: number, maximumDelinquencyFeeBips: number, minimumWithdrawalBatchDuration: number, maximumWithdrawalBatchDuration: number, minimumAnnualInterestBips: number, maximumAnnualInterestBips: number }, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null }, archController: { __typename: 'ArchController', id: string }, authorizedLenders: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, addedTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', role: SubgraphLenderStatus, market: { __typename: 'Market', id: string, name: string } }> }> } | null };
+export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery = { __typename: 'Query', hooksInstance?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }>, lenders: Array<{ __typename: 'LenderHooksAccess', addedTimestamp: number, id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, market: { __typename: 'Market', id: string, name: string } }>, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null }> } | null, controller?: { __typename: 'Controller', id: string, borrower: string, numMarkets: number, isRegistered: boolean, markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerFactory: { __typename: 'ControllerFactory', id: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, constraints: { __typename: 'ParameterConstraints', minimumDelinquencyGracePeriod: number, maximumDelinquencyGracePeriod: number, minimumReserveRatioBips: number, maximumReserveRatioBips: number, minimumDelinquencyFeeBips: number, maximumDelinquencyFeeBips: number, minimumWithdrawalBatchDuration: number, maximumWithdrawalBatchDuration: number, minimumAnnualInterestBips: number, maximumAnnualInterestBips: number }, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null }, archController: { __typename: 'ArchController', id: string }, authorizedLenders: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, addedTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', role: SubgraphLenderStatus, market: { __typename: 'Market', id: string, name: string } }> }> } | null };
 
 export type SubgraphGetActiveLendersByMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -27199,7 +36266,7 @@ export type SubgraphGetActiveLendersByMarketQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetActiveLendersByMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, addedTimestamp: number, role: SubgraphLenderStatus, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean, addedTimestamp: number } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null }> } | null };
+export type SubgraphGetActiveLendersByMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, addedTimestamp: number, role: SubgraphLenderStatus, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean, addedTimestamp: number } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null }> } | null };
 
 export type SubgraphGetAuthorizedLendersByBorrowerQueryVariables = Exact<{
   filter: SubgraphController_Filter;
@@ -27540,6 +36607,11 @@ export const RoleProviderDataFragmentDoc = gql`
     fragment RoleProviderData on RoleProvider {
   id
   providerAddress
+  providerInstance {
+    kind
+    administrator
+    pendingAdministrator
+  }
   timeToLive
   isPullProvider
   pullProviderIndex
@@ -27810,6 +36882,8 @@ export const HooksInstanceDataFragmentDoc = gql`
   id
   address
   borrower
+  administrator
+  pendingAdministrator
   name
   kind
   marketKind
@@ -27890,6 +36964,10 @@ export const MarketDataFragmentDoc = gql`
     id
   }
   borrower
+  borrowerPrincipal
+  pendingBorrower
+  pendingBorrowerPrincipal
+  borrowerIdentityRegistryAddress
   sentinel
   feeRecipient
   name
@@ -28083,6 +37161,10 @@ export const MarketListDataFragmentDoc = gql`
     id
   }
   borrower
+  borrowerPrincipal
+  pendingBorrower
+  pendingBorrowerPrincipal
+  borrowerIdentityRegistryAddress
   sentinel
   feeRecipient
   name
@@ -28326,6 +37408,251 @@ export const MarketClosedDataFragmentDoc = gql`
   blockNumber
   blockTimestamp
   transactionHash
+}
+    `;
+export const BorrowerAccountIdentityDataFragmentDoc = gql`
+    fragment BorrowerAccountIdentityData on BorrowerAccount {
+  id
+  address
+  registry {
+    id
+    address
+  }
+  accountFactory {
+    id
+    address
+    isApproved
+  }
+  principalAddress
+  pendingPrincipalAddress
+  registeredAtBlock
+  registeredAtTimestamp
+  registeredAtTransaction
+  registeredAtLogIndex
+}
+    `;
+export const BorrowerPrincipalIdentityDataFragmentDoc = gql`
+    fragment BorrowerPrincipalIdentityData on Borrower {
+  id
+  address
+  firstSeenBlock
+  firstSeenTimestamp
+  firstSeenTransaction
+  firstSeenLogIndex
+  lastSeenBlock
+  lastSeenTimestamp
+  lastSeenTransaction
+  lastSeenLogIndex
+  registrations {
+    archController {
+      id
+    }
+    isRegistered
+  }
+}
+    `;
+export const MarketBorrowerIdentityDataFragmentDoc = gql`
+    fragment MarketBorrowerIdentityData on Market {
+  id
+  address
+  borrower
+  borrowerPrincipal
+  pendingBorrower
+  pendingBorrowerPrincipal
+  borrowerIdentityRegistryAddress
+}
+    `;
+export const BorrowerAccountPrincipalChangeDataFragmentDoc = gql`
+    fragment BorrowerAccountPrincipalChangeData on BorrowerAccountPrincipalChange {
+  id
+  kind
+  account {
+    address
+    registry {
+      address
+    }
+  }
+  currentPrincipalAddress
+  previousPrincipalAddress
+  newPrincipalAddress
+  previousPendingPrincipalAddress
+  pendingPrincipalAddress
+  cancelledPendingPrincipalAddress
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const MarketBorrowerChangeDataFragmentDoc = gql`
+    fragment MarketBorrowerChangeData on MarketBorrowerChange {
+  id
+  kind
+  market {
+    address
+  }
+  borrower
+  borrowerPrincipal
+  previousBorrower
+  previousBorrowerPrincipal
+  newBorrower
+  newBorrowerPrincipal
+  previousPendingBorrower
+  previousPendingBorrowerPrincipal
+  pendingBorrower
+  pendingBorrowerPrincipal
+  cancelledPendingBorrower
+  cancelledPendingBorrowerPrincipal
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const HookAuthorityDataFragmentDoc = gql`
+    fragment HookAuthorityData on HooksInstance {
+  id
+  address
+  borrower
+  administrator
+  pendingAdministrator
+  providerMetadataState
+  hooksFactory {
+    address
+  }
+  hooksTemplate {
+    address
+    kind
+    version
+  }
+}
+    `;
+export const RoleProviderAttachmentDataFragmentDoc = gql`
+    fragment RoleProviderAttachmentData on RoleProvider {
+  id
+  hooks {
+    address
+    administrator
+    pendingAdministrator
+  }
+  providerAddress
+  timeToLive
+  isPullProvider
+  pullProviderIndex
+  isPushProvider
+  pushProviderIndex
+  isApproved
+}
+    `;
+export const RoleProviderMemberDataFragmentDoc = gql`
+    fragment RoleProviderMemberData on RoleProviderMember {
+  id
+  account
+  isMember
+  updatedAtBlock
+  updatedAtTimestamp
+  updatedAtTransaction
+  updatedAtLogIndex
+}
+    `;
+export const RoleProviderInstanceDataFragmentDoc = gql`
+    fragment RoleProviderInstanceData on RoleProviderInstance {
+  id
+  address
+  kind
+  administrator
+  pendingAdministrator
+  deployer
+  salt
+  root
+  token
+  vault
+  minBalance
+  minAssets
+  tokenId
+  skipInterfaceCheck
+  deployedAtBlock
+  deployedAtTimestamp
+  deployedAtTransaction
+  deployedAtLogIndex
+  deploymentFactory {
+    address
+    kind
+    label
+    generation
+    configuredStartBlock
+    indexed
+    lifecycle
+    configured
+  }
+}
+    `;
+export const HookAdministratorChangeDataFragmentDoc = gql`
+    fragment HookAdministratorChangeData on HookAdministratorChange {
+  id
+  kind
+  hooks {
+    address
+  }
+  administrator
+  previousAdministrator
+  newAdministrator
+  previousPendingAdministrator
+  pendingAdministrator
+  cancelledPendingAdministrator
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const RoleProviderAdministratorChangeDataFragmentDoc = gql`
+    fragment RoleProviderAdministratorChangeData on RoleProviderAdministratorChange {
+  id
+  kind
+  provider {
+    address
+  }
+  administrator
+  previousAdministrator
+  newAdministrator
+  previousPendingAdministrator
+  pendingAdministrator
+  cancelledPendingAdministrator
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const RoleProviderMembershipChangeDataFragmentDoc = gql`
+    fragment RoleProviderMembershipChangeData on RoleProviderMembershipChange {
+  id
+  kind
+  provider {
+    address
+  }
+  account
+  administrator
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+    `;
+export const RoleProviderRootChangeDataFragmentDoc = gql`
+    fragment RoleProviderRootChangeData on RoleProviderRootChange {
+  id
+  provider {
+    address
+  }
+  administrator
+  previousRoot
+  newRoot
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
 }
     `;
 export const SimpleCollateralContractSnapshotDataFragmentDoc = gql`
@@ -29133,6 +38460,21 @@ export const GetBasicBorrowerDataDocument = gql`
   markets(where: {borrower: $borrower}, first: 1) {
     id
   }
+  borrowerAccounts(where: {address: $borrower}, first: 100) {
+    registry {
+      archController {
+        id
+      }
+    }
+    principal {
+      registrations {
+        archController {
+          id
+        }
+        isRegistered
+      }
+    }
+  }
 }
     `;
 export type GetBasicBorrowerDataQueryResult = Apollo.QueryResult<SubgraphGetBasicBorrowerDataQuery, SubgraphGetBasicBorrowerDataQueryVariables>;
@@ -29439,6 +38781,21 @@ export const GetAllHooksTemplatesDocument = gql`
   registeredBorrowers(where: {borrower: $borrower}, first: 1) @include(if: $includeBorrower) {
     isRegistered
   }
+  borrowerAccounts(where: {address: $borrower}, first: 100) @include(if: $includeBorrower) {
+    registry {
+      archController {
+        id
+      }
+    }
+    principal {
+      registrations {
+        archController {
+          id
+        }
+        isRegistered
+      }
+    }
+  }
 }
     ${HooksTemplateRegistrationDataFragmentDoc}
 ${TokenDataFragmentDoc}
@@ -29447,7 +38804,7 @@ ${HooksFactoryDataFragmentDoc}`;
 export type GetAllHooksTemplatesQueryResult = Apollo.QueryResult<SubgraphGetAllHooksTemplatesQuery, SubgraphGetAllHooksTemplatesQueryVariables>;
 export const GetHooksInstancesForBorrowerDocument = gql`
     query getHooksInstancesForBorrower($borrower: Bytes!) {
-  hooksInstances(where: {borrower: $borrower}) {
+  hooksInstances(where: {administrator: $borrower}) {
     ...HooksInstanceData
   }
 }
@@ -29463,11 +38820,26 @@ export const GetAllHooksDataForBorrowerDocument = gql`
   hooksTemplateRegistrations {
     ...HooksTemplateRegistrationData
   }
-  hooksInstances(where: {borrower: $borrower}) {
+  hooksInstances(where: {administrator: $borrower}) {
     ...HooksInstanceData
   }
   registeredBorrowers(where: {borrower: $borrower}, first: 1) {
     isRegistered
+  }
+  borrowerAccounts(where: {address: $borrower}, first: 100) {
+    registry {
+      archController {
+        id
+      }
+    }
+    principal {
+      registrations {
+        archController {
+          id
+        }
+        isRegistered
+      }
+    }
   }
   controllers(where: {borrower: $borrower}, first: 1) {
     ...MinimalControllerData
@@ -29482,6 +38854,150 @@ ${RoleProviderDataFragmentDoc}
 ${MinimalControllerDataFragmentDoc}
 ${ParameterConstraintsDataFragmentDoc}`;
 export type GetAllHooksDataForBorrowerQueryResult = Apollo.QueryResult<SubgraphGetAllHooksDataForBorrowerQuery, SubgraphGetAllHooksDataForBorrowerQueryVariables>;
+export const GetBorrowerPrincipalIdentityDocument = gql`
+    query getBorrowerPrincipalIdentity($principal: ID!, $first: Int = 1000, $skip: Int = 0) {
+  borrower(id: $principal) {
+    ...BorrowerPrincipalIdentityData
+    accounts(first: $first, skip: $skip, orderBy: address, orderDirection: asc) {
+      ...BorrowerAccountIdentityData
+    }
+    pendingAccounts(
+      first: $first
+      skip: $skip
+      orderBy: address
+      orderDirection: asc
+    ) {
+      ...BorrowerAccountIdentityData
+    }
+  }
+}
+    ${BorrowerPrincipalIdentityDataFragmentDoc}
+${BorrowerAccountIdentityDataFragmentDoc}`;
+export type GetBorrowerPrincipalIdentityQueryResult = Apollo.QueryResult<SubgraphGetBorrowerPrincipalIdentityQuery, SubgraphGetBorrowerPrincipalIdentityQueryVariables>;
+export const GetBorrowerAccountIdentitiesDocument = gql`
+    query getBorrowerAccountIdentities($account: Bytes!, $first: Int = 1000, $skip: Int = 0) {
+  borrowerAccounts(
+    where: {address: $account}
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...BorrowerAccountIdentityData
+  }
+}
+    ${BorrowerAccountIdentityDataFragmentDoc}`;
+export type GetBorrowerAccountIdentitiesQueryResult = Apollo.QueryResult<SubgraphGetBorrowerAccountIdentitiesQuery, SubgraphGetBorrowerAccountIdentitiesQueryVariables>;
+export const GetMarketBorrowerIdentityDocument = gql`
+    query getMarketBorrowerIdentity($market: ID!) {
+  market(id: $market) {
+    ...MarketBorrowerIdentityData
+  }
+}
+    ${MarketBorrowerIdentityDataFragmentDoc}`;
+export type GetMarketBorrowerIdentityQueryResult = Apollo.QueryResult<SubgraphGetMarketBorrowerIdentityQuery, SubgraphGetMarketBorrowerIdentityQueryVariables>;
+export const GetBorrowerAccountPrincipalChangesDocument = gql`
+    query getBorrowerAccountPrincipalChanges($account: Bytes!, $first: Int = 100, $skip: Int = 0) {
+  borrowerAccountPrincipalChanges(
+    where: {account_: {address: $account}}
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...BorrowerAccountPrincipalChangeData
+  }
+}
+    ${BorrowerAccountPrincipalChangeDataFragmentDoc}`;
+export type GetBorrowerAccountPrincipalChangesQueryResult = Apollo.QueryResult<SubgraphGetBorrowerAccountPrincipalChangesQuery, SubgraphGetBorrowerAccountPrincipalChangesQueryVariables>;
+export const GetMarketBorrowerChangesDocument = gql`
+    query getMarketBorrowerChanges($market: String!, $first: Int = 100, $skip: Int = 0) {
+  marketBorrowerChanges(
+    where: {market: $market}
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...MarketBorrowerChangeData
+  }
+}
+    ${MarketBorrowerChangeDataFragmentDoc}`;
+export type GetMarketBorrowerChangesQueryResult = Apollo.QueryResult<SubgraphGetMarketBorrowerChangesQuery, SubgraphGetMarketBorrowerChangesQueryVariables>;
+export const GetHooksAuthorityDocument = gql`
+    query getHooksAuthority($hooks: ID!, $first: Int = 1000, $skip: Int = 0) {
+  hooksInstance(id: $hooks) {
+    ...HookAuthorityData
+    providers(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+      ...RoleProviderAttachmentData
+    }
+  }
+}
+    ${HookAuthorityDataFragmentDoc}
+${RoleProviderAttachmentDataFragmentDoc}`;
+export type GetHooksAuthorityQueryResult = Apollo.QueryResult<SubgraphGetHooksAuthorityQuery, SubgraphGetHooksAuthorityQueryVariables>;
+export const GetRoleProviderAuthorityDocument = gql`
+    query getRoleProviderAuthority($provider: ID!, $first: Int = 1000, $skip: Int = 0) {
+  roleProviderInstance(id: $provider) {
+    ...RoleProviderInstanceData
+    attachments(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+      ...RoleProviderAttachmentData
+    }
+    members(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+      ...RoleProviderMemberData
+    }
+    rootChanges(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+      ...RoleProviderRootChangeData
+    }
+  }
+}
+    ${RoleProviderInstanceDataFragmentDoc}
+${RoleProviderAttachmentDataFragmentDoc}
+${RoleProviderMemberDataFragmentDoc}
+${RoleProviderRootChangeDataFragmentDoc}`;
+export type GetRoleProviderAuthorityQueryResult = Apollo.QueryResult<SubgraphGetRoleProviderAuthorityQuery, SubgraphGetRoleProviderAuthorityQueryVariables>;
+export const GetHookAdministratorChangesDocument = gql`
+    query getHookAdministratorChanges($hooks: String!, $first: Int = 100, $skip: Int = 0) {
+  hookAdministratorChanges(
+    where: {hooks: $hooks}
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...HookAdministratorChangeData
+  }
+}
+    ${HookAdministratorChangeDataFragmentDoc}`;
+export type GetHookAdministratorChangesQueryResult = Apollo.QueryResult<SubgraphGetHookAdministratorChangesQuery, SubgraphGetHookAdministratorChangesQueryVariables>;
+export const GetRoleProviderAdministratorChangesDocument = gql`
+    query getRoleProviderAdministratorChanges($provider: String!, $first: Int = 100, $skip: Int = 0) {
+  roleProviderAdministratorChanges(
+    where: {provider: $provider}
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...RoleProviderAdministratorChangeData
+  }
+}
+    ${RoleProviderAdministratorChangeDataFragmentDoc}`;
+export type GetRoleProviderAdministratorChangesQueryResult = Apollo.QueryResult<SubgraphGetRoleProviderAdministratorChangesQuery, SubgraphGetRoleProviderAdministratorChangesQueryVariables>;
+export const GetRoleProviderMembershipChangesDocument = gql`
+    query getRoleProviderMembershipChanges($provider: String!, $first: Int = 100, $skip: Int = 0) {
+  roleProviderMembershipChanges(
+    where: {provider: $provider}
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...RoleProviderMembershipChangeData
+  }
+}
+    ${RoleProviderMembershipChangeDataFragmentDoc}`;
+export type GetRoleProviderMembershipChangesQueryResult = Apollo.QueryResult<SubgraphGetRoleProviderMembershipChangesQuery, SubgraphGetRoleProviderMembershipChangesQueryVariables>;
 export const GetIndexerDeploymentDocument = gql`
     query getIndexerDeployment {
   indexerDeployments(first: 1) {

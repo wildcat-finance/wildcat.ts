@@ -12,6 +12,11 @@ fragment TokenData on Token {
 fragment RoleProviderData on RoleProvider {
   id
   providerAddress
+  providerInstance {
+    kind
+    administrator
+    pendingAdministrator
+  }
   timeToLive
   isPullProvider
   pullProviderIndex
@@ -189,6 +194,10 @@ fragment MarketData on Market {
     id
   }
   borrower
+  borrowerPrincipal
+  pendingBorrower
+  pendingBorrowerPrincipal
+  borrowerIdentityRegistryAddress
   sentinel
   feeRecipient
   name
@@ -337,6 +346,10 @@ fragment MarketListData on Market {
     id
   }
   borrower
+  borrowerPrincipal
+  pendingBorrower
+  pendingBorrowerPrincipal
+  borrowerIdentityRegistryAddress
   sentinel
   feeRecipient
   name
@@ -749,6 +762,8 @@ fragment HooksInstanceData on HooksInstance {
   id
   address
   borrower
+  administrator
+  pendingAdministrator
   name
   kind
   marketKind
@@ -768,6 +783,238 @@ fragment HooksInstanceData on HooksInstance {
     ...RoleProviderData
   }
   eventIndex
+}
+
+fragment BorrowerAccountIdentityData on BorrowerAccount {
+  id
+  address
+  registry {
+    id
+    address
+  }
+  accountFactory {
+    id
+    address
+    isApproved
+  }
+  principalAddress
+  pendingPrincipalAddress
+  registeredAtBlock
+  registeredAtTimestamp
+  registeredAtTransaction
+  registeredAtLogIndex
+}
+
+fragment BorrowerPrincipalIdentityData on Borrower {
+  id
+  address
+  firstSeenBlock
+  firstSeenTimestamp
+  firstSeenTransaction
+  firstSeenLogIndex
+  lastSeenBlock
+  lastSeenTimestamp
+  lastSeenTransaction
+  lastSeenLogIndex
+  registrations {
+    archController {
+      id
+    }
+    isRegistered
+  }
+}
+
+fragment MarketBorrowerIdentityData on Market {
+  id
+  address
+  borrower
+  borrowerPrincipal
+  pendingBorrower
+  pendingBorrowerPrincipal
+  borrowerIdentityRegistryAddress
+}
+
+fragment BorrowerAccountPrincipalChangeData on BorrowerAccountPrincipalChange {
+  id
+  kind
+  account {
+    address
+    registry {
+      address
+    }
+  }
+  currentPrincipalAddress
+  previousPrincipalAddress
+  newPrincipalAddress
+  previousPendingPrincipalAddress
+  pendingPrincipalAddress
+  cancelledPendingPrincipalAddress
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment MarketBorrowerChangeData on MarketBorrowerChange {
+  id
+  kind
+  market {
+    address
+  }
+  borrower
+  borrowerPrincipal
+  previousBorrower
+  previousBorrowerPrincipal
+  newBorrower
+  newBorrowerPrincipal
+  previousPendingBorrower
+  previousPendingBorrowerPrincipal
+  pendingBorrower
+  pendingBorrowerPrincipal
+  cancelledPendingBorrower
+  cancelledPendingBorrowerPrincipal
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment HookAuthorityData on HooksInstance {
+  id
+  address
+  borrower
+  administrator
+  pendingAdministrator
+  providerMetadataState
+  hooksFactory {
+    address
+  }
+  hooksTemplate {
+    address
+    kind
+    version
+  }
+}
+
+fragment RoleProviderAttachmentData on RoleProvider {
+  id
+  hooks {
+    address
+    administrator
+    pendingAdministrator
+  }
+  providerAddress
+  timeToLive
+  isPullProvider
+  pullProviderIndex
+  isPushProvider
+  pushProviderIndex
+  isApproved
+}
+
+fragment RoleProviderMemberData on RoleProviderMember {
+  id
+  account
+  isMember
+  updatedAtBlock
+  updatedAtTimestamp
+  updatedAtTransaction
+  updatedAtLogIndex
+}
+
+fragment RoleProviderInstanceData on RoleProviderInstance {
+  id
+  address
+  kind
+  administrator
+  pendingAdministrator
+  deployer
+  salt
+  root
+  token
+  vault
+  minBalance
+  minAssets
+  tokenId
+  skipInterfaceCheck
+  deployedAtBlock
+  deployedAtTimestamp
+  deployedAtTransaction
+  deployedAtLogIndex
+  deploymentFactory {
+    address
+    kind
+    label
+    generation
+    configuredStartBlock
+    indexed
+    lifecycle
+    configured
+  }
+}
+
+fragment HookAdministratorChangeData on HookAdministratorChange {
+  id
+  kind
+  hooks {
+    address
+  }
+  administrator
+  previousAdministrator
+  newAdministrator
+  previousPendingAdministrator
+  pendingAdministrator
+  cancelledPendingAdministrator
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment RoleProviderAdministratorChangeData on RoleProviderAdministratorChange {
+  id
+  kind
+  provider {
+    address
+  }
+  administrator
+  previousAdministrator
+  newAdministrator
+  previousPendingAdministrator
+  pendingAdministrator
+  cancelledPendingAdministrator
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment RoleProviderMembershipChangeData on RoleProviderMembershipChange {
+  id
+  kind
+  provider {
+    address
+  }
+  account
+  administrator
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment RoleProviderRootChangeData on RoleProviderRootChange {
+  id
+  provider {
+    address
+  }
+  administrator
+  previousRoot
+  newRoot
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
 }
 
 fragment HooksTemplateData on HooksTemplate {

@@ -10,6 +10,7 @@ export * from "./account";
 export * from "./access";
 export * from "./analytics";
 export * from "./abi";
+export * from "./authority";
 export * from "./client";
 export * from "./collateral";
 export * from "./constants";
@@ -23,6 +24,7 @@ export * from "./withdrawal-batch";
 export * from "./withdrawal-status";
 export * from "./utils";
 export * from "./gql";
+export * from "./identity";
 export * from "./wrapper";
 
 export const {

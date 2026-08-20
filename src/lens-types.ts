@@ -63,6 +63,12 @@ export type RoleProviderDataStructOutput = {
   pushProviderIndex: Numeric;
 };
 
+export type RoleProviderDataV2_5StructOutput = RoleProviderDataStructOutput & {
+  isManaged: boolean;
+  administrator: string;
+  pendingAdministrator: string;
+};
+
 export type HooksDeploymentFlagsStructOutput = {
   optional: HooksConfigDataStructOutput;
   required: HooksConfigDataStructOutput;
@@ -103,10 +109,18 @@ export type HooksInstanceDataStructOutput = {
 
 export type HooksInstanceDataV2_5StructOutput = Omit<
   HooksInstanceDataStructOutput,
-  "deploymentFlags"
+  "borrower" | "deploymentFlags" | "pullProviders" | "pushProviders"
 > & {
+  administrator: string;
+  pendingAdministrator: string;
   deploymentFlags: HooksDeploymentFlagsV2_5StructOutput;
+  pullProviders: RoleProviderDataV2_5StructOutput[];
+  pushProviders: RoleProviderDataV2_5StructOutput[];
 };
+
+export type AnyHooksInstanceDataStructOutput =
+  | HooksInstanceDataStructOutput
+  | HooksInstanceDataV2_5StructOutput;
 
 export type MarketHooksDataStructOutput = {
   hooksAddress: string;
@@ -193,6 +207,10 @@ export type MarketDataBaseV2_5StructOutput = Omit<
 
 export type MarketDataV2_5StructOutput = {
   market: MarketDataBaseV2_5StructOutput;
+  borrowerPrincipal: string;
+  pendingBorrower: string;
+  pendingBorrowerPrincipal: string;
+  borrowerIdentityRegistry: string;
   commitmentFeeBips: OptionalUintDataV2_5StructOutput;
   drawnAmount: OptionalUintDataV2_5StructOutput;
 };
@@ -233,7 +251,12 @@ export type LenderAccountDataStructOutput = {
   isKnownLender: boolean;
 };
 
-export type LenderAccountDataV2_5StructOutput = LenderAccountDataStructOutput;
+export type LenderAccountDataV2_5StructOutput = Omit<
+  LenderAccountDataStructOutput,
+  "lastProvider"
+> & {
+  lastProvider: RoleProviderDataV2_5StructOutput;
+};
 
 export type MarketDataWithLenderStatusStructOutput = {
   market: MarketDataStructOutput;

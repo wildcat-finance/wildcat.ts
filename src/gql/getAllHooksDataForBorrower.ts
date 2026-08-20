@@ -23,6 +23,7 @@ import {
   normalizeLegacyHooksInstanceData,
   normalizeLegacyHooksTemplateRegistrationData
 } from "./legacy-subgraph";
+import { hasRegisteredBorrowerAccountPrincipal } from "./borrower-eligibility";
 
 export type GetAllHooksDataForBorrowerOptions = {
   chainId: SupportedChainId;
@@ -68,7 +69,12 @@ export async function getAllHooksDataForBorrower(
       borrower
     }
   });
-  const isRegisteredBorrower = result.data.registeredBorrowers?.[0]?.isRegistered ?? false;
+  const isRegisteredBorrower =
+    (result.data.registeredBorrowers?.[0]?.isRegistered ?? false) ||
+    (!legacySchema &&
+      hasRegisteredBorrowerAccountPrincipal(
+        (result.data as SubgraphGetAllHooksDataForBorrowerQuery).borrowerAccounts ?? []
+      ));
   const hooksTemplateRegistrations = legacySchema
     ? (result.data as LegacyGetAllHooksDataForBorrowerData).hooksTemplates.map((template) =>
         normalizeLegacyHooksTemplateRegistrationData(chainId, template)

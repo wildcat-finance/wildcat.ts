@@ -2,16 +2,15 @@ import type { Result } from "@ethersproject/abi";
 export type MarketDeployedEvent = {
   args: Result & {
     hooksTemplate: string;
+    hooksInstance: string;
     market: string;
+    borrower: string;
+    borrowerPrincipal: string;
+    borrowerIdentityRegistry: string;
     name: string;
     symbol: string;
     asset: string;
-    maxTotalSupply: unknown;
-    annualInterestBips: unknown;
-    delinquencyFeeBips: unknown;
-    withdrawalBatchDuration: unknown;
-    reserveRatioBips: unknown;
-    delinquencyGracePeriod: unknown;
+    requestedHooks: unknown;
     hooks: unknown;
   };
 };

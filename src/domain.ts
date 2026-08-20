@@ -67,6 +67,14 @@ export type HookedMarketAbiKind = "base" | "force-buyback" | "unknown";
 export type PricingMode = "chainlink" | "synthetic-testnet" | "none" | "unknown";
 export type SnapshotSource = "event-projection" | "event-and-contract-call" | "unknown";
 export type ReadStateSource = "indexed" | "live";
+export type RoleProviderKind =
+  | "access-list"
+  | "merkle"
+  | "erc20"
+  | "erc4626-assets"
+  | "erc721"
+  | "erc1155"
+  | "unknown";
 
 export const parseHooksKind = (value: string | null | undefined): HooksKind => {
   switch (normalizeEnumValue(value)) {
@@ -127,6 +135,25 @@ export const parseSnapshotSource = (value: string | null | undefined): SnapshotS
       return "event-projection";
     case "eventandcontractcall":
       return "event-and-contract-call";
+    default:
+      return "unknown";
+  }
+};
+
+export const parseRoleProviderKind = (value: string | null | undefined): RoleProviderKind => {
+  switch (normalizeEnumValue(value)) {
+    case "accesslist":
+      return "access-list";
+    case "merkle":
+      return "merkle";
+    case "erc20":
+      return "erc20";
+    case "erc4626assets":
+      return "erc4626-assets";
+    case "erc721":
+      return "erc721";
+    case "erc1155":
+      return "erc1155";
     default:
       return "unknown";
   }
@@ -227,6 +254,10 @@ export type MarketProvenance = {
   abiFamily: string;
   archController: string;
   borrower: string;
+  borrowerPrincipal: string;
+  pendingBorrower?: string;
+  pendingBorrowerPrincipal?: string;
+  borrowerIdentityRegistry?: string;
   sentinel: string;
   controller?: string;
   hooksFactory?: HooksFactoryMetadata;

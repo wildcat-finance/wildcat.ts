@@ -7,23 +7,87 @@ import {
   type Address,
   type Hex
 } from "viem";
-import { MarketHooksInstanceInputs } from "../types";
-import { assert } from "../utils";
+import {
+  AnyHooksInstanceDataStructOutput,
+  RoleProviderDataStructOutput,
+  RoleProviderDataV2_5StructOutput
+} from "../lens-types";
+import { MarketHooksInstanceInputs, RoleProvider } from "../types";
+import { assert, toNumber } from "../utils";
+
+const NullProviderIndex = 2 ** 24 - 1;
+
+export const hasRoleProviderFactory = (roleProviderFactory?: string): boolean =>
+  !!roleProviderFactory && roleProviderFactory.toLowerCase() !== zeroAddress;
+
+export const getHooksAdministrator = (data: AnyHooksInstanceDataStructOutput): string =>
+  "administrator" in data ? data.administrator : data.borrower;
+
+export const getHooksPendingAdministrator = (
+  data: AnyHooksInstanceDataStructOutput
+): string | undefined =>
+  "pendingAdministrator" in data && data.pendingAdministrator.toLowerCase() !== zeroAddress
+    ? data.pendingAdministrator
+    : undefined;
+
+export const roleProviderFromLensData = (
+  provider: RoleProviderDataStructOutput | RoleProviderDataV2_5StructOutput
+): RoleProvider => {
+  const pullProviderIndex = toNumber(provider.pullProviderIndex);
+  const pushProviderIndex = toNumber(provider.pushProviderIndex);
+  if ("isManaged" in provider && provider.isManaged) {
+    return {
+      kind: "unknown",
+      providerAddress: provider.providerAddress,
+      timeToLive: toNumber(provider.timeToLive),
+      isPullProvider: pullProviderIndex !== NullProviderIndex,
+      pullProviderIndex,
+      isPushProvider: pushProviderIndex !== NullProviderIndex,
+      pushProviderIndex,
+      isApproved: true,
+      isManaged: true,
+      administrator: provider.administrator,
+      ...(provider.pendingAdministrator.toLowerCase() !== zeroAddress
+        ? { pendingAdministrator: provider.pendingAdministrator }
+        : {})
+    };
+  }
+  return {
+    kind: "unknown",
+    providerAddress: provider.providerAddress,
+    timeToLive: toNumber(provider.timeToLive),
+    isPullProvider: pullProviderIndex !== NullProviderIndex,
+    pullProviderIndex,
+    isPushProvider: pushProviderIndex !== NullProviderIndex,
+    pushProviderIndex,
+    isApproved: true,
+    ...("isManaged" in provider ? { isManaged: false } : {})
+  };
+};
 
 const marketDeployedEventAbi = {
   anonymous: false,
   inputs: [
     { indexed: true, internalType: "address", name: "hooksTemplate", type: "address" },
+    { indexed: true, internalType: "address", name: "hooksInstance", type: "address" },
     { indexed: true, internalType: "address", name: "market", type: "address" },
+    { indexed: false, internalType: "address", name: "borrower", type: "address" },
+    {
+      indexed: false,
+      internalType: "address",
+      name: "borrowerPrincipal",
+      type: "address"
+    },
+    {
+      indexed: false,
+      internalType: "address",
+      name: "borrowerIdentityRegistry",
+      type: "address"
+    },
     { indexed: false, internalType: "string", name: "name", type: "string" },
     { indexed: false, internalType: "string", name: "symbol", type: "string" },
     { indexed: false, internalType: "address", name: "asset", type: "address" },
-    { indexed: false, internalType: "uint256", name: "maxTotalSupply", type: "uint256" },
-    { indexed: false, internalType: "uint256", name: "annualInterestBips", type: "uint256" },
-    { indexed: false, internalType: "uint256", name: "delinquencyFeeBips", type: "uint256" },
-    { indexed: false, internalType: "uint256", name: "withdrawalBatchDuration", type: "uint256" },
-    { indexed: false, internalType: "uint256", name: "reserveRatioBips", type: "uint256" },
-    { indexed: false, internalType: "uint256", name: "delinquencyGracePeriod", type: "uint256" },
+    { indexed: false, internalType: "HooksConfig", name: "requestedHooks", type: "uint256" },
     { indexed: false, internalType: "uint256", name: "hooks", type: "uint256" }
   ],
   name: "MarketDeployed",
@@ -87,7 +151,10 @@ export function encodeMarketHooksInstanceInputs(args: MarketHooksInstanceInputs)
     hooksInstanceName = ""
   } = args;
   if (newProviderInputs.length) {
-    assert(roleProviderFactory !== undefined, `Can not create new providers without a factory`);
+    assert(
+      hasRoleProviderFactory(roleProviderFactory),
+      `Can not create new providers without a factory`
+    );
   }
   const encodedNewProviderInputs = newProviderInputs.map(({ data, timeToLive }) => ({
     timeToLive,

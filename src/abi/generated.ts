@@ -2615,6 +2615,111 @@ export const wildcatMarketV2Abi = [
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "cancelledPendingBorrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrowerPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "cancelledPendingBorrowerPrincipal",
+        "type": "address"
+      }
+    ],
+    "name": "BorrowerTransferCancelled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousPendingBorrower",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "pendingBorrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrowerPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousPendingBorrowerPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "pendingBorrowerPrincipal",
+        "type": "address"
+      }
+    ],
+    "name": "BorrowerTransferRequested",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousBorrower",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newBorrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousBorrowerPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newBorrowerPrincipal",
+        "type": "address"
+      }
+    ],
+    "name": "BorrowerTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "address",
         "name": "oldEngineAddress",
@@ -3110,6 +3215,13 @@ export const wildcatMarketV2Abi = [
   },
   {
     "inputs": [],
+    "name": "acceptBorrowerTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "accruedProtocolFees",
     "outputs": [
       {
@@ -3214,6 +3326,52 @@ export const wildcatMarketV2Abi = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "borrower",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "borrowerIdentityRegistry",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "borrowerPrincipal",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "cancelBorrowerTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -3622,6 +3780,32 @@ export const wildcatMarketV2Abi = [
   },
   {
     "inputs": [],
+    "name": "pendingBorrower",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pendingBorrowerPrincipal",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "previousState",
     "outputs": [
       {
@@ -3740,6 +3924,25 @@ export const wildcatMarketV2Abi = [
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "scaledAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "queueWithdrawalScaled",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "wrapper",
         "type": "address"
@@ -3790,6 +3993,19 @@ export const wildcatMarketV2Abi = [
       }
     ],
     "name": "repayAndProcessUnpaidWithdrawalBatches",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newBorrower",
+        "type": "address"
+      }
+    ],
+    "name": "requestBorrowerTransfer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -18744,7 +18960,12 @@ export const marketLensV2_5Abi = [
               },
               {
                 "internalType": "address",
-                "name": "borrower",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
                 "type": "address"
               },
               {
@@ -19077,6 +19298,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -19104,6 +19340,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -19500,7 +19751,12 @@ export const marketLensV2_5Abi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "borrower",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
                     "type": "address"
                   },
                   {
@@ -19833,6 +20089,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -19860,6 +20131,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -19990,6 +20276,26 @@ export const marketLensV2_5Abi = [
             "internalType": "struct MarketDataBaseV2_5",
             "name": "market",
             "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrower",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerIdentityRegistry",
+            "type": "address"
           },
           {
             "components": [
@@ -20166,7 +20472,12 @@ export const marketLensV2_5Abi = [
               },
               {
                 "internalType": "address",
-                "name": "borrower",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
                 "type": "address"
               },
               {
@@ -20499,6 +20810,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -20526,6 +20852,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -20570,7 +20911,12 @@ export const marketLensV2_5Abi = [
           },
           {
             "internalType": "address",
-            "name": "borrower",
+            "name": "administrator",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingAdministrator",
             "type": "address"
           },
           {
@@ -20903,6 +21249,21 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint24",
                 "name": "pushProviderIndex",
                 "type": "uint24"
+              },
+              {
+                "internalType": "bool",
+                "name": "isManaged",
+                "type": "bool"
+              },
+              {
+                "internalType": "address",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
+                "type": "address"
               }
             ],
             "internalType": "struct RoleProviderDataV2_5[]",
@@ -20930,6 +21291,21 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint24",
                 "name": "pushProviderIndex",
                 "type": "uint24"
+              },
+              {
+                "internalType": "bool",
+                "name": "isManaged",
+                "type": "bool"
+              },
+              {
+                "internalType": "address",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
+                "type": "address"
               }
             ],
             "internalType": "struct RoleProviderDataV2_5[]",
@@ -21595,7 +21971,12 @@ export const marketLensV2_5Abi = [
               },
               {
                 "internalType": "address",
-                "name": "borrower",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
                 "type": "address"
               },
               {
@@ -21928,6 +22309,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -21955,6 +22351,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -22349,7 +22760,12 @@ export const marketLensV2_5Abi = [
               },
               {
                 "internalType": "address",
-                "name": "borrower",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
                 "type": "address"
               },
               {
@@ -22682,6 +23098,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -22709,6 +23140,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -23110,7 +23556,12 @@ export const marketLensV2_5Abi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "borrower",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
                     "type": "address"
                   },
                   {
@@ -23443,6 +23894,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -23470,6 +23936,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -23600,6 +24081,26 @@ export const marketLensV2_5Abi = [
             "internalType": "struct MarketDataBaseV2_5",
             "name": "market",
             "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrower",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerIdentityRegistry",
+            "type": "address"
           },
           {
             "components": [
@@ -23905,7 +24406,12 @@ export const marketLensV2_5Abi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "borrower",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
                     "type": "address"
                   },
                   {
@@ -24238,6 +24744,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -24265,6 +24786,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -24395,6 +24931,26 @@ export const marketLensV2_5Abi = [
             "internalType": "struct MarketDataBaseV2_5",
             "name": "market",
             "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrower",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerIdentityRegistry",
+            "type": "address"
           },
           {
             "components": [
@@ -24571,7 +25127,12 @@ export const marketLensV2_5Abi = [
               },
               {
                 "internalType": "address",
-                "name": "borrower",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
                 "type": "address"
               },
               {
@@ -24904,6 +25465,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -24931,6 +25507,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -25093,7 +25684,12 @@ export const marketLensV2_5Abi = [
               },
               {
                 "internalType": "address",
-                "name": "borrower",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
                 "type": "address"
               },
               {
@@ -25426,6 +26022,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -25453,6 +26064,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -25502,7 +26128,12 @@ export const marketLensV2_5Abi = [
           },
           {
             "internalType": "address",
-            "name": "borrower",
+            "name": "administrator",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingAdministrator",
             "type": "address"
           },
           {
@@ -25835,6 +26466,21 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint24",
                 "name": "pushProviderIndex",
                 "type": "uint24"
+              },
+              {
+                "internalType": "bool",
+                "name": "isManaged",
+                "type": "bool"
+              },
+              {
+                "internalType": "address",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
+                "type": "address"
               }
             ],
             "internalType": "struct RoleProviderDataV2_5[]",
@@ -25862,6 +26508,21 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint24",
                 "name": "pushProviderIndex",
                 "type": "uint24"
+              },
+              {
+                "internalType": "bool",
+                "name": "isManaged",
+                "type": "bool"
+              },
+              {
+                "internalType": "address",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
+                "type": "address"
               }
             ],
             "internalType": "struct RoleProviderDataV2_5[]",
@@ -25901,7 +26562,12 @@ export const marketLensV2_5Abi = [
           },
           {
             "internalType": "address",
-            "name": "borrower",
+            "name": "administrator",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingAdministrator",
             "type": "address"
           },
           {
@@ -26234,6 +26900,21 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint24",
                 "name": "pushProviderIndex",
                 "type": "uint24"
+              },
+              {
+                "internalType": "bool",
+                "name": "isManaged",
+                "type": "bool"
+              },
+              {
+                "internalType": "address",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
+                "type": "address"
               }
             ],
             "internalType": "struct RoleProviderDataV2_5[]",
@@ -26261,6 +26942,21 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint24",
                 "name": "pushProviderIndex",
                 "type": "uint24"
+              },
+              {
+                "internalType": "bool",
+                "name": "isManaged",
+                "type": "bool"
+              },
+              {
+                "internalType": "address",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
+                "type": "address"
               }
             ],
             "internalType": "struct RoleProviderDataV2_5[]",
@@ -26839,6 +27535,21 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint24",
                 "name": "pushProviderIndex",
                 "type": "uint24"
+              },
+              {
+                "internalType": "bool",
+                "name": "isManaged",
+                "type": "bool"
+              },
+              {
+                "internalType": "address",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
+                "type": "address"
               }
             ],
             "internalType": "struct RoleProviderDataV2_5",
@@ -26937,6 +27648,21 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint24",
                 "name": "pushProviderIndex",
                 "type": "uint24"
+              },
+              {
+                "internalType": "bool",
+                "name": "isManaged",
+                "type": "bool"
+              },
+              {
+                "internalType": "address",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
+                "type": "address"
               }
             ],
             "internalType": "struct RoleProviderDataV2_5",
@@ -27035,6 +27761,21 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint24",
                 "name": "pushProviderIndex",
                 "type": "uint24"
+              },
+              {
+                "internalType": "bool",
+                "name": "isManaged",
+                "type": "bool"
+              },
+              {
+                "internalType": "address",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
+                "type": "address"
               }
             ],
             "internalType": "struct RoleProviderDataV2_5",
@@ -27324,7 +28065,12 @@ export const marketLensV2_5Abi = [
               },
               {
                 "internalType": "address",
-                "name": "borrower",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
                 "type": "address"
               },
               {
@@ -27657,6 +28403,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -27684,6 +28445,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -28080,7 +28856,12 @@ export const marketLensV2_5Abi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "borrower",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
                     "type": "address"
                   },
                   {
@@ -28413,6 +29194,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -28440,6 +29236,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -28570,6 +29381,26 @@ export const marketLensV2_5Abi = [
             "internalType": "struct MarketDataBaseV2_5",
             "name": "market",
             "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrower",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerIdentityRegistry",
+            "type": "address"
           },
           {
             "components": [
@@ -28880,7 +29711,12 @@ export const marketLensV2_5Abi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "borrower",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
                     "type": "address"
                   },
                   {
@@ -29213,6 +30049,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -29240,6 +30091,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -29424,6 +30290,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5",
@@ -29718,7 +30599,12 @@ export const marketLensV2_5Abi = [
               },
               {
                 "internalType": "address",
-                "name": "borrower",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
                 "type": "address"
               },
               {
@@ -30051,6 +30937,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -30078,6 +30979,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -30474,7 +31390,12 @@ export const marketLensV2_5Abi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "borrower",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
                     "type": "address"
                   },
                   {
@@ -30807,6 +31728,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -30834,6 +31770,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -30964,6 +31915,26 @@ export const marketLensV2_5Abi = [
             "internalType": "struct MarketDataBaseV2_5",
             "name": "market",
             "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrower",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerIdentityRegistry",
+            "type": "address"
           },
           {
             "components": [
@@ -31274,7 +32245,12 @@ export const marketLensV2_5Abi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "borrower",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
                     "type": "address"
                   },
                   {
@@ -31607,6 +32583,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -31634,6 +32625,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -31818,6 +32824,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5",
@@ -32242,6 +33263,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5",
@@ -32551,7 +33587,12 @@ export const marketLensV2_5Abi = [
               },
               {
                 "internalType": "address",
-                "name": "borrower",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
                 "type": "address"
               },
               {
@@ -32884,6 +33925,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -32911,6 +33967,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -33315,7 +34386,12 @@ export const marketLensV2_5Abi = [
               },
               {
                 "internalType": "address",
-                "name": "borrower",
+                "name": "administrator",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "pendingAdministrator",
                 "type": "address"
               },
               {
@@ -33648,6 +34724,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -33675,6 +34766,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5[]",
@@ -34086,7 +35192,12 @@ export const marketLensV2_5Abi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "borrower",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
                     "type": "address"
                   },
                   {
@@ -34419,6 +35530,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -34446,6 +35572,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -34576,6 +35717,26 @@ export const marketLensV2_5Abi = [
             "internalType": "struct MarketDataBaseV2_5",
             "name": "market",
             "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrower",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerIdentityRegistry",
+            "type": "address"
           },
           {
             "components": [
@@ -34891,7 +36052,12 @@ export const marketLensV2_5Abi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "borrower",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
                     "type": "address"
                   },
                   {
@@ -35224,6 +36390,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -35251,6 +36432,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -35381,6 +36577,26 @@ export const marketLensV2_5Abi = [
             "internalType": "struct MarketDataBaseV2_5",
             "name": "market",
             "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrower",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "pendingBorrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerIdentityRegistry",
+            "type": "address"
           },
           {
             "components": [
@@ -36226,7 +37442,12 @@ export const marketLensV2_5Abi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "borrower",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
                     "type": "address"
                   },
                   {
@@ -36559,6 +37780,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -36586,6 +37822,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -36770,6 +38021,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5",
@@ -37159,7 +38425,12 @@ export const marketLensV2_5Abi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "borrower",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
                     "type": "address"
                   },
                   {
@@ -37492,6 +38763,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -37519,6 +38805,21 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint24",
                         "name": "pushProviderIndex",
                         "type": "uint24"
+                      },
+                      {
+                        "internalType": "bool",
+                        "name": "isManaged",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "administrator",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "address",
+                        "name": "pendingAdministrator",
+                        "type": "address"
                       }
                     ],
                     "internalType": "struct RoleProviderDataV2_5[]",
@@ -37703,6 +39004,21 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint24",
                     "name": "pushProviderIndex",
                     "type": "uint24"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isManaged",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "administrator",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "pendingAdministrator",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct RoleProviderDataV2_5",
@@ -39385,6 +40701,990 @@ export const wildcatArchControllerAbi = [
   }
 ] as const satisfies Abi;
 
+export const borrowerIdentityRegistryAbi = [
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "accountFactory",
+        "type": "address"
+      }
+    ],
+    "name": "AccountFactoryAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "accountFactory",
+        "type": "address"
+      }
+    ],
+    "name": "AccountFactoryRemoved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "currentPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "cancelledPendingPrincipal",
+        "type": "address"
+      }
+    ],
+    "name": "BorrowerAccountPrincipalTransferCancelled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "currentPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousPendingPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "pendingPrincipal",
+        "type": "address"
+      }
+    ],
+    "name": "BorrowerAccountPrincipalTransferRequested",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newPrincipal",
+        "type": "address"
+      }
+    ],
+    "name": "BorrowerAccountPrincipalTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "principal",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "accountFactory",
+        "type": "address"
+      }
+    ],
+    "name": "BorrowerAccountRegistered",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "acceptBorrowerAccountPrincipalTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "accountFactoryOf",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "accountFactory",
+        "type": "address"
+      }
+    ],
+    "name": "addAccountFactory",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "archController",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "cancelBorrowerAccountPrincipalTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getAccountFactories",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAccountFactories",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAccountFactoriesCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "principal",
+        "type": "address"
+      }
+    ],
+    "name": "getBorrowerAccounts",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "principal",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getBorrowerAccounts",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "principal",
+        "type": "address"
+      }
+    ],
+    "name": "getBorrowerAccountsCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "accountFactory",
+        "type": "address"
+      }
+    ],
+    "name": "getBorrowerAccountsForFactory",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "accountFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getBorrowerAccountsForFactory",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "accountFactory",
+        "type": "address"
+      }
+    ],
+    "name": "getBorrowerAccountsForFactoryCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "accountFactory",
+        "type": "address"
+      }
+    ],
+    "name": "isAccountFactory",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "pendingPrincipalOf",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "principalOf",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "principal",
+        "type": "address"
+      }
+    ],
+    "name": "registerBorrowerAccount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "accountFactory",
+        "type": "address"
+      }
+    ],
+    "name": "removeAccountFactory",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "newPrincipal",
+        "type": "address"
+      }
+    ],
+    "name": "requestBorrowerAccountPrincipalTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      }
+    ],
+    "name": "resolveBorrower",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "principal",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+] as const satisfies Abi;
+
+export const accessListRoleProviderAbi = [
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "cancelledPendingAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "AdministratorTransferCancelled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousPendingAdministrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "pendingAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "AdministratorTransferRequested",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousAdministrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "AdministratorTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "MemberAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "MemberRemoved",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "acceptAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "addMember",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "accounts",
+        "type": "address[]"
+      }
+    ],
+    "name": "addMembers",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "administrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "cancelAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "getCredential",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "credentialTimestamp",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMembers",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMembers",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMembersCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "isMember",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pendingAdministrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "removeMember",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "accounts",
+        "type": "address[]"
+      }
+    ],
+    "name": "removeMembers",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "requestAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "validateCredential",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "credentialTimestamp",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+] as const satisfies Abi;
+
+export const accessListRoleProviderFactoryAbi = [
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "provider",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "deployer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address[]",
+        "name": "initialMembers",
+        "type": "address[]"
+      }
+    ],
+    "name": "AccessListRoleProviderDeployed",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "deployer",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "administrator",
+            "type": "address"
+          },
+          {
+            "internalType": "address[]",
+            "name": "initialMembers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "salt",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct AccessListRoleProviderFactoryInputs",
+        "name": "inputs",
+        "type": "tuple"
+      }
+    ],
+    "name": "computeRoleProviderAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "provider",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "administrator",
+            "type": "address"
+          },
+          {
+            "internalType": "address[]",
+            "name": "initialMembers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "salt",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct AccessListRoleProviderFactoryInputs",
+        "name": "inputs",
+        "type": "tuple"
+      }
+    ],
+    "name": "createAccessListRoleProvider",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "provider",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "createRoleProvider",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "provider",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+] as const satisfies Abi;
+
 export const hooksFactoryAbi = [
   {
     "inputs": [
@@ -39427,6 +41727,19 @@ export const hooksFactoryAbi = [
   {
     "inputs": [],
     "name": "archController",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "borrowerIdentityRegistry",
     "outputs": [
       {
         "internalType": "address",
@@ -39694,6 +42007,63 @@ export const hooksFactoryAbi = [
     "inputs": [
       {
         "internalType": "address",
+        "name": "hooks",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksAdministrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstanceDeploymentNonce",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstancesCountForAdministrator",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "borrower",
         "type": "address"
       }
@@ -39704,6 +42074,54 @@ export const hooksFactoryAbi = [
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getHooksInstancesForAdministrator",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstancesForAdministrator",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
       }
     ],
     "stateMutability": "view",
@@ -40188,6 +42606,24 @@ export const hooksFactoryAbi = [
     "inputs": [
       {
         "internalType": "address",
+        "name": "previousAdministrator",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "onHooksAdministratorTransferred",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "hooksTemplate",
         "type": "address"
       }
@@ -40330,6 +42766,19 @@ export const hooksFactoryRevolvingAbi = [
   {
     "inputs": [],
     "name": "archController",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "borrowerIdentityRegistry",
     "outputs": [
       {
         "internalType": "address",
@@ -40607,6 +43056,63 @@ export const hooksFactoryRevolvingAbi = [
     "inputs": [
       {
         "internalType": "address",
+        "name": "hooks",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksAdministrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstanceDeploymentNonce",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstancesCountForAdministrator",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "borrower",
         "type": "address"
       }
@@ -40617,6 +43123,54 @@ export const hooksFactoryRevolvingAbi = [
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getHooksInstancesForAdministrator",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstancesForAdministrator",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
       }
     ],
     "stateMutability": "view",
@@ -41114,6 +43668,24 @@ export const hooksFactoryRevolvingAbi = [
     "inputs": [
       {
         "internalType": "address",
+        "name": "previousAdministrator",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "onHooksAdministratorTransferred",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "hooksTemplate",
         "type": "address"
       }
@@ -41216,6 +43788,13 @@ export const hooksFactoryRevolvingAbi = [
 
 export const iOpenTermHooksAbi = [
   {
+    "inputs": [],
+    "name": "acceptAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -41231,6 +43810,19 @@ export const iOpenTermHooksAbi = [
     "name": "addRoleProvider",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "administrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -41270,6 +43862,13 @@ export const iOpenTermHooksAbi = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "cancelAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -41687,6 +44286,30 @@ export const iOpenTermHooksAbi = [
       }
     ],
     "name": "isMarketTransferDisabled",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "marketAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      }
+    ],
+    "name": "isMarketTransferRecipientAllowed",
     "outputs": [
       {
         "internalType": "bool",
@@ -42168,6 +44791,111 @@ export const iOpenTermHooksAbi = [
         ],
         "internalType": "struct MarketStateV2",
         "name": "param2",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "hooksData",
+        "type": "bytes"
+      }
+    ],
+    "name": "onExecuteWithdrawal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lender",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint128",
+        "name": "normalizedAmountWithdrawn",
+        "type": "uint128"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint128",
+            "name": "maxTotalSupply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "accruedProtocolFees",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "normalizedUnclaimedWithdrawals",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint104",
+            "name": "scaledTotalSupply",
+            "type": "uint104"
+          },
+          {
+            "internalType": "uint104",
+            "name": "scaledPendingWithdrawals",
+            "type": "uint104"
+          },
+          {
+            "internalType": "uint32",
+            "name": "pendingWithdrawalExpiry",
+            "type": "uint32"
+          },
+          {
+            "internalType": "bool",
+            "name": "isDelinquent",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timeDelinquent",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "protocolFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "annualInterestBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reserveRatioBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint112",
+            "name": "scaleFactor",
+            "type": "uint112"
+          },
+          {
+            "internalType": "uint32",
+            "name": "lastInterestAccruedTimestamp",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct MarketStateV2",
+        "name": "state",
         "type": "tuple"
       },
       {
@@ -42988,6 +45716,19 @@ export const iOpenTermHooksAbi = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "pendingAdministrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -42996,6 +45737,19 @@ export const iOpenTermHooksAbi = [
       }
     ],
     "name": "removeRoleProvider",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "requestAdministratorTransfer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -43129,6 +45883,13 @@ export const iFixedTermHooksAbi = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "acceptAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -43144,6 +45905,19 @@ export const iFixedTermHooksAbi = [
     "name": "addRoleProvider",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "administrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -43183,6 +45957,13 @@ export const iFixedTermHooksAbi = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "cancelAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -43651,6 +46432,30 @@ export const iFixedTermHooksAbi = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "marketAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      }
+    ],
+    "name": "isMarketTransferRecipientAllowed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "name",
     "outputs": [
@@ -44121,6 +46926,111 @@ export const iFixedTermHooksAbi = [
         ],
         "internalType": "struct MarketStateV2",
         "name": "param2",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "hooksData",
+        "type": "bytes"
+      }
+    ],
+    "name": "onExecuteWithdrawal",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lender",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint128",
+        "name": "normalizedAmountWithdrawn",
+        "type": "uint128"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint128",
+            "name": "maxTotalSupply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "accruedProtocolFees",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "normalizedUnclaimedWithdrawals",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint104",
+            "name": "scaledTotalSupply",
+            "type": "uint104"
+          },
+          {
+            "internalType": "uint104",
+            "name": "scaledPendingWithdrawals",
+            "type": "uint104"
+          },
+          {
+            "internalType": "uint32",
+            "name": "pendingWithdrawalExpiry",
+            "type": "uint32"
+          },
+          {
+            "internalType": "bool",
+            "name": "isDelinquent",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timeDelinquent",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "protocolFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "annualInterestBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reserveRatioBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint112",
+            "name": "scaleFactor",
+            "type": "uint112"
+          },
+          {
+            "internalType": "uint32",
+            "name": "lastInterestAccruedTimestamp",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct MarketStateV2",
+        "name": "state",
         "type": "tuple"
       },
       {
@@ -44941,6 +47851,19 @@ export const iFixedTermHooksAbi = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "pendingAdministrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -44949,6 +47872,19 @@ export const iFixedTermHooksAbi = [
       }
     ],
     "name": "removeRoleProvider",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "requestAdministratorTransfer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -45087,6 +48023,44 @@ export const iFixedTermHooksAbi = [
 
 export const iPeriodicTermHooksAbi = [
   {
+    "inputs": [],
+    "name": "acceptAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "providerAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "timeToLive",
+        "type": "uint32"
+      }
+    ],
+    "name": "addRoleProvider",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "administrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -45127,6 +48101,13 @@ export const iPeriodicTermHooksAbi = [
   },
   {
     "inputs": [],
+    "name": "cancelAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "config",
     "outputs": [
       {
@@ -45136,6 +48117,29 @@ export const iPeriodicTermHooksAbi = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "providerFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "timeToLive",
+        "type": "uint32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "createRoleProvider",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -45395,6 +48399,47 @@ export const iPeriodicTermHooksAbi = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "accountAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getLenderStatus",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isBlockedFromDeposits",
+            "type": "bool"
+          },
+          {
+            "internalType": "address",
+            "name": "lastProvider",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "canRefresh",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint32",
+            "name": "lastApprovalTimestamp",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct LenderStatus",
+        "name": "status",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getParameterConstraints",
     "outputs": [
@@ -45504,6 +48549,92 @@ export const iPeriodicTermHooksAbi = [
     "inputs": [
       {
         "internalType": "address",
+        "name": "accountAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getPreviousLenderStatus",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isBlockedFromDeposits",
+            "type": "bool"
+          },
+          {
+            "internalType": "address",
+            "name": "lastProvider",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "canRefresh",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint32",
+            "name": "lastApprovalTimestamp",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct LenderStatus",
+        "name": "status",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPullProviders",
+    "outputs": [
+      {
+        "internalType": "RoleProvider[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPushProviders",
+    "outputs": [
+      {
+        "internalType": "RoleProvider[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "providerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "getRoleProvider",
+    "outputs": [
+      {
+        "internalType": "RoleProvider",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "account",
         "type": "address"
       },
@@ -45585,6 +48716,30 @@ export const iPeriodicTermHooksAbi = [
         "internalType": "address",
         "name": "marketAddress",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      }
+    ],
+    "name": "isMarketTransferRecipientAllowed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "marketAddress",
+        "type": "address"
       }
     ],
     "name": "isWithdrawalWindowOpen",
@@ -45606,6 +48761,19 @@ export const iPeriodicTermHooksAbi = [
         "internalType": "string",
         "name": "",
         "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pendingAdministrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -45649,6 +48817,58 @@ export const iPeriodicTermHooksAbi = [
       }
     ],
     "name": "proposeAnnualInterestBips",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "providerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "removeRoleProvider",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "requestAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "revokeRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "accounts",
+        "type": "address[]"
+      }
+    ],
+    "name": "revokeRoles",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -45728,12 +48948,32 @@ export const iPeriodicTermHooksAbi = [
 export const baseAccessControlsErrorAbi = [
   {
     "inputs": [],
+    "name": "AdministratorNotRegistered",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CallerNotAdministrator",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "CallerNotBorrower",
     "type": "error"
   },
   {
     "inputs": [],
+    "name": "CreateRoleProviderFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "GrantedCredentialExpired",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidAdministratorTransferTarget",
     "type": "error"
   },
   {
@@ -45753,7 +48993,17 @@ export const baseAccessControlsErrorAbi = [
   },
   {
     "inputs": [],
+    "name": "NoPendingAdministratorTransfer",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "NotApprovedLender",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotPendingAdministrator",
     "type": "error"
   },
   {
@@ -45769,6 +49019,11 @@ export const baseAccessControlsErrorAbi = [
   {
     "inputs": [],
     "name": "ProviderNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RoleProviderFactoryRequired",
     "type": "error"
   }
 ] as const satisfies Abi;

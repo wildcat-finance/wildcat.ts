@@ -4,12 +4,11 @@ import { MarketParameters } from "../controller";
 import { SubgraphHooksInstanceDataFragment } from "../gql/graphql";
 import { Token, TokenAmount } from "../token";
 import {
+  AnyHooksInstanceDataStructOutput,
   DeployMarketInputsV2Struct,
-  HooksInstanceDataStructOutput,
   HooksTemplateDataStructOutput
 } from "../lens-types";
 import {
-  AddLenderInput,
   ContractWrapper,
   DepositAccess,
   FeeConfigurationV2,
@@ -23,7 +22,6 @@ import {
   SignerOrProvider,
   TransactionHash,
   TransferAccess,
-  TimestampedAddLenderInput,
   WithdrawalAccess
 } from "../types";
 import {
@@ -47,19 +45,19 @@ import {
 } from "./validation";
 import { encodeRevolvingMarketData } from "./revolving";
 import { HooksAccountContext, HooksLensReadContext } from "./context";
+import { isMarketSaltFormatValid } from "./market-salt";
 import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iPeriodicTermHooksAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
-import { getViemPublicClientFromEthers } from "../internal/ethers-viem";
-import {
-  getCredentialTimestamps,
-  prepareLenderRestoration as prepareLenderRestorationPlan,
-  LenderRestorationPlan,
-  timestampAddLenderInputs
-} from "./lender-restoration";
 import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
+import { readMarketTransferRecipientAllowed } from "./transfer-policy";
+import { parseRoleProviderKind } from "../domain";
 import {
   createHooksFactoryContractFacade,
   encodeMarketHooksInstanceInputs,
+  getHooksAdministrator,
+  getHooksPendingAdministrator,
+  hasRoleProviderFactory,
+  roleProviderFromLensData,
   HooksFactoryContractFacade
 } from "./utils";
 
@@ -67,7 +65,6 @@ import {
 export interface PeriodicTermHooks
   extends Omit<PeriodicTermHooksArgs, "roleProviders" | "constraints"> {}
 
-const NullProviderIndex = 2 ** 24 - 1;
 const MaxPeriodicMinimumDeposit = (1n << 96n) - 1n;
 
 export class PeriodicTermHooks extends ContractWrapper {
@@ -88,67 +85,33 @@ export class PeriodicTermHooks extends ContractWrapper {
     this.constraints = constraints;
   }
 
-  updateWith(data: HooksInstanceDataStructOutput, context: HooksLensReadContext): void {
+  updateWith(data: AnyHooksInstanceDataStructOutput, context: HooksLensReadContext): void {
     this.hooksTemplate.updateWith(data.hooksTemplate, context);
     this.name = data.name;
-    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map((p) => {
-      const pullProviderIndex = toNumber(p.pullProviderIndex);
-      const pushProviderIndex = toNumber(p.pushProviderIndex);
-      return {
-        isApproved: true,
-        providerAddress: p.providerAddress,
-        isPullProvider: pullProviderIndex !== NullProviderIndex,
-        pullProviderIndex,
-        isPushProvider: pushProviderIndex !== NullProviderIndex,
-        pushProviderIndex,
-        timeToLive: toNumber(p.timeToLive)
-      };
-    });
+    this.administrator = getHooksAdministrator(data);
+    this.pendingAdministrator = getHooksPendingAdministrator(data);
+    this.borrower = this.administrator;
+    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map(
+      roleProviderFromLensData
+    );
   }
 
   get hooksFactory(): string {
     return this.hooksTemplate.hooksFactory;
   }
 
-  previewAddLenders(_: AddLenderInput[]): ChangeLenderRolePreview {
-    if (this.signerAddress?.toLowerCase() !== this.borrower.toLowerCase()) {
-      return { status: ChangeLenderRoleStatus.NotBorrower };
-    }
-    return { status: ChangeLenderRoleStatus.Ready };
-  }
-
-  populateAddLenders(inputs: TimestampedAddLenderInput[]): PartialTransaction {
-    const lenders = inputs.map((input) => input.lender);
-    const credentialTimestamps = getCredentialTimestamps(inputs);
-    return prepareTransaction({
-      to: this.address,
-      abi: iPeriodicTermHooksAbi,
-      functionName: inputs.length === 1 ? "grantRole" : "grantRoles",
-      args:
-        inputs.length === 1
-          ? [lenders[0], credentialTimestamps[0]]
-          : [lenders, credentialTimestamps]
-    });
-  }
-
-  async prepareAddLenders(inputs: AddLenderInput[]): Promise<PartialTransaction> {
-    const publicClient = getViemPublicClientFromEthers(this.provider);
-    return this.populateAddLenders(await timestampAddLenderInputs(publicClient, inputs));
-  }
-
-  prepareLenderRestoration(inputs: AddLenderInput[]): Promise<LenderRestorationPlan> {
-    return prepareLenderRestorationPlan(getViemPublicClientFromEthers(this.provider), this, inputs);
-  }
-
-  async addLenders(inputs: AddLenderInput[]): Promise<TransactionHash> {
-    const result = this.previewAddLenders(inputs);
-    assert(result.status === ChangeLenderRoleStatus.Ready, `Can not add lenders: ${result.status}`);
-    return submitPreparedTransaction(this.signer, await this.prepareAddLenders(inputs));
+  isMarketTransferRecipientAllowed(marketAddress: string, recipient: string): Promise<boolean> {
+    return readMarketTransferRecipientAllowed(
+      this.provider,
+      this.address,
+      marketAddress,
+      recipient
+    );
   }
 
   previewBlockLenders(_: string[]): ChangeLenderRolePreview {
-    if (this.signerAddress?.toLowerCase() !== this.borrower.toLowerCase()) {
-      return { status: ChangeLenderRoleStatus.NotBorrower };
+    if (this.signerAddress?.toLowerCase() !== this.administrator.toLowerCase()) {
+      return { status: ChangeLenderRoleStatus.NotAdministrator };
     }
     return { status: ChangeLenderRoleStatus.Ready };
   }
@@ -163,8 +126,8 @@ export class PeriodicTermHooks extends ContractWrapper {
   }
 
   previewUnblockLender(): ChangeLenderRolePreview {
-    if (this.signerAddress?.toLowerCase() !== this.borrower.toLowerCase()) {
-      return { status: ChangeLenderRoleStatus.NotBorrower };
+    if (this.signerAddress?.toLowerCase() !== this.administrator.toLowerCase()) {
+      return { status: ChangeLenderRoleStatus.NotAdministrator };
     }
     return { status: ChangeLenderRoleStatus.Ready };
   }
@@ -190,9 +153,10 @@ export class PeriodicTermHooks extends ContractWrapper {
   static fromLensData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: HooksInstanceDataStructOutput,
+    data: AnyHooksInstanceDataStructOutput,
     context: HooksLensReadContext
   ): PeriodicTermHooks {
+    const administrator = getHooksAdministrator(data);
     return new PeriodicTermHooks({
       chainId,
       provider,
@@ -205,21 +169,11 @@ export class PeriodicTermHooks extends ContractWrapper {
         data.hooksTemplate,
         context
       ),
-      borrower: data.borrower,
+      borrower: administrator,
+      administrator,
+      pendingAdministrator: getHooksPendingAdministrator(data),
       constraints: parseMarketParameterConstraints(data.constraints),
-      roleProviders: [...data.pullProviders, ...data.pushProviders].map((p) => {
-        const pullProviderIndex = toNumber(p.pullProviderIndex);
-        const pushProviderIndex = toNumber(p.pushProviderIndex);
-        return {
-          isApproved: true,
-          providerAddress: p.providerAddress,
-          isPullProvider: pullProviderIndex !== NullProviderIndex,
-          pullProviderIndex,
-          isPushProvider: pushProviderIndex !== NullProviderIndex,
-          pushProviderIndex,
-          timeToLive: toNumber(p.timeToLive)
-        };
-      })
+      roleProviders: [...data.pullProviders, ...data.pushProviders].map(roleProviderFromLensData)
     });
   }
 
@@ -232,7 +186,9 @@ export class PeriodicTermHooks extends ContractWrapper {
     return new PeriodicTermHooks({
       chainId,
       provider,
-      borrower: data.borrower,
+      borrower: data.administrator,
+      administrator: data.administrator,
+      pendingAdministrator: data.pendingAdministrator ?? undefined,
       address: data.id,
       hooksTemplate: PeriodicTermHooksTemplate.fromSubgraphData(
         chainId,
@@ -243,13 +199,23 @@ export class PeriodicTermHooks extends ContractWrapper {
       signerAddress: context.signerAddress,
       name: data.name,
       roleProviders: data.providers.map((p) => ({
+        kind: parseRoleProviderKind(p.providerInstance.kind),
         isApproved: p.isApproved,
         providerAddress: p.providerAddress,
         isPullProvider: p.isPullProvider,
         pullProviderIndex: p.pullProviderIndex,
         isPushProvider: p.isPushProvider,
         pushProviderIndex: p.pushProviderIndex,
-        timeToLive: toNumber(p.timeToLive)
+        timeToLive: toNumber(p.timeToLive),
+        ...(p.providerInstance.administrator
+          ? {
+              isManaged: true,
+              administrator: p.providerInstance.administrator,
+              ...(p.providerInstance.pendingAdministrator
+                ? { pendingAdministrator: p.providerInstance.pendingAdministrator }
+                : {})
+            }
+          : {})
       })),
       numMarkets: data.numMarkets
     });
@@ -263,6 +229,8 @@ export type PeriodicTermHooksArgs = {
   hooksTemplate: PeriodicTermHooksTemplate;
   constraints?: MarketParameterConstraints;
   borrower: string;
+  administrator: string;
+  pendingAdministrator?: string;
   roleProviders?: RoleProvider[];
   name: string;
   numMarkets?: number;
@@ -411,8 +379,15 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
     ...otherParameters
   }: PeriodicTermMarketDeploymentArgs): DeployMarketPreview {
     const targetMarketKind = marketKind ?? "standard";
-    const deploymentStatus = getHooksTemplateDeploymentStatus(this, targetMarketKind);
+    const deploymentStatus = getHooksTemplateDeploymentStatus(
+      this,
+      targetMarketKind,
+      !!hooksAddress
+    );
     if (deploymentStatus) return { status: deploymentStatus };
+    if (!isMarketSaltFormatValid(salt)) {
+      return { status: DeployMarketStatus.InvalidMarketSaltFormat };
+    }
     if (this.isRegisteredBorrower !== undefined && !this.isRegisteredBorrower) {
       return { status: DeployMarketStatus.NotRegisteredBorrower };
     }
@@ -431,7 +406,11 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
         }
       }
     }
-    if (!hooksAddress && !roleProviderFactory && newProviderInputs?.length) {
+    if (
+      !hooksAddress &&
+      !hasRoleProviderFactory(roleProviderFactory) &&
+      newProviderInputs?.length
+    ) {
       return { status: DeployMarketStatus.CreateProviderInputsWithoutFactory };
     }
     if (
@@ -542,7 +521,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
 }
 
 type PeriodicTermCommonMarketDeploymentArgs = MarketParameters & {
-  /** Create2 salt to use for the market deployment */
+  /** CREATE2 salt encoded as immediate factory caller followed by a 12-byte nonce. */
   salt: string;
   /** First timestamp at which lenders can queue withdrawals */
   firstWithdrawalWindowStart: number;

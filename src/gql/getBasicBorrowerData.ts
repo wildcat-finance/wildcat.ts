@@ -1,5 +1,6 @@
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { GetBasicBorrowerDataDocument } from "./graphql";
+import { hasRegisteredBorrowerAccountPrincipal } from "./borrower-eligibility";
 
 export async function getBasicBorrowerData(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
@@ -10,7 +11,9 @@ export async function getBasicBorrowerData(
     variables: { borrower }
   });
   return {
-    isRegisteredBorrower: data.registeredBorrowers[0]?.isRegistered ?? false,
+    isRegisteredBorrower:
+      (data.registeredBorrowers[0]?.isRegistered ?? false) ||
+      hasRegisteredBorrowerAccountPrincipal(data.borrowerAccounts ?? []),
     hasMarkets: !!data.markets[0]
   };
 }

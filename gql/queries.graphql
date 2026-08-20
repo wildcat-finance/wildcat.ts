@@ -79,6 +79,21 @@ query getBasicBorrowerData($borrower: Bytes!) {
   markets(where: { borrower: $borrower }, first: 1) {
     id
   }
+  borrowerAccounts(where: { address: $borrower }, first: 100) {
+    registry {
+      archController {
+        id
+      }
+    }
+    principal {
+      registrations {
+        archController {
+          id
+        }
+        isRegistered
+      }
+    }
+  }
 }
 
 # Get all markets, including lender account if lender is authorized
@@ -424,10 +439,25 @@ query getAllHooksTemplates($borrower: Bytes, $includeBorrower: Boolean!) {
   registeredBorrowers(where: { borrower: $borrower }, first: 1) @include(if: $includeBorrower) {
     isRegistered
   }
+  borrowerAccounts(where: { address: $borrower }, first: 100) @include(if: $includeBorrower) {
+    registry {
+      archController {
+        id
+      }
+    }
+    principal {
+      registrations {
+        archController {
+          id
+        }
+        isRegistered
+      }
+    }
+  }
 }
 
 query getHooksInstancesForBorrower($borrower: Bytes!) {
-  hooksInstances(where: { borrower: $borrower }) {
+  hooksInstances(where: { administrator: $borrower }) {
     ...HooksInstanceData
   }
 }
@@ -436,14 +466,147 @@ query getAllHooksDataForBorrower($borrower: Bytes!) {
   hooksTemplateRegistrations {
     ...HooksTemplateRegistrationData
   }
-  hooksInstances(where: { borrower: $borrower }) {
+  hooksInstances(where: { administrator: $borrower }) {
     ...HooksInstanceData
   }
   registeredBorrowers(where: { borrower: $borrower }, first: 1) {
     isRegistered
   }
+  borrowerAccounts(where: { address: $borrower }, first: 100) {
+    registry {
+      archController {
+        id
+      }
+    }
+    principal {
+      registrations {
+        archController {
+          id
+        }
+        isRegistered
+      }
+    }
+  }
   controllers(where: { borrower: $borrower }, first: 1) {
     ...MinimalControllerData
+  }
+}
+
+# -------------------------------------------------------------------------- #
+#                       v2.5 identity and authority                          #
+# -------------------------------------------------------------------------- #
+
+query getBorrowerPrincipalIdentity($principal: ID!, $first: Int = 1000, $skip: Int = 0) {
+  borrower(id: $principal) {
+    ...BorrowerPrincipalIdentityData
+    accounts(first: $first, skip: $skip, orderBy: address, orderDirection: asc) {
+      ...BorrowerAccountIdentityData
+    }
+    pendingAccounts(first: $first, skip: $skip, orderBy: address, orderDirection: asc) {
+      ...BorrowerAccountIdentityData
+    }
+  }
+}
+
+query getBorrowerAccountIdentities($account: Bytes!, $first: Int = 1000, $skip: Int = 0) {
+  borrowerAccounts(
+    where: { address: $account }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...BorrowerAccountIdentityData
+  }
+}
+
+query getMarketBorrowerIdentity($market: ID!) {
+  market(id: $market) {
+    ...MarketBorrowerIdentityData
+  }
+}
+
+query getBorrowerAccountPrincipalChanges($account: Bytes!, $first: Int = 100, $skip: Int = 0) {
+  borrowerAccountPrincipalChanges(
+    where: { account_: { address: $account } }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...BorrowerAccountPrincipalChangeData
+  }
+}
+
+query getMarketBorrowerChanges($market: String!, $first: Int = 100, $skip: Int = 0) {
+  marketBorrowerChanges(
+    where: { market: $market }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...MarketBorrowerChangeData
+  }
+}
+
+query getHooksAuthority($hooks: ID!, $first: Int = 1000, $skip: Int = 0) {
+  hooksInstance(id: $hooks) {
+    ...HookAuthorityData
+    providers(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+      ...RoleProviderAttachmentData
+    }
+  }
+}
+
+query getRoleProviderAuthority($provider: ID!, $first: Int = 1000, $skip: Int = 0) {
+  roleProviderInstance(id: $provider) {
+    ...RoleProviderInstanceData
+    attachments(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+      ...RoleProviderAttachmentData
+    }
+    members(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+      ...RoleProviderMemberData
+    }
+    rootChanges(first: $first, skip: $skip, orderBy: id, orderDirection: asc) {
+      ...RoleProviderRootChangeData
+    }
+  }
+}
+
+query getHookAdministratorChanges($hooks: String!, $first: Int = 100, $skip: Int = 0) {
+  hookAdministratorChanges(
+    where: { hooks: $hooks }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...HookAdministratorChangeData
+  }
+}
+
+query getRoleProviderAdministratorChanges($provider: String!, $first: Int = 100, $skip: Int = 0) {
+  roleProviderAdministratorChanges(
+    where: { provider: $provider }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...RoleProviderAdministratorChangeData
+  }
+}
+
+query getRoleProviderMembershipChanges($provider: String!, $first: Int = 100, $skip: Int = 0) {
+  roleProviderMembershipChanges(
+    where: { provider: $provider }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...RoleProviderMembershipChangeData
   }
 }
 

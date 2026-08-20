@@ -20,7 +20,8 @@ import {
   SubgraphMarketOriginKind,
   SubgraphMarketSnapshotDataFragment,
   SubgraphSnapshotSource,
-  SubgraphMarketVersion
+  SubgraphMarketVersion,
+  SubgraphRoleProviderKind
 } from "../../src/gql/graphql";
 import {
   MarketDataBaseV2_5StructOutput,
@@ -291,13 +292,33 @@ const makeFactoryBackedMarketData = (hooksFactory: string): MarketDataV2StructOu
 
 const makeUnifiedMarketData = (hooksFactory: string): MarketDataBaseV2_5StructOutput => {
   const data = makeFactoryBackedMarketData(hooksFactory);
-  const hooksConfig = {
-    ...data.hooksConfig
-  };
   return {
     ...data,
-    hooksConfig
-  } as MarketDataBaseV2_5StructOutput;
+    hooksConfig: {
+      ...data.hooksConfig,
+      flags: {
+        ...data.hooksConfig.flags,
+        useOnExecutePendingAnnualInterestBipsReduction: false
+      }
+    },
+    hooks: {
+      ...data.hooks,
+      administrator: data.hooks.borrower,
+      pendingAdministrator: makeAddress(0),
+      deploymentFlags: {
+        optional: {
+          ...data.hooks.deploymentFlags.optional,
+          useOnExecutePendingAnnualInterestBipsReduction: false
+        },
+        required: {
+          ...data.hooks.deploymentFlags.required,
+          useOnExecutePendingAnnualInterestBipsReduction: false
+        }
+      },
+      pullProviders: [],
+      pushProviders: []
+    }
+  };
 };
 
 const makeUnifiedMarketDataV2 = (
@@ -311,6 +332,10 @@ const makeUnifiedMarketDataV2 = (
   } = {}
 ): MarketDataV2_5StructOutput => ({
   market: makeUnifiedMarketData(hooksFactory),
+  borrowerPrincipal: makeAddress(9),
+  pendingBorrower: makeAddress(0),
+  pendingBorrowerPrincipal: makeAddress(0),
+  borrowerIdentityRegistry: makeAddress(92),
   commitmentFeeBips,
   drawnAmount
 });
@@ -391,6 +416,10 @@ const makeSubgraphMarketData = (): Omit<
   isRegistered: true,
   isClosed: false,
   borrower: makeAddress(71),
+  borrowerPrincipal: makeAddress(71),
+  pendingBorrower: null,
+  pendingBorrowerPrincipal: null,
+  borrowerIdentityRegistryAddress: makeAddress(92),
   sentinel: makeAddress(72),
   feeRecipient: makeAddress(73),
   name: "Subgraph Market",
@@ -478,6 +507,8 @@ const makeSubgraphMarketData = (): Omit<
     id: makeAddress(76),
     address: makeAddress(76),
     borrower: makeAddress(71),
+    administrator: makeAddress(71),
+    pendingAdministrator: null,
     name: "OpenTermHooksInstance",
     kind: SubgraphHooksKind.OpenTerm,
     marketKind: SubgraphMarketKind.REVOLVING,
@@ -1236,6 +1267,12 @@ describe("Market model routing metadata", () => {
         __typename: "RoleProvider",
         id: `${data.hooks!.id}-${makeAddress(90)}`,
         providerAddress: makeAddress(90),
+        providerInstance: {
+          __typename: "RoleProviderInstance",
+          kind: SubgraphRoleProviderKind.ACCESS_LIST,
+          administrator: null,
+          pendingAdministrator: null
+        },
         timeToLive: "4294967295",
         isPullProvider: true,
         pullProviderIndex: 0,
@@ -1249,6 +1286,7 @@ describe("Market model routing metadata", () => {
 
     expect(market.roleProviders).to.deep.equal([
       {
+        kind: "access-list",
         providerAddress: makeAddress(90),
         timeToLive: 4_294_967_295,
         isPullProvider: true,
@@ -1291,7 +1329,10 @@ describe("Market model routing metadata", () => {
         providerAddress: makeAddress(91),
         timeToLive: BigNumber.from(3600),
         pullProviderIndex: BigNumber.from(0),
-        pushProviderIndex: BigNumber.from(0xffffff)
+        pushProviderIndex: BigNumber.from(0xffffff),
+        isManaged: false,
+        administrator: makeAddress(0),
+        pendingAdministrator: makeAddress(0)
       }
     ];
 
@@ -1351,6 +1392,23 @@ describe("Market model routing metadata", () => {
     expect(market.marketKind).to.equal("revolving");
     expect(market.hooksConfig?.kind).to.equal(HooksKind.OpenTerm);
     expect(market.hooksConfig?.template?.name).to.equal("");
+  });
+});
+
+describe("Market reserve ratio previews", () => {
+  const makeV2Market = (annualInterestBips: number): Market => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
+    const data = makeUnifiedMarketDataV2(hooksFactory);
+    data.market.annualInterestBips = BigNumber.from(annualInterestBips);
+    data.market.originalAnnualInterestBips = BigNumber.from(annualInterestBips);
+    data.market.reserveRatioBips = BigNumber.from(1_000);
+    data.market.originalReserveRatioBips = BigNumber.from(1_000);
+    return Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
+  };
+
+  it("compares the exact v2 APR reduction before rounding to bips", () => {
+    expect(makeV2Market(10_000).getReserveRatioForNewAPR(7_500)).to.equal(1_000);
+    expect(makeV2Market(9_999).getReserveRatioForNewAPR(7_499)).to.equal(5_000);
   });
 });
 

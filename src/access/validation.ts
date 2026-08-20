@@ -14,6 +14,7 @@ import { DeployableMarketKind, HooksKind, HooksTemplateRegistrationMetadata } fr
 
 export enum DeployMarketStatus {
   Ready = "Ready",
+  InvalidMarketSaltFormat = "InvalidMarketSaltFormat",
   InsufficientBalance = "InsufficientBalance",
   InsufficientAllowance = "InsufficientAllowance",
   NotRegisteredBorrower = "NotRegisteredBorrower",
@@ -41,11 +42,12 @@ export type HooksTemplateDeploymentAuthority = {
 /** Return the first static authority failure for a prospective market deployment. */
 export const getHooksTemplateDeploymentStatus = (
   template: HooksTemplateDeploymentAuthority,
-  marketKind: DeployableMarketKind
+  marketKind: DeployableMarketKind,
+  usesExistingHooksInstance = false
 ): Exclude<DeployMarketStatus, DeployMarketStatus.Ready> | undefined => {
-  // `enabled` is the caller's freshest view. Registration metadata may lag the
-  // lens/RPC overlay and must not independently veto a live-enabled template.
-  if (!template.enabled) {
+  // Disabling a template stops new hook instances. It does not retire existing
+  // immutable instances, so direct market deployment remains available.
+  if (!usesExistingHooksInstance && !template.enabled) {
     return DeployMarketStatus.HooksTemplateDisabled;
   }
   if (!template.registration) {
@@ -163,7 +165,7 @@ export const readyRevolvingDeployMarketPreview = (
 
 export enum ChangeLenderRoleStatus {
   Ready = "Ready",
-  NotBorrower = "NotBorrower"
+  NotAdministrator = "NotAdministrator"
 }
 
 export type ChangeLenderRolePreview = {

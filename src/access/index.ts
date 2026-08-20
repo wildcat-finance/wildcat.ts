@@ -6,7 +6,10 @@ import {
 } from "../constants";
 import { SubgraphHooksInstanceDataFragment } from "../gql/graphql";
 import { HooksKind, HooksTemplateRegistrationMetadata, parseHooksKind } from "../domain";
-import type { HooksInstanceDataStructOutput, HooksTemplateDataStructOutput } from "../lens-types";
+import type {
+  AnyHooksInstanceDataStructOutput,
+  HooksTemplateDataStructOutput
+} from "../lens-types";
 import {
   getV2HooksDataForBorrower,
   getV2_5AggregatedHooksTemplatesForBorrowerWithFactory,
@@ -20,13 +23,16 @@ import { FixedTermHooks, FixedTermHooksTemplate } from "./fixed-term";
 import { PeriodicTermHooks, PeriodicTermHooksTemplate } from "./periodic-term";
 import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
 import { HooksAccountContext, HooksLensReadContext } from "./context";
+import { resolveBorrowerPrincipalForHooksFactory } from "../identity/onchain";
 
 export * from "./access-control";
 export * from "./context";
 export * from "./fixed-term";
 export * from "./lender-restoration";
+export * from "./market-salt";
 export * from "./periodic-term";
 export * from "./revolving";
+export * from "./transfer-policy";
 export * from "./validation";
 
 export type HooksTemplate =
@@ -81,7 +87,7 @@ export async function getBorrowerHooksData({
 
   if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
     const archController = getArchControllerContract(chainId, provider);
-    const [factoryScopedTemplates, isRegisteredBorrower] = await Promise.all([
+    const [factoryScopedTemplates, isDirectlyRegisteredBorrower] = await Promise.all([
       getV2_5AggregatedHooksTemplatesForBorrowerWithFactory(chainId, provider, borrowerAddress),
       archController.isRegisteredBorrower(borrowerAddress)
     ]);
@@ -106,6 +112,18 @@ export async function getBorrowerHooksData({
         ])
       ).values()
     );
+    const isRegisteredBorrower =
+      isDirectlyRegisteredBorrower ||
+      (
+        await Promise.all(
+          supportedFactories.map((hooksFactory) =>
+            resolveBorrowerPrincipalForHooksFactory(provider, hooksFactory, borrowerAddress).then(
+              () => true,
+              () => false
+            )
+          )
+        )
+      ).some(Boolean);
     const [factoryScopedInstances, factoryRegistrationEntries] = await Promise.all([
       Promise.all(
         supportedFactories.map(async (hooksFactory) => ({
@@ -296,7 +314,7 @@ export function hooksInstanceFromSubgraph(
 export function hooksInstanceFromLens(
   chainId: SupportedChainId,
   provider: SignerOrProvider,
-  data: HooksInstanceDataStructOutput,
+  data: AnyHooksInstanceDataStructOutput,
   context: HooksLensReadContext
 ): HooksInstance {
   const kind = toNumber(data.kind);

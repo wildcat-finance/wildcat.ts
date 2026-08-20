@@ -4,7 +4,12 @@ import path from "path";
 import { encodeFunctionData, getAddress } from "viem";
 import * as generatedAbis from "../../src/abi";
 import {
+  accessListRoleProviderAbi,
+  accessListRoleProviderFactoryAbi,
   baseAccessControlsErrorAbi,
+  borrowerIdentityRegistryAbi,
+  hooksFactoryAbi,
+  hooksFactoryRevolvingAbi,
   iFixedTermHooksAbi,
   iOpenTermHooksAbi,
   iPeriodicTermHooksAbi,
@@ -80,6 +85,18 @@ const functionNames = (abi: readonly unknown[]): string[] => {
     .map((entry) => entry.name);
 };
 
+const functionInputTypes = (abi: readonly unknown[], functionName: string): string[][] => {
+  return abi
+    .filter(
+      (entry): entry is { type: "function"; name: string; inputs: Array<{ type: string }> } =>
+        typeof entry === "object" &&
+        entry !== null &&
+        (entry as { type?: string }).type === "function" &&
+        (entry as { name?: string }).name === functionName
+    )
+    .map((entry) => entry.inputs.map(({ type }) => type));
+};
+
 const errorNames = (abi: readonly unknown[]): string[] => {
   return abi
     .filter(
@@ -131,11 +148,26 @@ describe("generated viem ABIs", () => {
 
   it("exposes the V2.5 market and wrapper compatibility surface", () => {
     expect(functionNames(wildcatMarketV2Abi)).to.include.members([
+      "acceptBorrowerTransfer",
+      "borrowerIdentityRegistry",
+      "borrowerPrincipal",
+      "cancelBorrowerTransfer",
+      "pendingBorrower",
+      "pendingBorrowerPrincipal",
+      "queueWithdrawalScaled",
       "registerWrapper",
+      "requestBorrowerTransfer",
       "registeredWrapper",
       "scaledTransferRounding",
       "wrapperFactory"
     ]);
+    expect(
+      encodeFunctionData({
+        abi: wildcatMarketV2Abi,
+        functionName: "queueWithdrawalScaled",
+        args: [123n]
+      }).slice(0, 10)
+    ).to.equal("0x5ee883f8");
     expect(functionNames(wildcat4626WrapperFactoryAbi)).to.include.members([
       "isFloorRoundingMarket",
       "v1Factory",
@@ -164,20 +196,68 @@ describe("generated viem ABIs", () => {
         expect(hasNamedComponent(getter, "allowForceBuyBacks")).to.equal(false);
       }
       expect(functionNames(abi as readonly unknown[])).to.include("revokeRoles");
+      expect(functionInputTypes(abi as readonly unknown[], "onExecuteWithdrawal")).to.deep.equal([
+        ["address", "uint128", "tuple", "bytes"],
+        ["address", "uint32", "uint128", "tuple", "bytes"]
+      ]);
+    }
+  });
+
+  it("exports the v2.5 identity and independent authority surfaces", () => {
+    expect(functionNames(borrowerIdentityRegistryAbi)).to.include.members([
+      "acceptBorrowerAccountPrincipalTransfer",
+      "principalOf",
+      "requestBorrowerAccountPrincipalTransfer",
+      "resolveBorrower"
+    ]);
+    expect(functionNames(accessListRoleProviderAbi)).to.include.members([
+      "acceptAdministratorTransfer",
+      "addMembers",
+      "removeMembers",
+      "requestAdministratorTransfer"
+    ]);
+    expect(functionNames(accessListRoleProviderFactoryAbi)).to.include.members([
+      "computeRoleProviderAddress",
+      "createAccessListRoleProvider"
+    ]);
+    for (const abi of [iOpenTermHooksAbi, iFixedTermHooksAbi, iPeriodicTermHooksAbi]) {
+      expect(functionNames(abi as readonly unknown[])).to.include.members([
+        "acceptAdministratorTransfer",
+        "addRoleProvider",
+        "createRoleProvider",
+        "isMarketTransferRecipientAllowed",
+        "removeRoleProvider",
+        "requestAdministratorTransfer"
+      ]);
+    }
+    for (const abi of [hooksFactoryAbi, hooksFactoryRevolvingAbi]) {
+      expect(functionNames(abi as readonly unknown[])).to.include.members([
+        "borrowerIdentityRegistry",
+        "getHooksAdministrator",
+        "getHooksInstancesForAdministrator",
+        "onHooksAdministratorTransferred"
+      ]);
     }
   });
 
   it("exports access-control errors needed for viem revert decoding", () => {
     expect(errorNames(baseAccessControlsErrorAbi as readonly unknown[])).to.have.members([
+      "AdministratorNotRegistered",
+      "CallerNotAdministrator",
       "CallerNotBorrower",
+      "CreateRoleProviderFailed",
       "GrantedCredentialExpired",
+      "InvalidAdministratorTransferTarget",
       "InvalidArrayLength",
       "InvalidCredentialReturned",
       "InvalidCredentialTimestamp",
+      "NoPendingAdministratorTransfer",
       "NotApprovedLender",
+      "NotPendingAdministrator",
       "ProviderCanNotReplaceCredential",
       "ProviderCanNotRevokeCredential",
-      "ProviderNotFound"
+      "ProviderNotFound",
+      "RoleProviderFactoryRequired"
     ]);
   });
 });

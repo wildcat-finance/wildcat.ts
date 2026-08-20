@@ -5,10 +5,11 @@
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Development Workflow](#development-workflow)
-3. [App Integration Testing](#app-integration-testing)
-4. [Releases](#releases)
-5. [Branch Strategy](#branch-strategy)
+2. [v2.5 Market Deployment Salts](#v25-market-deployment-salts)
+3. [Development Workflow](#development-workflow)
+4. [App Integration Testing](#app-integration-testing)
+5. [Releases](#releases)
+6. [Branch Strategy](#branch-strategy)
 
 ## Overview
 
@@ -16,6 +17,11 @@
 
 The most likely scenario for working in this repo is while also working on app side. Theres a section below specifically on _how_ to manage this as a local dependency.
 
+## v2.5 Market Deployment Salts
+
+v2.5 market factories require a 32-byte CREATE2 salt made from the immediate factory caller followed by a 12-byte nonce. Use `encodeMarketSalt(factoryCaller, nonce)` to build one and `isMarketSaltForFactoryCaller(salt, factoryCaller)` when the caller is known.
+
+The factory caller is not always the wallet signing the outer transaction. A borrower account must use the account contract address, not its principal or signer.
 
 For local development inside this repo run `yarn build` (or `npm run build`) to compile TypeScript output before linking or publishing
 

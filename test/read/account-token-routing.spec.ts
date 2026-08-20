@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { BigNumber, providers } from "ethers";
+import { BigNumber, constants, providers } from "ethers";
 import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
 import {
   iERC20Abi,
@@ -281,11 +281,17 @@ const makeFactoryBackedMarketData = (hooksFactory: string): MarketDataV2StructOu
 const makeUnifiedMarketData = (hooksFactory: string) => {
   const marketData = makeFactoryBackedMarketData(hooksFactory);
   const hooksConfig = { ...marketData.hooksConfig };
+  const { borrower: hooksAdministrator, ...hooks } = marketData.hooks;
   delete (hooksConfig as { allowForceBuyBacks?: unknown }).allowForceBuyBacks;
 
   return {
     ...marketData,
-    hooksConfig
+    hooksConfig,
+    hooks: {
+      ...hooks,
+      administrator: hooksAdministrator,
+      pendingAdministrator: constants.AddressZero
+    }
   };
 };
 
@@ -345,7 +351,10 @@ const makeLenderAccountData = (lender: string) => ({
     providerAddress: makeAddress(20),
     pullProviderIndex: 0,
     pushProviderIndex: NullProviderIndex,
-    timeToLive: 3_600
+    timeToLive: 3_600,
+    isManaged: true,
+    administrator: makeAddress(21),
+    pendingAdministrator: constants.AddressZero
   },
   canRefresh: true,
   lastApprovalTimestamp: 1_700_000_000,
