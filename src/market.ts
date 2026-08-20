@@ -185,12 +185,15 @@ const toUnifiedMarketDataV2 = (
   } as unknown as MarketDataV2_5StructOutput;
 };
 
-type SubgraphMarketHydrationData =
+type SubgraphMarketHydrationData = (
   | MakeOptional<
       SubgraphMarketDataWithEventsFragment,
       "depositRecords" | "repaymentRecords" | "borrowRecords" | "feeCollectionRecords"
     >
-  | SubgraphMarketListDataFragment;
+  | SubgraphMarketListDataFragment
+) & {
+  latestDeposit?: Array<{ blockTimestamp: number }>;
+};
 
 const hasSubgraphMarketTotals = (
   data: SubgraphMarketHydrationData
@@ -295,6 +298,8 @@ export type MarketArgs = {
   totalDelinquencyFeesAccrued?: TokenAmount;
   totalProtocolFeesAccrued?: TokenAmount;
   totalDeposited?: TokenAmount;
+  /** Timestamp of the most recent deposit indexed by the market-list query. */
+  latestDepositTimestamp?: number;
   commitmentFeeBips?: number;
   drawnAmount?: TokenAmount;
   provenance?: MarketProvenance;
@@ -1402,6 +1407,7 @@ export class Market extends ContractWrapper {
         hasTotals ? data.totalProtocolFeesAccrued : 0
       ),
       totalDeposited: underlyingToken.getAmount(hasTotals ? data.totalDeposited : 0),
+      latestDepositTimestamp: data.latestDeposit?.[0]?.blockTimestamp,
       depositRecords: hasRecords ? data.depositRecords : undefined,
       repaymentRecords: hasRecords ? data.repaymentRecords : undefined,
       borrowRecords: hasRecords ? data.borrowRecords : undefined,

@@ -1,7 +1,7 @@
 import { ApolloClient, DocumentNode, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
 import { providers } from "ethers";
-import { getOperationAST } from "graphql";
+import { getOperationAST, print } from "graphql";
 import { SupportedChainId } from "../../src/constants";
 import { getIndexedMarketList } from "../../src/gql";
 import {
@@ -14,9 +14,9 @@ const makeAddress = (suffix: number): string => `0x${suffix.toString(16).padStar
 
 describe("indexed market discovery", () => {
   it("maps SDK-owned filters and pagination to Graph transport variables", async () => {
-    const calls: Array<{ variables?: Record<string, unknown> }> = [];
+    const calls: Array<{ query: DocumentNode; variables?: Record<string, unknown> }> = [];
     const client = {
-      query: async (args: { variables?: Record<string, unknown> }) => {
+      query: async (args: { query: DocumentNode; variables?: Record<string, unknown> }) => {
         calls.push(args);
         return { data: { markets: [] } };
       }
@@ -61,6 +61,7 @@ describe("indexed market discovery", () => {
       orderMarkets: SubgraphMarket_OrderBy.createdAtBlock,
       directionMarkets: SubgraphOrderDirection.asc
     });
+    expect(print(calls[0].query)).to.match(/latestDeposit:\s*depositRecords\(\s*first:\s*1/);
   });
 
   it("routes legacy chains through a V2.0-compatible document and normalizes the market", async () => {
@@ -128,6 +129,12 @@ describe("indexed market discovery", () => {
                 totalDelinquencyFeesAccrued: "0",
                 totalProtocolFeesAccrued: "0",
                 totalDeposited: "0",
+                latestDeposit: [
+                  {
+                    __typename: "Deposit",
+                    blockTimestamp: 1_750_000_000
+                  }
+                ],
                 eventIndex: 1,
                 deployedEvent: {
                   __typename: "MarketDeployed",
@@ -156,6 +163,7 @@ describe("indexed market discovery", () => {
     });
 
     expect(getOperationAST(calls[0].query)?.name?.value).to.equal("legacyGetMarketList");
+    expect(print(calls[0].query)).to.match(/latestDeposit:\s*depositRecords\(\s*first:\s*1/);
     expect(calls[0].variables).to.deep.include({
       marketFilter: {
         id_in: [marketAddress],
@@ -168,5 +176,6 @@ describe("indexed market discovery", () => {
     expect(market.marketKind).to.equal("standard");
     expect(market.provenance?.generation).to.equal("legacy-v2");
     expect(market.stateSource).to.equal("indexed");
+    expect(market.latestDepositTimestamp).to.equal(1_750_000_000);
   });
 });

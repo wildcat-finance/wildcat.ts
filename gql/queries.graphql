@@ -129,6 +129,9 @@ query getAllMarketsForLenderView(
     skip: $skipMarkets
   ) {
     ...MarketData
+    latestDeposit: depositRecords(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
+      blockTimestamp
+    }
     borrowRecords(
       first: $numBorrows
       skip: $skipBorrows
@@ -179,6 +182,9 @@ query getAllMarketsForLenderListView(
     skip: $skipMarkets
   ) {
     ...MarketListData
+    latestDeposit: depositRecords(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
+      blockTimestamp
+    }
     lenders(where: { address: $lender }, first: 1) {
       ...AccountDataForLenderListView
     }
@@ -1013,6 +1019,9 @@ query getMarketList(
     skip: $skipMarkets
   ) {
     ...MarketListData
+    latestDeposit: depositRecords(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
+      blockTimestamp
+    }
   }
 }
 

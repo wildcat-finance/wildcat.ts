@@ -161,6 +161,10 @@ export type LegacyMarketData = {
   totalDelinquencyFeesAccrued: string;
   totalProtocolFeesAccrued: string;
   totalDeposited: string;
+  latestDeposit?: Array<{
+    __typename?: "Deposit";
+    blockTimestamp: number;
+  }>;
   eventIndex: number;
   deployedEvent?: {
     __typename?: "MarketDeployed";
@@ -651,6 +655,9 @@ export const LegacyGetMarketListDocument = gql`
       skip: $skipMarkets
     ) {
       ...LegacyMarketData
+      latestDeposit: depositRecords(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
+        blockTimestamp
+      }
     }
   }
   ${LegacyMarketDataFragment}
@@ -990,6 +997,9 @@ export const LegacyGetAllMarketsForLenderViewDocument = gql`
       skip: $skipMarkets
     ) {
       ...LegacyMarketData
+      latestDeposit: depositRecords(first: 1, orderBy: blockTimestamp, orderDirection: desc) {
+        blockTimestamp
+      }
       lenders(where: { address: $lender }, first: 1) {
         ...LegacyAccountDataForLenderView
       }

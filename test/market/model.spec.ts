@@ -14,9 +14,9 @@ import {
   SubgraphHooksKind,
   SubgraphAccountDataForLenderListViewFragment,
   SubgraphLenderStatus,
+  SubgraphGetMarketListQuery,
   SubgraphMarketDataWithEventsFragment,
   SubgraphMarketKind,
-  SubgraphMarketListDataFragment,
   SubgraphMarketOriginKind,
   SubgraphMarketSnapshotDataFragment,
   SubgraphSnapshotSource,
@@ -568,7 +568,7 @@ const makeSubgraphMarketData = (): Omit<
   annualInterestBipsReductionProposalRecords: []
 });
 
-const makeSubgraphMarketListData = (): SubgraphMarketListDataFragment => {
+const makeSubgraphMarketListData = (): SubgraphGetMarketListQuery["markets"][number] => {
   const market = { ...makeSubgraphMarketData() };
   const { hooks } = market;
   delete (market as Partial<SubgraphMarketDataWithEventsFragment>).sentinel;
@@ -581,6 +581,12 @@ const makeSubgraphMarketListData = (): SubgraphMarketListDataFragment => {
 
   return {
     ...market,
+    latestDeposit: [
+      {
+        __typename: "Deposit",
+        blockTimestamp: 1_750_000_000
+      }
+    ],
     hooks: hooks
       ? {
           __typename: "HooksInstance",
@@ -1381,6 +1387,7 @@ describe("Market model routing metadata", () => {
     expect(market.drawnAmount?.raw).to.equal(250n);
     expect(market.totalBorrowed?.raw).to.equal(0n);
     expect(market.depositRecords).to.deep.equal([]);
+    expect(market.latestDepositTimestamp).to.equal(1_750_000_000);
   });
 
   it("dispatches subgraph hook templates by kind rather than display name", () => {
