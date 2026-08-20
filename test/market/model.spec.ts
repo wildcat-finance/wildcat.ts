@@ -1403,6 +1403,34 @@ describe("Market model routing metadata", () => {
 });
 
 describe("Market reserve ratio previews", () => {
+  it("returns minimum reserves in the underlying asset without changing reserve math", () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
+    const data = makeUnifiedMarketDataV2(hooksFactory);
+    data.market.totalSupply = BigNumber.from(1_000);
+    data.market.scaledTotalSupply = BigNumber.from(1_000);
+    data.market.scaledPendingWithdrawals = BigNumber.from(200);
+    data.market.normalizedUnclaimedWithdrawals = BigNumber.from(20);
+    data.market.totalAssets = BigNumber.from(500);
+    const market = Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
+
+    const minimumReserves = market.minimumReserves;
+    expect(minimumReserves.raw).to.equal(80n);
+    expect(minimumReserves.token).to.equal(market.underlyingToken);
+    expect(minimumReserves.token).not.to.equal(market.marketToken);
+    expect(minimumReserves.token.address).to.equal(data.market.underlyingToken.token);
+    expect(minimumReserves.name).to.equal("Mock USD");
+    expect(minimumReserves.symbol).to.equal("mUSD");
+
+    const breakdown = market.getTotalDebtBreakdown();
+    expect(breakdown.status).to.equal("healthy");
+    if (breakdown.status !== "healthy") throw Error("Expected healthy debt breakdown");
+    expect(breakdown.collateralObligation.raw).to.equal(310n);
+    expect(breakdown.borrowable.raw).to.equal(190n);
+    expect(breakdown.borrowed.raw).to.equal(530n);
+    expect(breakdown.totalDebt.raw).to.equal(1_030n);
+    expect(market.delinquentDebt.raw).to.equal(0n);
+  });
+
   const makeV2Market = (annualInterestBips: number): Market => {
     const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
     const data = makeUnifiedMarketDataV2(hooksFactory);

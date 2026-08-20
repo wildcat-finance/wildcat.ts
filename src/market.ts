@@ -680,7 +680,9 @@ export class Market extends ContractWrapper {
   }
 
   get minimumReserves(): TokenAmount {
-    return this.outstandingTotalSupply.bipMul(this.reserveRatioBips);
+    return this.underlyingToken.getAmount(
+      bipMulBigint(this.outstandingTotalSupply.raw, this.reserveRatioBips)
+    );
   }
 
   get borrowableAssets(): TokenAmount {
