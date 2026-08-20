@@ -579,6 +579,111 @@ describe("Account and token read routing", () => {
     expect(marketAccount.stateSource).to.equal("live");
   });
 
+  it("retains V2 access state while clearing wallet state when no account is connected", async () => {
+    const account = makeAddress(43);
+    const hooksFactory = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "HooksFactoryRevolving"
+    );
+    const market = Market.fromMarketDataV2(
+      constantsModule.SupportedChainId.Sepolia,
+      provider,
+      makeFactoryBackedMarketData(hooksFactory)
+    );
+    const marketAccount = MarketAccount.fromLenderAccountData(
+      market,
+      makeLenderAccountData(account)
+    );
+    const credential = marketAccount.credential;
+    const disconnectedLenderStatus = {
+      ...makeLenderAccountData(constants.AddressZero),
+      canRefresh: false,
+      isBlockedFromDeposits: true,
+      lastApprovalTimestamp: 0,
+      isKnownLender: false
+    };
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLensV2_5"
+    );
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getMarketsLiveDataWithLenderStatusV2");
+      expect((decoded.args as [string, string[]])[0].toLowerCase()).to.equal(constants.AddressZero);
+
+      return encodeLensResult(marketLensV2_5Abi as Abi, decoded.functionName, [
+        {
+          market: makeMarketLiveData(hooksFactory),
+          lenderStatus: disconnectedLenderStatus
+        }
+      ]);
+    });
+
+    await MarketAccount.refreshMarketAccountsV2LiveData(
+      constantsModule.SupportedChainId.Sepolia,
+      viemProvider as unknown as providers.Provider,
+      undefined,
+      [marketAccount]
+    );
+
+    expect(marketAccount.credential).to.equal(credential);
+    expect(marketAccount.isKnownLender).to.equal(true);
+    expect(marketAccount.scaledMarketBalance).to.equal(0n);
+    expect(marketAccount.marketBalance.raw).to.equal(0n);
+    expect(marketAccount.underlyingBalance.raw).to.equal(0n);
+    expect(marketAccount.underlyingApproval).to.equal(0n);
+    expect(marketAccount.stateSource).to.equal("live");
+  });
+
+  it("retains legacy access state while clearing wallet state when no account is connected", async () => {
+    const chainId = constantsModule.SupportedChainId.Mainnet;
+    const account = makeAddress(44);
+    const marketData = makeLegacyMarketData();
+    const market = Market.fromMarketData(chainId, marketData, provider);
+    const marketAccount = MarketAccount.fromMarketLenderStatus(
+      account,
+      makeMarketLenderStatus(account),
+      market
+    );
+    const lensAddress = constantsModule.getDeploymentAddress(chainId, "MarketLens");
+    const disconnectedLenderStatus = {
+      ...makeMarketLenderStatus(constants.AddressZero),
+      isAuthorizedOnController: false,
+      role: 0
+    };
+    const viemProvider = new FakeViemProvider((call) => {
+      const decoded = decodeLensCall(marketLensAbi as Abi, call);
+
+      expect(call.to).to.equal(lensAddress);
+      expect(decoded.functionName).to.equal("getMarketsDataWithLenderStatus");
+      expect((decoded.args as [string, string[]])[0].toLowerCase()).to.equal(constants.AddressZero);
+
+      return encodeLensResult(marketLensAbi as Abi, decoded.functionName, [
+        {
+          market: marketData,
+          lenderStatus: disconnectedLenderStatus
+        }
+      ]);
+    });
+
+    await MarketAccount.hydrateMarketAccountsLive(
+      chainId,
+      viemProvider as unknown as providers.Provider,
+      undefined,
+      [marketAccount]
+    );
+
+    expect(marketAccount.role).to.equal(3);
+    expect(marketAccount.isAuthorizedOnController).to.equal(true);
+    expect(marketAccount.scaledMarketBalance).to.equal(0n);
+    expect(marketAccount.marketBalance.raw).to.equal(0n);
+    expect(marketAccount.underlyingBalance.raw).to.equal(0n);
+    expect(marketAccount.underlyingApproval).to.equal(0n);
+    expect(marketAccount.stateSource).to.equal("live");
+  });
+
   it("batch-refreshes a singleton legacy V2 account without ambiguous lens overloads", async () => {
     const chainId = constantsModule.SupportedChainId.Mainnet;
     const account = makeAddress(44);

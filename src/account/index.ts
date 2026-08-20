@@ -120,26 +120,6 @@ type MarketDataWithLenderStatusOutput =
   | MarketDataWithLenderStatusV2StructOutput
   | MarketDataWithLenderStatusV2_5StructOutput;
 
-const zeroLenderBalances = (
-  info: LatestLenderAccountDataStructOutput
-): LatestLenderAccountDataStructOutput => ({
-  ...info,
-  scaledBalance: 0n,
-  normalizedBalance: 0n,
-  underlyingBalance: 0n,
-  underlyingApproval: 0n
-});
-
-const zeroLegacyLenderBalances = (
-  info: MarketLenderStatusStructOutput
-): MarketLenderStatusStructOutput => ({
-  ...info,
-  scaledBalance: 0n,
-  normalizedBalance: 0n,
-  underlyingBalance: 0n,
-  underlyingApproval: 0n
-});
-
 export type MarketAccountArgs = {
   account: string;
   /** For V1 markets - whether lender has been manually approved on controller  */
@@ -1045,6 +1025,15 @@ export class MarketAccount {
     this.stateSource = "live";
   }
 
+  private clearWalletState(): void {
+    this.scaledMarketBalance = 0n;
+    this.marketBalance = this.market.marketToken.getAmount(0n);
+    this.underlyingBalance = this.market.underlyingToken.getAmount(0n);
+    this.underlyingApproval = 0n;
+    this.processInterestAccrued();
+    this.stateSource = "live";
+  }
+
   private calculateInterestEarned(): bigint {
     if (!this.lastScaleFactor) return 0n;
     if (this.scaledMarketBalance === 0n || this.lastScaleFactor === this.market.scaleFactor) {
@@ -1326,6 +1315,8 @@ export class MarketAccount {
   /**
    * Refresh existing V2 lender market accounts using the focused live lens surface when available.
    * Falls back to existing broad V2 market reads plus lender-account reads.
+   * If `account` is undefined, access state is retained while wallet balances and allowance are
+   * cleared.
    */
   static async refreshMarketAccountsV2LiveData(
     chainId: SupportedChainId,
@@ -1338,7 +1329,7 @@ export class MarketAccount {
     }
 
     const lender = account ?? ZERO_ADDRESS;
-    const shouldZeroBalances = !account;
+    const shouldClearWalletState = !account;
     const marketAddresses = marketAccounts.map((marketAccount) => marketAccount.market.address);
 
     if (hasUnifiedLatestLensForAccountReads(chainId)) {
@@ -1351,9 +1342,11 @@ export class MarketAccount {
         );
         updates.forEach((update: MarketLiveDataWithLenderStatusV2_5StructOutput, i) => {
           marketAccounts[i].market.updateWithLiveData(update.market);
-          marketAccounts[i].updateWith(
-            shouldZeroBalances ? zeroLenderBalances(update.lenderStatus) : update.lenderStatus
-          );
+          if (shouldClearWalletState) {
+            marketAccounts[i].clearWalletState();
+          } else {
+            marketAccounts[i].updateWith(update.lenderStatus);
+          }
         });
         return marketAccounts;
       } catch (_) {
@@ -1368,9 +1361,11 @@ export class MarketAccount {
 
     marketAccounts.forEach((marketAccount, i) => {
       Object.assign(marketAccount.market, refreshedMarkets[i]);
-      marketAccount.updateWith(
-        shouldZeroBalances ? zeroLenderBalances(lenderStatuses[i]) : lenderStatuses[i]
-      );
+      if (shouldClearWalletState) {
+        marketAccount.clearWalletState();
+      } else {
+        marketAccount.updateWith(lenderStatuses[i]);
+      }
     });
     return marketAccounts;
   }
@@ -1378,6 +1373,8 @@ export class MarketAccount {
   /**
    * Mutate indexed lender accounts with current market, authorization, balance,
    * allowance, and credential state while preserving input order.
+   * If `account` is undefined, access state is retained while wallet balances and allowance are
+   * cleared.
    */
   static async hydrateMarketAccountsLive(
     chainId: SupportedChainId,
@@ -1386,7 +1383,7 @@ export class MarketAccount {
     marketAccounts: MarketAccount[]
   ): Promise<MarketAccount[]> {
     const lender = account ?? ZERO_ADDRESS;
-    const shouldZeroBalances = !account;
+    const shouldClearWalletState = !account;
     const v1Accounts = marketAccounts.filter(({ market }) => market.version === MarketVersion.V1);
     const v2Accounts = marketAccounts.filter(({ market }) => market.version === MarketVersion.V2);
 
@@ -1400,11 +1397,11 @@ export class MarketAccount {
           ).then((updates) =>
             updates.forEach((update, index) => {
               v1Accounts[index].market.updateWith(update.market);
-              v1Accounts[index].updateWith(
-                shouldZeroBalances
-                  ? zeroLegacyLenderBalances(update.lenderStatus)
-                  : update.lenderStatus
-              );
+              if (shouldClearWalletState) {
+                v1Accounts[index].clearWalletState();
+              } else {
+                v1Accounts[index].updateWith(update.lenderStatus);
+              }
             })
           )
         : Promise.resolve(),
