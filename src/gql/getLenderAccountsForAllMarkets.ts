@@ -17,6 +17,7 @@ import {
   LegacyGetAllMarketsForLenderViewDocument,
   LegacyLenderMarketsQueryData,
   legacyMarketFilterCanMatch,
+  normalizeLegacyLenderHooksAccessData,
   normalizeLegacyLenderAccountData,
   normalizeLegacyMarketData,
   toLegacyMarketFilter,
@@ -106,7 +107,7 @@ export async function getLenderAccountsForAllMarkets(
       const access = hooksAccess
         ? {
             credential: parseSubgraphLenderHooksAccess(
-              hooksAccess as unknown as Parameters<typeof parseSubgraphLenderHooksAccess>[0]
+              normalizeLegacyLenderHooksAccessData(hooksAccess)
             ),
             isKnownLender: hooksAccess.knownLenderStatuses.some(
               ({ market: knownMarket }) =>

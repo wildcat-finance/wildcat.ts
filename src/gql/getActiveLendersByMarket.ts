@@ -20,6 +20,12 @@ import type {
   LenderAccountDataV2_5StructOutput
 } from "../lens-types";
 import { roleProviderFromLensData } from "../access/utils";
+import { usesLegacySubgraphSchema } from "../config";
+import {
+  LegacyGetActiveLendersByMarketData,
+  LegacyGetActiveLendersByMarketDocument,
+  normalizeLegacyLenderHooksAccessData
+} from "./legacy-subgraph";
 
 export type GetActiveLendersByMarketOptions = Omit<
   SubgraphGetActiveLendersByMarketQueryVariables,
@@ -154,19 +160,48 @@ export async function getActiveLendersByMarket(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   { fetchPolicy, market, ...options }: GetActiveLendersByMarketOptions
 ): Promise<BasicLenderData[]> {
-  const {
-    data: { market: marketData }
-  } = await subgraphClient.query<
-    SubgraphGetActiveLendersByMarketQuery,
-    SubgraphGetActiveLendersByMarketQueryVariables
-  >({
-    query: GetActiveLendersByMarketDocument,
-    variables: {
-      market: market.address.toLowerCase(),
-      ...options
-    },
-    fetchPolicy
-  });
+  type CurrentLenderData = NonNullable<
+    SubgraphGetActiveLendersByMarketQuery["market"]
+  >["lenders"][number];
+  const variables = {
+    market: market.address.toLowerCase(),
+    ...options
+  };
+  let marketData: { lenders: CurrentLenderData[] } | null | undefined;
+  if (usesLegacySubgraphSchema(market.chainId)) {
+    const result = await subgraphClient.query<
+      LegacyGetActiveLendersByMarketData,
+      SubgraphGetActiveLendersByMarketQueryVariables
+    >({
+      query: LegacyGetActiveLendersByMarketDocument,
+      variables,
+      fetchPolicy
+    });
+    marketData = result.data.market
+      ? {
+          lenders: result.data.market.lenders.map(
+            (lender): CurrentLenderData =>
+              ({
+                ...lender,
+                __typename: "LenderAccount",
+                hooksAccess: lender.hooksAccess
+                  ? normalizeLegacyLenderHooksAccessData(lender.hooksAccess)
+                  : lender.hooksAccess
+              } as CurrentLenderData)
+          )
+        }
+      : result.data.market;
+  } else {
+    const result = await subgraphClient.query<
+      SubgraphGetActiveLendersByMarketQuery,
+      SubgraphGetActiveLendersByMarketQueryVariables
+    >({
+      query: GetActiveLendersByMarketDocument,
+      variables,
+      fetchPolicy
+    });
+    marketData = result.data.market;
+  }
   assert(marketData !== undefined && marketData !== null, `Market not found ${market.address}`);
   return marketData.lenders.map(
     ({

@@ -2,9 +2,10 @@ import { ApolloClient, DocumentNode, NormalizedCacheObject } from "@apollo/clien
 import { expect } from "chai";
 import { providers } from "ethers";
 import { getOperationAST } from "graphql";
-import { getLenderAccountsForAllMarkets } from "../../src/gql";
+import { getActiveLendersByMarket, getLenderAccountsForAllMarkets } from "../../src/gql";
 import { SupportedChainId } from "../../src/constants";
 import { HooksKind } from "../../src/domain";
+import { Market } from "../../src/market";
 
 const makeAddress = (suffix: number): string => `0x${suffix.toString(16).padStart(40, "0")}`;
 
@@ -191,7 +192,75 @@ describe("legacy lender market discovery", () => {
       throw Error("Expected fixed-term hooks config");
     }
     expect(hooksConfig.allowForceBuyBacks).to.equal(true);
+    expect(account.market.roleProviders?.[0]?.kind).to.equal("unknown");
     expect(account.credential?.lastProvider?.providerAddress).to.equal(providerAddress);
+    expect(account.credential?.lastProvider?.kind).to.equal("unknown");
     expect(account.isKnownLender).to.equal(true);
+  });
+
+  it("routes active-lender reads through legacy provider data", async () => {
+    const marketAddress = makeAddress(20);
+    const lender = makeAddress(21);
+    const providerAddress = makeAddress(22);
+    const calls: Array<{ query: DocumentNode }> = [];
+    const client = {
+      query: async (args: { query: DocumentNode }) => {
+        calls.push(args);
+        return {
+          data: {
+            market: {
+              lenders: [
+                {
+                  __typename: "LenderAccount",
+                  id: `${marketAddress}-${lender}`,
+                  address: lender,
+                  scaledBalance: "100",
+                  addedTimestamp: 1_700_000_000,
+                  role: "DepositAndWithdraw",
+                  controllerAuthorization: null,
+                  hooksAccess: {
+                    __typename: "LenderHooksAccess",
+                    id: `${makeAddress(23)}-${lender}`,
+                    lender,
+                    isBlockedFromDeposits: false,
+                    lastProvider: {
+                      __typename: "RoleProvider",
+                      id: `PROVIDER-${providerAddress}`,
+                      providerAddress,
+                      timeToLive: "3600",
+                      isPullProvider: true,
+                      pullProviderIndex: 0,
+                      isPushProvider: false,
+                      pushProviderIndex: 16777215,
+                      isApproved: true
+                    },
+                    canRefresh: true,
+                    lastApprovalTimestamp: 1_700_000_000,
+                    addedTimestamp: 1_700_000_000
+                  },
+                  knownLenderStatus: { id: `${marketAddress}-${lender}` }
+                }
+              ]
+            }
+          }
+        };
+      }
+    } as unknown as ApolloClient<NormalizedCacheObject>;
+
+    const [activeLender] = await getActiveLendersByMarket(client, {
+      market: {
+        chainId: SupportedChainId.Mainnet,
+        address: marketAddress
+      } as Market,
+      fetchPolicy: "network-only"
+    });
+
+    expect(getOperationAST(calls[0].query)?.name?.value).to.equal("legacyGetActiveLendersByMarket");
+    expect(activeLender.address).to.equal(lender);
+    expect(activeLender.credential?.lastProvider).to.deep.include({
+      kind: "unknown",
+      providerAddress
+    });
+    expect(activeLender.isKnownLender).to.equal(true);
   });
 });

@@ -9,12 +9,15 @@ import {
   SubgraphHooksFactoryDataFragment,
   SubgraphHooksInstanceDataFragment,
   SubgraphHooksTemplateRegistrationDataFragment,
+  SubgraphLenderHooksAccessDataFragment,
   SubgraphMarketDataWithEventsFragment,
   SubgraphMarket_Filter,
   SubgraphMarketKind,
   SubgraphMarket_OrderBy,
   SubgraphMarketOriginKind,
   SubgraphMarketVersion,
+  SubgraphRoleProviderDataFragment,
+  SubgraphRoleProviderKind,
   AnnualInterestBipsUpdatedDataFragmentDoc,
   BorrowDataFragmentDoc,
   DelinquencyStatusChangedDataFragmentDoc,
@@ -210,6 +213,27 @@ export type LegacyLenderAccountData = {
     blockTimestamp: number;
     transactionHash: string;
   }>;
+};
+
+export type LegacyBasicLenderData = {
+  __typename?: "LenderAccount";
+  id: string;
+  address: string;
+  scaledBalance: string;
+  addedTimestamp: number;
+  role: string;
+  controllerAuthorization?: {
+    authorized: boolean;
+    addedTimestamp: number;
+  } | null;
+  hooksAccess?: LegacyLenderHooksAccessData | null;
+  knownLenderStatus?: { id: string } | null;
+};
+
+export type LegacyGetActiveLendersByMarketData = {
+  market?: {
+    lenders: LegacyBasicLenderData[];
+  } | null;
 };
 
 export type LegacyLenderHooksAccessWithKnownMarkets = LegacyLenderHooksAccessData & {
@@ -691,6 +715,44 @@ export const LegacyGetLenderAccountForMarketDocument = gql`
   ${LegacyAccountDataForLenderViewFragment}
 `;
 
+export const LegacyGetActiveLendersByMarketDocument = gql`
+  query legacyGetActiveLendersByMarket(
+    $market: ID!
+    $accountFilter: LenderAccount_filter = { address_not: null }
+    $numAccounts: Int = 1000
+    $skipAccounts: Int = 0
+    $orderAccounts: LenderAccount_orderBy = lastUpdatedTimestamp
+    $directionAccounts: OrderDirection = desc
+  ) {
+    market(id: $market) {
+      lenders(
+        where: $accountFilter
+        first: $numAccounts
+        skip: $skipAccounts
+        orderBy: $orderAccounts
+        orderDirection: $directionAccounts
+      ) {
+        id
+        address
+        scaledBalance
+        addedTimestamp
+        role
+        controllerAuthorization {
+          authorized
+          addedTimestamp
+        }
+        hooksAccess {
+          ...LegacyLenderHooksAccessData
+        }
+        knownLenderStatus {
+          id
+        }
+      }
+    }
+  }
+  ${LegacyLenderHooksAccessDataFragment}
+`;
+
 export const LegacyGetIndexedLenderAccountSummaryForMarketDocument = gql`
   query legacyGetIndexedLenderAccountSummaryForMarket($market: ID!, $lender: Bytes!) {
     market(id: $market) {
@@ -1165,6 +1227,29 @@ export const normalizeLegacyHooksTemplateRegistrationData = (
   } as unknown as SubgraphHooksTemplateRegistrationDataFragment;
 };
 
+export const normalizeLegacyRoleProviderData = (
+  provider: LegacyRoleProviderData
+): SubgraphRoleProviderDataFragment => ({
+  ...provider,
+  __typename: "RoleProvider",
+  providerInstance: {
+    __typename: "RoleProviderInstance",
+    kind: SubgraphRoleProviderKind.UNKNOWN,
+    administrator: null,
+    pendingAdministrator: null
+  }
+});
+
+export const normalizeLegacyLenderHooksAccessData = <Access extends LegacyLenderHooksAccessData>(
+  access: Access
+): Omit<Access, "lastProvider"> & SubgraphLenderHooksAccessDataFragment => ({
+  ...access,
+  __typename: "LenderHooksAccess",
+  lastProvider: access.lastProvider
+    ? normalizeLegacyRoleProviderData(access.lastProvider)
+    : access.lastProvider
+});
+
 export const normalizeLegacyHooksInstanceData = (
   chainId: SupportedChainId,
   instance: LegacyHooksInstanceData
@@ -1188,7 +1273,8 @@ export const normalizeLegacyHooksInstanceData = (
     abiFamily: "legacy-v2",
     hooksTemplate: registration.hooksTemplate,
     templateRegistration: registration,
-    hooksFactory: registration.hooksFactory
+    hooksFactory: registration.hooksFactory,
+    providers: instance.providers.map(normalizeLegacyRoleProviderData)
   } as unknown as SubgraphHooksInstanceDataFragment;
 };
 
@@ -1271,6 +1357,9 @@ export const normalizeLegacyLenderAccountData = (
   ({
     ...account,
     __typename: "LenderAccount",
+    hooksAccess: account.hooksAccess
+      ? normalizeLegacyLenderHooksAccessData(account.hooksAccess)
+      : account.hooksAccess,
     snapshot: null
   } as unknown as SubgraphAccountDataForLenderViewFragment);
 

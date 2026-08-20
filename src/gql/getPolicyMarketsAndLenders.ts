@@ -15,8 +15,10 @@ import { getSubgraphClientSchemaFamily } from "../config";
 import {
   LegacyGetMarketsAndLendersByHooksInstanceOrControllerDocument,
   LegacyHooksInstanceData,
+  LegacyLenderHooksAccessData,
   LegacyMarketData,
   normalizeLegacyHooksInstanceData,
+  normalizeLegacyLenderHooksAccessData,
   normalizeLegacyMarketData,
   toLegacyMarketFilter,
   toLegacyMarketOrder
@@ -39,11 +41,13 @@ export type PolicyMarketsAndLenders = {
 type CurrentPolicyData = SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery;
 type CurrentPolicyHooksInstance = NonNullable<CurrentPolicyData["hooksInstance"]>;
 type CurrentPolicyController = NonNullable<CurrentPolicyData["controller"]>;
+type LegacyPolicyHooksLender = Omit<CurrentPolicyHooksInstance["lenders"][number], "lastProvider"> &
+  LegacyLenderHooksAccessData;
 type LegacyPolicyData = {
   hooksInstance?:
     | (LegacyHooksInstanceData & {
         markets: LegacyMarketData[];
-        lenders: CurrentPolicyHooksInstance["lenders"];
+        lenders: LegacyPolicyHooksLender[];
       })
     | null;
   controller?:
@@ -96,7 +100,9 @@ export async function getPolicyMarketsAndLenders(
               markets: (result.data as LegacyPolicyData).hooksInstance!.markets.map((market) =>
                 normalizeLegacyMarketData(chainId, market)
               ),
-              lenders: (result.data as LegacyPolicyData).hooksInstance!.lenders
+              lenders: (result.data as LegacyPolicyData).hooksInstance!.lenders.map(
+                normalizeLegacyLenderHooksAccessData
+              )
             } as CurrentPolicyHooksInstance)
           : null,
         controller: (result.data as LegacyPolicyData).controller
