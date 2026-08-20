@@ -243,6 +243,49 @@ describe("Withdrawal read routing", () => {
     expect(withdrawal.isExecutable).to.equal(true);
   });
 
+  it("treats fully claimed future-expiry batches as completed after market closure", () => {
+    const hooksFactory = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "HooksFactoryStandard"
+    );
+    const marketData = makeFactoryBackedMarketData(hooksFactory);
+    marketData.isClosed = true;
+    const market = Market.fromMarketDataV2(
+      constantsModule.SupportedChainId.Sepolia,
+      provider,
+      marketData
+    );
+    const batch = WithdrawalBatch.fromWithdrawalBatchData(
+      market,
+      {
+        ...makeWithdrawalBatchData(BatchStatus.Complete),
+        expiry: Math.floor(Date.now() / 1000) + 3_600,
+        scaledAmountBurned: BigNumber.from(100),
+        normalizedAmountPaid: BigNumber.from(100),
+        normalizedTotalAmount: BigNumber.from(100)
+      },
+      true
+    );
+    const lenderStatus = {
+      ...makeWithdrawalBatchLenderStatus(makeAddress(31)),
+      normalizedAmountWithdrawn: BigNumber.from(25),
+      normalizedAmountOwed: BigNumber.from(0)
+    };
+    const withdrawal = LenderWithdrawalStatus.fromWithdrawalBatchLenderStatus(
+      market,
+      batch,
+      lenderStatus
+    );
+
+    expect(batch.effectiveStatus).to.equal(BatchStatus.Complete);
+    expect(withdrawal.isCompleted).to.equal(true);
+
+    withdrawal.isCompleted = false;
+    withdrawal.updateWith(lenderStatus);
+
+    expect(withdrawal.isCompleted).to.equal(true);
+  });
+
   it("preserves the explicit V2.5 Expired status on lens updates", () => {
     const hooksFactory = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,
