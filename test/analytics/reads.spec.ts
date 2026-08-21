@@ -335,6 +335,7 @@ describe("V2.5 indexed analytics reads", () => {
             address: lender,
             market,
             scaledBalance: "123",
+            principalBasis: "100",
             totalDeposited: "456",
             totalInterestEarned: "7",
             lastScaleFactor: "1000000000000000000000000000",
@@ -344,6 +345,7 @@ describe("V2.5 indexed analytics reads", () => {
             snapshot: {
               source: "EVENT_PROJECTION",
               scaledBalance: "123",
+              principalBasis: "100",
               role: "DepositAndWithdraw",
               totalDeposited: "456",
               lastScaleFactor: "1000000000000000000000000000",
@@ -456,7 +458,9 @@ describe("V2.5 indexed analytics reads", () => {
       fetchPolicy: "no-cache"
     });
     expect(positions.items[0].scaledBalance).to.equal(123n);
+    expect(positions.items[0].principalBasis).to.equal(100n);
     expect(positions.items[0].snapshot?.blockNumber).to.equal(200n);
+    expect(positions.items[0].snapshot?.principalBasis).to.equal(100n);
 
     expect((await getProtocolAnalyticsStats(client, "no-cache")).stats?.numActiveLenders).to.equal(
       5
@@ -500,6 +504,7 @@ describe("V2.5 indexed analytics reads", () => {
             to: { id: `LENDER-${marketAddress}-other`, address: borrower },
             amount: "100",
             scaledAmount: "90",
+            principalBasisAmount: "80",
             ...eventFields
           }
         ]
@@ -518,7 +523,12 @@ describe("V2.5 indexed analytics reads", () => {
       direction: "out",
       fetchPolicy: "no-cache"
     });
-    expect(transfers.items[0]).to.include({ kind: "transfer", from: lender, to: borrower });
+    expect(transfers.items[0]).to.include({
+      kind: "transfer",
+      from: lender,
+      to: borrower,
+      principalBasisAmount: 80n
+    });
     expect(
       operations.find(({ operationName }) => operationName === "getLenderTransferPage")?.variables
         .filter
@@ -721,6 +731,8 @@ describe("V2.5 indexed analytics reads", () => {
             batch,
             scaledAmount: "81",
             normalizedAmount: "90",
+            principalBasisBefore: "100",
+            principalBasisAfter: "90",
             ...eventFields
           }
         ]
@@ -797,7 +809,9 @@ describe("V2.5 indexed analytics reads", () => {
     expect(request.items[0]).to.include({
       kind: "withdrawal-request",
       scaledAmount: 81n,
-      normalizedAmount: 90n
+      normalizedAmount: 90n,
+      principalBasisBefore: 100n,
+      principalBasisAfter: 90n
     });
 
     const execution = await getLenderWithdrawalExecutionPage(client, {

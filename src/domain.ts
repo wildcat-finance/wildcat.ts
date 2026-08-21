@@ -298,6 +298,7 @@ export type IndexedLenderRole =
 
 export type IndexedLenderAccountSnapshot = IndexedSnapshotMetadata & {
   scaledBalance: bigint;
+  principalBasis: bigint;
   role: IndexedLenderRole;
   totalDeposited: bigint;
   lastScaleFactor: bigint;

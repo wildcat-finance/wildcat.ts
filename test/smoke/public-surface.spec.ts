@@ -36,6 +36,7 @@ describe("SDK public surface smoke", () => {
     expect(typeof sdk.getTokenData).to.equal("function");
     expect(typeof sdk.getTokensData).to.equal("function");
     expect(typeof sdk.getTokenWrapperDataForMarket).to.equal("function");
+    expect(typeof sdk.createInterestOnlyWithdrawalQuote).to.equal("function");
     expect(typeof sdk.getIndexedLenderAccountSummaryForMarket).to.equal("function");
     expect(typeof sdk.getIncompleteLenderWithdrawalsForMarket).to.equal("function");
     expect(typeof sdk.getIncompleteWithdrawalsForMarket).to.equal("function");

@@ -1003,6 +1003,7 @@ describe("Market model routing metadata", () => {
       id: `${market.address}-${makeAddress(82)}`,
       address: makeAddress(82),
       scaledBalance: "1",
+      principalBasis: "1",
       role: SubgraphLenderStatus.Null,
       totalDeposited: "1",
       lastScaleFactor: market.scaleFactor.toString(),
@@ -1016,6 +1017,7 @@ describe("Market model routing metadata", () => {
         __typename: "LenderAccountSnapshot",
         source: SubgraphSnapshotSource.EVENT_PROJECTION,
         scaledBalance: "5",
+        principalBasis: "4",
         role: SubgraphLenderStatus.WithdrawOnly,
         totalDeposited: "50",
         lastScaleFactor: market.scaleFactor.toString(),
@@ -1036,9 +1038,12 @@ describe("Market model routing metadata", () => {
     expect(account.scaledMarketBalance).to.equal(5n);
     expect(account.role).to.equal(2);
     expect(account.totalDeposited?.raw).to.equal(50n);
+    expect(account.principalBasis?.raw).to.equal(4n);
+    expect(account.interestOnlyWithdrawalAmount?.raw).to.equal(1n);
     expect(account.indexedSnapshot).to.deep.include({
       source: "event-projection",
       role: "withdraw-only",
+      principalBasis: 4n,
       blockNumber: 123n,
       logIndex: 5n
     });

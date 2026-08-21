@@ -71,6 +71,7 @@ describe("indexed lender-account summary", () => {
             id: `${marketAddress}-${lender}`,
             address: lender,
             scaledBalance: "25",
+            principalBasis: "20",
             role: SubgraphLenderStatus.WithdrawOnly,
             totalDeposited: "100",
             lastScaleFactor: scaleFactor.toString(),
@@ -80,7 +81,23 @@ describe("indexed lender-account summary", () => {
             controllerAuthorization: null,
             hooksAccess: null,
             knownLenderStatus: null,
-            snapshot: null
+            snapshot: {
+              __typename: "LenderAccountSnapshot",
+              source: "EVENT_PROJECTION",
+              scaledBalance: "25",
+              principalBasis: "20",
+              role: SubgraphLenderStatus.WithdrawOnly,
+              totalDeposited: "100",
+              lastScaleFactor: scaleFactor.toString(),
+              lastUpdatedTimestamp: 1_700_000_000,
+              lastUpdatedBlockNumber: 100,
+              totalInterestEarned: "5",
+              numPendingWithdrawalBatches: 1,
+              updatedAtBlock: "100",
+              updatedAtTimestamp: "1700000000",
+              updatedAtTransaction: makeAddress(4),
+              updatedAtLogIndex: "1"
+            }
           }
         ]
       }
@@ -101,6 +118,20 @@ describe("indexed lender-account summary", () => {
     expect(account.depositRecords).to.deep.equal([]);
     expect(account.totalDeposited?.raw).to.equal(100n);
     expect(account.totalInterestEarned?.raw).to.equal(5n);
+    expect(account.principalBasis?.raw).to.equal(20n);
+    expect(account.interestOnlyWithdrawalAmount?.raw).to.equal(5n);
+    expect(account.getInterestOnlyWithdrawalQuote(1_700_000_100)).to.deep.include({
+      account: lender,
+      market: market.address,
+      balanceStateSource: "indexed",
+      quotedAtTimestamp: 1_700_000_100
+    });
+    expect(account.getInterestOnlyWithdrawalQuote()?.basisIndexedAt).to.deep.equal({
+      blockNumber: 100n,
+      blockTimestamp: 1_700_000_000n,
+      transactionHash: makeAddress(4),
+      logIndex: 1n
+    });
     expect(account.hasEverInteracted).to.equal(true);
     expect(account.stateSource).to.equal("indexed");
   });

@@ -96,6 +96,10 @@ import {
 import { parseEventLogs, type TransactionReceipt } from "viem";
 import { normalizeSubgraphLenderAccountSnapshot } from "../gql/normalizers";
 import { roleProviderFromLensData } from "../access/utils";
+import {
+  InterestOnlyWithdrawalQuote,
+  createInterestOnlyWithdrawalQuote
+} from "../interest-only-withdrawal";
 export * from "./validation";
 
 export enum LenderRole {
@@ -132,6 +136,8 @@ export type MarketAccountArgs = {
   role: LenderRole;
   scaledMarketBalance: bigint;
   marketBalance: TokenAmount;
+  /** Indexed nominal principal still attached to the active market-token position. */
+  principalBasis?: TokenAmount;
   underlyingBalance: TokenAmount;
   underlyingApproval: bigint;
   market: Market;
@@ -197,6 +203,69 @@ export class MarketAccount {
 
   get userHasUnderlyingBalance(): boolean {
     return this.underlyingBalance.gt(0);
+  }
+
+  /**
+   * Full-precision interest-only amount for the indexed direct market position.
+   * Undefined means this account was not hydrated from a principal-basis subgraph.
+   */
+  get interestOnlyWithdrawalAmount(): TokenAmount | undefined {
+    return this.getInterestOnlyWithdrawalQuote()?.availableInterest;
+  }
+
+  /**
+   * Quote the direct position's available interest. The indexed scaled balance
+   * prevents unindexed incoming principal from being counted as interest, while
+   * the latest known balance caps the result after outgoing activity.
+   */
+  getInterestOnlyWithdrawalQuote(
+    quotedAtTimestamp?: number
+  ): InterestOnlyWithdrawalQuote | undefined {
+    if (!this.principalBasis || !this.indexedSnapshot) return undefined;
+    const { blockNumber, blockTimestamp, transactionHash, logIndex } = this.indexedSnapshot;
+    return createInterestOnlyWithdrawalQuote({
+      account: this.account,
+      market: this.market.address,
+      position: { kind: "market", address: this.market.address },
+      assetToken: this.market.underlyingToken,
+      indexedScaledBalance: this.indexedSnapshot.scaledBalance,
+      currentScaledBalance: this.scaledMarketBalance,
+      currentBalance: this.market.underlyingToken.getAmount(this.marketBalance.raw),
+      principalBasis: this.principalBasis,
+      currentScaleFactor: this.market.scaleFactor,
+      basisIndexedAt: { blockNumber, blockTimestamp, transactionHash, logIndex },
+      balanceStateSource: this.stateSource,
+      quotedAtTimestamp
+    });
+  }
+
+  private requireMatchingInterestOnlyWithdrawalQuote(
+    quote: InterestOnlyWithdrawalQuote | undefined
+  ): InterestOnlyWithdrawalQuote {
+    assert(quote !== undefined, "Principal basis is unavailable for this account");
+    assert(quote.position.kind === "market", "Interest-only quote is not for a direct position");
+    assert(
+      quote.account.toLowerCase() === this.account.toLowerCase() &&
+        quote.market.toLowerCase() === this.market.address.toLowerCase() &&
+        quote.position.address.toLowerCase() === this.market.address.toLowerCase(),
+      "Interest-only quote does not match this market account"
+    );
+    assert(
+      quote.status === "ready",
+      "Interest-only quote requires refreshed indexed position data"
+    );
+    assert(quote.availableInterest.gt(0), "No interest is currently available to withdraw");
+    const currentQuote = this.getInterestOnlyWithdrawalQuote(quote.quotedAtTimestamp);
+    assert(
+      currentQuote?.status === "ready" &&
+        currentQuote.principalBasis.eq(quote.principalBasis) &&
+        currentQuote.currentBalance.eq(quote.currentBalance) &&
+        currentQuote.availableInterest.eq(quote.availableInterest) &&
+        currentQuote.basisIndexedAt.blockNumber === quote.basisIndexedAt.blockNumber &&
+        currentQuote.basisIndexedAt.logIndex === quote.basisIndexedAt.logIndex,
+      "Interest-only quote is stale; refresh the account and quote"
+    );
+    return quote;
   }
 
   get isBorrower(): boolean {
@@ -762,9 +831,7 @@ export class MarketAccount {
     return { status: QueueWithdrawalStatus.Ready };
   }
 
-  async queueWithdrawal(
-    amount: TokenAmount
-  ): Promise<SubmittedTransactionResult<LenderWithdrawalStatus>> {
+  async populateQueueWithdrawal(amount: TokenAmount): Promise<PartialTransaction> {
     const { status } = this.previewQueueWithdrawal(amount);
     assert(status === QueueWithdrawalStatus.Ready, `Cannot queue withdrawal: ${status}`);
 
@@ -772,15 +839,28 @@ export class MarketAccount {
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
     }
+    return prepareTransaction({
+      to: this.market.address,
+      abi: wildcatMarketAbi,
+      functionName: "queueWithdrawal",
+      args: [amount.raw]
+    });
+  }
+
+  async populateQueueInterestOnlyWithdrawal(
+    quote = this.getInterestOnlyWithdrawalQuote()
+  ): Promise<PartialTransaction> {
+    const matchingQuote = this.requireMatchingInterestOnlyWithdrawalQuote(quote);
+    return this.populateQueueWithdrawal(matchingQuote.availableInterest);
+  }
+
+  async queueWithdrawal(
+    amount: TokenAmount
+  ): Promise<SubmittedTransactionResult<LenderWithdrawalStatus>> {
     const { hash, receipt, transaction } = await submitPreparedTransactionAndWait(
       this.market.provider,
       this.market.signer,
-      prepareTransaction({
-        to: this.market.address,
-        abi: wildcatMarketAbi,
-        functionName: "queueWithdrawal",
-        args: [amount.raw]
-      })
+      await this.populateQueueWithdrawal(amount)
     );
     const queuedWithdrawalTransaction = toQueueWithdrawalTransaction(
       this.market.underlyingToken,
@@ -798,6 +878,13 @@ export class MarketAccount {
       transaction,
       result: withdrawal
     };
+  }
+
+  async queueInterestOnlyWithdrawal(
+    quote = this.getInterestOnlyWithdrawalQuote()
+  ): Promise<SubmittedTransactionResult<LenderWithdrawalStatus>> {
+    const matchingQuote = this.requireMatchingInterestOnlyWithdrawalQuote(quote);
+    return this.queueWithdrawal(matchingQuote.availableInterest);
   }
 
   async queueFullWithdrawal(): Promise<SubmittedTransactionResult<LenderWithdrawalStatus>> {
@@ -1075,6 +1162,10 @@ export class MarketAccount {
       role: parseSubgraphLenderStatus(indexedState.role),
       scaledMarketBalance: scaledBalance,
       marketBalance: market.marketToken.getAmount(rayMulBigint(scaledBalance, market.scaleFactor)),
+      principalBasis:
+        "principalBasis" in indexedState && indexedState.principalBasis !== undefined
+          ? market.underlyingToken.getAmount(indexedState.principalBasis)
+          : undefined,
       underlyingBalance: market.underlyingToken.getAmount(0),
       underlyingApproval: 0n,
       market,

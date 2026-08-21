@@ -25,6 +25,7 @@ export * from "./withdrawal-status";
 export * from "./utils";
 export * from "./gql";
 export * from "./identity";
+export * from "./interest-only-withdrawal";
 export * from "./wrapper";
 
 export const {

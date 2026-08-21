@@ -289,6 +289,8 @@ export type LenderPosition = {
   lender: string;
   market: IndexedAnalyticsMarket;
   scaledBalance: bigint;
+  /** Present on V2.5 principal-basis subgraphs. */
+  principalBasis?: bigint;
   totalDeposited: bigint;
   totalInterestEarned: bigint;
   lastScaleFactor: bigint;
@@ -317,6 +319,8 @@ export type LenderWithdrawalRequest = IndexedLenderActivity & {
   batchExpiry: bigint;
   scaledAmount: bigint;
   normalizedAmount: bigint;
+  principalBasisBefore?: bigint;
+  principalBasisAfter?: bigint;
 };
 
 export type LenderWithdrawalExecution = IndexedLenderActivity & {
@@ -336,6 +340,7 @@ export type LenderTransfer = IndexedAt & {
   to: string;
   amount: bigint;
   scaledAmount: bigint;
+  principalBasisAmount?: bigint;
 };
 
 export type IndexedLenderWithdrawalStatus = {

@@ -1,9 +1,18 @@
+import { ApolloClient, DocumentNode, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
 import { providers } from "ethers";
+import { print } from "graphql";
 import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
 import { wildcat4626WrapperFactoryAbi, wildcatMarketV2Abi } from "../../src/abi";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
-import { SubgraphTokenWrapperData, TokenWrapper, WrapperFactory } from "../../src/wrapper";
+import { Market } from "../../src/market";
+import { Token } from "../../src/token";
+import {
+  GetTokenWrapperForMarketDocument,
+  SubgraphTokenWrapperData,
+  TokenWrapper,
+  WrapperFactory
+} from "../../src/wrapper";
 
 const provider = new providers.JsonRpcProvider();
 
@@ -70,6 +79,140 @@ describe("TokenWrapper subgraph hydration", () => {
     expect(wrapper.shareToken.symbol).to.equal("wmMOCK");
     expect(wrapper.name).to.equal("Wrapped Mock Market");
     expect(wrapper.symbol).to.equal("wmMOCK");
+    expect(print(GetTokenWrapperForMarketDocument)).not.to.include("principalBasis");
+  });
+
+  it("quotes indexed wrapper interest against the current share balance", async () => {
+    const marketAddress = "0x4000000000000000000000000000000000000004";
+    const wrapperAddress = "0x5000000000000000000000000000000000000005";
+    const account = "0x6000000000000000000000000000000000000006";
+    const marketToken = new Token(
+      SupportedChainId.Sepolia,
+      marketAddress,
+      "Mock Market",
+      "mMOCK",
+      6,
+      false,
+      provider
+    );
+    const shareToken = new Token(
+      SupportedChainId.Sepolia,
+      wrapperAddress,
+      "Wrapped Mock Market",
+      "wmMOCK",
+      6,
+      false,
+      provider
+    );
+    const underlyingToken = new Token(
+      SupportedChainId.Sepolia,
+      "0x7000000000000000000000000000000000000007",
+      "USD Coin",
+      "USDC",
+      6,
+      false,
+      provider
+    );
+    const wrapper = new TokenWrapper({
+      chainId: SupportedChainId.Sepolia,
+      provider,
+      address: wrapperAddress,
+      marketAddress,
+      marketToken,
+      shareToken
+    });
+    wrapper.shareToken.balanceOf = async () => wrapper.shareToken.getAmount(100n);
+
+    const calls: Array<{ query: DocumentNode; variables?: Record<string, unknown> }> = [];
+    const client = {
+      query: async (args: { query: DocumentNode; variables?: Record<string, unknown> }) => {
+        calls.push(args);
+        return {
+          data: {
+            wildcat4626Wrapper: {
+              id: wrapperAddress,
+              accounts: [
+                {
+                  address: account,
+                  shares: "100",
+                  principalBasis: "100",
+                  updatedAtBlock: "10",
+                  updatedAtTimestamp: "20",
+                  updatedAtTransaction: "0x1234",
+                  updatedAtLogIndex: "2"
+                }
+              ]
+            }
+          }
+        };
+      }
+    } as unknown as ApolloClient<NormalizedCacheObject>;
+    const market = {
+      address: marketAddress,
+      underlyingToken,
+      scaleFactor: (11n * 10n ** 27n) / 10n,
+      stateSource: "live"
+    } as Market;
+
+    const quote = await wrapper.getInterestOnlyWithdrawalQuote(client, market, {
+      account: account.toUpperCase(),
+      fetchPolicy: "network-only",
+      quotedAtTimestamp: 30
+    });
+
+    expect(calls[0].variables).to.deep.equal({
+      wrapper: wrapperAddress,
+      account
+    });
+    expect(quote?.status).to.equal("ready");
+    expect(quote?.position).to.deep.equal({ kind: "wrapper", address: wrapperAddress });
+    expect(quote?.principalBasis.raw).to.equal(100n);
+    expect(quote?.availableInterest.raw).to.equal(10n);
+    expect(quote?.basisIndexedAt).to.deep.equal({
+      blockNumber: 10n,
+      blockTimestamp: 20n,
+      transactionHash: "0x1234",
+      logIndex: 2n
+    });
+  });
+
+  it("does not query principal basis from legacy production subgraphs", async () => {
+    const marketAddress = "0x4000000000000000000000000000000000000004";
+    const wrapperAddress = "0x5000000000000000000000000000000000000005";
+    const marketToken = new Token(
+      SupportedChainId.Mainnet,
+      marketAddress,
+      "Mock Market",
+      "mMOCK",
+      6,
+      false,
+      provider
+    );
+    const wrapper = new TokenWrapper({
+      chainId: SupportedChainId.Mainnet,
+      provider,
+      address: wrapperAddress,
+      marketAddress,
+      marketToken,
+      shareToken: new Token(
+        SupportedChainId.Mainnet,
+        wrapperAddress,
+        "Wrapped Mock Market",
+        "wmMOCK",
+        6,
+        false,
+        provider
+      )
+    });
+    const client = {
+      query: async () => {
+        throw new Error("legacy principal-basis query should not run");
+      }
+    } as unknown as ApolloClient<NormalizedCacheObject>;
+
+    expect(await wrapper.getIndexedAccount(client, { account: wrapperAddress })).to.equal(
+      undefined
+    );
   });
 });
 

@@ -9,7 +9,7 @@ import {
   TransactionHash
 } from "../types";
 import { SupportedChainId, getDeploymentAddress, hasDeploymentAddress } from "../constants";
-import { assert, prepareTransaction, toNumber } from "../utils";
+import { assert, prepareTransaction, rayMulBigint, toNumber } from "../utils";
 import {
   iERC20Abi,
   wildcat4626WrapperAbi,
@@ -24,6 +24,13 @@ import { parseEventLogs, zeroAddress } from "viem";
 import { getViemPublicClientFromEthers } from "../internal/ethers-viem";
 import { readViemContract } from "../internal/viem-read";
 import { SubgraphTokenDataFragment } from "../gql/graphql";
+import { Market } from "../market";
+import { IndexedAt } from "../domain";
+import {
+  InterestOnlyWithdrawalQuote,
+  createInterestOnlyWithdrawalQuote
+} from "../interest-only-withdrawal";
+import { usesLegacySubgraphSchema } from "../config";
 
 const getErc20Token = async (
   chainId: SupportedChainId,
@@ -206,6 +213,42 @@ export type GetTokenWrapperForMarketOptions = {
   fallbackToFactory?: boolean;
 };
 
+export type IndexedTokenWrapperAccount = {
+  account: string;
+  wrapper: string;
+  shares: TokenAmount;
+  /** Nominal underlying principal in the market asset's raw units. */
+  principalBasis: bigint;
+  indexedAt: IndexedAt;
+};
+
+type SubgraphTokenWrapperAccountData = {
+  address: string;
+  shares: string;
+  principalBasis: string;
+  updatedAtBlock: string;
+  updatedAtTimestamp: string;
+  updatedAtTransaction: string;
+  updatedAtLogIndex: string;
+};
+
+type GetIndexedTokenWrapperAccountQuery = {
+  wildcat4626Wrapper?: {
+    id: string;
+    accounts: SubgraphTokenWrapperAccountData[];
+  } | null;
+};
+
+type GetIndexedTokenWrapperAccountQueryVariables = {
+  wrapper: string;
+  account: string;
+};
+
+export type GetIndexedTokenWrapperAccountOptions = {
+  account: string;
+  fetchPolicy?: FetchPolicy;
+};
+
 export const GetTokenWrapperForMarketDocument = gql`
   query getTokenWrapperForMarket($market: ID!) {
     market(id: $market) {
@@ -241,6 +284,23 @@ export const GetTokenWrapperForMarketDocument = gql`
           blockTimestamp
           transactionHash
         }
+      }
+    }
+  }
+`;
+
+export const GetIndexedTokenWrapperAccountDocument = gql`
+  query getIndexedTokenWrapperAccount($wrapper: ID!, $account: Bytes!) {
+    wildcat4626Wrapper(id: $wrapper) {
+      id
+      accounts(first: 1, where: { address: $account }) {
+        address
+        shares
+        principalBasis
+        updatedAtBlock
+        updatedAtTimestamp
+        updatedAtTransaction
+        updatedAtLogIndex
       }
     }
   }
@@ -412,6 +472,77 @@ export class TokenWrapper extends ContractWrapper {
   async totalAssets(): Promise<TokenAmount> {
     const assets = await this.readWrapper<bigint>("totalAssets");
     return this.marketToken.getAmount(assets);
+  }
+
+  async getIndexedAccount(
+    subgraphClient: ApolloClient<NormalizedCacheObject>,
+    { account, fetchPolicy = "cache-first" }: GetIndexedTokenWrapperAccountOptions
+  ): Promise<IndexedTokenWrapperAccount | undefined> {
+    if (usesLegacySubgraphSchema(this.chainId)) return undefined;
+    const normalizedAccount = account.toLowerCase();
+    const { data } = await subgraphClient.query<
+      GetIndexedTokenWrapperAccountQuery,
+      GetIndexedTokenWrapperAccountQueryVariables
+    >({
+      query: GetIndexedTokenWrapperAccountDocument,
+      variables: {
+        wrapper: this.address.toLowerCase(),
+        account: normalizedAccount
+      },
+      fetchPolicy
+    });
+    const indexedAccount = data.wildcat4626Wrapper?.accounts[0];
+    if (!indexedAccount) return undefined;
+    return {
+      account: indexedAccount.address,
+      wrapper: this.address,
+      shares: this.shareToken.getAmount(indexedAccount.shares),
+      principalBasis: BigInt(indexedAccount.principalBasis),
+      indexedAt: {
+        blockNumber: BigInt(indexedAccount.updatedAtBlock),
+        blockTimestamp: BigInt(indexedAccount.updatedAtTimestamp),
+        transactionHash: indexedAccount.updatedAtTransaction,
+        logIndex: BigInt(indexedAccount.updatedAtLogIndex)
+      }
+    };
+  }
+
+  /**
+   * Quote interest attached to an indexed wrapper-share position. Wrapper
+   * interest still has to be unwrapped before it can use ordinary
+   * queueWithdrawal(amount); this helper does not approximate that action.
+   */
+  async getInterestOnlyWithdrawalQuote(
+    subgraphClient: ApolloClient<NormalizedCacheObject>,
+    market: Market,
+    options: GetIndexedTokenWrapperAccountOptions & { quotedAtTimestamp?: number }
+  ): Promise<InterestOnlyWithdrawalQuote | undefined> {
+    assert(
+      market.address.toLowerCase() === this.marketAddress.toLowerCase(),
+      "Wrapper does not belong to the supplied market"
+    );
+    const [indexedAccount, currentShares] = await Promise.all([
+      this.getIndexedAccount(subgraphClient, options),
+      this.shareToken.balanceOf(options.account)
+    ]);
+    if (!indexedAccount) return undefined;
+    const currentBalance = market.underlyingToken.getAmount(
+      rayMulBigint(currentShares.raw, market.scaleFactor)
+    );
+    return createInterestOnlyWithdrawalQuote({
+      account: indexedAccount.account,
+      market: market.address,
+      position: { kind: "wrapper", address: this.address },
+      assetToken: market.underlyingToken,
+      indexedScaledBalance: indexedAccount.shares.raw,
+      currentScaledBalance: currentShares.raw,
+      currentBalance,
+      principalBasis: market.underlyingToken.getAmount(indexedAccount.principalBasis),
+      currentScaleFactor: market.scaleFactor,
+      basisIndexedAt: indexedAccount.indexedAt,
+      balanceStateSource: market.stateSource,
+      quotedAtTimestamp: options.quotedAtTimestamp
+    });
   }
 
   async convertToShares(assets: TokenAmount): Promise<TokenAmount> {

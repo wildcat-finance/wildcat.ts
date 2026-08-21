@@ -455,6 +455,9 @@ export const normalizeLenderPosition = (
   lender: data.address,
   market: normalizeAnalyticsMarket(data.market),
   scaledBalance: BigInt(data.scaledBalance),
+  ...("principalBasis" in data && data.principalBasis !== undefined
+    ? { principalBasis: BigInt(data.principalBasis) }
+    : {}),
   totalDeposited: BigInt(data.totalDeposited),
   totalInterestEarned: BigInt(data.totalInterestEarned),
   lastScaleFactor: BigInt(data.lastScaleFactor),
@@ -487,6 +490,12 @@ export const normalizeLenderWithdrawalRequest = (
   batchExpiry: BigInt(data.batch.expiry),
   scaledAmount: BigInt(data.scaledAmount),
   normalizedAmount: BigInt(data.normalizedAmount),
+  ...("principalBasisBefore" in data && data.principalBasisBefore !== undefined
+    ? { principalBasisBefore: BigInt(data.principalBasisBefore) }
+    : {}),
+  ...("principalBasisAfter" in data && data.principalBasisAfter !== undefined
+    ? { principalBasisAfter: BigInt(data.principalBasisAfter) }
+    : {}),
   ...indexedAt(data.blockNumber, data.blockTimestamp, data.transactionHash, data.blockLogIndex)
 });
 
@@ -516,6 +525,9 @@ export const normalizeLenderTransfer = (
   to: data.to.address,
   amount: BigInt(data.amount),
   scaledAmount: BigInt(data.scaledAmount),
+  ...("principalBasisAmount" in data && data.principalBasisAmount !== undefined
+    ? { principalBasisAmount: BigInt(data.principalBasisAmount) }
+    : {}),
   ...indexedAt(data.blockNumber, data.blockTimestamp, data.transactionHash, data.blockLogIndex)
 });
 

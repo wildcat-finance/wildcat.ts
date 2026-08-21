@@ -111,6 +111,7 @@ fragment LenderProperties on LenderAccount {
   id
   address
   scaledBalance
+  principalBasis
   role
   totalDeposited
   lastScaleFactor
@@ -125,6 +126,7 @@ fragment LenderProperties on LenderAccount {
 fragment LenderAccountSnapshotData on LenderAccountSnapshot {
   source
   scaledBalance
+  principalBasis
   role
   totalDeposited
   lastScaleFactor
@@ -1536,6 +1538,7 @@ fragment LenderPositionData on LenderAccount {
     ...AnalyticsMarketReferenceData
   }
   scaledBalance
+  principalBasis
   totalDeposited
   totalInterestEarned
   lastScaleFactor
@@ -1579,6 +1582,8 @@ fragment LenderWithdrawalRequestData on WithdrawalRequest {
   }
   scaledAmount
   normalizedAmount
+  principalBasisBefore
+  principalBasisAfter
   blockNumber
   blockTimestamp
   transactionHash
@@ -1620,6 +1625,7 @@ fragment LenderTransferData on Transfer {
   }
   amount
   scaledAmount
+  principalBasisAmount
   blockNumber
   blockTimestamp
   transactionHash

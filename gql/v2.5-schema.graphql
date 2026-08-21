@@ -11054,6 +11054,7 @@ type LenderAccount {
   lastUpdatedTimestamp: Int!
   market: Market!
   numPendingWithdrawalBatches: Int!
+  principalBasis: BigInt!
   role: LenderStatus!
   scaledBalance: BigInt!
   snapshot: LenderAccountSnapshot
@@ -11078,6 +11079,7 @@ type LenderAccountSnapshot {
   lastUpdatedBlockNumber: Int!
   lastUpdatedTimestamp: Int!
   numPendingWithdrawalBatches: Int!
+  principalBasis: BigInt!
   role: LenderStatus!
   scaledBalance: BigInt!
   source: SnapshotSource!
@@ -11157,6 +11159,14 @@ input LenderAccountSnapshot_filter {
   numPendingWithdrawalBatches_not: Int
   numPendingWithdrawalBatches_not_in: [Int!]
   or: [LenderAccountSnapshot_filter]
+  principalBasis: BigInt
+  principalBasis_gt: BigInt
+  principalBasis_gte: BigInt
+  principalBasis_in: [BigInt!]
+  principalBasis_lt: BigInt
+  principalBasis_lte: BigInt
+  principalBasis_not: BigInt
+  principalBasis_not_in: [BigInt!]
   role: LenderStatus
   role_in: [LenderStatus!]
   role_not: LenderStatus
@@ -11234,6 +11244,7 @@ enum LenderAccountSnapshot_orderBy {
   account__lastUpdatedBlockNumber
   account__lastUpdatedTimestamp
   account__numPendingWithdrawalBatches
+  account__principalBasis
   account__role
   account__scaledBalance
   account__totalDeposited
@@ -11243,6 +11254,7 @@ enum LenderAccountSnapshot_orderBy {
   lastUpdatedBlockNumber
   lastUpdatedTimestamp
   numPendingWithdrawalBatches
+  principalBasis
   role
   scaledBalance
   source
@@ -11385,6 +11397,14 @@ input LenderAccount_filter {
   numPendingWithdrawalBatches_not: Int
   numPendingWithdrawalBatches_not_in: [Int!]
   or: [LenderAccount_filter]
+  principalBasis: BigInt
+  principalBasis_gt: BigInt
+  principalBasis_gte: BigInt
+  principalBasis_in: [BigInt!]
+  principalBasis_lt: BigInt
+  principalBasis_lte: BigInt
+  principalBasis_not: BigInt
+  principalBasis_not_in: [BigInt!]
   role: LenderStatus
   role_in: [LenderStatus!]
   role_not: LenderStatus
@@ -11530,6 +11550,7 @@ enum LenderAccount_orderBy {
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
   numPendingWithdrawalBatches
+  principalBasis
   role
   scaledBalance
   snapshot
@@ -11538,6 +11559,7 @@ enum LenderAccount_orderBy {
   snapshot__lastUpdatedBlockNumber
   snapshot__lastUpdatedTimestamp
   snapshot__numPendingWithdrawalBatches
+  snapshot__principalBasis
   snapshot__role
   snapshot__scaledBalance
   snapshot__source
@@ -34274,6 +34296,7 @@ type Transfer {
   from: LenderAccount!
   id: ID!
   market: Market!
+  principalBasisAmount: BigInt!
   scaledAmount: BigInt!
   to: LenderAccount!
   transactionHash: Bytes!
@@ -34368,6 +34391,14 @@ input Transfer_filter {
   market_starts_with: String
   market_starts_with_nocase: String
   or: [Transfer_filter]
+  principalBasisAmount: BigInt
+  principalBasisAmount_gt: BigInt
+  principalBasisAmount_gte: BigInt
+  principalBasisAmount_in: [BigInt!]
+  principalBasisAmount_lt: BigInt
+  principalBasisAmount_lte: BigInt
+  principalBasisAmount_not: BigInt
+  principalBasisAmount_not_in: [BigInt!]
   scaledAmount: BigInt
   scaledAmount_gt: BigInt
   scaledAmount_gte: BigInt
@@ -34422,6 +34453,7 @@ enum Transfer_orderBy {
   from__lastUpdatedBlockNumber
   from__lastUpdatedTimestamp
   from__numPendingWithdrawalBatches
+  from__principalBasis
   from__role
   from__scaledBalance
   from__totalDeposited
@@ -34516,6 +34548,7 @@ enum Transfer_orderBy {
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
+  principalBasisAmount
   scaledAmount
   to
   to__addedTimestamp
@@ -34525,6 +34558,7 @@ enum Transfer_orderBy {
   to__lastUpdatedBlockNumber
   to__lastUpdatedTimestamp
   to__numPendingWithdrawalBatches
+  to__principalBasis
   to__role
   to__scaledBalance
   to__totalDeposited
@@ -34666,6 +34700,13 @@ enum UpdateProtocolFeeConfiguration_orderBy {
 }
 
 type Wildcat4626Wrapper {
+  accounts(
+    first: Int = 100
+    orderBy: Wildcat4626WrapperAccount_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: Wildcat4626WrapperAccount_filter
+  ): [Wildcat4626WrapperAccount!]!
   address: Bytes!
   blockLogIndex: Int!
   blockNumber: Int!
@@ -34676,8 +34717,55 @@ type Wildcat4626Wrapper {
   market: Market
   marketAddress: Bytes!
   marketToken: Token!
+  principalBasis: BigInt!
   token: Token!
+  totalShares: BigInt!
   transactionHash: Bytes!
+}
+
+"A lender's non-rebasing share position in one Wildcat ERC-4626 wrapper."
+type Wildcat4626WrapperAccount {
+  address: Bytes!
+  id: ID!
+  principalBasis: BigInt!
+  shares: BigInt!
+  updatedAtBlock: BigInt!
+  updatedAtLogIndex: BigInt!
+  updatedAtTimestamp: BigInt!
+  updatedAtTransaction: Bytes!
+  wrapper: Wildcat4626Wrapper!
+}
+
+input Wildcat4626WrapperAccount_filter {
+  address: Bytes
+  address_in: [Bytes!]
+  address_not: Bytes
+  and: [Wildcat4626WrapperAccount_filter]
+  id: ID
+  id_gt: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_not: ID
+  or: [Wildcat4626WrapperAccount_filter]
+  principalBasis: BigInt
+  principalBasis_gt: BigInt
+  shares: BigInt
+  shares_gt: BigInt
+  updatedAtBlock: BigInt
+  wrapper: String
+  wrapper_: Wildcat4626Wrapper_filter
+}
+
+enum Wildcat4626WrapperAccount_orderBy {
+  address
+  id
+  principalBasis
+  shares
+  updatedAtBlock
+  updatedAtLogIndex
+  updatedAtTimestamp
+  updatedAtTransaction
+  wrapper
 }
 
 type Wildcat4626WrapperDeployed {
@@ -35235,6 +35323,14 @@ input Wildcat4626Wrapper_filter {
   market_starts_with: String
   market_starts_with_nocase: String
   or: [Wildcat4626Wrapper_filter]
+  principalBasis: BigInt
+  principalBasis_gt: BigInt
+  principalBasis_gte: BigInt
+  principalBasis_in: [BigInt!]
+  principalBasis_lt: BigInt
+  principalBasis_lte: BigInt
+  principalBasis_not: BigInt
+  principalBasis_not_in: [BigInt!]
   token: String
   token_: Token_filter
   token_contains: String
@@ -35256,6 +35352,14 @@ input Wildcat4626Wrapper_filter {
   token_not_starts_with_nocase: String
   token_starts_with: String
   token_starts_with_nocase: String
+  totalShares: BigInt
+  totalShares_gt: BigInt
+  totalShares_gte: BigInt
+  totalShares_in: [BigInt!]
+  totalShares_lt: BigInt
+  totalShares_lte: BigInt
+  totalShares_not: BigInt
+  totalShares_not_in: [BigInt!]
   transactionHash: Bytes
   transactionHash_contains: Bytes
   transactionHash_gt: Bytes
@@ -35395,6 +35499,7 @@ enum Wildcat4626Wrapper_orderBy {
   market__version
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
+  principalBasis
   token
   token__address
   token__decimals
@@ -35407,6 +35512,7 @@ enum Wildcat4626Wrapper_orderBy {
   token__priceFeed1
   token__priceSource
   token__symbol
+  totalShares
   transactionHash
 }
 
@@ -36621,6 +36727,8 @@ type WithdrawalRequest {
   id: ID!
   market: Market!
   normalizedAmount: BigInt!
+  principalBasisAfter: BigInt!
+  principalBasisBefore: BigInt!
   requestIndex: Int!
   scaledAmount: BigInt!
   status: LenderWithdrawalStatus!
@@ -36746,6 +36854,22 @@ input WithdrawalRequest_filter {
   normalizedAmount_not: BigInt
   normalizedAmount_not_in: [BigInt!]
   or: [WithdrawalRequest_filter]
+  principalBasisAfter: BigInt
+  principalBasisAfter_gt: BigInt
+  principalBasisAfter_gte: BigInt
+  principalBasisAfter_in: [BigInt!]
+  principalBasisAfter_lt: BigInt
+  principalBasisAfter_lte: BigInt
+  principalBasisAfter_not: BigInt
+  principalBasisAfter_not_in: [BigInt!]
+  principalBasisBefore: BigInt
+  principalBasisBefore_gt: BigInt
+  principalBasisBefore_gte: BigInt
+  principalBasisBefore_in: [BigInt!]
+  principalBasisBefore_lt: BigInt
+  principalBasisBefore_lte: BigInt
+  principalBasisBefore_not: BigInt
+  principalBasisBefore_not_in: [BigInt!]
   requestIndex: Int
   requestIndex_gt: Int
   requestIndex_gte: Int
@@ -36812,6 +36936,7 @@ enum WithdrawalRequest_orderBy {
   account__lastUpdatedBlockNumber
   account__lastUpdatedTimestamp
   account__numPendingWithdrawalBatches
+  account__principalBasis
   account__role
   account__scaledBalance
   account__totalDeposited
@@ -36932,6 +37057,8 @@ enum WithdrawalRequest_orderBy {
   market__withdrawalBatchDuration
   market__withdrawalRequestsIndex
   normalizedAmount
+  principalBasisAfter
+  principalBasisBefore
   requestIndex
   scaledAmount
   status

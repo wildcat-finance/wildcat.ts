@@ -288,6 +288,95 @@ describe("prepared transaction encoding", () => {
     });
   });
 
+  it("populates interest-only withdrawals through the ordinary queue path", async () => {
+    const lender = makeAddress(40);
+    const marketAddress = makeAddress(41);
+    const asset = new Token(
+      SupportedChainId.Sepolia,
+      makeAddress(42),
+      "USD Coin",
+      "USDC",
+      6,
+      false,
+      provider
+    );
+    const marketToken = new Token(
+      SupportedChainId.Sepolia,
+      marketAddress,
+      "Wildcat USDC",
+      "WUSDC",
+      6,
+      false,
+      provider
+    );
+    const account = new MarketAccount({
+      account: lender,
+      role: LenderRole.Null,
+      market: {
+        address: marketAddress,
+        chainId: SupportedChainId.Sepolia,
+        version: MarketVersion.V2,
+        marketToken,
+        underlyingToken: asset,
+        scaleFactor: (11n * 10n ** 27n) / 10n,
+        stateSource: "live",
+        signer: { getAddress: async () => lender },
+        hooksConfig: {
+          kind: HooksKind.OpenTerm,
+          hooksAddress: makeAddress(43),
+          flags: makeHooksFlags()
+        }
+      },
+      scaledMarketBalance: 100n,
+      marketBalance: marketToken.getAmount(110n),
+      principalBasis: asset.getAmount(100n),
+      underlyingBalance: asset.getAmount(0n),
+      underlyingApproval: 0n,
+      indexedSnapshot: {
+        source: "event-projection",
+        scaledBalance: 100n,
+        principalBasis: 100n,
+        role: "deposit-and-withdraw",
+        totalDeposited: 100n,
+        lastScaleFactor: 10n ** 27n,
+        lastUpdatedTimestamp: 20,
+        lastUpdatedBlockNumber: 10,
+        totalInterestEarned: 10n,
+        numPendingWithdrawalBatches: 0,
+        blockNumber: 10n,
+        blockTimestamp: 20n,
+        transactionHash: `0x${"1".repeat(64)}`,
+        logIndex: 2n
+      },
+      stateSource: "live"
+    } as any);
+
+    const quote = account.getInterestOnlyWithdrawalQuote(30);
+    const tx = await account.populateQueueInterestOnlyWithdrawal(quote);
+
+    expect(tx.to).to.equal(marketAddress);
+    expect(
+      decodeFunctionData({
+        abi: wildcatMarketV2Abi,
+        data: tx.data as `0x${string}`
+      })
+    ).to.deep.equal({
+      functionName: "queueWithdrawal",
+      args: [10n]
+    });
+
+    account.marketBalance = marketToken.getAmount(109n);
+    let staleError: unknown;
+    try {
+      await account.populateQueueInterestOnlyWithdrawal(quote);
+    } catch (error) {
+      staleError = error;
+    }
+    expect((staleError as Error).message).to.equal(
+      "Interest-only quote is stale; refresh the account and quote"
+    );
+  });
+
   it("submits prepared transactions as hashes without leaking ethers transaction objects", async () => {
     const expectedHash = `0x${"1".padStart(64, "0")}`;
     const tx = prepareTransaction({

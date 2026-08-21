@@ -186,6 +186,7 @@ export const normalizeSubgraphLenderAccountSnapshot = (
     ? {
         source: parseSnapshotSource(data.source),
         scaledBalance: BigInt(data.scaledBalance),
+        principalBasis: BigInt(data.principalBasis),
         role: normalizeLenderRole(data.role),
         totalDeposited: BigInt(data.totalDeposited),
         lastScaleFactor: BigInt(data.lastScaleFactor),

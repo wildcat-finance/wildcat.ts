@@ -71,7 +71,27 @@ describe("legacy market detail routing", () => {
       stateSource: "indexed"
     } as unknown as Market;
     const { client, calls } = createClient({
-      market: { __typename: "Market", id: marketAddress, lenders: [] }
+      market: {
+        __typename: "Market",
+        id: marketAddress,
+        lenders: [
+          {
+            __typename: "LenderAccount",
+            id: `${marketAddress}-${lender}`,
+            address: lender,
+            scaledBalance: "1",
+            role: "DepositAndWithdraw",
+            totalDeposited: "1",
+            lastScaleFactor: (10n ** 27n).toString(),
+            lastUpdatedTimestamp: 0,
+            totalInterestEarned: "0",
+            numPendingWithdrawalBatches: 0,
+            controllerAuthorization: null,
+            hooksAccess: null,
+            knownLenderStatus: null
+          }
+        ]
+      }
     });
 
     const account = await getLenderAccountForMarket(client, {
@@ -81,6 +101,8 @@ describe("legacy market detail routing", () => {
     });
 
     expect(account.account).to.equal(lender);
+    expect(account.principalBasis).to.equal(undefined);
+    expect(account.getInterestOnlyWithdrawalQuote()).to.equal(undefined);
     expect(getOperationAST(calls[0].query)?.name?.value).to.equal(
       "legacyGetLenderAccountForMarket"
     );
