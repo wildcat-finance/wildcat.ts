@@ -1087,7 +1087,7 @@ export class MarketAccount {
       credential:
         access?.credential ??
         (data.hooksAccess ? parseSubgraphLenderHooksAccess(data.hooksAccess) : undefined),
-      isKnownLender: access?.isKnownLender ?? !!data.knownLenderStatus?.id,
+      isKnownLender: !!data.knownLenderStatus?.id || !!access?.isKnownLender,
       hadSubgraphEntry: true,
       indexedSnapshot,
       stateSource: "indexed"

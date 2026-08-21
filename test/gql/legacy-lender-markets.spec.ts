@@ -139,7 +139,24 @@ describe("legacy lender market discovery", () => {
                   blockTimestamp: 1_600_000_000,
                   transactionHash: `0x${"1".repeat(64)}`
                 },
-                lenders: []
+                lenders: [
+                  {
+                    __typename: "LenderAccount",
+                    id: `${marketAddress}-${lender}`,
+                    address: lender,
+                    scaledBalance: "0",
+                    role: "Null",
+                    totalDeposited: "0",
+                    lastScaleFactor: (10n ** 27n).toString(),
+                    lastUpdatedTimestamp: 1_700_000_000,
+                    totalInterestEarned: "0",
+                    numPendingWithdrawalBatches: 0,
+                    controllerAuthorization: null,
+                    hooksAccess: null,
+                    knownLenderStatus: { id: `${marketAddress}-${lender}` },
+                    deposits: []
+                  }
+                ]
               }
             ],
             controllerAuthorizations: [],
@@ -164,9 +181,7 @@ describe("legacy lender market discovery", () => {
                 lastApprovalTimestamp: 1_700_000_000,
                 addedTimestamp: 1_700_000_000,
                 hooks: { __typename: "HooksInstance", id: hooksAddress },
-                knownLenderStatuses: [
-                  { __typename: "KnownLenderStatus", market: { id: marketAddress } }
-                ]
+                knownLenderStatuses: []
               }
             ]
           }
