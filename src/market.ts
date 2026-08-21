@@ -484,9 +484,7 @@ export class Market extends ContractWrapper {
 
     const timeInPeriod = (now - config.firstWithdrawalWindowStart) % config.periodDuration;
     const currentWindowStart = now - timeInPeriod;
-    return timeInPeriod < config.withdrawalWindowDuration
-      ? currentWindowStart
-      : currentWindowStart + config.periodDuration;
+    return currentWindowStart + config.periodDuration;
   }
 
   /** @returns Percentage growth of the market since it was created */
