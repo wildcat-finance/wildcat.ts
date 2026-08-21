@@ -39,7 +39,7 @@ export async function getMarketsForBorrower(
   delete marketListVariables.skipRepayments;
   delete marketListVariables.orderRepayments;
   delete marketListVariables.directionRepayments;
-  const marketFilter = { borrower: borrower.toLowerCase(), ...marketListVariables.marketFilter };
+  const marketFilter = { ...marketListVariables.marketFilter, borrower: borrower.toLowerCase() };
 
   if (shouldSkipRecords) {
     return getMarketListAsMarkets(subgraphClient, {
