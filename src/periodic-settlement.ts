@@ -262,7 +262,7 @@ export async function getPeriodicAprReductionSettlementQuote(
 
   const base: PeriodicAprSettlementQuote = {
     ...emptyQuote(PeriodicAprSettlementStatus.Ready),
-    isWithdrawalWindowOpen: market.isPeriodicWithdrawalWindowOpen,
+    isWithdrawalWindowOpen: market.isPeriodicWithdrawalWindowOpenAt(now),
     responseWindowEnd,
     proposedAprBips: pendingAprChange.annualInterestBips
   };

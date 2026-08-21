@@ -460,17 +460,21 @@ export class Market extends ContractWrapper {
     return !!this.periodicHooksConfig?.periodicTermClosed;
   }
 
-  get isPeriodicWithdrawalWindowOpen(): boolean {
+  isPeriodicWithdrawalWindowOpenAt(timestampSec: number): boolean {
     const config = this.periodicHooksConfig;
     if (!config) return false;
     if (this.isClosed || config.periodicTermClosed) return true;
     if (config.periodDuration === 0) return false;
 
-    const now = Math.floor(Date.now() / 1_000);
-    if (now < config.firstWithdrawalWindowStart) return false;
+    const timestamp = Math.floor(timestampSec);
+    if (timestamp < config.firstWithdrawalWindowStart) return false;
 
-    const timeInPeriod = (now - config.firstWithdrawalWindowStart) % config.periodDuration;
+    const timeInPeriod = (timestamp - config.firstWithdrawalWindowStart) % config.periodDuration;
     return timeInPeriod < config.withdrawalWindowDuration;
+  }
+
+  get isPeriodicWithdrawalWindowOpen(): boolean {
+    return this.isPeriodicWithdrawalWindowOpenAt(Date.now() / 1_000);
   }
 
   get nextPeriodicWithdrawalWindowStart(): number | undefined {

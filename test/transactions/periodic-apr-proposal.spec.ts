@@ -1,11 +1,16 @@
 import { expect } from "chai";
 import { providers } from "ethers";
-import { encodeFunctionData, type Address } from "viem";
+import { encodeFunctionData, encodeFunctionResult, type Address } from "viem";
 import { iPeriodicTermHooksAbi } from "../../src/abi";
 import { LenderRole, MarketAccount, ProposeAnnualInterestBipsStatus } from "../../src/account";
 import { SupportedChainId } from "../../src/constants";
 import { Token } from "../../src/token";
 import { HooksKind, MarketVersion } from "../../src/types";
+import { Market } from "../../src/market";
+import {
+  getPeriodicAprReductionSettlementQuote,
+  PeriodicAprSettlementStatus
+} from "../../src/periodic-settlement";
 
 const provider = new providers.JsonRpcProvider();
 
@@ -123,5 +128,68 @@ describe("periodic APR reduction proposals", () => {
       data: expectedData,
       value: "0"
     });
+  });
+
+  it("uses the quote timestamp when reporting whether the withdrawal window is open", async () => {
+    const quoteTimestamp = 1_050;
+    const rpcProvider = {
+      send: async (method: string) => {
+        if (method === "eth_chainId") return "0xaa36a7";
+        if (method === "eth_call") {
+          return encodeFunctionResult({
+            abi: iPeriodicTermHooksAbi,
+            functionName: "getPendingAprChange",
+            result: [{ annualInterestBips: 900, proposalTimestamp: 1_010 }, 1_000, 1_040]
+          });
+        }
+        throw new Error(`Unexpected RPC method: ${method}`);
+      }
+    };
+    const token = new Token(
+      SupportedChainId.Sepolia,
+      makeAddress(4),
+      "Mock Token",
+      "MOCK",
+      18,
+      false,
+      rpcProvider as unknown as providers.Provider
+    );
+    const zero = token.getAmount(0n);
+    const market = Object.create(Market.prototype) as Market;
+    Object.assign(market, {
+      address: marketAddress,
+      provider: rpcProvider,
+      version: MarketVersion.V2,
+      underlyingToken: token,
+      hooksConfig: {
+        kind: HooksKind.PeriodicTerm,
+        hooksAddress,
+        flags: {
+          useOnExecutePendingAnnualInterestBipsReduction: true
+        },
+        firstWithdrawalWindowStart: 1_000,
+        periodDuration: 300,
+        withdrawalWindowDuration: 60,
+        periodicTermClosed: false
+      },
+      update: async () => undefined,
+      isClosed: false,
+      totalAssets: zero,
+      coverageLiquidity: zero,
+      unpaidWithdrawalBatchExpiries: []
+    });
+    const account = { market } as MarketAccount;
+    const originalDateNow = Date.now;
+
+    try {
+      Date.now = () => 1_200_000;
+      expect(market.isPeriodicWithdrawalWindowOpen).to.equal(false);
+      const quote = await getPeriodicAprReductionSettlementQuote(account, 900, quoteTimestamp);
+
+      expect(quote.status).to.equal(PeriodicAprSettlementStatus.Ready);
+      expect(quote.isWithdrawalWindowOpen).to.equal(true);
+    } finally {
+      Date.now = originalDateNow;
+    }
   });
 });
