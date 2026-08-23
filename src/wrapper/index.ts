@@ -1,4 +1,4 @@
-import { ApolloClient, FetchPolicy, gql, NormalizedCacheObject } from "@apollo/client";
+import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import { Token, TokenAmount, toRawAmount } from "../token";
 import {
   ContractWrapper,
@@ -23,7 +23,18 @@ import {
 import { parseEventLogs, zeroAddress } from "viem";
 import { getViemPublicClientFromEthers } from "../internal/ethers-viem";
 import { readViemContract } from "../internal/viem-read";
-import { SubgraphTokenDataFragment } from "../gql/graphql";
+import {
+  GetIndexedTokenWrapperAccountDocument,
+  GetIndexedTokenWrapperActivityDocument,
+  GetTokenWrapperForMarketDocument,
+  SubgraphGetIndexedTokenWrapperAccountQuery,
+  SubgraphGetIndexedTokenWrapperAccountQueryVariables,
+  SubgraphGetIndexedTokenWrapperActivityQuery,
+  SubgraphGetIndexedTokenWrapperActivityQueryVariables,
+  SubgraphGetTokenWrapperForMarketQuery,
+  SubgraphGetTokenWrapperForMarketQueryVariables,
+  SubgraphTokenWrapperDataFragment
+} from "../gql/graphql";
 import { Market } from "../market";
 import { IndexedAt } from "../domain";
 import {
@@ -177,32 +188,30 @@ export type TokenWrapperArgs = {
   shareToken: Token;
 };
 
-export type SubgraphTokenWrapperData = {
-  id: string;
-  address: string;
-  marketAddress: string;
-  marketToken: SubgraphTokenDataFragment;
-  token: SubgraphTokenDataFragment;
-  factory: {
-    id: string;
-    address: string;
+export {
+  GetIndexedTokenWrapperAccountDocument,
+  GetIndexedTokenWrapperActivityDocument,
+  GetTokenWrapperForMarketDocument
+} from "../gql/graphql";
+
+type SubgraphTokenWrapperFactoryData = SubgraphTokenWrapperDataFragment["factory"];
+type SubgraphTokenWrapperDeployedEventData = NonNullable<
+  SubgraphTokenWrapperDataFragment["deployedEvent"]
+>;
+
+export type SubgraphTokenWrapperData = Omit<
+  SubgraphTokenWrapperDataFragment,
+  "__typename" | "deployedEvent" | "factory"
+> & {
+  __typename?: SubgraphTokenWrapperDataFragment["__typename"];
+  factory: Omit<SubgraphTokenWrapperFactoryData, "__typename"> & {
+    __typename?: SubgraphTokenWrapperFactoryData["__typename"];
   };
-  deployedEvent?: {
-    blockNumber: number;
-    blockTimestamp: number;
-    transactionHash: string;
-  } | null;
-};
-
-type GetTokenWrapperForMarketQuery = {
-  market?: {
-    id: string;
-    tokenWrapper?: SubgraphTokenWrapperData | null;
-  } | null;
-};
-
-type GetTokenWrapperForMarketQueryVariables = {
-  market: string;
+  deployedEvent?:
+    | (Omit<SubgraphTokenWrapperDeployedEventData, "__typename"> & {
+        __typename?: SubgraphTokenWrapperDeployedEventData["__typename"];
+      })
+    | null;
 };
 
 export type GetTokenWrapperForMarketOptions = {
@@ -222,26 +231,56 @@ export type IndexedTokenWrapperAccount = {
   indexedAt: IndexedAt;
 };
 
-type SubgraphTokenWrapperAccountData = {
-  address: string;
-  shares: string;
-  principalBasis: string;
-  updatedAtBlock: string;
-  updatedAtTimestamp: string;
-  updatedAtTransaction: string;
-  updatedAtLogIndex: string;
-};
-
-type GetIndexedTokenWrapperAccountQuery = {
-  wildcat4626Wrapper?: {
-    id: string;
-    accounts: SubgraphTokenWrapperAccountData[];
-  } | null;
-};
-
-type GetIndexedTokenWrapperAccountQueryVariables = {
+type IndexedTokenWrapperActivityBase = IndexedAt & {
+  id: string;
   wrapper: string;
+};
+
+export type IndexedTokenWrapperDeposit = IndexedTokenWrapperActivityBase & {
+  kind: "deposit";
   account: string;
+  caller: string;
+  assets: TokenAmount;
+  shares: TokenAmount;
+  principalBasisAmount: bigint;
+  marketTransfer?: string;
+};
+
+export type IndexedTokenWrapperWithdrawal = IndexedTokenWrapperActivityBase & {
+  kind: "withdrawal";
+  account: string;
+  caller: string;
+  receiver: string;
+  assets: TokenAmount;
+  shares: TokenAmount;
+  principalBasisAmount: bigint;
+  marketTransfer?: string;
+};
+
+export type IndexedTokenWrapperTransfer = IndexedTokenWrapperActivityBase & {
+  kind: "transfer";
+  fromAddress: string;
+  toAddress: string;
+  fromAccount?: string;
+  toAccount?: string;
+  shares: TokenAmount;
+  principalBasisAmount: bigint;
+};
+
+export type IndexedTokenWrapperTokensSwept = IndexedTokenWrapperActivityBase & {
+  kind: "tokens-swept";
+  token: string;
+  receiver: string;
+  amount: bigint;
+  principalBasisAmount: bigint;
+  marketTransfer?: string;
+};
+
+export type IndexedTokenWrapperActivityPage = {
+  deposits: IndexedTokenWrapperDeposit[];
+  withdrawals: IndexedTokenWrapperWithdrawal[];
+  transfers: IndexedTokenWrapperTransfer[];
+  tokenSweeps: IndexedTokenWrapperTokensSwept[];
 };
 
 export type GetIndexedTokenWrapperAccountOptions = {
@@ -249,62 +288,13 @@ export type GetIndexedTokenWrapperAccountOptions = {
   fetchPolicy?: FetchPolicy;
 };
 
-export const GetTokenWrapperForMarketDocument = gql`
-  query getTokenWrapperForMarket($market: ID!) {
-    market(id: $market) {
-      id
-      tokenWrapper {
-        id
-        address
-        marketAddress
-        marketToken {
-          __typename
-          id
-          address
-          name
-          symbol
-          decimals
-          isMock
-        }
-        token {
-          __typename
-          id
-          address
-          name
-          symbol
-          decimals
-          isMock
-        }
-        factory {
-          id
-          address
-        }
-        deployedEvent {
-          blockNumber
-          blockTimestamp
-          transactionHash
-        }
-      }
-    }
-  }
-`;
-
-export const GetIndexedTokenWrapperAccountDocument = gql`
-  query getIndexedTokenWrapperAccount($wrapper: ID!, $account: Bytes!) {
-    wildcat4626Wrapper(id: $wrapper) {
-      id
-      accounts(first: 1, where: { address: $account }) {
-        address
-        shares
-        principalBasis
-        updatedAtBlock
-        updatedAtTimestamp
-        updatedAtTransaction
-        updatedAtLogIndex
-      }
-    }
-  }
-`;
+export type GetIndexedTokenWrapperActivityOptions = {
+  /** applied independently to each of the four wrapper event streams. */
+  first?: number;
+  /** applied independently to each of the four wrapper event streams. */
+  skip?: number;
+  fetchPolicy?: FetchPolicy;
+};
 
 export async function getTokenWrapperDataForMarket(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
@@ -312,8 +302,8 @@ export async function getTokenWrapperDataForMarket(
   fetchPolicy: FetchPolicy = "cache-first"
 ): Promise<SubgraphTokenWrapperData | undefined> {
   const result = await subgraphClient.query<
-    GetTokenWrapperForMarketQuery,
-    GetTokenWrapperForMarketQueryVariables
+    SubgraphGetTokenWrapperForMarketQuery,
+    SubgraphGetTokenWrapperForMarketQueryVariables
   >({
     query: GetTokenWrapperForMarketDocument,
     variables: {
@@ -481,8 +471,8 @@ export class TokenWrapper extends ContractWrapper {
     if (usesLegacySubgraphSchema(this.chainId)) return undefined;
     const normalizedAccount = account.toLowerCase();
     const { data } = await subgraphClient.query<
-      GetIndexedTokenWrapperAccountQuery,
-      GetIndexedTokenWrapperAccountQueryVariables
+      SubgraphGetIndexedTokenWrapperAccountQuery,
+      SubgraphGetIndexedTokenWrapperAccountQueryVariables
     >({
       query: GetIndexedTokenWrapperAccountDocument,
       variables: {
@@ -504,6 +494,126 @@ export class TokenWrapper extends ContractWrapper {
         transactionHash: indexedAccount.updatedAtTransaction,
         logIndex: BigInt(indexedAccount.updatedAtLogIndex)
       }
+    };
+  }
+
+  async getIndexedActivity(
+    subgraphClient: ApolloClient<NormalizedCacheObject>,
+    {
+      first = 100,
+      skip = 0,
+      fetchPolicy = "cache-first"
+    }: GetIndexedTokenWrapperActivityOptions = {}
+  ): Promise<IndexedTokenWrapperActivityPage | undefined> {
+    if (usesLegacySubgraphSchema(this.chainId)) return undefined;
+    assert(Number.isInteger(first) && first > 0, "first must be a positive integer");
+    assert(Number.isInteger(skip) && skip >= 0, "skip must be a non-negative integer");
+    const wrapper = this.address.toLowerCase();
+    const { data } = await subgraphClient.query<
+      SubgraphGetIndexedTokenWrapperActivityQuery,
+      SubgraphGetIndexedTokenWrapperActivityQueryVariables
+    >({
+      query: GetIndexedTokenWrapperActivityDocument,
+      variables: { wrapper, first, skip },
+      fetchPolicy
+    });
+    const activity = data.wildcat4626Wrapper;
+    if (!activity) return undefined;
+    const indexedAt = (
+      blockNumber: string,
+      blockTimestamp: string,
+      transactionHash: string,
+      blockLogIndex: string
+    ): IndexedAt => ({
+      blockNumber: BigInt(blockNumber),
+      blockTimestamp: BigInt(blockTimestamp),
+      transactionHash,
+      logIndex: BigInt(blockLogIndex)
+    });
+    const byIndexedAt = (left: IndexedAt, right: IndexedAt): number => {
+      if (left.blockNumber !== right.blockNumber) {
+        return left.blockNumber < right.blockNumber ? -1 : 1;
+      }
+      if (left.logIndex === right.logIndex) return 0;
+      return left.logIndex < right.logIndex ? -1 : 1;
+    };
+    return {
+      deposits: activity.deposits
+        .map((event) => ({
+          id: event.id,
+          kind: "deposit" as const,
+          wrapper,
+          account: event.account.address,
+          caller: event.caller,
+          assets: this.marketToken.getAmount(event.assets),
+          shares: this.shareToken.getAmount(event.shares),
+          principalBasisAmount: BigInt(event.principalBasisAmount),
+          ...(event.marketTransfer ? { marketTransfer: event.marketTransfer.id } : {}),
+          ...indexedAt(
+            event.blockNumber,
+            event.blockTimestamp,
+            event.transactionHash,
+            event.blockLogIndex
+          )
+        }))
+        .sort(byIndexedAt),
+      withdrawals: activity.withdrawals
+        .map((event) => ({
+          id: event.id,
+          kind: "withdrawal" as const,
+          wrapper,
+          account: event.account.address,
+          caller: event.caller,
+          receiver: event.receiver,
+          assets: this.marketToken.getAmount(event.assets),
+          shares: this.shareToken.getAmount(event.shares),
+          principalBasisAmount: BigInt(event.principalBasisAmount),
+          ...(event.marketTransfer ? { marketTransfer: event.marketTransfer.id } : {}),
+          ...indexedAt(
+            event.blockNumber,
+            event.blockTimestamp,
+            event.transactionHash,
+            event.blockLogIndex
+          )
+        }))
+        .sort(byIndexedAt),
+      transfers: activity.transfers
+        .map((event) => ({
+          id: event.id,
+          kind: "transfer" as const,
+          wrapper,
+          fromAddress: event.fromAddress,
+          toAddress: event.toAddress,
+          ...(event.from ? { fromAccount: event.from.address } : {}),
+          ...(event.to ? { toAccount: event.to.address } : {}),
+          shares: this.shareToken.getAmount(event.shares),
+          principalBasisAmount: BigInt(event.principalBasisAmount),
+          ...indexedAt(
+            event.blockNumber,
+            event.blockTimestamp,
+            event.transactionHash,
+            event.blockLogIndex
+          )
+        }))
+        .sort(byIndexedAt),
+      tokenSweeps: activity.tokenSweeps
+        .map((event) => ({
+          id: event.id,
+          kind: "tokens-swept" as const,
+          wrapper,
+          token: event.token,
+          receiver: event.receiver,
+          amount: BigInt(event.amount),
+          principalBasisAmount: BigInt(event.principalBasisAmount),
+          ...(event.marketTransfer ? { marketTransfer: event.marketTransfer.id } : {}),
+          ...indexedAt(
+            event.blockNumber,
+            event.blockTimestamp,
+            event.transactionHash,
+            event.blockLogIndex
+          )
+        }))
+        .sort(byIndexedAt)
     };
   }
 

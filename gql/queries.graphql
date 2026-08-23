@@ -1802,3 +1802,43 @@ query getLatestTokenPriceObservation($filter: TokenDailyPrice_filter!, $block: B
     ...TokenPriceObservationData
   }
 }
+
+# ========================================================================== #
+#                             ERC-4626 wrappers                              #
+# ========================================================================== #
+
+query getTokenWrapperForMarket($market: ID!) {
+  market(id: $market) {
+    id
+    tokenWrapper {
+      ...TokenWrapperData
+    }
+  }
+}
+
+query getIndexedTokenWrapperAccount($wrapper: ID!, $account: Bytes!) {
+  wildcat4626Wrapper(id: $wrapper) {
+    id
+    accounts(first: 1, where: { address: $account }) {
+      ...TokenWrapperAccountData
+    }
+  }
+}
+
+query getIndexedTokenWrapperActivity($wrapper: ID!, $first: Int!, $skip: Int!) {
+  wildcat4626Wrapper(id: $wrapper) {
+    id
+    deposits(first: $first, skip: $skip, orderBy: blockNumber, orderDirection: asc) {
+      ...TokenWrapperDepositData
+    }
+    withdrawals(first: $first, skip: $skip, orderBy: blockNumber, orderDirection: asc) {
+      ...TokenWrapperWithdrawalData
+    }
+    transfers(first: $first, skip: $skip, orderBy: blockNumber, orderDirection: asc) {
+      ...TokenWrapperTransferData
+    }
+    tokenSweeps(first: $first, skip: $skip, orderBy: blockNumber, orderDirection: asc) {
+      ...TokenWrapperTokensSweptData
+    }
+  }
+}

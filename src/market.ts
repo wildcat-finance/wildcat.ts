@@ -34,6 +34,7 @@ import {
   PartialTransaction,
   MarketVersion,
   MarketKind,
+  ProtocolEventGeneration,
   MarketOnboardingMode,
   IndexedMarketSnapshot,
   MarketProvenance,
@@ -238,6 +239,7 @@ export type MarketArgs = {
   provider: SignerOrProvider;
   chainId: SupportedChainId;
   version: MarketVersion;
+  eventGeneration?: ProtocolEventGeneration;
   marketToken: Token;
   underlyingToken: Token;
   hooksFactory?: string;
@@ -338,16 +340,63 @@ export const getMarketOnboardingMode = ({
     : MarketOnboardingMode.BorrowerApproval;
 };
 
+const calculateLiquidityCoverage = ({
+  eventGeneration,
+  scaledTotalSupply,
+  scaledPendingWithdrawals,
+  reserveRatioBips,
+  scaleFactor,
+  accruedProtocolFees,
+  normalizedUnclaimedWithdrawals
+}: {
+  eventGeneration: ProtocolEventGeneration;
+  scaledTotalSupply: bigint;
+  scaledPendingWithdrawals: bigint;
+  reserveRatioBips: number;
+  scaleFactor: bigint;
+  accruedProtocolFees: bigint;
+  normalizedUnclaimedWithdrawals: bigint;
+}): bigint => {
+  let normalizedSupplyRequired: bigint;
+  if (eventGeneration === "v2.5") {
+    const normalizedPendingWithdrawals = rayMulBigint(scaledPendingWithdrawals, scaleFactor);
+    if (reserveRatioBips === 0) {
+      normalizedSupplyRequired = normalizedPendingWithdrawals;
+    } else if (reserveRatioBips === Number(BIP_BIGINT)) {
+      normalizedSupplyRequired = rayMulBigint(scaledTotalSupply, scaleFactor);
+    } else {
+      const normalizedTotalSupply = rayMulBigint(scaledTotalSupply, scaleFactor);
+      const normalizedOutstandingSupply = normalizedTotalSupply - normalizedPendingWithdrawals;
+      normalizedSupplyRequired =
+        normalizedPendingWithdrawals + bipMulBigint(normalizedOutstandingSupply, reserveRatioBips);
+    }
+  } else {
+    // legacy markets apply the reserve ratio before normalization.
+    const scaledRequiredReserves =
+      bipMulBigint(scaledTotalSupply - scaledPendingWithdrawals, reserveRatioBips) +
+      scaledPendingWithdrawals;
+    normalizedSupplyRequired = rayMulBigint(scaledRequiredReserves, scaleFactor);
+  }
+
+  return normalizedSupplyRequired + accruedProtocolFees + normalizedUnclaimedWithdrawals;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Market
   extends Omit<
     MarketArgs,
-    "depositRecords" | "repaymentRecords" | "borrowRecords" | "feeCollectionRecords" | "provider"
+    | "depositRecords"
+    | "repaymentRecords"
+    | "borrowRecords"
+    | "feeCollectionRecords"
+    | "eventGeneration"
+    | "provider"
   > {
   address: string;
   name: string;
   symbol: string;
   decimals: number;
+  eventGeneration: ProtocolEventGeneration;
   stateSource: ReadStateSource;
 }
 
@@ -368,7 +417,11 @@ export class Market extends ContractWrapper {
     return getMarketOnboardingMode(this);
   }
 
-  constructor({ provider, ...args }: MarketArgs & { hooksConfig?: HooksConfig }) {
+  constructor({
+    provider,
+    eventGeneration = "unknown",
+    ...args
+  }: MarketArgs & { hooksConfig?: HooksConfig }) {
     super(provider);
     const { address, name, symbol, decimals } = args.marketToken;
     Object.assign(this, {
@@ -388,7 +441,11 @@ export class Market extends ContractWrapper {
         }
       }
     });
-    Object.assign(this, { ...args, stateSource: args.stateSource ?? "live" });
+    Object.assign(this, {
+      ...args,
+      eventGeneration,
+      stateSource: args.stateSource ?? "live"
+    });
     this.depositRecords = (args.depositRecords ?? []).map((log) =>
       parseMarketRecord(this.underlyingToken, log)
     );
@@ -415,6 +472,7 @@ export class Market extends ContractWrapper {
     symbol: string;
     decimals: number;
     version: MarketVersion;
+    eventGeneration: ProtocolEventGeneration;
     marketKind: MarketKind;
     hooksFactory?: string;
     borrower: string;
@@ -428,6 +486,7 @@ export class Market extends ContractWrapper {
       symbol: this.symbol,
       decimals: this.decimals,
       version: this.version,
+      eventGeneration: this.eventGeneration,
       marketKind: this.marketKind,
       hooksFactory: this.hooksFactory,
       borrower: this.borrower,
@@ -931,8 +990,12 @@ export class Market extends ContractWrapper {
           // v2 only raises the reserve ratio when the exact reduction exceeds 25%.
           return originalReserveRatioBips;
         }
-        const relativeDiff = Number((10_000n * reduction) / BigInt(originalAnnualInterestBips));
-        doubleRelativeDiff = 2 * relativeDiff;
+        if (this.eventGeneration === "v2.5") {
+          doubleRelativeDiff = Number((20_000n * reduction) / BigInt(originalAnnualInterestBips));
+        } else {
+          const relativeDiff = Number((10_000n * reduction) / BigInt(originalAnnualInterestBips));
+          doubleRelativeDiff = 2 * relativeDiff;
+        }
       } else {
         doubleRelativeDiff = Number(
           (20_000n * BigInt(originalAnnualInterestBips - annualInterestBips)) /
@@ -950,13 +1013,16 @@ export class Market extends ContractWrapper {
   }
 
   calculateLiquidityCoverageForReserveRatio(reserveRatio: number): TokenAmount {
-    const scaledRequiredReserves =
-      bipMulBigint(this.scaledTotalSupply - this.scaledPendingWithdrawals, reserveRatio) +
-      this.scaledPendingWithdrawals;
     return this.underlyingToken.getAmount(
-      rayMulBigint(scaledRequiredReserves, this.scaleFactor) +
-        this.lastAccruedProtocolFees.raw +
-        this.normalizedUnclaimedWithdrawals.raw
+      calculateLiquidityCoverage({
+        eventGeneration: this.eventGeneration,
+        scaledTotalSupply: this.scaledTotalSupply,
+        scaledPendingWithdrawals: this.scaledPendingWithdrawals,
+        reserveRatioBips: reserveRatio,
+        scaleFactor: this.scaleFactor,
+        accruedProtocolFees: this.lastAccruedProtocolFees.raw,
+        normalizedUnclaimedWithdrawals: this.normalizedUnclaimedWithdrawals.raw
+      })
     );
   }
 
@@ -1060,6 +1126,7 @@ export class Market extends ContractWrapper {
         data.borrowerIdentityRegistry.toLowerCase() === zeroAddress
           ? undefined
           : data.borrowerIdentityRegistry;
+      this.eventGeneration = this.borrowerIdentityRegistry ? "v2.5" : "legacy";
     }
     this.feeRecipient = baseData.feeRecipient;
     this.protocolFeeBips = toNumber(baseData.protocolFeeBips);
@@ -1232,13 +1299,15 @@ export class Market extends ContractWrapper {
     const scaledTotalSupply = toRawAmount(indexedState.scaledTotalSupply);
     const scaleFactor = toRawAmount(indexedState.scaleFactor);
     const scaledWithdrawals = toRawAmount(indexedState.scaledPendingWithdrawals);
-    const scaledRequiredReserves =
-      bipMulBigint(scaledTotalSupply - scaledWithdrawals, indexedState.reserveRatioBips) +
-      scaledWithdrawals;
-    const coverageLiquidity =
-      rayMulBigint(scaledRequiredReserves, scaleFactor) +
-      toRawAmount(indexedState.pendingProtocolFees) +
-      toRawAmount(indexedState.normalizedUnclaimedWithdrawals);
+    const coverageLiquidity = calculateLiquidityCoverage({
+      eventGeneration: provenance.eventGeneration,
+      scaledTotalSupply,
+      scaledPendingWithdrawals: scaledWithdrawals,
+      reserveRatioBips: indexedState.reserveRatioBips,
+      scaleFactor,
+      accruedProtocolFees: toRawAmount(indexedState.pendingProtocolFees),
+      normalizedUnclaimedWithdrawals: toRawAmount(indexedState.normalizedUnclaimedWithdrawals)
+    });
 
     let hooksConfig: HooksConfig | undefined;
     let hooksFactory: string | undefined;
@@ -1349,6 +1418,7 @@ export class Market extends ContractWrapper {
       chainId,
       provider,
       version: data.version,
+      eventGeneration: provenance.eventGeneration,
       hooksFactory,
       marketKind,
       hooksConfig,
@@ -1437,6 +1507,7 @@ export class Market extends ContractWrapper {
     return new Market({
       provider,
       version: MarketVersion.V1,
+      eventGeneration: "legacy",
       marketKind: "standard",
       chainId: chainId,
       marketToken: marketToken,
@@ -1554,6 +1625,7 @@ export class Market extends ContractWrapper {
       hooksConfig,
       roleProviders: roleProvidersFromLens(hooks),
       version: MarketVersion.V2,
+      eventGeneration: "legacy",
       chainId: chainId,
       marketToken: marketToken,
       underlyingToken: underlyingToken,
@@ -1669,6 +1741,7 @@ export class Market extends ContractWrapper {
       hooksConfig,
       roleProviders: roleProvidersFromLens(hooks),
       version: MarketVersion.V2,
+      eventGeneration: borrowerIdentityRegistry.toLowerCase() === zeroAddress ? "legacy" : "v2.5",
       chainId,
       marketToken,
       underlyingToken,
@@ -1723,8 +1796,11 @@ export class Market extends ContractWrapper {
     data: MarketDataBaseV2_5StructOutput | MarketDataV2_5StructOutput,
     signerAddress?: string
   ): Promise<Market> {
+    const hasGenerationMetadata = "market" in data;
     const marketData = toUnifiedMarketDataV2(data);
-    return Market.fromMarketDataV2_5(chainId, provider, marketData, false, signerAddress);
+    const market = Market.fromMarketDataV2_5(chainId, provider, marketData, false, signerAddress);
+    if (!hasGenerationMetadata) market.eventGeneration = "unknown";
+    return market;
   }
 
   /* -------------------------------------------------------------------------- */

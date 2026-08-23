@@ -97,6 +97,24 @@ const functionInputTypes = (abi: readonly unknown[], functionName: string): stri
     .map((entry) => entry.inputs.map(({ type }) => type));
 };
 
+const eventInputShapes = (abi: readonly unknown[], eventName: string): string[][] => {
+  return abi
+    .filter(
+      (
+        entry
+      ): entry is {
+        type: "event";
+        name: string;
+        inputs: Array<{ type: string; indexed: boolean }>;
+      } =>
+        typeof entry === "object" &&
+        entry !== null &&
+        (entry as { type?: string }).type === "event" &&
+        (entry as { name?: string }).name === eventName
+    )
+    .map((entry) => entry.inputs.map(({ type, indexed }) => `${indexed ? "indexed " : ""}${type}`));
+};
+
 const errorNames = (abi: readonly unknown[]): string[] => {
   return abi
     .filter(
@@ -149,9 +167,17 @@ describe("generated viem ABIs", () => {
   it("exposes the V2.5 market and wrapper compatibility surface", () => {
     expect(functionNames(wildcatMarketV2Abi)).to.include.members([
       "acceptBorrowerTransfer",
+      "allowance",
+      "asset",
       "borrowerIdentityRegistry",
       "borrowerPrincipal",
       "cancelBorrowerTransfer",
+      "decimals",
+      "delinquencyFeeBips",
+      "delinquencyGracePeriod",
+      "factory",
+      "feeRecipient",
+      "hooks",
       "pendingBorrower",
       "pendingBorrowerPrincipal",
       "queueWithdrawalScaled",
@@ -159,6 +185,8 @@ describe("generated viem ABIs", () => {
       "requestBorrowerTransfer",
       "registeredWrapper",
       "scaledTransferRounding",
+      "sentinel",
+      "withdrawalBatchDuration",
       "wrapperFactory"
     ]);
     expect(
@@ -176,11 +204,90 @@ describe("generated viem ABIs", () => {
     expect(functionNames(wildcat4626WrapperAbi)).to.include("nukeFromOrbit");
   });
 
+  it("retains legacy market events while exposing the V2.5 event signatures", () => {
+    expect(eventInputShapes(wildcatMarketV2Abi, "Borrow")).to.deep.equal([
+      ["uint256"],
+      ["indexed address", "uint256"]
+    ]);
+    expect(eventInputShapes(wildcatMarketV2Abi, "FeesCollected")).to.deep.equal([
+      ["uint256"],
+      ["indexed address", "indexed address", "uint256"]
+    ]);
+    expect(eventInputShapes(wildcatMarketV2Abi, "MarketClosed")).to.deep.equal([
+      ["uint256"],
+      ["indexed address", "uint256"]
+    ]);
+    expect(
+      eventInputShapes(wildcatMarketV2Abi, "AnnualInterestAndReserveRatioBipsUpdated")
+    ).to.deep.equal([["indexed address", "uint256", "uint256", "uint256", "uint256"]]);
+    expect(eventInputShapes(wildcatMarketV2Abi, "MaxTotalSupplyUpdated")).to.deep.equal([
+      ["uint256"],
+      ["indexed address", "uint256", "uint256"]
+    ]);
+    expect(eventInputShapes(wildcatMarketV2Abi, "ProtocolFeeBipsUpdated")).to.deep.equal([
+      ["uint256"],
+      ["indexed address", "uint256", "uint256"]
+    ]);
+  });
+
+  it("models the complete V2.5 factory market-parameter tuple", () => {
+    const expectedComponents = [
+      "asset",
+      "decimals",
+      "packedNameWord0",
+      "packedNameWord1",
+      "packedSymbolWord0",
+      "packedSymbolWord1",
+      "borrower",
+      "feeRecipient",
+      "sentinel",
+      "wrapperFactory",
+      "maxTotalSupply",
+      "protocolFeeBips",
+      "annualInterestBips",
+      "delinquencyFeeBips",
+      "withdrawalBatchDuration",
+      "reserveRatioBips",
+      "delinquencyGracePeriod",
+      "archController",
+      "sphereXEngine",
+      "hooks",
+      "borrowerPrincipal",
+      "borrowerIdentityRegistry"
+    ];
+    for (const abi of [hooksFactoryAbi, hooksFactoryRevolvingAbi]) {
+      const getter = (abi as readonly any[]).find(
+        (entry) => entry.type === "function" && entry.name === "getMarketParameters"
+      );
+      expect(getter.outputs[0].components.map(({ name }: { name: string }) => name)).to.deep.equal(
+        expectedComponents
+      );
+      expect(functionNames(abi as readonly unknown[])).to.include.members([
+        "changeSphereXEngine",
+        "sphereXEngine",
+        "sphereXOperator"
+      ]);
+    }
+  });
+
   it("models the V2.5 periodic minimum-deposit storage width", () => {
     const getter = iPeriodicTermHooksAbi.find(
       (entry) => entry.type === "function" && entry.name === "getHookedMarket"
     );
     expect(findNamedComponent(getter, "minimumDeposit")?.type).to.equal("uint96");
+    expect(functionNames(iPeriodicTermHooksAbi)).to.include.members([
+      "AprReductionProposalValidityPeriods",
+      "MaximumInitialWithdrawalWindowDelay",
+      "MaximumPeriodDuration",
+      "MinimumPeriodDuration",
+      "MinimumWithdrawalWindowDuration",
+      "onCreateMarket",
+      "onExecuteWithdrawal",
+      "temporaryExcessReserveRatio"
+    ]);
+    expect(functionInputTypes(iPeriodicTermHooksAbi, "onExecuteWithdrawal")).to.deep.equal([
+      ["address", "uint32", "uint128", "tuple", "bytes"]
+    ]);
   });
 
   it("models the V2.5 OpenTerm and FixedTerm hooked-market tuples", () => {
@@ -213,6 +320,7 @@ describe("generated viem ABIs", () => {
     expect(functionNames(accessListRoleProviderAbi)).to.include.members([
       "acceptAdministratorTransfer",
       "addMembers",
+      "isPullProvider",
       "removeMembers",
       "requestAdministratorTransfer"
     ]);

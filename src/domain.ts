@@ -4,6 +4,9 @@ export type MarketKind = (typeof MarketKinds)[number];
 export const ProtocolMarketVersions = ["v1", "v2", "unknown"] as const;
 export type ProtocolMarketVersion = (typeof ProtocolMarketVersions)[number];
 
+export const ProtocolEventGenerations = ["legacy", "v2.5", "unknown"] as const;
+export type ProtocolEventGeneration = (typeof ProtocolEventGenerations)[number];
+
 export const DeployableMarketKinds = ["standard", "revolving"] as const;
 export type DeployableMarketKind = (typeof DeployableMarketKinds)[number];
 
@@ -39,6 +42,19 @@ export const parseProtocolMarketVersion = (
       return "v1";
     case "v2":
       return "v2";
+    default:
+      return "unknown";
+  }
+};
+
+export const parseProtocolEventGeneration = (
+  value: string | null | undefined
+): ProtocolEventGeneration => {
+  switch (normalizeEnumValue(value)) {
+    case "legacy":
+      return "legacy";
+    case "v25":
+      return "v2.5";
     default:
       return "unknown";
   }
@@ -210,6 +226,7 @@ export type HooksFactoryMetadata = {
   marketKind: MarketKind;
   generation: string;
   abiFamily: string;
+  eventGeneration: ProtocolEventGeneration;
   hookedMarketAbi: HookedMarketAbiKind;
   configuredStartBlock: bigint;
   indexed: boolean;
@@ -252,6 +269,7 @@ export type MarketProvenance = {
   originKind: MarketOriginKind | "unknown";
   generation: string;
   abiFamily: string;
+  eventGeneration: ProtocolEventGeneration;
   archController: string;
   borrower: string;
   borrowerPrincipal: string;

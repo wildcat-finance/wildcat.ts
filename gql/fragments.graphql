@@ -182,6 +182,7 @@ fragment MarketData on Market {
   originKind
   generation
   abiFamily
+  eventGeneration
   archController {
     id
   }
@@ -336,6 +337,7 @@ fragment MarketListData on Market {
   originKind
   generation
   abiFamily
+  eventGeneration
   archController {
     id
   }
@@ -1038,6 +1040,7 @@ fragment HooksFactoryData on HooksFactory {
   marketKind
   generation
   abiFamily
+  eventGeneration
   hookedMarketAbi
   configuredStartBlock
   indexed
@@ -1724,4 +1727,109 @@ fragment TokenPriceObservationData on TokenDailyPrice {
   observedAtTimestamp
   observedAtTransaction
   observedAtLogIndex
+}
+
+# ========================================================================== #
+#                             ERC-4626 wrappers                              #
+# ========================================================================== #
+
+fragment TokenWrapperData on Wildcat4626Wrapper {
+  id
+  address
+  marketAddress
+  marketToken {
+    ...TokenData
+  }
+  token {
+    ...TokenData
+  }
+  factory {
+    id
+    address
+  }
+  deployedEvent {
+    blockNumber
+    blockTimestamp
+    transactionHash
+  }
+}
+
+fragment TokenWrapperAccountData on Wildcat4626WrapperAccount {
+  address
+  shares
+  principalBasis
+  updatedAtBlock
+  updatedAtTimestamp
+  updatedAtTransaction
+  updatedAtLogIndex
+}
+
+fragment TokenWrapperDepositData on Wildcat4626WrapperDeposit {
+  id
+  account {
+    address
+  }
+  caller
+  assets
+  shares
+  principalBasisAmount
+  marketTransfer {
+    id
+  }
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment TokenWrapperWithdrawalData on Wildcat4626WrapperWithdrawal {
+  id
+  account {
+    address
+  }
+  caller
+  receiver
+  assets
+  shares
+  principalBasisAmount
+  marketTransfer {
+    id
+  }
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment TokenWrapperTransferData on Wildcat4626WrapperTransfer {
+  id
+  fromAddress
+  toAddress
+  from {
+    address
+  }
+  to {
+    address
+  }
+  shares
+  principalBasisAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+fragment TokenWrapperTokensSweptData on Wildcat4626WrapperTokensSwept {
+  id
+  token
+  receiver
+  amount
+  principalBasisAmount
+  marketTransfer {
+    id
+  }
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
 }

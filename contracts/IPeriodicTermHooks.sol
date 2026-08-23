@@ -2,10 +2,12 @@
 pragma solidity ^0.8.20;
 
 import { MarketParameterConstraints } from "./MarketLensStructs.sol";
+import { DeployMarketInputsV2 } from "./HooksFactory.sol";
 import "./CommonHooksStructs.sol";
 
 type HooksDeploymentConfig is uint256;
 type RoleProvider is uint256;
+type HooksConfig is uint256;
 
 struct PeriodicTermHookedMarket {
   bool isHooked;
@@ -91,15 +93,45 @@ interface IPeriodicTermHooks {
     uint32 credentialTimestamp
   );
 
+  event AccountAccessGranted(
+    address indexed providerAddress,
+    address indexed accountAddress,
+    address indexed caller,
+    uint32 credentialTimestamp
+  );
+
   event AccountAccessRevoked(address indexed accountAddress);
 
+  event AccountAccessRevoked(
+    address indexed providerAddress,
+    address indexed accountAddress,
+    address indexed caller
+  );
+
   event AccountBlockedFromDeposits(address indexed accountAddress);
+
+  event AccountBlockedFromDeposits(
+    address indexed administrator,
+    address indexed accountAddress
+  );
 
   event AccountMadeFirstDeposit(address indexed market, address indexed accountAddress);
 
   event AccountUnblockedFromDeposits(address indexed accountAddress);
 
+  event AccountUnblockedFromDeposits(
+    address indexed administrator,
+    address indexed accountAddress
+  );
+
   event MinimumDepositUpdated(address market, uint128 newMinimumDeposit);
+
+  event MinimumDepositUpdated(
+    address indexed market,
+    address indexed caller,
+    uint128 previousMinimumDeposit,
+    uint128 newMinimumDeposit
+  );
 
   event NameUpdated(string name);
 
@@ -121,13 +153,66 @@ interface IPeriodicTermHooks {
     address indexed newAdministrator
   );
 
-  event PeriodicTermClosed(address market);
+  event PeriodicTermClosed(address indexed market);
 
   event PeriodicTermUpdated(
     address market,
     uint32 firstWithdrawalWindowStart,
     uint32 periodDuration,
     uint32 withdrawalWindowDuration
+  );
+
+  event PeriodicTermUpdated(
+    address indexed market,
+    address indexed administrator,
+    uint32 firstWithdrawalWindowStart,
+    uint32 periodDuration,
+    uint32 withdrawalWindowDuration
+  );
+
+  event RoleProviderAdded(
+    address indexed administrator,
+    address indexed providerAddress,
+    uint32 timeToLive,
+    uint24 pullProviderIndex,
+    uint24 pushProviderIndex
+  );
+
+  event RoleProviderRemoved(
+    address indexed administrator,
+    address indexed providerAddress,
+    uint32 timeToLive,
+    uint24 pullProviderIndex,
+    uint24 pushProviderIndex
+  );
+
+  event RoleProviderUpdated(
+    address indexed administrator,
+    address indexed providerAddress,
+    uint32 previousTimeToLive,
+    uint32 newTimeToLive,
+    uint24 previousPullProviderIndex,
+    uint24 newPullProviderIndex,
+    uint24 previousPushProviderIndex,
+    uint24 newPushProviderIndex
+  );
+
+  event TemporaryExcessReserveRatioActivated(
+    address indexed market,
+    uint256 originalReserveRatioBips,
+    uint256 temporaryReserveRatioBips,
+    uint256 temporaryReserveRatioExpiry
+  );
+
+  event TemporaryExcessReserveRatioCanceled(address indexed market);
+
+  event TemporaryExcessReserveRatioExpired(address indexed market);
+
+  event TemporaryExcessReserveRatioUpdated(
+    address indexed market,
+    uint256 originalReserveRatioBips,
+    uint256 temporaryReserveRatioBips,
+    uint256 temporaryReserveRatioExpiry
   );
 
   event AnnualInterestBipsReductionProposed(
@@ -143,6 +228,16 @@ interface IPeriodicTermHooks {
   event AnnualInterestBipsReductionExecuted(address indexed market, uint16 annualInterestBips);
 
   function addRoleProvider(address providerAddress, uint32 timeToLive) external;
+
+  function AprReductionProposalValidityPeriods() external view returns (uint32);
+
+  function MaximumInitialWithdrawalWindowDelay() external view returns (uint32);
+
+  function MaximumPeriodDuration() external view returns (uint32);
+
+  function MinimumPeriodDuration() external view returns (uint32);
+
+  function MinimumWithdrawalWindowDuration() external view returns (uint32);
 
   function blockFromDeposits(address account) external;
 
@@ -217,6 +312,80 @@ interface IPeriodicTermHooks {
 
   function name() external view returns (string memory);
 
+  function onBorrow(uint256 amount, MarketState calldata state, bytes calldata hooksData) external;
+
+  function onCloseMarket(MarketState calldata state, bytes calldata hooksData) external;
+
+  function onCreateMarket(
+    address administrator,
+    address marketAddress,
+    DeployMarketInputsV2 calldata parameters,
+    bytes calldata extraData
+  ) external returns (HooksConfig);
+
+  function onDeposit(
+    address lender,
+    uint256 scaledAmount,
+    MarketState calldata state,
+    bytes calldata hooksData
+  ) external;
+
+  function onExecuteWithdrawal(
+    address lender,
+    uint32 expiry,
+    uint128 normalizedAmountWithdrawn,
+    MarketState calldata state,
+    bytes calldata hooksData
+  ) external;
+
+  function onNukeFromOrbit(
+    address account,
+    MarketState calldata state,
+    bytes calldata hooksData
+  ) external;
+
+  function onQueueWithdrawal(
+    address lender,
+    uint32 expiry,
+    uint256 scaledAmount,
+    MarketState calldata state,
+    bytes calldata hooksData
+  ) external;
+
+  function onRepay(
+    uint256 normalizedAmount,
+    MarketState calldata state,
+    bytes calldata hooksData
+  ) external;
+
+  function onSetAnnualInterestAndReserveRatioBips(
+    uint16 annualInterestBips,
+    uint16 reserveRatioBips,
+    MarketState calldata intermediateState,
+    bytes calldata hooksData
+  ) external returns (uint16 updatedAnnualInterestBips, uint16 updatedReserveRatioBips);
+
+  function onSetMaxTotalSupply(
+    uint256 maxTotalSupply,
+    MarketState calldata state,
+    bytes calldata hooksData
+  ) external;
+
+  function onSetProtocolFeeBips(
+    uint16 protocolFeeBips,
+    MarketState calldata state,
+    bytes calldata hooksData
+  ) external;
+
+  function onTransfer(
+    address caller,
+    address from,
+    address to,
+    uint256 scaledAmount,
+    MarketState calldata state,
+    bytes calldata extraData
+  ) external;
+
   function pendingAprChanges(
     address market
   ) external view returns (uint16 annualInterestBips, uint32 proposalTimestamp);
@@ -247,6 +416,13 @@ interface IPeriodicTermHooks {
   function setMinimumDeposit(address market, uint128 newMinimumDeposit) external;
 
   function setName(string calldata name) external;
+
+  function temporaryExcessReserveRatio(
+    address market
+  )
+    external
+    view
+    returns (uint16 originalAnnualInterestBips, uint16 originalReserveRatioBips, uint32 expiry);
 
   function unblockFromDeposits(address account) external;
 

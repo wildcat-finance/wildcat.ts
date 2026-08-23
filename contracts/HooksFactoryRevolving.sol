@@ -85,6 +85,12 @@ interface HooksFactoryRevolving {
 
   function borrowerIdentityRegistry() external view returns (address);
 
+  function sphereXOperator() external view returns (address);
+
+  function sphereXEngine() external view returns (address);
+
+  function changeSphereXEngine(address newSphereXEngine) external;
+
   function marketInitCodeStorage() external view returns (address);
 
   function marketInitCodeHash() external view returns (uint256);

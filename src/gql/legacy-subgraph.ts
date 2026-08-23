@@ -3,6 +3,7 @@ import { SupportedChainId } from "../config/chains";
 import { Deployments, getHooksFactoryAddress } from "../config/deployments";
 import { parseHooksKind } from "../domain";
 import {
+  SubgraphEventGeneration,
   SubgraphFactoryLifecycle,
   SubgraphAccountDataForLenderViewFragment,
   SubgraphHookedMarketAbi,
@@ -1174,6 +1175,7 @@ export const normalizeLegacyHooksFactoryData = (
     marketKind: SubgraphMarketKind.STANDARD,
     generation: "legacy-v2",
     abiFamily: "legacy-v2",
+    eventGeneration: SubgraphEventGeneration.LEGACY,
     hookedMarketAbi: SubgraphHookedMarketAbi.FORCE_BUYBACK,
     configuredStartBlock: "0",
     indexed: true,
@@ -1317,6 +1319,7 @@ export const normalizeLegacyMarketData = (
     originKind: isV2 ? SubgraphMarketOriginKind.HOOKS : SubgraphMarketOriginKind.CONTROLLER,
     generation: "legacy-v2",
     abiFamily: "legacy-v2",
+    eventGeneration: SubgraphEventGeneration.LEGACY,
     archController: {
       __typename: "ArchController",
       id: market.archController?.id ?? Deployments[chainId].WildcatArchController

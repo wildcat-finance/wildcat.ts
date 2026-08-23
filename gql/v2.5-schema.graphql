@@ -10715,6 +10715,7 @@ enum IndexerDiagnosticKind {
   UNKNOWN_FACTORY
   UNKNOWN_HOOKS_TEMPLATE
   UNKNOWN_WRAPPER_MARKET
+  WRAPPER_EVENT_CORRELATION_FAILED
 }
 
 input IndexerDiagnostic_filter {
@@ -34707,6 +34708,34 @@ type Wildcat4626Wrapper {
     skip: Int = 0
     where: Wildcat4626WrapperAccount_filter
   ): [Wildcat4626WrapperAccount!]!
+  deposits(
+    first: Int = 100
+    orderBy: Wildcat4626WrapperDeposit_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: Wildcat4626WrapperDeposit_filter
+  ): [Wildcat4626WrapperDeposit!]!
+  withdrawals(
+    first: Int = 100
+    orderBy: Wildcat4626WrapperWithdrawal_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: Wildcat4626WrapperWithdrawal_filter
+  ): [Wildcat4626WrapperWithdrawal!]!
+  transfers(
+    first: Int = 100
+    orderBy: Wildcat4626WrapperTransfer_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: Wildcat4626WrapperTransfer_filter
+  ): [Wildcat4626WrapperTransfer!]!
+  tokenSweeps(
+    first: Int = 100
+    orderBy: Wildcat4626WrapperTokensSwept_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: Wildcat4626WrapperTokensSwept_filter
+  ): [Wildcat4626WrapperTokensSwept!]!
   address: Bytes!
   blockLogIndex: Int!
   blockNumber: Int!
@@ -34734,6 +34763,34 @@ type Wildcat4626WrapperAccount {
   updatedAtTimestamp: BigInt!
   updatedAtTransaction: Bytes!
   wrapper: Wildcat4626Wrapper!
+  deposits(
+    first: Int = 100
+    orderBy: Wildcat4626WrapperDeposit_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: Wildcat4626WrapperDeposit_filter
+  ): [Wildcat4626WrapperDeposit!]!
+  withdrawals(
+    first: Int = 100
+    orderBy: Wildcat4626WrapperWithdrawal_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: Wildcat4626WrapperWithdrawal_filter
+  ): [Wildcat4626WrapperWithdrawal!]!
+  transfersFrom(
+    first: Int = 100
+    orderBy: Wildcat4626WrapperTransfer_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: Wildcat4626WrapperTransfer_filter
+  ): [Wildcat4626WrapperTransfer!]!
+  transfersTo(
+    first: Int = 100
+    orderBy: Wildcat4626WrapperTransfer_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: Wildcat4626WrapperTransfer_filter
+  ): [Wildcat4626WrapperTransfer!]!
 }
 
 input Wildcat4626WrapperAccount_filter {
@@ -34766,6 +34823,225 @@ enum Wildcat4626WrapperAccount_orderBy {
   updatedAtTimestamp
   updatedAtTransaction
   wrapper
+}
+
+type Wildcat4626WrapperDeposit {
+  id: ID!
+  wrapper: Wildcat4626Wrapper!
+  account: Wildcat4626WrapperAccount!
+  caller: Bytes!
+  assets: BigInt!
+  shares: BigInt!
+  principalBasisAmount: BigInt!
+  marketTransfer: Transfer
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  blockLogIndex: BigInt!
+}
+
+input Wildcat4626WrapperDeposit_filter {
+  and: [Wildcat4626WrapperDeposit_filter]
+  or: [Wildcat4626WrapperDeposit_filter]
+  id: ID
+  id_gt: ID
+  wrapper: String
+  wrapper_: Wildcat4626Wrapper_filter
+  account: String
+  account_: Wildcat4626WrapperAccount_filter
+  caller: Bytes
+  assets: BigInt
+  shares: BigInt
+  principalBasisAmount: BigInt
+  marketTransfer: String
+  marketTransfer_: Transfer_filter
+  blockNumber: BigInt
+  blockTimestamp: BigInt
+  transactionHash: Bytes
+  blockLogIndex: BigInt
+}
+
+enum Wildcat4626WrapperDeposit_orderBy {
+  id
+  wrapper
+  account
+  caller
+  assets
+  shares
+  principalBasisAmount
+  marketTransfer
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+type Wildcat4626WrapperWithdrawal {
+  id: ID!
+  wrapper: Wildcat4626Wrapper!
+  account: Wildcat4626WrapperAccount!
+  caller: Bytes!
+  receiver: Bytes!
+  assets: BigInt!
+  shares: BigInt!
+  principalBasisAmount: BigInt!
+  marketTransfer: Transfer
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  blockLogIndex: BigInt!
+}
+
+input Wildcat4626WrapperWithdrawal_filter {
+  and: [Wildcat4626WrapperWithdrawal_filter]
+  or: [Wildcat4626WrapperWithdrawal_filter]
+  id: ID
+  id_gt: ID
+  wrapper: String
+  wrapper_: Wildcat4626Wrapper_filter
+  account: String
+  account_: Wildcat4626WrapperAccount_filter
+  caller: Bytes
+  receiver: Bytes
+  assets: BigInt
+  shares: BigInt
+  principalBasisAmount: BigInt
+  marketTransfer: String
+  marketTransfer_: Transfer_filter
+  blockNumber: BigInt
+  blockTimestamp: BigInt
+  transactionHash: Bytes
+  blockLogIndex: BigInt
+}
+
+enum Wildcat4626WrapperWithdrawal_orderBy {
+  id
+  wrapper
+  account
+  caller
+  receiver
+  assets
+  shares
+  principalBasisAmount
+  marketTransfer
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+type Wildcat4626WrapperTransfer {
+  id: ID!
+  wrapper: Wildcat4626Wrapper!
+  fromAddress: Bytes!
+  toAddress: Bytes!
+  from: Wildcat4626WrapperAccount
+  to: Wildcat4626WrapperAccount
+  shares: BigInt!
+  principalBasisAmount: BigInt!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  blockLogIndex: BigInt!
+}
+
+input Wildcat4626WrapperTransfer_filter {
+  and: [Wildcat4626WrapperTransfer_filter]
+  or: [Wildcat4626WrapperTransfer_filter]
+  id: ID
+  id_gt: ID
+  wrapper: String
+  wrapper_: Wildcat4626Wrapper_filter
+  fromAddress: Bytes
+  toAddress: Bytes
+  from: String
+  from_: Wildcat4626WrapperAccount_filter
+  to: String
+  to_: Wildcat4626WrapperAccount_filter
+  shares: BigInt
+  principalBasisAmount: BigInt
+  blockNumber: BigInt
+  blockTimestamp: BigInt
+  transactionHash: Bytes
+  blockLogIndex: BigInt
+}
+
+enum Wildcat4626WrapperTransfer_orderBy {
+  id
+  wrapper
+  fromAddress
+  toAddress
+  from
+  to
+  shares
+  principalBasisAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+type Wildcat4626WrapperTokensSwept {
+  id: ID!
+  wrapper: Wildcat4626Wrapper!
+  token: Bytes!
+  receiver: Bytes!
+  amount: BigInt!
+  principalBasisAmount: BigInt!
+  marketTransfer: Transfer
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  blockLogIndex: BigInt!
+}
+
+input Wildcat4626WrapperTokensSwept_filter {
+  and: [Wildcat4626WrapperTokensSwept_filter]
+  or: [Wildcat4626WrapperTokensSwept_filter]
+  id: ID
+  id_gt: ID
+  wrapper: String
+  wrapper_: Wildcat4626Wrapper_filter
+  token: Bytes
+  receiver: Bytes
+  amount: BigInt
+  principalBasisAmount: BigInt
+  marketTransfer: String
+  marketTransfer_: Transfer_filter
+  blockNumber: BigInt
+  blockTimestamp: BigInt
+  transactionHash: Bytes
+  blockLogIndex: BigInt
+}
+
+enum Wildcat4626WrapperTokensSwept_orderBy {
+  id
+  wrapper
+  token
+  receiver
+  amount
+  principalBasisAmount
+  marketTransfer
+  blockNumber
+  blockTimestamp
+  transactionHash
+  blockLogIndex
+}
+
+"Internal transaction-local bridge between market-token and wrapper events."
+type Wildcat4626WrapperTransactionCursor {
+  id: ID!
+  wrapper: Wildcat4626Wrapper!
+  transactionHash: Bytes!
+  inboundMarketTransfer: Transfer
+  inboundScaledAmount: BigInt!
+  inboundPrincipalBasis: BigInt!
+  outboundMarketTransfer: Transfer
+  outboundScaledAmount: BigInt!
+  outboundPrincipalBasis: BigInt!
+  pendingBurnAccount: Wildcat4626WrapperAccount
+  pendingBurnShares: BigInt!
+  pendingBurnPrincipalBasis: BigInt!
 }
 
 type Wildcat4626WrapperDeployed {

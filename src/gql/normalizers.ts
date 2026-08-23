@@ -12,6 +12,7 @@ import {
   parseHooksKind,
   parseMarketKind,
   parseMarketOriginKind,
+  parseProtocolEventGeneration,
   parseProtocolMarketVersion,
   parseSnapshotSource
 } from "../domain";
@@ -36,6 +37,7 @@ export const normalizeSubgraphHooksFactoryData = (
   marketKind: parseMarketKind(data.marketKind),
   generation: data.generation,
   abiFamily: data.abiFamily,
+  eventGeneration: parseProtocolEventGeneration(data.eventGeneration),
   hookedMarketAbi: parseHookedMarketAbiKind(data.hookedMarketAbi),
   configuredStartBlock: BigInt(data.configuredStartBlock),
   indexed: data.indexed,
@@ -100,6 +102,7 @@ export const normalizeSubgraphMarketProvenance = (
   originKind: parseMarketOriginKind(data.originKind),
   generation: data.generation,
   abiFamily: data.abiFamily,
+  eventGeneration: parseProtocolEventGeneration(data.eventGeneration),
   archController: data.archController.id,
   borrower: data.borrower,
   borrowerPrincipal: data.borrowerPrincipal,
