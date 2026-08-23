@@ -22,6 +22,8 @@ interface AccessListRoleProvider {
 
   function pendingAdministrator() external view returns (address);
 
+  function isPullProvider() external view returns (bool);
+
   function requestAdministratorTransfer(address newAdministrator) external;
 
   function cancelAdministratorTransfer() external;

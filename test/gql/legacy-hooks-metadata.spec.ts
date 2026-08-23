@@ -78,6 +78,7 @@ describe("legacy hooks metadata routing", () => {
         address: factory,
         archController,
         sentinel,
+        eventGeneration: "legacy",
         isRegistered: true
       });
     } finally {

@@ -8,6 +8,7 @@ import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { Market } from "../../src/market";
 import { Token } from "../../src/token";
 import {
+  GetIndexedTokenWrapperActivityDocument,
   GetTokenWrapperForMarketDocument,
   SubgraphTokenWrapperData,
   TokenWrapper,
@@ -80,6 +81,151 @@ describe("TokenWrapper subgraph hydration", () => {
     expect(wrapper.name).to.equal("Wrapped Mock Market");
     expect(wrapper.symbol).to.equal("wmMOCK");
     expect(print(GetTokenWrapperForMarketDocument)).not.to.include("principalBasis");
+  });
+
+  it("hydrates indexed wrapper deposits, withdrawals, transfers, and token sweeps", async () => {
+    const marketAddress = "0x4000000000000000000000000000000000000004";
+    const wrapperAddress = "0x5000000000000000000000000000000000000005";
+    const account = "0x6000000000000000000000000000000000000006";
+    const receiver = "0x7000000000000000000000000000000000000007";
+    const wrapper = new TokenWrapper({
+      chainId: SupportedChainId.Sepolia,
+      provider,
+      address: wrapperAddress,
+      marketAddress,
+      marketToken: new Token(
+        SupportedChainId.Sepolia,
+        marketAddress,
+        "Mock Market",
+        "mMOCK",
+        6,
+        false,
+        provider
+      ),
+      shareToken: new Token(
+        SupportedChainId.Sepolia,
+        wrapperAddress,
+        "Wrapped Mock Market",
+        "wmMOCK",
+        6,
+        false,
+        provider
+      )
+    });
+    const calls: Array<{ query: DocumentNode; variables?: Record<string, unknown> }> = [];
+    const event = {
+      blockNumber: "10",
+      blockTimestamp: "20",
+      transactionHash: "0x1234",
+      blockLogIndex: "2"
+    };
+    const client = {
+      query: async (args: { query: DocumentNode; variables?: Record<string, unknown> }) => {
+        calls.push(args);
+        return {
+          data: {
+            wildcat4626Wrapper: {
+              id: wrapperAddress,
+              deposits: [
+                {
+                  id: "deposit-later",
+                  account: { address: account },
+                  caller: account,
+                  assets: "111",
+                  shares: "112",
+                  principalBasisAmount: "113",
+                  marketTransfer: null,
+                  ...event,
+                  blockNumber: "11",
+                  blockLogIndex: "1"
+                },
+                {
+                  id: "deposit",
+                  account: { address: account },
+                  caller: account,
+                  assets: "101",
+                  shares: "102",
+                  principalBasisAmount: "103",
+                  marketTransfer: { id: "market-transfer-deposit" },
+                  ...event
+                }
+              ],
+              withdrawals: [
+                {
+                  id: "withdrawal",
+                  account: { address: account },
+                  caller: account,
+                  receiver,
+                  assets: "201",
+                  shares: "202",
+                  principalBasisAmount: "203",
+                  marketTransfer: { id: "market-transfer-withdrawal" },
+                  ...event
+                }
+              ],
+              transfers: [
+                {
+                  id: "transfer",
+                  fromAddress: account,
+                  toAddress: receiver,
+                  from: { address: account },
+                  to: { address: receiver },
+                  shares: "302",
+                  principalBasisAmount: "303",
+                  ...event
+                }
+              ],
+              tokenSweeps: [
+                {
+                  id: "tokens-swept",
+                  token: marketAddress,
+                  receiver,
+                  amount: "401",
+                  principalBasisAmount: "403",
+                  marketTransfer: { id: "market-transfer-sweep" },
+                  ...event
+                }
+              ]
+            }
+          }
+        };
+      }
+    } as unknown as ApolloClient<NormalizedCacheObject>;
+
+    const activity = await wrapper.getIndexedActivity(client, {
+      first: 10,
+      skip: 2,
+      fetchPolicy: "network-only"
+    });
+
+    expect(calls[0].query).to.equal(GetIndexedTokenWrapperActivityDocument);
+    expect(print(calls[0].query).match(/orderBy: blockNumber/g)).to.have.lengthOf(4);
+    expect(calls[0].variables).to.deep.equal({
+      wrapper: wrapperAddress,
+      first: 10,
+      skip: 2
+    });
+    expect(activity?.deposits[0]).to.include({
+      kind: "deposit",
+      account,
+      principalBasisAmount: 103n,
+      marketTransfer: "market-transfer-deposit",
+      blockNumber: 10n,
+      logIndex: 2n
+    });
+    expect(activity?.deposits[0].assets.raw).to.equal(101n);
+    expect(activity?.deposits.map(({ id }) => id)).to.deep.equal(["deposit", "deposit-later"]);
+    expect(activity?.withdrawals[0].shares.raw).to.equal(202n);
+    expect(activity?.transfers[0]).to.include({
+      fromAccount: account,
+      toAccount: receiver,
+      principalBasisAmount: 303n
+    });
+    expect(activity?.tokenSweeps[0]).to.include({
+      kind: "tokens-swept",
+      amount: 401n,
+      principalBasisAmount: 403n
+    });
   });
 
   it("quotes indexed wrapper interest against the current share balance", async () => {
@@ -213,6 +359,7 @@ describe("TokenWrapper subgraph hydration", () => {
     expect(await wrapper.getIndexedAccount(client, { account: wrapperAddress })).to.equal(
       undefined
     );
+    expect(await wrapper.getIndexedActivity(client)).to.equal(undefined);
   });
 });
 

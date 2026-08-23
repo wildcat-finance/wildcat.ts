@@ -26,6 +26,7 @@ const makeFactoryMetadata = (
   marketKind,
   generation: "v2.5",
   abiFamily: "hooks-shared-current",
+  eventGeneration: "legacy",
   hookedMarketAbi: "base",
   configuredStartBlock: 1n,
   indexed: true,

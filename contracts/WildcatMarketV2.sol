@@ -25,6 +25,8 @@ interface WildcatMarketV2 {
 
   error AnnualInterestBipsTooHigh();
 
+  error AmbiguousBorrowerIdentity();
+
   error AprChangeOnClosedMarket();
 
   error AprReductionNotReduction();
@@ -101,7 +103,21 @@ interface WildcatMarketV2 {
 
   error BorrowerPrincipalNotRegistered();
 
+  error BorrowerIdentityNotFound();
+
   error BorrowerTransferWhileSanctioned(address account);
+
+  error CannotNukeWrapper();
+
+  error ExecutePendingAprReductionNotEnabled();
+
+  error FIFOQueueOutOfBounds();
+
+  error NotWrapperFactory();
+
+  error WithdrawalBatchKeyAlreadyExists();
+
+  error WrapperAlreadyRegistered();
 
   error RepayToClosedMarket();
 
@@ -115,9 +131,19 @@ interface WildcatMarketV2 {
 
   event AnnualInterestBipsUpdated(uint256 annualInterestBipsUpdated);
 
+  event AnnualInterestAndReserveRatioBipsUpdated(
+    address indexed caller,
+    uint256 previousAnnualInterestBips,
+    uint256 newAnnualInterestBips,
+    uint256 previousReserveRatioBips,
+    uint256 newReserveRatioBips
+  );
+
   event Approval(address indexed owner, address indexed spender, uint256 value);
 
   event Borrow(uint256 assetAmount);
+
+  event Borrow(address indexed borrower, uint256 assetAmount);
 
   event BorrowerTransferRequested(
     address indexed borrower,
@@ -152,6 +178,12 @@ interface WildcatMarketV2 {
 
   event FeesCollected(uint256 assets);
 
+  event FeesCollected(
+    address indexed collector,
+    address indexed feeRecipient,
+    uint256 assets
+  );
+
   event ForceBuyBack(address indexed lender, uint256 scaledAmount, uint256 normalizedAmount);
 
   event InterestAndFeesAccrued(
@@ -165,9 +197,23 @@ interface WildcatMarketV2 {
 
   event MarketClosed(uint256 timestamp);
 
+  event MarketClosed(address indexed borrower, uint256 timestamp);
+
   event MaxTotalSupplyUpdated(uint256 assets);
 
+  event MaxTotalSupplyUpdated(
+    address indexed caller,
+    uint256 previousMaxTotalSupply,
+    uint256 newMaxTotalSupply
+  );
+
   event ProtocolFeeBipsUpdated(uint256 protocolFeeBips);
+
+  event ProtocolFeeBipsUpdated(
+    address indexed caller,
+    uint256 previousProtocolFeeBips,
+    uint256 newProtocolFeeBips
+  );
 
   event ReserveRatioBipsUpdated(uint256 reserveRatioBipsUpdated);
 
@@ -231,9 +277,13 @@ interface WildcatMarketV2 {
 
   function annualInterestBips() external view returns (uint256 param0);
 
+  function allowance(address owner, address spender) external view returns (uint256 param0);
+
   function approve(address spender, uint256 amount) external returns (bool param0);
 
   function archController() external view returns (address param0);
+
+  function asset() external view returns (address param0);
 
   function balanceOf(address account) external view returns (uint256 param0);
 
@@ -267,6 +317,12 @@ interface WildcatMarketV2 {
 
   function currentState() external view returns (MarketStateV2 memory state);
 
+  function decimals() external view returns (uint8 param0);
+
+  function delinquencyFeeBips() external view returns (uint256 param0);
+
+  function delinquencyGracePeriod() external view returns (uint256 param0);
+
   function deposit(uint256 amount) external;
 
   function depositUpTo(uint256 amount) external returns (uint256 param0);
@@ -282,6 +338,10 @@ interface WildcatMarketV2 {
     address[] calldata accountAddresses,
     uint32[] calldata expiries
   ) external returns (uint256[] memory amounts);
+
+  function factory() external view returns (address param0);
+
+  function feeRecipient() external view returns (address param0);
 
   function forceBuyBack(address lender, uint256 normalizedAmount) external;
 
@@ -300,6 +360,8 @@ interface WildcatMarketV2 {
   function getWithdrawalBatch(uint32 expiry) external view returns (WithdrawalBatch memory batch);
 
   function isClosed() external view returns (bool param0);
+
+  function hooks() external view returns (uint256 param0);
 
   function maximumDeposit() external view returns (uint256 param0);
 
@@ -337,6 +399,8 @@ interface WildcatMarketV2 {
 
   function scaleFactor() external view returns (uint256 param0);
 
+  function sentinel() external view returns (address param0);
+
   function setAnnualInterestAndReserveRatioBips(
     uint16 _annualInterestBips,
     uint16 _reserveRatioBips
@@ -367,6 +431,8 @@ interface WildcatMarketV2 {
   function version() external pure returns (string memory param0);
 
   function withdrawableProtocolFees() external view returns (uint128 param0);
+
+  function withdrawalBatchDuration() external view returns (uint256 param0);
 
   function wrapperFactory() external view returns (address);
 }

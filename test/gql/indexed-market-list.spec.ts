@@ -175,6 +175,7 @@ describe("indexed market discovery", () => {
     expect(market.address).to.equal(marketAddress);
     expect(market.marketKind).to.equal("standard");
     expect(market.provenance?.generation).to.equal("legacy-v2");
+    expect(market.eventGeneration).to.equal("legacy");
     expect(market.stateSource).to.equal("indexed");
     expect(market.latestDepositTimestamp).to.equal(1_750_000_000);
   });

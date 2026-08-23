@@ -10,6 +10,7 @@ import {
   parseHooksKind,
   parseMarketKind,
   parseMarketOriginKind,
+  parseProtocolEventGeneration,
   parseProtocolMarketVersion,
   parsePricingMode,
   parseSnapshotSource
@@ -31,6 +32,9 @@ describe("SDK domain normalization", () => {
     expect(parseMarketKind(undefined)).to.equal("unknown");
     expect(parseProtocolMarketVersion("V2")).to.equal("v2");
     expect(parseProtocolMarketVersion("future-version")).to.equal("unknown");
+    expect(parseProtocolEventGeneration("LEGACY")).to.equal("legacy");
+    expect(parseProtocolEventGeneration("V2_5")).to.equal("v2.5");
+    expect(parseProtocolEventGeneration("future-generation")).to.equal("unknown");
   });
 
   it("normalizes subgraph metadata without silently accepting unknown values", () => {

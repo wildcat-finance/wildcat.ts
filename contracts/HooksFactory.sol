@@ -24,6 +24,8 @@ struct MarketParametersV2 {
   address archController;
   address sphereXEngine;
   HooksConfig hooks;
+  address borrowerPrincipal;
+  address borrowerIdentityRegistry;
 }
 
 struct DeployMarketInputsV2 {
@@ -156,6 +158,12 @@ interface HooksFactory {
   function wrapperFactory() external view returns (address);
 
   function borrowerIdentityRegistry() external view returns (address);
+
+  function sphereXOperator() external view returns (address);
+
+  function sphereXEngine() external view returns (address);
+
+  function changeSphereXEngine(address newSphereXEngine) external;
 
   function marketInitCodeStorage() external view returns (address);
 

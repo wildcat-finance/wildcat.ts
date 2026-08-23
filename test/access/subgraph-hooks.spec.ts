@@ -8,6 +8,7 @@ import {
   getHooksTemplateRegistrations
 } from "../../src/gql";
 import {
+  SubgraphEventGeneration,
   SubgraphFactoryLifecycle,
   SubgraphHookedMarketAbi,
   SubgraphHooksKind,
@@ -57,6 +58,7 @@ const makeFactory = (hooksFactory: string) => ({
   marketKind: SubgraphMarketKind.STANDARD,
   generation: "v2.5",
   abiFamily: "hooks-shared-current",
+  eventGeneration: SubgraphEventGeneration.V2_5,
   hookedMarketAbi: SubgraphHookedMarketAbi.BASE,
   configuredStartBlock: "1",
   indexed: true,

@@ -173,6 +173,7 @@ const makeTemplateRegistration = (
     marketKind,
     generation: "v2.5",
     abiFamily: "hooks-shared-current",
+    eventGeneration: "v2.5",
     hookedMarketAbi: "base",
     configuredStartBlock: 1n,
     indexed: true,

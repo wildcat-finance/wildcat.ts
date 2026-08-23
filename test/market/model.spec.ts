@@ -9,6 +9,7 @@ import { Token, toRawAmount } from "../../src/token";
 import { HooksKind, MarketOnboardingMode, MarketVersion } from "../../src/types";
 import {
   SubgraphFactoryLifecycle,
+  SubgraphEventGeneration,
   SubgraphHookedMarketAbi,
   SubgraphHooksFactoryDataFragment,
   SubgraphHooksKind,
@@ -54,6 +55,7 @@ const makeSubgraphHooksFactory = (
   marketKind: SubgraphMarketKind.REVOLVING,
   generation: "v2.5",
   abiFamily: "hooks-shared-current",
+  eventGeneration: SubgraphEventGeneration.V2_5,
   hookedMarketAbi: SubgraphHookedMarketAbi.BASE,
   configuredStartBlock: "1",
   indexed: true,
@@ -408,6 +410,7 @@ const makeSubgraphMarketData = (): Omit<
   originKind: SubgraphMarketOriginKind.HOOKS,
   generation: "v2.5",
   abiFamily: "market-v2.5",
+  eventGeneration: SubgraphEventGeneration.V2_5,
   archController: {
     __typename: "ArchController",
     id: getDeploymentAddress(SupportedChainId.Sepolia, "WildcatArchController")
@@ -879,6 +882,7 @@ describe("Market model routing metadata", () => {
     v1.originKind = SubgraphMarketOriginKind.CONTROLLER;
     v1.generation = "v1";
     v1.abiFamily = "market-v1";
+    v1.eventGeneration = SubgraphEventGeneration.LEGACY;
     v1.controller = { __typename: "Controller", id: makeAddress(80) };
     v1.hooksFactory = null;
     v1.hooksConfig = null;
@@ -894,6 +898,7 @@ describe("Market model routing metadata", () => {
       label: "standard-v2-historical",
       marketKind: SubgraphMarketKind.STANDARD,
       generation: "v2",
+      eventGeneration: SubgraphEventGeneration.LEGACY,
       deploymentTarget: false,
       lifecycle: SubgraphFactoryLifecycle.HISTORICAL,
       isRegistered: false
@@ -901,6 +906,7 @@ describe("Market model routing metadata", () => {
     historicalStandard.marketKind = SubgraphMarketKind.STANDARD;
     historicalStandard.generation = "v2";
     historicalStandard.abiFamily = "market-v2";
+    historicalStandard.eventGeneration = SubgraphEventGeneration.LEGACY;
     historicalStandard.commitmentFeeBips = null;
     historicalStandard.drawnAmount = null;
     historicalStandard.snapshot!.commitmentFeeBips = null;
@@ -931,6 +937,7 @@ describe("Market model routing metadata", () => {
       {
         data: v1,
         version: "v1",
+        eventGeneration: "legacy",
         marketKind: "standard",
         originKind: "controller",
         factoryLifecycle: undefined
@@ -938,6 +945,7 @@ describe("Market model routing metadata", () => {
       {
         data: historicalStandard,
         version: "v2",
+        eventGeneration: "legacy",
         marketKind: "standard",
         originKind: "hooks",
         factoryLifecycle: "historical"
@@ -945,6 +953,7 @@ describe("Market model routing metadata", () => {
       {
         data: currentStandard,
         version: "v2",
+        eventGeneration: "v2.5",
         marketKind: "standard",
         originKind: "hooks",
         factoryLifecycle: "active"
@@ -952,31 +961,39 @@ describe("Market model routing metadata", () => {
       {
         data: currentRevolving,
         version: "v2",
+        eventGeneration: "v2.5",
         marketKind: "revolving",
         originKind: "hooks",
         factoryLifecycle: "active"
       }
     ] as const;
 
-    fixtures.forEach(({ data, version, marketKind, originKind, factoryLifecycle }) => {
-      const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
-      expect(market.stateSource).to.equal("indexed");
-      expect(market.provenance).to.deep.include({ version, marketKind, originKind });
-      expect(market.provenance?.createdAt).to.deep.equal({
-        blockNumber: 1n,
-        blockTimestamp: 1_700_000_000n,
-        transactionHash: makeAddress(78),
-        logIndex: 0n
-      });
-      expect(market.provenance?.hooksFactory?.lifecycle).to.equal(factoryLifecycle);
-      expect(market.indexedSnapshot).to.deep.include({
-        source: "event-projection",
-        blockNumber: 123n,
-        blockTimestamp: 1_700_000_123n,
-        transactionHash: makeAddress(79),
-        logIndex: 4n
-      });
-    });
+    fixtures.forEach(
+      ({ data, version, eventGeneration, marketKind, originKind, factoryLifecycle }) => {
+        const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+        expect(market.stateSource).to.equal("indexed");
+        expect(market.provenance).to.deep.include({
+          version,
+          eventGeneration,
+          marketKind,
+          originKind
+        });
+        expect(market.provenance?.createdAt).to.deep.equal({
+          blockNumber: 1n,
+          blockTimestamp: 1_700_000_000n,
+          transactionHash: makeAddress(78),
+          logIndex: 0n
+        });
+        expect(market.provenance?.hooksFactory?.lifecycle).to.equal(factoryLifecycle);
+        expect(market.indexedSnapshot).to.deep.include({
+          source: "event-projection",
+          blockNumber: 123n,
+          blockTimestamp: 1_700_000_123n,
+          transactionHash: makeAddress(79),
+          logIndex: 4n
+        });
+      }
+    );
   });
 
   it("uses the freshness-stamped market snapshot instead of legacy root state", () => {
@@ -1196,6 +1213,7 @@ describe("Market model routing metadata", () => {
       provider,
       chainId: SupportedChainId.Sepolia,
       version: MarketVersion.V1,
+      eventGeneration: "legacy",
       marketKind: "standard",
       marketToken,
       underlyingToken,
@@ -1436,6 +1454,48 @@ describe("Market reserve ratio previews", () => {
     expect(market.delinquentDebt.raw).to.equal(0n);
   });
 
+  it("uses normalized-space reserve rounding for V2.5 and scaled-space rounding for legacy", () => {
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
+    const scaleFactor = BigNumber.from(2).pow(22).mul(BigNumber.from(10).pow(27));
+    const data = makeUnifiedMarketDataV2(hooksFactory);
+    data.market.scaleFactor = scaleFactor;
+    data.market.scaledTotalSupply = BigNumber.from(1);
+    data.market.totalSupply = BigNumber.from(2).pow(22);
+    data.market.scaledPendingWithdrawals = BigNumber.from(0);
+    data.market.reserveRatioBips = BigNumber.from(4_999);
+    data.market.lastAccruedProtocolFees = BigNumber.from(0);
+    data.market.normalizedUnclaimedWithdrawals = BigNumber.from(0);
+
+    const v2_5Market = Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
+    expect(v2_5Market.eventGeneration).to.equal("v2.5");
+    expect(v2_5Market.calculateLiquidityCoverageForReserveRatio(4_999).raw).to.equal(2_096_733n);
+
+    data.borrowerIdentityRegistry = makeAddress(0);
+    const legacyMarket = Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
+    expect(legacyMarket.eventGeneration).to.equal("legacy");
+    expect(legacyMarket.calculateLiquidityCoverageForReserveRatio(4_999).raw).to.equal(0n);
+  });
+
+  it("hydrates indexed liquidity coverage with the subgraph event generation", () => {
+    const data = makeSubgraphMarketData();
+    const scaleFactor = BigNumber.from(2).pow(22).mul(BigNumber.from(10).pow(27)).toString();
+    Object.assign(data.snapshot!, {
+      scaledTotalSupply: "1",
+      scaledPendingWithdrawals: "0",
+      reserveRatioBips: 4_999,
+      scaleFactor,
+      pendingProtocolFees: "0",
+      normalizedUnclaimedWithdrawals: "0"
+    });
+
+    const v2_5Market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+    expect(v2_5Market.coverageLiquidity.raw).to.equal(2_096_733n);
+
+    data.eventGeneration = SubgraphEventGeneration.LEGACY;
+    const legacyMarket = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+    expect(legacyMarket.coverageLiquidity.raw).to.equal(0n);
+  });
+
   const makeV2Market = (annualInterestBips: number): Market => {
     const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
     const data = makeUnifiedMarketDataV2(hooksFactory);
@@ -1449,6 +1509,21 @@ describe("Market reserve ratio previews", () => {
   it("compares the exact v2 APR reduction before rounding to bips", () => {
     expect(makeV2Market(10_000).getReserveRatioForNewAPR(7_500)).to.equal(1_000);
     expect(makeV2Market(9_999).getReserveRatioForNewAPR(7_499)).to.equal(5_000);
+  });
+
+  it("rounds the doubled V2.5 APR reduction once while preserving legacy behavior", () => {
+    expect(makeV2Market(7_501).getReserveRatioForNewAPR(5_625)).to.equal(5_001);
+
+    const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
+    const data = makeUnifiedMarketDataV2(hooksFactory);
+    data.borrowerIdentityRegistry = makeAddress(0);
+    data.market.annualInterestBips = BigNumber.from(7_501);
+    data.market.originalAnnualInterestBips = BigNumber.from(7_501);
+    data.market.reserveRatioBips = BigNumber.from(1_000);
+    data.market.originalReserveRatioBips = BigNumber.from(1_000);
+    const legacyMarket = Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
+
+    expect(legacyMarket.getReserveRatioForNewAPR(5_625)).to.equal(5_000);
   });
 });
 

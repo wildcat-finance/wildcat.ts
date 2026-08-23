@@ -104,19 +104,56 @@ interface IFixedTermHooks {
     uint32 credentialTimestamp
   );
 
+  event AccountAccessGranted(
+    address indexed providerAddress,
+    address indexed accountAddress,
+    address indexed caller,
+    uint32 credentialTimestamp
+  );
+
   event AccountAccessRevoked(address indexed accountAddress);
 
+  event AccountAccessRevoked(
+    address indexed providerAddress,
+    address indexed accountAddress,
+    address indexed caller
+  );
+
   event AccountBlockedFromDeposits(address indexed accountAddress);
+
+  event AccountBlockedFromDeposits(
+    address indexed administrator,
+    address indexed accountAddress
+  );
 
   event AccountMadeFirstDeposit(address indexed market, address indexed accountAddress);
 
   event AccountUnblockedFromDeposits(address indexed accountAddress);
 
+  event AccountUnblockedFromDeposits(
+    address indexed administrator,
+    address indexed accountAddress
+  );
+
   event DisabledForceBuyBacks(address market);
 
   event FixedTermUpdated(address market, uint32 fixedTermEndTime);
 
+  event FixedTermUpdated(
+    address indexed market,
+    address indexed caller,
+    uint32 previousFixedTermEndTime,
+    uint32 newFixedTermEndTime
+  );
+
   event MinimumDepositUpdated(address market, uint128 newMinimumDeposit);
+
+  event MinimumDepositUpdated(
+    address indexed market,
+    address indexed caller,
+    uint128 previousMinimumDeposit,
+    uint128 newMinimumDeposit
+  );
 
   event NameUpdated(string name);
 
@@ -145,8 +182,24 @@ interface IFixedTermHooks {
     uint24 pushProviderIndex
   );
 
+  event RoleProviderAdded(
+    address indexed administrator,
+    address indexed providerAddress,
+    uint32 timeToLive,
+    uint24 pullProviderIndex,
+    uint24 pushProviderIndex
+  );
+
   event RoleProviderRemoved(
     address indexed providerAddress,
+    uint24 pullProviderIndex,
+    uint24 pushProviderIndex
+  );
+
+  event RoleProviderRemoved(
+    address indexed administrator,
+    address indexed providerAddress,
+    uint32 timeToLive,
     uint24 pullProviderIndex,
     uint24 pushProviderIndex
   );
@@ -156,6 +209,17 @@ interface IFixedTermHooks {
     uint32 timeToLive,
     uint24 pullProviderIndex,
     uint24 pushProviderIndex
+  );
+
+  event RoleProviderUpdated(
+    address indexed administrator,
+    address indexed providerAddress,
+    uint32 previousTimeToLive,
+    uint32 newTimeToLive,
+    uint24 previousPullProviderIndex,
+    uint24 newPullProviderIndex,
+    uint24 previousPushProviderIndex,
+    uint24 newPushProviderIndex
   );
 
   event TemporaryExcessReserveRatioActivated(
