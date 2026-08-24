@@ -40,10 +40,13 @@ const makeFactoryMetadata = (
 describe("SDK deployment configuration", () => {
   it("pins the live Sepolia V2.5 deployment addresses", () => {
     expect(Deployments[SupportedChainId.Sepolia]).to.include({
-      HooksFactoryStandard: "0xAa9BbaE0D519e85B6aBEA81aD3C2cBeBfA57696C",
-      HooksFactoryRevolving: "0x76Fe050d91940a72133e1819BF34c1042d8DBe73",
-      MarketLensV2_5: "0x622286C01c6417531Fdb8e63E009a06247cc8117",
-      Wildcat4626WrapperFactory: "0x8a77449eaBB1522983cd700f002b5b191463378e"
+      HooksFactoryStandard: "0xbFbDaFc91977eE599a61B30D9e75788565Ad6d18",
+      HooksFactoryRevolving: "0x190B42942fe9492df9CeA441dA5c43309840E93A",
+      MarketLensV2_5: "0xcFc66c78CF7518A1378d751e1C3526eEad25A31A",
+      MockArchControllerOwner: "0x981f1Fb406bD7a8385f9373c08Ab4c832Ed0d508",
+      AccessListRoleProviderFactory: "0x92995EA2ba572E4Cb8bB41E30f813BeB77FD4974",
+      WildcatBorrowerIdentityRegistry: "0xc2cF90781595203D1e75c28246b306C95d4b8b21",
+      Wildcat4626WrapperFactory: "0x6B1DD93453584346C530A1646e98aB306fD6D37C"
     });
   });
 

@@ -743,6 +743,7 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   lenderAccount__lastUpdatedBlockNumber = 'lenderAccount__lastUpdatedBlockNumber',
   lenderAccount__lastUpdatedTimestamp = 'lenderAccount__lastUpdatedTimestamp',
   lenderAccount__numPendingWithdrawalBatches = 'lenderAccount__numPendingWithdrawalBatches',
+  lenderAccount__principalBasis = 'lenderAccount__principalBasis',
   lenderAccount__role = 'lenderAccount__role',
   lenderAccount__scaledBalance = 'lenderAccount__scaledBalance',
   lenderAccount__totalDeposited = 'lenderAccount__totalDeposited',
@@ -1003,6 +1004,14 @@ export enum SubgraphAdministratorChangeKind {
   TRANSFERRED = 'TRANSFERRED',
   TRANSFER_CANCELLED = 'TRANSFER_CANCELLED',
   TRANSFER_REQUESTED = 'TRANSFER_REQUESTED'
+}
+
+/** Indicates whether the current, partially filled bucket should be included in the response. Defaults to `exclude` */
+export enum SubgraphAggregation_Current {
+  /** Exclude the current, partially filled bucket from the response */
+  exclude = 'exclude',
+  /** Include the current, partially filled bucket in the response */
+  include = 'include'
 }
 
 export enum SubgraphAggregation_Interval {
@@ -6124,6 +6133,7 @@ export enum SubgraphDeposit_OrderBy {
   account__lastUpdatedBlockNumber = 'account__lastUpdatedBlockNumber',
   account__lastUpdatedTimestamp = 'account__lastUpdatedTimestamp',
   account__numPendingWithdrawalBatches = 'account__numPendingWithdrawalBatches',
+  account__principalBasis = 'account__principalBasis',
   account__role = 'account__role',
   account__scaledBalance = 'account__scaledBalance',
   account__totalDeposited = 'account__totalDeposited',
@@ -7666,6 +7676,7 @@ export enum SubgraphForceBuyBack_OrderBy {
   account__lastUpdatedBlockNumber = 'account__lastUpdatedBlockNumber',
   account__lastUpdatedTimestamp = 'account__lastUpdatedTimestamp',
   account__numPendingWithdrawalBatches = 'account__numPendingWithdrawalBatches',
+  account__principalBasis = 'account__principalBasis',
   account__role = 'account__role',
   account__scaledBalance = 'account__scaledBalance',
   account__totalDeposited = 'account__totalDeposited',
@@ -9087,16 +9098,12 @@ export type SubgraphHooksInstanceRoleProviderSnapshot_Filter = {
   or?: InputMaybe<Array<InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_Filter>>>;
   pullProviders?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pullProviders_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  pullProviders_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pullProviders_not?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pullProviders_not_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  pullProviders_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pushProviders?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pushProviders_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  pushProviders_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pushProviders_not?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pushProviders_not_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  pushProviders_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
@@ -10939,6 +10946,7 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   lenderAccount__lastUpdatedBlockNumber = 'lenderAccount__lastUpdatedBlockNumber',
   lenderAccount__lastUpdatedTimestamp = 'lenderAccount__lastUpdatedTimestamp',
   lenderAccount__numPendingWithdrawalBatches = 'lenderAccount__numPendingWithdrawalBatches',
+  lenderAccount__principalBasis = 'lenderAccount__principalBasis',
   lenderAccount__role = 'lenderAccount__role',
   lenderAccount__scaledBalance = 'lenderAccount__scaledBalance',
   lenderAccount__totalDeposited = 'lenderAccount__totalDeposited',
@@ -11049,6 +11057,7 @@ export type SubgraphLenderAccount = {
   lastUpdatedTimestamp: Scalars['Int']['output'];
   market: SubgraphMarket;
   numPendingWithdrawalBatches: Scalars['Int']['output'];
+  /** Nominal underlying principal still attached to the active market-token balance. */
   principalBasis: Scalars['BigInt']['output'];
   role: SubgraphLenderStatus;
   scaledBalance: Scalars['BigInt']['output'];
@@ -12319,6 +12328,7 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   account__lastUpdatedBlockNumber = 'account__lastUpdatedBlockNumber',
   account__lastUpdatedTimestamp = 'account__lastUpdatedTimestamp',
   account__numPendingWithdrawalBatches = 'account__numPendingWithdrawalBatches',
+  account__principalBasis = 'account__principalBasis',
   account__role = 'account__role',
   account__scaledBalance = 'account__scaledBalance',
   account__totalDeposited = 'account__totalDeposited',
@@ -12730,6 +12740,7 @@ export enum SubgraphLenderWithdrawalStatus_OrderBy {
   account__lastUpdatedBlockNumber = 'account__lastUpdatedBlockNumber',
   account__lastUpdatedTimestamp = 'account__lastUpdatedTimestamp',
   account__numPendingWithdrawalBatches = 'account__numPendingWithdrawalBatches',
+  account__principalBasis = 'account__principalBasis',
   account__role = 'account__role',
   account__scaledBalance = 'account__scaledBalance',
   account__totalDeposited = 'account__totalDeposited',
@@ -18348,6 +18359,8 @@ export enum SubgraphMarket_OrderBy {
   tokenWrapper__blockTimestamp = 'tokenWrapper__blockTimestamp',
   tokenWrapper__id = 'tokenWrapper__id',
   tokenWrapper__marketAddress = 'tokenWrapper__marketAddress',
+  tokenWrapper__principalBasis = 'tokenWrapper__principalBasis',
+  tokenWrapper__totalShares = 'tokenWrapper__totalShares',
   tokenWrapper__transactionHash = 'tokenWrapper__transactionHash',
   totalAssets = 'totalAssets',
   totalBaseInterestAccrued = 'totalBaseInterestAccrued',
@@ -21447,6 +21460,8 @@ export type SubgraphQuery = {
   roleProviderMembershipChanges: Array<SubgraphRoleProviderMembershipChange>;
   roleProviderRemoved?: Maybe<SubgraphRoleProviderRemoved>;
   roleProviderRemoveds: Array<SubgraphRoleProviderRemoved>;
+  roleProviderRootChange?: Maybe<SubgraphRoleProviderRootChange>;
+  roleProviderRootChanges: Array<SubgraphRoleProviderRootChange>;
   roleProviderUpdated?: Maybe<SubgraphRoleProviderUpdated>;
   roleProviderUpdateds: Array<SubgraphRoleProviderUpdated>;
   roleProviders: Array<SubgraphRoleProvider>;
@@ -21497,10 +21512,22 @@ export type SubgraphQuery = {
   updateProtocolFeeConfiguration?: Maybe<SubgraphUpdateProtocolFeeConfiguration>;
   updateProtocolFeeConfigurations: Array<SubgraphUpdateProtocolFeeConfiguration>;
   wildcat4626Wrapper?: Maybe<SubgraphWildcat4626Wrapper>;
+  wildcat4626WrapperAccount?: Maybe<SubgraphWildcat4626WrapperAccount>;
+  wildcat4626WrapperAccounts: Array<SubgraphWildcat4626WrapperAccount>;
   wildcat4626WrapperDeployed?: Maybe<SubgraphWildcat4626WrapperDeployed>;
   wildcat4626WrapperDeployeds: Array<SubgraphWildcat4626WrapperDeployed>;
+  wildcat4626WrapperDeposit?: Maybe<SubgraphWildcat4626WrapperDeposit>;
+  wildcat4626WrapperDeposits: Array<SubgraphWildcat4626WrapperDeposit>;
   wildcat4626WrapperFactories: Array<SubgraphWildcat4626WrapperFactory>;
   wildcat4626WrapperFactory?: Maybe<SubgraphWildcat4626WrapperFactory>;
+  wildcat4626WrapperTokensSwept?: Maybe<SubgraphWildcat4626WrapperTokensSwept>;
+  wildcat4626WrapperTokensSwepts: Array<SubgraphWildcat4626WrapperTokensSwept>;
+  wildcat4626WrapperTransactionCursor?: Maybe<SubgraphWildcat4626WrapperTransactionCursor>;
+  wildcat4626WrapperTransactionCursors: Array<SubgraphWildcat4626WrapperTransactionCursor>;
+  wildcat4626WrapperTransfer?: Maybe<SubgraphWildcat4626WrapperTransfer>;
+  wildcat4626WrapperTransfers: Array<SubgraphWildcat4626WrapperTransfer>;
+  wildcat4626WrapperWithdrawal?: Maybe<SubgraphWildcat4626WrapperWithdrawal>;
+  wildcat4626WrapperWithdrawals: Array<SubgraphWildcat4626WrapperWithdrawal>;
   wildcat4626Wrappers: Array<SubgraphWildcat4626Wrapper>;
   withdrawalBatch?: Maybe<SubgraphWithdrawalBatch>;
   withdrawalBatchCreated?: Maybe<SubgraphWithdrawalBatchCreated>;
@@ -23387,6 +23414,24 @@ export type SubgraphQueryRoleProviderRemovedsArgs = {
 };
 
 
+export type SubgraphQueryRoleProviderRootChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryRoleProviderRootChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphRoleProviderRootChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphRoleProviderRootChange_Filter>;
+};
+
+
 export type SubgraphQueryRoleProviderUpdatedArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
@@ -23837,6 +23882,24 @@ export type SubgraphQueryWildcat4626WrapperArgs = {
 };
 
 
+export type SubgraphQueryWildcat4626WrapperAccountArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryWildcat4626WrapperAccountsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWildcat4626WrapperAccount_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWildcat4626WrapperAccount_Filter>;
+};
+
+
 export type SubgraphQueryWildcat4626WrapperDeployedArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
@@ -23855,6 +23918,24 @@ export type SubgraphQueryWildcat4626WrapperDeployedsArgs = {
 };
 
 
+export type SubgraphQueryWildcat4626WrapperDepositArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryWildcat4626WrapperDepositsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWildcat4626WrapperDeposit_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWildcat4626WrapperDeposit_Filter>;
+};
+
+
 export type SubgraphQueryWildcat4626WrapperFactoriesArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -23870,6 +23951,78 @@ export type SubgraphQueryWildcat4626WrapperFactoryArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryWildcat4626WrapperTokensSweptArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryWildcat4626WrapperTokensSweptsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWildcat4626WrapperTokensSwept_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWildcat4626WrapperTokensSwept_Filter>;
+};
+
+
+export type SubgraphQueryWildcat4626WrapperTransactionCursorArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryWildcat4626WrapperTransactionCursorsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWildcat4626WrapperTransactionCursor_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWildcat4626WrapperTransactionCursor_Filter>;
+};
+
+
+export type SubgraphQueryWildcat4626WrapperTransferArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryWildcat4626WrapperTransfersArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWildcat4626WrapperTransfer_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWildcat4626WrapperTransfer_Filter>;
+};
+
+
+export type SubgraphQueryWildcat4626WrapperWithdrawalArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryWildcat4626WrapperWithdrawalsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWildcat4626WrapperWithdrawal_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphWildcat4626WrapperWithdrawal_Filter>;
 };
 
 
@@ -24957,8 +25110,15 @@ export enum SubgraphRoleProviderAdministratorChange_OrderBy {
   provider__deployer = 'provider__deployer',
   provider__id = 'provider__id',
   provider__kind = 'provider__kind',
+  provider__minAssets = 'provider__minAssets',
+  provider__minBalance = 'provider__minBalance',
   provider__pendingAdministrator = 'provider__pendingAdministrator',
+  provider__root = 'provider__root',
   provider__salt = 'provider__salt',
+  provider__skipInterfaceCheck = 'provider__skipInterfaceCheck',
+  provider__token = 'provider__token',
+  provider__tokenId = 'provider__tokenId',
+  provider__vault = 'provider__vault',
   transactionHash = 'transactionHash'
 }
 
@@ -25002,6 +25162,16 @@ export type SubgraphRoleProviderFactory_Filter = {
   and?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderFactory_Filter>>>;
   configured?: InputMaybe<Scalars['Boolean']['input']>;
   configuredStartBlock?: InputMaybe<Scalars['BigInt']['input']>;
+  configuredStartBlock_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  configuredStartBlock_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  configuredStartBlock_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  configuredStartBlock_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  configuredStartBlock_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  configuredStartBlock_not?: InputMaybe<Scalars['BigInt']['input']>;
+  configuredStartBlock_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  configured_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  configured_not?: InputMaybe<Scalars['Boolean']['input']>;
+  configured_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
   eventIndex?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -25011,6 +25181,25 @@ export type SubgraphRoleProviderFactory_Filter = {
   eventIndex_not?: InputMaybe<Scalars['Int']['input']>;
   eventIndex_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   generation?: InputMaybe<Scalars['String']['input']>;
+  generation_contains?: InputMaybe<Scalars['String']['input']>;
+  generation_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  generation_ends_with?: InputMaybe<Scalars['String']['input']>;
+  generation_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  generation_gt?: InputMaybe<Scalars['String']['input']>;
+  generation_gte?: InputMaybe<Scalars['String']['input']>;
+  generation_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  generation_lt?: InputMaybe<Scalars['String']['input']>;
+  generation_lte?: InputMaybe<Scalars['String']['input']>;
+  generation_not?: InputMaybe<Scalars['String']['input']>;
+  generation_not_contains?: InputMaybe<Scalars['String']['input']>;
+  generation_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  generation_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  generation_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  generation_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  generation_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  generation_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  generation_starts_with?: InputMaybe<Scalars['String']['input']>;
+  generation_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
   id_gte?: InputMaybe<Scalars['ID']['input']>;
@@ -25020,9 +25209,37 @@ export type SubgraphRoleProviderFactory_Filter = {
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   indexed?: InputMaybe<Scalars['Boolean']['input']>;
+  indexed_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  indexed_not?: InputMaybe<Scalars['Boolean']['input']>;
+  indexed_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
   kind?: InputMaybe<SubgraphRoleProviderKind>;
+  kind_in?: InputMaybe<Array<SubgraphRoleProviderKind>>;
+  kind_not?: InputMaybe<SubgraphRoleProviderKind>;
+  kind_not_in?: InputMaybe<Array<SubgraphRoleProviderKind>>;
   label?: InputMaybe<Scalars['String']['input']>;
+  label_contains?: InputMaybe<Scalars['String']['input']>;
+  label_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  label_ends_with?: InputMaybe<Scalars['String']['input']>;
+  label_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  label_gt?: InputMaybe<Scalars['String']['input']>;
+  label_gte?: InputMaybe<Scalars['String']['input']>;
+  label_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  label_lt?: InputMaybe<Scalars['String']['input']>;
+  label_lte?: InputMaybe<Scalars['String']['input']>;
+  label_not?: InputMaybe<Scalars['String']['input']>;
+  label_not_contains?: InputMaybe<Scalars['String']['input']>;
+  label_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  label_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  label_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  label_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  label_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  label_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  label_starts_with?: InputMaybe<Scalars['String']['input']>;
+  label_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   lifecycle?: InputMaybe<SubgraphFactoryLifecycle>;
+  lifecycle_in?: InputMaybe<Array<SubgraphFactoryLifecycle>>;
+  lifecycle_not?: InputMaybe<SubgraphFactoryLifecycle>;
+  lifecycle_not_in?: InputMaybe<Array<SubgraphFactoryLifecycle>>;
   or?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderFactory_Filter>>>;
   providers_?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
 };
@@ -25225,6 +25442,22 @@ export type SubgraphRoleProviderInstance_Filter = {
   kind_not_in?: InputMaybe<Array<SubgraphRoleProviderKind>>;
   members_?: InputMaybe<SubgraphRoleProviderMember_Filter>;
   membershipChanges_?: InputMaybe<SubgraphRoleProviderMembershipChange_Filter>;
+  minAssets?: InputMaybe<Scalars['BigInt']['input']>;
+  minAssets_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  minAssets_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  minAssets_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  minAssets_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  minAssets_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  minAssets_not?: InputMaybe<Scalars['BigInt']['input']>;
+  minAssets_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  minBalance?: InputMaybe<Scalars['BigInt']['input']>;
+  minBalance_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  minBalance_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  minBalance_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  minBalance_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  minBalance_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  minBalance_not?: InputMaybe<Scalars['BigInt']['input']>;
+  minBalance_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   or?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderInstance_Filter>>>;
   pendingAdministrator?: InputMaybe<Scalars['Bytes']['input']>;
   pendingAdministrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
@@ -25236,7 +25469,17 @@ export type SubgraphRoleProviderInstance_Filter = {
   pendingAdministrator_not?: InputMaybe<Scalars['Bytes']['input']>;
   pendingAdministrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   pendingAdministrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  root?: InputMaybe<Scalars['Bytes']['input']>;
   rootChanges_?: InputMaybe<SubgraphRoleProviderRootChange_Filter>;
+  root_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  root_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  root_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  root_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  root_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  root_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  root_not?: InputMaybe<Scalars['Bytes']['input']>;
+  root_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  root_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   salt?: InputMaybe<Scalars['Bytes']['input']>;
   salt_contains?: InputMaybe<Scalars['Bytes']['input']>;
   salt_gt?: InputMaybe<Scalars['Bytes']['input']>;
@@ -25247,6 +25490,38 @@ export type SubgraphRoleProviderInstance_Filter = {
   salt_not?: InputMaybe<Scalars['Bytes']['input']>;
   salt_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   salt_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  skipInterfaceCheck?: InputMaybe<Scalars['Boolean']['input']>;
+  skipInterfaceCheck_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  skipInterfaceCheck_not?: InputMaybe<Scalars['Boolean']['input']>;
+  skipInterfaceCheck_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  token?: InputMaybe<Scalars['Bytes']['input']>;
+  tokenId?: InputMaybe<Scalars['BigInt']['input']>;
+  tokenId_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  tokenId_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  tokenId_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  tokenId_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  tokenId_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  tokenId_not?: InputMaybe<Scalars['BigInt']['input']>;
+  tokenId_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  token_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  token_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  token_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  token_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  token_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  token_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  token_not?: InputMaybe<Scalars['Bytes']['input']>;
+  token_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  token_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  vault?: InputMaybe<Scalars['Bytes']['input']>;
+  vault_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  vault_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  vault_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  vault_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  vault_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  vault_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  vault_not?: InputMaybe<Scalars['Bytes']['input']>;
+  vault_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  vault_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
 };
 
 export enum SubgraphRoleProviderInstance_OrderBy {
@@ -25261,15 +25536,29 @@ export enum SubgraphRoleProviderInstance_OrderBy {
   deployer = 'deployer',
   deploymentFactory = 'deploymentFactory',
   deploymentFactory__address = 'deploymentFactory__address',
+  deploymentFactory__configured = 'deploymentFactory__configured',
+  deploymentFactory__configuredStartBlock = 'deploymentFactory__configuredStartBlock',
   deploymentFactory__eventIndex = 'deploymentFactory__eventIndex',
+  deploymentFactory__generation = 'deploymentFactory__generation',
   deploymentFactory__id = 'deploymentFactory__id',
+  deploymentFactory__indexed = 'deploymentFactory__indexed',
+  deploymentFactory__kind = 'deploymentFactory__kind',
+  deploymentFactory__label = 'deploymentFactory__label',
+  deploymentFactory__lifecycle = 'deploymentFactory__lifecycle',
   id = 'id',
   kind = 'kind',
   members = 'members',
   membershipChanges = 'membershipChanges',
+  minAssets = 'minAssets',
+  minBalance = 'minBalance',
   pendingAdministrator = 'pendingAdministrator',
+  root = 'root',
   rootChanges = 'rootChanges',
-  salt = 'salt'
+  salt = 'salt',
+  skipInterfaceCheck = 'skipInterfaceCheck',
+  token = 'token',
+  tokenId = 'tokenId',
+  vault = 'vault'
 }
 
 export enum SubgraphRoleProviderKind {
@@ -25404,8 +25693,15 @@ export enum SubgraphRoleProviderMember_OrderBy {
   provider__deployer = 'provider__deployer',
   provider__id = 'provider__id',
   provider__kind = 'provider__kind',
+  provider__minAssets = 'provider__minAssets',
+  provider__minBalance = 'provider__minBalance',
   provider__pendingAdministrator = 'provider__pendingAdministrator',
+  provider__root = 'provider__root',
   provider__salt = 'provider__salt',
+  provider__skipInterfaceCheck = 'provider__skipInterfaceCheck',
+  provider__token = 'provider__token',
+  provider__tokenId = 'provider__tokenId',
+  provider__vault = 'provider__vault',
   updatedAtBlock = 'updatedAtBlock',
   updatedAtLogIndex = 'updatedAtLogIndex',
   updatedAtTimestamp = 'updatedAtTimestamp',
@@ -25567,8 +25863,15 @@ export enum SubgraphRoleProviderMembershipChange_OrderBy {
   provider__deployer = 'provider__deployer',
   provider__id = 'provider__id',
   provider__kind = 'provider__kind',
+  provider__minAssets = 'provider__minAssets',
+  provider__minBalance = 'provider__minBalance',
   provider__pendingAdministrator = 'provider__pendingAdministrator',
+  provider__root = 'provider__root',
   provider__salt = 'provider__salt',
+  provider__skipInterfaceCheck = 'provider__skipInterfaceCheck',
+  provider__token = 'provider__token',
+  provider__tokenId = 'provider__tokenId',
+  provider__vault = 'provider__vault',
   transactionHash = 'transactionHash'
 }
 
@@ -25778,15 +26081,132 @@ export type SubgraphRoleProviderRootChange = {
 };
 
 export type SubgraphRoleProviderRootChange_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  administrator?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  administrator_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  administrator_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderRootChange_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  newRoot?: InputMaybe<Scalars['Bytes']['input']>;
+  newRoot_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  newRoot_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  newRoot_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  newRoot_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  newRoot_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  newRoot_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  newRoot_not?: InputMaybe<Scalars['Bytes']['input']>;
+  newRoot_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  newRoot_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphRoleProviderRootChange_Filter>>>;
+  previousRoot?: InputMaybe<Scalars['Bytes']['input']>;
+  previousRoot_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousRoot_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousRoot_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousRoot_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  previousRoot_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  previousRoot_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  previousRoot_not?: InputMaybe<Scalars['Bytes']['input']>;
+  previousRoot_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  previousRoot_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   provider?: InputMaybe<Scalars['String']['input']>;
+  provider_?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
+  provider_contains?: InputMaybe<Scalars['String']['input']>;
+  provider_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_ends_with?: InputMaybe<Scalars['String']['input']>;
+  provider_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_gt?: InputMaybe<Scalars['String']['input']>;
+  provider_gte?: InputMaybe<Scalars['String']['input']>;
+  provider_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  provider_lt?: InputMaybe<Scalars['String']['input']>;
+  provider_lte?: InputMaybe<Scalars['String']['input']>;
+  provider_not?: InputMaybe<Scalars['String']['input']>;
+  provider_not_contains?: InputMaybe<Scalars['String']['input']>;
+  provider_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  provider_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  provider_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  provider_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  provider_starts_with?: InputMaybe<Scalars['String']['input']>;
+  provider_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
 };
 
 export enum SubgraphRoleProviderRootChange_OrderBy {
+  administrator = 'administrator',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
   id = 'id',
+  newRoot = 'newRoot',
+  previousRoot = 'previousRoot',
+  provider = 'provider',
+  provider__address = 'provider__address',
+  provider__administrator = 'provider__administrator',
+  provider__deployedAtBlock = 'provider__deployedAtBlock',
+  provider__deployedAtLogIndex = 'provider__deployedAtLogIndex',
+  provider__deployedAtTimestamp = 'provider__deployedAtTimestamp',
+  provider__deployedAtTransaction = 'provider__deployedAtTransaction',
+  provider__deployer = 'provider__deployer',
+  provider__id = 'provider__id',
+  provider__kind = 'provider__kind',
+  provider__minAssets = 'provider__minAssets',
+  provider__minBalance = 'provider__minBalance',
+  provider__pendingAdministrator = 'provider__pendingAdministrator',
+  provider__root = 'provider__root',
+  provider__salt = 'provider__salt',
+  provider__skipInterfaceCheck = 'provider__skipInterfaceCheck',
+  provider__token = 'provider__token',
+  provider__tokenId = 'provider__tokenId',
+  provider__vault = 'provider__vault',
   transactionHash = 'transactionHash'
 }
 
@@ -26223,8 +26643,15 @@ export enum SubgraphRoleProvider_OrderBy {
   providerInstance__deployer = 'providerInstance__deployer',
   providerInstance__id = 'providerInstance__id',
   providerInstance__kind = 'providerInstance__kind',
+  providerInstance__minAssets = 'providerInstance__minAssets',
+  providerInstance__minBalance = 'providerInstance__minBalance',
   providerInstance__pendingAdministrator = 'providerInstance__pendingAdministrator',
+  providerInstance__root = 'providerInstance__root',
   providerInstance__salt = 'providerInstance__salt',
+  providerInstance__skipInterfaceCheck = 'providerInstance__skipInterfaceCheck',
+  providerInstance__token = 'providerInstance__token',
+  providerInstance__tokenId = 'providerInstance__tokenId',
+  providerInstance__vault = 'providerInstance__vault',
   pullProviderIndex = 'pullProviderIndex',
   pushProviderIndex = 'pushProviderIndex',
   removedEvent = 'removedEvent',
@@ -29731,2797 +30158,6 @@ export enum SubgraphSubgraphVersion_OrderBy {
   id = 'id'
 }
 
-export type SubgraphSubscription = {
-  __typename: 'Subscription';
-  /** Access to subgraph metadata */
-  _meta?: Maybe<Subgraph_Meta_>;
-  accountAccessGranted?: Maybe<SubgraphAccountAccessGranted>;
-  accountAccessGranteds: Array<SubgraphAccountAccessGranted>;
-  accountAccessRevoked?: Maybe<SubgraphAccountAccessRevoked>;
-  accountAccessRevokeds: Array<SubgraphAccountAccessRevoked>;
-  accountBlockedFromDeposits?: Maybe<SubgraphAccountBlockedFromDeposits>;
-  accountBlockedFromDeposits_collection: Array<SubgraphAccountBlockedFromDeposits>;
-  accountMadeFirstDeposit?: Maybe<SubgraphAccountMadeFirstDeposit>;
-  accountMadeFirstDeposits: Array<SubgraphAccountMadeFirstDeposit>;
-  accountUnblockedFromDeposits?: Maybe<SubgraphAccountUnblockedFromDeposits>;
-  accountUnblockedFromDeposits_collection: Array<SubgraphAccountUnblockedFromDeposits>;
-  annualInterestBipsReductionExecuted?: Maybe<SubgraphAnnualInterestBipsReductionExecuted>;
-  annualInterestBipsReductionExecuteds: Array<SubgraphAnnualInterestBipsReductionExecuted>;
-  annualInterestBipsReductionProposalCancelled?: Maybe<SubgraphAnnualInterestBipsReductionProposalCancelled>;
-  annualInterestBipsReductionProposalCancelleds: Array<SubgraphAnnualInterestBipsReductionProposalCancelled>;
-  annualInterestBipsReductionProposed?: Maybe<SubgraphAnnualInterestBipsReductionProposed>;
-  annualInterestBipsReductionProposeds: Array<SubgraphAnnualInterestBipsReductionProposed>;
-  annualInterestBipsUpdated?: Maybe<SubgraphAnnualInterestBipsUpdated>;
-  annualInterestBipsUpdateds: Array<SubgraphAnnualInterestBipsUpdated>;
-  approval?: Maybe<SubgraphApproval>;
-  approvals: Array<SubgraphApproval>;
-  approvedCollateralExchange?: Maybe<SubgraphApprovedCollateralExchange>;
-  approvedCollateralExchanges: Array<SubgraphApprovedCollateralExchange>;
-  approvedLiquidator?: Maybe<SubgraphApprovedLiquidator>;
-  approvedLiquidators: Array<SubgraphApprovedLiquidator>;
-  archController?: Maybe<SubgraphArchController>;
-  archControllers: Array<SubgraphArchController>;
-  borrow?: Maybe<SubgraphBorrow>;
-  borrower?: Maybe<SubgraphBorrower>;
-  borrowerAccount?: Maybe<SubgraphBorrowerAccount>;
-  borrowerAccountFactories: Array<SubgraphBorrowerAccountFactory>;
-  borrowerAccountFactory?: Maybe<SubgraphBorrowerAccountFactory>;
-  borrowerAccountFactoryChange?: Maybe<SubgraphBorrowerAccountFactoryChange>;
-  borrowerAccountFactoryChanges: Array<SubgraphBorrowerAccountFactoryChange>;
-  borrowerAccountPrincipalChange?: Maybe<SubgraphBorrowerAccountPrincipalChange>;
-  borrowerAccountPrincipalChanges: Array<SubgraphBorrowerAccountPrincipalChange>;
-  borrowerAccounts: Array<SubgraphBorrowerAccount>;
-  borrowerDailyStats?: Maybe<SubgraphBorrowerDailyStats>;
-  borrowerDailyStats_collection: Array<SubgraphBorrowerDailyStats>;
-  borrowerIdentityRegistries: Array<SubgraphBorrowerIdentityRegistry>;
-  borrowerIdentityRegistry?: Maybe<SubgraphBorrowerIdentityRegistry>;
-  borrowerRegistrationChange?: Maybe<SubgraphBorrowerRegistrationChange>;
-  borrowerRegistrationChanges: Array<SubgraphBorrowerRegistrationChange>;
-  borrowerStats?: Maybe<SubgraphBorrowerStats>;
-  borrowerStats_collection: Array<SubgraphBorrowerStats>;
-  borrowers: Array<SubgraphBorrower>;
-  borrows: Array<SubgraphBorrow>;
-  collateralExchangeApproved?: Maybe<SubgraphCollateralExchangeApproved>;
-  collateralExchangeApproveds: Array<SubgraphCollateralExchangeApproved>;
-  collateralExchangeRemoved?: Maybe<SubgraphCollateralExchangeRemoved>;
-  collateralExchangeRemoveds: Array<SubgraphCollateralExchangeRemoved>;
-  controller?: Maybe<SubgraphController>;
-  controllerAdded?: Maybe<SubgraphControllerAdded>;
-  controllerAddeds: Array<SubgraphControllerAdded>;
-  controllerFactories: Array<SubgraphControllerFactory>;
-  controllerFactory?: Maybe<SubgraphControllerFactory>;
-  controllerFactoryAdded?: Maybe<SubgraphControllerFactoryAdded>;
-  controllerFactoryAddeds: Array<SubgraphControllerFactoryAdded>;
-  controllerFactoryRemoved?: Maybe<SubgraphControllerFactoryRemoved>;
-  controllerFactoryRemoveds: Array<SubgraphControllerFactoryRemoved>;
-  controllerRemoved?: Maybe<SubgraphControllerRemoved>;
-  controllerRemoveds: Array<SubgraphControllerRemoved>;
-  controllers: Array<SubgraphController>;
-  debtRepaid?: Maybe<SubgraphDebtRepaid>;
-  debtRepaids: Array<SubgraphDebtRepaid>;
-  delinquencyStatusChanged?: Maybe<SubgraphDelinquencyStatusChanged>;
-  delinquencyStatusChangeds: Array<SubgraphDelinquencyStatusChanged>;
-  deposit?: Maybe<SubgraphDeposit>;
-  deposits: Array<SubgraphDeposit>;
-  disabledForceBuyBacks?: Maybe<SubgraphDisabledForceBuyBacks>;
-  disabledForceBuyBacks_collection: Array<SubgraphDisabledForceBuyBacks>;
-  drawnAmountUpdate?: Maybe<SubgraphDrawnAmountUpdate>;
-  drawnAmountUpdates: Array<SubgraphDrawnAmountUpdate>;
-  factoryRegistration?: Maybe<SubgraphFactoryRegistration>;
-  factoryRegistrationEvent?: Maybe<SubgraphFactoryRegistrationEvent>;
-  factoryRegistrationEvents: Array<SubgraphFactoryRegistrationEvent>;
-  factoryRegistrations: Array<SubgraphFactoryRegistration>;
-  feesCollected?: Maybe<SubgraphFeesCollected>;
-  feesCollecteds: Array<SubgraphFeesCollected>;
-  fixedTermUpdated?: Maybe<SubgraphFixedTermUpdated>;
-  fixedTermUpdateds: Array<SubgraphFixedTermUpdated>;
-  forceBuyBack?: Maybe<SubgraphForceBuyBack>;
-  forceBuyBacks: Array<SubgraphForceBuyBack>;
-  hookAdministratorChange?: Maybe<SubgraphHookAdministratorChange>;
-  hookAdministratorChanges: Array<SubgraphHookAdministratorChange>;
-  hooksConfig?: Maybe<SubgraphHooksConfig>;
-  hooksConfigs: Array<SubgraphHooksConfig>;
-  hooksFactories: Array<SubgraphHooksFactory>;
-  hooksFactory?: Maybe<SubgraphHooksFactory>;
-  hooksInstance?: Maybe<SubgraphHooksInstance>;
-  hooksInstanceDeployed?: Maybe<SubgraphHooksInstanceDeployed>;
-  hooksInstanceDeployeds: Array<SubgraphHooksInstanceDeployed>;
-  hooksInstanceRoleProviderSnapshot?: Maybe<SubgraphHooksInstanceRoleProviderSnapshot>;
-  hooksInstanceRoleProviderSnapshots: Array<SubgraphHooksInstanceRoleProviderSnapshot>;
-  hooksInstances: Array<SubgraphHooksInstance>;
-  hooksNameUpdated?: Maybe<SubgraphHooksNameUpdated>;
-  hooksNameUpdateds: Array<SubgraphHooksNameUpdated>;
-  hooksTemplate?: Maybe<SubgraphHooksTemplate>;
-  hooksTemplateRegistration?: Maybe<SubgraphHooksTemplateRegistration>;
-  hooksTemplateRegistrationEvent?: Maybe<SubgraphHooksTemplateRegistrationEvent>;
-  hooksTemplateRegistrationEvents: Array<SubgraphHooksTemplateRegistrationEvent>;
-  hooksTemplateRegistrations: Array<SubgraphHooksTemplateRegistration>;
-  hooksTemplates: Array<SubgraphHooksTemplate>;
-  indexerDeployment?: Maybe<SubgraphIndexerDeployment>;
-  indexerDeployments: Array<SubgraphIndexerDeployment>;
-  indexerDiagnostic?: Maybe<SubgraphIndexerDiagnostic>;
-  indexerDiagnostics: Array<SubgraphIndexerDiagnostic>;
-  knownLenderStatus?: Maybe<SubgraphKnownLenderStatus>;
-  knownLenderStatuses: Array<SubgraphKnownLenderStatus>;
-  lenderAccount?: Maybe<SubgraphLenderAccount>;
-  lenderAccountSnapshot?: Maybe<SubgraphLenderAccountSnapshot>;
-  lenderAccountSnapshots: Array<SubgraphLenderAccountSnapshot>;
-  lenderAccounts: Array<SubgraphLenderAccount>;
-  lenderAuthorization?: Maybe<SubgraphLenderAuthorization>;
-  lenderAuthorizationChange?: Maybe<SubgraphLenderAuthorizationChange>;
-  lenderAuthorizationChanges: Array<SubgraphLenderAuthorizationChange>;
-  lenderAuthorizations: Array<SubgraphLenderAuthorization>;
-  lenderDailyStats?: Maybe<SubgraphLenderDailyStats>;
-  lenderDailyStats_collection: Array<SubgraphLenderDailyStats>;
-  lenderHooksAccess?: Maybe<SubgraphLenderHooksAccess>;
-  lenderHooksAccesses: Array<SubgraphLenderHooksAccess>;
-  lenderInterestAccrued?: Maybe<SubgraphLenderInterestAccrued>;
-  lenderInterestAccrueds: Array<SubgraphLenderInterestAccrued>;
-  lenderStats?: Maybe<SubgraphLenderStats>;
-  lenderStats_collection: Array<SubgraphLenderStats>;
-  lenderWithdrawalStatus?: Maybe<SubgraphLenderWithdrawalStatus>;
-  lenderWithdrawalStatuses: Array<SubgraphLenderWithdrawalStatus>;
-  liquidatorApproved?: Maybe<SubgraphLiquidatorApproved>;
-  liquidatorApproveds: Array<SubgraphLiquidatorApproved>;
-  liquidatorRemoved?: Maybe<SubgraphLiquidatorRemoved>;
-  liquidatorRemoveds: Array<SubgraphLiquidatorRemoved>;
-  market?: Maybe<SubgraphMarket>;
-  marketAdded?: Maybe<SubgraphMarketAdded>;
-  marketAddeds: Array<SubgraphMarketAdded>;
-  marketBorrowerChange?: Maybe<SubgraphMarketBorrowerChange>;
-  marketBorrowerChanges: Array<SubgraphMarketBorrowerChange>;
-  marketClosed?: Maybe<SubgraphMarketClosed>;
-  marketCloseds: Array<SubgraphMarketClosed>;
-  marketDailyStats?: Maybe<SubgraphMarketDailyStats>;
-  marketDailyStats_collection: Array<SubgraphMarketDailyStats>;
-  marketDeployed?: Maybe<SubgraphMarketDeployed>;
-  marketDeployeds: Array<SubgraphMarketDeployed>;
-  marketDeploymentConfig?: Maybe<SubgraphMarketDeploymentConfig>;
-  marketDeploymentConfigs: Array<SubgraphMarketDeploymentConfig>;
-  marketEvent?: Maybe<SubgraphMarketEvent>;
-  marketEventCursor?: Maybe<SubgraphMarketEventCursor>;
-  marketEventCursors: Array<SubgraphMarketEventCursor>;
-  marketEvents: Array<SubgraphMarketEvent>;
-  marketHooksData?: Maybe<SubgraphMarketHooksData>;
-  marketHooksDatas: Array<SubgraphMarketHooksData>;
-  marketInterestAccrued?: Maybe<SubgraphMarketInterestAccrued>;
-  marketInterestAccrueds: Array<SubgraphMarketInterestAccrued>;
-  marketRemoved?: Maybe<SubgraphMarketRemoved>;
-  marketRemoveds: Array<SubgraphMarketRemoved>;
-  marketSnapshot?: Maybe<SubgraphMarketSnapshot>;
-  marketSnapshots: Array<SubgraphMarketSnapshot>;
-  marketWrapperRegistration?: Maybe<SubgraphMarketWrapperRegistration>;
-  marketWrapperRegistrations: Array<SubgraphMarketWrapperRegistration>;
-  markets: Array<SubgraphMarket>;
-  maxTotalSupplyUpdated?: Maybe<SubgraphMaxTotalSupplyUpdated>;
-  maxTotalSupplyUpdateds: Array<SubgraphMaxTotalSupplyUpdated>;
-  minimumDepositUpdated?: Maybe<SubgraphMinimumDepositUpdated>;
-  minimumDepositUpdateds: Array<SubgraphMinimumDepositUpdated>;
-  newController?: Maybe<SubgraphNewController>;
-  newControllers: Array<SubgraphNewController>;
-  newSanctionsEscrow?: Maybe<SubgraphNewSanctionsEscrow>;
-  newSanctionsEscrows: Array<SubgraphNewSanctionsEscrow>;
-  ownershipHandoverCanceled?: Maybe<SubgraphOwnershipHandoverCanceled>;
-  ownershipHandoverCanceleds: Array<SubgraphOwnershipHandoverCanceled>;
-  ownershipHandoverRequested?: Maybe<SubgraphOwnershipHandoverRequested>;
-  ownershipHandoverRequesteds: Array<SubgraphOwnershipHandoverRequested>;
-  ownershipTransferred?: Maybe<SubgraphOwnershipTransferred>;
-  ownershipTransferreds: Array<SubgraphOwnershipTransferred>;
-  parameterConstraints?: Maybe<SubgraphParameterConstraints>;
-  parameterConstraints_collection: Array<SubgraphParameterConstraints>;
-  pendingMarketDeployment?: Maybe<SubgraphPendingMarketDeployment>;
-  pendingMarketDeployments: Array<SubgraphPendingMarketDeployment>;
-  periodicTermClosed?: Maybe<SubgraphPeriodicTermClosed>;
-  periodicTermCloseds: Array<SubgraphPeriodicTermClosed>;
-  periodicTermUpdated?: Maybe<SubgraphPeriodicTermUpdated>;
-  periodicTermUpdateds: Array<SubgraphPeriodicTermUpdated>;
-  protocolDailyStats?: Maybe<SubgraphProtocolDailyStats>;
-  protocolDailyStats_collection: Array<SubgraphProtocolDailyStats>;
-  protocolFeeBipsUpdated?: Maybe<SubgraphProtocolFeeBipsUpdated>;
-  protocolFeeBipsUpdateds: Array<SubgraphProtocolFeeBipsUpdated>;
-  protocolStats?: Maybe<SubgraphProtocolStats>;
-  protocolStats_collection: Array<SubgraphProtocolStats>;
-  registeredBorrower?: Maybe<SubgraphRegisteredBorrower>;
-  registeredBorrowers: Array<SubgraphRegisteredBorrower>;
-  reserveRatioBipsUpdated?: Maybe<SubgraphReserveRatioBipsUpdated>;
-  reserveRatioBipsUpdateds: Array<SubgraphReserveRatioBipsUpdated>;
-  revolvingMarketDeployment?: Maybe<SubgraphRevolvingMarketDeployment>;
-  revolvingMarketDeployments: Array<SubgraphRevolvingMarketDeployment>;
-  roleProvider?: Maybe<SubgraphRoleProvider>;
-  roleProviderAdded?: Maybe<SubgraphRoleProviderAdded>;
-  roleProviderAddeds: Array<SubgraphRoleProviderAdded>;
-  roleProviderAdministratorChange?: Maybe<SubgraphRoleProviderAdministratorChange>;
-  roleProviderAdministratorChanges: Array<SubgraphRoleProviderAdministratorChange>;
-  roleProviderFactories: Array<SubgraphRoleProviderFactory>;
-  roleProviderFactory?: Maybe<SubgraphRoleProviderFactory>;
-  roleProviderInstance?: Maybe<SubgraphRoleProviderInstance>;
-  roleProviderInstances: Array<SubgraphRoleProviderInstance>;
-  roleProviderMember?: Maybe<SubgraphRoleProviderMember>;
-  roleProviderMembers: Array<SubgraphRoleProviderMember>;
-  roleProviderMembershipChange?: Maybe<SubgraphRoleProviderMembershipChange>;
-  roleProviderMembershipChanges: Array<SubgraphRoleProviderMembershipChange>;
-  roleProviderRemoved?: Maybe<SubgraphRoleProviderRemoved>;
-  roleProviderRemoveds: Array<SubgraphRoleProviderRemoved>;
-  roleProviderUpdated?: Maybe<SubgraphRoleProviderUpdated>;
-  roleProviderUpdateds: Array<SubgraphRoleProviderUpdated>;
-  roleProviders: Array<SubgraphRoleProvider>;
-  sanctionOverride?: Maybe<SubgraphSanctionOverride>;
-  sanctionOverrideRemoved?: Maybe<SubgraphSanctionOverrideRemoved>;
-  sanctionOverrideRemoveds: Array<SubgraphSanctionOverrideRemoved>;
-  sanctionOverrideStatus?: Maybe<SubgraphSanctionOverrideStatus>;
-  sanctionOverrideStatuses: Array<SubgraphSanctionOverrideStatus>;
-  sanctionOverrides: Array<SubgraphSanctionOverride>;
-  sanctionedAccountAssetsQueuedForWithdrawal?: Maybe<SubgraphSanctionedAccountAssetsQueuedForWithdrawal>;
-  sanctionedAccountAssetsQueuedForWithdrawals: Array<SubgraphSanctionedAccountAssetsQueuedForWithdrawal>;
-  sanctionedAccountAssetsSentToEscrow?: Maybe<SubgraphSanctionedAccountAssetsSentToEscrow>;
-  sanctionedAccountAssetsSentToEscrows: Array<SubgraphSanctionedAccountAssetsSentToEscrow>;
-  sanctionedAccountWithdrawalSentToEscrow?: Maybe<SubgraphSanctionedAccountWithdrawalSentToEscrow>;
-  sanctionedAccountWithdrawalSentToEscrows: Array<SubgraphSanctionedAccountWithdrawalSentToEscrow>;
-  sanctionsEscrow?: Maybe<SubgraphSanctionsEscrow>;
-  sanctionsEscrows: Array<SubgraphSanctionsEscrow>;
-  simpleCollateralContract?: Maybe<SubgraphSimpleCollateralContract>;
-  simpleCollateralContractCreated?: Maybe<SubgraphSimpleCollateralContractCreated>;
-  simpleCollateralContractCreateds: Array<SubgraphSimpleCollateralContractCreated>;
-  simpleCollateralContractDeposit?: Maybe<SubgraphSimpleCollateralContractDeposit>;
-  simpleCollateralContractDepositor?: Maybe<SubgraphSimpleCollateralContractDepositor>;
-  simpleCollateralContractDepositors: Array<SubgraphSimpleCollateralContractDepositor>;
-  simpleCollateralContractDeposits: Array<SubgraphSimpleCollateralContractDeposit>;
-  simpleCollateralContractFullReset?: Maybe<SubgraphSimpleCollateralContractFullReset>;
-  simpleCollateralContractFullResets: Array<SubgraphSimpleCollateralContractFullReset>;
-  simpleCollateralContractLiquidatedSharesReset?: Maybe<SubgraphSimpleCollateralContractLiquidatedSharesReset>;
-  simpleCollateralContractLiquidatedSharesResets: Array<SubgraphSimpleCollateralContractLiquidatedSharesReset>;
-  simpleCollateralContractLiquidation?: Maybe<SubgraphSimpleCollateralContractLiquidation>;
-  simpleCollateralContractLiquidations: Array<SubgraphSimpleCollateralContractLiquidation>;
-  simpleCollateralContractReclaim?: Maybe<SubgraphSimpleCollateralContractReclaim>;
-  simpleCollateralContractReclaims: Array<SubgraphSimpleCollateralContractReclaim>;
-  simpleCollateralContractSnapshot?: Maybe<SubgraphSimpleCollateralContractSnapshot>;
-  simpleCollateralContractSnapshots: Array<SubgraphSimpleCollateralContractSnapshot>;
-  simpleCollateralContracts: Array<SubgraphSimpleCollateralContract>;
-  simpleCollateralFactories: Array<SubgraphSimpleCollateralFactory>;
-  simpleCollateralFactory?: Maybe<SubgraphSimpleCollateralFactory>;
-  simpleCollateralMarketIndex?: Maybe<SubgraphSimpleCollateralMarketIndex>;
-  simpleCollateralMarketIndexes: Array<SubgraphSimpleCollateralMarketIndex>;
-  subgraphVersion?: Maybe<SubgraphSubgraphVersion>;
-  subgraphVersions: Array<SubgraphSubgraphVersion>;
-  token?: Maybe<SubgraphToken>;
-  tokenDailyPrice?: Maybe<SubgraphTokenDailyPrice>;
-  tokenDailyPrices: Array<SubgraphTokenDailyPrice>;
-  tokens: Array<SubgraphToken>;
-  transfer?: Maybe<SubgraphTransfer>;
-  transfers: Array<SubgraphTransfer>;
-  updateProtocolFeeConfiguration?: Maybe<SubgraphUpdateProtocolFeeConfiguration>;
-  updateProtocolFeeConfigurations: Array<SubgraphUpdateProtocolFeeConfiguration>;
-  wildcat4626Wrapper?: Maybe<SubgraphWildcat4626Wrapper>;
-  wildcat4626WrapperDeployed?: Maybe<SubgraphWildcat4626WrapperDeployed>;
-  wildcat4626WrapperDeployeds: Array<SubgraphWildcat4626WrapperDeployed>;
-  wildcat4626WrapperFactories: Array<SubgraphWildcat4626WrapperFactory>;
-  wildcat4626WrapperFactory?: Maybe<SubgraphWildcat4626WrapperFactory>;
-  wildcat4626Wrappers: Array<SubgraphWildcat4626Wrapper>;
-  withdrawalBatch?: Maybe<SubgraphWithdrawalBatch>;
-  withdrawalBatchCreated?: Maybe<SubgraphWithdrawalBatchCreated>;
-  withdrawalBatchCreateds: Array<SubgraphWithdrawalBatchCreated>;
-  withdrawalBatchExpired?: Maybe<SubgraphWithdrawalBatchExpired>;
-  withdrawalBatchExpireds: Array<SubgraphWithdrawalBatchExpired>;
-  withdrawalBatchInterestAccrued?: Maybe<SubgraphWithdrawalBatchInterestAccrued>;
-  withdrawalBatchInterestAccrueds: Array<SubgraphWithdrawalBatchInterestAccrued>;
-  withdrawalBatchPayment?: Maybe<SubgraphWithdrawalBatchPayment>;
-  withdrawalBatchPayments: Array<SubgraphWithdrawalBatchPayment>;
-  withdrawalBatches: Array<SubgraphWithdrawalBatch>;
-  withdrawalExecution?: Maybe<SubgraphWithdrawalExecution>;
-  withdrawalExecutions: Array<SubgraphWithdrawalExecution>;
-  withdrawalRequest?: Maybe<SubgraphWithdrawalRequest>;
-  withdrawalRequests: Array<SubgraphWithdrawalRequest>;
-  wrapperMarketIndex?: Maybe<SubgraphWrapperMarketIndex>;
-  wrapperMarketIndexes: Array<SubgraphWrapperMarketIndex>;
-};
-
-
-export type SubgraphSubscription_MetaArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-};
-
-
-export type SubgraphSubscriptionAccountAccessGrantedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionAccountAccessGrantedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphAccountAccessGranted_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphAccountAccessGranted_Filter>;
-};
-
-
-export type SubgraphSubscriptionAccountAccessRevokedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionAccountAccessRevokedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphAccountAccessRevoked_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphAccountAccessRevoked_Filter>;
-};
-
-
-export type SubgraphSubscriptionAccountBlockedFromDepositsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionAccountBlockedFromDeposits_CollectionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphAccountBlockedFromDeposits_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphAccountBlockedFromDeposits_Filter>;
-};
-
-
-export type SubgraphSubscriptionAccountMadeFirstDepositArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionAccountMadeFirstDepositsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphAccountMadeFirstDeposit_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphAccountMadeFirstDeposit_Filter>;
-};
-
-
-export type SubgraphSubscriptionAccountUnblockedFromDepositsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionAccountUnblockedFromDeposits_CollectionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphAccountUnblockedFromDeposits_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphAccountUnblockedFromDeposits_Filter>;
-};
-
-
-export type SubgraphSubscriptionAnnualInterestBipsReductionExecutedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionAnnualInterestBipsReductionExecutedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphAnnualInterestBipsReductionExecuted_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphAnnualInterestBipsReductionExecuted_Filter>;
-};
-
-
-export type SubgraphSubscriptionAnnualInterestBipsReductionProposalCancelledArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionAnnualInterestBipsReductionProposalCancelledsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphAnnualInterestBipsReductionProposalCancelled_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphAnnualInterestBipsReductionProposalCancelled_Filter>;
-};
-
-
-export type SubgraphSubscriptionAnnualInterestBipsReductionProposedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionAnnualInterestBipsReductionProposedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphAnnualInterestBipsReductionProposed_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphAnnualInterestBipsReductionProposed_Filter>;
-};
-
-
-export type SubgraphSubscriptionAnnualInterestBipsUpdatedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionAnnualInterestBipsUpdatedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphAnnualInterestBipsUpdated_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphAnnualInterestBipsUpdated_Filter>;
-};
-
-
-export type SubgraphSubscriptionApprovalArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionApprovalsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphApproval_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphApproval_Filter>;
-};
-
-
-export type SubgraphSubscriptionApprovedCollateralExchangeArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionApprovedCollateralExchangesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphApprovedCollateralExchange_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphApprovedCollateralExchange_Filter>;
-};
-
-
-export type SubgraphSubscriptionApprovedLiquidatorArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionApprovedLiquidatorsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphApprovedLiquidator_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphApprovedLiquidator_Filter>;
-};
-
-
-export type SubgraphSubscriptionArchControllerArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionArchControllersArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphArchController_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphArchController_Filter>;
-};
-
-
-export type SubgraphSubscriptionBorrowArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionBorrowerArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionBorrowerAccountArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionBorrowerAccountFactoriesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphBorrowerAccountFactory_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphBorrowerAccountFactory_Filter>;
-};
-
-
-export type SubgraphSubscriptionBorrowerAccountFactoryArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionBorrowerAccountFactoryChangeArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionBorrowerAccountFactoryChangesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphBorrowerAccountFactoryChange_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphBorrowerAccountFactoryChange_Filter>;
-};
-
-
-export type SubgraphSubscriptionBorrowerAccountPrincipalChangeArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionBorrowerAccountPrincipalChangesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphBorrowerAccountPrincipalChange_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphBorrowerAccountPrincipalChange_Filter>;
-};
-
-
-export type SubgraphSubscriptionBorrowerAccountsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphBorrowerAccount_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphBorrowerAccount_Filter>;
-};
-
-
-export type SubgraphSubscriptionBorrowerDailyStatsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionBorrowerDailyStats_CollectionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphBorrowerDailyStats_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphBorrowerDailyStats_Filter>;
-};
-
-
-export type SubgraphSubscriptionBorrowerIdentityRegistriesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphBorrowerIdentityRegistry_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphBorrowerIdentityRegistry_Filter>;
-};
-
-
-export type SubgraphSubscriptionBorrowerIdentityRegistryArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionBorrowerRegistrationChangeArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionBorrowerRegistrationChangesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphBorrowerRegistrationChange_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphBorrowerRegistrationChange_Filter>;
-};
-
-
-export type SubgraphSubscriptionBorrowerStatsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionBorrowerStats_CollectionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphBorrowerStats_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphBorrowerStats_Filter>;
-};
-
-
-export type SubgraphSubscriptionBorrowersArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphBorrower_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphBorrower_Filter>;
-};
-
-
-export type SubgraphSubscriptionBorrowsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphBorrow_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphBorrow_Filter>;
-};
-
-
-export type SubgraphSubscriptionCollateralExchangeApprovedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionCollateralExchangeApprovedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphCollateralExchangeApproved_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphCollateralExchangeApproved_Filter>;
-};
-
-
-export type SubgraphSubscriptionCollateralExchangeRemovedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionCollateralExchangeRemovedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphCollateralExchangeRemoved_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphCollateralExchangeRemoved_Filter>;
-};
-
-
-export type SubgraphSubscriptionControllerArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionControllerAddedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionControllerAddedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphControllerAdded_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphControllerAdded_Filter>;
-};
-
-
-export type SubgraphSubscriptionControllerFactoriesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphControllerFactory_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphControllerFactory_Filter>;
-};
-
-
-export type SubgraphSubscriptionControllerFactoryArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionControllerFactoryAddedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionControllerFactoryAddedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphControllerFactoryAdded_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphControllerFactoryAdded_Filter>;
-};
-
-
-export type SubgraphSubscriptionControllerFactoryRemovedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionControllerFactoryRemovedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphControllerFactoryRemoved_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphControllerFactoryRemoved_Filter>;
-};
-
-
-export type SubgraphSubscriptionControllerRemovedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionControllerRemovedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphControllerRemoved_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphControllerRemoved_Filter>;
-};
-
-
-export type SubgraphSubscriptionControllersArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphController_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphController_Filter>;
-};
-
-
-export type SubgraphSubscriptionDebtRepaidArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionDebtRepaidsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphDebtRepaid_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphDebtRepaid_Filter>;
-};
-
-
-export type SubgraphSubscriptionDelinquencyStatusChangedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionDelinquencyStatusChangedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphDelinquencyStatusChanged_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphDelinquencyStatusChanged_Filter>;
-};
-
-
-export type SubgraphSubscriptionDepositArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionDepositsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphDeposit_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphDeposit_Filter>;
-};
-
-
-export type SubgraphSubscriptionDisabledForceBuyBacksArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionDisabledForceBuyBacks_CollectionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphDisabledForceBuyBacks_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphDisabledForceBuyBacks_Filter>;
-};
-
-
-export type SubgraphSubscriptionDrawnAmountUpdateArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionDrawnAmountUpdatesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphDrawnAmountUpdate_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphDrawnAmountUpdate_Filter>;
-};
-
-
-export type SubgraphSubscriptionFactoryRegistrationArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionFactoryRegistrationEventArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionFactoryRegistrationEventsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphFactoryRegistrationEvent_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphFactoryRegistrationEvent_Filter>;
-};
-
-
-export type SubgraphSubscriptionFactoryRegistrationsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphFactoryRegistration_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphFactoryRegistration_Filter>;
-};
-
-
-export type SubgraphSubscriptionFeesCollectedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionFeesCollectedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphFeesCollected_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphFeesCollected_Filter>;
-};
-
-
-export type SubgraphSubscriptionFixedTermUpdatedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionFixedTermUpdatedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphFixedTermUpdated_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphFixedTermUpdated_Filter>;
-};
-
-
-export type SubgraphSubscriptionForceBuyBackArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionForceBuyBacksArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphForceBuyBack_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphForceBuyBack_Filter>;
-};
-
-
-export type SubgraphSubscriptionHookAdministratorChangeArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionHookAdministratorChangesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphHookAdministratorChange_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphHookAdministratorChange_Filter>;
-};
-
-
-export type SubgraphSubscriptionHooksConfigArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionHooksConfigsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphHooksConfig_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphHooksConfig_Filter>;
-};
-
-
-export type SubgraphSubscriptionHooksFactoriesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphHooksFactory_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphHooksFactory_Filter>;
-};
-
-
-export type SubgraphSubscriptionHooksFactoryArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionHooksInstanceArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionHooksInstanceDeployedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionHooksInstanceDeployedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphHooksInstanceDeployed_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphHooksInstanceDeployed_Filter>;
-};
-
-
-export type SubgraphSubscriptionHooksInstanceRoleProviderSnapshotArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionHooksInstanceRoleProviderSnapshotsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_Filter>;
-};
-
-
-export type SubgraphSubscriptionHooksInstancesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphHooksInstance_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphHooksInstance_Filter>;
-};
-
-
-export type SubgraphSubscriptionHooksNameUpdatedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionHooksNameUpdatedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphHooksNameUpdated_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphHooksNameUpdated_Filter>;
-};
-
-
-export type SubgraphSubscriptionHooksTemplateArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionHooksTemplateRegistrationArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionHooksTemplateRegistrationEventArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionHooksTemplateRegistrationEventsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphHooksTemplateRegistrationEvent_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphHooksTemplateRegistrationEvent_Filter>;
-};
-
-
-export type SubgraphSubscriptionHooksTemplateRegistrationsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphHooksTemplateRegistration_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphHooksTemplateRegistration_Filter>;
-};
-
-
-export type SubgraphSubscriptionHooksTemplatesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphHooksTemplate_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphHooksTemplate_Filter>;
-};
-
-
-export type SubgraphSubscriptionIndexerDeploymentArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionIndexerDeploymentsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphIndexerDeployment_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphIndexerDeployment_Filter>;
-};
-
-
-export type SubgraphSubscriptionIndexerDiagnosticArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionIndexerDiagnosticsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphIndexerDiagnostic_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphIndexerDiagnostic_Filter>;
-};
-
-
-export type SubgraphSubscriptionKnownLenderStatusArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionKnownLenderStatusesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphKnownLenderStatus_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphKnownLenderStatus_Filter>;
-};
-
-
-export type SubgraphSubscriptionLenderAccountArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionLenderAccountSnapshotArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionLenderAccountSnapshotsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphLenderAccountSnapshot_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphLenderAccountSnapshot_Filter>;
-};
-
-
-export type SubgraphSubscriptionLenderAccountsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphLenderAccount_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphLenderAccount_Filter>;
-};
-
-
-export type SubgraphSubscriptionLenderAuthorizationArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionLenderAuthorizationChangeArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionLenderAuthorizationChangesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphLenderAuthorizationChange_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphLenderAuthorizationChange_Filter>;
-};
-
-
-export type SubgraphSubscriptionLenderAuthorizationsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphLenderAuthorization_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphLenderAuthorization_Filter>;
-};
-
-
-export type SubgraphSubscriptionLenderDailyStatsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionLenderDailyStats_CollectionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphLenderDailyStats_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphLenderDailyStats_Filter>;
-};
-
-
-export type SubgraphSubscriptionLenderHooksAccessArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionLenderHooksAccessesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphLenderHooksAccess_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphLenderHooksAccess_Filter>;
-};
-
-
-export type SubgraphSubscriptionLenderInterestAccruedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionLenderInterestAccruedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphLenderInterestAccrued_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphLenderInterestAccrued_Filter>;
-};
-
-
-export type SubgraphSubscriptionLenderStatsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionLenderStats_CollectionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphLenderStats_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphLenderStats_Filter>;
-};
-
-
-export type SubgraphSubscriptionLenderWithdrawalStatusArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionLenderWithdrawalStatusesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphLenderWithdrawalStatus_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphLenderWithdrawalStatus_Filter>;
-};
-
-
-export type SubgraphSubscriptionLiquidatorApprovedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionLiquidatorApprovedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphLiquidatorApproved_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphLiquidatorApproved_Filter>;
-};
-
-
-export type SubgraphSubscriptionLiquidatorRemovedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionLiquidatorRemovedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphLiquidatorRemoved_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphLiquidatorRemoved_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketAddedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketAddedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketAdded_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketAdded_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketBorrowerChangeArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketBorrowerChangesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketBorrowerChange_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketBorrowerChange_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketClosedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketClosedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketClosed_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketClosed_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketDailyStatsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketDailyStats_CollectionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketDailyStats_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketDailyStats_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketDeployedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketDeployedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketDeployed_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketDeployed_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketDeploymentConfigArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketDeploymentConfigsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketDeploymentConfig_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketDeploymentConfig_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketEventArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketEventCursorArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketEventCursorsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketEventCursor_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketEventCursor_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketEventsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketEvent_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketEvent_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketHooksDataArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketHooksDatasArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketHooksData_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketHooksData_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketInterestAccruedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketInterestAccruedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketInterestAccrued_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketInterestAccrued_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketRemovedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketRemovedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketRemoved_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketRemoved_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketSnapshotArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketSnapshotsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketSnapshot_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketSnapshot_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketWrapperRegistrationArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMarketWrapperRegistrationsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarketWrapperRegistration_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarketWrapperRegistration_Filter>;
-};
-
-
-export type SubgraphSubscriptionMarketsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMarket_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMarket_Filter>;
-};
-
-
-export type SubgraphSubscriptionMaxTotalSupplyUpdatedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMaxTotalSupplyUpdatedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMaxTotalSupplyUpdated_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMaxTotalSupplyUpdated_Filter>;
-};
-
-
-export type SubgraphSubscriptionMinimumDepositUpdatedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionMinimumDepositUpdatedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphMinimumDepositUpdated_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphMinimumDepositUpdated_Filter>;
-};
-
-
-export type SubgraphSubscriptionNewControllerArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionNewControllersArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphNewController_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphNewController_Filter>;
-};
-
-
-export type SubgraphSubscriptionNewSanctionsEscrowArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionNewSanctionsEscrowsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphNewSanctionsEscrow_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphNewSanctionsEscrow_Filter>;
-};
-
-
-export type SubgraphSubscriptionOwnershipHandoverCanceledArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionOwnershipHandoverCanceledsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphOwnershipHandoverCanceled_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphOwnershipHandoverCanceled_Filter>;
-};
-
-
-export type SubgraphSubscriptionOwnershipHandoverRequestedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionOwnershipHandoverRequestedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphOwnershipHandoverRequested_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphOwnershipHandoverRequested_Filter>;
-};
-
-
-export type SubgraphSubscriptionOwnershipTransferredArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionOwnershipTransferredsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphOwnershipTransferred_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphOwnershipTransferred_Filter>;
-};
-
-
-export type SubgraphSubscriptionParameterConstraintsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionParameterConstraints_CollectionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphParameterConstraints_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphParameterConstraints_Filter>;
-};
-
-
-export type SubgraphSubscriptionPendingMarketDeploymentArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionPendingMarketDeploymentsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphPendingMarketDeployment_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphPendingMarketDeployment_Filter>;
-};
-
-
-export type SubgraphSubscriptionPeriodicTermClosedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionPeriodicTermClosedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphPeriodicTermClosed_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphPeriodicTermClosed_Filter>;
-};
-
-
-export type SubgraphSubscriptionPeriodicTermUpdatedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionPeriodicTermUpdatedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphPeriodicTermUpdated_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphPeriodicTermUpdated_Filter>;
-};
-
-
-export type SubgraphSubscriptionProtocolDailyStatsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionProtocolDailyStats_CollectionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphProtocolDailyStats_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphProtocolDailyStats_Filter>;
-};
-
-
-export type SubgraphSubscriptionProtocolFeeBipsUpdatedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionProtocolFeeBipsUpdatedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphProtocolFeeBipsUpdated_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphProtocolFeeBipsUpdated_Filter>;
-};
-
-
-export type SubgraphSubscriptionProtocolStatsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionProtocolStats_CollectionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphProtocolStats_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphProtocolStats_Filter>;
-};
-
-
-export type SubgraphSubscriptionRegisteredBorrowerArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionRegisteredBorrowersArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphRegisteredBorrower_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphRegisteredBorrower_Filter>;
-};
-
-
-export type SubgraphSubscriptionReserveRatioBipsUpdatedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionReserveRatioBipsUpdatedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphReserveRatioBipsUpdated_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphReserveRatioBipsUpdated_Filter>;
-};
-
-
-export type SubgraphSubscriptionRevolvingMarketDeploymentArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionRevolvingMarketDeploymentsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphRevolvingMarketDeployment_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphRevolvingMarketDeployment_Filter>;
-};
-
-
-export type SubgraphSubscriptionRoleProviderArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionRoleProviderAddedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionRoleProviderAddedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphRoleProviderAdded_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphRoleProviderAdded_Filter>;
-};
-
-
-export type SubgraphSubscriptionRoleProviderAdministratorChangeArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionRoleProviderAdministratorChangesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphRoleProviderAdministratorChange_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphRoleProviderAdministratorChange_Filter>;
-};
-
-
-export type SubgraphSubscriptionRoleProviderFactoriesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphRoleProviderFactory_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphRoleProviderFactory_Filter>;
-};
-
-
-export type SubgraphSubscriptionRoleProviderFactoryArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionRoleProviderInstanceArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionRoleProviderInstancesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphRoleProviderInstance_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphRoleProviderInstance_Filter>;
-};
-
-
-export type SubgraphSubscriptionRoleProviderMemberArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionRoleProviderMembersArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphRoleProviderMember_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphRoleProviderMember_Filter>;
-};
-
-
-export type SubgraphSubscriptionRoleProviderMembershipChangeArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionRoleProviderMembershipChangesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphRoleProviderMembershipChange_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphRoleProviderMembershipChange_Filter>;
-};
-
-
-export type SubgraphSubscriptionRoleProviderRemovedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionRoleProviderRemovedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphRoleProviderRemoved_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphRoleProviderRemoved_Filter>;
-};
-
-
-export type SubgraphSubscriptionRoleProviderUpdatedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionRoleProviderUpdatedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphRoleProviderUpdated_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphRoleProviderUpdated_Filter>;
-};
-
-
-export type SubgraphSubscriptionRoleProvidersArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphRoleProvider_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphRoleProvider_Filter>;
-};
-
-
-export type SubgraphSubscriptionSanctionOverrideArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSanctionOverrideRemovedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSanctionOverrideRemovedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSanctionOverrideRemoved_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSanctionOverrideRemoved_Filter>;
-};
-
-
-export type SubgraphSubscriptionSanctionOverrideStatusArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSanctionOverrideStatusesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSanctionOverrideStatus_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSanctionOverrideStatus_Filter>;
-};
-
-
-export type SubgraphSubscriptionSanctionOverridesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSanctionOverride_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSanctionOverride_Filter>;
-};
-
-
-export type SubgraphSubscriptionSanctionedAccountAssetsQueuedForWithdrawalArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSanctionedAccountAssetsQueuedForWithdrawalsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSanctionedAccountAssetsQueuedForWithdrawal_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSanctionedAccountAssetsQueuedForWithdrawal_Filter>;
-};
-
-
-export type SubgraphSubscriptionSanctionedAccountAssetsSentToEscrowArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSanctionedAccountAssetsSentToEscrowsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSanctionedAccountAssetsSentToEscrow_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSanctionedAccountAssetsSentToEscrow_Filter>;
-};
-
-
-export type SubgraphSubscriptionSanctionedAccountWithdrawalSentToEscrowArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSanctionedAccountWithdrawalSentToEscrowsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSanctionedAccountWithdrawalSentToEscrow_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSanctionedAccountWithdrawalSentToEscrow_Filter>;
-};
-
-
-export type SubgraphSubscriptionSanctionsEscrowArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSanctionsEscrowsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSanctionsEscrow_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSanctionsEscrow_Filter>;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractCreatedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractCreatedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSimpleCollateralContractCreated_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSimpleCollateralContractCreated_Filter>;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractDepositArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractDepositorArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractDepositorsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSimpleCollateralContractDepositor_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSimpleCollateralContractDepositor_Filter>;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractDepositsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSimpleCollateralContractDeposit_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSimpleCollateralContractDeposit_Filter>;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractFullResetArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractFullResetsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSimpleCollateralContractFullReset_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSimpleCollateralContractFullReset_Filter>;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractLiquidatedSharesResetArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractLiquidatedSharesResetsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSimpleCollateralContractLiquidatedSharesReset_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSimpleCollateralContractLiquidatedSharesReset_Filter>;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractLiquidationArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractLiquidationsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSimpleCollateralContractLiquidation_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSimpleCollateralContractLiquidation_Filter>;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractReclaimArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractReclaimsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSimpleCollateralContractReclaim_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSimpleCollateralContractReclaim_Filter>;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractSnapshotArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractSnapshotsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSimpleCollateralContractSnapshot_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSimpleCollateralContractSnapshot_Filter>;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralContractsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSimpleCollateralContract_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSimpleCollateralContract_Filter>;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralFactoriesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSimpleCollateralFactory_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSimpleCollateralFactory_Filter>;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralFactoryArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralMarketIndexArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSimpleCollateralMarketIndexesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSimpleCollateralMarketIndex_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSimpleCollateralMarketIndex_Filter>;
-};
-
-
-export type SubgraphSubscriptionSubgraphVersionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionSubgraphVersionsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphSubgraphVersion_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphSubgraphVersion_Filter>;
-};
-
-
-export type SubgraphSubscriptionTokenArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionTokenDailyPriceArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionTokenDailyPricesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphTokenDailyPrice_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphTokenDailyPrice_Filter>;
-};
-
-
-export type SubgraphSubscriptionTokensArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphToken_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphToken_Filter>;
-};
-
-
-export type SubgraphSubscriptionTransferArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionTransfersArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphTransfer_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphTransfer_Filter>;
-};
-
-
-export type SubgraphSubscriptionUpdateProtocolFeeConfigurationArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionUpdateProtocolFeeConfigurationsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphUpdateProtocolFeeConfiguration_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphUpdateProtocolFeeConfiguration_Filter>;
-};
-
-
-export type SubgraphSubscriptionWildcat4626WrapperArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionWildcat4626WrapperDeployedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionWildcat4626WrapperDeployedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphWildcat4626WrapperDeployed_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphWildcat4626WrapperDeployed_Filter>;
-};
-
-
-export type SubgraphSubscriptionWildcat4626WrapperFactoriesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphWildcat4626WrapperFactory_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphWildcat4626WrapperFactory_Filter>;
-};
-
-
-export type SubgraphSubscriptionWildcat4626WrapperFactoryArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionWildcat4626WrappersArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphWildcat4626Wrapper_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
-};
-
-
-export type SubgraphSubscriptionWithdrawalBatchArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionWithdrawalBatchCreatedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionWithdrawalBatchCreatedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphWithdrawalBatchCreated_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphWithdrawalBatchCreated_Filter>;
-};
-
-
-export type SubgraphSubscriptionWithdrawalBatchExpiredArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionWithdrawalBatchExpiredsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphWithdrawalBatchExpired_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphWithdrawalBatchExpired_Filter>;
-};
-
-
-export type SubgraphSubscriptionWithdrawalBatchInterestAccruedArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionWithdrawalBatchInterestAccruedsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphWithdrawalBatchInterestAccrued_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphWithdrawalBatchInterestAccrued_Filter>;
-};
-
-
-export type SubgraphSubscriptionWithdrawalBatchPaymentArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionWithdrawalBatchPaymentsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphWithdrawalBatchPayment_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphWithdrawalBatchPayment_Filter>;
-};
-
-
-export type SubgraphSubscriptionWithdrawalBatchesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphWithdrawalBatch_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphWithdrawalBatch_Filter>;
-};
-
-
-export type SubgraphSubscriptionWithdrawalExecutionArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionWithdrawalExecutionsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphWithdrawalExecution_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphWithdrawalExecution_Filter>;
-};
-
-
-export type SubgraphSubscriptionWithdrawalRequestArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionWithdrawalRequestsArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphWithdrawalRequest_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphWithdrawalRequest_Filter>;
-};
-
-
-export type SubgraphSubscriptionWrapperMarketIndexArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  id: Scalars['ID']['input'];
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-};
-
-
-export type SubgraphSubscriptionWrapperMarketIndexesArgs = {
-  block?: InputMaybe<SubgraphBlock_Height>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<SubgraphWrapperMarketIndex_OrderBy>;
-  orderDirection?: InputMaybe<SubgraphOrderDirection>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  subgraphError?: Subgraph_SubgraphErrorPolicy_;
-  where?: InputMaybe<SubgraphWrapperMarketIndex_Filter>;
-};
-
 export type SubgraphToken = {
   __typename: 'Token';
   address: Scalars['Bytes']['output'];
@@ -33238,9 +30874,11 @@ export type SubgraphWildcat4626Wrapper = {
   market?: Maybe<SubgraphMarket>;
   marketAddress: Scalars['Bytes']['output'];
   marketToken: SubgraphToken;
+  /** Nominal underlying principal attributed to the outstanding wrapper shares. */
   principalBasis: Scalars['BigInt']['output'];
   token: SubgraphToken;
   tokenSweeps: Array<SubgraphWildcat4626WrapperTokensSwept>;
+  /** Wrapper shares currently outstanding. Shares mirror scaled market tokens. */
   totalShares: Scalars['BigInt']['output'];
   transactionHash: Scalars['Bytes']['output'];
   transfers: Array<SubgraphWildcat4626WrapperTransfer>;
@@ -33298,6 +30936,7 @@ export type SubgraphWildcat4626WrapperAccount = {
   address: Scalars['Bytes']['output'];
   deposits: Array<SubgraphWildcat4626WrapperDeposit>;
   id: Scalars['ID']['output'];
+  /** Nominal underlying principal still attached to these wrapper shares. */
   principalBasis: Scalars['BigInt']['output'];
   shares: Scalars['BigInt']['output'];
   transfersFrom: Array<SubgraphWildcat4626WrapperTransfer>;
@@ -33351,35 +30990,128 @@ export type SubgraphWildcat4626WrapperAccountWithdrawalsArgs = {
 };
 
 export type SubgraphWildcat4626WrapperAccount_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
   address?: InputMaybe<Scalars['Bytes']['input']>;
+  address_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_gte?: InputMaybe<Scalars['Bytes']['input']>;
   address_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  address_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  address_lte?: InputMaybe<Scalars['Bytes']['input']>;
   address_not?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  address_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperAccount_Filter>>>;
+  deposits_?: InputMaybe<SubgraphWildcat4626WrapperDeposit_Filter>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
   id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
   id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   or?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperAccount_Filter>>>;
   principalBasis?: InputMaybe<Scalars['BigInt']['input']>;
   principalBasis_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasis_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasis_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  principalBasis_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasis_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasis_not?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasis_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   shares?: InputMaybe<Scalars['BigInt']['input']>;
   shares_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  shares_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_not?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  transfersFrom_?: InputMaybe<SubgraphWildcat4626WrapperTransfer_Filter>;
+  transfersTo_?: InputMaybe<SubgraphWildcat4626WrapperTransfer_Filter>;
   updatedAtBlock?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtBlock_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtBlock_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtBlock_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  updatedAtBlock_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtBlock_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtBlock_not?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtBlock_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  updatedAtLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  updatedAtLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  updatedAtTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  updatedAtTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  updatedAtTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  updatedAtTransaction?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  updatedAtTransaction_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_not?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  updatedAtTransaction_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  withdrawals_?: InputMaybe<SubgraphWildcat4626WrapperWithdrawal_Filter>;
   wrapper?: InputMaybe<Scalars['String']['input']>;
   wrapper_?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
+  wrapper_contains?: InputMaybe<Scalars['String']['input']>;
+  wrapper_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_ends_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_gt?: InputMaybe<Scalars['String']['input']>;
+  wrapper_gte?: InputMaybe<Scalars['String']['input']>;
+  wrapper_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  wrapper_lt?: InputMaybe<Scalars['String']['input']>;
+  wrapper_lte?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_contains?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  wrapper_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_starts_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum SubgraphWildcat4626WrapperAccount_OrderBy {
   address = 'address',
+  deposits = 'deposits',
   id = 'id',
   principalBasis = 'principalBasis',
   shares = 'shares',
+  transfersFrom = 'transfersFrom',
+  transfersTo = 'transfersTo',
   updatedAtBlock = 'updatedAtBlock',
   updatedAtLogIndex = 'updatedAtLogIndex',
   updatedAtTimestamp = 'updatedAtTimestamp',
   updatedAtTransaction = 'updatedAtTransaction',
-  wrapper = 'wrapper'
+  withdrawals = 'withdrawals',
+  wrapper = 'wrapper',
+  wrapper__address = 'wrapper__address',
+  wrapper__blockLogIndex = 'wrapper__blockLogIndex',
+  wrapper__blockNumber = 'wrapper__blockNumber',
+  wrapper__blockTimestamp = 'wrapper__blockTimestamp',
+  wrapper__id = 'wrapper__id',
+  wrapper__marketAddress = 'wrapper__marketAddress',
+  wrapper__principalBasis = 'wrapper__principalBasis',
+  wrapper__totalShares = 'wrapper__totalShares',
+  wrapper__transactionHash = 'wrapper__transactionHash'
 }
 
 export type SubgraphWildcat4626WrapperDeployed = {
@@ -33643,6 +31375,8 @@ export enum SubgraphWildcat4626WrapperDeployed_OrderBy {
   wrapper__blockTimestamp = 'wrapper__blockTimestamp',
   wrapper__id = 'wrapper__id',
   wrapper__marketAddress = 'wrapper__marketAddress',
+  wrapper__principalBasis = 'wrapper__principalBasis',
+  wrapper__totalShares = 'wrapper__totalShares',
   wrapper__transactionHash = 'wrapper__transactionHash'
 }
 
@@ -33663,28 +31397,161 @@ export type SubgraphWildcat4626WrapperDeposit = {
 };
 
 export type SubgraphWildcat4626WrapperDeposit_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
   account?: InputMaybe<Scalars['String']['input']>;
   account_?: InputMaybe<SubgraphWildcat4626WrapperAccount_Filter>;
+  account_contains?: InputMaybe<Scalars['String']['input']>;
+  account_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_ends_with?: InputMaybe<Scalars['String']['input']>;
+  account_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_gt?: InputMaybe<Scalars['String']['input']>;
+  account_gte?: InputMaybe<Scalars['String']['input']>;
+  account_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  account_lt?: InputMaybe<Scalars['String']['input']>;
+  account_lte?: InputMaybe<Scalars['String']['input']>;
+  account_not?: InputMaybe<Scalars['String']['input']>;
+  account_not_contains?: InputMaybe<Scalars['String']['input']>;
+  account_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  account_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  account_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  account_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_starts_with?: InputMaybe<Scalars['String']['input']>;
+  account_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   and?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperDeposit_Filter>>>;
   assets?: InputMaybe<Scalars['BigInt']['input']>;
+  assets_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  assets_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  assets_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  assets_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  assets_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  assets_not?: InputMaybe<Scalars['BigInt']['input']>;
+  assets_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   caller?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  caller_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   marketTransfer?: InputMaybe<Scalars['String']['input']>;
   marketTransfer_?: InputMaybe<SubgraphTransfer_Filter>;
+  marketTransfer_contains?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_ends_with?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_gt?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_gte?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  marketTransfer_lt?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_lte?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_contains?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  marketTransfer_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_starts_with?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   or?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperDeposit_Filter>>>;
   principalBasisAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  principalBasisAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   shares?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  shares_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_not?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   wrapper?: InputMaybe<Scalars['String']['input']>;
   wrapper_?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
+  wrapper_contains?: InputMaybe<Scalars['String']['input']>;
+  wrapper_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_ends_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_gt?: InputMaybe<Scalars['String']['input']>;
+  wrapper_gte?: InputMaybe<Scalars['String']['input']>;
+  wrapper_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  wrapper_lt?: InputMaybe<Scalars['String']['input']>;
+  wrapper_lte?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_contains?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  wrapper_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_starts_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum SubgraphWildcat4626WrapperDeposit_OrderBy {
   account = 'account',
+  account__address = 'account__address',
+  account__id = 'account__id',
+  account__principalBasis = 'account__principalBasis',
+  account__shares = 'account__shares',
+  account__updatedAtBlock = 'account__updatedAtBlock',
+  account__updatedAtLogIndex = 'account__updatedAtLogIndex',
+  account__updatedAtTimestamp = 'account__updatedAtTimestamp',
+  account__updatedAtTransaction = 'account__updatedAtTransaction',
   assets = 'assets',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
@@ -33692,10 +31559,27 @@ export enum SubgraphWildcat4626WrapperDeposit_OrderBy {
   caller = 'caller',
   id = 'id',
   marketTransfer = 'marketTransfer',
+  marketTransfer__amount = 'marketTransfer__amount',
+  marketTransfer__blockLogIndex = 'marketTransfer__blockLogIndex',
+  marketTransfer__blockNumber = 'marketTransfer__blockNumber',
+  marketTransfer__blockTimestamp = 'marketTransfer__blockTimestamp',
+  marketTransfer__id = 'marketTransfer__id',
+  marketTransfer__principalBasisAmount = 'marketTransfer__principalBasisAmount',
+  marketTransfer__scaledAmount = 'marketTransfer__scaledAmount',
+  marketTransfer__transactionHash = 'marketTransfer__transactionHash',
   principalBasisAmount = 'principalBasisAmount',
   shares = 'shares',
   transactionHash = 'transactionHash',
-  wrapper = 'wrapper'
+  wrapper = 'wrapper',
+  wrapper__address = 'wrapper__address',
+  wrapper__blockLogIndex = 'wrapper__blockLogIndex',
+  wrapper__blockNumber = 'wrapper__blockNumber',
+  wrapper__blockTimestamp = 'wrapper__blockTimestamp',
+  wrapper__id = 'wrapper__id',
+  wrapper__marketAddress = 'wrapper__marketAddress',
+  wrapper__principalBasis = 'wrapper__principalBasis',
+  wrapper__totalShares = 'wrapper__totalShares',
+  wrapper__transactionHash = 'wrapper__transactionHash'
 }
 
 export type SubgraphWildcat4626WrapperFactory = {
@@ -33886,22 +31770,130 @@ export type SubgraphWildcat4626WrapperTokensSwept = {
 };
 
 export type SubgraphWildcat4626WrapperTokensSwept_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
   amount?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  amount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  amount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   and?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperTokensSwept_Filter>>>;
   blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   marketTransfer?: InputMaybe<Scalars['String']['input']>;
   marketTransfer_?: InputMaybe<SubgraphTransfer_Filter>;
+  marketTransfer_contains?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_ends_with?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_gt?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_gte?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  marketTransfer_lt?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_lte?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_contains?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  marketTransfer_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_starts_with?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   or?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperTokensSwept_Filter>>>;
   principalBasisAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  principalBasisAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   receiver?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  receiver_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_not?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   token?: InputMaybe<Scalars['Bytes']['input']>;
+  token_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  token_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  token_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  token_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  token_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  token_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  token_not?: InputMaybe<Scalars['Bytes']['input']>;
+  token_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  token_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   wrapper?: InputMaybe<Scalars['String']['input']>;
   wrapper_?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
+  wrapper_contains?: InputMaybe<Scalars['String']['input']>;
+  wrapper_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_ends_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_gt?: InputMaybe<Scalars['String']['input']>;
+  wrapper_gte?: InputMaybe<Scalars['String']['input']>;
+  wrapper_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  wrapper_lt?: InputMaybe<Scalars['String']['input']>;
+  wrapper_lte?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_contains?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  wrapper_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_starts_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum SubgraphWildcat4626WrapperTokensSwept_OrderBy {
@@ -33911,11 +31903,28 @@ export enum SubgraphWildcat4626WrapperTokensSwept_OrderBy {
   blockTimestamp = 'blockTimestamp',
   id = 'id',
   marketTransfer = 'marketTransfer',
+  marketTransfer__amount = 'marketTransfer__amount',
+  marketTransfer__blockLogIndex = 'marketTransfer__blockLogIndex',
+  marketTransfer__blockNumber = 'marketTransfer__blockNumber',
+  marketTransfer__blockTimestamp = 'marketTransfer__blockTimestamp',
+  marketTransfer__id = 'marketTransfer__id',
+  marketTransfer__principalBasisAmount = 'marketTransfer__principalBasisAmount',
+  marketTransfer__scaledAmount = 'marketTransfer__scaledAmount',
+  marketTransfer__transactionHash = 'marketTransfer__transactionHash',
   principalBasisAmount = 'principalBasisAmount',
   receiver = 'receiver',
   token = 'token',
   transactionHash = 'transactionHash',
-  wrapper = 'wrapper'
+  wrapper = 'wrapper',
+  wrapper__address = 'wrapper__address',
+  wrapper__blockLogIndex = 'wrapper__blockLogIndex',
+  wrapper__blockNumber = 'wrapper__blockNumber',
+  wrapper__blockTimestamp = 'wrapper__blockTimestamp',
+  wrapper__id = 'wrapper__id',
+  wrapper__marketAddress = 'wrapper__marketAddress',
+  wrapper__principalBasis = 'wrapper__principalBasis',
+  wrapper__totalShares = 'wrapper__totalShares',
+  wrapper__transactionHash = 'wrapper__transactionHash'
 }
 
 /** Internal transaction-local bridge between market-token and wrapper events. */
@@ -33935,6 +31944,212 @@ export type SubgraphWildcat4626WrapperTransactionCursor = {
   wrapper: SubgraphWildcat4626Wrapper;
 };
 
+export type SubgraphWildcat4626WrapperTransactionCursor_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperTransactionCursor_Filter>>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  inboundMarketTransfer?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_?: InputMaybe<SubgraphTransfer_Filter>;
+  inboundMarketTransfer_contains?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_ends_with?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_gt?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_gte?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  inboundMarketTransfer_lt?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_lte?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_not?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_not_contains?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  inboundMarketTransfer_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_starts_with?: InputMaybe<Scalars['String']['input']>;
+  inboundMarketTransfer_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  inboundPrincipalBasis?: InputMaybe<Scalars['BigInt']['input']>;
+  inboundPrincipalBasis_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  inboundPrincipalBasis_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  inboundPrincipalBasis_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  inboundPrincipalBasis_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  inboundPrincipalBasis_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  inboundPrincipalBasis_not?: InputMaybe<Scalars['BigInt']['input']>;
+  inboundPrincipalBasis_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  inboundScaledAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  inboundScaledAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  inboundScaledAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  inboundScaledAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  inboundScaledAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  inboundScaledAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  inboundScaledAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  inboundScaledAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperTransactionCursor_Filter>>>;
+  outboundMarketTransfer?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_?: InputMaybe<SubgraphTransfer_Filter>;
+  outboundMarketTransfer_contains?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_ends_with?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_gt?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_gte?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  outboundMarketTransfer_lt?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_lte?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_not?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_not_contains?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  outboundMarketTransfer_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_starts_with?: InputMaybe<Scalars['String']['input']>;
+  outboundMarketTransfer_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  outboundPrincipalBasis?: InputMaybe<Scalars['BigInt']['input']>;
+  outboundPrincipalBasis_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  outboundPrincipalBasis_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  outboundPrincipalBasis_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  outboundPrincipalBasis_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  outboundPrincipalBasis_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  outboundPrincipalBasis_not?: InputMaybe<Scalars['BigInt']['input']>;
+  outboundPrincipalBasis_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  outboundScaledAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  outboundScaledAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  outboundScaledAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  outboundScaledAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  outboundScaledAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  outboundScaledAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  outboundScaledAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  outboundScaledAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pendingBurnAccount?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_?: InputMaybe<SubgraphWildcat4626WrapperAccount_Filter>;
+  pendingBurnAccount_contains?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_ends_with?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_gt?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_gte?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  pendingBurnAccount_lt?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_lte?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_not?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_not_contains?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  pendingBurnAccount_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_starts_with?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnAccount_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  pendingBurnPrincipalBasis?: InputMaybe<Scalars['BigInt']['input']>;
+  pendingBurnPrincipalBasis_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  pendingBurnPrincipalBasis_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  pendingBurnPrincipalBasis_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pendingBurnPrincipalBasis_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  pendingBurnPrincipalBasis_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  pendingBurnPrincipalBasis_not?: InputMaybe<Scalars['BigInt']['input']>;
+  pendingBurnPrincipalBasis_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pendingBurnShares?: InputMaybe<Scalars['BigInt']['input']>;
+  pendingBurnShares_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  pendingBurnShares_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  pendingBurnShares_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pendingBurnShares_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  pendingBurnShares_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  pendingBurnShares_not?: InputMaybe<Scalars['BigInt']['input']>;
+  pendingBurnShares_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  wrapper?: InputMaybe<Scalars['String']['input']>;
+  wrapper_?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
+  wrapper_contains?: InputMaybe<Scalars['String']['input']>;
+  wrapper_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_ends_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_gt?: InputMaybe<Scalars['String']['input']>;
+  wrapper_gte?: InputMaybe<Scalars['String']['input']>;
+  wrapper_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  wrapper_lt?: InputMaybe<Scalars['String']['input']>;
+  wrapper_lte?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_contains?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  wrapper_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_starts_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum SubgraphWildcat4626WrapperTransactionCursor_OrderBy {
+  id = 'id',
+  inboundMarketTransfer = 'inboundMarketTransfer',
+  inboundMarketTransfer__amount = 'inboundMarketTransfer__amount',
+  inboundMarketTransfer__blockLogIndex = 'inboundMarketTransfer__blockLogIndex',
+  inboundMarketTransfer__blockNumber = 'inboundMarketTransfer__blockNumber',
+  inboundMarketTransfer__blockTimestamp = 'inboundMarketTransfer__blockTimestamp',
+  inboundMarketTransfer__id = 'inboundMarketTransfer__id',
+  inboundMarketTransfer__principalBasisAmount = 'inboundMarketTransfer__principalBasisAmount',
+  inboundMarketTransfer__scaledAmount = 'inboundMarketTransfer__scaledAmount',
+  inboundMarketTransfer__transactionHash = 'inboundMarketTransfer__transactionHash',
+  inboundPrincipalBasis = 'inboundPrincipalBasis',
+  inboundScaledAmount = 'inboundScaledAmount',
+  outboundMarketTransfer = 'outboundMarketTransfer',
+  outboundMarketTransfer__amount = 'outboundMarketTransfer__amount',
+  outboundMarketTransfer__blockLogIndex = 'outboundMarketTransfer__blockLogIndex',
+  outboundMarketTransfer__blockNumber = 'outboundMarketTransfer__blockNumber',
+  outboundMarketTransfer__blockTimestamp = 'outboundMarketTransfer__blockTimestamp',
+  outboundMarketTransfer__id = 'outboundMarketTransfer__id',
+  outboundMarketTransfer__principalBasisAmount = 'outboundMarketTransfer__principalBasisAmount',
+  outboundMarketTransfer__scaledAmount = 'outboundMarketTransfer__scaledAmount',
+  outboundMarketTransfer__transactionHash = 'outboundMarketTransfer__transactionHash',
+  outboundPrincipalBasis = 'outboundPrincipalBasis',
+  outboundScaledAmount = 'outboundScaledAmount',
+  pendingBurnAccount = 'pendingBurnAccount',
+  pendingBurnAccount__address = 'pendingBurnAccount__address',
+  pendingBurnAccount__id = 'pendingBurnAccount__id',
+  pendingBurnAccount__principalBasis = 'pendingBurnAccount__principalBasis',
+  pendingBurnAccount__shares = 'pendingBurnAccount__shares',
+  pendingBurnAccount__updatedAtBlock = 'pendingBurnAccount__updatedAtBlock',
+  pendingBurnAccount__updatedAtLogIndex = 'pendingBurnAccount__updatedAtLogIndex',
+  pendingBurnAccount__updatedAtTimestamp = 'pendingBurnAccount__updatedAtTimestamp',
+  pendingBurnAccount__updatedAtTransaction = 'pendingBurnAccount__updatedAtTransaction',
+  pendingBurnPrincipalBasis = 'pendingBurnPrincipalBasis',
+  pendingBurnShares = 'pendingBurnShares',
+  transactionHash = 'transactionHash',
+  wrapper = 'wrapper',
+  wrapper__address = 'wrapper__address',
+  wrapper__blockLogIndex = 'wrapper__blockLogIndex',
+  wrapper__blockNumber = 'wrapper__blockNumber',
+  wrapper__blockTimestamp = 'wrapper__blockTimestamp',
+  wrapper__id = 'wrapper__id',
+  wrapper__marketAddress = 'wrapper__marketAddress',
+  wrapper__principalBasis = 'wrapper__principalBasis',
+  wrapper__totalShares = 'wrapper__totalShares',
+  wrapper__transactionHash = 'wrapper__transactionHash'
+}
+
+/** A wrapper-share mint, burn, or holder-to-holder transfer. */
 export type SubgraphWildcat4626WrapperTransfer = {
   __typename: 'Wildcat4626WrapperTransfer';
   blockLogIndex: Scalars['BigInt']['output'];
@@ -33952,24 +32167,151 @@ export type SubgraphWildcat4626WrapperTransfer = {
 };
 
 export type SubgraphWildcat4626WrapperTransfer_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperTransfer_Filter>>>;
   blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   from?: InputMaybe<Scalars['String']['input']>;
   fromAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  fromAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  fromAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  fromAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  fromAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  fromAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  fromAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  fromAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  fromAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  fromAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   from_?: InputMaybe<SubgraphWildcat4626WrapperAccount_Filter>;
+  from_contains?: InputMaybe<Scalars['String']['input']>;
+  from_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  from_ends_with?: InputMaybe<Scalars['String']['input']>;
+  from_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  from_gt?: InputMaybe<Scalars['String']['input']>;
+  from_gte?: InputMaybe<Scalars['String']['input']>;
+  from_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  from_lt?: InputMaybe<Scalars['String']['input']>;
+  from_lte?: InputMaybe<Scalars['String']['input']>;
+  from_not?: InputMaybe<Scalars['String']['input']>;
+  from_not_contains?: InputMaybe<Scalars['String']['input']>;
+  from_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  from_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  from_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  from_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  from_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  from_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  from_starts_with?: InputMaybe<Scalars['String']['input']>;
+  from_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   or?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperTransfer_Filter>>>;
   principalBasisAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  principalBasisAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   shares?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  shares_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_not?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   to?: InputMaybe<Scalars['String']['input']>;
   toAddress?: InputMaybe<Scalars['Bytes']['input']>;
+  toAddress_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  toAddress_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  toAddress_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  toAddress_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  toAddress_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  toAddress_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  toAddress_not?: InputMaybe<Scalars['Bytes']['input']>;
+  toAddress_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  toAddress_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   to_?: InputMaybe<SubgraphWildcat4626WrapperAccount_Filter>;
+  to_contains?: InputMaybe<Scalars['String']['input']>;
+  to_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  to_ends_with?: InputMaybe<Scalars['String']['input']>;
+  to_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  to_gt?: InputMaybe<Scalars['String']['input']>;
+  to_gte?: InputMaybe<Scalars['String']['input']>;
+  to_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  to_lt?: InputMaybe<Scalars['String']['input']>;
+  to_lte?: InputMaybe<Scalars['String']['input']>;
+  to_not?: InputMaybe<Scalars['String']['input']>;
+  to_not_contains?: InputMaybe<Scalars['String']['input']>;
+  to_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  to_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  to_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  to_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  to_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  to_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  to_starts_with?: InputMaybe<Scalars['String']['input']>;
+  to_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   wrapper?: InputMaybe<Scalars['String']['input']>;
   wrapper_?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
+  wrapper_contains?: InputMaybe<Scalars['String']['input']>;
+  wrapper_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_ends_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_gt?: InputMaybe<Scalars['String']['input']>;
+  wrapper_gte?: InputMaybe<Scalars['String']['input']>;
+  wrapper_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  wrapper_lt?: InputMaybe<Scalars['String']['input']>;
+  wrapper_lte?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_contains?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  wrapper_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_starts_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum SubgraphWildcat4626WrapperTransfer_OrderBy {
@@ -33978,13 +32320,38 @@ export enum SubgraphWildcat4626WrapperTransfer_OrderBy {
   blockTimestamp = 'blockTimestamp',
   from = 'from',
   fromAddress = 'fromAddress',
+  from__address = 'from__address',
+  from__id = 'from__id',
+  from__principalBasis = 'from__principalBasis',
+  from__shares = 'from__shares',
+  from__updatedAtBlock = 'from__updatedAtBlock',
+  from__updatedAtLogIndex = 'from__updatedAtLogIndex',
+  from__updatedAtTimestamp = 'from__updatedAtTimestamp',
+  from__updatedAtTransaction = 'from__updatedAtTransaction',
   id = 'id',
   principalBasisAmount = 'principalBasisAmount',
   shares = 'shares',
   to = 'to',
   toAddress = 'toAddress',
+  to__address = 'to__address',
+  to__id = 'to__id',
+  to__principalBasis = 'to__principalBasis',
+  to__shares = 'to__shares',
+  to__updatedAtBlock = 'to__updatedAtBlock',
+  to__updatedAtLogIndex = 'to__updatedAtLogIndex',
+  to__updatedAtTimestamp = 'to__updatedAtTimestamp',
+  to__updatedAtTransaction = 'to__updatedAtTransaction',
   transactionHash = 'transactionHash',
-  wrapper = 'wrapper'
+  wrapper = 'wrapper',
+  wrapper__address = 'wrapper__address',
+  wrapper__blockLogIndex = 'wrapper__blockLogIndex',
+  wrapper__blockNumber = 'wrapper__blockNumber',
+  wrapper__blockTimestamp = 'wrapper__blockTimestamp',
+  wrapper__id = 'wrapper__id',
+  wrapper__marketAddress = 'wrapper__marketAddress',
+  wrapper__principalBasis = 'wrapper__principalBasis',
+  wrapper__totalShares = 'wrapper__totalShares',
+  wrapper__transactionHash = 'wrapper__transactionHash'
 }
 
 export type SubgraphWildcat4626WrapperWithdrawal = {
@@ -34005,29 +32372,171 @@ export type SubgraphWildcat4626WrapperWithdrawal = {
 };
 
 export type SubgraphWildcat4626WrapperWithdrawal_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
   account?: InputMaybe<Scalars['String']['input']>;
   account_?: InputMaybe<SubgraphWildcat4626WrapperAccount_Filter>;
+  account_contains?: InputMaybe<Scalars['String']['input']>;
+  account_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_ends_with?: InputMaybe<Scalars['String']['input']>;
+  account_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_gt?: InputMaybe<Scalars['String']['input']>;
+  account_gte?: InputMaybe<Scalars['String']['input']>;
+  account_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  account_lt?: InputMaybe<Scalars['String']['input']>;
+  account_lte?: InputMaybe<Scalars['String']['input']>;
+  account_not?: InputMaybe<Scalars['String']['input']>;
+  account_not_contains?: InputMaybe<Scalars['String']['input']>;
+  account_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  account_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  account_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  account_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  account_starts_with?: InputMaybe<Scalars['String']['input']>;
+  account_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   and?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperWithdrawal_Filter>>>;
   assets?: InputMaybe<Scalars['BigInt']['input']>;
+  assets_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  assets_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  assets_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  assets_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  assets_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  assets_not?: InputMaybe<Scalars['BigInt']['input']>;
+  assets_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   caller?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  caller_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  caller_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
   marketTransfer?: InputMaybe<Scalars['String']['input']>;
   marketTransfer_?: InputMaybe<SubgraphTransfer_Filter>;
+  marketTransfer_contains?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_ends_with?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_gt?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_gte?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  marketTransfer_lt?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_lte?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_contains?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  marketTransfer_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_starts_with?: InputMaybe<Scalars['String']['input']>;
+  marketTransfer_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   or?: InputMaybe<Array<InputMaybe<SubgraphWildcat4626WrapperWithdrawal_Filter>>>;
   principalBasisAmount?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  principalBasisAmount_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_not?: InputMaybe<Scalars['BigInt']['input']>;
+  principalBasisAmount_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   receiver?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  receiver_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_not?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  receiver_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   shares?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  shares_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_not?: InputMaybe<Scalars['BigInt']['input']>;
+  shares_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   wrapper?: InputMaybe<Scalars['String']['input']>;
   wrapper_?: InputMaybe<SubgraphWildcat4626Wrapper_Filter>;
+  wrapper_contains?: InputMaybe<Scalars['String']['input']>;
+  wrapper_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_ends_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_gt?: InputMaybe<Scalars['String']['input']>;
+  wrapper_gte?: InputMaybe<Scalars['String']['input']>;
+  wrapper_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  wrapper_lt?: InputMaybe<Scalars['String']['input']>;
+  wrapper_lte?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_contains?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  wrapper_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  wrapper_starts_with?: InputMaybe<Scalars['String']['input']>;
+  wrapper_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
 };
 
 export enum SubgraphWildcat4626WrapperWithdrawal_OrderBy {
   account = 'account',
+  account__address = 'account__address',
+  account__id = 'account__id',
+  account__principalBasis = 'account__principalBasis',
+  account__shares = 'account__shares',
+  account__updatedAtBlock = 'account__updatedAtBlock',
+  account__updatedAtLogIndex = 'account__updatedAtLogIndex',
+  account__updatedAtTimestamp = 'account__updatedAtTimestamp',
+  account__updatedAtTransaction = 'account__updatedAtTransaction',
   assets = 'assets',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
@@ -34035,16 +32544,34 @@ export enum SubgraphWildcat4626WrapperWithdrawal_OrderBy {
   caller = 'caller',
   id = 'id',
   marketTransfer = 'marketTransfer',
+  marketTransfer__amount = 'marketTransfer__amount',
+  marketTransfer__blockLogIndex = 'marketTransfer__blockLogIndex',
+  marketTransfer__blockNumber = 'marketTransfer__blockNumber',
+  marketTransfer__blockTimestamp = 'marketTransfer__blockTimestamp',
+  marketTransfer__id = 'marketTransfer__id',
+  marketTransfer__principalBasisAmount = 'marketTransfer__principalBasisAmount',
+  marketTransfer__scaledAmount = 'marketTransfer__scaledAmount',
+  marketTransfer__transactionHash = 'marketTransfer__transactionHash',
   principalBasisAmount = 'principalBasisAmount',
   receiver = 'receiver',
   shares = 'shares',
   transactionHash = 'transactionHash',
-  wrapper = 'wrapper'
+  wrapper = 'wrapper',
+  wrapper__address = 'wrapper__address',
+  wrapper__blockLogIndex = 'wrapper__blockLogIndex',
+  wrapper__blockNumber = 'wrapper__blockNumber',
+  wrapper__blockTimestamp = 'wrapper__blockTimestamp',
+  wrapper__id = 'wrapper__id',
+  wrapper__marketAddress = 'wrapper__marketAddress',
+  wrapper__principalBasis = 'wrapper__principalBasis',
+  wrapper__totalShares = 'wrapper__totalShares',
+  wrapper__transactionHash = 'wrapper__transactionHash'
 }
 
 export type SubgraphWildcat4626Wrapper_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  accounts_?: InputMaybe<SubgraphWildcat4626WrapperAccount_Filter>;
   address?: InputMaybe<Scalars['Bytes']['input']>;
   address_contains?: InputMaybe<Scalars['Bytes']['input']>;
   address_gt?: InputMaybe<Scalars['Bytes']['input']>;
@@ -34081,6 +32608,7 @@ export type SubgraphWildcat4626Wrapper_Filter = {
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   deployedEvent_?: InputMaybe<SubgraphWildcat4626WrapperDeployed_Filter>;
+  deposits_?: InputMaybe<SubgraphWildcat4626WrapperDeposit_Filter>;
   factory?: InputMaybe<Scalars['String']['input']>;
   factory_?: InputMaybe<SubgraphWildcat4626WrapperFactory_Filter>;
   factory_contains?: InputMaybe<Scalars['String']['input']>;
@@ -34172,6 +32700,7 @@ export type SubgraphWildcat4626Wrapper_Filter = {
   principalBasis_not?: InputMaybe<Scalars['BigInt']['input']>;
   principalBasis_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   token?: InputMaybe<Scalars['String']['input']>;
+  tokenSweeps_?: InputMaybe<SubgraphWildcat4626WrapperTokensSwept_Filter>;
   token_?: InputMaybe<SubgraphToken_Filter>;
   token_contains?: InputMaybe<Scalars['String']['input']>;
   token_contains_nocase?: InputMaybe<Scalars['String']['input']>;
@@ -34210,9 +32739,12 @@ export type SubgraphWildcat4626Wrapper_Filter = {
   transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transfers_?: InputMaybe<SubgraphWildcat4626WrapperTransfer_Filter>;
+  withdrawals_?: InputMaybe<SubgraphWildcat4626WrapperWithdrawal_Filter>;
 };
 
 export enum SubgraphWildcat4626Wrapper_OrderBy {
+  accounts = 'accounts',
   address = 'address',
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
@@ -34225,6 +32757,7 @@ export enum SubgraphWildcat4626Wrapper_OrderBy {
   deployedEvent__marketAddress = 'deployedEvent__marketAddress',
   deployedEvent__transactionHash = 'deployedEvent__transactionHash',
   deployedEvent__wrapperAddress = 'deployedEvent__wrapperAddress',
+  deposits = 'deposits',
   factory = 'factory',
   factory__address = 'factory__address',
   factory__configured = 'factory__configured',
@@ -34341,6 +32874,7 @@ export enum SubgraphWildcat4626Wrapper_OrderBy {
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   principalBasis = 'principalBasis',
   token = 'token',
+  tokenSweeps = 'tokenSweeps',
   token__address = 'token__address',
   token__decimals = 'token__decimals',
   token__id = 'token__id',
@@ -34353,7 +32887,9 @@ export enum SubgraphWildcat4626Wrapper_OrderBy {
   token__priceSource = 'token__priceSource',
   token__symbol = 'token__symbol',
   totalShares = 'totalShares',
-  transactionHash = 'transactionHash'
+  transactionHash = 'transactionHash',
+  transfers = 'transfers',
+  withdrawals = 'withdrawals'
 }
 
 export type SubgraphWithdrawalBatch = {
@@ -35520,6 +34056,7 @@ export enum SubgraphWithdrawalExecution_OrderBy {
   account__lastUpdatedBlockNumber = 'account__lastUpdatedBlockNumber',
   account__lastUpdatedTimestamp = 'account__lastUpdatedTimestamp',
   account__numPendingWithdrawalBatches = 'account__numPendingWithdrawalBatches',
+  account__principalBasis = 'account__principalBasis',
   account__role = 'account__role',
   account__scaledBalance = 'account__scaledBalance',
   account__totalDeposited = 'account__totalDeposited',
@@ -35990,6 +34527,8 @@ export enum SubgraphWrapperMarketIndex_OrderBy {
   wrapper__blockTimestamp = 'wrapper__blockTimestamp',
   wrapper__id = 'wrapper__id',
   wrapper__marketAddress = 'wrapper__marketAddress',
+  wrapper__principalBasis = 'wrapper__principalBasis',
+  wrapper__totalShares = 'wrapper__totalShares',
   wrapper__transactionHash = 'wrapper__transactionHash'
 }
 

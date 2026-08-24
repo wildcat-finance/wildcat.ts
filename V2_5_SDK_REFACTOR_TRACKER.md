@@ -12,22 +12,23 @@ Status values:
 
 ## Current state
 
-- [x] Branch is `feat/sdk-refactor` at baseline `4c3d8cc`.
-- [x] SDK package version is `3.1.8-beta`.
-- [x] Existing deployed/testnet consumers remain on `3.1.7`.
-- [x] Protocol is frozen for this refactor.
-- [x] Subgraph schema and mappings are frozen for this refactor.
-- [x] Breaking changes to unpublished `3.1.8-beta` are allowed.
-- [x] A full V2.5 Graph API schema was captured from a local deployment of the
-      frozen subgraph.
+- [x] Branch is `feat/sdk-v3.2.4-integration` at integration baseline `1b8c720`.
+- [x] SDK package version is `3.2.4-beta`.
+- [x] Existing V2 consumers remain on the `3.1.17` release lineage.
+- [x] Final V2.5 Sepolia protocol targets are deployed and loaded into SDK
+      configuration.
+- [x] The V2.5.9 subgraph is deployed to Goldsky and Hinterlight from the same
+      source and configuration.
+- [x] A full hosted V2.5 Graph API schema was captured from Goldsky; every SDK
+      operation also validates against Hinterlight's compatible schema.
 - [x] Factory/template registration identity and live hook reads use explicit
       factory scope.
 - [x] Indexed market, lender-account, and collateral state carries explicit
       freshness and remains distinguishable from live lens/RPC overlays.
 - [x] Borrower, lender, market, protocol, and price analytics use SDK-owned
       indexed read models with query-block freshness.
-- [!] Final V2.5 Sepolia addresses and start blocks are pending deployment.
-- [!] A hosted V2.5 Graph API endpoint URL is pending subgraph deployment.
+- [x] Final V2.5 Sepolia addresses, start blocks, and the hosted endpoint are
+      available.
 
 ## Phase 0 - Baseline and plan
 
@@ -131,19 +132,19 @@ Status values:
 
 ## Phase 6 - Transactions and deployment configuration
 
-- [!] Obtain final Sepolia deployment artifacts.
-- [ ] Verify standard hooks-factory target.
-- [ ] Verify revolving hooks-factory target.
-- [ ] Verify wrapper-factory target.
-- [ ] Verify V2.5 lens addresses and ABIs.
-- [ ] Verify V2.5 subgraph endpoint metadata and config digest.
-- [ ] Add addresses and URLs in an isolated commit.
-- [ ] Test standard create-market preview and encoding.
-- [ ] Test revolving create-market preview and encoding.
-- [ ] Test template/factory mismatch rejection.
-- [ ] Test wrapper and transfer-policy constraints.
-- [ ] Test periodic-term and APR-reduction paths.
-- [ ] Run Phase 6 checks.
+- [x] Obtain final Sepolia deployment artifacts.
+- [x] Verify standard hooks-factory target.
+- [x] Verify revolving hooks-factory target.
+- [x] Verify wrapper-factory target.
+- [x] Verify V2.5 lens addresses and ABIs.
+- [x] Verify V2.5 subgraph endpoint metadata and config digest.
+- [~] Add addresses and URLs in an isolated commit.
+- [x] Test standard create-market preview and encoding.
+- [x] Test revolving create-market preview and encoding.
+- [x] Test template/factory mismatch rejection.
+- [x] Test wrapper and transfer-policy constraints.
+- [x] Test periodic-term and APR-reduction paths.
+- [x] Run Phase 6 checks.
 - [ ] Commit Phase 6.
 
 ## Phase 7 - App migration and release gate
@@ -211,6 +212,16 @@ Status values:
 | 2026-07-17 | SDK Phase 5 | `yarn mocha` | Pass | 153 passing |
 | 2026-07-17 | SDK Phase 5 | `env -u WILDCAT_SUBGRAPH_SCHEMA yarn codegen:gql` | Pass | Analytics documents reproduce against the checked-in V2.5 Graph API schema |
 | 2026-07-17 | SDK Phase 5 | `git diff --check` | Pass | No whitespace errors |
+| 2026-08-24 | Final Sepolia targets | Protocol inventory plus on-chain runtime and anchor reads | Pass | Final factories, lens, wrapper facade, authority helper, borrower registry, and role-provider factory have code; factory/lens/helper/registry anchors resolve to the expected ArchController |
+| 2026-08-24 | Hosted endpoint parity | Goldsky and Hinterlight metadata, factory, registration, and market reads | Pass | Both report config digest `2ff16531111cc86080be714a4c9620340f8777c06c6b82eb92189fcab902109e`, 11 factories, 21 registrations, 467 markets, and no configured target issues |
+| 2026-08-24 | Hosted GraphQL contract | Refresh from Goldsky and validate all operations against both providers | Pass | Provider Graph Node versions differ only outside the SDK document surface |
+| 2026-08-24 | Live SDK hook read | Indexed registrations plus V2.5 lens read for the Sepolia executor | Pass | Borrower registration resolved on-chain; all 21 factory-scoped templates hydrated and the six final-target registrations are enabled with the corrected fee recipient |
+| 2026-08-24 | SDK Phase 6 | `env -u WILDCAT_SUBGRAPH_SCHEMA yarn codegen:gql` | Pass | Generated transport reproduces from the refreshed checked-in schema |
+| 2026-08-24 | SDK Phase 6 | `yarn lint` | Pass | Source and tests are clean |
+| 2026-08-24 | SDK Phase 6 | `yarn build` | Pass | TypeScript production build |
+| 2026-08-24 | SDK Phase 6 | `yarn mocha` | Pass | 240 passing |
+| 2026-08-24 | SDK package | `npm pack --dry-run --json` | Pass | `3.2.4-beta` package assembled successfully without publishing |
+| 2026-08-24 | SDK Phase 6 | `git diff --check` | Pass | No whitespace errors |
 
 ## Decision ledger
 
@@ -238,14 +249,13 @@ Status values:
 | 2026-07-17 | Include `_meta` freshness on every analytics result envelope | Indexed aggregate values otherwise have no entity-level update coordinates and could be mistaken for live state |
 | 2026-07-17 | Treat optional-module absence and unpriced tokens as explicit states | Disabled analytics/pricing and missing observations must not collapse into empty data or numeric zero |
 | 2026-07-17 | Keep cross-market notification polling as an app-owned GraphQL escape hatch | Its UI notification projections are not stable domain read models; profile and analytics queries now belong to the SDK |
+| 2026-08-24 | Keep Goldsky as the configured Sepolia endpoint and validate Hinterlight as an equivalent custom endpoint | The SDK already accepts caller-supplied endpoints; adding unrequested client-side failover would introduce routing semantics beyond deployment alignment |
+| 2026-08-24 | Accept event-lazy optional-module inventory before its first event | The final wrapper, identity, and role-provider targets are present in the generated manifest and verified on-chain; their subgraph entities materialize only when the first relevant event is handled |
 
 ## Open inputs and blockers
 
 | Input | Owner/source | Blocks | Current handling |
 | --- | --- | --- | --- |
-| Hosted V2.5 Graph API endpoint | Subgraph deployment | Phase 6 and app smoke tests | Phase 2 uses the checked-in full local Graph API schema; refresh and validate it against the hosted endpoint after deployment |
-| Sepolia V2.5 addresses/start blocks | Protocol deployment ceremony | Phase 6 | Keep address changes isolated |
-| Replacement subgraph URLs | Subgraph deployment | Phase 6 and app smoke tests | Retain placeholders until endpoint metadata validates |
 | App migration feedback | `wildcat-app-v2` integration | Final SDK surface | Treat required behavior as acceptance criteria, not current generated types |
 
 ## Known cleanup candidates within scope
@@ -273,7 +283,7 @@ Status values:
 | 3 - Factories/hooks | `aff7c32` | Multi-factory fixtures, lint, build, 133-test suite | Complete |
 | 4 - Markets/live | `7a930d1` | Historical fixtures, fixed-block parity, lint, build, 141-test suite | Complete |
 | 5 - Analytics | This commit | Analytics fixtures, app query inventory, lint, build, 153-test suite | Complete |
-| 6 - Deployment | Pending | Artifact checks, previews, deployed endpoint checks | Blocked on deployment |
+| 6 - Deployment | Working tree | Artifact checks, previews, hosted schema, live endpoint/lens checks, lint, build, 240-test suite | Ready for commit |
 | 7 - App/release | Pending | App tests, lint, build, Sepolia smoke | Not started |
 
 ## Working log
@@ -361,3 +371,21 @@ Status values:
 - Inventoried all app direct GraphQL callsites and mapped profile analytics to
   first-class SDK APIs while documenting the narrow notification/subscription
   and server-discovery escape hatches for Phase 7.
+
+### 2026-08-24
+
+- Replaced the July Sepolia preview factories, lens, wrapper, and authority
+  helper with the final ceremony addresses and added the deployed borrower
+  registry and access-list role-provider factory to the public inventory.
+- Moved the default Sepolia Graph API endpoint from V2.5.8 to V2.5.9.
+- Refreshed the checked-in Graph API schema and generated transport from the
+  live Goldsky deployment, then validated every SDK operation against both the
+  Goldsky and Hinterlight deployments.
+- Verified identical endpoint metadata, indexed factory targets, template
+  registrations, corrected fee recipients, and market inventory across both
+  providers.
+- Exercised the final V2.5 lens against live Sepolia through the SDK and kept
+  historical factory discovery separate from the two final transaction targets.
+- Confirmed the final wrapper facade and other new optional-module contracts
+  on-chain. Their subgraph inventory is intentionally empty until the first
+  relevant event materializes each entity.
