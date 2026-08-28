@@ -101,6 +101,7 @@ describe("V2.5 market withdrawal-execution history", () => {
 
     expect(calls[0].variables).to.include({
       market: market.address,
+      startEventIndex: 7,
       endEventIndex: 12,
       limit: 5
     });

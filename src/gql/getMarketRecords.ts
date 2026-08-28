@@ -84,6 +84,7 @@ export async function getMarketRecords(
   const legacySchema = usesLegacySubgraphSchema(market.chainId);
   const variables: SubgraphGetMarketEventsQueryVariables = {
     market: marketAddress,
+    startEventIndex,
     endEventIndex,
     limit,
     delinquencyRecordsFilter: additionalFilter,
