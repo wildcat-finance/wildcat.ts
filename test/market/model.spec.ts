@@ -1075,6 +1075,7 @@ describe("Market model routing metadata", () => {
 
     expect(market.hooksFactory).to.equal(undefined);
     expect(market.marketKind).to.equal("standard");
+    expect(market.onboardingMode).to.equal(MarketOnboardingMode.Managed);
   });
 
   it("derives standard marketKind from the configured standard factory", () => {
@@ -1289,6 +1290,9 @@ describe("Market model routing metadata", () => {
 
   it("preserves indexed role providers and derives stable onboarding policy", () => {
     const data = makeSubgraphMarketData();
+    const openMarket = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+    expect(openMarket.onboardingMode).to.equal(MarketOnboardingMode.Open);
+
     data.hooksConfig!.useOnDeposit = true;
     data.hooksConfig!.depositRequiresAccess = true;
     data.hooks!.providers = [
@@ -1325,16 +1329,12 @@ describe("Market model routing metadata", () => {
         isApproved: true
       }
     ]);
-    expect(market.onboardingMode).to.equal(MarketOnboardingMode.SelfOnboard);
+    expect(market.onboardingMode).to.equal(MarketOnboardingMode.Managed);
 
     data.hooks!.providers = [];
-    const borrowerApprovalMarket = Market.fromSubgraphMarketData(
-      SupportedChainId.Sepolia,
-      provider,
-      data
-    );
-    expect(borrowerApprovalMarket.roleProviders).to.deep.equal([]);
-    expect(borrowerApprovalMarket.onboardingMode).to.equal(MarketOnboardingMode.BorrowerApproval);
+    const managedMarket = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+    expect(managedMarket.roleProviders).to.deep.equal([]);
+    expect(managedMarket.onboardingMode).to.equal(MarketOnboardingMode.Managed);
   });
 
   it("keeps onboarding policy unknown when a narrow projection omits providers", () => {
@@ -1373,7 +1373,16 @@ describe("Market model routing metadata", () => {
       isPushProvider: false,
       timeToLive: 3600
     });
-    expect(market.onboardingMode).to.equal(MarketOnboardingMode.SelfOnboard);
+    expect(market.onboardingMode).to.equal(MarketOnboardingMode.Self);
+
+    data.market.hooks.pullProviders[0].isManaged = true;
+    const managedMarket = Market.fromMarketDataV2_5(
+      SupportedChainId.Sepolia,
+      provider,
+      data,
+      false
+    );
+    expect(managedMarket.onboardingMode).to.equal(MarketOnboardingMode.Managed);
   });
 
   it("uses indexed provenance for historical factories absent from SDK targets", () => {

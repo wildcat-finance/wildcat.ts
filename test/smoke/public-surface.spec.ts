@@ -90,8 +90,9 @@ describe("SDK public surface smoke", () => {
     expect(typeof sdk.readMarketTransferRecipientAllowed).to.equal("function");
     expect(typeof sdk.prepareRequestMarketBorrowerTransfer).to.equal("function");
     expect(typeof sdk.prepareAddAccessListMembers).to.equal("function");
-    expect(sdk.MarketOnboardingMode.SelfOnboard).to.equal("self-onboard");
-    expect(sdk.MarketOnboardingMode.BorrowerApproval).to.equal("borrower-approval");
+    expect(sdk.MarketOnboardingMode.Open).to.equal("open");
+    expect(sdk.MarketOnboardingMode.Self).to.equal("self");
+    expect(sdk.MarketOnboardingMode.Managed).to.equal("managed");
     expect("MarketTypes" in sdk).to.equal(false);
   });
 });

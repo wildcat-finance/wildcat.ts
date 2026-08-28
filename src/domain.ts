@@ -68,14 +68,18 @@ export enum HooksKind {
 }
 
 /**
- * How an otherwise eligible lender obtains deposit access to a market.
+ * How lender eligibility is controlled for deposits.
  *
  * This describes market policy, not whether a particular lender can deposit
  * right now. Use `MarketAccount.depositAvailability` for the latter.
  */
 export enum MarketOnboardingMode {
-  SelfOnboard = "self-onboard",
-  BorrowerApproval = "borrower-approval"
+  /** Deposits do not require a credential. */
+  Open = "open",
+  /** A lender can satisfy an unmanaged pull provider without prior approval. */
+  Self = "self",
+  /** Eligibility is controlled by a managed provider or per-account approval. */
+  Managed = "managed"
 }
 
 export type FactoryLifecycle = "active" | "historical" | "retired" | "unknown";

@@ -324,20 +324,26 @@ export const getMarketOnboardingMode = ({
   | MarketOnboardingMode
   | undefined => {
   if (version === MarketVersion.V1) {
-    return MarketOnboardingMode.BorrowerApproval;
+    return MarketOnboardingMode.Managed;
   }
   if (version !== MarketVersion.V2 || hooksConfig === undefined) {
     return undefined;
   }
   if (!hooksConfig.flags.useOnDeposit || !hooksConfig.depositRequiresAccess) {
-    return MarketOnboardingMode.SelfOnboard;
+    return MarketOnboardingMode.Open;
   }
   if (roleProviders === undefined) {
     return undefined;
   }
-  return roleProviders.some(({ isApproved, isPullProvider }) => isApproved && isPullProvider)
-    ? MarketOnboardingMode.SelfOnboard
-    : MarketOnboardingMode.BorrowerApproval;
+  const hasSelfOnboardingPath = roleProviders.some(
+    ({ kind, isApproved, isPullProvider, isManaged }) =>
+      isApproved &&
+      isPullProvider &&
+      isManaged !== true &&
+      kind !== "access-list" &&
+      kind !== "merkle"
+  );
+  return hasSelfOnboardingPath ? MarketOnboardingMode.Self : MarketOnboardingMode.Managed;
 };
 
 const calculateLiquidityCoverage = ({
