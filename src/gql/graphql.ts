@@ -13136,6 +13136,7 @@ export type SubgraphMarket = {
   version: SubgraphMarketVersion;
   withdrawalBatchDuration: Scalars['Int']['output'];
   withdrawalBatches: Array<SubgraphWithdrawalBatch>;
+  withdrawalExecutionRecords: Array<SubgraphWithdrawalExecution>;
   withdrawalRequestRecords: Array<SubgraphWithdrawalRequest>;
   withdrawalRequestsIndex: Scalars['Int']['output'];
   wrapperRegistrations: Array<SubgraphMarketWrapperRegistration>;
@@ -13364,6 +13365,15 @@ export type SubgraphMarketWithdrawalBatchesArgs = {
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<SubgraphWithdrawalBatch_Filter>;
+};
+
+
+export type SubgraphMarketWithdrawalExecutionRecordsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphWithdrawalExecution_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphWithdrawalExecution_Filter>;
 };
 
 
@@ -18010,6 +18020,7 @@ export type SubgraphMarket_Filter = {
   withdrawalBatchDuration_not?: InputMaybe<Scalars['Int']['input']>;
   withdrawalBatchDuration_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   withdrawalBatches_?: InputMaybe<SubgraphWithdrawalBatch_Filter>;
+  withdrawalExecutionRecords_?: InputMaybe<SubgraphWithdrawalExecution_Filter>;
   withdrawalRequestRecords_?: InputMaybe<SubgraphWithdrawalRequest_Filter>;
   withdrawalRequestsIndex?: InputMaybe<Scalars['Int']['input']>;
   withdrawalRequestsIndex_gt?: InputMaybe<Scalars['Int']['input']>;
@@ -18384,6 +18395,7 @@ export enum SubgraphMarket_OrderBy {
   version = 'version',
   withdrawalBatchDuration = 'withdrawalBatchDuration',
   withdrawalBatches = 'withdrawalBatches',
+  withdrawalExecutionRecords = 'withdrawalExecutionRecords',
   withdrawalRequestRecords = 'withdrawalRequestRecords',
   withdrawalRequestsIndex = 'withdrawalRequestsIndex',
   wrapperRegistrations = 'wrapperRegistrations'
@@ -33921,7 +33933,9 @@ export type SubgraphWithdrawalExecution = {
   blockLogIndex: Scalars['Int']['output'];
   blockNumber: Scalars['Int']['output'];
   blockTimestamp: Scalars['Int']['output'];
+  eventIndex: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
+  market: SubgraphMarket;
   normalizedAmount: Scalars['BigInt']['output'];
   status: SubgraphLenderWithdrawalStatus;
   transactionHash: Scalars['Bytes']['output'];
@@ -33997,6 +34011,14 @@ export type SubgraphWithdrawalExecution_Filter = {
   blockTimestamp_lte?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not?: InputMaybe<Scalars['Int']['input']>;
   blockTimestamp_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  eventIndex?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_gt?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_gte?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  eventIndex_lt?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_lte?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_not?: InputMaybe<Scalars['Int']['input']>;
+  eventIndex_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
   id_gte?: InputMaybe<Scalars['ID']['input']>;
@@ -34005,6 +34027,27 @@ export type SubgraphWithdrawalExecution_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>;
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  market?: InputMaybe<Scalars['String']['input']>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars['String']['input']>;
+  market_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_gt?: InputMaybe<Scalars['String']['input']>;
+  market_gte?: InputMaybe<Scalars['String']['input']>;
+  market_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_lt?: InputMaybe<Scalars['String']['input']>;
+  market_lte?: InputMaybe<Scalars['String']['input']>;
+  market_not?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   normalizedAmount?: InputMaybe<Scalars['BigInt']['input']>;
   normalizedAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
   normalizedAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
@@ -34085,7 +34128,97 @@ export enum SubgraphWithdrawalExecution_OrderBy {
   blockLogIndex = 'blockLogIndex',
   blockNumber = 'blockNumber',
   blockTimestamp = 'blockTimestamp',
+  eventIndex = 'eventIndex',
   id = 'id',
+  market = 'market',
+  market__abiFamily = 'market__abiFamily',
+  market__address = 'market__address',
+  market__annualInterestBips = 'market__annualInterestBips',
+  market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
+  market__borrowIndex = 'market__borrowIndex',
+  market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__commitmentFeeBips = 'market__commitmentFeeBips',
+  market__createdAt = 'market__createdAt',
+  market__createdAtBlock = 'market__createdAtBlock',
+  market__createdAtLogIndex = 'market__createdAtLogIndex',
+  market__createdAtTimestamp = 'market__createdAtTimestamp',
+  market__createdAtTransaction = 'market__createdAtTransaction',
+  market__debtRepaidIndex = 'market__debtRepaidIndex',
+  market__decimals = 'market__decimals',
+  market__delinquencyFeeBips = 'market__delinquencyFeeBips',
+  market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
+  market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
+  market__depositIndex = 'market__depositIndex',
+  market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
+  market__eventIndex = 'market__eventIndex',
+  market__feeRecipient = 'market__feeRecipient',
+  market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
+  market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
+  market__forceBuyBackIndex = 'market__forceBuyBackIndex',
+  market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
+  market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
+  market__isClosed = 'market__isClosed',
+  market__isDelinquent = 'market__isDelinquent',
+  market__isIncurringPenalties = 'market__isIncurringPenalties',
+  market__isRegistered = 'market__isRegistered',
+  market__lastInterestAccruedBlockNumber = 'market__lastInterestAccruedBlockNumber',
+  market__lastInterestAccruedTimestamp = 'market__lastInterestAccruedTimestamp',
+  market__marketKind = 'market__marketKind',
+  market__maxTotalSupply = 'market__maxTotalSupply',
+  market__maxTotalSupplyUpdatedIndex = 'market__maxTotalSupplyUpdatedIndex',
+  market__minimumDepositUpdatedIndex = 'market__minimumDepositUpdatedIndex',
+  market__name = 'market__name',
+  market__normalizedUnclaimedWithdrawals = 'market__normalizedUnclaimedWithdrawals',
+  market__numCollateralContracts = 'market__numCollateralContracts',
+  market__originKind = 'market__originKind',
+  market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
+  market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
+  market__pendingProtocolFees = 'market__pendingProtocolFees',
+  market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
+  market__protocolFeeBips = 'market__protocolFeeBips',
+  market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__requestedHooks = 'market__requestedHooks',
+  market__reserveRatioBips = 'market__reserveRatioBips',
+  market__scaleFactor = 'market__scaleFactor',
+  market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
+  market__scaledTotalSupply = 'market__scaledTotalSupply',
+  market__sentinel = 'market__sentinel',
+  market__symbol = 'market__symbol',
+  market__temporaryReserveRatioActive = 'market__temporaryReserveRatioActive',
+  market__temporaryReserveRatioExpiry = 'market__temporaryReserveRatioExpiry',
+  market__timeDelinquent = 'market__timeDelinquent',
+  market__totalAssets = 'market__totalAssets',
+  market__totalBaseInterestAccrued = 'market__totalBaseInterestAccrued',
+  market__totalBaseInterestAccruedUSD = 'market__totalBaseInterestAccruedUSD',
+  market__totalBorrowed = 'market__totalBorrowed',
+  market__totalBorrowedUSD = 'market__totalBorrowedUSD',
+  market__totalDebtUSD = 'market__totalDebtUSD',
+  market__totalDelinquencyFeesAccrued = 'market__totalDelinquencyFeesAccrued',
+  market__totalDelinquencyFeesAccruedUSD = 'market__totalDelinquencyFeesAccruedUSD',
+  market__totalDeposited = 'market__totalDeposited',
+  market__totalDepositedUSD = 'market__totalDepositedUSD',
+  market__totalProtocolFeesAccrued = 'market__totalProtocolFeesAccrued',
+  market__totalProtocolFeesAccruedUSD = 'market__totalProtocolFeesAccruedUSD',
+  market__totalRepaid = 'market__totalRepaid',
+  market__totalRepaidUSD = 'market__totalRepaidUSD',
+  market__totalWithdrawalsExecuted = 'market__totalWithdrawalsExecuted',
+  market__totalWithdrawalsExecutedUSD = 'market__totalWithdrawalsExecutedUSD',
+  market__totalWithdrawalsRequested = 'market__totalWithdrawalsRequested',
+  market__totalWithdrawalsRequestedUSD = 'market__totalWithdrawalsRequestedUSD',
+  market__usdTotalsComplete = 'market__usdTotalsComplete',
+  market__version = 'market__version',
+  market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   normalizedAmount = 'normalizedAmount',
   status = 'status',
   status__batchExpiry = 'status__batchExpiry',
@@ -34611,6 +34744,8 @@ export type SubgraphWithdrawalRequestPropertiesFragment = { __typename: 'Withdra
 
 export type SubgraphWithdrawalExecutionPropertiesFragment = { __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } };
 
+export type SubgraphMarketWithdrawalExecutionDataFragment = { __typename: 'WithdrawalExecution', id: string, eventIndex: number, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } };
+
 export type SubgraphLenderWithdrawalPropertiesFragment = { __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, account: { __typename: 'LenderAccount', address: string } };
 
 export type SubgraphForceBuyBackDataFragment = { __typename: 'ForceBuyBack', id: string, eventIndex: number, withdrawalExpiry: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } };
@@ -35061,6 +35196,7 @@ export type SubgraphGetMarketEventsQueryVariables = Exact<{
   annualInterestBipsUpdatedRecordsFilter?: InputMaybe<SubgraphAnnualInterestBipsUpdated_Filter>;
   maxTotalSupplyUpdatedRecordsFilter?: InputMaybe<SubgraphMaxTotalSupplyUpdated_Filter>;
   withdrawalRequestRecordsFilter?: InputMaybe<SubgraphWithdrawalRequest_Filter>;
+  withdrawalExecutionRecordsFilter?: InputMaybe<SubgraphWithdrawalExecution_Filter>;
   forceBuyBackRecordsFilter?: InputMaybe<SubgraphForceBuyBack_Filter>;
   minimumDepositUpdateRecordsFilter?: InputMaybe<SubgraphMinimumDepositUpdated_Filter>;
   protocolFeeBipsUpdatedRecordsFilter?: InputMaybe<SubgraphProtocolFeeBipsUpdated_Filter>;
@@ -35070,7 +35206,7 @@ export type SubgraphGetMarketEventsQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMarketEventsQuery = { __typename: 'Query', market?: { __typename: 'Market', marketClosedEvent?: { __typename: 'MarketClosed', eventIndex: number, blockNumber: number, blockTimestamp: number, transactionHash: string } | null, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, forceBuyBackDisabledRecord?: { __typename: 'DisabledForceBuyBacks', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, delinquencyRecords: Array<{ __typename: 'DelinquencyStatusChanged', id: string, eventIndex: number, isDelinquent: boolean, liquidityCoverageRequired: string, totalAssets: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, annualInterestBipsUpdatedRecords: Array<{ __typename: 'AnnualInterestBipsUpdated', eventIndex: number, oldAnnualInterestBips: number, newAnnualInterestBips: number, blockNumber: number, blockTimestamp: number, transactionHash: string }>, maxTotalSupplyUpdatedRecords: Array<{ __typename: 'MaxTotalSupplyUpdated', eventIndex: number, oldMaxTotalSupply: string, newMaxTotalSupply: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, withdrawalRequestRecords: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, forceBuyBackRecords: Array<{ __typename: 'ForceBuyBack', id: string, eventIndex: number, withdrawalExpiry: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, minimumDepositUpdateRecords: Array<{ __typename: 'MinimumDepositUpdated', id: string, eventIndex: number, oldMinimumDeposit?: string | null, newMinimumDeposit: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, protocolFeeBipsUpdatedRecords: Array<{ __typename: 'ProtocolFeeBipsUpdated', id: string, protocolFeeBipsUpdatedIndex: number, eventIndex: number, oldProtocolFeeBips: number, newProtocolFeeBips: number, blockNumber: number, blockTimestamp: number, transactionHash: string }>, fixedTermUpdatedRecords: Array<{ __typename: 'FixedTermUpdated', id: string, oldFixedTermEndTime: number, newFixedTermEndTime: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number, fixedTermUpdatedIndex: number }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> } | null };
+export type SubgraphGetMarketEventsQuery = { __typename: 'Query', market?: { __typename: 'Market', marketClosedEvent?: { __typename: 'MarketClosed', eventIndex: number, blockNumber: number, blockTimestamp: number, transactionHash: string } | null, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, forceBuyBackDisabledRecord?: { __typename: 'DisabledForceBuyBacks', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, delinquencyRecords: Array<{ __typename: 'DelinquencyStatusChanged', id: string, eventIndex: number, isDelinquent: boolean, liquidityCoverageRequired: string, totalAssets: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, annualInterestBipsUpdatedRecords: Array<{ __typename: 'AnnualInterestBipsUpdated', eventIndex: number, oldAnnualInterestBips: number, newAnnualInterestBips: number, blockNumber: number, blockTimestamp: number, transactionHash: string }>, maxTotalSupplyUpdatedRecords: Array<{ __typename: 'MaxTotalSupplyUpdated', eventIndex: number, oldMaxTotalSupply: string, newMaxTotalSupply: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, withdrawalRequestRecords: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, withdrawalExecutionRecords: Array<{ __typename: 'WithdrawalExecution', id: string, eventIndex: number, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, forceBuyBackRecords: Array<{ __typename: 'ForceBuyBack', id: string, eventIndex: number, withdrawalExpiry: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, minimumDepositUpdateRecords: Array<{ __typename: 'MinimumDepositUpdated', id: string, eventIndex: number, oldMinimumDeposit?: string | null, newMinimumDeposit: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, protocolFeeBipsUpdatedRecords: Array<{ __typename: 'ProtocolFeeBipsUpdated', id: string, protocolFeeBipsUpdatedIndex: number, eventIndex: number, oldProtocolFeeBips: number, newProtocolFeeBips: number, blockNumber: number, blockTimestamp: number, transactionHash: string }>, fixedTermUpdatedRecords: Array<{ __typename: 'FixedTermUpdated', id: string, oldFixedTermEndTime: number, newFixedTermEndTime: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number, fixedTermUpdatedIndex: number }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> } | null };
 
 export type SubgraphGetMarketsWithEventsQueryVariables = Exact<{
   marketFilter?: InputMaybe<SubgraphMarket_Filter>;
@@ -36236,6 +36372,19 @@ export const MarketListDataFragmentDoc = gql`
   snapshot {
     ...MarketSnapshotData
   }
+}
+    `;
+export const MarketWithdrawalExecutionDataFragmentDoc = gql`
+    fragment MarketWithdrawalExecutionData on WithdrawalExecution {
+  id
+  eventIndex
+  account {
+    address
+  }
+  normalizedAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
 }
     `;
 export const ForceBuyBackDataFragmentDoc = gql`
@@ -38191,7 +38340,7 @@ ${HooksTemplateDataFragmentDoc}
 ${HooksFactoryDataFragmentDoc}`;
 export type GetHooksTemplateRegistrationsQueryResult = Apollo.QueryResult<SubgraphGetHooksTemplateRegistrationsQuery, SubgraphGetHooksTemplateRegistrationsQueryVariables>;
 export const GetMarketEventsDocument = gql`
-    query getMarketEvents($market: ID!, $startEventIndex: Int = 0, $endEventIndex: Int = 100000000, $limit: Int = 10, $delinquencyRecordsFilter: DelinquencyStatusChanged_filter = {id_not: null}, $borrowRecordsFilter: Borrow_filter = {id_not: null}, $depositRecordsFilter: Deposit_filter = {id_not: null}, $feeCollectionRecordsFilter: FeesCollected_filter = {id_not: null}, $repaymentRecordsFilter: DebtRepaid_filter = {id_not: null}, $annualInterestBipsUpdatedRecordsFilter: AnnualInterestBipsUpdated_filter = {id_not: null}, $maxTotalSupplyUpdatedRecordsFilter: MaxTotalSupplyUpdated_filter = {id_not: null}, $withdrawalRequestRecordsFilter: WithdrawalRequest_filter = {id_not: null}, $forceBuyBackRecordsFilter: ForceBuyBack_filter = {id_not: null}, $minimumDepositUpdateRecordsFilter: MinimumDepositUpdated_filter = {id_not: null}, $protocolFeeBipsUpdatedRecordsFilter: ProtocolFeeBipsUpdated_filter = {id_not: null}, $fixedTermUpdatedRecordsFilter: FixedTermUpdated_filter = {id_not: null}, $periodicTermUpdatedRecordsFilter: PeriodicTermUpdated_filter = {id_not: null}, $annualInterestBipsReductionProposalRecordsFilter: AnnualInterestBipsReductionProposed_filter = {id_not: null}) {
+    query getMarketEvents($market: ID!, $startEventIndex: Int = 0, $endEventIndex: Int = 100000000, $limit: Int = 10, $delinquencyRecordsFilter: DelinquencyStatusChanged_filter = {id_not: null}, $borrowRecordsFilter: Borrow_filter = {id_not: null}, $depositRecordsFilter: Deposit_filter = {id_not: null}, $feeCollectionRecordsFilter: FeesCollected_filter = {id_not: null}, $repaymentRecordsFilter: DebtRepaid_filter = {id_not: null}, $annualInterestBipsUpdatedRecordsFilter: AnnualInterestBipsUpdated_filter = {id_not: null}, $maxTotalSupplyUpdatedRecordsFilter: MaxTotalSupplyUpdated_filter = {id_not: null}, $withdrawalRequestRecordsFilter: WithdrawalRequest_filter = {id_not: null}, $withdrawalExecutionRecordsFilter: WithdrawalExecution_filter = {id_not: null}, $forceBuyBackRecordsFilter: ForceBuyBack_filter = {id_not: null}, $minimumDepositUpdateRecordsFilter: MinimumDepositUpdated_filter = {id_not: null}, $protocolFeeBipsUpdatedRecordsFilter: ProtocolFeeBipsUpdated_filter = {id_not: null}, $fixedTermUpdatedRecordsFilter: FixedTermUpdated_filter = {id_not: null}, $periodicTermUpdatedRecordsFilter: PeriodicTermUpdated_filter = {id_not: null}, $annualInterestBipsReductionProposalRecordsFilter: AnnualInterestBipsReductionProposed_filter = {id_not: null}) {
   market(id: $market) {
     marketClosedEvent {
       ...MarketClosedData
@@ -38266,6 +38415,14 @@ export const GetMarketEventsDocument = gql`
     ) {
       ...WithdrawalRequestProperties
     }
+    withdrawalExecutionRecords(
+      where: {and: [$withdrawalExecutionRecordsFilter, {eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex}]}
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
+      ...MarketWithdrawalExecutionData
+    }
     forceBuyBackRecords(
       where: {and: [$forceBuyBackRecordsFilter, {eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex}]}
       orderBy: eventIndex
@@ -38327,6 +38484,7 @@ ${RepaymentDataFragmentDoc}
 ${AnnualInterestBipsUpdatedDataFragmentDoc}
 ${MaxTotalSupplyUpdatedDataFragmentDoc}
 ${WithdrawalRequestPropertiesFragmentDoc}
+${MarketWithdrawalExecutionDataFragmentDoc}
 ${ForceBuyBackDataFragmentDoc}
 ${MinimumDepositUpdatedDataFragmentDoc}
 ${ProtocolFeeBipsUpdatedDataFragmentDoc}

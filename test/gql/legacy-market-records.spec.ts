@@ -1,7 +1,7 @@
 import { ApolloClient, DocumentNode, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
 import { providers } from "ethers";
-import { getOperationAST } from "graphql";
+import { getOperationAST, print } from "graphql";
 import { SupportedChainId } from "../../src/constants";
 import { getMarketRecords } from "../../src/gql";
 import { Market } from "../../src/market";
@@ -64,5 +64,7 @@ describe("legacy market-record routing", () => {
     expect(calls[0].variables).not.to.have.property(
       "annualInterestBipsReductionProposalRecordsFilter"
     );
+    expect(calls[0].variables).not.to.have.property("withdrawalExecutionRecordsFilter");
+    expect(print(calls[0].query)).not.to.include("withdrawalExecutionRecords");
   });
 });

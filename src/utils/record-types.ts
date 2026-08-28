@@ -12,6 +12,7 @@ import {
   SubgraphRepaymentDataFragment,
   SubgraphWithdrawalBatchPaymentPropertiesFragment,
   SubgraphWithdrawalExecutionPropertiesFragment,
+  SubgraphMarketWithdrawalExecutionDataFragment,
   SubgraphWithdrawalRequestPropertiesFragment,
   SubgraphMinimumDepositUpdatedDataFragment,
   SubgraphProtocolFeeBipsUpdatedDataFragment,
@@ -207,6 +208,13 @@ export type WithdrawalRequestPartialRecord = Exact<
   }
 >;
 
+export type WithdrawalExecutionPartialRecord = Exact<
+  Omit<SubgraphMarketWithdrawalExecutionDataFragment, "normalizedAmount" | "account"> & {
+    normalizedAmount: TokenAmount;
+    address: string;
+  }
+>;
+
 export type MarketRecord =
   | AnnualInterestBipsUpdatedRecord
   | BorrowRecord
@@ -216,6 +224,7 @@ export type MarketRecord =
   | MarketClosedRecord
   | MaxTotalSupplyUpdatedRecord
   | RepaymentRecord
+  | WithdrawalExecutionPartialRecord
   | WithdrawalRequestPartialRecord
   | ForceBuyBackRecord
   | MinimumDepositUpdatedRecord
@@ -235,6 +244,7 @@ export type MarketDataFragment =
   | SubgraphMarketClosedDataFragment
   | SubgraphMaxTotalSupplyUpdatedDataFragment
   | SubgraphRepaymentDataFragment
+  | SubgraphMarketWithdrawalExecutionDataFragment
   | SubgraphWithdrawalRequestPropertiesFragment
   | SubgraphForceBuyBackDataFragment
   | SubgraphMinimumDepositUpdatedDataFragment

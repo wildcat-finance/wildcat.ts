@@ -469,6 +469,20 @@ fragment WithdrawalExecutionProperties on WithdrawalExecution {
   transactionHash
 }
 
+# V2.5 market-history shape. Keep WithdrawalExecutionProperties compatible
+# with legacy subgraphs, which do not expose eventIndex on this entity.
+fragment MarketWithdrawalExecutionData on WithdrawalExecution {
+  id
+  eventIndex
+  account {
+    address
+  }
+  normalizedAmount
+  blockNumber
+  blockTimestamp
+  transactionHash
+}
+
 fragment LenderWithdrawalProperties on LenderWithdrawalStatus {
   id
   account {

@@ -12,13 +12,14 @@ Status values:
 
 ## Current state
 
-- [x] Branch is `feat/sdk-v3.2.4-integration` at integration baseline `1b8c720`.
-- [x] SDK package version is `3.2.4-beta`.
+- [x] Branch is `release/v3.2.5-beta`, based on published `v3.2.4-beta` commit `b3c2750`.
+- [x] SDK package version is `3.2.5-beta`.
 - [x] Existing V2 consumers remain on the `3.1.17` release lineage.
 - [x] Final V2.5 Sepolia protocol targets are deployed and loaded into SDK
       configuration.
-- [x] The V2.5.9 subgraph is deployed to Goldsky and Hinterlight from the same
-      source and configuration.
+- [~] The V2.5.11 subgraph is deployed to Goldsky and Hinterlight from the same
+      source and configuration. Both expose the expected schema and metadata
+      without indexing errors; replay is still in progress.
 - [x] A full hosted V2.5 Graph API schema was captured from Goldsky; every SDK
       operation also validates against Hinterlight's compatible schema.
 - [x] Factory/template registration identity and live hook reads use explicit
@@ -138,7 +139,7 @@ Status values:
 - [x] Verify wrapper-factory target.
 - [x] Verify V2.5 lens addresses and ABIs.
 - [x] Verify V2.5 subgraph endpoint metadata and config digest.
-- [~] Add addresses and URLs in an isolated commit.
+- [x] Add addresses and URLs in an isolated commit.
 - [x] Test standard create-market preview and encoding.
 - [x] Test revolving create-market preview and encoding.
 - [x] Test template/factory mismatch rejection.
@@ -149,7 +150,7 @@ Status values:
 
 ## Phase 7 - App migration and release gate
 
-- [ ] Pack the SDK locally.
+- [x] Pack the SDK locally.
 - [ ] Install the local package into `wildcat-app-v2`.
 - [ ] Remove app imports of SDK-generated GraphQL types where practical.
 - [ ] Migrate app direct queries covered by first-class SDK APIs.
@@ -222,6 +223,12 @@ Status values:
 | 2026-08-24 | SDK Phase 6 | `yarn mocha` | Pass | 240 passing |
 | 2026-08-24 | SDK package | `npm pack --dry-run --json` | Pass | `3.2.4-beta` package assembled successfully without publishing |
 | 2026-08-24 | SDK Phase 6 | `git diff --check` | Pass | No whitespace errors |
+| 2026-08-27 | Replacement Sepolia targets | Protocol handoff plus live RPC anchor reads | Pass | Standard and revolving factories, V2.5 lens, and wrapper factory have code and resolve the expected ArchController, wrapper, registry, and v1 wrapper facade |
+| 2026-08-27 | Hosted endpoint compatibility | Schema and metadata validation against Goldsky and Hinterlight V2.5.11 | Partial | Both expose `WithdrawalExecution.eventIndex` and `.market`, matching deployment metadata, config digest `d0f08f8b49e89db86f91b73b60ba22ecc540a3d3967295e3a9b3515da60e98dc`, and no indexing errors; replay is still in progress |
+| 2026-08-27 | Live SDK factory reconciliation | `getHooksFactories` plus `getHooksFactoryDeploymentTargetIssues` against Hinterlight V2.5.10 | Pass | 13 configured factories, 9 indexed factories, 2 current targets, and no target issues |
+| 2026-08-27 | SDK DEF-007 | V2.5 market-record query, parsing, ordering, kind-filter, legacy routing, and existing withdrawal hydration tests | Pass | Withdrawal executions join the typed market-history stream without changing legacy subgraph documents |
+| 2026-08-27 | SDK release gate | `yarn lint`, `yarn build`, `yarn mocha`, `git diff --check` | Pass | 242 tests pass for `3.2.5-beta` |
+| 2026-08-27 | SDK package | `npm pack --dry-run --json` | Pass | `3.2.5-beta` package assembled successfully without publishing |
 
 ## Decision ledger
 

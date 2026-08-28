@@ -10,6 +10,7 @@ import {
   SubgraphAnnualInterestBipsUpdated_Filter,
   SubgraphMaxTotalSupplyUpdated_Filter,
   SubgraphWithdrawalRequest_Filter,
+  SubgraphWithdrawalExecution_Filter,
   SubgraphForceBuyBack_Filter,
   SubgraphMinimumDepositUpdated_Filter,
   SubgraphProtocolFeeBipsUpdated_Filter,
@@ -50,6 +51,7 @@ type FilterUnion =
   | SubgraphAnnualInterestBipsUpdated_Filter
   | SubgraphMaxTotalSupplyUpdated_Filter
   | SubgraphWithdrawalRequest_Filter
+  | SubgraphWithdrawalExecution_Filter
   | SubgraphForceBuyBack_Filter
   | SubgraphMinimumDepositUpdated_Filter
   | SubgraphProtocolFeeBipsUpdated_Filter
@@ -98,6 +100,7 @@ export async function getMarketRecords(
     fixedTermUpdatedRecordsFilter: additionalFilter
   };
   if (!legacySchema) {
+    variables.withdrawalExecutionRecordsFilter = additionalFilter;
     variables.periodicTermUpdatedRecordsFilter = additionalFilter;
     variables.annualInterestBipsReductionProposalRecordsFilter = additionalFilter;
   }
@@ -127,6 +130,7 @@ export async function getMarketRecords(
     annualInterestBipsReductionProposalRecords = [],
     forceBuyBackRecords,
     maxTotalSupplyUpdatedRecords,
+    withdrawalExecutionRecords = [],
     withdrawalRequestRecords,
     marketClosedEvent,
     minimumDepositUpdateRecords,
@@ -170,6 +174,7 @@ export async function getMarketRecords(
     ...maxTotalSupplyUpdatedRecords.map((r) => parseMarketRecord(market.marketToken, r)),
     ...minimumDepositUpdateRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
     ...protocolFeeBipsUpdatedRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
+    ...withdrawalExecutionRecords.map((r) => parseMarketRecord(market.underlyingToken, r)),
     ...withdrawalRequestRecords.map((r) => parseMarketRecord(market.underlyingToken, r))
   ].filter(filter);
 

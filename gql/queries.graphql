@@ -664,6 +664,7 @@ query getMarketEvents(
   $annualInterestBipsUpdatedRecordsFilter: AnnualInterestBipsUpdated_filter = { id_not: null }
   $maxTotalSupplyUpdatedRecordsFilter: MaxTotalSupplyUpdated_filter = { id_not: null }
   $withdrawalRequestRecordsFilter: WithdrawalRequest_filter = { id_not: null }
+  $withdrawalExecutionRecordsFilter: WithdrawalExecution_filter = { id_not: null }
   $forceBuyBackRecordsFilter: ForceBuyBack_filter = { id_not: null }
   $minimumDepositUpdateRecordsFilter: MinimumDepositUpdated_filter = { id_not: null }
   $protocolFeeBipsUpdatedRecordsFilter: ProtocolFeeBipsUpdated_filter = { id_not: null }
@@ -786,6 +787,19 @@ query getMarketEvents(
       first: $limit
     ) {
       ...WithdrawalRequestProperties
+    }
+    withdrawalExecutionRecords(
+      where: {
+        and: [
+          $withdrawalExecutionRecordsFilter
+          { eventIndex_gte: $startEventIndex, eventIndex_lt: $endEventIndex }
+        ]
+      }
+      orderBy: eventIndex
+      orderDirection: desc
+      first: $limit
+    ) {
+      ...MarketWithdrawalExecutionData
     }
     forceBuyBackRecords(
       where: {

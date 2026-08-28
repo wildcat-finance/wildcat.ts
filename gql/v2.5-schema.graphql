@@ -13186,6 +13186,13 @@ type Market {
     skip: Int = 0
     where: WithdrawalBatch_filter
   ): [WithdrawalBatch!]!
+  withdrawalExecutionRecords(
+    first: Int = 100
+    orderBy: WithdrawalExecution_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: WithdrawalExecution_filter
+  ): [WithdrawalExecution!]!
   withdrawalRequestRecords(
     first: Int = 100
     orderBy: WithdrawalRequest_orderBy
@@ -17850,6 +17857,7 @@ input Market_filter {
   withdrawalBatchDuration_not: Int
   withdrawalBatchDuration_not_in: [Int!]
   withdrawalBatches_: WithdrawalBatch_filter
+  withdrawalExecutionRecords_: WithdrawalExecution_filter
   withdrawalRequestRecords_: WithdrawalRequest_filter
   withdrawalRequestsIndex: Int
   withdrawalRequestsIndex_gt: Int
@@ -18224,6 +18232,7 @@ enum Market_orderBy {
   version
   withdrawalBatchDuration
   withdrawalBatches
+  withdrawalExecutionRecords
   withdrawalRequestRecords
   withdrawalRequestsIndex
   wrapperRegistrations
@@ -34591,7 +34600,9 @@ type WithdrawalExecution {
   blockLogIndex: Int!
   blockNumber: Int!
   blockTimestamp: Int!
+  eventIndex: Int!
   id: ID!
+  market: Market!
   normalizedAmount: BigInt!
   status: LenderWithdrawalStatus!
   transactionHash: Bytes!
@@ -34669,6 +34680,14 @@ input WithdrawalExecution_filter {
   blockTimestamp_lte: Int
   blockTimestamp_not: Int
   blockTimestamp_not_in: [Int!]
+  eventIndex: Int
+  eventIndex_gt: Int
+  eventIndex_gte: Int
+  eventIndex_in: [Int!]
+  eventIndex_lt: Int
+  eventIndex_lte: Int
+  eventIndex_not: Int
+  eventIndex_not_in: [Int!]
   id: ID
   id_gt: ID
   id_gte: ID
@@ -34677,6 +34696,27 @@ input WithdrawalExecution_filter {
   id_lte: ID
   id_not: ID
   id_not_in: [ID!]
+  market: String
+  market_: Market_filter
+  market_contains: String
+  market_contains_nocase: String
+  market_ends_with: String
+  market_ends_with_nocase: String
+  market_gt: String
+  market_gte: String
+  market_in: [String!]
+  market_lt: String
+  market_lte: String
+  market_not: String
+  market_not_contains: String
+  market_not_contains_nocase: String
+  market_not_ends_with: String
+  market_not_ends_with_nocase: String
+  market_not_in: [String!]
+  market_not_starts_with: String
+  market_not_starts_with_nocase: String
+  market_starts_with: String
+  market_starts_with_nocase: String
   normalizedAmount: BigInt
   normalizedAmount_gt: BigInt
   normalizedAmount_gte: BigInt
@@ -34757,7 +34797,97 @@ enum WithdrawalExecution_orderBy {
   blockLogIndex
   blockNumber
   blockTimestamp
+  eventIndex
   id
+  market
+  market__abiFamily
+  market__address
+  market__annualInterestBips
+  market__annualInterestBipsUpdatedIndex
+  market__borrowIndex
+  market__borrower
+  market__borrowerIdentityRegistryAddress
+  market__borrowerPrincipal
+  market__commitmentFeeBips
+  market__createdAt
+  market__createdAtBlock
+  market__createdAtLogIndex
+  market__createdAtTimestamp
+  market__createdAtTransaction
+  market__debtRepaidIndex
+  market__decimals
+  market__delinquencyFeeBips
+  market__delinquencyGracePeriod
+  market__delinquencyStatusChangedIndex
+  market__depositIndex
+  market__drawnAmount
+  market__eventGeneration
+  market__eventIndex
+  market__feeRecipient
+  market__feesCollectedIndex
+  market__finalHooks
+  market__fixedTermUpdatedIndex
+  market__forceBuyBackIndex
+  market__generation
+  market__hooksData
+  market__id
+  market__initialBorrower
+  market__initialBorrowerPrincipal
+  market__isClosed
+  market__isDelinquent
+  market__isIncurringPenalties
+  market__isRegistered
+  market__lastInterestAccruedBlockNumber
+  market__lastInterestAccruedTimestamp
+  market__marketKind
+  market__maxTotalSupply
+  market__maxTotalSupplyUpdatedIndex
+  market__minimumDepositUpdatedIndex
+  market__name
+  market__normalizedUnclaimedWithdrawals
+  market__numCollateralContracts
+  market__originKind
+  market__originalAnnualInterestBips
+  market__originalReserveRatioBips
+  market__originationFeeAmount
+  market__pendingBorrower
+  market__pendingBorrowerPrincipal
+  market__pendingProtocolFees
+  market__pendingWithdrawalExpiry
+  market__protocolFeeBips
+  market__protocolFeeBipsUpdatedIndex
+  market__requestedHooks
+  market__reserveRatioBips
+  market__scaleFactor
+  market__scaledPendingWithdrawals
+  market__scaledTotalSupply
+  market__sentinel
+  market__symbol
+  market__temporaryReserveRatioActive
+  market__temporaryReserveRatioExpiry
+  market__timeDelinquent
+  market__totalAssets
+  market__totalBaseInterestAccrued
+  market__totalBaseInterestAccruedUSD
+  market__totalBorrowed
+  market__totalBorrowedUSD
+  market__totalDebtUSD
+  market__totalDelinquencyFeesAccrued
+  market__totalDelinquencyFeesAccruedUSD
+  market__totalDeposited
+  market__totalDepositedUSD
+  market__totalProtocolFeesAccrued
+  market__totalProtocolFeesAccruedUSD
+  market__totalRepaid
+  market__totalRepaidUSD
+  market__totalWithdrawalsExecuted
+  market__totalWithdrawalsExecutedUSD
+  market__totalWithdrawalsRequested
+  market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
+  market__version
+  market__withdrawalBatchDuration
+  market__withdrawalRequestsIndex
   normalizedAmount
   status
   status__batchExpiry

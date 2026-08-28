@@ -98,7 +98,7 @@ export const getSubgraphFeatureAvailability = (
 
 export const SubgraphUrls: Record<SupportedChainId, string> = {
   [SupportedChainId.Sepolia]:
-    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.5.9/gn",
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.5.11/gn",
   [SupportedChainId.Mainnet]:
     "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.30/gn",
   [SupportedChainId.PlasmaTestnet]:

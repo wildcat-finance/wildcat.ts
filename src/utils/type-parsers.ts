@@ -187,6 +187,11 @@ const marketRecordParsers: MarketRecordParserMap = {
   PeriodicTermClosed: (_, log) => log,
   PeriodicTermUpdated: (_, log) => log,
   ProtocolFeeBipsUpdated: (_, log) => ({ ...log }),
+  WithdrawalExecution: (token, { normalizedAmount, account, ...rest }) => ({
+    address: account.address,
+    normalizedAmount: token.getAmount(normalizedAmount),
+    ...rest
+  }),
   WithdrawalRequest: (token, { scaledAmount, normalizedAmount, account, ...rest }) => ({
     address: account.address,
     scaledAmount: toRawAmount(scaledAmount),
