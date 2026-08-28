@@ -580,6 +580,21 @@ query getRoleProviderAuthority($provider: ID!, $first: Int = 1000, $skip: Int = 
   }
 }
 
+query getActiveRoleProviderMembers($providers: [String!]!, $first: Int = 1000, $skip: Int = 0) {
+  roleProviderMembers(
+    where: { provider_in: $providers, isMember: true }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...RoleProviderMemberData
+    provider {
+      address
+    }
+  }
+}
+
 query getHookAdministratorChanges($hooks: String!, $first: Int = 100, $skip: Int = 0) {
   hookAdministratorChanges(
     where: { hooks: $hooks }

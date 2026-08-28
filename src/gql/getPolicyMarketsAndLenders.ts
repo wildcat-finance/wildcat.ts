@@ -23,6 +23,7 @@ import {
   toLegacyMarketFilter,
   toLegacyMarketOrder
 } from "./legacy-subgraph";
+import { getPolicyAccessListMembers, PolicyAccessListMember } from "./getPolicyAccessListMembers";
 
 export type GetPolicyMarketsAndLendersOptions =
   SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables & {
@@ -34,6 +35,9 @@ export type GetPolicyMarketsAndLendersOptions =
 export type PolicyMarketsAndLenders = {
   hooksInstance?: HooksInstance;
   markets: Market[];
+  /** Current members of approved pull-based AccessList providers. */
+  accessListMembers: PolicyAccessListMember[];
+  /** Accounts with credential history on the hooks instance or controller. */
   lenders: PolicyLender[];
   controller?: MarketController;
 };
@@ -127,6 +131,7 @@ export async function getPolicyMarketsAndLenders(
       Market.fromSubgraphMarketData(chainId, signerOrProvider, market)
     );
     return {
+      accessListMembers: [],
       lenders,
       markets,
       controller: MarketController.fromSubgraphControllerData(chainId, signerOrProvider, controller)
@@ -143,10 +148,19 @@ export async function getPolicyMarketsAndLenders(
   const markets = hooksInstance.markets.map((market) =>
     Market.fromSubgraphMarketData(chainId, signerOrProvider, market)
   );
+  const normalizedHooksInstance = hooksInstanceFromSubgraph(
+    chainId,
+    signerOrProvider,
+    hooksInstance
+  );
+  const accessListMembers = legacySchema
+    ? []
+    : await getPolicyAccessListMembers(subgraphClient, normalizedHooksInstance, { fetchPolicy });
 
   return {
+    accessListMembers,
     lenders,
     markets,
-    hooksInstance: hooksInstanceFromSubgraph(chainId, signerOrProvider, hooksInstance)
+    hooksInstance: normalizedHooksInstance
   };
 }

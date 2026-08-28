@@ -35135,6 +35135,15 @@ export type SubgraphGetRoleProviderAuthorityQueryVariables = Exact<{
 
 export type SubgraphGetRoleProviderAuthorityQuery = { __typename: 'Query', roleProviderInstance?: { __typename: 'RoleProviderInstance', id: string, address: string, kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null, deployer?: string | null, salt?: string | null, root?: string | null, token?: string | null, vault?: string | null, minBalance?: string | null, minAssets?: string | null, tokenId?: string | null, skipInterfaceCheck?: boolean | null, deployedAtBlock?: string | null, deployedAtTimestamp?: string | null, deployedAtTransaction?: string | null, deployedAtLogIndex?: string | null, attachments: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, hooks: { __typename: 'HooksInstance', address: string, administrator: string, pendingAdministrator?: string | null } }>, members: Array<{ __typename: 'RoleProviderMember', id: string, account: string, isMember: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string }>, rootChanges: Array<{ __typename: 'RoleProviderRootChange', id: string, administrator: string, previousRoot: string, newRoot: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, provider: { __typename: 'RoleProviderInstance', address: string } }>, deploymentFactory?: { __typename: 'RoleProviderFactory', address: string, kind: SubgraphRoleProviderKind, label: string, generation: string, configuredStartBlock: string, indexed: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean } | null } | null };
 
+export type SubgraphGetActiveRoleProviderMembersQueryVariables = Exact<{
+  providers: Array<Scalars['String']['input']> | Scalars['String']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type SubgraphGetActiveRoleProviderMembersQuery = { __typename: 'Query', roleProviderMembers: Array<{ __typename: 'RoleProviderMember', id: string, account: string, isMember: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, provider: { __typename: 'RoleProviderInstance', address: string } }> };
+
 export type SubgraphGetHookAdministratorChangesQueryVariables = Exact<{
   hooks: Scalars['String']['input'];
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -38250,6 +38259,23 @@ ${RoleProviderAttachmentDataFragmentDoc}
 ${RoleProviderMemberDataFragmentDoc}
 ${RoleProviderRootChangeDataFragmentDoc}`;
 export type GetRoleProviderAuthorityQueryResult = Apollo.QueryResult<SubgraphGetRoleProviderAuthorityQuery, SubgraphGetRoleProviderAuthorityQueryVariables>;
+export const GetActiveRoleProviderMembersDocument = gql`
+    query getActiveRoleProviderMembers($providers: [String!]!, $first: Int = 1000, $skip: Int = 0) {
+  roleProviderMembers(
+    where: {provider_in: $providers, isMember: true}
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: asc
+  ) {
+    ...RoleProviderMemberData
+    provider {
+      address
+    }
+  }
+}
+    ${RoleProviderMemberDataFragmentDoc}`;
+export type GetActiveRoleProviderMembersQueryResult = Apollo.QueryResult<SubgraphGetActiveRoleProviderMembersQuery, SubgraphGetActiveRoleProviderMembersQueryVariables>;
 export const GetHookAdministratorChangesDocument = gql`
     query getHookAdministratorChanges($hooks: String!, $first: Int = 100, $skip: Int = 0) {
   hookAdministratorChanges(
