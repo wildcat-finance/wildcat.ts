@@ -17,9 +17,9 @@ Status values:
 - [x] Existing V2 consumers remain on the `3.1.17` release lineage.
 - [x] Final V2.5 Sepolia protocol targets are deployed and loaded into SDK
       configuration.
-- [~] The V2.5.11 subgraph is deployed to Goldsky and Hinterlight from the same
-      source and configuration. Both expose the expected schema and metadata
-      without indexing errors; replay is still in progress.
+- [x] The V2.5.11 subgraph is synced on Goldsky and Hinterlight from the same
+      source and configuration. Both expose matching data, schema, and metadata
+      without indexing errors.
 - [x] A full hosted V2.5 Graph API schema was captured from Goldsky; every SDK
       operation also validates against Hinterlight's compatible schema.
 - [x] Factory/template registration identity and live hook reads use explicit
@@ -146,7 +146,7 @@ Status values:
 - [x] Test wrapper and transfer-policy constraints.
 - [x] Test periodic-term and APR-reduction paths.
 - [x] Run Phase 6 checks.
-- [ ] Commit Phase 6.
+- [x] Commit Phase 6.
 
 ## Phase 7 - App migration and release gate
 
@@ -229,6 +229,9 @@ Status values:
 | 2026-08-27 | SDK DEF-007 | V2.5 market-record query, parsing, ordering, kind-filter, legacy routing, and existing withdrawal hydration tests | Pass | Withdrawal executions join the typed market-history stream without changing legacy subgraph documents |
 | 2026-08-27 | SDK release gate | `yarn lint`, `yarn build`, `yarn mocha`, `git diff --check` | Pass | 242 tests pass for `3.2.5-beta` |
 | 2026-08-27 | SDK package | `npm pack --dry-run --json` | Pass | `3.2.5-beta` package assembled successfully without publishing |
+| 2026-08-28 | V2.5.11 replay and provider parity | Goldsky and Hinterlight `_meta`, withdrawal executions, and active role-provider members | Pass | Both providers reached block 11585284 at hash `0x7deb994351dc10bbfe9b3f4cea170c2db05ce68fffe4e67d49f13990ae781e3f` without indexing errors; sampled entity payloads match exactly |
+| 2026-08-28 | Live SDK factory reconciliation | `getHooksFactories` plus `getHooksFactoryDeploymentTargetIssues` against Goldsky and Hinterlight V2.5.11 | Pass | Both return 13 configured factories, 9 indexed factories, 2 current targets, and no target issues |
+| 2026-08-28 | SDK release gate | `env -u WILDCAT_SUBGRAPH_SCHEMA yarn codegen:gql`, `yarn lint`, `yarn build`, `yarn mocha`, `git diff --check` | Pass | Generated transport reproduces; 246 tests pass for `3.2.5-beta` |
 
 ## Decision ledger
 
@@ -289,8 +292,8 @@ Status values:
 | 2 - GraphQL/codegen | `6e56b3b` | Schema validation, endpoint-gate integration, lint, build, 124-test suite | Complete |
 | 3 - Factories/hooks | `aff7c32` | Multi-factory fixtures, lint, build, 133-test suite | Complete |
 | 4 - Markets/live | `7a930d1` | Historical fixtures, fixed-block parity, lint, build, 141-test suite | Complete |
-| 5 - Analytics | This commit | Analytics fixtures, app query inventory, lint, build, 153-test suite | Complete |
-| 6 - Deployment | Working tree | Artifact checks, previews, hosted schema, live endpoint/lens checks, lint, build, 240-test suite | Ready for commit |
+| 5 - Analytics | `3456cd9` | Analytics fixtures, app query inventory, lint, build, 153-test suite | Complete |
+| 6 - Deployment | `b3c2750`, `51499d5` | Artifact checks, previews, hosted schema, live endpoint/lens checks, lint, build, 240-test suite, replacement-target alignment | Complete |
 | 7 - App/release | Pending | App tests, lint, build, Sepolia smoke | Not started |
 
 ## Working log
