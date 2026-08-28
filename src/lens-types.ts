@@ -273,6 +273,12 @@ export type MarketDataWithLenderStatusV2_5StructOutput = {
   lenderStatus: LenderAccountDataV2_5StructOutput;
 };
 
+/** Complete V2.5 market data paired with the focused lender-account result. */
+export type FullMarketDataWithLenderStatusV2_5StructOutput = {
+  market: MarketDataV2_5StructOutput;
+  lenderStatus: LenderAccountDataV2_5StructOutput;
+};
+
 export type MarketLiveDataV2_5StructOutput = {
   market: string;
   isClosed: boolean;

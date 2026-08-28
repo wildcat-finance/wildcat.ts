@@ -7,6 +7,7 @@ import {
   MarketDataWithLenderStatusV2StructOutput,
   LenderAccountDataV2_5StructOutput,
   MarketDataWithLenderStatusV2_5StructOutput,
+  FullMarketDataWithLenderStatusV2_5StructOutput,
   MarketLiveDataWithLenderStatusV2_5StructOutput
 } from "../lens-types";
 import {
@@ -122,7 +123,8 @@ type LatestLenderAccountDataStructOutput =
 type MarketDataWithLenderStatusOutput =
   | MarketDataWithLenderStatusStructOutput
   | MarketDataWithLenderStatusV2StructOutput
-  | MarketDataWithLenderStatusV2_5StructOutput;
+  | MarketDataWithLenderStatusV2_5StructOutput
+  | FullMarketDataWithLenderStatusV2_5StructOutput;
 
 export type MarketAccountArgs = {
   account: string;
@@ -1233,6 +1235,11 @@ export class MarketAccount {
     account: string,
     info: MarketDataWithLenderStatusOutput
   ): Promise<MarketAccount> {
+    if ("market" in info.market) {
+      const infoV2_5 = info as FullMarketDataWithLenderStatusV2_5StructOutput;
+      const market = await Market.fromUnifiedMarketData(chainId, provider, infoV2_5.market);
+      return MarketAccount.fromLenderAccountData(market, infoV2_5.lenderStatus);
+    }
     if ("controller" in info.market) {
       info = info as MarketDataWithLenderStatusStructOutput;
       return MarketAccount.fromMarketLenderStatus(
