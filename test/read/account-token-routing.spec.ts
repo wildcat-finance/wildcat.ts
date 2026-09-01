@@ -10,7 +10,8 @@ import {
 } from "../../src/abi";
 import * as constantsModule from "../../src/constants";
 import { Market } from "../../src/market";
-import { MarketAccount } from "../../src/account";
+import { DepositStatus, MarketAccount } from "../../src/account";
+import { BasicLenderData } from "../../src/gql/getActiveLendersByMarket";
 import { Token } from "../../src/token";
 import {
   MarketDataStructOutput,
@@ -539,6 +540,95 @@ describe("Account and token read routing", () => {
     expect(marketAccount.account).to.equal(account);
     expect(marketAccount.marketBalance.raw.toString()).to.equal("50");
     expect(marketAccount.isKnownLender).to.equal(true);
+  });
+
+  it("accepts live refreshable zero-TTL credentials without trusting indexed refresh flags", () => {
+    const account = makeAddress(44);
+    const hooksFactory = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "HooksFactoryStandard"
+    );
+    const marketData = makeFactoryBackedMarketData(hooksFactory);
+    marketData.hooksConfig.flags.useOnDeposit = true;
+    marketData.hooksConfig.depositRequiresAccess = true;
+    const market = Market.fromMarketDataV2(
+      constantsModule.SupportedChainId.Sepolia,
+      provider,
+      marketData
+    );
+    market.stateSource = "indexed";
+
+    const lenderData = {
+      ...makeLenderAccountData(account),
+      lastProvider: {
+        ...makeLenderAccountData(account).lastProvider,
+        timeToLive: 0
+      },
+      lastApprovalTimestamp: Math.floor(Date.now() / 1000) - 1,
+      isKnownLender: false
+    };
+    const credential = {
+      canRefresh: true,
+      isBlockedFromDeposits: false,
+      lastApprovalTimestamp: lenderData.lastApprovalTimestamp,
+      lastProvider: {
+        providerAddress: lenderData.lastProvider.providerAddress,
+        timeToLive: 0,
+        isPullProvider: true,
+        pullProviderIndex: 0,
+        isPushProvider: false,
+        pushProviderIndex: NullProviderIndex,
+        isApproved: true
+      }
+    };
+    const marketAccount = MarketAccount.fromMarketDataOnly(market, account, false, {
+      credential,
+      isKnownLender: false
+    });
+    const directlyHydratedAccount = MarketAccount.fromLenderAccountData(market, lenderData);
+    const basicLender = new BasicLenderData({
+      market,
+      address: account,
+      scaledBalance: lenderData.scaledBalance,
+      addedTimestamp: lenderData.lastApprovalTimestamp,
+      credential
+    });
+
+    expect(marketAccount.stateSource).to.equal("indexed");
+    expect(marketAccount.hasValidCredential).to.equal(false);
+    expect(marketAccount.depositAvailability).to.equal(DepositStatus.RequiresAccess);
+    expect(basicLender.hasValidCredential).to.equal(false);
+    expect(basicLender.canDeposit).to.equal(false);
+    expect(directlyHydratedAccount.stateSource).to.equal("live");
+    expect(directlyHydratedAccount.hasValidCredential).to.equal(true);
+    expect(directlyHydratedAccount.depositAvailability).to.equal(DepositStatus.Ready);
+
+    marketAccount.updateWith(lenderData);
+    basicLender.updateWith(lenderData);
+
+    expect(marketAccount.stateSource).to.equal("live");
+    expect(marketAccount.hasValidCredential).to.equal(true);
+    expect(marketAccount.depositAvailability).to.equal(DepositStatus.Ready);
+    expect(basicLender.hasValidCredential).to.equal(true);
+    expect(basicLender.canDeposit).to.equal(true);
+
+    const nonRefreshableData = { ...lenderData, canRefresh: false };
+    marketAccount.updateWith(nonRefreshableData);
+    basicLender.updateWith(nonRefreshableData);
+
+    expect(marketAccount.hasValidCredential).to.equal(false);
+    expect(marketAccount.depositAvailability).to.equal(DepositStatus.RequiresAccess);
+    expect(basicLender.hasValidCredential).to.equal(false);
+    expect(basicLender.canDeposit).to.equal(false);
+
+    const blockedData = { ...lenderData, isBlockedFromDeposits: true };
+    marketAccount.updateWith(blockedData);
+    basicLender.updateWith(blockedData);
+
+    expect(marketAccount.hasValidCredential).to.equal(true);
+    expect(marketAccount.depositAvailability).to.equal(DepositStatus.Blocked);
+    expect(basicLender.hasValidCredential).to.equal(true);
+    expect(basicLender.canDeposit).to.equal(false);
   });
 
   it("refreshes V2 lender market accounts through the live list endpoint", async () => {

@@ -6,7 +6,7 @@ import {
 } from "./graphql";
 import { Market } from "../market";
 import { LenderRole } from "../account";
-import { HooksCredential, HooksKind, MarketVersion } from "../types";
+import { HooksCredential, HooksKind, MarketVersion, ReadStateSource } from "../types";
 import { TokenAmount, toRawAmount } from "../token";
 import {
   assert,
@@ -19,7 +19,7 @@ import type {
   LenderAccountDataStructOutput,
   LenderAccountDataV2_5StructOutput
 } from "../lens-types";
-import { roleProviderFromLensData } from "../access/utils";
+import { isCredentialValid, roleProviderFromLensData } from "../access/utils";
 import { usesLegacySubgraphSchema } from "../config";
 import {
   LegacyGetActiveLendersByMarketData,
@@ -47,16 +47,19 @@ type BasicLenderArgs = {
   /** For V1 markets - whether lender has been manually approved on controller  */
   isAuthorizedOnController?: boolean;
   role?: LenderRole;
+  stateSource?: ReadStateSource;
 };
 
-export interface BasicLenderData extends Omit<BasicLenderArgs, "scaledBalance"> {
+export interface BasicLenderData extends Omit<BasicLenderArgs, "scaledBalance" | "stateSource"> {
   scaledBalance: bigint;
+  stateSource: ReadStateSource;
 }
 
 export class BasicLenderData {
   constructor(args: BasicLenderArgs) {
     Object.assign(this, args);
     this.scaledBalance = toRawAmount(args.scaledBalance);
+    this.stateSource = args.stateSource ?? "indexed";
   }
 
   get marketBalance(): TokenAmount {
@@ -71,8 +74,7 @@ export class BasicLenderData {
   }
 
   get hasValidCredential(): boolean {
-    const expiry = this.credentialExpiry;
-    return expiry !== undefined && expiry >= Date.now() / 1000;
+    return isCredentialValid(this.credential, this.stateSource);
   }
 
   /** Shim for functions in app that use lender role */
@@ -153,6 +155,7 @@ export class BasicLenderData {
       lastApprovalTimestamp: toNumber(data.lastApprovalTimestamp),
       lastProvider: roleProviderFromLensData(data.lastProvider)
     };
+    this.stateSource = "live";
   }
 }
 

@@ -12,10 +12,37 @@ import {
   RoleProviderDataStructOutput,
   RoleProviderDataV2_5StructOutput
 } from "../lens-types";
-import { MarketHooksInstanceInputs, RoleProvider } from "../types";
+import {
+  HooksCredential,
+  MarketHooksInstanceInputs,
+  ReadStateSource,
+  RoleProvider
+} from "../types";
 import { assert, toNumber } from "../utils";
 
 const NullProviderIndex = 2 ** 24 - 1;
+
+export const isCredentialValid = (
+  credential: HooksCredential | undefined,
+  stateSource: ReadStateSource,
+  currentTimestamp = Date.now() / 1000
+): boolean => {
+  const provider = credential?.lastProvider;
+  if (!provider) return false;
+
+  // A live lens read has already resolved pull-provider access. Indexed canRefresh
+  // values only describe historical refresh capability and may be stale.
+  if (
+    stateSource === "live" &&
+    credential.canRefresh &&
+    provider.isPullProvider &&
+    provider.isApproved
+  ) {
+    return true;
+  }
+
+  return credential.lastApprovalTimestamp + provider.timeToLive >= currentTimestamp;
+};
 
 export const hasRoleProviderFactory = (roleProviderFactory?: string): boolean =>
   !!roleProviderFactory && roleProviderFactory.toLowerCase() !== zeroAddress;
