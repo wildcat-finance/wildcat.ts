@@ -847,6 +847,121 @@ describe("Account and token read routing", () => {
     expect(marketAccount.marketBalance.raw.toString()).to.equal("50");
   });
 
+  it("hydrates legacy V2 market addresses through the latest lens compatibility projection", async () => {
+    const account = makeAddress(40);
+    const hooksFactory = makeAddress(39);
+    const marketData = makeUnifiedMarketData(hooksFactory);
+    const marketAddress = marketData.marketToken.token;
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLensV2_5"
+    );
+    const seenFunctions: string[] = [];
+    const viemProvider = new FakeViemProvider((call) => {
+      expect(call.to).to.equal(lensAddress);
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      seenFunctions.push(decoded.functionName);
+
+      if (decoded.functionName === "getMarketDataV2") {
+        throw new Error("NotV2_5Market");
+      }
+      if (decoded.functionName === "getMarketData") {
+        return encodeLensResult(marketLensV2_5Abi as Abi, decoded.functionName, marketData);
+      }
+      if (decoded.functionName === "getLenderAccountData") {
+        return encodeLensResult(
+          marketLensV2_5Abi as Abi,
+          decoded.functionName,
+          makeLenderAccountData(account)
+        );
+      }
+      throw new Error(`Unexpected V2.5 lens read: ${decoded.functionName}`);
+    });
+
+    const marketAccount = await MarketAccount.getMarketAccount(
+      constantsModule.SupportedChainId.Sepolia,
+      viemProvider as unknown as providers.Provider,
+      account,
+      marketAddress
+    );
+
+    expect(seenFunctions.sort()).to.deep.equal([
+      "getLenderAccountData",
+      "getMarketData",
+      "getMarketDataV2"
+    ]);
+    expect(marketAccount.market.address.toLowerCase()).to.equal(marketAddress.toLowerCase());
+    expect(marketAccount.market.borrowerPrincipal).to.equal(undefined);
+    expect(marketAccount.marketBalance.raw.toString()).to.equal("50");
+  });
+
+  it("hydrates legacy V2 market address batches through the latest lens compatibility projection", async () => {
+    const account = makeAddress(40);
+    const hooksFactory = makeAddress(39);
+    const firstMarket = makeUnifiedMarketData(hooksFactory);
+    const secondMarket = makeUnifiedMarketData(hooksFactory);
+    firstMarket.marketToken = {
+      ...firstMarket.marketToken,
+      token: makeAddress(45)
+    };
+    secondMarket.marketToken = {
+      ...secondMarket.marketToken,
+      token: makeAddress(46)
+    };
+    const marketData = [firstMarket, secondMarket];
+    const marketAddresses = marketData.map((market) => market.marketToken.token);
+    const lensAddress = constantsModule.getDeploymentAddress(
+      constantsModule.SupportedChainId.Sepolia,
+      "MarketLensV2_5"
+    );
+    const seenFunctions: string[] = [];
+    const viemProvider = new FakeViemProvider((call) => {
+      expect(call.to).to.equal(lensAddress);
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      seenFunctions.push(decoded.functionName);
+
+      if (decoded.functionName === "getMarketsDataV2") {
+        throw new Error("NotV2_5Market");
+      }
+      if (decoded.functionName === "getMarketsData") {
+        return encodeLensResult(marketLensV2_5Abi as Abi, decoded.functionName, marketData);
+      }
+      if (decoded.functionName === "getLenderAccountData") {
+        const batchLenderAccountAbi = (marketLensV2_5Abi as Abi).filter(
+          (item) =>
+            item.type === "function" &&
+            item.name === "getLenderAccountData" &&
+            item.inputs[1]?.type === "address[]"
+        ) as Abi;
+        return encodeLensResult(batchLenderAccountAbi, decoded.functionName, [
+          makeLenderAccountData(account),
+          makeLenderAccountData(account)
+        ]);
+      }
+      throw new Error(`Unexpected V2.5 lens read: ${decoded.functionName}`);
+    });
+
+    const marketAccounts = await MarketAccount.getMarketAccountsForLender(
+      constantsModule.SupportedChainId.Sepolia,
+      viemProvider as unknown as providers.Provider,
+      account,
+      marketAddresses
+    );
+
+    expect(seenFunctions.sort()).to.deep.equal([
+      "getLenderAccountData",
+      "getMarketsData",
+      "getMarketsDataV2"
+    ]);
+    expect(marketAccounts.map(({ market }) => market.address.toLowerCase())).to.deep.equal(
+      marketAddresses
+    );
+    expect(marketAccounts.map(({ marketBalance }) => marketBalance.raw.toString())).to.deep.equal([
+      "50",
+      "50"
+    ]);
+  });
+
   it("preserves full revolving metadata in direct V2.5 account reads", async () => {
     const account = makeAddress(40);
     const hooksFactory = constantsModule.getDeploymentAddress(
@@ -921,8 +1036,15 @@ describe("Account and token read routing", () => {
     const viemProvider = new FakeViemProvider((call) => {
       if (call.to?.toLowerCase() === latestLensAddress.toLowerCase()) {
         const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
-        expect(["getMarketDataV2", "getLenderAccountData"]).to.include(decoded.functionName);
         latestFunctions.add(decoded.functionName);
+        if (decoded.functionName === "getLenderAccountData") {
+          return encodeLensResult(
+            marketLensV2_5Abi as Abi,
+            decoded.functionName,
+            makeLenderAccountData(account)
+          );
+        }
+        expect(["getMarketData", "getMarketDataV2"]).to.include(decoded.functionName);
         throw new Error("NotV2Market");
       }
 
@@ -957,6 +1079,7 @@ describe("Account and token read routing", () => {
     );
     expect(Array.from(latestFunctions).sort()).to.deep.equal([
       "getLenderAccountData",
+      "getMarketData",
       "getMarketDataV2"
     ]);
     expect(marketAccount).to.equal(hydratedAccount);
