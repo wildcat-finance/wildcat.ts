@@ -96,7 +96,7 @@ import {
 } from "../internal/viem-write";
 import { parseEventLogs, type TransactionReceipt } from "viem";
 import { normalizeSubgraphLenderAccountSnapshot } from "../gql/normalizers";
-import { roleProviderFromLensData } from "../access/utils";
+import { isCredentialValid, roleProviderFromLensData } from "../access/utils";
 import {
   InterestOnlyWithdrawalQuote,
   createInterestOnlyWithdrawalQuote
@@ -282,8 +282,7 @@ export class MarketAccount {
   }
 
   get hasValidCredential(): boolean {
-    const expiry = this.credentialExpiry;
-    return expiry !== undefined && expiry >= Date.now() / 1000;
+    return isCredentialValid(this.credential, this.stateSource);
   }
 
   /** Shim for functions in app that use lender role */
@@ -1225,7 +1224,8 @@ export class MarketAccount {
         isBlockedFromDeposits: data.isBlockedFromDeposits,
         lastApprovalTimestamp: toNumber(data.lastApprovalTimestamp),
         lastProvider: roleProviderFromLensData(data.lastProvider)
-      }
+      },
+      stateSource: "live"
     });
   }
 
