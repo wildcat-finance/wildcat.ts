@@ -11,6 +11,7 @@ import type {
   LenderAccountDataStructOutput,
   LenderAccountDataV2_5StructOutput,
   MarketDataStructOutput,
+  MarketDataBaseV2_5StructOutput,
   MarketDataV2_5StructOutput,
   MarketDataV2StructOutput,
   MarketDataWithLenderStatusStructOutput,
@@ -63,6 +64,46 @@ const readLatestMarketLens = <Result>(
 ): Promise<Result> => {
   const { deploymentName, abi } = getLatestLensTarget(chainId);
   return readMarketLens<Result>(chainId, provider, deploymentName, abi, functionName, args);
+};
+
+const getCompatibleMarketDataV2_5 = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  market: string
+): Promise<MarketDataBaseV2_5StructOutput> => {
+  return readMarketLens<MarketDataBaseV2_5StructOutput>(
+    chainId,
+    provider,
+    "MarketLensV2_5",
+    marketLensV2_5Abi as Abi,
+    "getMarketData",
+    [market as Address]
+  );
+};
+
+const getCompatibleMarketsDataV2_5 = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  markets: string[]
+): Promise<MarketDataBaseV2_5StructOutput[]> => {
+  return readMarketLens<MarketDataBaseV2_5StructOutput[]>(
+    chainId,
+    provider,
+    "MarketLensV2_5",
+    marketLensV2_5Abi as Abi,
+    "getMarketsData",
+    [markets as Address[]]
+  );
+};
+
+const withLenderStatusV2_5 = (
+  market: MarketDataBaseV2_5StructOutput | MarketDataV2_5StructOutput,
+  lenderStatus: LenderAccountDataV2_5StructOutput
+): MarketDataWithLenderStatusV2_5StructOutput | FullMarketDataWithLenderStatusV2_5StructOutput => {
+  if ("market" in market) {
+    return { market, lenderStatus };
+  }
+  return { market, lenderStatus };
 };
 
 export const getLegacyMarketData = (
@@ -344,12 +385,13 @@ export const getLatestMarketDataWithLenderStatus = (
 > => {
   if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
     return Promise.all([
-      getUnifiedMarketDataV2(chainId, provider, market),
+      getUnifiedMarketDataV2(chainId, provider, market).catch(() =>
+        getCompatibleMarketDataV2_5(chainId, provider, market)
+      ),
       getLatestLenderAccountData(chainId, provider, account, market)
-    ]).then(([marketData, lenderStatus]) => ({
-      market: marketData,
-      lenderStatus: lenderStatus as LenderAccountDataV2_5StructOutput
-    }));
+    ]).then(([marketData, lenderStatus]) =>
+      withLenderStatusV2_5(marketData, lenderStatus as LenderAccountDataV2_5StructOutput)
+    );
   }
   return readLatestMarketLens<
     MarketDataWithLenderStatusV2StructOutput | MarketDataWithLenderStatusV2_5StructOutput
@@ -370,16 +412,17 @@ export const getLatestMarketsDataWithLenderStatus = (
 > => {
   if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
     return Promise.all([
-      getUnifiedMarketsDataV2(chainId, provider, markets),
+      getUnifiedMarketsDataV2(chainId, provider, markets).catch(() =>
+        getCompatibleMarketsDataV2_5(chainId, provider, markets)
+      ),
       getLatestLenderAccountsData(chainId, provider, account, markets)
     ]).then(([marketData, lenderStatuses]) => {
       if (marketData.length !== lenderStatuses.length) {
         throw new Error("V2.5 market and lender-account result lengths do not match");
       }
-      return marketData.map((market, index) => ({
-        market,
-        lenderStatus: lenderStatuses[index] as LenderAccountDataV2_5StructOutput
-      }));
+      return marketData.map((market, index) =>
+        withLenderStatusV2_5(market, lenderStatuses[index] as LenderAccountDataV2_5StructOutput)
+      );
     });
   }
   return readLatestMarketLens<
