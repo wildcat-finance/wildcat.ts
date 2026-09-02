@@ -9,6 +9,7 @@ import {
   getHooksFactoryAddress,
   getHooksFactoryDeploymentTargetIssues,
   getLatestLensDeploymentName,
+  getSupportedWrapperFactoryAddresses,
   hasHooksFactoryDeployment
 } from "../../src/config";
 import { HooksFactoryMetadata } from "../../src/domain";
@@ -48,6 +49,13 @@ describe("SDK deployment configuration", () => {
       WildcatBorrowerIdentityRegistry: "0xc2cF90781595203D1e75c28246b306C95d4b8b21",
       Wildcat4626WrapperFactory: "0x31D8D5564Ce11f764E74beca5B4e8d363046949f"
     });
+  });
+
+  it("supports only wrapper factories whose embedded implementation is current", () => {
+    expect(getSupportedWrapperFactoryAddresses(SupportedChainId.Sepolia)).to.deep.equal([
+      "0x31D8D5564Ce11f764E74beca5B4e8d363046949f"
+    ]);
+    expect(getSupportedWrapperFactoryAddresses(SupportedChainId.PlasmaMainnet)).to.deep.equal([]);
   });
 
   it("separates Sepolia standard and revolving transaction targets", () => {

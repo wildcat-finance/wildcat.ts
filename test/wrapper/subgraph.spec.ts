@@ -2,7 +2,7 @@ import { ApolloClient, DocumentNode, NormalizedCacheObject } from "@apollo/clien
 import { expect } from "chai";
 import { providers } from "ethers";
 import { print } from "graphql";
-import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
+import { decodeFunctionData, encodeFunctionResult, ExecutionRevertedError, type Abi } from "viem";
 import { wildcat4626WrapperFactoryAbi, wildcatMarketV2Abi } from "../../src/abi";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { Market } from "../../src/market";
@@ -12,6 +12,7 @@ import {
   GetTokenWrapperForMarketDocument,
   SubgraphTokenWrapperData,
   TokenWrapper,
+  WrapperDeploymentStatus,
   WrapperFactory
 } from "../../src/wrapper";
 
@@ -418,5 +419,183 @@ describe("WrapperFactory wrapper discovery", () => {
       )
     ).to.equal(wrapper);
     expect(rpc.calls.map((call) => call.to)).to.deep.equal([market, factory]);
+  });
+});
+
+describe("WrapperFactory deployment routing", () => {
+  it("uses the factory declared by a supported V2.5 market", async () => {
+    const market = "0x4000000000000000000000000000000000000004";
+    const configuredFactory = getDeploymentAddress(
+      SupportedChainId.Sepolia,
+      "Wildcat4626WrapperFactory"
+    );
+    const rpc = new FakeViemProvider((call) => {
+      const decoded = decodeFunctionData({
+        abi: wildcatMarketV2Abi as Abi,
+        data: call.data!
+      });
+      expect(call.to).to.equal(market);
+      expect(decoded.functionName).to.equal("wrapperFactory");
+      return encodeFunctionResult({
+        abi: wildcatMarketV2Abi as Abi,
+        functionName: "wrapperFactory",
+        result: configuredFactory
+      });
+    });
+
+    const capability = await WrapperFactory.getDeploymentCapability(
+      SupportedChainId.Sepolia,
+      rpc as unknown as providers.Provider,
+      market
+    );
+    expect(capability).to.deep.equal({
+      status: WrapperDeploymentStatus.Ready,
+      factoryAddress: configuredFactory,
+      routing: "market"
+    });
+
+    const transaction = await WrapperFactory.populateCreateWrapper(
+      SupportedChainId.Sepolia,
+      rpc as unknown as providers.Provider,
+      market
+    );
+    expect(transaction.to).to.equal(configuredFactory);
+    expect(rpc.calls).to.have.length(2);
+  });
+
+  it("uses the configured generation-routing facade for pre-V2.5 markets", async () => {
+    const market = "0x4000000000000000000000000000000000000004";
+    const configuredFactory = getDeploymentAddress(
+      SupportedChainId.Sepolia,
+      "Wildcat4626WrapperFactory"
+    );
+    const rpc = new FakeViemProvider((call) => {
+      expect(call.to).to.equal(market);
+      return "0x";
+    });
+
+    const capability = await WrapperFactory.getDeploymentCapability(
+      SupportedChainId.Sepolia,
+      rpc as unknown as providers.Provider,
+      market
+    );
+    expect(capability).to.deep.equal({
+      status: WrapperDeploymentStatus.Ready,
+      factoryAddress: configuredFactory,
+      routing: "legacy-facade"
+    });
+  });
+
+  it("recognizes the empty execution revert returned by legacy markets", async () => {
+    const market = "0x4000000000000000000000000000000000000004";
+    const configuredFactory = getDeploymentAddress(
+      SupportedChainId.Sepolia,
+      "Wildcat4626WrapperFactory"
+    );
+    const rpc = new FakeViemProvider(() => {
+      throw new ExecutionRevertedError();
+    });
+
+    expect(
+      await WrapperFactory.getDeploymentCapability(
+        SupportedChainId.Sepolia,
+        rpc as unknown as providers.Provider,
+        market
+      )
+    ).to.deep.equal({
+      status: WrapperDeploymentStatus.Ready,
+      factoryAddress: configuredFactory,
+      routing: "legacy-facade"
+    });
+  });
+
+  it("refuses a V2.5 market bound to an unsupported wrapper factory", async () => {
+    const market = "0x4000000000000000000000000000000000000004";
+    const marketFactory = "0x6000000000000000000000000000000000000006";
+    const configuredFactory = getDeploymentAddress(
+      SupportedChainId.Sepolia,
+      "Wildcat4626WrapperFactory"
+    );
+    const rpc = new FakeViemProvider((call) => {
+      const decoded = decodeFunctionData({
+        abi: wildcatMarketV2Abi as Abi,
+        data: call.data!
+      });
+      expect(call.to).to.equal(market);
+      expect(decoded.functionName).to.equal("wrapperFactory");
+      return encodeFunctionResult({
+        abi: wildcatMarketV2Abi as Abi,
+        functionName: "wrapperFactory",
+        result: marketFactory
+      });
+    });
+
+    expect(
+      await WrapperFactory.getDeploymentCapability(
+        SupportedChainId.Sepolia,
+        rpc as unknown as providers.Provider,
+        market
+      )
+    ).to.deep.equal({
+      status: WrapperDeploymentStatus.UnsupportedFactory,
+      marketFactoryAddress: marketFactory,
+      supportedFactoryAddresses: [configuredFactory]
+    });
+
+    let failure: unknown;
+    try {
+      await WrapperFactory.populateCreateWrapper(
+        SupportedChainId.Sepolia,
+        rpc as unknown as providers.Provider,
+        market
+      );
+    } catch (error) {
+      failure = error;
+    }
+
+    expect(failure).to.be.instanceOf(Error);
+    expect((failure as Error).name).to.equal("UnsupportedWrapperFactoryError");
+    expect((failure as Error).message).to.include(market);
+    expect((failure as Error).message).to.include(marketFactory);
+    expect((failure as Error).message).to.include(configuredFactory);
+    expect(rpc.calls).to.have.length(2);
+  });
+
+  it("does not turn an RPC failure into legacy-facade routing", async () => {
+    const market = "0x4000000000000000000000000000000000000004";
+    const rpc = new FakeViemProvider(() => {
+      throw new Error("RPC unavailable");
+    });
+
+    let failure: unknown;
+    try {
+      await WrapperFactory.populateCreateWrapper(
+        SupportedChainId.Sepolia,
+        rpc as unknown as providers.Provider,
+        market
+      );
+    } catch (error) {
+      failure = error;
+    }
+
+    expect(failure).to.be.instanceOf(Error);
+    expect((failure as Error).name).not.to.equal("UnsupportedWrapperFactoryError");
+    expect((failure as Error).message).to.include("RPC unavailable");
+    expect(rpc.calls).to.have.length(1);
+  });
+
+  it("reports chains without a configured wrapper factory", async () => {
+    const rpc = new FakeViemProvider(() => {
+      throw new Error("wrapperFactory should not be queried");
+    });
+
+    expect(
+      await WrapperFactory.getDeploymentCapability(
+        SupportedChainId.PlasmaMainnet,
+        rpc as unknown as providers.Provider,
+        "0x4000000000000000000000000000000000000004"
+      )
+    ).to.deep.equal({ status: WrapperDeploymentStatus.FactoryUnavailable });
+    expect(rpc.calls).to.have.length(0);
   });
 });

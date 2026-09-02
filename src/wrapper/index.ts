@@ -8,7 +8,12 @@ import {
   SubmittedDeployment,
   TransactionHash
 } from "../types";
-import { SupportedChainId, getDeploymentAddress, hasDeploymentAddress } from "../constants";
+import {
+  SupportedChainId,
+  getDeploymentAddress,
+  getSupportedWrapperFactoryAddresses,
+  hasDeploymentAddress
+} from "../constants";
 import { assert, prepareTransaction, rayMulBigint, toNumber } from "../utils";
 import {
   iERC20Abi,
@@ -20,7 +25,14 @@ import {
   submitPreparedTransaction,
   submitPreparedTransactionAndWait
 } from "../internal/viem-write";
-import { parseEventLogs, zeroAddress } from "viem";
+import {
+  BaseError,
+  ContractFunctionRevertedError,
+  ContractFunctionZeroDataError,
+  ExecutionRevertedError,
+  parseEventLogs,
+  zeroAddress
+} from "viem";
 import { getViemPublicClientFromEthers } from "../internal/ethers-viem";
 import { readViemContract } from "../internal/viem-read";
 import {
@@ -55,6 +67,58 @@ const getErc20Token = async (
     readViemContract<bigint | number>(publicClient, address, iERC20Abi, "decimals")
   ]);
   return new Token(chainId, address, name, symbol, toNumber(decimals), false, provider);
+};
+
+export enum WrapperDeploymentStatus {
+  Ready = "Ready",
+  FactoryUnavailable = "FactoryUnavailable",
+  UnsupportedFactory = "UnsupportedFactory"
+}
+
+export type WrapperDeploymentCapability =
+  | {
+      status: WrapperDeploymentStatus.Ready;
+      factoryAddress: string;
+      routing: "market" | "legacy-facade";
+    }
+  | {
+      status: WrapperDeploymentStatus.FactoryUnavailable;
+    }
+  | {
+      status: WrapperDeploymentStatus.UnsupportedFactory;
+      marketFactoryAddress: string;
+      supportedFactoryAddresses: readonly string[];
+    };
+
+export class UnsupportedWrapperFactoryError extends Error {
+  readonly name = "UnsupportedWrapperFactoryError";
+
+  constructor(
+    readonly chainId: SupportedChainId,
+    readonly market: string,
+    readonly marketFactoryAddress: string,
+    readonly supportedFactoryAddresses: readonly string[]
+  ) {
+    super(
+      `Wrapper factory ${marketFactoryAddress} declared by market ${market} is not supported ` +
+        `on chain ${chainId}; supported wrapper factories: ${supportedFactoryAddresses.join(", ")}`
+    );
+  }
+}
+
+const isMissingWrapperFactoryFunction = (error: unknown): boolean => {
+  if (!(error instanceof BaseError)) return false;
+  // Pre-V2.5 markets have no fallback function. Depending on the provider,
+  // probing wrapperFactory() therefore appears as zero data or an empty revert.
+  return (
+    error.walk((cause) => cause instanceof ContractFunctionZeroDataError) !== null ||
+    error.walk(
+      (cause) =>
+        cause instanceof ContractFunctionRevertedError &&
+        (cause.raw === undefined || cause.raw === "0x")
+    ) !== null ||
+    error.walk((cause) => cause instanceof ExecutionRevertedError) !== null
+  );
 };
 
 export class WrapperFactory extends ContractWrapper {
@@ -99,6 +163,76 @@ export class WrapperFactory extends ContractWrapper {
     return factory.getWrapperForMarket(market);
   }
 
+  static async getDeploymentCapability(
+    chainId: SupportedChainId,
+    providerOrSigner: SignerOrProvider,
+    market: string
+  ): Promise<WrapperDeploymentCapability> {
+    if (!hasDeploymentAddress(chainId, "Wildcat4626WrapperFactory")) {
+      return { status: WrapperDeploymentStatus.FactoryUnavailable };
+    }
+
+    const configuredFactoryAddress = getDeploymentAddress(chainId, "Wildcat4626WrapperFactory");
+    const supportedFactoryAddresses = getSupportedWrapperFactoryAddresses(chainId);
+    const publicClient = getViemPublicClientFromEthers(providerOrSigner);
+    let marketFactoryAddress: string;
+    try {
+      marketFactoryAddress = await readViemContract<string>(
+        publicClient,
+        market,
+        wildcatMarketV2Abi,
+        "wrapperFactory"
+      );
+    } catch (error) {
+      if (!isMissingWrapperFactoryFunction(error)) throw error;
+      return {
+        status: WrapperDeploymentStatus.Ready,
+        factoryAddress: configuredFactoryAddress,
+        routing: "legacy-facade"
+      };
+    }
+
+    const supportedFactoryAddress = supportedFactoryAddresses.find(
+      (address) => address.toLowerCase() === marketFactoryAddress.toLowerCase()
+    );
+    if (!supportedFactoryAddress) {
+      return {
+        status: WrapperDeploymentStatus.UnsupportedFactory,
+        marketFactoryAddress,
+        supportedFactoryAddresses
+      };
+    }
+    return {
+      status: WrapperDeploymentStatus.Ready,
+      factoryAddress: supportedFactoryAddress,
+      routing: "market"
+    };
+  }
+
+  private static async getDeploymentFactory(
+    chainId: SupportedChainId,
+    providerOrSigner: SignerOrProvider,
+    market: string
+  ): Promise<WrapperFactory> {
+    const capability = await WrapperFactory.getDeploymentCapability(
+      chainId,
+      providerOrSigner,
+      market
+    );
+    if (capability.status === WrapperDeploymentStatus.FactoryUnavailable) {
+      throw new Error(`Wrapper factory is not available on chain ${chainId}`);
+    }
+    if (capability.status === WrapperDeploymentStatus.UnsupportedFactory) {
+      throw new UnsupportedWrapperFactoryError(
+        chainId,
+        market,
+        capability.marketFactoryAddress,
+        capability.supportedFactoryAddresses
+      );
+    }
+    return new WrapperFactory(chainId, capability.factoryAddress, providerOrSigner);
+  }
+
   static async isFloorRoundingMarket(
     chainId: SupportedChainId,
     providerOrSigner: SignerOrProvider,
@@ -112,16 +246,16 @@ export class WrapperFactory extends ContractWrapper {
     signer: Signer,
     market: string
   ): Promise<SubmittedDeployment<string> & { wrapper: string }> {
-    const factory = WrapperFactory.getFactory(chainId, signer);
+    const factory = await WrapperFactory.getDeploymentFactory(chainId, signer, market);
     return factory.createWrapper(market);
   }
 
-  static populateCreateWrapper(
+  static async populateCreateWrapper(
     chainId: SupportedChainId,
     providerOrSigner: SignerOrProvider,
     market: string
-  ): PartialTransaction {
-    const factory = WrapperFactory.getFactory(chainId, providerOrSigner);
+  ): Promise<PartialTransaction> {
+    const factory = await WrapperFactory.getDeploymentFactory(chainId, providerOrSigner, market);
     return factory.populateCreateWrapper(market);
   }
 
@@ -435,13 +569,12 @@ export class TokenWrapper extends ContractWrapper {
     signer: Signer,
     marketAddress: string
   ): Promise<SubmittedDeployment<TokenWrapper> & { wrapper: TokenWrapper }> {
-    const factory = WrapperFactory.getFactory(chainId, signer);
     const {
       result: wrapperAddress,
       receipt,
       hash,
       transaction
-    } = await factory.createWrapper(marketAddress);
+    } = await WrapperFactory.createWrapper(chainId, signer, marketAddress);
     const wrapper = await TokenWrapper.fromAddress(chainId, signer, wrapperAddress);
     return { result: wrapper, receipt, hash, transaction, wrapper };
   }
