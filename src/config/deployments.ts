@@ -133,6 +133,21 @@ export const getDeploymentAddress = (
   return address;
 };
 
+// Keep only wrapper generations whose embedded implementation remains supported.
+// When the current target rotates, retain a previous address here only if existing
+// markets bound to it may still deploy that wrapper safely.
+const HistoricalWrapperFactoryAddresses: Partial<Record<SupportedChainId, readonly string[]>> = {};
+
+export const getSupportedWrapperFactoryAddresses = (
+  chainId: SupportedChainId
+): readonly string[] => {
+  if (!hasDeploymentAddress(chainId, "Wildcat4626WrapperFactory")) return [];
+  return [
+    getDeploymentAddress(chainId, "Wildcat4626WrapperFactory"),
+    ...(HistoricalWrapperFactoryAddresses[chainId] ?? [])
+  ];
+};
+
 export const getHooksFactoryDeploymentName = (
   marketKind: DeployableMarketKind
 ): HooksFactoryDeploymentName => HooksFactoryDeploymentNamesByMarketKind[marketKind];
