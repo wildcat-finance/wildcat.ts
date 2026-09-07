@@ -37,11 +37,18 @@ type WithdrawalBatchDataOutput =
   | WithdrawalBatchDataV2_5StructOutput;
 
 const getLegacyBatchStatus = (
+  market: Market,
   expiry: number,
   scaledTotalAmount: bigint,
   scaledAmountBurned: bigint
 ): BatchStatus => {
-  if (expiry > Math.floor(Date.now() / 1000)) return BatchStatus.Pending;
+  // V2 early closure retires the old batch before its scheduled expiry. A new
+  // closed-market batch still has to stop being the active pending batch first.
+  const retiredByClosure =
+    market.version === MarketVersion.V2 &&
+    market.isClosed &&
+    expiry !== market.pendingWithdrawalExpiry;
+  if (!retiredByClosure && expiry > Math.floor(Date.now() / 1000)) return BatchStatus.Pending;
   return scaledAmountBurned === scaledTotalAmount ? BatchStatus.Complete : BatchStatus.Unpaid;
 };
 
@@ -79,14 +86,24 @@ export class WithdrawalBatch {
     // Batch-level event queries return every request and execution separately
     // from their lender status. Reconnect those records here so consumers do
     // not need to reconstruct the relationship themselves.
+    const requestsByLender = new Map<string, WithdrawalRequestRecord[]>();
+    const executionsByLender = new Map<string, WithdrawalExecutionRecord[]>();
+    for (const request of this.requests) {
+      const lender = request.address.toLowerCase();
+      const records = requestsByLender.get(lender) ?? [];
+      records.push(request);
+      requestsByLender.set(lender, records);
+    }
+    for (const execution of this.executions) {
+      const lender = execution.account.address.toLowerCase();
+      const records = executionsByLender.get(lender) ?? [];
+      records.push(execution);
+      executionsByLender.set(lender, records);
+    }
     this.withdrawals.forEach((withdrawal) => {
       const lender = withdrawal.lender.toLowerCase();
-      withdrawal.requests = this.requests.filter(
-        (request) => request.address.toLowerCase() === lender
-      );
-      withdrawal.executions = this.executions.filter(
-        (execution) => execution.account.address.toLowerCase() === lender
-      );
+      withdrawal.requests = [...(requestsByLender.get(lender) ?? [])];
+      withdrawal.executions = [...(executionsByLender.get(lender) ?? [])];
     });
   }
 
@@ -189,7 +206,12 @@ export class WithdrawalBatch {
     this.normalizedTotalAmount = this.market.underlyingToken.getAmount(data.normalizedTotalAmount);
     this.status = hasExplicitExpiredStatus
       ? (toNumber(data.status) as BatchStatus)
-      : getLegacyBatchStatus(this.expiry, this.scaledTotalAmount, this.scaledAmountBurned);
+      : getLegacyBatchStatus(
+          this.market,
+          this.expiry,
+          this.scaledTotalAmount,
+          this.scaledAmountBurned
+        );
     if (this.status === BatchStatus.Complete) {
       const scaledTotalFromRecords = this.withdrawals.reduce(
         (total, w) => total + w.scaledAmount,
@@ -222,7 +244,7 @@ export class WithdrawalBatch {
       expiry,
       hasExplicitExpiredStatus
         ? toNumber(data.status)
-        : getLegacyBatchStatus(expiry, scaledTotalAmount, scaledAmountBurned),
+        : getLegacyBatchStatus(market, expiry, scaledTotalAmount, scaledAmountBurned),
       scaledTotalAmount,
       scaledAmountBurned,
       market.underlyingToken.getAmount(data.normalizedAmountPaid),
@@ -241,12 +263,7 @@ export class WithdrawalBatch {
     const scaledAmountBurned = toRawAmount(batch.scaledAmountBurned);
     const normalizedAmountPaid = market.underlyingToken.getAmount(batch.normalizedAmountPaid);
     const expiry = +batch.expiry;
-    const status =
-      expiry > Math.floor(Date.now() / 1000)
-        ? BatchStatus.Pending
-        : scaledAmountBurned === scaledTotalAmount
-        ? BatchStatus.Complete
-        : BatchStatus.Unpaid;
+    const status = getLegacyBatchStatus(market, expiry, scaledTotalAmount, scaledAmountBurned);
     let scaledAmountOwed: bigint;
     let normalizedAmountOwed: TokenAmount;
     let normalizedTotalAmount: TokenAmount;

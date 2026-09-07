@@ -4,6 +4,7 @@ import { Market } from "../market";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { assert } from "../utils";
+import { completeLenderWithdrawal } from "./withdrawal-history";
 import {
   GetLenderWithdrawalsForMarketDocument,
   SubgraphGetLenderWithdrawalsForMarketQuery,
@@ -19,6 +20,7 @@ export type GetLenderWithdrawalsForMarketOptions = {
   lender: string;
   first?: number;
   skip?: number;
+  /** Retained for compatibility; complete histories always bypass the normalized cache. */
   fetchPolicy?: FetchPolicy;
 };
 
@@ -42,13 +44,7 @@ const hydrateLenderWithdrawal = (
  */
 export async function getLenderWithdrawalsForMarket(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
-  {
-    market,
-    lender,
-    first = 200,
-    skip = 0,
-    fetchPolicy = "cache-first"
-  }: GetLenderWithdrawalsForMarketOptions
+  { market, lender, first = 200, skip = 0 }: GetLenderWithdrawalsForMarketOptions
 ): Promise<LenderWithdrawalsForMarket> {
   assert(
     Number.isSafeInteger(first) && first > 0 && first <= 1_000,
@@ -75,18 +71,20 @@ export async function getLenderWithdrawalsForMarket(
         : SubgraphLenderWithdrawalStatus_OrderBy.batchExpiry) as SubgraphLenderWithdrawalStatus_OrderBy,
       directionWithdrawals: SubgraphOrderDirection.desc
     },
-    fetchPolicy
+    fetchPolicy: "no-cache"
   });
 
   const account = data.market?.lenders[0];
-  return {
-    incompleteWithdrawals:
-      account?.incompleteWithdrawals.map((withdrawal) =>
-        hydrateLenderWithdrawal(market, withdrawal)
-      ) ?? [],
-    completeWithdrawals:
-      account?.completeWithdrawals.map((withdrawal) =>
-        hydrateLenderWithdrawal(market, withdrawal)
-      ) ?? []
-  };
+  const result: LenderWithdrawalsForMarket = { incompleteWithdrawals: [], completeWithdrawals: [] };
+  for (const key of ["incompleteWithdrawals", "completeWithdrawals"] as const) {
+    for (const withdrawal of account?.[key] ?? []) {
+      const complete = await completeLenderWithdrawal(
+        subgraphClient,
+        withdrawal,
+        data._meta?.block.number
+      );
+      result[key].push(hydrateLenderWithdrawal(market, complete));
+    }
+  }
+  return result;
 }

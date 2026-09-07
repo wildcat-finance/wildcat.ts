@@ -7,12 +7,10 @@ import {
 } from "../config";
 import {
   GetAnalyticsTokensDocument,
-  GetLatestTokenPriceObservationDocument,
   GetTokenPriceObservationPageDocument,
   SubgraphGetAnalyticsTokensQuery,
   SubgraphGetAnalyticsTokensQueryVariables,
   SubgraphGetLatestTokenPriceObservationQuery,
-  SubgraphGetLatestTokenPriceObservationQueryVariables,
   SubgraphGetTokenPriceObservationPageQuery,
   SubgraphGetTokenPriceObservationPageQueryVariables,
   SubgraphTokenDailyPrice_Filter,
@@ -25,7 +23,7 @@ import {
   normalizeTokenPriceObservation
 } from "./normalizers";
 import { MAX_INDEXED_PAGE_SIZE, normalizeIndexedPageRequest, toIndexedPage } from "./pagination";
-import { IndexedReadOptions, normalizeAddresses } from "./read-options";
+import { indexedFetchPolicy, IndexedReadOptions, normalizeAddresses } from "./read-options";
 import {
   IndexedAnalyticsToken,
   IndexedPage,
@@ -35,10 +33,10 @@ import {
 } from "./types";
 import {
   LegacyGetAnalyticsTokensDocument,
-  LegacyGetLatestTokenPriceObservationDocument,
   LegacyGetTokenPriceObservationPageDocument,
   LegacyTokenPriceObservationData
 } from "./legacy";
+import { batchedPriceQuery, PRICE_QUERY_BATCH_SIZE } from "./price-query";
 
 const ZERO_TRANSACTION_HASH = `0x${"0".repeat(64)}`;
 
@@ -86,7 +84,7 @@ export const getAnalyticsTokenPage = async (
   >({
     query: legacySchema ? LegacyGetAnalyticsTokensDocument : GetAnalyticsTokensDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.tokens.map(normalizeAnalyticsToken),
@@ -128,7 +126,7 @@ export const getTokenPriceObservationPage = async (
       ? LegacyGetTokenPriceObservationPageDocument
       : GetTokenPriceObservationPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     legacySchema
@@ -207,20 +205,23 @@ export const getLatestTokenUsdPrices = async (
     }
   }
 
-  await Promise.all(
-    observedTokens.map(async (token) => {
-      const filter: SubgraphTokenDailyPrice_Filter = { token: token.address.toLowerCase() };
-      const { data } = await client.query<
-        SubgraphGetLatestTokenPriceObservationQuery,
-        SubgraphGetLatestTokenPriceObservationQueryVariables
-      >({
-        query: legacySchema
-          ? LegacyGetLatestTokenPriceObservationDocument
-          : GetLatestTokenPriceObservationDocument,
-        variables: { filter, block: priceBlock },
-        fetchPolicy
-      });
-      const rawObservation = data.tokenDailyPrices[0];
+  const readBatch = async (batch: IndexedAnalyticsToken[]) => {
+    const { data } = await client.query<
+      Record<string, SubgraphGetLatestTokenPriceObservationQuery["tokenDailyPrices"]>
+    >({
+      query: batchedPriceQuery(legacySchema, batch.length),
+      variables: {
+        block: priceBlock,
+        ...Object.fromEntries(
+          batch.map((token, index) => [`filter${index}`, { token: token.address.toLowerCase() }])
+        )
+      },
+      fetchPolicy: "no-cache"
+    });
+    batch.forEach((token, index) => {
+      const observations = data[`price${index}`];
+      assert(observations !== undefined, "Missing token price result");
+      const rawObservation = observations[0];
       const address = token.address.toLowerCase();
       if (!rawObservation) {
         results.set(address, { status: "unpriced", address, token, reason: "no-observation" });
@@ -240,6 +241,19 @@ export const getLatestTokenUsdPrices = async (
         basis: "observation",
         observation
       });
+    });
+  };
+  // Bound both document size and concurrency, including the 1,000-token public limit.
+  const workers = Math.min(4, Math.ceil(observedTokens.length / PRICE_QUERY_BATCH_SIZE));
+  await Promise.all(
+    Array.from({ length: workers }, async (_, worker) => {
+      for (
+        let start = worker * PRICE_QUERY_BATCH_SIZE;
+        start < observedTokens.length;
+        start += workers * PRICE_QUERY_BATCH_SIZE
+      ) {
+        await readBatch(observedTokens.slice(start, start + PRICE_QUERY_BATCH_SIZE));
+      }
     })
   );
 

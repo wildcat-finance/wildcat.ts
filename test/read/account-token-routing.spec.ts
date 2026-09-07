@@ -803,6 +803,14 @@ describe("Account and token read routing", () => {
       market,
       makeLenderAccountData(account)
     );
+    const config = market.hooksConfig;
+    const records = [{ id: "preserved-account-market-record" }];
+    Object.assign(market, {
+      depositRecords: records,
+      repaymentRecords: records,
+      borrowRecords: records,
+      feeCollectionRecords: records
+    });
     const lensAddress = constantsModule.getDeploymentAddress(chainId, "MarketLensV2");
     const seenFunctions: string[] = [];
     const viemProvider = new FakeViemProvider((call) => {
@@ -845,6 +853,11 @@ describe("Account and token read routing", () => {
     expect(result).to.deep.equal([marketAccount]);
     expect(seenFunctions.sort()).to.deep.equal(["getLenderAccountData", "getMarketsData"].sort());
     expect(marketAccount.marketBalance.raw.toString()).to.equal("50");
+    expect(market.hooksConfig === config, "hooks config identity").to.equal(true);
+    expect(market.depositRecords).to.equal(records);
+    expect(market.repaymentRecords).to.equal(records);
+    expect(market.borrowRecords).to.equal(records);
+    expect(market.feeCollectionRecords).to.equal(records);
   });
 
   it("hydrates legacy V2 market addresses through the latest lens compatibility projection", async () => {

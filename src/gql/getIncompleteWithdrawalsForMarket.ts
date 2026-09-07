@@ -2,6 +2,7 @@ import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client
 import { Market } from "../market";
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { assert } from "../utils";
+import { completeWithdrawalBatch } from "./withdrawal-history";
 import {
   GetIncompleteWithdrawalsForMarketDocument,
   SubgraphGetIncompleteWithdrawalsForMarketQuery,
@@ -14,6 +15,7 @@ export type GetIncompleteWithdrawalsForMarketOptions = {
   market: Market;
   first?: number;
   skip?: number;
+  /** Retained for compatibility; complete histories always bypass the normalized cache. */
   fetchPolicy?: FetchPolicy;
 };
 
@@ -23,12 +25,7 @@ export type GetIncompleteWithdrawalsForMarketOptions = {
  */
 export async function getIncompleteWithdrawalsForMarket(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
-  {
-    market,
-    first = 100,
-    skip = 0,
-    fetchPolicy = "cache-first"
-  }: GetIncompleteWithdrawalsForMarketOptions
+  { market, first = 100, skip = 0 }: GetIncompleteWithdrawalsForMarketOptions
 ): Promise<WithdrawalBatch[]> {
   assert(
     Number.isSafeInteger(first) && first > 0 && first <= 1_000,
@@ -48,12 +45,13 @@ export async function getIncompleteWithdrawalsForMarket(
       orderWithdrawalBatches: SubgraphWithdrawalBatch_OrderBy.expiry,
       directionWithdrawalBatches: SubgraphOrderDirection.desc
     },
-    fetchPolicy
+    fetchPolicy: "no-cache"
   });
 
-  return (
-    data.market?.withdrawalBatches.map((batch) =>
-      WithdrawalBatch.fromSubgraphWithdrawalBatch(market, batch)
-    ) ?? []
-  );
+  const batches: WithdrawalBatch[] = [];
+  for (const batch of data.market?.withdrawalBatches ?? []) {
+    const complete = await completeWithdrawalBatch(subgraphClient, batch, data._meta?.block.number);
+    batches.push(WithdrawalBatch.fromSubgraphWithdrawalBatch(market, complete));
+  }
+  return batches;
 }

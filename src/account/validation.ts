@@ -76,6 +76,7 @@ export type SetAprPreview =
       status:
         | SetAprStatus.NotBorrower
         | SetAprStatus.InvalidApr
+        | SetAprStatus.DecreaseDuringFixedTerm
         | SetAprStatus.AprReductionNotProposed
         | SetAprStatus.AprChangeDoesNotMatchProposal
         | SetAprStatus.AprChangeNotReady

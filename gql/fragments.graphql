@@ -590,10 +590,10 @@ fragment LenderWithdrawalPropertiesWithEvents on LenderWithdrawalStatus {
   batch {
     ...WithdrawalBatchProperties
   }
-  requests {
+  requests(first: 100, orderBy: id, orderDirection: asc) {
     ...WithdrawalRequestProperties
   }
-  executions {
+  executions(first: 100, orderBy: id, orderDirection: asc) {
     ...WithdrawalExecutionProperties
   }
 }
@@ -620,7 +620,7 @@ fragment WithdrawalBatchProperties on WithdrawalBatch {
     transactionHash
   }
 
-  payments {
+  payments(first: 100, orderBy: id, orderDirection: asc) {
     ...WithdrawalBatchPaymentProperties
   }
 }
@@ -628,13 +628,13 @@ fragment WithdrawalBatchProperties on WithdrawalBatch {
 fragment WithdrawalBatchPropertiesWithEvents on WithdrawalBatch {
   ...WithdrawalBatchProperties
 
-  withdrawals {
+  withdrawals(first: 100, orderBy: id, orderDirection: asc) {
     ...LenderWithdrawalProperties
   }
-  requests {
+  requests(first: 100, orderBy: id, orderDirection: asc) {
     ...WithdrawalRequestProperties
   }
-  executions {
+  executions(first: 100, orderBy: id, orderDirection: asc) {
     ...WithdrawalExecutionProperties
   }
 }

@@ -158,6 +158,15 @@ export async function getLenderAccountsForAllMarketsList(
     ...variables
   }: GetLenderAccountsForAllMarketsListOptions
 ): Promise<MarketAccount[]> {
+  if (usesLegacySubgraphSchema(chainId)) {
+    return getLenderAccountsForAllMarkets(subgraphClient, {
+      ...variables,
+      lender,
+      fetchPolicy,
+      chainId,
+      signerOrProvider
+    });
+  }
   const {
     data: { markets: _markets, controllerAuthorizations }
   } = await subgraphClient.query<

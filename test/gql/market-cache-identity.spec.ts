@@ -67,6 +67,7 @@ describe("market-scoped GraphQL cache identity", () => {
       query: GetLenderWithdrawalsForMarketDocument,
       variables: { market, lender },
       data: {
+        _meta: { __typename: "_Meta_", block: { __typename: "_Block_", number: 100 } },
         market: {
           __typename: "Market",
           id: market,

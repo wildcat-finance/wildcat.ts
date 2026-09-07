@@ -46,7 +46,12 @@ import {
   normalizeMaxTotalSupplyUpdate
 } from "./normalizers";
 import { normalizeIndexedPageRequest, toIndexedPage } from "./pagination";
-import { IndexedReadOptions, MarketAnalyticsFilter, normalizeAddresses } from "./read-options";
+import {
+  indexedFetchPolicy,
+  IndexedReadOptions,
+  MarketAnalyticsFilter,
+  normalizeAddresses
+} from "./read-options";
 import {
   AnnualInterestBipsUpdate,
   DelinquencyStatusChange,
@@ -110,7 +115,7 @@ export const getMarketDailyStatsPage = async (
   >({
     query: legacySchema ? LegacyGetMarketDailyStatsPageDocument : GetMarketDailyStatsPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.marketDailyStats_collection.map(normalizeMarketDailyStats),
@@ -147,7 +152,7 @@ export const getDelinquencyStatusChangePage = async (
       ? LegacyGetDelinquencyStatusChangePageDocument
       : GetDelinquencyStatusChangePageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.delinquencyStatusChangeds.map(normalizeDelinquencyStatusChange),
@@ -184,7 +189,7 @@ export const getMarketInterestAccrualPage = async (
       ? LegacyGetMarketInterestAccrualPageDocument
       : GetMarketInterestAccrualPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.marketInterestAccrueds.map(normalizeMarketInterestAccrual),
@@ -221,7 +226,7 @@ export const getAnnualInterestBipsUpdatePage = async (
       ? LegacyGetAnnualInterestBipsUpdatePageDocument
       : GetAnnualInterestBipsUpdatePageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.annualInterestBipsUpdateds.map(normalizeAnnualInterestBipsUpdate),
@@ -255,7 +260,7 @@ export const getMarketBorrowPage = async (
   >({
     query: legacySchema ? LegacyGetMarketBorrowPageDocument : GetMarketBorrowPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.borrows.map(normalizeMarketBorrow),
@@ -291,7 +296,7 @@ export const getMarketDebtRepaymentPage = async (
       ? LegacyGetMarketDebtRepaymentPageDocument
       : GetMarketDebtRepaymentPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.debtRepaids.map(normalizeMarketDebtRepayment),
@@ -327,7 +332,7 @@ export const getMaxTotalSupplyUpdatePage = async (
       ? LegacyGetMaxTotalSupplyUpdatePageDocument
       : GetMaxTotalSupplyUpdatePageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.maxTotalSupplyUpdateds.map(normalizeMaxTotalSupplyUpdate),
@@ -370,7 +375,7 @@ export const getMarketAggregatePage = async (
       first,
       block
     },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.markets.map(normalizeIndexedMarketAggregate),

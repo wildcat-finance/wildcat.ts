@@ -4,6 +4,7 @@ import { Market } from "../market";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { assert } from "../utils";
+import { completeLenderWithdrawal } from "./withdrawal-history";
 import {
   GetIncompleteLenderWithdrawalsForMarketDocument,
   SubgraphGetIncompleteLenderWithdrawalsForMarketQuery,
@@ -18,6 +19,7 @@ export type GetIncompleteLenderWithdrawalsForMarketOptions = {
   lender: string;
   first?: number;
   skip?: number;
+  /** Retained for compatibility; complete histories always bypass the normalized cache. */
   fetchPolicy?: FetchPolicy;
 };
 
@@ -28,13 +30,7 @@ export type GetIncompleteLenderWithdrawalsForMarketOptions = {
  */
 export async function getIncompleteLenderWithdrawalsForMarket(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
-  {
-    market,
-    lender,
-    first = 200,
-    skip = 0,
-    fetchPolicy = "cache-first"
-  }: GetIncompleteLenderWithdrawalsForMarketOptions
+  { market, lender, first = 200, skip = 0 }: GetIncompleteLenderWithdrawalsForMarketOptions
 ): Promise<LenderWithdrawalStatus[]> {
   assert(
     Number.isSafeInteger(first) && first > 0 && first <= 1_000,
@@ -61,13 +57,20 @@ export async function getIncompleteLenderWithdrawalsForMarket(
         : SubgraphLenderWithdrawalStatus_OrderBy.batchExpiry) as SubgraphLenderWithdrawalStatus_OrderBy,
       directionWithdrawals: SubgraphOrderDirection.desc
     },
-    fetchPolicy
+    fetchPolicy: "no-cache"
   });
 
-  return (
-    data.market?.lenders[0]?.incompleteWithdrawals.map((withdrawal) => {
-      const batch = WithdrawalBatch.fromSubgraphWithdrawalBatch(market, withdrawal.batch);
-      return LenderWithdrawalStatus.fromSubgraphLenderWithdrawalStatus(market, batch, withdrawal);
-    }) ?? []
-  );
+  const withdrawals: LenderWithdrawalStatus[] = [];
+  for (const withdrawal of data.market?.lenders[0]?.incompleteWithdrawals ?? []) {
+    const complete = await completeLenderWithdrawal(
+      subgraphClient,
+      withdrawal,
+      data._meta?.block.number
+    );
+    const batch = WithdrawalBatch.fromSubgraphWithdrawalBatch(market, complete.batch);
+    withdrawals.push(
+      LenderWithdrawalStatus.fromSubgraphLenderWithdrawalStatus(market, batch, complete)
+    );
+  }
+  return withdrawals;
 }

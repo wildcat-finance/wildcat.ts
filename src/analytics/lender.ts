@@ -46,7 +46,12 @@ import {
   normalizeAnalyticsMarket
 } from "./normalizers";
 import { normalizeIndexedPageRequest, toIndexedPage } from "./pagination";
-import { IndexedReadOptions, IndexedTimeRange, normalizeAddresses } from "./read-options";
+import {
+  indexedFetchPolicy,
+  IndexedReadOptions,
+  IndexedTimeRange,
+  normalizeAddresses
+} from "./read-options";
 import {
   IndexedLenderWithdrawalStatus,
   IndexedPage,
@@ -169,7 +174,7 @@ export const getLenderPositionPage = async (
   >({
     query: legacySchema ? LegacyGetLenderPositionPageDocument : GetLenderPositionPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.lenderAccounts.map(normalizeLenderPosition),
@@ -207,7 +212,7 @@ export const getLenderDailyStatsPage = async (
   >({
     query: GetLenderDailyStatsPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.lenderDailyStats_collection.map(normalizeLenderDailyStats),
@@ -260,7 +265,7 @@ export const getLenderDepositPage = async (
   >({
     query: legacySchema ? LegacyGetLenderDepositPageDocument : GetLenderDepositPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.deposits.map(normalizeLenderDeposit),
@@ -296,7 +301,7 @@ export const getLenderWithdrawalRequestPage = async (
       ? LegacyGetLenderWithdrawalRequestPageDocument
       : GetLenderWithdrawalRequestPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.withdrawalRequests.map(normalizeLenderWithdrawalRequest),
@@ -332,7 +337,7 @@ export const getLenderWithdrawalExecutionPage = async (
       ? LegacyGetLenderWithdrawalExecutionPageDocument
       : GetLenderWithdrawalExecutionPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.withdrawalExecutions.map(normalizeLenderWithdrawalExecution),
@@ -383,7 +388,7 @@ export const getLenderTransferPage = async (
   >({
     query: legacySchema ? LegacyGetLenderTransferPageDocument : GetLenderTransferPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.transfers.map(normalizeLenderTransfer),
@@ -416,7 +421,7 @@ export const getLenderWithdrawalStatusPage = async (
       ? LegacyGetLenderWithdrawalStatusPageDocument
       : GetLenderWithdrawalStatusPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     legacySchema

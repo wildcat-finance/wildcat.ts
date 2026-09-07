@@ -22,13 +22,18 @@ import {
   toNumber,
   type BigintNumberish
 } from "../utils";
-import { SupportedChainId, hasDeploymentAddress } from "../constants";
+import {
+  APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS,
+  SupportedChainId,
+  hasDeploymentAddress
+} from "../constants";
 import {
   getRegisteredMarkets,
   getRegisteredMarketsCount,
   getRegisteredMarketsPage
 } from "../internal/arch-controller";
 import {
+  getFullMarketsDataV2,
   getLatestLenderAccountData,
   getLatestLenderAccountsData,
   getLatestMarketDataWithLenderStatus,
@@ -148,6 +153,9 @@ export type MarketAccountArgs = {
   lastScaleFactor?: bigint;
   lastUpdatedTimestamp?: number;
   totalInterestEarned?: TokenAmount;
+  /** True when live balance changes make cumulative interest unknowable without indexed history.
+   * The last known total is retained; rehydrate from indexed account data to resume estimates. */
+  isInterestAccrualStale?: boolean;
   numPendingWithdrawalBatches?: number;
   /** Whether lender had a LenderAccount entry in the subgraph */
   hadSubgraphEntry?: boolean;
@@ -172,12 +180,14 @@ export interface MarketAccount extends Omit<MarketAccountArgs, "deposits" | "had
  */
 export class MarketAccount {
   public depositRecords: DepositRecord[];
+  public isInterestAccrualStale: boolean;
 
   /** Whether lender had a LenderAccount entry in the subgraph */
   protected hadSubgraphEntry?: boolean;
 
   constructor(args: MarketAccountArgs) {
     Object.assign(this, { ...args, stateSource: args.stateSource ?? args.market.stateSource });
+    this.isInterestAccrualStale = args.isInterestAccrualStale ?? false;
     this.depositRecords = (args.deposits ?? []).map((log) =>
       parseMarketRecord(this.market.underlyingToken, log)
     );
@@ -342,6 +352,9 @@ export class MarketAccount {
       if (!config.flags!.useOnQueueWithdrawal) return QueueWithdrawalStatus.Ready;
       // Can not withdraw if market in fixed term
       if (this.market.isInFixedTerm) return QueueWithdrawalStatus.MarketInClosedTerm;
+      if (config.kind === HooksKind.PeriodicTerm && !this.market.isPeriodicWithdrawalWindowOpen) {
+        return QueueWithdrawalStatus.WithdrawalWindowClosed;
+      }
       // Can not withdraw if market requires access and lender has no credential and is not a known lender
       if (
         config.flags.useOnQueueWithdrawal &&
@@ -355,7 +368,7 @@ export class MarketAccount {
   }
 
   canChangeAPR(apr: number): boolean {
-    return this.isBorrower && apr > 0 && apr <= 10000 && this.market.canChangeAPR(apr);
+    return this.previewSetAPR(apr).status === SetAprStatus.Ready;
   }
 
   /**
@@ -416,11 +429,59 @@ export class MarketAccount {
     return { status: CloseMarketStatus.Ready };
   }
 
+  /** Uses the current model snapshot, including indexed proposal data. Refresh the market
+   * and its pending APR change before relying on a periodic reduction preview. */
   previewSetAPR(apr: number): SetAprPreview {
     if (!this.isBorrower) return { status: SetAprStatus.NotBorrower };
-    if (!(apr > 0 && apr <= 10000)) return { status: SetAprStatus.InvalidApr };
+    if (!(Number.isInteger(apr) && apr > 0 && apr <= 10000))
+      return { status: SetAprStatus.InvalidApr };
 
     const config = this.market.hooksConfig;
+    if (
+      config?.flags?.useOnSetAnnualInterestAndReserveRatioBips &&
+      apr < this.market.annualInterestBips
+    ) {
+      if (config.kind === HooksKind.FixedTerm && this.market.isInFixedTerm) {
+        return { status: SetAprStatus.DecreaseDuringFixedTerm };
+      }
+      if (config.kind === HooksKind.PeriodicTerm) {
+        if (config.pendingAprChangeProposalTimestamp === 0)
+          return { status: SetAprStatus.AprReductionNotProposed };
+        if (apr !== config.pendingAprChangeAnnualInterestBips)
+          return { status: SetAprStatus.AprChangeDoesNotMatchProposal };
+        const now = Math.floor(Date.now() / 1_000);
+        if (now < config.pendingAprChangeResponseWindowEnd)
+          return { status: SetAprStatus.AprChangeNotReady };
+        if (
+          now >=
+          config.pendingAprChangeResponseWindowStart +
+            config.periodDuration * APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS
+        ) {
+          return { status: SetAprStatus.AprChangeExpired };
+        }
+        if (this.market.scaledPendingWithdrawals !== 0n)
+          return { status: SetAprStatus.UnpaidWithdrawalsExist };
+        const newCoverageLiquidity = this.market.calculateLiquidityCoverageForReserveRatio(
+          this.market.reserveRatioBips
+        );
+        if (this.market.totalAssets.lt(newCoverageLiquidity)) {
+          return {
+            status: SetAprStatus.InsufficientReserves,
+            newCoverageLiquidity,
+            newReserveRatio: this.market.reserveRatioBips,
+            missingReserves: newCoverageLiquidity.sub(this.market.totalAssets),
+            changeCausedByReset: false
+          };
+        }
+        // The borrower reduction hook shares proposal gates with permissionless execution,
+        // but does not require that separate execution hook to be enabled.
+        return {
+          status: SetAprStatus.Ready,
+          willChangeReserveRatio: false,
+          willCancelPendingProposal: false
+        };
+      }
+    }
     const willCancelPendingProposal =
       config?.kind === HooksKind.PeriodicTerm &&
       config.pendingAprChangeProposalTimestamp !== 0 &&
@@ -654,6 +715,15 @@ export class MarketAccount {
   }
 
   async setAnnualInterestBips(newAprBips: number): Promise<TransactionHash> {
+    if (
+      this.isBorrower &&
+      Number.isInteger(newAprBips) &&
+      newAprBips > 0 &&
+      newAprBips < this.market.annualInterestBips &&
+      this.market.periodicHooksConfig
+    ) {
+      await Promise.all([this.market.update(), this.market.refreshPendingAprChange()]);
+    }
     const { status } = this.previewSetAPR(newAprBips);
     assert(
       status === SetAprStatus.Ready,
@@ -1105,7 +1175,9 @@ export class MarketAccount {
       };
       this.isKnownLender = info.isKnownLender;
     }
-    this.scaledMarketBalance = toRawAmount(info.scaledBalance);
+    const nextScaledBalance = toRawAmount(info.scaledBalance);
+    if (nextScaledBalance !== this.scaledMarketBalance) this.isInterestAccrualStale = true;
+    this.scaledMarketBalance = nextScaledBalance;
     this.marketBalance = this.market.marketToken.getAmount(info.normalizedBalance);
     this.underlyingBalance = this.market.underlyingToken.getAmount(info.underlyingBalance);
     this.underlyingApproval = toRawAmount(info.underlyingApproval);
@@ -1114,6 +1186,7 @@ export class MarketAccount {
   }
 
   private clearWalletState(): void {
+    if (this.scaledMarketBalance !== 0n) this.isInterestAccrualStale = true;
     this.scaledMarketBalance = 0n;
     this.marketBalance = this.market.marketToken.getAmount(0n);
     this.underlyingBalance = this.market.underlyingToken.getAmount(0n);
@@ -1133,7 +1206,11 @@ export class MarketAccount {
   }
 
   processInterestAccrued(): void {
-    if (!this.lastScaleFactor || !this.totalInterestEarned) return;
+    if (this.isInterestAccrualStale || !this.lastScaleFactor || !this.totalInterestEarned) return;
+    if (this.market.scaleFactor < this.lastScaleFactor) {
+      this.isInterestAccrualStale = true;
+      return;
+    }
     if (this.lastScaleFactor !== this.market.scaleFactor) {
       const interestEarned = this.calculateInterestEarned();
       this.lastScaleFactor = this.market.scaleFactor;
@@ -1452,13 +1529,13 @@ export class MarketAccount {
       }
     }
 
-    const [refreshedMarkets, lenderStatuses] = await Promise.all([
-      Market.getMarketsV2(chainId, marketAddresses, provider),
+    const [marketUpdates, lenderStatuses] = await Promise.all([
+      getFullMarketsDataV2(chainId, provider, marketAddresses),
       getLatestLenderAccountsData(chainId, provider, lender, marketAddresses)
     ]);
 
     marketAccounts.forEach((marketAccount, i) => {
-      Object.assign(marketAccount.market, refreshedMarkets[i]);
+      marketAccount.market.updateWith(marketUpdates[i]);
       if (shouldClearWalletState) {
         marketAccount.clearWalletState();
       } else {

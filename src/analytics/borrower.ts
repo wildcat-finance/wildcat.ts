@@ -22,7 +22,12 @@ import {
   normalizeAnalyticsMarket,
   normalizeIndexedQueryMetadata
 } from "./normalizers";
-import { IndexedReadOptions, IndexedTimeRange, normalizeAddresses } from "./read-options";
+import {
+  indexedFetchPolicy,
+  IndexedReadOptions,
+  IndexedTimeRange,
+  normalizeAddresses
+} from "./read-options";
 import {
   BorrowerAnalyticsProfile,
   BorrowerDailyStats,
@@ -101,7 +106,7 @@ export const getBorrowerDailyStatsPage = async (
   >({
     query: GetBorrowerDailyStatsPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.borrowerDailyStats_collection.map(normalizeBorrowerDailyStats),
@@ -182,7 +187,7 @@ export const getBorrowerWithdrawalReliabilityPage = async (
       ? LegacyGetBorrowerWithdrawalReliabilityPageDocument
       : GetBorrowerWithdrawalReliabilityPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     legacySchema

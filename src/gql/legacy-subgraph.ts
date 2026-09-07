@@ -775,6 +775,11 @@ export const LegacyGetLenderWithdrawalsForMarketDocument = gql`
     $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry
     $directionWithdrawals: OrderDirection = desc
   ) {
+    _meta {
+      block {
+        number
+      }
+    }
     market(id: $market) {
       id
       lenders(where: { address: $lender }) {
@@ -816,6 +821,11 @@ export const LegacyGetIncompleteLenderWithdrawalsForMarketDocument = gql`
     $orderWithdrawals: LenderWithdrawalStatus_orderBy = batch__expiry
     $directionWithdrawals: OrderDirection = desc
   ) {
+    _meta {
+      block {
+        number
+      }
+    }
     market(id: $market) {
       id
       lenders(where: { address: $lender }) {

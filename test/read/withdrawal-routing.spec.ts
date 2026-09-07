@@ -211,6 +211,52 @@ const makeWithdrawalBatchLenderStatus = (lender: string) => ({
 });
 
 describe("Withdrawal read routing", () => {
+  for (const activePendingBatch of [false, true]) {
+    it(`keeps a legacy closed-market batch ${
+      activePendingBatch ? "pending" : "executable after early closure"
+    }`, () => {
+      const chainId = constantsModule.SupportedChainId.Mainnet;
+      const data = makeFactoryBackedMarketData(
+        constantsModule.getDeploymentAddress(chainId, "HooksFactoryStandard")
+      );
+      const expiry = Math.floor(Date.now() / 1000) + 86_400;
+      data.isClosed = true;
+      data.pendingWithdrawalExpiry = BigNumber.from(activePendingBatch ? expiry : 0);
+      const market = Market.fromMarketDataV2(chainId, provider, data);
+      const batch = WithdrawalBatch.fromWithdrawalBatchData(
+        market,
+        {
+          ...makeWithdrawalBatchData(BatchStatus.Pending),
+          expiry,
+          scaledTotalAmount: BigNumber.from(100),
+          scaledAmountBurned: BigNumber.from(100),
+          normalizedAmountPaid: BigNumber.from(100),
+          normalizedTotalAmount: BigNumber.from(100)
+        },
+        false
+      );
+      const withdrawal = LenderWithdrawalStatus.fromWithdrawalBatchLenderStatus(market, batch, {
+        ...makeWithdrawalBatchLenderStatus(makeAddress(30)),
+        scaledAmount: BigNumber.from(100),
+        normalizedAmountWithdrawn: BigNumber.from(0)
+      });
+      expect(withdrawal.availableWithdrawalAmount.raw).to.equal(100n);
+      expect(withdrawal.isExecutable).to.equal(!activePendingBatch);
+      batch.applyLensUpdate(
+        {
+          ...makeWithdrawalBatchData(BatchStatus.Pending),
+          expiry,
+          scaledTotalAmount: BigNumber.from(100),
+          scaledAmountBurned: BigNumber.from(100),
+          normalizedAmountPaid: BigNumber.from(100),
+          normalizedTotalAmount: BigNumber.from(100)
+        },
+        false
+      );
+      expect(withdrawal.isExecutable).to.equal(!activePendingBatch);
+    });
+  }
+
   it("distinguishes a concluded closed-market batch from an executable withdrawal", () => {
     const hooksFactory = constantsModule.getDeploymentAddress(
       constantsModule.SupportedChainId.Sepolia,

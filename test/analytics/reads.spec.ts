@@ -194,6 +194,98 @@ const borrowerTotals = {
 };
 
 describe("V2.5 indexed analytics reads", () => {
+  for (const count of [20, 1_000]) {
+    it(`bounds latest-price requests for ${count} independently observed tokens`, async () => {
+      const tokens = Array.from({ length: count }, (_, i) => ({
+        ...token,
+        id: `0x${(i + 1).toString(16).padStart(40, "0")}`,
+        address: `0x${(i + 1).toString(16).padStart(40, "0")}`
+      }));
+      const observation = (address: string) => {
+        const i = tokens.findIndex((token) => token.address === address);
+        return {
+          id: `price-${i}`,
+          token: tokens[i],
+          timestamp: 86_400 - i,
+          priceUSD: String(i + 1),
+          source: "CHAINLINK_DIRECT",
+          observedAtBlock: "500",
+          observedAtTimestamp: "600",
+          observedAtTransaction: transactionHash,
+          observedAtLogIndex: "7"
+        };
+      };
+      const { client, operations } = createClient(metadataFor(SupportedChainId.Sepolia), {
+        getAnalyticsTokens: () => ({ tokens }),
+        getLatestTokenPriceObservation: ({ filter }) => ({
+          tokenDailyPrices: [observation((filter as { token: string }).token)]
+        }),
+        getLatestTokenPriceObservationBatch: (variables) => {
+          expect(variables.block).to.deep.equal({ number: 999 });
+          const filters = Object.entries(variables).filter(([key]) => key.startsWith("filter"));
+          expect(filters.length).to.be.at.most(20);
+          return Object.fromEntries(
+            filters.map(([key, value]) => [
+              key.replace("filter", "price"),
+              [observation((value as { token: string }).token)]
+            ])
+          );
+        }
+      });
+      const result = await getLatestTokenUsdPrices(client, {
+        tokens: tokens.map((t) => t.address),
+        fetchPolicy: "no-cache"
+      });
+      expect(result.prices).to.have.length(count);
+      result.prices.forEach((price, i) => {
+        expect(price).to.include({
+          address: tokens[i].address,
+          status: "priced",
+          priceUSD: String(i + 1)
+        });
+        if (price.status === "priced" && price.basis === "observation")
+          expect(price.observation?.timestamp).to.equal(86_400 - i);
+      });
+      expect(operations.length).to.equal(2 + Math.ceil(count / 20));
+      client.stop();
+    });
+  }
+
+  for (const fetchPolicy of ["cache-first", "network-only"] as const) {
+    it(`isolates pinned analytics entities from other blocks with ${fetchPolicy}`, async () => {
+      const { client } = createClient(metadataFor(SupportedChainId.Sepolia), {
+        getAnalyticsTokens: ({ block }) => {
+          const height = (block as { number: number } | undefined)?.number ?? 300;
+          return {
+            tokens: [{ ...token, __typename: "Token", symbol: String(height) }],
+            _meta: {
+              ...queryMetadata,
+              __typename: "_Meta_",
+              block: {
+                ...queryMetadata.block,
+                __typename: "_Block_",
+                number: height
+              }
+            }
+          };
+        }
+      });
+      const latest = () => getAnalyticsTokenPage(client);
+      const pinned = (height: number) =>
+        getAnalyticsTokenPage(client, {
+          fetchPolicy,
+          after: { entityId: "0", blockNumber: BigInt(height) }
+        });
+      expect((await latest()).items[0].symbol).to.equal("300");
+      expect((await pinned(100)).items[0].symbol).to.equal("100");
+      expect((await pinned(200)).items[0].symbol).to.equal("200");
+      const repeated = await pinned(100);
+      expect(repeated.indexedAt.blockNumber).to.equal(100n);
+      expect(repeated.items[0].symbol).to.equal("100");
+      expect((await latest()).items[0].symbol).to.equal("300");
+    });
+  }
+
   it("represents unpriced nonzero market debt as unavailable", () => {
     const normalized = normalizeAnalyticsMarket({
       ...market,
@@ -879,7 +971,7 @@ describe("V2.5 indexed analytics reads", () => {
     };
     const { client } = createClient(metadataFor(SupportedChainId.Sepolia), {
       getAnalyticsTokens: () => ({ tokens: [token] }),
-      getLatestTokenPriceObservation: () => ({ tokenDailyPrices: [observation] }),
+      getLatestTokenPriceObservationBatch: () => ({ price0: [observation] }),
       getTokenPriceObservationPage: () => ({ tokenDailyPrices: [observation] })
     });
 

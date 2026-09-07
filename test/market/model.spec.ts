@@ -815,6 +815,64 @@ describe("Market direct read routing", () => {
     expect(market.drawnAmount?.raw).to.equal(300n);
   });
 
+  for (const chainId of [
+    SupportedChainId.Mainnet,
+    SupportedChainId.PlasmaMainnet,
+    SupportedChainId.Sepolia
+  ]) {
+    it(`preserves indexed records and template context during broad refresh on ${chainId}`, async () => {
+      const hooksFactory = getDeploymentAddress(chainId, "HooksFactoryStandard");
+      const data = makeFactoryBackedMarketData(hooksFactory);
+      const viemProvider = new FakeViemProvider((call) => {
+        if (
+          chainId === SupportedChainId.Sepolia &&
+          call.to === getDeploymentAddress(chainId, "MarketLensV2_5")
+        ) {
+          throw Error("Unified endpoint unavailable");
+        }
+        const decoded = decodeLensCall(marketLensV2Abi as Abi, call);
+        expect(decoded.functionName).to.equal("getMarketsData");
+        return encodeLensResult(marketLensV2Abi as Abi, "getMarketsData", [
+          {
+            ...data,
+            annualInterestBips: BigNumber.from(1_350)
+          }
+        ]);
+      });
+      const market = Market.fromMarketDataV2(
+        chainId,
+        viemProvider as unknown as providers.Provider,
+        data
+      );
+      const template = Market.fromSubgraphMarketData(
+        SupportedChainId.Sepolia,
+        provider,
+        makeSubgraphMarketData()
+      ).hooksConfig!.template;
+      market.hooksConfig!.template = template;
+      const records = [{ id: "preserved-indexed-record" }];
+      Object.assign(market, {
+        depositRecords: records,
+        repaymentRecords: records,
+        borrowRecords: records,
+        feeCollectionRecords: records
+      });
+      const config = market.hooksConfig;
+      await Market.refreshMarketsV2LiveData(
+        chainId,
+        [market],
+        viemProvider as unknown as providers.Provider
+      );
+      expect(market.annualInterestBips).to.equal(1_350);
+      expect(market.hooksConfig === config, "hooks config identity").to.equal(true);
+      expect(market.hooksConfig!.template).to.equal(template);
+      expect(market.depositRecords).to.equal(records);
+      expect(market.repaymentRecords).to.equal(records);
+      expect(market.borrowRecords).to.equal(records);
+      expect(market.feeCollectionRecords).to.equal(records);
+    });
+  }
+
   it("hydrates mixed indexed market generations through explicit live batch reads", async () => {
     const legacyData = makeLegacyMarketData();
     const legacyUpdate = { ...legacyData, annualInterestBips: BigNumber.from(1_350) };

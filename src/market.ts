@@ -19,13 +19,13 @@ import {
   getRegisteredMarketsPage
 } from "./internal/arch-controller";
 import {
+  getFullMarketsDataV2,
   getLegacyMarketData,
   getLegacyMarketsData,
   getUnifiedMarketDataV2,
   getUnifiedMarketsDataV2,
   getUnifiedMarketsLiveDataV2,
-  getV2MarketData,
-  getV2MarketsData
+  getV2MarketData
 } from "./internal/market-lens";
 import { TokenAmount, Token, toRawAmount } from "./token";
 import {
@@ -82,7 +82,9 @@ import {
 } from "./utils";
 import { hooksTemplateFromSubgraph } from "./access";
 import { roleProviderFromLensData } from "./access/utils";
-import { wildcatMarketAbi } from "./abi";
+import { iPeriodicTermHooksAbi, wildcatMarketAbi } from "./abi";
+import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
+import { readViemContract } from "./internal/viem-read";
 import { submitPreparedTransaction } from "./internal/viem-write";
 import { getEthersSignerAddress } from "./internal/ethers-signer";
 import {
@@ -513,7 +515,7 @@ export class Market extends ContractWrapper {
     const config = this.hooksConfig!;
     if (config.kind !== HooksKind.FixedTerm) return false;
     const fixedTermEndTime = config.fixedTermEndTime;
-    return fixedTermEndTime >= Date.now() / 1_000;
+    return fixedTermEndTime > Math.floor(Date.now() / 1_000);
   }
 
   get periodicHooksConfig(): PeriodicTermHooksConfig | undefined {
@@ -651,10 +653,6 @@ export class Market extends ContractWrapper {
 
   private get currentPenaltyAPR(): bigint {
     return this.isIncurringPenalties ? bipToRayBigint(this.delinquencyFeeBips) : 0n;
-  }
-
-  private get currentProtocolAPR(): bigint {
-    return bipMulBigint(this.currentBaseLenderAPR, this.protocolFeeBips);
   }
 
   /** @returns Whether the borrower is in penalized delinquency */
@@ -799,94 +797,70 @@ export class Market extends ContractWrapper {
     return rayDivBigint(amount, this.scaleFactor);
   }
 
-  get secondsBeforeDelinquency(): number {
-    if (this.willBeDelinquent || this.totalDebts.eq(0)) return 0;
-
-    const scaledBase = this.scaledTotalSupply;
-    const basePrincipal = this.underlyingToken.getAmount(
-      rayMulBigint(scaledBase, this.scaleFactor)
-    );
-
-    const baseAPRRay = this.currentBaseLenderAPR;
-    const protocolFeeAPRRay = this.currentProtocolAPR;
-    const delinquencyFeeAPRRay = this.currentPenaltyAPR;
-
-    // lender APR portion
-    const lenderRequirementGrowthPerSecond = basePrincipal
-      .rayMul(baseAPRRay + delinquencyFeeAPRRay)
-      .div(SECONDS_IN_365_DAYS)
-      .bipMul(this.reserveRatioBips);
-
-    // protocol fee portion
-    const protocolRequirementGrowthPerSecond = basePrincipal
-      .rayMul(protocolFeeAPRRay)
-      .div(SECONDS_IN_365_DAYS);
-
-    const totalRequirementGrowthPerSecond = lenderRequirementGrowthPerSecond.add(
-      protocolRequirementGrowthPerSecond.raw
-    );
-    // essentially if  apr=0 and rr=0 then bips alone wont move us to delinquency
-    if (totalRequirementGrowthPerSecond.raw === 0n) return Number.MAX_SAFE_INTEGER;
-
-    const buffer = this.liquidReserves.sub(this.minimumReserves);
-    if (buffer.raw <= 0n) return 0; // we are delinquent
-    return Number(buffer.div(totalRequirementGrowthPerSecond, true).raw); // seconds until the party
+  // Keep the instantaneous growth rate as a fraction until the final division:
+  // raw-token-per-second and whole-bip rounding can erase small but nonzero rates.
+  private reserveRequirementGrowth(borrowAmount = 0n): { numerator: bigint; denominator: bigint } {
+    const supply = this.normalizeAmount(this.scaledTotalSupply);
+    if (supply === 0n || this.isClosed) return { numerator: 0n, denominator: 1n };
+    const pending = this.normalizeAmount(this.scaledPendingWithdrawals);
+    const weightedPrincipal =
+      pending * BIP_BIGINT + (supply - pending) * BigInt(this.reserveRatioBips);
+    let baseInterest = supply * BigInt(this.annualInterestBips);
+    if (this.commitmentFeeBips != null && this.drawnAmount != null) {
+      const postDraw = this.drawnAmount.raw + borrowAmount;
+      const drawn = postDraw > supply ? supply : postDraw;
+      baseInterest =
+        supply * BigInt(this.commitmentFeeBips) + drawn * BigInt(this.annualInterestBips);
+    }
+    const penaltyInterest =
+      supply * BigInt(this.isIncurringPenalties ? this.delinquencyFeeBips : 0);
+    return {
+      numerator:
+        weightedPrincipal * (baseInterest + penaltyInterest) +
+        baseInterest * BigInt(this.protocolFeeBips) * supply,
+      denominator: supply * BIP_BIGINT * BIP_BIGINT * BigInt(SECONDS_IN_365_DAYS)
+    };
   }
 
+  private forecastSecondsBeforeDelinquency(borrowAmount: bigint): number {
+    assert(borrowAmount >= 0n, "Borrow amount must be nonnegative");
+    if (this.totalDebts.eq(0)) return 0;
+    const buffer =
+      this.totalAssets.raw -
+      this.calculateLiquidityCoverageForReserveRatio(this.reserveRatioBips).raw -
+      borrowAmount;
+    if (buffer < 0n) return 0;
+    const { numerator, denominator } = this.reserveRequirementGrowth(borrowAmount);
+    if (numerator === 0n) return Number.MAX_SAFE_INTEGER;
+    const seconds = (buffer * denominator) / numerator;
+    return Number(
+      seconds > BigInt(Number.MAX_SAFE_INTEGER) ? BigInt(Number.MAX_SAFE_INTEGER) : seconds
+    );
+  }
+
+  /** Linear estimate at the current rate; excludes future compounding and state changes. */
+  get secondsBeforeDelinquency(): number {
+    return this.forecastSecondsBeforeDelinquency(0n);
+  }
+
+  /** Linear estimate using post-draw revolving utilization, without changing market state. */
   getSecondsBeforeDelinquencyForBorrowedAmount(borrowAmount: TokenAmount): number {
-    if (this.isDelinquent || this.totalDebts.eq(0)) return 0;
-    const scaledBase = this.scaledTotalSupply;
-
-    const basePrincipal = this.underlyingToken.getAmount(
-      rayMulBigint(scaledBase, this.scaleFactor)
-    );
-    const baseAPRRay = this.currentBaseLenderAPR;
-    const protocolFeeAPRRay = this.currentProtocolAPR;
-    const delinquencyFeeAPRRay = this.currentPenaltyAPR;
-
-    const lenderRequirementGrowthPerSecond = basePrincipal
-      .rayMul(baseAPRRay + delinquencyFeeAPRRay)
-      .div(SECONDS_IN_365_DAYS)
-      .bipMul(this.reserveRatioBips);
-
-    const protocolRequirementGrowthPerSecond = basePrincipal
-      .rayMul(protocolFeeAPRRay)
-      .div(SECONDS_IN_365_DAYS);
-
-    const totalRequirementGrowthPerSecond = lenderRequirementGrowthPerSecond.add(
-      protocolRequirementGrowthPerSecond.raw
-    );
-    if (totalRequirementGrowthPerSecond.raw === 0n) return Number.MAX_SAFE_INTEGER;
-
-    const postBorrowBuffer = this.liquidReserves.sub(this.minimumReserves).sub(borrowAmount);
-    if (postBorrowBuffer.raw <= 0n) return 0;
-    return Number(postBorrowBuffer.div(totalRequirementGrowthPerSecond, true).raw);
+    return this.forecastSecondsBeforeDelinquency(borrowAmount.raw);
   }
   /**
-   * @dev Calculate token amount to be repayed by borrower for a given duration
-   * to keep the market healthy.
-   * @return token amount to be repayed
+   * Estimate additional reserve growth at the current rate, rounded up to one raw
+   * token unit. Includes fully reserved unpaid withdrawals and protocol fees;
+   * excludes existing deficits, future compounding and changes in market state.
    **/
   repayRequiredForDuration(timeToPayInSeconds: number): TokenAmount {
-    const scaledBase = this.scaledTotalSupply - this.scaledPendingWithdrawals;
-    if (scaledBase <= 0n) return this.underlyingToken.getAmount(0);
-    const basePrincipal = this.underlyingToken.getAmount(
-      rayMulBigint(scaledBase, this.scaleFactor)
+    assert(
+      Number.isSafeInteger(timeToPayInSeconds) && timeToPayInSeconds >= 0,
+      "Duration must be a nonnegative safe integer number of seconds"
     );
-    const baseAPRRay = this.currentBaseLenderAPR;
-    const protocolFeeAPRRay = this.currentProtocolAPR;
-    const delinquencyFeeAPRRay = this.currentPenaltyAPR;
-    const lenderRequirementGrowthPerSecond = basePrincipal
-      .rayMul(baseAPRRay + delinquencyFeeAPRRay)
-      .div(SECONDS_IN_365_DAYS)
-      .bipMul(this.reserveRatioBips);
-    const protocolRequirementGrowthPerSecond = basePrincipal
-      .rayMul(protocolFeeAPRRay)
-      .div(SECONDS_IN_365_DAYS);
-    const totalRequirementGrowthPerSecond = lenderRequirementGrowthPerSecond.add(
-      protocolRequirementGrowthPerSecond.raw
+    const { numerator, denominator } = this.reserveRequirementGrowth();
+    return this.underlyingToken.getAmount(
+      (numerator * BigInt(timeToPayInSeconds) + denominator - 1n) / denominator
     );
-    return totalRequirementGrowthPerSecond.mul(timeToPayInSeconds);
   }
 
   /**
@@ -1082,6 +1056,25 @@ export class Market extends ContractWrapper {
 
     const market = await getLegacyMarketData(this.chainId, this.provider, this.address);
     this.updateWith(market);
+  }
+
+  /** Refresh proposal fields omitted by market lenses; other indexed context is retained. */
+  async refreshPendingAprChange(): Promise<void> {
+    const config = this.periodicHooksConfig;
+    assert(config !== undefined, "Pending APR changes require a periodic market");
+    const [proposal, start, end] = await readViemContract<
+      readonly [{ annualInterestBips: number; proposalTimestamp: number }, number, number]
+    >(
+      getViemPublicClientFromEthers(this.provider),
+      config.hooksAddress,
+      iPeriodicTermHooksAbi,
+      "getPendingAprChange",
+      [this.address]
+    );
+    config.pendingAprChangeAnnualInterestBips = toNumber(proposal.annualInterestBips);
+    config.pendingAprChangeProposalTimestamp = toNumber(proposal.proposalTimestamp);
+    config.pendingAprChangeResponseWindowStart = toNumber(start);
+    config.pendingAprChangeResponseWindowEnd = toNumber(end);
   }
 
   updateWith(
@@ -1864,20 +1857,14 @@ export class Market extends ContractWrapper {
     provider: SignerOrProvider
   ): Promise<Market[]> {
     const signerAddress = await getEthersSignerAddress(provider);
-    if (hasUnifiedLatestLensForDirectReads(chainId)) {
-      try {
-        const data = await getUnifiedMarketsDataV2(chainId, provider, markets);
-        return Promise.all(
-          data.map((market) =>
-            Market.fromUnifiedMarketData(chainId, provider, market, signerAddress)
-          )
-        );
-      } catch (_) {
-        // Fall back to the pre-2.5 V2 lens for chains that have not fully migrated.
-      }
-    }
-    const data = await getV2MarketsData(chainId, provider, markets);
-    return data.map((market) => Market.fromMarketDataV2(chainId, provider, market, signerAddress));
+    const data = await getFullMarketsDataV2(chainId, provider, markets);
+    return Promise.all(
+      data.map((market) =>
+        "market" in market
+          ? Market.fromUnifiedMarketData(chainId, provider, market, signerAddress)
+          : Market.fromMarketDataV2(chainId, provider, market, signerAddress)
+      )
+    );
   }
 
   /**
@@ -1906,9 +1893,9 @@ export class Market extends ContractWrapper {
       }
     }
 
-    const refreshedMarkets = await Market.getMarketsV2(chainId, marketAddresses, provider);
-    refreshedMarkets.forEach((market, i) => {
-      Object.assign(markets[i], market);
+    const updates = await getFullMarketsDataV2(chainId, provider, marketAddresses);
+    updates.forEach((update, i) => {
+      markets[i].updateWith(update);
     });
     return markets;
   }

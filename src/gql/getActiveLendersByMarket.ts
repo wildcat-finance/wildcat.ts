@@ -134,6 +134,8 @@ export class BasicLenderData {
       if (!config.flags!.useOnQueueWithdrawal) return true;
       // Can not withdraw if market in fixed term
       if (this.market.isInFixedTerm) return false;
+      if (config.kind === HooksKind.PeriodicTerm && !this.market.isPeriodicWithdrawalWindowOpen)
+        return false;
       // Can not withdraw if market requires access and lender has no credential and is not a known lender
       if (
         config.flags.useOnQueueWithdrawal &&

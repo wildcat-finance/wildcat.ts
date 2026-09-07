@@ -211,6 +211,22 @@ export const getUnifiedMarketsDataV2 = (
   );
 };
 
+/** Broad V2 reads without constructing objects that would discard indexed context. */
+export const getFullMarketsDataV2 = async (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  markets: string[]
+): Promise<Array<MarketDataV2StructOutput | MarketDataV2_5StructOutput>> => {
+  if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
+    try {
+      return await getUnifiedMarketsDataV2(chainId, provider, markets);
+    } catch (_) {
+      // Preserve the pre-unified read path on chains whose lens has not fully migrated.
+    }
+  }
+  return getV2MarketsData(chainId, provider, markets);
+};
+
 export const getUnifiedMarketsLiveDataV2 = (
   chainId: SupportedChainId,
   provider: SignerOrProvider,

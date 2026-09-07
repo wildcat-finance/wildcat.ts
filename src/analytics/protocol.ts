@@ -14,7 +14,7 @@ import {
   normalizeProtocolDailyStats
 } from "./normalizers";
 import { normalizeIndexedPageRequest, toIndexedPage } from "./pagination";
-import { IndexedReadOptions, IndexedTimeRange } from "./read-options";
+import { indexedFetchPolicy, IndexedReadOptions, IndexedTimeRange } from "./read-options";
 import { IndexedPage, ProtocolAnalyticsSnapshot, ProtocolDailyStats } from "./types";
 
 export const getProtocolAnalyticsStats = async (
@@ -56,7 +56,7 @@ export const getProtocolDailyStatsPage = async (
   >({
     query: GetProtocolDailyStatsPageDocument,
     variables: { filter, first, block },
-    fetchPolicy
+    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
   });
   return toIndexedPage(
     data.protocolDailyStats_collection.map(normalizeProtocolDailyStats),
