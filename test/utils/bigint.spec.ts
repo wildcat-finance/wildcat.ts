@@ -27,8 +27,50 @@ import {
   rayDivBigint,
   rayMulBigint,
   RAY_BIGINT,
-  satSubBigint
+  satSubBigint,
+  toBigint,
+  toNumber
 } from "../../src/utils";
+
+describe("integer conversions", () => {
+  it("preserves safe numeric inputs including both range boundaries", () => {
+    for (const value of [Number.MIN_SAFE_INTEGER, -1, 0, 1, Number.MAX_SAFE_INTEGER]) {
+      expect(toBigint(value)).to.equal(BigInt(value));
+      expect(toNumber(BigInt(value))).to.equal(value);
+    }
+  });
+
+  it("rejects numeric inputs outside the safe integer range", () => {
+    for (const value of [
+      Number.MIN_SAFE_INTEGER - 1,
+      Number.MAX_SAFE_INTEGER + 1,
+      1e18,
+      Number.MAX_VALUE
+    ]) {
+      expect(() => toBigint(value)).to.throw("Can not convert unsafe integer number to bigint");
+    }
+  });
+
+  it("continues rejecting fractional and non-finite numeric inputs", () => {
+    for (const value of [1.5, -1.5, NaN, Infinity, -Infinity]) {
+      expect(() => toBigint(value)).to.throw("Can not convert non-integer number to bigint");
+    }
+  });
+
+  it("preserves large signed bigint and integer-string inputs exactly", () => {
+    for (const value of [9_007_199_254_740_993n, -9_007_199_254_740_993n, (1n << 256n) - 1n]) {
+      expect(toBigint(value)).to.equal(value);
+      expect(toBigint(value.toString())).to.equal(value);
+    }
+  });
+
+  it("rejects number outputs outside the safe integer range", () => {
+    for (const value of [9_007_199_254_740_992n, -9_007_199_254_740_992n, 10n ** 18n]) {
+      expect(() => toNumber(value)).to.throw("Can not safely convert bigint to number");
+      expect(() => toNumber(value.toString())).to.throw("Can not safely convert bigint to number");
+    }
+  });
+});
 
 describe("bigint math helpers", () => {
   it("exposes bigint protocol constants through both current and legacy names", () => {

@@ -782,3 +782,61 @@ describe("FixedTermHooksTemplate.previewDeployMarket", () => {
     expect(expectDecodedNumber(commitmentFeeBips)).to.equal(95);
   });
 });
+
+describe("deployment amount identity", () => {
+  for (const [kind, makeTemplate] of [
+    ["open", makeOpenTermTemplate],
+    ["fixed", makeFixedTermTemplate],
+    ["periodic", makePeriodicTermTemplate]
+  ] as const) {
+    for (const dimension of ["chain", "address", "decimals"] as const) {
+      for (const field of ["maxTotalSupply", "minimumDeposit", "originationFeeAmount"] as const) {
+        it(`checks ${kind}-term ${field} token ${dimension} before deployment encoding`, () => {
+          const asset = makeToken();
+          const other = new Token(
+            dimension === "chain" ? SupportedChainId.Mainnet : asset.chainId,
+            dimension === "address" ? makeAddress(99) : asset.address,
+            asset.name,
+            asset.symbol,
+            dimension === "decimals" ? 18 : asset.decimals,
+            false,
+            provider
+          );
+          const template = makeTemplate();
+          const args = {
+            ...makeMarketParameters(asset),
+            hooksAddress: makeAddress(20),
+            salt: marketSalt,
+            minimumDeposit: asset.getAmount(0n),
+            transferAccess: TransferAccess.Open,
+            depositAccess: DepositAccess.Open,
+            withdrawalAccess: WithdrawalAccess.Open,
+            allowForceBuyBacks: true,
+            allowClosureBeforeTerm: true,
+            allowTermReduction: true,
+            fixedTermEndTime: 2_000_000_000,
+            firstWithdrawalWindowStart: 2_000_000_000,
+            periodDuration: 86_400,
+            withdrawalWindowDuration: 3_600
+          };
+          if (field === "originationFeeAmount") {
+            template.fees = {
+              ...makeFees(),
+              originationFeeToken: asset,
+              originationFeeAmount: other.getAmount(0n)
+            };
+          } else {
+            args[field] = other.getAmount(0n);
+          }
+          expect(() => {
+            if (template instanceof PeriodicTermHooksTemplate)
+              return template.previewDeployMarket(args);
+            if (template instanceof FixedTermHooksTemplate)
+              return template.previewDeployMarket(args);
+            return template.previewDeployMarket(args);
+          }).to.throw(new RegExp(`token ${dimension} mismatch`));
+        });
+      }
+    }
+  }
+});

@@ -1,5 +1,7 @@
 import { assert } from "../utils";
 import { IndexedPage, IndexedPageRequest, IndexedQueryMetadata } from "./types";
+import { IndexedTraversalError, IndexedTraversalOptions } from "../indexed-pagination";
+import { IndexedPageProgress, withIndexedTraversal } from "../internal/indexed-traversal";
 
 export const DEFAULT_INDEXED_PAGE_SIZE = 100;
 export const MAX_INDEXED_PAGE_SIZE = 1_000;
@@ -41,28 +43,57 @@ export const toIndexedPage = <T extends { id: string }>(
   };
 };
 
-/** Drain a cursor-based indexed read without relying on mutable offsets. */
+/** Drain complete cursor-based history within configurable aggregate limits. */
 export const collectIndexedPages = async <T extends { id: string }>(
   getPage: (request: IndexedPageRequest) => Promise<IndexedPage<T>>,
-  request: IndexedPageRequest = {}
-): Promise<T[]> => {
-  const items: T[] = [];
-  let after = request.after;
+  request: IndexedPageRequest & IndexedTraversalOptions = {}
+): Promise<T[]> =>
+  withIndexedTraversal(request, async (traversal) => {
+    normalizeIndexedPageRequest(request);
+    // A callback may choose its own page size when the collector's caller omits first.
+    const pageSize = request.first ?? MAX_INDEXED_PAGE_SIZE;
+    const items: T[] = [];
+    let after = request.after;
+    let blockNumber = after?.blockNumber;
+    const progress = new IndexedPageProgress(true, after?.entityId);
 
-  for (;;) {
-    const page = await getPage({ ...request, after });
-    items.push(...page.items);
-    if (!page.pageInfo.nextCursor) return items;
-    if (after) {
-      assert(
-        page.pageInfo.nextCursor.blockNumber === after.blockNumber,
-        "Indexed page block changed during traversal"
+    for (;;) {
+      const page = await traversal.page((signal) =>
+        getPage({ ...(request.first !== undefined ? { first: request.first } : {}), after, signal })
       );
-      assert(
-        page.pageInfo.nextCursor.entityId > after.entityId,
-        "Indexed page cursor did not advance"
-      );
+      const next = page.pageInfo.nextCursor;
+      if (blockNumber !== undefined && page.indexedAt.blockNumber !== blockNumber) {
+        throw new IndexedTraversalError(
+          "INVALID_PAGE",
+          "Indexed page block changed during traversal"
+        );
+      }
+      blockNumber = page.indexedAt.blockNumber;
+      if (next && after) {
+        if (next.blockNumber !== after.blockNumber) {
+          throw new IndexedTraversalError(
+            "INVALID_PAGE",
+            "Indexed page block changed during traversal"
+          );
+        }
+        if (next.entityId <= after.entityId) {
+          throw new IndexedTraversalError("INVALID_PAGE", "Indexed page cursor did not advance");
+        }
+      }
+      if (
+        page.pageInfo.hasNextPage !== (next !== undefined) ||
+        (next &&
+          (next.entityId !== page.items[page.items.length - 1]?.id ||
+            next.blockNumber !== blockNumber))
+      ) {
+        throw new IndexedTraversalError(
+          "INVALID_PAGE",
+          "Indexed page cursor does not match its records"
+        );
+      }
+      traversal.accept(page.items, pageSize, progress);
+      items.push(...page.items);
+      if (!next) return items;
+      after = next;
     }
-    after = page.pageInfo.nextCursor;
-  }
-};
+  });

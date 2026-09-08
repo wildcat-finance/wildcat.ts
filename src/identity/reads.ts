@@ -1,3 +1,5 @@
+import { IndexedTraversalOptions } from "../indexed-pagination";
+import { IndexedPageProgress, withIndexedTraversal } from "../internal/indexed-traversal";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import {
   GetBorrowerAccountIdentitiesDocument,
@@ -48,60 +50,68 @@ const normalizeAddress = (address: string): string => address.toLowerCase();
 export const getBorrowerPrincipalIdentity = async (
   client: ApolloClient<NormalizedCacheObject>,
   principal: string,
-  { fetchPolicy = "cache-first" }: IdentityReadOptions = {}
-): Promise<BorrowerPrincipalIdentity | undefined> => {
-  const accounts: NonNullable<SubgraphGetBorrowerPrincipalIdentityQuery["borrower"]>["accounts"] =
-    [];
-  const pendingAccounts: NonNullable<
-    SubgraphGetBorrowerPrincipalIdentityQuery["borrower"]
-  >["pendingAccounts"] = [];
-  let borrower: NonNullable<SubgraphGetBorrowerPrincipalIdentityQuery["borrower"]> | undefined;
+  { fetchPolicy = "cache-first", ...options }: IdentityReadOptions & IndexedTraversalOptions = {}
+): Promise<BorrowerPrincipalIdentity | undefined> =>
+  withIndexedTraversal(options, async (traversal) => {
+    const accounts: NonNullable<SubgraphGetBorrowerPrincipalIdentityQuery["borrower"]>["accounts"] =
+      [];
+    const pendingAccounts: NonNullable<
+      SubgraphGetBorrowerPrincipalIdentityQuery["borrower"]
+    >["pendingAccounts"] = [];
+    let borrower: NonNullable<SubgraphGetBorrowerPrincipalIdentityQuery["borrower"]> | undefined;
 
-  for (let skip = 0; ; skip += IdentityPageSize) {
-    const { data } = await client.query<
-      SubgraphGetBorrowerPrincipalIdentityQuery,
-      SubgraphGetBorrowerPrincipalIdentityQueryVariables
-    >({
-      query: GetBorrowerPrincipalIdentityDocument,
-      variables: {
-        principal: normalizeAddress(principal),
-        first: IdentityPageSize,
-        skip
-      },
-      fetchPolicy
-    });
-    if (!data.borrower) return undefined;
-    borrower ??= data.borrower;
-    accounts.push(...data.borrower.accounts);
-    pendingAccounts.push(...data.borrower.pendingAccounts);
-    if (
-      data.borrower.accounts.length < IdentityPageSize &&
-      data.borrower.pendingAccounts.length < IdentityPageSize
-    ) {
-      return normalizeBorrowerPrincipalIdentity({ ...borrower, accounts, pendingAccounts });
+    const accountsProgress = new IndexedPageProgress();
+    const pendingAccountsProgress = new IndexedPageProgress();
+    for (let skip = 0; ; skip += IdentityPageSize) {
+      const { data } = await traversal.query<
+        SubgraphGetBorrowerPrincipalIdentityQuery,
+        SubgraphGetBorrowerPrincipalIdentityQueryVariables
+      >(client, {
+        query: GetBorrowerPrincipalIdentityDocument,
+        variables: {
+          principal: normalizeAddress(principal),
+          first: IdentityPageSize,
+          skip
+        },
+        fetchPolicy
+      });
+      if (!data.borrower) return undefined;
+      borrower ??= data.borrower;
+      traversal.accept(data.borrower.accounts, IdentityPageSize, accountsProgress);
+      accounts.push(...data.borrower.accounts);
+      traversal.accept(data.borrower.pendingAccounts, IdentityPageSize, pendingAccountsProgress);
+      pendingAccounts.push(...data.borrower.pendingAccounts);
+      if (
+        data.borrower.accounts.length < IdentityPageSize &&
+        data.borrower.pendingAccounts.length < IdentityPageSize
+      ) {
+        return normalizeBorrowerPrincipalIdentity({ ...borrower, accounts, pendingAccounts });
+      }
     }
-  }
-};
+  });
 
 export const getBorrowerAccountIdentities = async (
   client: ApolloClient<NormalizedCacheObject>,
   account: string,
-  { fetchPolicy = "cache-first" }: IdentityReadOptions = {}
-): Promise<BorrowerAccountIdentity[]> => {
-  const accounts: BorrowerAccountIdentity[] = [];
-  for (let skip = 0; ; skip += IdentityPageSize) {
-    const { data } = await client.query<
-      SubgraphGetBorrowerAccountIdentitiesQuery,
-      SubgraphGetBorrowerAccountIdentitiesQueryVariables
-    >({
-      query: GetBorrowerAccountIdentitiesDocument,
-      variables: { account: normalizeAddress(account), first: IdentityPageSize, skip },
-      fetchPolicy
-    });
-    accounts.push(...data.borrowerAccounts.map(normalizeBorrowerAccountIdentity));
-    if (data.borrowerAccounts.length < IdentityPageSize) return accounts;
-  }
-};
+  { fetchPolicy = "cache-first", ...options }: IdentityReadOptions & IndexedTraversalOptions = {}
+): Promise<BorrowerAccountIdentity[]> =>
+  withIndexedTraversal(options, async (traversal) => {
+    const accounts: BorrowerAccountIdentity[] = [];
+    const accountsProgress = new IndexedPageProgress();
+    for (let skip = 0; ; skip += IdentityPageSize) {
+      const { data } = await traversal.query<
+        SubgraphGetBorrowerAccountIdentitiesQuery,
+        SubgraphGetBorrowerAccountIdentitiesQueryVariables
+      >(client, {
+        query: GetBorrowerAccountIdentitiesDocument,
+        variables: { account: normalizeAddress(account), first: IdentityPageSize, skip },
+        fetchPolicy
+      });
+      traversal.accept(data.borrowerAccounts, IdentityPageSize, accountsProgress);
+      accounts.push(...data.borrowerAccounts.map(normalizeBorrowerAccountIdentity));
+      if (data.borrowerAccounts.length < IdentityPageSize) return accounts;
+    }
+  });
 
 export const getMarketBorrowerIdentity = async (
   client: ApolloClient<NormalizedCacheObject>,

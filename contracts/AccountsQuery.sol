@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "./ISafe.sol";
+import "./InspectionCalls.sol";
 
 enum AccountKind {
   EOA,
@@ -97,13 +98,21 @@ contract AccountsQuery {
         }
       }
     }
+    description.kind = AccountKind.UnknownContract;
     if (proxyAddress != address(0) && _isSafe(proxyAddress)) {
+      (bool ownersOk, address[] memory owners) = InspectionCalls.readAddressArray(
+        account,
+        abi.encodeCall(ISafe.getOwners, ())
+      );
+      if (!ownersOk) return description;
+      (bool thresholdOk, uint256 threshold) = InspectionCalls.readWord(
+        account,
+        abi.encodeCall(ISafe.getThreshold, ())
+      );
+      if (!thresholdOk) return description;
       description.kind = AccountKind.Safe;
-      ISafe safe = ISafe(account);
-      description.owners = safe.getOwners();
-      description.threshold = safe.getThreshold();
-    } else {
-      description.kind = AccountKind.UnknownContract;
+      description.owners = owners;
+      description.threshold = threshold;
     }
   }
 }

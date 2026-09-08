@@ -1,3 +1,4 @@
+import { withWatchQuery } from "../helpers/watch-query-client";
 import { ApolloClient, DocumentNode, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
 import { providers } from "ethers";
@@ -21,12 +22,12 @@ type QueryCall = {
 
 const createClient = (data: Record<string, unknown>) => {
   const calls: QueryCall[] = [];
-  const client = {
+  const client = withWatchQuery({
     query: async (args: QueryCall) => {
       calls.push(args);
       return { data };
     }
-  } as unknown as ApolloClient<NormalizedCacheObject>;
+  } as unknown as ApolloClient<NormalizedCacheObject>);
   return { client, calls };
 };
 

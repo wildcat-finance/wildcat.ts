@@ -7,6 +7,8 @@ import {
   SubgraphSnapshotSource
 } from "../../src/gql/graphql";
 import { Market } from "../../src/market";
+import { Token } from "../../src/token";
+import { CollateralContractDataStructOutput } from "../../src/lens-types";
 
 const provider = new providers.JsonRpcProvider();
 const makeAddress = (suffix: number): string => `0x${suffix.toString(16).padStart(40, "0")}`;
@@ -71,10 +73,18 @@ describe("collateral indexed snapshots", () => {
       }
     };
 
+    const market = {
+      address: makeAddress(3),
+      underlyingToken: Token.fromSubgraphToken(
+        SupportedChainId.Sepolia,
+        makeToken(4, "USD"),
+        provider
+      )
+    } as Market;
     const collateral = MarketCollateralV1.fromSubgraphData(
       SupportedChainId.Sepolia,
       provider,
-      {} as Market,
+      market,
       data
     );
 
@@ -89,5 +99,55 @@ describe("collateral indexed snapshots", () => {
       blockTimestamp: 1_700_000_111n,
       logIndex: 12n
     });
+
+    expect(() =>
+      MarketCollateralV1.fromSubgraphData(
+        SupportedChainId.Sepolia,
+        provider,
+        { ...market, address: makeAddress(99) } as Market,
+        data
+      )
+    ).to.throw("Subgraph collateral market address mismatch");
+    expect(() =>
+      MarketCollateralV1.fromSubgraphData(SupportedChainId.Sepolia, provider, market, {
+        ...data,
+        market: { ...data.market!, underlyingAsset: makeToken(99, "OTHER") }
+      })
+    ).to.throw("Subgraph collateral underlying token address mismatch");
+
+    const liveData: CollateralContractDataStructOutput = {
+      collateralContract: data.id,
+      market: market.address,
+      marketBorrower: makeAddress(6),
+      bebopSettlementContract: makeAddress(7),
+      underlyingAsset: { ...makeToken(4, "USD"), token: makeAddress(4) },
+      collateralAsset: { ...makeToken(5, "COL"), token: makeAddress(5) },
+      liquidationCooldown: 108,
+      maxRepaymentBips: 10000,
+      fullLiquidationIndex: 106,
+      totalShares: 204,
+      availableCollateral: 205,
+      collateralBalance: 205,
+      nextLiquidationTrigger: 209,
+      isMarketClosed: false,
+      isMarketInPenalty: false,
+      delinquentDebt: 0,
+      maxRepayment: 0
+    };
+    expect(() => collateral.updateWith({ ...liveData, market: makeAddress(99) })).to.throw(
+      "Live collateral market address mismatch"
+    );
+    expect(() =>
+      collateral.updateWith({
+        ...liveData,
+        collateralAsset: { ...liveData.collateralAsset, token: makeAddress(99) }
+      })
+    ).to.throw("Live collateral token address mismatch");
+    expect(collateral.availableCollateral.raw).to.equal(105n);
+    expect(collateral.stateSource).to.equal("indexed");
+
+    collateral.updateWith(liveData);
+    expect(collateral.availableCollateral.raw).to.equal(205n);
+    expect(collateral.stateSource).to.equal("live");
   });
 });

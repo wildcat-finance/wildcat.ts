@@ -44,6 +44,10 @@ const accountQueryAbi = [
   }
 ] as const;
 
+/**
+ * Unreadable or malformed Safe owner/threshold responses produce UnknownContract.
+ * Provider failures still reject the query.
+ */
 export async function describeAccount(
   provider: SignerOrProvider,
   address: string,

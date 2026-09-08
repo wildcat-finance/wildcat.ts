@@ -1,3 +1,5 @@
+import { IndexedTraversalOptions } from "../indexed-pagination";
+import { withIndexedTraversal } from "../internal/indexed-traversal";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import { usesLegacySubgraphSchema } from "../config";
 import { Market } from "../market";
@@ -15,7 +17,7 @@ import {
 } from "./graphql";
 import { LegacyGetLenderWithdrawalsForMarketDocument } from "./legacy-subgraph";
 
-export type GetLenderWithdrawalsForMarketOptions = {
+export type GetLenderWithdrawalsForMarketOptions = IndexedTraversalOptions & {
   market: Market;
   lender: string;
   first?: number;
@@ -44,47 +46,54 @@ const hydrateLenderWithdrawal = (
  */
 export async function getLenderWithdrawalsForMarket(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
-  { market, lender, first = 200, skip = 0 }: GetLenderWithdrawalsForMarketOptions
+  { market, lender, first = 200, skip = 0, limits, signal }: GetLenderWithdrawalsForMarketOptions
 ): Promise<LenderWithdrawalsForMarket> {
-  assert(
-    Number.isSafeInteger(first) && first > 0 && first <= 1_000,
-    "Invalid lender withdrawal page size"
-  );
-  assert(Number.isSafeInteger(skip) && skip >= 0, "Invalid lender withdrawal page offset");
+  return withIndexedTraversal({ limits, signal }, async (traversal) => {
+    assert(
+      Number.isSafeInteger(first) && first > 0 && first <= 1_000,
+      "Invalid lender withdrawal page size"
+    );
+    assert(Number.isSafeInteger(skip) && skip >= 0, "Invalid lender withdrawal page offset");
 
-  const legacySchema = usesLegacySubgraphSchema(market.chainId);
+    const legacySchema = usesLegacySubgraphSchema(market.chainId);
 
-  const { data } = await subgraphClient.query<
-    SubgraphGetLenderWithdrawalsForMarketQuery,
-    SubgraphGetLenderWithdrawalsForMarketQueryVariables
-  >({
-    query: legacySchema
-      ? LegacyGetLenderWithdrawalsForMarketDocument
-      : GetLenderWithdrawalsForMarketDocument,
-    variables: {
-      market: market.address.toLowerCase(),
-      lender: lender.toLowerCase(),
-      numWithdrawals: first,
-      skipWithdrawals: skip,
-      orderWithdrawals: (legacySchema
-        ? "batch__expiry"
-        : SubgraphLenderWithdrawalStatus_OrderBy.batchExpiry) as SubgraphLenderWithdrawalStatus_OrderBy,
-      directionWithdrawals: SubgraphOrderDirection.desc
-    },
-    fetchPolicy: "no-cache"
-  });
+    const { data } = await traversal.query<
+      SubgraphGetLenderWithdrawalsForMarketQuery,
+      SubgraphGetLenderWithdrawalsForMarketQueryVariables
+    >(subgraphClient, {
+      query: legacySchema
+        ? LegacyGetLenderWithdrawalsForMarketDocument
+        : GetLenderWithdrawalsForMarketDocument,
+      variables: {
+        market: market.address.toLowerCase(),
+        lender: lender.toLowerCase(),
+        numWithdrawals: first,
+        skipWithdrawals: skip,
+        orderWithdrawals: (legacySchema
+          ? "batch__expiry"
+          : SubgraphLenderWithdrawalStatus_OrderBy.batchExpiry) as SubgraphLenderWithdrawalStatus_OrderBy,
+        directionWithdrawals: SubgraphOrderDirection.desc
+      },
+      fetchPolicy: "no-cache"
+    });
 
-  const account = data.market?.lenders[0];
-  const result: LenderWithdrawalsForMarket = { incompleteWithdrawals: [], completeWithdrawals: [] };
-  for (const key of ["incompleteWithdrawals", "completeWithdrawals"] as const) {
-    for (const withdrawal of account?.[key] ?? []) {
-      const complete = await completeLenderWithdrawal(
-        subgraphClient,
-        withdrawal,
-        data._meta?.block.number
-      );
-      result[key].push(hydrateLenderWithdrawal(market, complete));
+    const account = data.market?.lenders[0];
+    const result: LenderWithdrawalsForMarket = {
+      incompleteWithdrawals: [],
+      completeWithdrawals: []
+    };
+    for (const key of ["incompleteWithdrawals", "completeWithdrawals"] as const) {
+      traversal.accept(account?.[key] ?? [], first);
+      for (const withdrawal of account?.[key] ?? []) {
+        const complete = await completeLenderWithdrawal(
+          subgraphClient,
+          withdrawal,
+          data._meta?.block.number,
+          traversal
+        );
+        result[key].push(hydrateLenderWithdrawal(market, complete));
+      }
     }
-  }
-  return result;
+    return result;
+  });
 }

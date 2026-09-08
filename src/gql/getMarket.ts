@@ -8,6 +8,7 @@ import {
 import { SupportedChainId } from "../constants";
 import { SignerOrProvider } from "../types";
 import { usesLegacySubgraphSchema } from "../config";
+import { assertMatchingAddress } from "../internal/read-identity";
 import {
   LegacyGetMarketDocument,
   LegacyMarketData,
@@ -24,15 +25,19 @@ export async function getMarket(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   { chainId, fetchPolicy, market, signerOrProvider, ...variables }: GetMarketOptions
 ): Promise<Market | undefined> {
+  const requestedAddress = market.toLowerCase();
   if (usesLegacySubgraphSchema(chainId)) {
     const result = await subgraphClient.query<{ market?: LegacyMarketData | null }>({
       query: LegacyGetMarketDocument,
       variables: {
-        market: market.toLowerCase(),
+        market: requestedAddress,
         ...variables
       },
       fetchPolicy
     });
+    if (result.data.market) {
+      assertMatchingAddress(result.data.market.id, requestedAddress, "Subgraph market");
+    }
     return result.data.market
       ? Market.fromSubgraphMarketData(
           chainId,
@@ -48,16 +53,22 @@ export async function getMarket(
   >({
     query: GetMarketDocument,
     variables: {
-      market: market.toLowerCase(),
+      market: requestedAddress,
       ...variables
     },
     fetchPolicy
   });
   const marketData = result.data.market;
+  if (marketData) {
+    assertMatchingAddress(marketData.address, requestedAddress, "Subgraph market");
+  }
   return marketData
     ? Market.fromSubgraphMarketData(chainId, signerOrProvider, marketData)
     : undefined;
 }
 
-/** Indexed market detail; call `market.update()` or `hydrateMarketsLive` for current state. */
+/**
+ * Indexed market detail; rejects a returned market address that differs from the request.
+ * Call `market.update()` or `hydrateMarketsLive` for current state.
+ */
 export const getIndexedMarket = getMarket;

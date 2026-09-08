@@ -1,5 +1,7 @@
+import { withWatchQuery } from "../helpers/watch-query-client";
 import { ApolloClient, DocumentNode, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
+import { rejects } from "assert";
 import { providers } from "ethers";
 import { HooksInstance } from "../../src/access";
 import { getPolicyAccessListMembers } from "../../src/gql";
@@ -38,14 +40,31 @@ const makeMember = (provider: string, account: string, id: string) => ({
 });
 
 describe("policy AccessList members", () => {
+  it("rejects repeated memberships instead of appending another copy for each lender", async () => {
+    const provider = makeProvider();
+    const page = Array.from({ length: 1_000 }, (_, i) =>
+      makeMember(provider.providerAddress, makeAddress(i + 100), `member-${i}`)
+    );
+    let requests = 0;
+    const client = withWatchQuery({
+      query: async () => {
+        requests++;
+        return { data: { roleProviderMembers: page } };
+      }
+    } as unknown as ApolloClient<NormalizedCacheObject>);
+    await rejects(getPolicyAccessListMembers(client, makeHooksInstance([provider])), {
+      code: "INVALID_PAGE"
+    });
+    expect(requests).to.equal(2);
+  });
   it("returns no members without an approved pull-based AccessList", async () => {
     let queried = false;
-    const client = {
+    const client = withWatchQuery({
       query: async () => {
         queried = true;
         return { data: { roleProviderMembers: [] } };
       }
-    } as unknown as ApolloClient<NormalizedCacheObject>;
+    } as unknown as ApolloClient<NormalizedCacheObject>);
     const hooksInstance = makeHooksInstance([
       makeProvider({ kind: "erc20" }),
       makeProvider({ providerAddress: makeAddress(2), isApproved: false }),
@@ -61,7 +80,7 @@ describe("policy AccessList members", () => {
     const secondProvider = makeProvider({ providerAddress: makeAddress(2), pullProviderIndex: 1 });
     const member = makeAddress(20);
     const calls: Array<{ query: DocumentNode; variables?: Record<string, unknown> }> = [];
-    const client = {
+    const client = withWatchQuery({
       query: async (args: { query: DocumentNode; variables?: Record<string, unknown> }) => {
         calls.push(args);
         return {
@@ -73,7 +92,7 @@ describe("policy AccessList members", () => {
           }
         };
       }
-    } as unknown as ApolloClient<NormalizedCacheObject>;
+    } as unknown as ApolloClient<NormalizedCacheObject>);
 
     const result = await getPolicyAccessListMembers(
       client,
@@ -107,7 +126,7 @@ describe("policy AccessList members", () => {
       makeMember(provider.providerAddress, makeAddress(index + 100), `member-${index}`)
     );
     const finalMember = makeMember(provider.providerAddress, makeAddress(1_100), "member-1000");
-    const client = {
+    const client = withWatchQuery({
       query: async (args: { variables?: Record<string, unknown> }) => {
         calls.push(args);
         return {
@@ -116,7 +135,7 @@ describe("policy AccessList members", () => {
           }
         };
       }
-    } as unknown as ApolloClient<NormalizedCacheObject>;
+    } as unknown as ApolloClient<NormalizedCacheObject>);
 
     const result = await getPolicyAccessListMembers(client, makeHooksInstance([provider]));
 

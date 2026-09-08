@@ -27,6 +27,7 @@ import { simpleMarketCollateralAbi, wildcatCollateralFactoryAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
 import { isEthersSigner } from "../internal/ethers-signer";
 import { normalizeSubgraphCollateralSnapshot } from "../gql/normalizers";
+import { assertMatchingAddress } from "../internal/read-identity";
 
 export * from "./collateral-events";
 
@@ -80,7 +81,7 @@ export class MarketCollateralV1 extends ContractWrapper {
       to: this.address,
       abi: simpleMarketCollateralAbi,
       functionName: "deposit",
-      args: [amount.raw]
+      args: [toRawAmount(amount, this.collateralAsset)]
     });
   }
 
@@ -103,6 +104,12 @@ export class MarketCollateralV1 extends ContractWrapper {
     data: SubgraphSimpleCollateralContractDataFragment
   ): MarketCollateralV1 {
     assert(data.market !== null && data.market !== undefined, "Collateral market is not indexed");
+    assertMatchingAddress(data.market.id, market.address, "Subgraph collateral market");
+    assertMatchingAddress(
+      data.market.underlyingAsset.address,
+      market.underlyingToken.address,
+      "Subgraph collateral underlying token"
+    );
     assert(
       data.liquidationCooldown !== null && data.liquidationCooldown !== undefined,
       "Collateral liquidation cooldown is not indexed"
@@ -137,6 +144,33 @@ export class MarketCollateralV1 extends ContractWrapper {
   updateWith(
     data: CollateralContractDataStructOutput | SubgraphSimpleCollateralContractDataFragment
   ): void {
+    if ("collateralContract" in data) {
+      assertMatchingAddress(data.collateralContract, this.address, "Live collateral contract");
+      assertMatchingAddress(data.market, this.market.address, "Live collateral market");
+      assertMatchingAddress(
+        data.underlyingAsset.token,
+        this.underlyingAsset.address,
+        "Live collateral underlying token"
+      );
+      assertMatchingAddress(
+        data.collateralAsset.token,
+        this.collateralAsset.address,
+        "Live collateral token"
+      );
+    } else {
+      assertMatchingAddress(data.id, this.address, "Subgraph collateral contract");
+      assertMatchingAddress(data.market?.id, this.market.address, "Subgraph collateral market");
+      assertMatchingAddress(
+        data.market?.underlyingAsset.address,
+        this.underlyingAsset.address,
+        "Subgraph collateral underlying token"
+      );
+      assertMatchingAddress(
+        data.collateralAsset.address,
+        this.collateralAsset.address,
+        "Subgraph collateral token"
+      );
+    }
     this.availableCollateral = this.collateralAsset.getAmount(data.availableCollateral);
     if ("__typename" in data) {
       this.totalDeposited = this.collateralAsset.getAmount(data.totalDeposited);
@@ -156,6 +190,12 @@ export class MarketCollateralV1 extends ContractWrapper {
     market: Market,
     data: CollateralContractDataStructOutput
   ): MarketCollateralV1 {
+    assertMatchingAddress(data.market, market.address, "Live collateral market");
+    assertMatchingAddress(
+      data.underlyingAsset.token,
+      market.underlyingToken.address,
+      "Live collateral underlying token"
+    );
     const collateralAsset = Token.fromTokenMetadata(
       market.chainId,
       data.collateralAsset,
@@ -205,7 +245,7 @@ export class MarketCollateralV1 extends ContractWrapper {
       to: collateralFactory.address,
       abi: wildcatCollateralFactoryAbi,
       functionName: "deployCollateralContract",
-      args: [market.address, collateralAsset.address]
+      args: [collateralAsset.address, market.address]
     });
   }
 }

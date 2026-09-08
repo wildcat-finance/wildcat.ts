@@ -3,6 +3,7 @@ import { MarketAccount } from "../account";
 import { usesLegacySubgraphSchema } from "../config";
 import { Market } from "../market";
 import { assert } from "../utils";
+import { assertMatchingAddress } from "../internal/read-identity";
 import {
   GetIndexedLenderAccountSummaryForMarketDocument,
   SubgraphGetIndexedLenderAccountSummaryForMarketQuery,
@@ -42,10 +43,12 @@ export async function getIndexedLenderAccountSummaryForMarket(
     });
 
     assert(!!data.market, `Market not found in subgraph: ${market.address}`);
+    assertMatchingAddress(data.market.id, market.address, "Subgraph lender market");
     const lenderData = data.market.lenders[0];
     if (!lenderData) {
       return MarketAccount.fromMarketDataOnly(market, normalizedLender, false);
     }
+    assertMatchingAddress(lenderData.address, lender, "Subgraph lender");
     return MarketAccount.fromSubgraphAccountData(
       market,
       normalizeLegacyLenderAccountData(lenderData)
@@ -65,9 +68,11 @@ export async function getIndexedLenderAccountSummaryForMarket(
   });
 
   assert(!!data.market, `Market not found in subgraph: ${market.address}`);
+  assertMatchingAddress(data.market.id, market.address, "Subgraph lender market");
   const lenderData = data.market.lenders[0];
   if (!lenderData) {
     return MarketAccount.fromMarketDataOnly(market, normalizedLender, false);
   }
+  assertMatchingAddress(lenderData.address, lender, "Subgraph lender");
   return MarketAccount.fromSubgraphAccountData(market, lenderData);
 }

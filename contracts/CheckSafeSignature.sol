@@ -1,22 +1,20 @@
-import "./ISafe.sol";
+import "./InspectionCalls.sol";
 bytes4 constant MAGIC_VALUE = 0x1626ba7e;
 bytes4 constant MAGIC_VALUE_BYTES = 0x20c13b0b;
 
 contract CheckSafeSignature {
   constructor(address safeAddress, bytes memory message, bytes memory signature) {
-    ISafe safe = ISafe(safeAddress);
-
-    bytes memory call1 = abi.encodeWithSelector(MAGIC_VALUE_BYTES, message, signature);
-    (bool success1, bytes memory returnData1) = address(safe).staticcall(call1);
-    bool isValid = success1 && (abi.decode(returnData1, (bytes4)) == MAGIC_VALUE_BYTES);
+    bool isValid = InspectionCalls.matchesBytes4(
+      safeAddress,
+      abi.encodeWithSelector(MAGIC_VALUE_BYTES, message, signature),
+      MAGIC_VALUE_BYTES
+    );
     if (!isValid) {
-      bytes memory call2 = abi.encodeWithSelector(
-        MAGIC_VALUE,
-        toEthSignedMessageHash(message),
-        signature
+      isValid = InspectionCalls.matchesBytes4(
+        safeAddress,
+        abi.encodeWithSelector(MAGIC_VALUE, toEthSignedMessageHash(message), signature),
+        MAGIC_VALUE
       );
-      (bool success2, bytes memory returnData2) = address(safe).staticcall(call2);
-      isValid = success2 && (abi.decode(returnData2, (bytes4)) == MAGIC_VALUE);
     }
     assembly {
       mstore(0, isValid)

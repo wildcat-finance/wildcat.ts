@@ -2,7 +2,7 @@ import { MarketAccount } from "./account";
 import { Market } from "./market";
 import { HooksKind, MarketVersion, PartialTransaction, PeriodicTermHooksConfig } from "./types";
 import { TokenAmount } from "./token";
-import { prepareTransaction, SECONDS_IN_365_DAYS, toNumber } from "./utils";
+import { assert, prepareTransaction, SECONDS_IN_365_DAYS, toNumber } from "./utils";
 import { iPeriodicTermHooksAbi, wildcatMarketV2Abi } from "./abi";
 import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
 import { readViemContract } from "./internal/viem-read";
@@ -314,6 +314,11 @@ export async function getPeriodicAprReductionSettlementQuote(
  * and execute; contract wallets may batch them atomically when the same wallet
  * is sending the approval/settlement steps.
  *
+ * An existing quote preserves the caller's chosen amounts without refreshing
+ * state or checking quote age. Both amounts must match the market's underlying
+ * asset by chain, address, and decimals; APR execution still depends on chain
+ * state when the transaction executes.
+ *
  * When more unpaid batches are queued than one settlement transaction can
  * process (`quote.remainingBatchesAfterThisPass > 0`), the plan contains the
  * settlement step ONLY — appending the APR execution would revert and, in a
@@ -366,8 +371,26 @@ export async function populatePeriodicAprReductionPlan(
     return { quote, transactions, safeBatchable: false };
   }
 
+  const underlyingToken = market.underlyingToken;
+  for (const field of ["amountToSettle", "suggestedApprovalAmount"] as const) {
+    const { token } = quote[field];
+    assert(
+      token.chainId === market.chainId && token.chainId === underlyingToken.chainId,
+      `Settlement quote ${field} token chain mismatch`
+    );
+    assert(
+      token.address.toLowerCase() === underlyingToken.address.toLowerCase(),
+      `Settlement quote ${field} token address mismatch`
+    );
+    assert(
+      token.decimals === underlyingToken.decimals,
+      `Settlement quote ${field} token decimals mismatch`
+    );
+  }
+
   if (quote.status === PeriodicAprSettlementStatus.NeedsSettlement) {
-    if (quote.amountToSettle.gt(0) && !marketAccount.isApprovedFor(quote.amountToSettle)) {
+    const hasRepayment = quote.amountToSettle.gt(0);
+    if (hasRepayment && !marketAccount.isApprovedFor(quote.amountToSettle)) {
       transactions.push({
         tx: {
           to: market.underlyingToken.address,
@@ -391,7 +414,7 @@ export async function populatePeriodicAprReductionPlan(
       ),
       kind: "settle",
       requiresBorrower: false,
-      description: quote.needsRepayment
+      description: hasRepayment
         ? `Repay ${quote.amountToSettle.format()} ${
             market.underlyingToken.symbol
           } and process up to ${quote.maxBatches} unpaid withdrawal batch(es)`

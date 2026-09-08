@@ -203,23 +203,6 @@ export async function getCollateralContractEvents(
     endEventIndex = collateralContract.eventIndex;
   }
   const startEventIndex = endEventIndex ? Math.max(0, endEventIndex - limit) : 0;
-  console.log(`OPTIONS:`);
-  console.log({
-    startEventIndex,
-    endEventIndex,
-    limit,
-    depositRecordsFilter: additionalFilter,
-    reclaimRecordsFilter: additionalFilter,
-    liquidationRecordsFilter: additionalFilter,
-    fullResetRecordsFilter: additionalFilter,
-    liquidatedSharesResetRecordsFilter: additionalFilter,
-    includeDeposits: !kinds?.length || kinds.includes("SimpleCollateralContractDeposit"),
-    includeReclaims: !kinds?.length || kinds.includes("SimpleCollateralContractReclaim"),
-    includeLiquidations: !kinds?.length || kinds.includes("SimpleCollateralContractLiquidation"),
-    includeFullResets: !kinds?.length || kinds.includes("SimpleCollateralContractFullReset"),
-    includeLiquidatedSharesResets:
-      !kinds?.length || kinds.includes("SimpleCollateralContractLiquidatedSharesReset")
-  });
   const result = await subgraphClient.query<
     SubgraphGetCollateralContractEventsQuery,
     SubgraphGetCollateralContractEventsQueryVariables

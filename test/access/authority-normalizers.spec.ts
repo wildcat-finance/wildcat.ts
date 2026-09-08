@@ -1,3 +1,4 @@
+import { withWatchQuery } from "../helpers/watch-query-client";
 import type { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
 import {
@@ -301,12 +302,12 @@ describe("v2.5 hook and role-provider authority normalization", () => {
 
   it("normalizes history filters without conflating provider and hook addresses", async () => {
     const calls: Array<{ variables?: Record<string, unknown> }> = [];
-    const client = {
+    const client = withWatchQuery({
       query: async (args: { variables?: Record<string, unknown> }) => {
         calls.push(args);
         return { data: { roleProviderAdministratorChanges: [] } };
       }
-    } as unknown as ApolloClient<NormalizedCacheObject>;
+    } as unknown as ApolloClient<NormalizedCacheObject>);
 
     const provider = makeAddress(30).toUpperCase();
     const result = await getRoleProviderAdministratorChanges(client, provider, {
@@ -354,7 +355,7 @@ describe("v2.5 hook and role-provider authority normalization", () => {
       deployedAtLogIndex: null,
       deploymentFactory: null
     } as SubgraphRoleProviderInstanceDataFragment;
-    const client = {
+    const client = withWatchQuery({
       query: async (args: { variables?: Record<string, unknown> }) => {
         calls.push(args);
         const skip = args.variables?.skip;
@@ -369,7 +370,7 @@ describe("v2.5 hook and role-provider authority normalization", () => {
           }
         };
       }
-    } as unknown as ApolloClient<NormalizedCacheObject>;
+    } as unknown as ApolloClient<NormalizedCacheObject>);
 
     const normalized = await getRoleProviderAuthority(client, provider.address, {
       fetchPolicy: "no-cache"
@@ -423,7 +424,7 @@ describe("v2.5 hook and role-provider authority normalization", () => {
       transactionHash: makeAddress(84),
       blockLogIndex: String(index)
     })) as SubgraphRoleProviderRootChangeDataFragment[];
-    const client = {
+    const client = withWatchQuery({
       query: async (args: { variables?: Record<string, unknown> }) => {
         calls.push(args);
         return {
@@ -437,7 +438,7 @@ describe("v2.5 hook and role-provider authority normalization", () => {
           }
         };
       }
-    } as unknown as ApolloClient<NormalizedCacheObject>;
+    } as unknown as ApolloClient<NormalizedCacheObject>);
 
     const normalized = await getRoleProviderAuthority(client, provider.address, {
       fetchPolicy: "no-cache"

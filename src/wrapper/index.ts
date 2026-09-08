@@ -48,6 +48,7 @@ import {
   SubgraphTokenWrapperDataFragment
 } from "../gql/graphql";
 import { Market } from "../market";
+import { assertMatchingAddress, ReadIdentityMismatchError } from "../internal/read-identity";
 import { IndexedAt } from "../domain";
 import {
   InterestOnlyWithdrawalQuote,
@@ -446,7 +447,15 @@ export async function getTokenWrapperDataForMarket(
     fetchPolicy
   });
 
-  return result.data.market?.tokenWrapper ?? undefined;
+  const marketData = result.data.market;
+  if (!marketData) return undefined;
+  assertMatchingAddress(marketData.id, market, "Subgraph wrapper market");
+  const wrapper = marketData.tokenWrapper;
+  if (wrapper) {
+    assertMatchingAddress(wrapper.marketAddress, market, "Subgraph wrapper parent market");
+    assertMatchingAddress(wrapper.marketToken.address, market, "Subgraph wrapper market token");
+  }
+  return wrapper ?? undefined;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -470,6 +479,12 @@ export class TokenWrapper extends ContractWrapper {
     provider: SignerOrProvider,
     data: SubgraphTokenWrapperData
   ): TokenWrapper {
+    assertMatchingAddress(
+      data.marketToken.address,
+      data.marketAddress,
+      "Subgraph wrapper market token"
+    );
+    assertMatchingAddress(data.token.address, data.address, "Subgraph wrapper share token");
     return new TokenWrapper({
       chainId,
       provider,
@@ -544,7 +559,7 @@ export class TokenWrapper extends ContractWrapper {
         return TokenWrapper.fromSubgraphData(chainId, signerOrProvider, wrapper);
       }
     } catch (error) {
-      if (!fallbackToFactory) {
+      if (error instanceof ReadIdentityMismatchError || !fallbackToFactory) {
         throw error;
       }
     }
@@ -789,12 +804,16 @@ export class TokenWrapper extends ContractWrapper {
   }
 
   async convertToShares(assets: TokenAmount): Promise<TokenAmount> {
-    const shares = await this.readWrapper<bigint>("convertToShares", [assets.raw]);
+    const shares = await this.readWrapper<bigint>("convertToShares", [
+      toRawAmount(assets, this.marketToken)
+    ]);
     return this.shareToken.getAmount(shares);
   }
 
   async convertToAssets(shares: TokenAmount): Promise<TokenAmount> {
-    const assets = await this.readWrapper<bigint>("convertToAssets", [shares.raw]);
+    const assets = await this.readWrapper<bigint>("convertToAssets", [
+      toRawAmount(shares, this.shareToken)
+    ]);
     return this.marketToken.getAmount(assets);
   }
 
@@ -804,7 +823,9 @@ export class TokenWrapper extends ContractWrapper {
   }
 
   async previewDeposit(assets: TokenAmount): Promise<TokenAmount> {
-    const shares = await this.readWrapper<bigint>("previewDeposit", [assets.raw]);
+    const shares = await this.readWrapper<bigint>("previewDeposit", [
+      toRawAmount(assets, this.marketToken)
+    ]);
     return this.shareToken.getAmount(shares);
   }
 
@@ -814,7 +835,9 @@ export class TokenWrapper extends ContractWrapper {
   }
 
   async previewMint(shares: TokenAmount): Promise<TokenAmount> {
-    const assets = await this.readWrapper<bigint>("previewMint", [shares.raw]);
+    const assets = await this.readWrapper<bigint>("previewMint", [
+      toRawAmount(shares, this.shareToken)
+    ]);
     return this.marketToken.getAmount(assets);
   }
 
@@ -824,7 +847,9 @@ export class TokenWrapper extends ContractWrapper {
   }
 
   async previewWithdraw(assets: TokenAmount): Promise<TokenAmount> {
-    const shares = await this.readWrapper<bigint>("previewWithdraw", [assets.raw]);
+    const shares = await this.readWrapper<bigint>("previewWithdraw", [
+      toRawAmount(assets, this.marketToken)
+    ]);
     return this.shareToken.getAmount(shares);
   }
 
@@ -834,7 +859,9 @@ export class TokenWrapper extends ContractWrapper {
   }
 
   async previewRedeem(shares: TokenAmount): Promise<TokenAmount> {
-    const assets = await this.readWrapper<bigint>("previewRedeem", [shares.raw]);
+    const assets = await this.readWrapper<bigint>("previewRedeem", [
+      toRawAmount(shares, this.shareToken)
+    ]);
     return this.marketToken.getAmount(assets);
   }
 
@@ -868,7 +895,7 @@ export class TokenWrapper extends ContractWrapper {
       to: this.address,
       abi: wildcat4626WrapperAbi,
       functionName: "deposit",
-      args: [assets.raw, receiver]
+      args: [toRawAmount(assets, this.marketToken), receiver]
     });
   }
 
@@ -881,7 +908,7 @@ export class TokenWrapper extends ContractWrapper {
       to: this.address,
       abi: wildcat4626WrapperAbi,
       functionName: "mint",
-      args: [shares.raw, receiver]
+      args: [toRawAmount(shares, this.shareToken), receiver]
     });
   }
 
@@ -894,7 +921,7 @@ export class TokenWrapper extends ContractWrapper {
       to: this.address,
       abi: wildcat4626WrapperAbi,
       functionName: "withdraw",
-      args: [assets.raw, receiver, owner]
+      args: [toRawAmount(assets, this.marketToken), receiver, owner]
     });
   }
 
@@ -907,7 +934,7 @@ export class TokenWrapper extends ContractWrapper {
       to: this.address,
       abi: wildcat4626WrapperAbi,
       functionName: "redeem",
-      args: [shares.raw, receiver, owner]
+      args: [toRawAmount(shares, this.shareToken), receiver, owner]
     });
   }
 
@@ -929,7 +956,7 @@ export class TokenWrapper extends ContractWrapper {
         to: this.marketAddress,
         abi: wildcatMarketV2Abi,
         functionName: "queueWithdrawalScaled",
-        args: [shares.raw]
+        args: [toRawAmount(shares, this.shareToken)]
       })
     ];
   }

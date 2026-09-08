@@ -1,5 +1,7 @@
+import { withWatchQuery } from "../helpers/watch-query-client";
 import { ApolloClient, DocumentNode, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
+import { rejects } from "assert";
 import { providers } from "ethers";
 import { getOperationAST, print } from "graphql";
 import { SupportedChainId } from "../../src/constants";
@@ -105,16 +107,68 @@ type QueryCall = {
 
 const createClient = (data: Record<string, unknown>) => {
   const calls: QueryCall[] = [];
-  const client = {
+  const client = withWatchQuery({
     query: async (args: QueryCall) => {
       calls.push(args);
       return { data };
     }
-  } as unknown as ApolloClient<NormalizedCacheObject>;
+  } as unknown as ApolloClient<NormalizedCacheObject>);
   return { client, calls };
 };
 
 describe("withdrawal subgraph reads", () => {
+  it("shares one entry allowance across batches and their nested histories", async () => {
+    const batches = ["a", "b"].map((id) => ({
+      ...batch,
+      id,
+      withdrawals: [],
+      executions: [],
+      requests: Array.from({ length: 75 }, (_, i) => ({
+        ...request,
+        id: `${id}-${String(i).padStart(4, "0")}`
+      }))
+    }));
+    const { client, calls } = createClient({
+      _meta: { block: { number: 777 } },
+      market: { withdrawalBatches: batches }
+    });
+    await rejects(
+      getAllPendingWithdrawalBatchesForMarket(client, market, "no-cache", {
+        limits: { maxItems: 150 }
+      }),
+      { code: "ITEM_LIMIT" }
+    );
+    expect(calls).to.have.length(1);
+    expect(batches.map((entry) => entry.requests.length)).to.deep.equal([75, 75]);
+  });
+
+  it("shares the root request allowance with child history requests", async () => {
+    const requests = Array.from({ length: 100 }, (_, i) => ({
+      ...request,
+      id: String(i).padStart(4, "0")
+    }));
+    const { client, calls } = createClient({
+      _meta: { block: { number: 777 } },
+      market: { withdrawalBatches: [{ ...batch, withdrawals: [], requests, executions: [] }] }
+    });
+    await rejects(getIncompleteWithdrawalsForMarket(client, { market, limits: { maxPages: 1 } }), {
+      code: "PAGE_LIMIT"
+    });
+    expect(calls).to.have.length(1);
+  });
+
+  it("rejects internally reordered child records before accepting a page boundary", async () => {
+    const requests = Array.from({ length: 100 }, (_, i) => ({
+      ...request,
+      id: String(i).padStart(4, "0")
+    })).reverse();
+    const { client, calls } = createClient({
+      _meta: { block: { number: 777 } },
+      market: { withdrawalBatches: [{ ...batch, withdrawals: [], requests, executions: [] }] }
+    });
+    await rejects(getIncompleteWithdrawalsForMarket(client, { market }), { code: "INVALID_PAGE" });
+    expect(calls).to.have.length(1);
+  });
   it("associates 100 lenders and 200 records with 300 address normalizations", () => {
     const lenders = Array.from({ length: 100 }, (_, i) => makeAddress(200 + i));
     const lenderSet = new Set(lenders);
@@ -183,7 +237,7 @@ describe("withdrawal subgraph reads", () => {
     "incomplete-lender"
   ] as const) {
     it(`paginates all nested withdrawal records for ${helper}`, async () => {
-      const count = helper === "incomplete-batches" ? 1_051 : 151;
+      const count = 1_051;
       const entries = Array.from({ length: count }, (_, i) => String(i).padStart(4, "0"));
       const payments = entries.map((id) => ({
         __typename: "WithdrawalBatchPayment",
@@ -198,12 +252,12 @@ describe("withdrawal subgraph reads", () => {
       const requests = entries.map((id) => ({ ...request, id: `r${id}` }));
       const executions = entries.map((id) => ({ ...execution, id: `e${id}` }));
       const calls: QueryCall[] = [];
-      const client = {
+      const client = withWatchQuery({
         query: async (args: QueryCall) => {
           calls.push(args);
           const name = getOperationAST(args.query)?.name?.value;
           const skip = Number(args.variables?.skip ?? 0);
-          const page = (items: unknown[]) => items.slice(skip, skip + 100);
+          const page = (items: unknown[]) => Object.freeze(items.slice(skip, skip + 100));
           if (name === "getWithdrawalBatchChildren") {
             expect(args.variables?.block).to.deep.equal({ number: 777 });
             expect(args.fetchPolicy).to.equal("no-cache");
@@ -251,7 +305,7 @@ describe("withdrawal subgraph reads", () => {
             }
           };
         }
-      } as unknown as ApolloClient<NormalizedCacheObject>;
+      } as unknown as ApolloClient<NormalizedCacheObject>);
       if (helper.endsWith("batches")) {
         const result =
           helper === "incomplete-batches"
@@ -284,7 +338,7 @@ describe("withdrawal subgraph reads", () => {
       executions: []
     }));
     const calls: QueryCall[] = [];
-    const client = {
+    const client = withWatchQuery({
       query: async (args: QueryCall) => {
         calls.push(args);
         const skip = Number(args.variables?.skip ?? 0);
@@ -295,7 +349,7 @@ describe("withdrawal subgraph reads", () => {
           }
         };
       }
-    } as unknown as ApolloClient<NormalizedCacheObject>;
+    } as unknown as ApolloClient<NormalizedCacheObject>);
     expect(
       await getAllPendingWithdrawalBatchesForMarket(client, market, "cache-first")
     ).to.have.length(151);

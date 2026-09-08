@@ -20,7 +20,12 @@ export * from "./getMarketRecords";
 export * from "./getMarketsForBorrower";
 export * from "./getMarketsWithEvents";
 export * from "./getPolicyLenders";
-export * from "./getPolicyAccessListMembers";
+export { getPolicyAccessListMembers } from "./getPolicyAccessListMembers";
+export type {
+  GetPolicyAccessListMembersOptions,
+  PolicyAccessListMember,
+  PolicyAccessListMembership
+} from "./getPolicyAccessListMembers";
 export * from "./getPolicyMarketsAndLenders";
 
 export { MakeOptional } from "../utils/misc";

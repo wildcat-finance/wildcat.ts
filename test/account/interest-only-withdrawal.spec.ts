@@ -1,7 +1,10 @@
 import { expect } from "chai";
 import { providers } from "ethers";
 import { SupportedChainId } from "../../src/constants";
-import { createInterestOnlyWithdrawalQuote } from "../../src/interest-only-withdrawal";
+import {
+  createInterestOnlyWithdrawalQuote,
+  CreateInterestOnlyWithdrawalQuoteArgs
+} from "../../src/interest-only-withdrawal";
 import { Token } from "../../src/token";
 
 const provider = new providers.JsonRpcProvider();
@@ -26,7 +29,10 @@ const quote = (
   indexedScaledBalance: bigint,
   currentScaledBalance: bigint,
   currentBalance: bigint,
-  principalBasis: bigint
+  principalBasis: bigint,
+  overrides: Partial<
+    Pick<CreateInterestOnlyWithdrawalQuoteArgs, "currentBalance" | "principalBasis">
+  > = {}
 ) =>
   createInterestOnlyWithdrawalQuote({
     account: "0x0000000000000000000000000000000000000002",
@@ -40,10 +46,26 @@ const quote = (
     currentScaleFactor: (11n * ray) / 10n,
     basisIndexedAt: indexedAt,
     balanceStateSource: "live",
-    quotedAtTimestamp: 300
+    quotedAtTimestamp: 300,
+    ...overrides
   });
 
 describe("interest-only withdrawal quotes", () => {
+  for (const field of ["currentBalance", "principalBasis"] as const) {
+    for (const [dimension, chainId, address, decimals] of [
+      ["chain", SupportedChainId.Mainnet, asset.address, 6],
+      ["address", asset.chainId, "0x0000000000000000000000000000000000000004", 6],
+      ["decimals", asset.chainId, asset.address, 18]
+    ] as const) {
+      it(`checks ${field} token ${dimension} even when the position has changed`, () => {
+        const other = new Token(chainId, address, "Asset", "AST", decimals, false, provider);
+        expect(() => quote(100n, 150n, 165n, 0n, { [field]: other.getAmount(0n) })).to.throw(
+          new RegExp(`token ${dimension} mismatch`)
+        );
+      });
+    }
+  }
+
   it("returns the full-precision excess over indexed principal basis", () => {
     const result = quote(100n, 100n, 110n, 100n);
 

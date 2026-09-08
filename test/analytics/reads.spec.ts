@@ -8,6 +8,7 @@ import {
 } from "@apollo/client";
 import { expect } from "chai";
 import {
+  collectIndexedPages,
   getAnalyticsTokenPage,
   getAnnualInterestBipsUpdatePage,
   getBorrowerAnalyticsProfile,
@@ -194,6 +195,46 @@ const borrowerTotals = {
 };
 
 describe("V2.5 indexed analytics reads", () => {
+  it("collects 1,001 deposits through Apollo and SDK normalization at one indexed block", async () => {
+    const deposits = Array.from({ length: 1_001 }, (_, index) => ({
+      id: `deposit-${String(index).padStart(6, "0")}`,
+      account: { id: `LENDER-${marketAddress}-${lender}`, address: lender },
+      market,
+      assetAmount: "1000000",
+      scaledAmount: "900000",
+      ...eventFields
+    }));
+    const { client, operations } = createClient(metadataFor(SupportedChainId.Sepolia), {
+      getLenderDepositPage: ({ filter, first }) => ({
+        deposits: deposits
+          .filter(({ id }) => id > (filter as { id_gt: string }).id_gt)
+          .slice(0, Number(first))
+      })
+    });
+    try {
+      const result = await collectIndexedPages(
+        (request) => getLenderDepositPage(client, { lender, fetchPolicy: "no-cache", ...request }),
+        { first: 1_000 }
+      );
+      expect(result.map(({ id }) => id)).to.deep.equal(deposits.map(({ id }) => id));
+      expect(result.every(({ assetAmount }) => assetAmount === 1_000_000n)).to.equal(true);
+      const pageReads = operations.filter(
+        ({ operationName }) => operationName === "getLenderDepositPage"
+      );
+      expect(pageReads).to.have.length(2);
+      expect(pageReads[1].variables.block).to.deep.equal({ number: 999 });
+      expect(
+        pageReads.every(
+          (operation) => operation.getContext().fetchOptions.signal instanceof AbortSignal
+        )
+      ).to.equal(true);
+      expect(
+        operations.filter(({ operationName }) => operationName === "getIndexerDeployment")
+      ).to.have.length(1);
+    } finally {
+      client.stop();
+    }
+  });
   for (const count of [20, 1_000]) {
     it(`bounds latest-price requests for ${count} independently observed tokens`, async () => {
       const tokens = Array.from({ length: count }, (_, i) => ({

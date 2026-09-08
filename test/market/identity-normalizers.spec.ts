@@ -1,3 +1,4 @@
+import { withWatchQuery } from "../helpers/watch-query-client";
 import type { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
 import {
@@ -149,12 +150,12 @@ describe("v2.5 borrower identity normalization", () => {
 
   it("normalizes address filters and preserves caller pagination", async () => {
     const calls: Array<{ variables?: Record<string, unknown> }> = [];
-    const client = {
+    const client = withWatchQuery({
       query: async (args: { variables?: Record<string, unknown> }) => {
         calls.push(args);
         return { data: { marketBorrowerChanges: [] } };
       }
-    } as unknown as ApolloClient<NormalizedCacheObject>;
+    } as unknown as ApolloClient<NormalizedCacheObject>);
 
     const market = makeAddress(50).toUpperCase();
     const result = await getMarketBorrowerChanges(client, market, {
@@ -182,7 +183,7 @@ describe("v2.5 borrower identity normalization", () => {
       id: `account-${index}`
     }));
     const finalAccount = { ...makeAccount(), id: "account-1000" };
-    const client = {
+    const client = withWatchQuery({
       query: async (args: { variables?: Record<string, unknown> }) => {
         calls.push(args);
         return {
@@ -191,7 +192,7 @@ describe("v2.5 borrower identity normalization", () => {
           }
         };
       }
-    } as unknown as ApolloClient<NormalizedCacheObject>;
+    } as unknown as ApolloClient<NormalizedCacheObject>);
     const account = makeAddress(60).toUpperCase();
 
     const normalized = await getBorrowerAccountIdentities(client, account, {

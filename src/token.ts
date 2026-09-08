@@ -4,6 +4,8 @@ import type { TokenMetadataStructOutput, TokenMetadataV2_5StructOutput } from ".
 import { ContractWrapper, PartialTransaction, SignerOrProvider, TransactionHash } from "./types";
 import { SupportedChainId, getDeploymentAddress, hasDeploymentAddress } from "./constants";
 import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
+import { assertTokenDecimals } from "./internal/token-decimals";
+import { assertMatchingToken } from "./internal/token-identity";
 import { readViemContract } from "./internal/viem-read";
 import {
   bipMulBigint,
@@ -65,13 +67,6 @@ declare global {
   }
 }
 
-const toCompatBigInt = (value: BigIntCompatNumberish): bigint => {
-  if (typeof value === "bigint") return value;
-  if (typeof value === "number") return BigInt(value);
-  if (typeof value === "string") return BigInt(value);
-  return BigInt(value.toString());
-};
-
 const installBigIntCompatibilityMethod = (
   name: BigIntCompatibilityMethodName,
   value: (this: bigint, value?: BigIntCompatNumberish) => bigint | boolean | number | string
@@ -87,34 +82,34 @@ installBigIntCompatibilityMethod("isZero", function isZero(this: bigint) {
   return this.valueOf() === 0n;
 });
 installBigIntCompatibilityMethod("gt", function gt(this: bigint, value?: BigIntCompatNumberish) {
-  return this.valueOf() > toCompatBigInt(value ?? 0n);
+  return this.valueOf() > toBigint(value ?? 0n);
 });
 installBigIntCompatibilityMethod("gte", function gte(this: bigint, value?: BigIntCompatNumberish) {
-  return this.valueOf() >= toCompatBigInt(value ?? 0n);
+  return this.valueOf() >= toBigint(value ?? 0n);
 });
 installBigIntCompatibilityMethod("lt", function lt(this: bigint, value?: BigIntCompatNumberish) {
-  return this.valueOf() < toCompatBigInt(value ?? 0n);
+  return this.valueOf() < toBigint(value ?? 0n);
 });
 installBigIntCompatibilityMethod("lte", function lte(this: bigint, value?: BigIntCompatNumberish) {
-  return this.valueOf() <= toCompatBigInt(value ?? 0n);
+  return this.valueOf() <= toBigint(value ?? 0n);
 });
 installBigIntCompatibilityMethod("eq", function eq(this: bigint, value?: BigIntCompatNumberish) {
-  return this.valueOf() === toCompatBigInt(value ?? 0n);
+  return this.valueOf() === toBigint(value ?? 0n);
 });
 installBigIntCompatibilityMethod("add", function add(this: bigint, value?: BigIntCompatNumberish) {
-  return this.valueOf() + toCompatBigInt(value ?? 0n);
+  return this.valueOf() + toBigint(value ?? 0n);
 });
 installBigIntCompatibilityMethod("sub", function sub(this: bigint, value?: BigIntCompatNumberish) {
-  return this.valueOf() - toCompatBigInt(value ?? 0n);
+  return this.valueOf() - toBigint(value ?? 0n);
 });
 installBigIntCompatibilityMethod("mul", function mul(this: bigint, value?: BigIntCompatNumberish) {
-  return this.valueOf() * toCompatBigInt(value ?? 0n);
+  return this.valueOf() * toBigint(value ?? 0n);
 });
 installBigIntCompatibilityMethod("div", function div(this: bigint, value?: BigIntCompatNumberish) {
-  return this.valueOf() / toCompatBigInt(value ?? 1n);
+  return this.valueOf() / toBigint(value ?? 1n);
 });
 installBigIntCompatibilityMethod("toNumber", function toNumberCompat(this: bigint) {
-  return Number(this.valueOf());
+  return toNumber(this.valueOf());
 });
 installBigIntCompatibilityMethod("toJSON", function toJSONCompat(this: bigint) {
   return this.toString();
@@ -129,8 +124,10 @@ const getViemTokenMetadataValue = (
   return keyedValue ?? (metadata as readonly ViemTokenMetadataField[])[index];
 };
 
-export const toRawAmount = (amount: RhsAmount): bigint => {
+/** Extract raw units, checking a tagged amount when an expected token is supplied. */
+export const toRawAmount = (amount: RhsAmount, expectedToken?: Token): bigint => {
   if (amount instanceof TokenAmount) {
+    if (expectedToken) assertMatchingToken(amount.token, expectedToken);
     return amount.raw;
   }
   return toBigint(amount);
@@ -156,7 +153,7 @@ export class TokenAmount {
   public raw: bigint;
 
   constructor(raw: RhsAmount, public token: Token) {
-    this.raw = toRawAmount(raw);
+    this.raw = toRawAmount(raw, token);
   }
 
   get name(): string {
@@ -180,60 +177,62 @@ export class TokenAmount {
   }
 
   gt(amount: RhsAmount): boolean {
-    return this.raw > toRawAmount(amount);
+    return this.raw > toRawAmount(amount, this.token);
   }
 
   lt(amount: RhsAmount): boolean {
-    return this.raw < toRawAmount(amount);
+    return this.raw < toRawAmount(amount, this.token);
   }
 
   lte(amount: RhsAmount): boolean {
-    return this.raw <= toRawAmount(amount);
+    return this.raw <= toRawAmount(amount, this.token);
   }
 
   gte(amount: RhsAmount): boolean {
-    return this.raw >= toRawAmount(amount);
+    return this.raw >= toRawAmount(amount, this.token);
   }
 
   eq(amount: RhsAmount): boolean {
-    return this.raw === toRawAmount(amount);
+    return this.raw === toRawAmount(amount, this.token);
   }
 
   add(amount: RhsAmount): TokenAmount {
-    return this.token.getAmount(this.raw + toRawAmount(amount));
+    return this.token.getAmount(this.raw + toRawAmount(amount, this.token));
   }
 
   sub(amount: RhsAmount): TokenAmount {
-    return this.token.getAmount(this.raw - toRawAmount(amount));
+    return this.token.getAmount(this.raw - toRawAmount(amount, this.token));
   }
 
   mul(amount: RhsAmount): TokenAmount {
-    return this.token.getAmount(this.raw * toRawAmount(amount));
+    return this.token.getAmount(this.raw * toRawAmount(amount, this.token));
   }
 
   div(amount: RhsAmount, allowDivideByZero = false): TokenAmount {
-    const divisor = toRawAmount(amount);
+    const divisor = toRawAmount(amount, this.token);
     return this.token.getAmount(allowDivideByZero && divisor === 0n ? 0n : this.raw / divisor);
   }
 
   mulDiv(numer: RhsAmount, denom: RhsAmount): TokenAmount {
-    return this.token.getAmount(mulDivBigint(this.raw, toRawAmount(numer), toRawAmount(denom)));
+    return this.token.getAmount(
+      mulDivBigint(this.raw, toRawAmount(numer, this.token), toRawAmount(denom, this.token))
+    );
   }
 
   bipMul(amount: RhsAmount): TokenAmount {
-    return this.token.getAmount(bipMulBigint(this.raw, toRawAmount(amount)));
+    return this.token.getAmount(bipMulBigint(this.raw, toRawAmount(amount, this.token)));
   }
 
   rayMul(amount: RhsAmount): TokenAmount {
-    return this.token.getAmount(rayMulBigint(this.raw, toRawAmount(amount)));
+    return this.token.getAmount(rayMulBigint(this.raw, toRawAmount(amount, this.token)));
   }
 
   rayDiv(amount: RhsAmount): TokenAmount {
-    return this.token.getAmount(rayDivBigint(this.raw, toRawAmount(amount)));
+    return this.token.getAmount(rayDivBigint(this.raw, toRawAmount(amount, this.token)));
   }
 
   satsub(amount: RhsAmount): TokenAmount {
-    const b = toRawAmount(amount);
+    const b = toRawAmount(amount, this.token);
     return this.token.getAmount(this.raw < b ? 0n : this.raw - b);
   }
 
@@ -267,6 +266,7 @@ export class Token extends ContractWrapper {
     provider: SignerOrProvider
   ) {
     super(provider);
+    assertTokenDecimals(decimals);
     this.contract = {
       address,
       interface: {
@@ -328,7 +328,7 @@ export class Token extends ContractWrapper {
       to: this.address,
       abi: iERC20Abi,
       functionName: "approve",
-      args: [spender, toRawAmount(amount)]
+      args: [spender, toRawAmount(amount, this)]
     });
   }
 
@@ -337,7 +337,7 @@ export class Token extends ContractWrapper {
   }
 
   getAmount(amount: RhsAmount): TokenAmount {
-    return new TokenAmount(toRawAmount(amount), this);
+    return new TokenAmount(amount, this);
   }
 
   toJSON(): {

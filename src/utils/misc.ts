@@ -1,5 +1,5 @@
-import { encodeAbiParameters, formatUnits, type Address, type Hex } from "viem";
-import { toBigint, type BigintNumberish } from "./bigint";
+import { encodeAbiParameters, type Address, type Hex } from "viem";
+import { formatFixedBigint, toBigint, type BigintNumberish } from "./bigint";
 
 export const encodeAddress = (address: string): Hex => {
   return encodeAbiParameters([{ type: "address" }], [address as Address]);
@@ -44,9 +44,5 @@ export const formatBnFixed = (
   decimals = 18,
   precision = decimals
 ): string => {
-  let str = formatUnits(toBigint(value), decimals);
-  if (str.includes(".") && precision !== decimals) {
-    str = str.slice(0, str.indexOf(".") + precision + 1);
-  }
-  return stripTrailingZeroes(str);
+  return formatFixedBigint(value, decimals, precision);
 };

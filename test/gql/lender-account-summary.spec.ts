@@ -1,8 +1,9 @@
 import { ApolloClient, DocumentNode, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
+import { rejects } from "assert";
 import { providers } from "ethers";
 import { print } from "graphql";
-import { getIndexedLenderAccountSummaryForMarket } from "../../src/gql";
+import { getIndexedLenderAccountSummaryForMarket, getLenderAccountForMarket } from "../../src/gql";
 import { SubgraphLenderStatus } from "../../src/gql/graphql";
 import { Market } from "../../src/market";
 import { SupportedChainId } from "../../src/constants";
@@ -154,4 +155,59 @@ describe("indexed lender-account summary", () => {
     expect(account.depositRecords).to.deep.equal([]);
     expect(account.hasEverInteracted).to.equal(false);
   });
+
+  for (const chainId of [SupportedChainId.Mainnet, SupportedChainId.Sepolia]) {
+    for (const read of [getLenderAccountForMarket, getIndexedLenderAccountSummaryForMarket]) {
+      const options = {
+        market: { ...market, chainId } as Market,
+        lender: lender.toUpperCase(),
+        fetchPolicy: "no-cache" as const
+      };
+      const lenderData = {
+        __typename: "LenderAccount",
+        id: `${marketAddress}-${lender}`,
+        address: lender,
+        scaledBalance: "25",
+        principalBasis: "20",
+        role: SubgraphLenderStatus.WithdrawOnly,
+        totalDeposited: "100",
+        lastScaleFactor: scaleFactor.toString(),
+        lastUpdatedTimestamp: 1_700_000_000,
+        totalInterestEarned: "5",
+        numPendingWithdrawalBatches: 0,
+        controllerAuthorization: null,
+        hooksAccess: null,
+        knownLenderStatus: null
+      };
+
+      it(`${read.name} accepts matching identities on ${chainId}`, async () => {
+        const { client, calls } = createClient({
+          market: { id: marketAddress, lenders: [lenderData] }
+        });
+
+        const account = await read(client, options);
+
+        expect(account.account.toLowerCase()).to.equal(lender);
+        expect(account.market).to.equal(options.market);
+        expect(calls).to.have.lengthOf(1);
+      });
+
+      it(`${read.name} rejects a different parent market on ${chainId}`, async () => {
+        const { client } = createClient({ market: { id: makeAddress(99), lenders: [] } });
+
+        await rejects(read(client, options), /Subgraph lender market address mismatch/);
+      });
+
+      it(`${read.name} rejects a different lender on ${chainId}`, async () => {
+        const { client } = createClient({
+          market: {
+            id: marketAddress,
+            lenders: [{ ...lenderData, address: makeAddress(99) }]
+          }
+        });
+
+        await rejects(read(client, options), /Subgraph lender address mismatch/);
+      });
+    }
+  }
 });

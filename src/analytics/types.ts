@@ -19,6 +19,8 @@ export type IndexedPageRequest = {
   first?: number;
   /** Exclusive cursor returned by the preceding page. */
   after?: IndexedPageCursor;
+  /** Forward the collector's signal to cancel an in-flight page request. */
+  signal?: AbortSignal;
 };
 
 export type IndexedQueryMetadata = {
