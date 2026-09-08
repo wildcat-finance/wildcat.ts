@@ -82,6 +82,21 @@ export function rayDivBigint(a: BigintNumberish, b: BigintNumberish): bigint {
   return (aBigint * RAY_BIGINT + halfB) / bBigint;
 }
 
+/** Normalized-to-scaled conversion used by V2.5 transfers and withdrawal requests. */
+export function rayDivDownBigint(a: BigintNumberish, b: BigintNumberish): bigint {
+  const aBigint = toBigint(a);
+  const bBigint = toBigint(b);
+  assertUint256(aBigint, "rayDivDown(a)");
+  assertUint256(bBigint, "rayDivDown(b)");
+  if (bBigint === 0n) {
+    throw new Error("rayDivDown: division by zero");
+  }
+  if (aBigint > MAX_UINT256_BIGINT / RAY_BIGINT) {
+    throw new Error(`rayDivDown: ${aBigint} * ${RAY_BIGINT} overflows`);
+  }
+  return (aBigint * RAY_BIGINT) / bBigint;
+}
+
 export function mulDivBigint(x: BigintNumberish, y: BigintNumberish, d: BigintNumberish): bigint {
   const denominator = toBigint(d);
   if (denominator === 0n) {

@@ -225,6 +225,7 @@ fragment MarketData on Market {
 
   # ================================== State ================================= #
   maxTotalSupply
+  totalAssets
   pendingProtocolFees
   normalizedUnclaimedWithdrawals
   scaledTotalSupply
@@ -369,6 +370,7 @@ fragment MarketListData on Market {
   reserveRatioBips
   drawnAmount
   maxTotalSupply
+  totalAssets
   pendingProtocolFees
   normalizedUnclaimedWithdrawals
   scaledTotalSupply
@@ -411,6 +413,7 @@ fragment MarketSnapshotData on MarketSnapshot {
   source
   isClosed
   maxTotalSupply
+  totalAssets
   protocolFeeBips
   pendingProtocolFees
   normalizedUnclaimedWithdrawals

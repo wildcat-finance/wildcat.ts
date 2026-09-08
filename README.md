@@ -22,9 +22,13 @@
 
 The most likely scenario for working in this repo is while also working on app side. Theres a section below specifically on _how_ to manage this as a local dependency.
 
+See the [3.2.10-beta release notes](docs/releases/3.2.10-beta.md) for Sepolia
+V2.5.4 deployment targets, indexed liquidity, transfer rounding, and historical
+wrapper compatibility with subgraph V2.5.12.
+
 ## Gateway Connections
 
-SDK 3.2.9 defaults to Wildcat's public data gateway. RPC connections identify
+SDK 3.2.9 and later default to Wildcat's public data gateway. RPC connections identify
 the chain; subgraph connections also pin the release understood by the SDK.
 Sepolia uses subgraph v2.5.12. The gateway manages upstream provider failover.
 Public access needs no credential and is subject to gateway quotas.
@@ -288,6 +292,9 @@ Once happy with changes publish to npm (if you have permissions):
 - `npm publish --tag beta `
 
 ## Branch Strategy
+
+For the 3.2 beta series, branch from and target `release/v3.2`. The subgraph
+V2.5 release track is `release/v2.5` in its own repository.
 
 - `main`: latest supported release branch. Publish production npm releases (`npm publish` or `yarn npm publish`).
 - `develop`: integration branch. Publish beta releases with `npm publish --tag beta` (or the yarn equivalent).

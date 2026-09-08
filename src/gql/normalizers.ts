@@ -134,6 +134,7 @@ export const normalizeSubgraphMarketSnapshot = (
         source: parseSnapshotSource(data.source),
         isClosed: data.isClosed,
         maxTotalSupply: BigInt(data.maxTotalSupply),
+        totalAssets: BigInt(data.totalAssets),
         protocolFeeBips: data.protocolFeeBips,
         pendingProtocolFees: BigInt(data.pendingProtocolFees),
         normalizedUnclaimedWithdrawals: BigInt(data.normalizedUnclaimedWithdrawals),

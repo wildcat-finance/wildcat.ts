@@ -68,6 +68,59 @@ const makeWrapperData = (): SubgraphTokenWrapperData => {
 };
 
 describe("TokenWrapper subgraph hydration", () => {
+  it("keeps a retired V2.5.3 wrapper visible while refusing new deployment through its factory", async () => {
+    const market = "0x4c02b9e4e699b9ec5f984510946656ea3c80d5a5";
+    const address = "0x4a8e8baecd16e871ce6633d5b285fef20c044d88";
+    const factory = "0x31D8D5564Ce11f764E74beca5B4e8d363046949f";
+    const data: SubgraphTokenWrapperData = {
+      id: address,
+      address,
+      marketAddress: market,
+      marketToken: token(market, "UAT2 M1 Dai Dai Stablecoin", "u2M1DAI"),
+      token: token(address, "u2M1DAI [4626 Vault Shares]", "v-u2M1DAI"),
+      factory: { id: factory.toLowerCase(), address: factory }
+    };
+    const client = {
+      query: async () => ({ data: { market: { id: market, tokenWrapper: data } } })
+    } as unknown as ApolloClient<NormalizedCacheObject>;
+    const rpc = new FakeViemProvider((call) => {
+      expect(call.to).to.equal(market);
+      const { functionName } = decodeFunctionData({ abi: wildcatMarketV2Abi, data: call.data! });
+      if (functionName === "wrapperFactory") {
+        return encodeFunctionResult({ abi: wildcatMarketV2Abi, functionName, result: factory });
+      }
+      if (functionName === "registeredWrapper") {
+        return encodeFunctionResult({ abi: wildcatMarketV2Abi, functionName, result: address });
+      }
+      throw new Error(`Unexpected function: ${functionName}`);
+    });
+    const signerOrProvider = rpc as unknown as providers.Provider;
+
+    const wrapper = await TokenWrapper.fromMarketWithSubgraph(client, {
+      chainId: SupportedChainId.Sepolia,
+      signerOrProvider,
+      market
+    });
+    expect(wrapper?.address).to.equal(address);
+    expect(wrapper?.symbol).to.equal("v-u2M1DAI");
+    expect(rpc.calls).to.have.length(0);
+    expect(
+      (
+        await WrapperFactory.getWrapperForMarket(SupportedChainId.Sepolia, signerOrProvider, market)
+      )?.toLowerCase()
+    ).to.equal(address);
+    const capability = await WrapperFactory.getDeploymentCapability(
+      SupportedChainId.Sepolia,
+      signerOrProvider,
+      market
+    );
+    expect(capability.status).to.equal(WrapperDeploymentStatus.UnsupportedFactory);
+    await rejects(
+      WrapperFactory.populateCreateWrapper(SupportedChainId.Sepolia, signerOrProvider, market),
+      { name: "UnsupportedWrapperFactoryError" }
+    );
+  });
+
   for (const field of ["rootMarket", "parentMarket", "marketToken", "shareToken"] as const) {
     it(`rejects a different ${field} without a factory fallback`, async () => {
       const wrapper = makeWrapperData();

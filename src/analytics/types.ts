@@ -230,6 +230,10 @@ export type DelinquencyStatusChange = IndexedMarketAnalyticsEvent & {
 export type MarketInterestAccrual = IndexedMarketAnalyticsEvent & {
   fromTimestamp: number;
   toTimestamp: number;
+  /**
+   * V2.5: seconds charged a delinquency fee (zero at a zero fee rate).
+   * Legacy families: projected penalty exposure. This is not the stored delinquency clock.
+   */
   timeWithPenalties: number;
   baseInterestRay: bigint;
   delinquencyFeeRay: bigint;

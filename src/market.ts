@@ -77,6 +77,7 @@ import {
   formatFixedBigint,
   prepareTransaction,
   rayDivBigint,
+  rayDivDownBigint,
   rayMulBigint,
   toNumber
 } from "./utils";
@@ -799,7 +800,9 @@ export class Market extends ContractWrapper {
   }
 
   scaleAmount(amount: bigint): bigint {
-    return rayDivBigint(amount, this.scaleFactor);
+    return this.eventGeneration === "v2.5"
+      ? rayDivDownBigint(amount, this.scaleFactor)
+      : rayDivBigint(amount, this.scaleFactor);
   }
 
   // Keep the instantaneous growth rate as a fraction until the final division:
@@ -1488,7 +1491,7 @@ export class Market extends ContractWrapper {
       totalSupply: marketToken.getAmount(rayMulBigint(scaledTotalSupply, scaleFactor)),
       maxTotalSupply: marketToken.getAmount(indexedState.maxTotalSupply),
       scaledTotalSupply: scaledTotalSupply,
-      totalAssets: underlyingToken.getAmount(0), // @todo maybe update subgraph to query this per update?
+      totalAssets: underlyingToken.getAmount(indexedState.totalAssets),
       lastAccruedProtocolFees: underlyingToken.getAmount(indexedState.pendingProtocolFees),
       normalizedUnclaimedWithdrawals: underlyingToken.getAmount(
         indexedState.normalizedUnclaimedWithdrawals

@@ -22,9 +22,11 @@ import {
   formatFixedBigint,
   HALF_BIP_BIGINT,
   HALF_RAY_BIGINT,
+  MAX_UINT256_BIGINT,
   mulDivBigint,
   parseFixedBigint,
   rayDivBigint,
+  rayDivDownBigint,
   rayMulBigint,
   RAY_BIGINT,
   satSubBigint,
@@ -115,6 +117,24 @@ describe("bigint math helpers", () => {
   it("uses the intended rounded ray division semantics", () => {
     expect(rayDivBigint(5n, 2n)).to.equal((5n * RAY_BIGINT + 1n) / 2n);
     expect(() => rayDivBigint(1n, 0n)).to.throw("rayDiv: division by zero");
+  });
+
+  it("rounds V2.5 scaling down, including sub-unit and exact results", () => {
+    expect(rayDivDownBigint(0n, RAY_BIGINT)).to.equal(0n);
+    expect(rayDivDownBigint(1n, 2n * RAY_BIGINT)).to.equal(0n);
+    expect(rayDivDownBigint(3n, 2n * RAY_BIGINT)).to.equal(1n);
+    expect(rayDivDownBigint(4n, 2n * RAY_BIGINT)).to.equal(2n);
+    const maximumInput = MAX_UINT256_BIGINT / RAY_BIGINT;
+    expect(rayDivDownBigint(maximumInput, 1n)).to.equal(maximumInput * RAY_BIGINT);
+    expect(() => rayDivDownBigint(maximumInput + 1n, RAY_BIGINT)).to.throw("overflows");
+  });
+
+  it("rejects invalid unsigned operands and zero divisors when scaling down", () => {
+    expect(() => rayDivDownBigint(1n, 0n)).to.throw("rayDivDown: division by zero");
+    for (const invalid of [-1n, MAX_UINT256_BIGINT + 1n]) {
+      expect(() => rayDivDownBigint(invalid, RAY_BIGINT)).to.throw("outside uint256 range");
+      expect(() => rayDivDownBigint(1n, invalid)).to.throw("outside uint256 range");
+    }
   });
 
   it("parses and formats fixed-point decimal values", () => {

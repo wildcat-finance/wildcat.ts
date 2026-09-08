@@ -195,6 +195,46 @@ const borrowerTotals = {
 };
 
 describe("V2.5 indexed analytics reads", () => {
+  it("preserves charged penalty seconds across expiry intervals and zero-rate accrual", async () => {
+    const { client } = createClient(metadataFor(SupportedChainId.Sepolia), {
+      getMarketInterestAccrualPage: () => ({
+        marketInterestAccrueds: [
+          ["expiry", 200, 250, 10, "3170979198376458650"],
+          ["after-expiry", 250, 300, 0, "0"],
+          ["zero-rate", 300, 350, 0, "0"]
+        ].map(([id, fromTimestamp, toTimestamp, timeWithPenalties, delinquencyFeeRay]) => ({
+          id,
+          market: { ...market, isIncurringPenalties: true },
+          fromTimestamp,
+          toTimestamp,
+          timeWithPenalties,
+          delinquencyFeeRay,
+          baseInterestRay: "0",
+          baseInterestAccrued: "0",
+          delinquencyFeesAccrued: "0",
+          protocolFeesAccrued: "0",
+          ...eventFields
+        }))
+      })
+    });
+
+    const page = await getMarketInterestAccrualPage(client, {
+      markets: [marketAddress],
+      fetchPolicy: "no-cache"
+    });
+
+    expect(page.items.map(({ timeWithPenalties }) => timeWithPenalties)).to.deep.equal([10, 0, 0]);
+    expect(
+      page.items.map(({ fromTimestamp, toTimestamp }) => [fromTimestamp, toTimestamp])
+    ).to.deep.equal([
+      [200, 250],
+      [250, 300],
+      [300, 350]
+    ]);
+    expect(page.items[2].market.isIncurringPenalties).to.equal(true);
+    expect(page.items[2].delinquencyFeeRay).to.equal(0n);
+  });
+
   it("collects 1,001 deposits through Apollo and SDK normalization at one indexed block", async () => {
     const deposits = Array.from({ length: 1_001 }, (_, index) => ({
       id: `deposit-${String(index).padStart(6, "0")}`,

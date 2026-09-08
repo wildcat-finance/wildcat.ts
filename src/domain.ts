@@ -289,6 +289,7 @@ export type MarketProvenance = {
 export type IndexedMarketSnapshot = IndexedSnapshotMetadata & {
   isClosed: boolean;
   maxTotalSupply: bigint;
+  totalAssets: bigint;
   protocolFeeBips: number;
   pendingProtocolFees: bigint;
   normalizedUnclaimedWithdrawals: bigint;

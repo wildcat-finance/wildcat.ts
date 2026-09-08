@@ -373,6 +373,7 @@ const makeSubgraphMarketSnapshot = (): SubgraphMarketSnapshotDataFragment => ({
   source: SubgraphSnapshotSource.EVENT_PROJECTION,
   isClosed: false,
   maxTotalSupply: "10000",
+  totalAssets: "0",
   protocolFeeBips: 25,
   pendingProtocolFees: "10",
   normalizedUnclaimedWithdrawals: "0",
@@ -435,6 +436,7 @@ const makeSubgraphMarketData = (): Omit<
   withdrawalBatchDuration: 86_400,
   numCollateralContracts: 0,
   maxTotalSupply: "10000",
+  totalAssets: "0",
   pendingProtocolFees: "10",
   normalizedUnclaimedWithdrawals: "0",
   scaledTotalSupply: "1000",
@@ -1072,6 +1074,81 @@ describe("Market model routing metadata", () => {
     expect(market.annualInterestBips).to.equal(1350);
     expect(market.drawnAmount?.raw).to.equal(375n);
     expect(market.indexedSnapshot?.annualInterestBips).to.equal(1350);
+  });
+
+  it("uses indexed liquidity instead of reporting a funded market as empty", () => {
+    const data = makeSubgraphMarketData();
+    data.totalAssets = "900";
+    data.snapshot!.totalAssets = "550";
+    data.snapshot!.source = SubgraphSnapshotSource.EVENT_AND_CONTRACT_CALL;
+
+    const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+
+    expect(market.totalAssets.raw).to.equal(550n);
+    expect(market.totalAssets.token).to.equal(market.underlyingToken);
+    expect(market.getTotalDebtBreakdown().status).to.equal("healthy");
+    expect(market.stateSource).to.equal("indexed");
+    expect(market.indexedSnapshot).to.include({
+      totalAssets: 550n,
+      source: "event-and-contract-call"
+    });
+  });
+
+  it("uses root liquidity when a historical market has no snapshot", () => {
+    const data = makeSubgraphMarketData();
+    data.totalAssets = "275";
+    data.snapshot = null;
+
+    const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+
+    expect(market.totalAssets.raw).to.equal(275n);
+    expect(market.stateSource).to.equal("indexed");
+  });
+
+  for (const generation of ["v2.5", "v2.5.3", "v2.5.4"]) {
+    it(`rounds normalized amounts down for ${generation} protocol semantics`, () => {
+      const data = makeSubgraphMarketData();
+      data.generation = generation;
+      data.snapshot!.scaleFactor = (2n * 10n ** 27n).toString();
+      const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+
+      expect(market.scaleAmount(1n)).to.equal(0n);
+      expect(market.scaleAmount(3n)).to.equal(1n);
+      expect(market.scaleAmount(4n)).to.equal(2n);
+    });
+  }
+
+  it("preserves the block-final delinquency clock at a zero penalty rate", () => {
+    const data = makeSubgraphMarketData();
+    data.generation = "v2.5.4";
+    data.delinquencyFeeBips = 0;
+    data.timeDelinquent = 1;
+    data.snapshot!.timeDelinquent = data.delinquencyGracePeriod + 300;
+    data.snapshot!.isDelinquent = false;
+    data.snapshot!.isIncurringPenalties = true;
+    data.snapshot!.source = SubgraphSnapshotSource.EVENT_AND_CONTRACT_CALL;
+
+    const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+
+    expect(market.timeDelinquent).to.equal(data.delinquencyGracePeriod + 300);
+    expect(market.isDelinquent).to.equal(false);
+    expect(market.indexedSnapshot).to.include({
+      timeDelinquent: data.delinquencyGracePeriod + 300,
+      isIncurringPenalties: true,
+      source: "event-and-contract-call"
+    });
+    expect(market.stateSource).to.equal("indexed");
+  });
+
+  it("keeps legacy half-up scaling independent of deployment labels", () => {
+    const data = makeSubgraphMarketData();
+    data.generation = "v2.5.4";
+    data.eventGeneration = SubgraphEventGeneration.LEGACY;
+    data.snapshot!.scaleFactor = (2n * 10n ** 27n).toString();
+    const market = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+
+    expect(market.scaleAmount(1n)).to.equal(1n);
+    expect(market.scaleAmount(3n)).to.equal(2n);
   });
 
   it("normalizes lender snapshots without presenting them as live state", () => {
