@@ -1,3 +1,4 @@
+import { queryWithIndexedSignal } from "../internal/indexed-query";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import { getSubgraphClientSchemaFamily, requireSubgraphFeature } from "../config";
 import {
@@ -100,14 +101,18 @@ export const getBorrowerDailyStatsPage = async (
     ...(fromTimestamp !== undefined ? { startTimestamp_gte: fromTimestamp } : {}),
     ...(toTimestamp !== undefined ? { startTimestamp_lt: toTimestamp } : {})
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetBorrowerDailyStatsPageQuery,
     SubgraphGetBorrowerDailyStatsPageQueryVariables
-  >({
-    query: GetBorrowerDailyStatsPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: GetBorrowerDailyStatsPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.borrowerDailyStats_collection.map(normalizeBorrowerDailyStats),
     first,
@@ -179,16 +184,20 @@ export const getBorrowerWithdrawalReliabilityPage = async (
     ...(markets ? { market_in: normalizeAddresses(markets) } : {}),
     ...(borrower ? { market_: { borrower: borrower.toLowerCase() } } : {})
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetBorrowerWithdrawalReliabilityPageQuery,
     SubgraphGetBorrowerWithdrawalReliabilityPageQueryVariables
-  >({
-    query: legacySchema
-      ? LegacyGetBorrowerWithdrawalReliabilityPageDocument
-      : GetBorrowerWithdrawalReliabilityPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema
+        ? LegacyGetBorrowerWithdrawalReliabilityPageDocument
+        : GetBorrowerWithdrawalReliabilityPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     legacySchema
       ? (data.withdrawalBatches as unknown as LegacyBorrowerWithdrawalReliabilityData[]).map(

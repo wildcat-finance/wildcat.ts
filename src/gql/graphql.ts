@@ -38771,7 +38771,7 @@ export const GetAuthorizedLendersByMarketDocument = gql`
     query getAuthorizedLendersByMarket($market: ID!) {
   market(id: $market) {
     controller {
-      authorizedLenders {
+      authorizedLenders(where: {authorized: true}) {
         lender
         authorized
         changes(first: 1, orderBy: blockTimestamp, orderDirection: desc) {

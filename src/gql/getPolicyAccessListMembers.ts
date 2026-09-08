@@ -1,3 +1,9 @@
+import { IndexedTraversalOptions } from "../indexed-pagination";
+import {
+  IndexedTraversal,
+  IndexedPageProgress,
+  withIndexedTraversal
+} from "../internal/indexed-traversal";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import { HooksInstance } from "../access";
 import { normalizeRoleProviderMember } from "../authority";
@@ -21,7 +27,7 @@ export type PolicyAccessListMember = {
   memberships: PolicyAccessListMembership[];
 };
 
-export type GetPolicyAccessListMembersOptions = {
+export type GetPolicyAccessListMembersOptions = IndexedTraversalOptions & {
   fetchPolicy?: FetchPolicy;
 };
 
@@ -33,7 +39,19 @@ export type GetPolicyAccessListMembersOptions = {
 export async function getPolicyAccessListMembers(
   subgraphClient: ApolloClient<NormalizedCacheObject>,
   hooksInstance: HooksInstance,
-  { fetchPolicy = "cache-first" }: GetPolicyAccessListMembersOptions = {}
+  { fetchPolicy = "cache-first", ...options }: GetPolicyAccessListMembersOptions = {}
+): Promise<PolicyAccessListMember[]> {
+  return withIndexedTraversal(options, (traversal) =>
+    readPolicyAccessListMembers(subgraphClient, hooksInstance, fetchPolicy, traversal)
+  );
+}
+
+/** @internal Share the policy read's aggregate limits. */
+export async function readPolicyAccessListMembers(
+  subgraphClient: ApolloClient<NormalizedCacheObject>,
+  hooksInstance: HooksInstance,
+  fetchPolicy: FetchPolicy,
+  traversal: IndexedTraversal
 ): Promise<PolicyAccessListMember[]> {
   const providersByAddress = new Map(
     hooksInstance.roleProviders
@@ -46,11 +64,12 @@ export async function getPolicyAccessListMembers(
   if (providersByAddress.size === 0) return [];
 
   const membersByAddress = new Map<string, PolicyAccessListMember>();
+  const progress = new IndexedPageProgress();
   for (let skip = 0; ; skip += PolicyMemberPageSize) {
-    const { data } = await subgraphClient.query<
+    const { data } = await traversal.query<
       SubgraphGetActiveRoleProviderMembersQuery,
       SubgraphGetActiveRoleProviderMembersQueryVariables
-    >({
+    >(subgraphClient, {
       query: GetActiveRoleProviderMembersDocument,
       variables: {
         providers: Array.from(providersByAddress.keys()),
@@ -60,6 +79,7 @@ export async function getPolicyAccessListMembers(
       fetchPolicy
     });
 
+    traversal.accept(data.roleProviderMembers, PolicyMemberPageSize, progress);
     for (const dataMember of data.roleProviderMembers) {
       const provider = providersByAddress.get(dataMember.provider.address.toLowerCase());
       if (!provider) {

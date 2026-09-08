@@ -1,5 +1,7 @@
 import { formatUnits, parseUnits } from "viem";
+import { assertTokenDecimals } from "../internal/token-decimals";
 
+/** Integer input. Numbers must be safe integers; use bigint or integer strings for larger values. */
 export type BigintNumberish = bigint | number | string | { toString(): string };
 
 export const MAX_UINT256_BIGINT = (1n << 256n) - 1n;
@@ -17,6 +19,11 @@ export const toBigint = (value: BigintNumberish): bigint => {
   if (typeof value === "number") {
     if (!Number.isInteger(value)) {
       throw new Error(`Can not convert non-integer number to bigint: ${value}`);
+    }
+    if (!Number.isSafeInteger(value)) {
+      throw new Error(
+        `Can not convert unsafe integer number to bigint: ${value}. Use a bigint or integer string instead.`
+      );
     }
     return BigInt(value);
   }
@@ -107,6 +114,7 @@ export const formatFixedBigint = (
   decimals = 18,
   precision = decimals
 ): string => {
+  assertTokenDecimals(decimals);
   let str = formatUnits(toBigint(value), decimals);
   if (str.includes(".") && precision !== decimals) {
     str = str.slice(0, str.indexOf(".") + precision + 1);
@@ -115,5 +123,6 @@ export const formatFixedBigint = (
 };
 
 export const parseFixedBigint = (value: string | number, decimals = 18): bigint => {
+  assertTokenDecimals(decimals);
   return parseUnits(value.toString(), decimals);
 };

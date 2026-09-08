@@ -1,3 +1,4 @@
+import { queryWithIndexedSignal } from "../internal/indexed-query";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import {
   getSubgraphClientDeploymentMetadata,
@@ -78,14 +79,18 @@ export const getAnalyticsTokenPage = async (
     id_gt: afterId,
     ...(addresses ? { address_in: normalizeAddresses(addresses) } : {})
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetAnalyticsTokensQuery,
     SubgraphGetAnalyticsTokensQueryVariables
-  >({
-    query: legacySchema ? LegacyGetAnalyticsTokensDocument : GetAnalyticsTokensDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema ? LegacyGetAnalyticsTokensDocument : GetAnalyticsTokensDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.tokens.map(normalizeAnalyticsToken),
     first,
@@ -118,16 +123,20 @@ export const getTokenPriceObservationPage = async (
     ...(fromTimestamp !== undefined ? { timestamp_gte: fromTimestamp } : {}),
     ...(toTimestamp !== undefined ? { timestamp_lt: toTimestamp } : {})
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetTokenPriceObservationPageQuery,
     SubgraphGetTokenPriceObservationPageQueryVariables
-  >({
-    query: legacySchema
-      ? LegacyGetTokenPriceObservationPageDocument
-      : GetTokenPriceObservationPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema
+        ? LegacyGetTokenPriceObservationPageDocument
+        : GetTokenPriceObservationPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     legacySchema
       ? (data.tokenDailyPrices as unknown as LegacyTokenPriceObservationData[]).map(

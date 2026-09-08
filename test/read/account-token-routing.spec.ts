@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { rejects } from "assert";
 import { BigNumber, constants, providers } from "ethers";
 import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
 import {
@@ -1033,7 +1034,8 @@ describe("Account and token read routing", () => {
 
   it("falls back to the legacy lens for direct account reads when the latest lens rejects the market", async () => {
     const account = makeAddress(41);
-    const marketAddress = makeAddress(42);
+    const marketData = makeLegacyMarketData();
+    const marketAddress = marketData.marketToken.token;
     const hydratedAccount = { account } as unknown as MarketAccount;
     const seenInfos: unknown[] = [];
     const latestLensAddress = constantsModule.getDeploymentAddress(
@@ -1070,7 +1072,7 @@ describe("Account and token read routing", () => {
       ]);
 
       return encodeLensResult(marketLensAbi as Abi, "getMarketDataWithLenderStatus", {
-        market: makeLegacyMarketData(),
+        market: marketData,
         lenderStatus: makeMarketLenderStatus(account)
       });
     });
@@ -1135,10 +1137,12 @@ describe("Account and token read routing", () => {
       if (decoded.functionName === "getMarketsDataV2") {
         const [addresses] = decoded.args as [string[]];
         seenMarkets.push(addresses);
-        return encodeLensResult(marketLensV2_5Abi as Abi, decoded.functionName, [
-          makeFullUnifiedMarketData(hooksFactory),
-          makeFullUnifiedMarketData(hooksFactory)
-        ]);
+        const data = markets.map((address) => {
+          const entry = makeFullUnifiedMarketData(hooksFactory);
+          entry.market.marketToken.token = address;
+          return entry;
+        });
+        return encodeLensResult(marketLensV2_5Abi as Abi, decoded.functionName, data);
       }
       if (decoded.functionName === "getLenderAccountData") {
         const [, addresses] = decoded.args as [string, string[]];
@@ -1176,7 +1180,7 @@ describe("Account and token read routing", () => {
     expect(accounts).to.deep.equal(hydratedAccounts);
   });
 
-  it("maps paginated unified account reads from start/count to ArchController start/end", async () => {
+  it("maps pagination bounds and rejects empty hydration for a nonempty market page", async () => {
     const account = makeAddress(50);
     const markets = [makeAddress(51), makeAddress(52), makeAddress(53)];
     const rangeCalls: Array<[number, number]> = [];
@@ -1222,12 +1226,15 @@ describe("Account and token read routing", () => {
       return encodeArchControllerResult(functionName, markets.slice(1, 3));
     });
 
-    const accounts = await MarketAccount.getPaginatedMarketAccounts(
-      constantsModule.SupportedChainId.Sepolia,
-      viemProvider as unknown as providers.Provider,
-      account,
-      1,
-      5
+    await rejects(
+      MarketAccount.getPaginatedMarketAccounts(
+        constantsModule.SupportedChainId.Sepolia,
+        viemProvider as unknown as providers.Provider,
+        account,
+        1,
+        5
+      ),
+      /Live (market|lender) result count mismatch/
     );
 
     expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([
@@ -1238,6 +1245,142 @@ describe("Account and token read routing", () => {
     ]);
     expect(seenFunctions.sort()).to.deep.equal(["getLenderAccountData", "getMarketsDataV2"]);
     expect(rangeCalls).to.deep.equal([[1, 3]]);
-    expect(accounts).to.deep.equal([]);
   });
+});
+
+describe("account read identity", () => {
+  for (const mode of ["V1", "V2", "V2.5", "V2.5 compatibility"] as const) {
+    const unified = mode.startsWith("V2.5");
+    const chainId = unified
+      ? constantsModule.SupportedChainId.Sepolia
+      : constantsModule.SupportedChainId.Mainnet;
+    const abi =
+      mode === "V1"
+        ? (marketLensAbi as Abi)
+        : unified
+        ? (marketLensV2_5Abi as Abi)
+        : (marketLensV2Abi as Abi);
+    const hooksFactory = constantsModule.getDeploymentAddress(chainId, "HooksFactoryStandard");
+    const legacyLens = constantsModule.getDeploymentAddress(chainId, "MarketLens");
+    const expectedCalls = mode === "V1" ? 2 : mode === "V2" ? 1 : mode === "V2.5" ? 2 : 3;
+
+    for (const batch of [false, true]) {
+      for (const mismatch of batch ? ["market", "lender", "count"] : ["market", "lender"]) {
+        it(`rejects a ${mismatch} mismatch in ${mode} ${
+          batch ? "batch" : "single"
+        } account reads`, async () => {
+          const account = makeAddress(0xabcd);
+          const markets = batch ? [makeAddress(41), makeAddress(42)] : [makeAddress(41)];
+          let marketData = markets.map((address) => {
+            const data =
+              mode === "V1"
+                ? makeLegacyMarketData()
+                : mode === "V2"
+                ? makeFactoryBackedMarketData(hooksFactory)
+                : mode === "V2.5"
+                ? makeFullUnifiedMarketData(hooksFactory)
+                : makeUnifiedMarketData(hooksFactory);
+            const base = "market" in data ? data.market : data;
+            base.marketToken.token = address;
+            return data;
+          });
+          let statuses = markets.map(() =>
+            mode === "V1" ? makeMarketLenderStatus(account) : makeLenderAccountData(account)
+          );
+          const last = markets.length - 1;
+          if (mismatch === "market") {
+            const data = marketData[last];
+            const base = "market" in data ? data.market : data;
+            base.marketToken.token = makeAddress(99);
+          } else if (mismatch === "lender") {
+            statuses[last].lender = makeAddress(99);
+          } else {
+            statuses = [];
+            if (!unified) marketData = [];
+          }
+          const rpc = new FakeViemProvider((call) => {
+            if (mode === "V1" && call.to?.toLowerCase() !== legacyLens.toLowerCase()) {
+              throw new Error("NotV2Market");
+            }
+            const { functionName } = decodeLensCall(abi, call);
+            if (functionName === "getMarketDataV2" || functionName === "getMarketsDataV2") {
+              if (mode === "V2.5 compatibility") throw new Error("NotV2_5Market");
+              return encodeLensResult(abi, functionName, batch ? marketData : marketData[0]);
+            }
+            if (functionName === "getMarketData" || functionName === "getMarketsData") {
+              return encodeLensResult(abi, functionName, batch ? marketData : marketData[0]);
+            }
+            if (functionName === "getLenderAccountData") {
+              const methodAbi = abi.filter(
+                (item) =>
+                  item.type === "function" &&
+                  item.name === functionName &&
+                  item.inputs[1]?.type === (batch ? "address[]" : "address")
+              ) as Abi;
+              return encodeLensResult(methodAbi, functionName, batch ? statuses : statuses[0]);
+            }
+            const combined = marketData.map((market, index) => ({
+              market,
+              lenderStatus: statuses[index]
+            }));
+            return encodeLensResult(abi, functionName, batch ? combined : combined[0]);
+          });
+          const provider = rpc as unknown as providers.Provider;
+          const load = batch
+            ? MarketAccount.getMarketAccountsForLender(chainId, provider, account, markets)
+            : MarketAccount.getMarketAccount(chainId, provider, account, markets[0]);
+
+          await rejects(
+            load,
+            mismatch === "market"
+              ? /Live market address mismatch/
+              : mismatch === "lender"
+              ? /Live lender address mismatch/
+              : /Live (market|lender) result count mismatch/
+          );
+          expect(rpc.calls).to.have.lengthOf(expectedCalls);
+        });
+      }
+    }
+  }
+
+  for (const mismatch of ["market", "lender", "count"] as const) {
+    it(`validates the complete compact account batch before mutation on a ${mismatch} mismatch`, async () => {
+      const chainId = constantsModule.SupportedChainId.Sepolia;
+      const account = makeAddress(0xabcd);
+      const requested = [makeAddress(41), makeAddress(42)];
+      const hooksFactory = constantsModule.getDeploymentAddress(chainId, "HooksFactoryStandard");
+      const updates = requested.map((address) => ({
+        market: { ...makeMarketLiveData(hooksFactory), market: address, annualInterestBips: 1350 },
+        lenderStatus: makeLenderAccountData(account)
+      }));
+      if (mismatch === "market") updates[1].market.market = makeAddress(99);
+      if (mismatch === "lender") updates[1].lenderStatus.lender = makeAddress(99);
+      if (mismatch === "count") updates.pop();
+      const rpc = new FakeViemProvider(() =>
+        encodeLensResult(marketLensV2_5Abi as Abi, "getMarketsLiveDataWithLenderStatusV2", updates)
+      );
+      const provider = rpc as unknown as providers.Provider;
+      const accounts = requested.map((address) => {
+        const data = makeFactoryBackedMarketData(hooksFactory);
+        data.marketToken.token = address;
+        const market = Market.fromMarketDataV2(chainId, provider, data);
+        market.stateSource = "indexed";
+        return MarketAccount.fromLenderAccountData(market, makeLenderAccountData(account));
+      });
+
+      await rejects(
+        MarketAccount.refreshMarketAccountsV2LiveData(chainId, provider, account, accounts),
+        mismatch === "count"
+          ? /Live market result count mismatch/
+          : new RegExp(`Live ${mismatch} address mismatch`)
+      );
+
+      expect(rpc.calls).to.have.lengthOf(1);
+      for (const { market } of accounts) {
+        expect(market.annualInterestBips).to.equal(1200);
+        expect(market.stateSource).to.equal("indexed");
+      }
+    });
+  }
 });

@@ -86,6 +86,11 @@ import { iPeriodicTermHooksAbi, wildcatMarketAbi } from "./abi";
 import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
 import { readViemContract } from "./internal/viem-read";
 import { submitPreparedTransaction } from "./internal/viem-write";
+import {
+  assertMatchingAddress,
+  assertReadIdentity,
+  ReadIdentityMismatchError
+} from "./internal/read-identity";
 import { getEthersSignerAddress } from "./internal/ethers-signer";
 import {
   normalizeSubgraphMarketProvenance,
@@ -566,7 +571,7 @@ export class Market extends ContractWrapper {
 
   /** @returns Maximum amount of underlying token that can be deposited */
   get maximumDeposit(): TokenAmount {
-    return this.underlyingToken.getAmount(this.maxTotalSupply.satsub(this.totalSupply.raw));
+    return this.underlyingToken.getAmount(this.maxTotalSupply.satsub(this.totalSupply).raw);
   }
 
   get currentRevolvingAprMetrics(): RevolvingCurrentAprMetrics | undefined {
@@ -685,7 +690,7 @@ export class Market extends ContractWrapper {
   }
 
   get outstandingTotalSupply(): TokenAmount {
-    return this.totalSupply.sub(this.normalizedPendingWithdrawals);
+    return this.totalSupply.sub(this.normalizedPendingWithdrawals.raw);
   }
 
   /** @returns Address of underlying token */
@@ -762,7 +767,7 @@ export class Market extends ContractWrapper {
       .add(this.normalizedUnclaimedWithdrawals)
       .add(minimumReserves)
       .add(this.lastAccruedProtocolFees);
-    const nonReservedSupply = this.outstandingTotalSupply.sub(minimumReserves);
+    const nonReservedSupply = this.outstandingTotalSupply.sub(minimumReserves.raw);
 
     if (reserves.lt(collateralObligation)) {
       // const borrowablePortionOfSupply = totalDebts.sub(collateralObligation);
@@ -845,7 +850,7 @@ export class Market extends ContractWrapper {
 
   /** Linear estimate using post-draw revolving utilization, without changing market state. */
   getSecondsBeforeDelinquencyForBorrowedAmount(borrowAmount: TokenAmount): number {
-    return this.forecastSecondsBeforeDelinquency(borrowAmount.raw);
+    return this.forecastSecondsBeforeDelinquency(toRawAmount(borrowAmount, this.underlyingToken));
   }
   /**
    * Estimate additional reserve growth at the current rate, rounded up to one raw
@@ -934,7 +939,7 @@ export class Market extends ContractWrapper {
       to: this.address,
       abi: wildcatMarketAbi,
       functionName: "repayAndProcessUnpaidWithdrawalBatches",
-      args: [amount.raw, maxBatches]
+      args: [toRawAmount(amount, this.underlyingToken), maxBatches]
     });
   }
 
@@ -1045,7 +1050,8 @@ export class Market extends ContractWrapper {
           const market = await getUnifiedMarketDataV2(this.chainId, this.provider, this.address);
           this.updateWith(market);
           return;
-        } catch (_) {
+        } catch (error) {
+          if (error instanceof ReadIdentityMismatchError) throw error;
           // Fall back to the pre-2.5 V2 lens until unified lens deployment is reliable.
         }
       }
@@ -1085,6 +1091,41 @@ export class Market extends ContractWrapper {
       | MarketDataV2_5StructOutput
   ): void {
     const baseData = "market" in data ? data.market : data;
+    // Validate retained identities before mutating balances or marking the model live.
+    assertMatchingAddress(baseData.marketToken.token, this.address, "Live market");
+    assertMatchingAddress(
+      baseData.underlyingToken.token,
+      this.underlyingToken.address,
+      "Live market underlying token"
+    );
+    if ("hooksConfig" in baseData) {
+      assertReadIdentity(this.version === MarketVersion.V2, "Live market version mismatch");
+      assertReadIdentity(this.hooksConfig !== undefined, "Live market hooks config missing");
+      assertMatchingAddress(
+        baseData.hooksConfig.hooksAddress,
+        this.hooksConfig.hooksAddress,
+        "Live market hooks"
+      );
+      const hooksKind = [
+        HooksKind.Unknown,
+        HooksKind.OpenTerm,
+        HooksKind.FixedTerm,
+        HooksKind.PeriodicTerm
+      ][toNumber(baseData.hooksConfig.kind)];
+      assertReadIdentity(hooksKind === this.hooksConfig.kind, "Live market hooks kind mismatch");
+      assertMatchingAddress(
+        baseData.hooks.hooksAddress,
+        this.hooksConfig.hooksAddress,
+        "Live market hooks instance"
+      );
+      assertReadIdentity(
+        toNumber(baseData.hooks.kind) === toNumber(baseData.hooksConfig.kind),
+        "Live market hooks instance kind mismatch"
+      );
+    } else {
+      assertReadIdentity(this.version === MarketVersion.V1, "Live market version mismatch");
+      assertMatchingAddress(baseData.controller, this.controller, "Live market controller");
+    }
     const nextScaleFactor = toRawAmount(baseData.scaleFactor);
     const nextScaledTotalSupply = toRawAmount(baseData.scaledTotalSupply);
     const nextScaledPendingWithdrawals = toRawAmount(baseData.scaledPendingWithdrawals);
@@ -1207,10 +1248,7 @@ export class Market extends ContractWrapper {
   }
 
   updateWithLiveData(data: MarketLiveDataV2_5StructOutput): void {
-    assert(
-      data.market.toLowerCase() === this.address.toLowerCase(),
-      `Live market data address mismatch`
-    );
+    assertMatchingAddress(data.market, this.address, "Live market data");
 
     const nextScaleFactor = toRawAmount(data.scaleFactor);
     const nextScaledTotalSupply = toRawAmount(data.scaledTotalSupply);
@@ -1819,7 +1857,8 @@ export class Market extends ContractWrapper {
       try {
         const data = await getUnifiedMarketDataV2(chainId, provider, market);
         return Market.fromUnifiedMarketData(chainId, provider, data, signerAddress);
-      } catch (_) {
+      } catch (error) {
+        if (error instanceof ReadIdentityMismatchError) throw error;
         // Fall back to the legacy lens for V1 markets and pre-unified deployments.
       }
     }
@@ -1839,7 +1878,8 @@ export class Market extends ContractWrapper {
       try {
         const data = await getUnifiedMarketDataV2(chainId, provider, market);
         return Market.fromUnifiedMarketData(chainId, provider, data, signerAddress);
-      } catch (_) {
+      } catch (error) {
+        if (error instanceof ReadIdentityMismatchError) throw error;
         // Fall back to the pre-2.5 V2 lens for chains that have not fully migrated.
       }
     }
@@ -1888,7 +1928,8 @@ export class Market extends ContractWrapper {
           markets[i].updateWithLiveData(update);
         });
         return markets;
-      } catch (_) {
+      } catch (error) {
+        if (error instanceof ReadIdentityMismatchError) throw error;
         // Fall back to broad reads for older unified lens deployments.
       }
     }
@@ -1948,7 +1989,8 @@ export class Market extends ContractWrapper {
             Market.fromUnifiedMarketData(chainId, provider, market, signerAddress)
           )
         );
-      } catch (_) {
+      } catch (error) {
+        if (error instanceof ReadIdentityMismatchError) throw error;
         return Promise.all(markets.map((market) => Market.getMarket(chainId, market, provider)));
       }
     }

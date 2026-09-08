@@ -1,10 +1,13 @@
+import { withWatchQuery } from "../helpers/watch-query-client";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
+import { rejects } from "assert";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import {
   getAllHooksDataForBorrower,
   getAllHooksTemplates,
   getHooksFactories,
+  getPolicyMarketsAndLenders,
   getHooksTemplateRegistrations
 } from "../../src/gql";
 import {
@@ -41,12 +44,12 @@ const makeSubgraphClient = <TData>(
   data: TData,
   queries: QueryArgs[] = []
 ): ApolloClient<NormalizedCacheObject> => {
-  return {
+  return withWatchQuery({
     query: async (args: QueryArgs) => {
       queries.push(args);
       return { data };
     }
-  } as unknown as ApolloClient<NormalizedCacheObject>;
+  } as unknown as ApolloClient<NormalizedCacheObject>);
 };
 
 const makeFactory = (hooksFactory: string) => ({
@@ -176,6 +179,29 @@ const makeBorrowerAccountEligibility = (isPrincipalRegistered: boolean) => ({
 });
 
 describe("subgraph hooks helpers", () => {
+  it("shares the policy query's page allowance with its member traversal", async () => {
+    const hooksInstance = makeHooksInstance(SubgraphHooksKind.OpenTerm, "OpenTermHooks", 1);
+    hooksInstance.providers[0].isPullProvider = true;
+    hooksInstance.providers[0].pullProviderIndex = 0;
+    const queries: QueryArgs[] = [];
+    const client = makeSubgraphClient(
+      { hooksInstance: { ...hooksInstance, lenders: [], markets: [] } },
+      queries
+    );
+    await rejects(
+      getPolicyMarketsAndLenders(client, {
+        contractAddress: hooksInstance.id,
+        fetchPolicy: "no-cache",
+        chainId,
+        signerOrProvider: provider,
+        limits: { maxPages: 1 }
+      }),
+      { code: "PAGE_LIMIT" }
+    );
+    expect(queries).to.have.length(1);
+    expect(queries[0].variables).not.to.have.property("limits");
+    expect(queries[0].variables).not.to.have.property("signal");
+  });
   it("includes supported templates from historical factories discovered by the subgraph", async () => {
     const queries: QueryArgs[] = [];
     const subgraphClient = makeSubgraphClient(
@@ -431,12 +457,12 @@ describe("subgraph hooks helpers", () => {
       ),
       [makeTemplateRegistration(SubgraphHooksKind.FixedTerm, "FixedTermHooks", 11_001)]
     ];
-    const client = {
+    const client = withWatchQuery({
       query: async (args: QueryArgs) => {
         queries.push(args);
         return { data: { hooksTemplateRegistrations: pages.shift() ?? [] } };
       }
-    } as unknown as ApolloClient<NormalizedCacheObject>;
+    } as unknown as ApolloClient<NormalizedCacheObject>);
 
     const registrations = await getHooksTemplateRegistrations(client, {
       fetchPolicy: "no-cache"

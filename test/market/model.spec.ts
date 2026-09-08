@@ -1,6 +1,7 @@
 import { expect } from "chai";
+import { rejects } from "assert";
 import { BigNumber, providers } from "ethers";
-import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
+import { decodeFunctionData, encodeFunctionResult, getAddress, type Abi } from "viem";
 import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../../src/abi";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { Market } from "../../src/market";
@@ -615,6 +616,7 @@ describe("Market direct read routing", () => {
       commitmentFeeBips: { isPresent: true, value: BigNumber.from(175) },
       drawnAmount: { isPresent: true, value: BigNumber.from(250) }
     });
+    data.market.marketToken.token = marketAddress;
     const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
     const viemProvider = new FakeViemProvider((call) => {
       const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
@@ -651,6 +653,9 @@ describe("Market direct read routing", () => {
         drawnAmount: { isPresent: true, value: BigNumber.from(300) }
       })
     ];
+    data.forEach((entry, index) => {
+      entry.market.marketToken.token = markets[index];
+    });
     const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
     const viemProvider = new FakeViemProvider((call) => {
       const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
@@ -679,6 +684,7 @@ describe("Market direct read routing", () => {
   it("falls back from unified reads to the legacy lens through viem", async () => {
     const marketAddress = makeAddress(104);
     const data = makeLegacyMarketData();
+    data.marketToken.token = marketAddress;
     const unifiedLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
     const legacyLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLens");
     const viemProvider = new FakeViemProvider((call) => {
@@ -711,6 +717,7 @@ describe("Market direct read routing", () => {
     const marketAddress = makeAddress(105);
     const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
     const data = makeFactoryBackedMarketData(hooksFactory);
+    data.marketToken.token = marketAddress;
     const unifiedLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
     const v2LensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2");
     const viemProvider = new FakeViemProvider((call) => {
@@ -1458,7 +1465,12 @@ describe("Market model routing metadata", () => {
     expect(market.hooksFactory).to.equal(historicalFactory);
     expect(market.marketKind).to.equal("revolving");
 
-    market.updateWith(makeFactoryBackedMarketData(historicalFactory));
+    const liveData = makeFactoryBackedMarketData(historicalFactory);
+    liveData.marketToken.token = data.address;
+    liveData.underlyingToken.token = data._asset.address;
+    liveData.hooksConfig.hooksAddress = data.hooks!.address;
+    liveData.hooks.hooksAddress = data.hooks!.address;
+    market.updateWith(liveData);
 
     expect(market.stateSource).to.equal("live");
     expect(market.hooksFactory).to.equal(historicalFactory);
@@ -1751,4 +1763,273 @@ describe("Market revolving APR helpers", () => {
         standardSemanticsMarket.repayRequiredForDuration(SECONDS_IN_365_DAYS).raw
     ).to.equal(true);
   });
+});
+
+describe("full market refresh identity", () => {
+  const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
+  const cases: Array<{
+    name: string;
+    create: () => { market: Market; data: Parameters<Market["updateWith"]>[0] };
+  }> = [
+    {
+      name: "V1",
+      create: () => {
+        const data = makeLegacyMarketData();
+        return { market: Market.fromMarketData(SupportedChainId.Sepolia, data, provider), data };
+      }
+    },
+    {
+      name: "V2",
+      create: () => {
+        const data = makeFactoryBackedMarketData(hooksFactory);
+        return { market: Market.fromMarketDataV2(SupportedChainId.Sepolia, provider, data), data };
+      }
+    },
+    {
+      name: "V2.5 compatibility",
+      create: () => {
+        const data = makeUnifiedMarketData(hooksFactory);
+        return {
+          market: Market.fromMarketDataV2(
+            SupportedChainId.Sepolia,
+            provider,
+            makeFactoryBackedMarketData(hooksFactory)
+          ),
+          data
+        };
+      }
+    },
+    {
+      name: "V2.5 full",
+      create: () => {
+        const data = makeUnifiedMarketDataV2(hooksFactory);
+        return {
+          market: Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false),
+          data
+        };
+      }
+    }
+  ];
+
+  for (const { name, create } of cases) {
+    for (const field of ["marketToken", "underlyingToken"] as const) {
+      it(`rejects a different ${field} before mutating ${name} state`, () => {
+        const { market, data } = create();
+        const base = "market" in data ? data.market : data;
+        const originalApr = market.annualInterestBips;
+        market.stateSource = "indexed";
+        base.annualInterestBips = BigNumber.from(originalApr + 100);
+        base[field] = { ...base[field], token: makeAddress(0xabcd) };
+
+        expect(() => market.updateWith(data)).to.throw(
+          field === "marketToken"
+            ? "Live market address mismatch"
+            : "Live market underlying token address mismatch"
+        );
+        expect(market.annualInterestBips).to.equal(originalApr);
+        expect(market.stateSource).to.equal("indexed");
+      });
+    }
+
+    it(`accepts matching ${name} identities with different address casing`, () => {
+      const { market, data } = create();
+      const base = "market" in data ? data.market : data;
+      const originalToken = market.underlyingToken;
+      const originalHooks = market.hooksConfig;
+      base.marketToken.token = base.marketToken.token.toUpperCase();
+      base.underlyingToken.token = base.underlyingToken.token.toUpperCase();
+      if ("hooksConfig" in base) {
+        base.hooksConfig.hooksAddress = base.hooksConfig.hooksAddress.toUpperCase();
+        base.hooks.hooksAddress = base.hooks.hooksAddress.toUpperCase();
+      } else {
+        base.controller = base.controller.toUpperCase();
+      }
+      base.annualInterestBips = BigNumber.from(1350);
+      market.stateSource = "indexed";
+
+      market.updateWith(data);
+
+      expect(market.annualInterestBips).to.equal(1350);
+      expect(market.stateSource).to.equal("live");
+      expect(market.underlyingToken).to.equal(originalToken);
+      expect(market.hooksConfig).to.equal(originalHooks);
+    });
+  }
+
+  for (const [field, message] of [
+    ["hooksAddress", "Live market hooks address mismatch"],
+    ["kind", "Live market hooks kind mismatch"]
+  ] as const) {
+    it(`rejects a different hooks ${field} before updating a V2.5 market`, () => {
+      const data = makeUnifiedMarketDataV2(hooksFactory);
+      const market = Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
+      market.stateSource = "indexed";
+      data.market.annualInterestBips = BigNumber.from(1350);
+      if (field === "hooksAddress") data.market.hooksConfig.hooksAddress = makeAddress(0xabcd);
+      else data.market.hooksConfig.kind = 3;
+
+      expect(() => market.updateWith(data)).to.throw(message);
+      expect(market.annualInterestBips).to.equal(1200);
+      expect(market.stateSource).to.equal("indexed");
+    });
+  }
+
+  it("rejects hooks metadata that disagrees with the market's hooks configuration", () => {
+    const data = makeUnifiedMarketDataV2(hooksFactory);
+    const market = Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
+    data.market.hooks.hooksAddress = makeAddress(0xabcd);
+
+    expect(() => market.updateWith(data)).to.throw("Live market hooks instance address mismatch");
+  });
+
+  it("rejects a different legacy controller", () => {
+    const data = makeLegacyMarketData();
+    const market = Market.fromMarketData(SupportedChainId.Sepolia, data, provider);
+    data.controller = makeAddress(0xabcd);
+
+    expect(() => market.updateWith(data)).to.throw("Live market controller address mismatch");
+  });
+
+  it("does not retry another lens after an identity mismatch", async () => {
+    const initialData = makeUnifiedMarketDataV2(hooksFactory);
+    const updatedData = makeUnifiedMarketDataV2(hooksFactory);
+    updatedData.market.underlyingToken.token = makeAddress(0xabcd);
+    const lensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
+    const viemProvider = new FakeViemProvider((call) => {
+      expect(call.to).to.equal(lensAddress);
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketDataV2", updatedData);
+    });
+    const market = Market.fromMarketDataV2_5(
+      SupportedChainId.Sepolia,
+      viemProvider as unknown as providers.Provider,
+      initialData,
+      false
+    );
+    market.stateSource = "indexed";
+
+    await rejects(market.update(), /Live market underlying token address mismatch/);
+
+    expect(viemProvider.calls).to.have.lengthOf(1);
+    expect(market.stateSource).to.equal("indexed");
+  });
+});
+
+describe("initial market read identity", () => {
+  const cases = [
+    {
+      name: "V1",
+      chainId: SupportedChainId.Mainnet,
+      abi: marketLensAbi as Abi,
+      singleMethod: "getMarketData",
+      batchMethod: "getMarketsData",
+      single: Market.getMarket,
+      batch: Market.getMarkets,
+      makeData: makeLegacyMarketData
+    },
+    {
+      name: "V2",
+      chainId: SupportedChainId.Mainnet,
+      abi: marketLensV2Abi as Abi,
+      singleMethod: "getMarketData",
+      batchMethod: "getMarketsData",
+      single: Market.getMarketV2,
+      batch: Market.getMarketsV2,
+      makeData: () =>
+        makeFactoryBackedMarketData(
+          getDeploymentAddress(SupportedChainId.Mainnet, "HooksFactoryStandard")
+        )
+    },
+    ...[false, true].map((v2Only) => ({
+      name: v2Only ? "V2.5 V2-only loader" : "V2.5 general loader",
+      chainId: SupportedChainId.Sepolia,
+      abi: marketLensV2_5Abi as Abi,
+      singleMethod: "getMarketDataV2",
+      batchMethod: "getMarketsDataV2",
+      single: v2Only ? Market.getMarketV2 : Market.getMarket,
+      batch: v2Only ? Market.getMarketsV2 : Market.getMarkets,
+      makeData: () =>
+        makeUnifiedMarketDataV2(
+          getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard")
+        )
+    }))
+  ];
+
+  for (const route of cases) {
+    const requested = [makeAddress(0xabcd), makeAddress(0xef01)];
+    const makeData = (address: string) => {
+      const data = route.makeData();
+      const base = "market" in data ? data.market : data;
+      base.marketToken.token = address;
+      return data;
+    };
+
+    it(`accepts matching single and batch results through ${route.name}`, async () => {
+      const data = requested.map(makeData);
+      const rpc = new FakeViemProvider((call) => {
+        const { functionName } = decodeLensCall(route.abi, call);
+        return encodeLensResult(
+          route.abi,
+          functionName,
+          functionName === route.singleMethod ? data[0] : data
+        );
+      });
+      const provider = rpc as unknown as providers.Provider;
+      const checksummed = requested.map((address) => getAddress(address));
+
+      const single = await route.single(route.chainId, checksummed[0], provider);
+      const batch = await route.batch(route.chainId, checksummed, provider);
+
+      expect(single.address.toLowerCase()).to.equal(requested[0]);
+      expect(batch.map(({ address }) => address.toLowerCase())).to.deep.equal(requested);
+      expect(rpc.calls).to.have.lengthOf(2);
+    });
+
+    it(`rejects a substituted initial market through ${route.name} without fallback`, async () => {
+      const rpc = new FakeViemProvider(() =>
+        encodeLensResult(route.abi, route.singleMethod, makeData(requested[1]))
+      );
+
+      await rejects(
+        route.single(route.chainId, requested[0], rpc as unknown as providers.Provider),
+        /Live market address mismatch/
+      );
+      expect(rpc.calls).to.have.lengthOf(1);
+    });
+
+    for (const mismatch of ["empty", "short", "long", "reordered", "duplicate"] as const) {
+      it(`rejects a ${mismatch} batch through ${route.name} without fallback`, async () => {
+        const good = requested.map(makeData);
+        const data =
+          mismatch === "empty"
+            ? []
+            : mismatch === "short"
+            ? good.slice(0, 1)
+            : mismatch === "long"
+            ? [...good, good[0]]
+            : mismatch === "reordered"
+            ? [...good].reverse()
+            : [good[0], good[0]];
+        const rpc = new FakeViemProvider(() =>
+          encodeLensResult(route.abi, route.batchMethod, data)
+        );
+
+        await rejects(
+          route.batch(route.chainId, requested, rpc as unknown as providers.Provider),
+          mismatch === "reordered" || mismatch === "duplicate"
+            ? /Live market address mismatch/
+            : /Live market result count mismatch/
+        );
+        expect(rpc.calls).to.have.lengthOf(1);
+      });
+    }
+
+    it(`preserves an empty batch request through ${route.name}`, async () => {
+      const rpc = new FakeViemProvider(() => encodeLensResult(route.abi, route.batchMethod, []));
+
+      expect(
+        await route.batch(route.chainId, [], rpc as unknown as providers.Provider)
+      ).to.deep.equal([]);
+      expect(rpc.calls).to.have.lengthOf(1);
+    });
+  }
 });

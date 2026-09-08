@@ -1,5 +1,6 @@
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { assert } from "../utils";
+import { IndexedPageProgress, IndexedTraversal } from "../internal/indexed-traversal";
 import {
   GetWithdrawalBatchChildrenDocument,
   GetLenderWithdrawalChildrenDocument,
@@ -17,16 +18,29 @@ type Children = Partial<
     "payments" | "withdrawals" | "requests" | "executions"
   >
 >;
+type ChildRecord = NonNullable<Children[keyof Children]>[number];
 const childKeys = ["payments", "withdrawals", "requests", "executions"] as const;
 
 // Never mutate Apollo results. Page every requested collection at the parent read's
 // block; a missing parent or stalled page is an error, not a silently partial history.
 const completeChildren = async <T extends Children>(
   initial: T,
-  load: (skip: number) => Promise<Children>
+  load: (skip: number) => Promise<Children>,
+  traversal: IndexedTraversal
 ): Promise<T> => {
   const result = { ...initial };
   const keys = childKeys.filter((key) => initial[key] !== undefined);
+  const progress = new Map(
+    keys.map((key) => [
+      key,
+      new IndexedPageProgress(true, undefined, "Withdrawal history page did not advance")
+    ])
+  );
+  for (const key of keys) {
+    const items = initial[key]!;
+    traversal.accept(items, CHILD_PAGE_SIZE, progress.get(key));
+    Object.assign(result, { [key]: [...items] });
+  }
   let page: Children = initial;
   for (
     let skip = CHILD_PAGE_SIZE;
@@ -37,11 +51,9 @@ const completeChildren = async <T extends Children>(
     for (const key of keys) {
       const next = page[key];
       assert(next !== undefined, `Missing withdrawal history collection: ${key}`);
-      const prior = result[key] ?? [];
-      if (next.length && prior.length) {
-        assert(next[0].id > prior[prior.length - 1].id, "Withdrawal history page did not advance");
-      }
-      Object.assign(result, { [key]: [...prior, ...next] });
+      traversal.accept(next, CHILD_PAGE_SIZE, progress.get(key));
+      // These arrays are owned by this read; append without repeatedly copying all history.
+      (result[key] as ChildRecord[]).push(...next);
     }
   }
   return result;
@@ -60,36 +72,46 @@ export const completeWithdrawalBatch = async <
 >(
   client: ApolloClient<NormalizedCacheObject>,
   batch: T,
-  blockNumber?: number
+  blockNumber: number | undefined,
+  traversal: IndexedTraversal
 ): Promise<T> =>
-  completeChildren(batch, async (skip) => {
-    const { data } = await client.query<SubgraphGetWithdrawalBatchChildrenQuery>({
-      query: GetWithdrawalBatchChildrenDocument,
-      variables: {
-        id: batch.id,
-        skip,
-        block: withdrawalHistoryBlock(blockNumber),
-        includeEvents: batch.withdrawals !== undefined
-      },
-      fetchPolicy: "no-cache"
-    });
-    assert(data.withdrawalBatch != null, "Withdrawal batch missing at indexed block");
-    return data.withdrawalBatch;
-  });
+  completeChildren(
+    batch,
+    async (skip) => {
+      const { data } = await traversal.query<SubgraphGetWithdrawalBatchChildrenQuery>(client, {
+        query: GetWithdrawalBatchChildrenDocument,
+        variables: {
+          id: batch.id,
+          skip,
+          block: withdrawalHistoryBlock(blockNumber),
+          includeEvents: batch.withdrawals !== undefined
+        },
+        fetchPolicy: "no-cache"
+      });
+      assert(data.withdrawalBatch != null, "Withdrawal batch missing at indexed block");
+      return data.withdrawalBatch;
+    },
+    traversal
+  );
 
 export const completeLenderWithdrawal = async (
   client: ApolloClient<NormalizedCacheObject>,
   withdrawal: SubgraphLenderWithdrawalPropertiesWithEventsFragment,
-  blockNumber?: number
+  blockNumber: number | undefined,
+  traversal: IndexedTraversal
 ): Promise<SubgraphLenderWithdrawalPropertiesWithEventsFragment> => {
-  const batch = await completeWithdrawalBatch(client, withdrawal.batch, blockNumber);
-  return completeChildren({ ...withdrawal, batch }, async (skip) => {
-    const { data } = await client.query<SubgraphGetLenderWithdrawalChildrenQuery>({
-      query: GetLenderWithdrawalChildrenDocument,
-      variables: { id: withdrawal.id, skip, block: withdrawalHistoryBlock(blockNumber) },
-      fetchPolicy: "no-cache"
-    });
-    assert(data.lenderWithdrawalStatus != null, "Lender withdrawal missing at indexed block");
-    return data.lenderWithdrawalStatus;
-  });
+  const batch = await completeWithdrawalBatch(client, withdrawal.batch, blockNumber, traversal);
+  return completeChildren(
+    { ...withdrawal, batch },
+    async (skip) => {
+      const { data } = await traversal.query<SubgraphGetLenderWithdrawalChildrenQuery>(client, {
+        query: GetLenderWithdrawalChildrenDocument,
+        variables: { id: withdrawal.id, skip, block: withdrawalHistoryBlock(blockNumber) },
+        fetchPolicy: "no-cache"
+      });
+      assert(data.lenderWithdrawalStatus != null, "Lender withdrawal missing at indexed block");
+      return data.lenderWithdrawalStatus;
+    },
+    traversal
+  );
 };

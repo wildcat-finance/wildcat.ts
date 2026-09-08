@@ -1,3 +1,4 @@
+import { queryWithIndexedSignal } from "../internal/indexed-query";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import { getSubgraphClientSchemaFamily, requireSubgraphFeature } from "../config";
 import {
@@ -168,14 +169,18 @@ export const getLenderPositionPage = async (
     ...(markets ? { market_in: normalizeAddresses(markets) } : {}),
     ...(activeOnly ? { scaledBalance_gt: 0 } : {})
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetLenderPositionPageQuery,
     SubgraphGetLenderPositionPageQueryVariables
-  >({
-    query: legacySchema ? LegacyGetLenderPositionPageDocument : GetLenderPositionPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema ? LegacyGetLenderPositionPageDocument : GetLenderPositionPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.lenderAccounts.map(normalizeLenderPosition),
     first,
@@ -206,14 +211,18 @@ export const getLenderDailyStatsPage = async (
     ...(fromTimestamp !== undefined ? { startTimestamp_gte: fromTimestamp } : {}),
     ...(toTimestamp !== undefined ? { startTimestamp_lt: toTimestamp } : {})
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetLenderDailyStatsPageQuery,
     SubgraphGetLenderDailyStatsPageQueryVariables
-  >({
-    query: GetLenderDailyStatsPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: GetLenderDailyStatsPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.lenderDailyStats_collection.map(normalizeLenderDailyStats),
     first,
@@ -259,14 +268,18 @@ export const getLenderDepositPage = async (
     account_: lenderAccountFilter(lender, markets),
     ...blockTimeRange(fromTimestamp, toTimestamp)
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetLenderDepositPageQuery,
     SubgraphGetLenderDepositPageQueryVariables
-  >({
-    query: legacySchema ? LegacyGetLenderDepositPageDocument : GetLenderDepositPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema ? LegacyGetLenderDepositPageDocument : GetLenderDepositPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.deposits.map(normalizeLenderDeposit),
     first,
@@ -293,16 +306,20 @@ export const getLenderWithdrawalRequestPage = async (
     account_: lenderAccountFilter(lender, markets),
     ...blockTimeRange(fromTimestamp, toTimestamp)
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetLenderWithdrawalRequestPageQuery,
     SubgraphGetLenderWithdrawalRequestPageQueryVariables
-  >({
-    query: legacySchema
-      ? LegacyGetLenderWithdrawalRequestPageDocument
-      : GetLenderWithdrawalRequestPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema
+        ? LegacyGetLenderWithdrawalRequestPageDocument
+        : GetLenderWithdrawalRequestPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.withdrawalRequests.map(normalizeLenderWithdrawalRequest),
     first,
@@ -329,16 +346,20 @@ export const getLenderWithdrawalExecutionPage = async (
     account_: lenderAccountFilter(lender, markets),
     ...blockTimeRange(fromTimestamp, toTimestamp)
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetLenderWithdrawalExecutionPageQuery,
     SubgraphGetLenderWithdrawalExecutionPageQueryVariables
-  >({
-    query: legacySchema
-      ? LegacyGetLenderWithdrawalExecutionPageDocument
-      : GetLenderWithdrawalExecutionPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema
+        ? LegacyGetLenderWithdrawalExecutionPageDocument
+        : GetLenderWithdrawalExecutionPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.withdrawalExecutions.map(normalizeLenderWithdrawalExecution),
     first,
@@ -382,14 +403,18 @@ export const getLenderTransferPage = async (
             { ...commonFilter, to_: accountFilter }
           ]
         };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetLenderTransferPageQuery,
     SubgraphGetLenderTransferPageQueryVariables
-  >({
-    query: legacySchema ? LegacyGetLenderTransferPageDocument : GetLenderTransferPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema ? LegacyGetLenderTransferPageDocument : GetLenderTransferPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.transfers.map(normalizeLenderTransfer),
     first,
@@ -413,16 +438,20 @@ export const getLenderWithdrawalStatusPage = async (
     id_gt: afterId,
     account_: lenderAccountFilter(lender, markets)
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetLenderWithdrawalStatusPageQuery,
     SubgraphGetLenderWithdrawalStatusPageQueryVariables
-  >({
-    query: legacySchema
-      ? LegacyGetLenderWithdrawalStatusPageDocument
-      : GetLenderWithdrawalStatusPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema
+        ? LegacyGetLenderWithdrawalStatusPageDocument
+        : GetLenderWithdrawalStatusPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     legacySchema
       ? (data.lenderWithdrawalStatuses as unknown as LegacyLenderWithdrawalStatusData[]).map(

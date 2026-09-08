@@ -1,5 +1,7 @@
 import { Token, TokenAmount, minTokenAmount, toRawAmount } from "../token";
+import { assertMatchingToken, assertNormalizedMarketAmount } from "../internal/token-identity";
 import { Market } from "../market";
+import { ReadIdentityMismatchError } from "../internal/read-identity";
 import {
   MarketLenderStatusStructOutput,
   MarketDataWithLenderStatusStructOutput,
@@ -557,14 +559,16 @@ export class MarketAccount {
   }
 
   previewSetMaxTotalSupply(amount: TokenAmount): SetMaxTotalSupplyPreview {
+    assertNormalizedMarketAmount(amount, this.market, "Maximum supply");
     if (!this.isBorrower) return { status: SetMaxTotalSupplyStatus.NotBorrower };
-    if (this.market.version === MarketVersion.V1 && amount.lt(this.market.totalSupply)) {
+    if (this.market.version === MarketVersion.V1 && amount.raw < this.market.totalSupply.raw) {
       return { status: SetMaxTotalSupplyStatus.BelowCurrentSupply };
     }
     return { status: SetMaxTotalSupplyStatus.Ready };
   }
 
   previewSetMinimumDeposit(amount: TokenAmount): SetMinimumDepositPreview {
+    assertMatchingToken(amount.token, this.market.underlyingToken, "Minimum deposit");
     if (this.market.version !== MarketVersion.V2)
       return { status: SetMinimumDepositStatus.NotV2Market };
     if (!this.isBorrower) return { status: SetMinimumDepositStatus.NotBorrower };
@@ -757,7 +761,7 @@ export class MarketAccount {
   /* -------------------------------------------------------------------------- */
 
   isApprovedFor(amount: TokenAmount): boolean {
-    return this.underlyingApproval >= amount.raw;
+    return this.underlyingApproval >= toRawAmount(amount, this.market.underlyingToken);
   }
 
   async approveMarket(amount: TokenAmount): Promise<TransactionHash> {
@@ -766,6 +770,7 @@ export class MarketAccount {
 
   async populateApproveMarket(amount: TokenAmount): Promise<PartialTransaction> {
     const token = this.market.underlyingToken;
+    assertMatchingToken(amount.token, token, "Approval amount");
     const signer = await token.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
@@ -783,6 +788,7 @@ export class MarketAccount {
   /* -------------------------------------------------------------------------- */
 
   previewForceBuyBack(lender: string, amount: TokenAmount): ForceBuyBackPreview {
+    assertNormalizedMarketAmount(amount, this.market, "Buyback amount");
     if (!this.isBorrower) return { status: ForceBuyBackStatus.NotBorrower };
     if (this.market.version !== MarketVersion.V2) {
       return { status: ForceBuyBackStatus.V1NotSupported };
@@ -798,7 +804,7 @@ export class MarketAccount {
     ) {
       return { status: ForceBuyBackStatus.HooksNotSupported };
     }
-    if (amount.gt(this.underlyingBalance)) {
+    if (amount.raw > this.underlyingBalance.raw) {
       return { status: ForceBuyBackStatus.InsufficientBalance };
     }
     if (this.market.isDelinquent || this.market.willBeDelinquent) {
@@ -849,6 +855,7 @@ export class MarketAccount {
   }
 
   previewDeposit(amount: TokenAmount): DepositPreview {
+    assertMatchingToken(amount.token, this.market.underlyingToken, "Deposit amount");
     const status = this.depositAvailability;
     if (status !== DepositStatus.Ready) return { status };
     if (amount.gt(this.market.maximumDeposit)) {
@@ -894,9 +901,10 @@ export class MarketAccount {
   /* ------ Withdrawals ------ */
 
   previewQueueWithdrawal(amount: TokenAmount): QueueWithdrawalPreview {
+    assertNormalizedMarketAmount(amount, this.market, "Withdrawal amount");
     const status = this.withdrawalAvailability;
     if (status !== QueueWithdrawalStatus.Ready) return { status };
-    if (amount.gt(this.marketBalance)) {
+    if (amount.raw > this.marketBalance.raw) {
       return { status: QueueWithdrawalStatus.InsufficientBalance };
     }
     return { status: QueueWithdrawalStatus.Ready };
@@ -1025,6 +1033,7 @@ export class MarketAccount {
   }
 
   previewRepay(amount: TokenAmount): RepayPreview {
+    assertMatchingToken(amount.token, this.market.underlyingToken, "Repayment amount");
     if (this.market.isClosed) return { status: RepayStatus.MarketClosed };
     if (amount.gt(this.underlyingBalance)) {
       return { status: RepayStatus.InsufficientBalance };
@@ -1043,6 +1052,7 @@ export class MarketAccount {
   }
 
   async populateRepay(amount: TokenAmount | BigintNumberish): Promise<PartialTransaction> {
+    const rawAmount = toRawAmount(amount, this.market.underlyingToken);
     const signer = await this.market.signer.getAddress();
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
       throw Error(`MarketAccount signer ${signer} does not match ${this.account}`);
@@ -1053,7 +1063,7 @@ export class MarketAccount {
       to: this.market.address,
       abi: wildcatMarketAbi,
       functionName: "repay",
-      args: [toRawAmount(amount)]
+      args: [rawAmount]
     });
   }
 
@@ -1111,6 +1121,7 @@ export class MarketAccount {
   }
 
   async borrow(amount: TokenAmount): Promise<TransactionHash> {
+    assertMatchingToken(amount.token, this.market.underlyingToken, "Borrow amount");
     const signer = await this.market.signer.getAddress();
     if (!this.isBorrower) throw Error("Only borrower can borrow");
     if (signer.toLowerCase() !== this.account.toLowerCase()) {
@@ -1393,7 +1404,8 @@ export class MarketAccount {
     try {
       const info = await getLatestMarketDataWithLenderStatus(chainId, provider, account, market);
       return MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info);
-    } catch (_) {
+    } catch (error) {
+      if (error instanceof ReadIdentityMismatchError) throw error;
       const info = await getLegacyMarketDataWithLenderStatus(chainId, provider, account, market);
       return MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info);
     }
@@ -1481,7 +1493,8 @@ export class MarketAccount {
     try {
       const infos = await getLatestMarketsDataWithLenderStatus(chainId, provider, account, markets);
       return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
-    } catch (_) {
+    } catch (error) {
+      if (error instanceof ReadIdentityMismatchError) throw error;
       const infos = await getLegacyMarketsDataWithLenderStatus(chainId, provider, account, markets);
       return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
     }
@@ -1524,7 +1537,8 @@ export class MarketAccount {
           }
         });
         return marketAccounts;
-      } catch (_) {
+      } catch (error) {
+        if (error instanceof ReadIdentityMismatchError) throw error;
         // Fall back to existing reads for older unified lens deployments.
       }
     }

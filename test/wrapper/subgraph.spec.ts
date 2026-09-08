@@ -1,5 +1,6 @@
 import { ApolloClient, DocumentNode, NormalizedCacheObject } from "@apollo/client";
 import { expect } from "chai";
+import { rejects } from "assert";
 import { providers } from "ethers";
 import { print } from "graphql";
 import { decodeFunctionData, encodeFunctionResult, ExecutionRevertedError, type Abi } from "viem";
@@ -50,7 +51,79 @@ const token = (address: string, name: string, symbol: string) => ({
   isMock: false
 });
 
+const makeWrapperData = (): SubgraphTokenWrapperData => {
+  const marketAddress = "0x4000000000000000000000000000000000000004";
+  const address = "0x5000000000000000000000000000000000000005";
+  return {
+    id: address,
+    address,
+    marketAddress,
+    marketToken: token(marketAddress, "Market", "MKT"),
+    token: token(address, "Wrapper", "WMKT"),
+    factory: {
+      id: "0x2000000000000000000000000000000000000002",
+      address: "0x2000000000000000000000000000000000000002"
+    }
+  };
+};
+
 describe("TokenWrapper subgraph hydration", () => {
+  for (const field of ["rootMarket", "parentMarket", "marketToken", "shareToken"] as const) {
+    it(`rejects a different ${field} without a factory fallback`, async () => {
+      const wrapper = makeWrapperData();
+      const requestedMarket = wrapper.marketAddress;
+      const otherAddress = "0x9000000000000000000000000000000000000009";
+      const data = { market: { id: requestedMarket, tokenWrapper: wrapper } };
+      if (field === "rootMarket") data.market.id = otherAddress;
+      if (field === "parentMarket") wrapper.marketAddress = otherAddress;
+      if (field === "marketToken") wrapper.marketToken.address = otherAddress;
+      if (field === "shareToken") wrapper.token.address = otherAddress;
+      let queryCount = 0;
+      const client = {
+        query: async () => {
+          queryCount++;
+          return { data };
+        }
+      } as unknown as ApolloClient<NormalizedCacheObject>;
+      const rpc = new FakeViemProvider(() => {
+        throw Error("Unexpected RPC call");
+      });
+
+      await rejects(
+        TokenWrapper.fromMarketWithSubgraph(client, {
+          chainId: SupportedChainId.Sepolia,
+          signerOrProvider: rpc as unknown as providers.Provider,
+          market: requestedMarket
+        }),
+        /Subgraph wrapper .* address mismatch/
+      );
+
+      expect(queryCount).to.equal(1);
+      expect(rpc.calls).to.have.lengthOf(0);
+    });
+  }
+
+  it("accepts a matching indexed wrapper without live reads", async () => {
+    const data = makeWrapperData();
+    const client = {
+      query: async () => ({
+        data: { market: { id: data.marketAddress.toUpperCase(), tokenWrapper: data } }
+      })
+    } as unknown as ApolloClient<NormalizedCacheObject>;
+    const rpc = new FakeViemProvider(() => {
+      throw Error("Unexpected RPC call");
+    });
+
+    const wrapper = await TokenWrapper.fromMarketWithSubgraph(client, {
+      chainId: SupportedChainId.Sepolia,
+      signerOrProvider: rpc as unknown as providers.Provider,
+      market: data.marketAddress
+    });
+
+    expect(wrapper?.address).to.equal(data.address);
+    expect(rpc.calls).to.have.lengthOf(0);
+  });
+
   it("hydrates static wrapper metadata without live contract reads", () => {
     const marketAddress = "0x4000000000000000000000000000000000000004";
     const wrapperAddress = "0x5000000000000000000000000000000000000005";

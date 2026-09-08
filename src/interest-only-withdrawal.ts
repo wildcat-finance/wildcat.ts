@@ -1,6 +1,7 @@
 import { IndexedAt, ReadStateSource } from "./domain";
 import { Token, TokenAmount, minTokenAmount } from "./token";
-import { assert, rayMulBigint } from "./utils";
+import { rayMulBigint } from "./utils";
+import { assertMatchingToken } from "./internal/token-identity";
 
 export type InterestOnlyWithdrawalPosition =
   | { kind: "market"; address: string }
@@ -64,14 +65,8 @@ export const createInterestOnlyWithdrawalQuote = ({
   balanceStateSource,
   quotedAtTimestamp = Math.floor(Date.now() / 1_000)
 }: CreateInterestOnlyWithdrawalQuoteArgs): InterestOnlyWithdrawalQuote => {
-  assert(
-    currentBalance.token.address.toLowerCase() === assetToken.address.toLowerCase(),
-    "Current balance token does not match quote asset"
-  );
-  assert(
-    principalBasis.token.address.toLowerCase() === assetToken.address.toLowerCase(),
-    "Principal basis token does not match quote asset"
-  );
+  assertMatchingToken(currentBalance.token, assetToken, "Current balance");
+  assertMatchingToken(principalBasis.token, assetToken, "Principal basis");
 
   const indexedPositionBalance = assetToken.getAmount(
     rayMulBigint(indexedScaledBalance, currentScaleFactor)

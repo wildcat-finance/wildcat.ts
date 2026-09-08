@@ -1,3 +1,4 @@
+import { queryWithIndexedSignal } from "../internal/indexed-query";
 import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { getSubgraphClientSchemaFamily, requireSubgraphFeature } from "../config";
 import {
@@ -109,14 +110,18 @@ export const getMarketDailyStatsPage = async (
     ...(fromTimestamp !== undefined ? { startTimestamp_gte: fromTimestamp } : {}),
     ...(toTimestamp !== undefined ? { startTimestamp_lt: toTimestamp } : {})
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetMarketDailyStatsPageQuery,
     SubgraphGetMarketDailyStatsPageQueryVariables
-  >({
-    query: legacySchema ? LegacyGetMarketDailyStatsPageDocument : GetMarketDailyStatsPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema ? LegacyGetMarketDailyStatsPageDocument : GetMarketDailyStatsPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.marketDailyStats_collection.map(normalizeMarketDailyStats),
     first,
@@ -144,16 +149,20 @@ export const getDelinquencyStatusChangePage = async (
     ...(fromTimestamp !== undefined ? { blockTimestamp_gte: fromTimestamp } : {}),
     ...(toTimestamp !== undefined ? { blockTimestamp_lt: toTimestamp } : {})
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetDelinquencyStatusChangePageQuery,
     SubgraphGetDelinquencyStatusChangePageQueryVariables
-  >({
-    query: legacySchema
-      ? LegacyGetDelinquencyStatusChangePageDocument
-      : GetDelinquencyStatusChangePageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema
+        ? LegacyGetDelinquencyStatusChangePageDocument
+        : GetDelinquencyStatusChangePageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.delinquencyStatusChangeds.map(normalizeDelinquencyStatusChange),
     first,
@@ -181,16 +190,20 @@ export const getMarketInterestAccrualPage = async (
     ...(fromTimestamp !== undefined ? { fromTimestamp_gte: fromTimestamp } : {}),
     ...(toTimestamp !== undefined ? { fromTimestamp_lt: toTimestamp } : {})
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetMarketInterestAccrualPageQuery,
     SubgraphGetMarketInterestAccrualPageQueryVariables
-  >({
-    query: legacySchema
-      ? LegacyGetMarketInterestAccrualPageDocument
-      : GetMarketInterestAccrualPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema
+        ? LegacyGetMarketInterestAccrualPageDocument
+        : GetMarketInterestAccrualPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.marketInterestAccrueds.map(normalizeMarketInterestAccrual),
     first,
@@ -218,16 +231,20 @@ export const getAnnualInterestBipsUpdatePage = async (
     ...(fromTimestamp !== undefined ? { blockTimestamp_gte: fromTimestamp } : {}),
     ...(toTimestamp !== undefined ? { blockTimestamp_lt: toTimestamp } : {})
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetAnnualInterestBipsUpdatePageQuery,
     SubgraphGetAnnualInterestBipsUpdatePageQueryVariables
-  >({
-    query: legacySchema
-      ? LegacyGetAnnualInterestBipsUpdatePageDocument
-      : GetAnnualInterestBipsUpdatePageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema
+        ? LegacyGetAnnualInterestBipsUpdatePageDocument
+        : GetAnnualInterestBipsUpdatePageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.annualInterestBipsUpdateds.map(normalizeAnnualInterestBipsUpdate),
     first,
@@ -254,14 +271,18 @@ export const getMarketBorrowPage = async (
     ...marketScope(markets, borrower),
     ...eventTimeRange(fromTimestamp, toTimestamp)
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetMarketBorrowPageQuery,
     SubgraphGetMarketBorrowPageQueryVariables
-  >({
-    query: legacySchema ? LegacyGetMarketBorrowPageDocument : GetMarketBorrowPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema ? LegacyGetMarketBorrowPageDocument : GetMarketBorrowPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.borrows.map(normalizeMarketBorrow),
     first,
@@ -288,16 +309,20 @@ export const getMarketDebtRepaymentPage = async (
     ...marketScope(markets, borrower),
     ...eventTimeRange(fromTimestamp, toTimestamp)
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetMarketDebtRepaymentPageQuery,
     SubgraphGetMarketDebtRepaymentPageQueryVariables
-  >({
-    query: legacySchema
-      ? LegacyGetMarketDebtRepaymentPageDocument
-      : GetMarketDebtRepaymentPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema
+        ? LegacyGetMarketDebtRepaymentPageDocument
+        : GetMarketDebtRepaymentPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.debtRepaids.map(normalizeMarketDebtRepayment),
     first,
@@ -324,16 +349,20 @@ export const getMaxTotalSupplyUpdatePage = async (
     ...marketScope(markets, borrower),
     ...eventTimeRange(fromTimestamp, toTimestamp)
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetMaxTotalSupplyUpdatePageQuery,
     SubgraphGetMaxTotalSupplyUpdatePageQueryVariables
-  >({
-    query: legacySchema
-      ? LegacyGetMaxTotalSupplyUpdatePageDocument
-      : GetMaxTotalSupplyUpdatePageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: legacySchema
+        ? LegacyGetMaxTotalSupplyUpdatePageDocument
+        : GetMaxTotalSupplyUpdatePageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.maxTotalSupplyUpdateds.map(normalizeMaxTotalSupplyUpdate),
     first,
@@ -359,24 +388,28 @@ export const getMarketAggregatePage = async (
     ...(markets ? { address_in: normalizeAddresses(markets) } : {}),
     ...(borrower ? { borrower: borrower.toLowerCase() } : {})
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetMarketAggregatePageQuery,
     SubgraphGetMarketAggregatePageQueryVariables
-  >({
-    query: legacySchema ? LegacyGetMarketAggregatePageDocument : GetMarketAggregatePageDocument,
-    variables: {
-      filter: legacySchema
-        ? ({
-            ...filter,
-            ...(filter.address_in ? { id_in: filter.address_in } : {}),
-            address_in: undefined
-          } as unknown as SubgraphMarket_Filter)
-        : filter,
-      first,
-      block
+  >(
+    client,
+    {
+      query: legacySchema ? LegacyGetMarketAggregatePageDocument : GetMarketAggregatePageDocument,
+      variables: {
+        filter: legacySchema
+          ? ({
+              ...filter,
+              ...(filter.address_in ? { id_in: filter.address_in } : {}),
+              address_in: undefined
+            } as unknown as SubgraphMarket_Filter)
+          : filter,
+        first,
+        block
+      },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
     },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+    request.signal
+  );
   return toIndexedPage(
     data.markets.map(normalizeIndexedMarketAggregate),
     first,

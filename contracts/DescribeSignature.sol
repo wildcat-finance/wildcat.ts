@@ -1,4 +1,5 @@
 import "./ISafe.sol";
+import "./InspectionCalls.sol";
 bytes4 constant MAGIC_VALUE = 0x1626ba7e;
 bytes4 constant MAGIC_VALUE_BYTES = 0x20c13b0b;
 
@@ -150,26 +151,35 @@ contract DescribeSignature {
       }
     }
     if (data.account.kind == AccountKind.Safe) {
-      messageHash = getMessageHashForSafe(
-        ISafe(signer),
-        abi.encodePacked(toEthSignedMessageHash(message))
-      );
-      if (check1271WithBytes(signer, message, signature)) {
-        data.kind = SignatureKind.EIP1271_BYTES;
-      } else if (checkOnChainGnosisSignature(signer, message)) {
-        data.kind = SignatureKind.ON_CHAIN_GNOSIS_SIGNATURE;
-        // messageHash = toEthSignedMessageHash(message);
-      } else if (check1271WithMessageHash(signer, keccak256(message), signature)) {
-        data.kind = SignatureKind.EIP1271_HASH;
-      } else if (check1271WithMessageHash(signer, toEthSignedMessageHash(message), signature)) {
-        data.kind = SignatureKind.EIP1271_PERSONAL_SIGNATURE;
-      } else if (check1271WithBytes(signer, abi.encodePacked(messageHash), signature)) {
-        data.kind = SignatureKind.EIP1271_HASH;
-      } // else if (check1271WithBytes(signer, abi.encodePacked(toEthSignedMessageHash(message)), signature)) {
-      // data.kind = SignatureKind.EIP1271_PERSONAL_SIGNATURE;
-      //}
-      // Check if the signature data is a compact array of signatures by the owners
-      if (signature.length >= data.account.threshold * 65) {
+      {
+        bytes memory safeMessageData = encodeMessageDataForSafe(
+          ISafe(signer),
+          abi.encodePacked(toEthSignedMessageHash(message))
+        );
+        bool hasSafeMessageHash = safeMessageData.length != 0;
+        if (hasSafeMessageHash) messageHash = keccak256(safeMessageData);
+        if (check1271WithBytes(signer, message, signature)) {
+          data.kind = SignatureKind.EIP1271_BYTES;
+        } else if (checkOnChainGnosisSignature(signer, message)) {
+          data.kind = SignatureKind.ON_CHAIN_GNOSIS_SIGNATURE;
+        } else if (check1271WithMessageHash(signer, keccak256(message), signature)) {
+          data.kind = SignatureKind.EIP1271_HASH;
+        } else if (check1271WithMessageHash(signer, toEthSignedMessageHash(message), signature)) {
+          data.kind = SignatureKind.EIP1271_PERSONAL_SIGNATURE;
+        } else if (
+          hasSafeMessageHash &&
+          check1271WithBytes(signer, abi.encodePacked(messageHash), signature)
+        ) {
+          data.kind = SignatureKind.EIP1271_HASH;
+        }
+        // Signature validity remains usable when only the Safe domain is unavailable.
+        if (!hasSafeMessageHash) {
+          data.signer = signer;
+          return data;
+        }
+      }
+      // Bound the count before multiplying so malformed thresholds cannot overflow.
+      if (data.account.threshold <= signature.length / 65) {
         uint numSignatures = data.account.threshold;
         address lastOwner = address(0);
         address currentOwner;
@@ -192,7 +202,7 @@ contract DescribeSignature {
             }
 
             // Check that signature data pointer (s) is in bounds (points to the length of data -> 32 bytes)
-            if (uint256(s) + 32 > signature.length) {
+            if (uint256(s) > signature.length || signature.length - uint256(s) < 32) {
               signersOk = false;
               break;
             }
@@ -202,7 +212,7 @@ contract DescribeSignature {
             assembly {
               contractSignatureLen := mload(add(add(signature, s), 0x20))
             }
-            if (uint256(s) + 32 + contractSignatureLen > signature.length) {
+            if (contractSignatureLen > signature.length - uint256(s) - 32) {
               signersOk = false;
               break;
             }
@@ -227,7 +237,11 @@ contract DescribeSignature {
             // When handling approved hashes the address of the approver is encoded into r
             currentOwner = address(uint160(uint256(r)));
             // Hashes are automatically approved by the sender of the message or when they have been pre-approved via a separate transaction
-            if (ISafe(signer).approvedHashes(currentOwner, messageHash) == 0) {
+            (bool approvalOk, uint256 approval) = InspectionCalls.readWord(
+              signer,
+              abi.encodeCall(ISafe.approvedHashes, (currentOwner, messageHash))
+            );
+            if (!approvalOk || approval == 0) {
               signersOk = false;
               break;
             }
@@ -261,7 +275,15 @@ contract DescribeSignature {
             });
           }
 
-          if (currentOwner <= lastOwner || !ISafe(signer).isOwner(currentOwner)) {
+          if (currentOwner <= lastOwner) {
+            signersOk = false;
+            break;
+          }
+          (bool ownerOk, uint256 isOwner) = InspectionCalls.readWord(
+            signer,
+            abi.encodeCall(ISafe.isOwner, (currentOwner))
+          );
+          if (!ownerOk || isOwner != 1) {
             signersOk = false;
             break;
           }
@@ -324,10 +346,11 @@ contract DescribeSignature {
     bytes32 messageHash,
     bytes memory signature
   ) internal view returns (bool) {
-    (bool success, bytes memory returnData) = safeAddress.staticcall(
-      abi.encodeWithSelector(MAGIC_VALUE, messageHash, signature)
+    return InspectionCalls.matchesBytes4(
+      safeAddress,
+      abi.encodeWithSelector(MAGIC_VALUE, messageHash, signature),
+      MAGIC_VALUE
     );
-    return success && (abi.decode(returnData, (bytes4)) == MAGIC_VALUE);
   }
 
   /**
@@ -339,9 +362,11 @@ contract DescribeSignature {
     bytes memory message,
     bytes memory signature
   ) internal view returns (bool) {
-    bytes memory data = abi.encodeWithSelector(MAGIC_VALUE_BYTES, message, signature);
-    (bool success, bytes memory returnData) = safeAddress.staticcall(data);
-    return success && (abi.decode(returnData, (bytes4)) == MAGIC_VALUE_BYTES);
+    return InspectionCalls.matchesBytes4(
+      safeAddress,
+      abi.encodeWithSelector(MAGIC_VALUE_BYTES, message, signature),
+      MAGIC_VALUE_BYTES
+    );
   }
 
   /// @dev Returns an Ethereum Signed Message, created from `s`.
@@ -385,24 +410,30 @@ contract DescribeSignature {
    * @dev Returns the pre-image of the message hash (see getMessageHashForSafe).
    * @param safe Safe to which the message is targeted.
    * @param message Message that should be encoded.
-   * @return Encoded message.
+   * @return Encoded message, or empty bytes if the domain cannot be read.
    */
   function encodeMessageDataForSafe(
     ISafe safe,
     bytes memory message
   ) public view returns (bytes memory) {
+    (bool domainOk, uint256 domain) = InspectionCalls.readWord(
+      address(safe),
+      abi.encodeCall(ISafe.domainSeparator, ())
+    );
+    if (!domainOk) return new bytes(0);
     bytes32 safeMessageHash = keccak256(abi.encode(SAFE_MSG_TYPEHASH, keccak256(message)));
-    return abi.encodePacked(bytes1(0x19), bytes1(0x01), safe.domainSeparator(), safeMessageHash);
+    return abi.encodePacked(bytes1(0x19), bytes1(0x01), bytes32(domain), safeMessageHash);
   }
 
   /**
    * @dev Returns the hash of a message that can be signed by owners.
    * @param safe Safe to which the message is targeted.
    * @param message Message that should be hashed.
-   * @return Message hash.
+   * @return Message hash, or zero if the domain cannot be read.
    */
   function getMessageHashForSafe(ISafe safe, bytes memory message) public view returns (bytes32) {
-    return keccak256(encodeMessageDataForSafe(safe, message));
+    bytes memory encoded = encodeMessageDataForSafe(safe, message);
+    return encoded.length == 0 ? bytes32(0) : keccak256(encoded);
   }
 }
 
@@ -479,13 +510,21 @@ library AccountsLib {
         }
       }
     }
+    description.kind = AccountKind.UnknownContract;
     if (proxyAddress != address(0) && _isSafe(proxyAddress)) {
+      (bool ownersOk, address[] memory owners) = InspectionCalls.readAddressArray(
+        account,
+        abi.encodeCall(ISafe.getOwners, ())
+      );
+      if (!ownersOk) return description;
+      (bool thresholdOk, uint256 threshold) = InspectionCalls.readWord(
+        account,
+        abi.encodeCall(ISafe.getThreshold, ())
+      );
+      if (!thresholdOk) return description;
       description.kind = AccountKind.Safe;
-      ISafe safe = ISafe(account);
-      description.owners = safe.getOwners();
-      description.threshold = safe.getThreshold();
-    } else {
-      description.kind = AccountKind.UnknownContract;
+      description.owners = owners;
+      description.threshold = threshold;
     }
   }
 }

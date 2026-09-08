@@ -141,6 +141,10 @@
     "artifact": "artifacts/contracts/AccountQuery.sol/AccountQuery.json"
   },
   {
+    "bytecodeExportName": "checkSafeSignatureBytecode",
+    "artifact": "artifacts/contracts/CheckSafeSignature.sol/CheckSafeSignature.json"
+  },
+  {
     "bytecodeExportName": "describeSignatureBytecode",
     "artifact": "artifacts/contracts/DescribeSignature.sol/DescribeSignature.json"
   }

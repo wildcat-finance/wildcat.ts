@@ -84,6 +84,11 @@ const describeSignatureAbi = [
   }
 ] as const;
 
+/**
+ * Malformed contract responses fail the affected probe; remaining signature
+ * checks continue. Unavailable optional Safe details do not invalidate a
+ * separately verified signature. Provider failures still reject the query.
+ */
 export async function describeSignature(
   provider: SignerOrProvider,
   address: string,

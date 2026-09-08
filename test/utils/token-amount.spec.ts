@@ -1,5 +1,7 @@
 import { expect } from "chai";
-import { providers } from "ethers";
+import { BigNumber, providers } from "ethers";
+import { decodeFunctionData, type Hex } from "viem";
+import { iERC20Abi } from "../../src/abi";
 import { Market } from "../../src/market";
 import { SupportedChainId } from "../../src/constants";
 import { Token, toRawAmount } from "../../src/token";
@@ -65,6 +67,74 @@ describe("TokenAmount bigint model", () => {
 
     expect(toRawAmount(legacyBigNumberLike(42))).to.equal(42n);
     expect(toRawAmount(amount)).to.equal(42n);
+  });
+
+  it("retains exact large ethers BigNumber inputs for token amounts and legacy arithmetic", () => {
+    const value = 9_007_199_254_740_993n;
+    const legacy = BigNumber.from(value.toString());
+    const amount = token.getAmount(legacy);
+
+    expect(toRawAmount(legacy)).to.equal(value);
+    expect(amount.raw).to.equal(value);
+    expect(amount.add(legacy).raw).to.equal(value * 2n);
+    expect(amount.raw.add(legacy)).to.equal(value * 2n);
+    expect(amount.raw.eq(legacy)).to.equal(true);
+  });
+
+  it("keeps safe legacy toNumber conversions working at both range boundaries", () => {
+    for (const value of [Number.MIN_SAFE_INTEGER, -1, 0, 1, Number.MAX_SAFE_INTEGER]) {
+      expect(token.getAmount(BigInt(value)).raw.toNumber()).to.equal(value);
+    }
+  });
+
+  it("rejects legacy toNumber conversions outside the safe integer range", () => {
+    for (const value of [9_007_199_254_740_992n, -9_007_199_254_740_992n, 9_007_199_254_740_993n]) {
+      expect(() => token.getAmount(value).raw.toNumber()).to.throw(
+        "Can not safely convert bigint to number"
+      );
+    }
+  });
+
+  for (const method of ["gt", "gte", "lt", "lte", "eq", "add", "sub", "mul", "div"] as const) {
+    it(`checks unsafe numeric operands in legacy ${method}`, () => {
+      const raw = token.getAmount(100n).raw;
+
+      for (const value of [Number.MIN_SAFE_INTEGER - 1, Number.MAX_SAFE_INTEGER + 1]) {
+        expect(() => raw[method](value)).to.throw(
+          "Can not convert unsafe integer number to bigint"
+        );
+      }
+    });
+  }
+
+  it("rejects unsafe numeric token amounts and approval inputs", () => {
+    const unsafe = Number.MAX_SAFE_INTEGER + 1;
+    const spender = "0x0000000000000000000000000000000000000002";
+
+    expect(() => token.getAmount(unsafe)).to.throw(
+      "Can not convert unsafe integer number to bigint"
+    );
+    expect(() => token.getAmount(1n).add(unsafe)).to.throw(
+      "Can not convert unsafe integer number to bigint"
+    );
+    expect(() => token.populateApprove(spender, unsafe)).to.throw(
+      "Can not convert unsafe integer number to bigint"
+    );
+  });
+
+  it("preserves approval calldata for exact bigint, string, and ethers BigNumber inputs", () => {
+    const value = (1n << 80n) + 123n;
+    const spender = "0x0000000000000000000000000000000000000002";
+
+    for (const input of [value, value.toString(), BigNumber.from(value.toString())]) {
+      const transaction = token.populateApprove(spender, input);
+
+      expect(transaction.to).to.equal(token.address);
+      expect(decodeFunctionData({ abi: iERC20Abi, data: transaction.data as Hex })).to.deep.equal({
+        functionName: "approve",
+        args: [spender, value]
+      });
+    }
   });
 
   it("keeps legacy JSON.stringify paths safe for bigint-backed SDK values", () => {

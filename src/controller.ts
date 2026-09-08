@@ -17,6 +17,7 @@ import {
 } from "./types";
 import { Market } from "./market";
 import { Token, TokenAmount } from "./token";
+import { assertMatchingToken } from "./internal/token-identity";
 import {
   assert,
   parseFeeConfiguration,
@@ -228,6 +229,7 @@ export class MarketController extends ContractWrapper {
   }
 
   encodeDeployMarket(params: MarketParameters): PartialTransaction {
+    assertMatchingToken(params.maxTotalSupply.token, params.asset, "Maximum supply");
     if (this.checkParameters(params).length) {
       throw Error("Invalid parameters: " + this.checkParameters(params).join(", "));
     }

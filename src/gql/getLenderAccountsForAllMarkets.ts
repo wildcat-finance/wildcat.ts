@@ -13,6 +13,7 @@ import { SupportedChainId } from "../constants";
 import { SignerOrProvider } from "../types";
 import { usesLegacySubgraphSchema } from "../config";
 import { parseSubgraphLenderHooksAccess } from "../utils";
+import { assertMatchingAddress } from "../internal/read-identity";
 import {
   LegacyGetAllMarketsForLenderViewDocument,
   LegacyLenderMarketsQueryData,
@@ -59,6 +60,7 @@ function buildMarketAccounts(
       );
       return MarketAccount.fromMarketDataOnly(market, lender, !!authorization);
     }
+    assertMatchingAddress(lenderData.address, lender, "Subgraph lender");
     return MarketAccount.fromSubgraphAccountData(market, lenderData);
   });
 }
@@ -124,6 +126,7 @@ export async function getLenderAccountsForAllMarkets(
           access
         );
       }
+      assertMatchingAddress(lenderData.address, lender, "Subgraph lender");
       return MarketAccount.fromSubgraphAccountData(
         market,
         normalizeLegacyLenderAccountData(lenderData),

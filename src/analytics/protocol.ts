@@ -1,3 +1,4 @@
+import { queryWithIndexedSignal } from "../internal/indexed-query";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
 import { requireSubgraphFeature } from "../config";
 import {
@@ -50,14 +51,18 @@ export const getProtocolDailyStatsPage = async (
     ...(fromTimestamp !== undefined ? { startTimestamp_gte: fromTimestamp } : {}),
     ...(toTimestamp !== undefined ? { startTimestamp_lt: toTimestamp } : {})
   };
-  const { data } = await client.query<
+  const { data } = await queryWithIndexedSignal<
     SubgraphGetProtocolDailyStatsPageQuery,
     SubgraphGetProtocolDailyStatsPageQueryVariables
-  >({
-    query: GetProtocolDailyStatsPageDocument,
-    variables: { filter, first, block },
-    fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
-  });
+  >(
+    client,
+    {
+      query: GetProtocolDailyStatsPageDocument,
+      variables: { filter, first, block },
+      fetchPolicy: indexedFetchPolicy(fetchPolicy, block)
+    },
+    request.signal
+  );
   return toIndexedPage(
     data.protocolDailyStats_collection.map(normalizeProtocolDailyStats),
     first,

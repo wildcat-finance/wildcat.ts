@@ -28,6 +28,47 @@ import type {
 import type { SignerOrProvider } from "../types";
 import { getViemPublicClientFromEthers } from "./ethers-viem";
 import { readViemContract } from "./viem-read";
+import {
+  assertMatchingAddress,
+  assertReadIdentity,
+  ReadIdentityMismatchError
+} from "./read-identity";
+
+type MarketIdentityData =
+  | { marketToken: { token: string } }
+  | { market: { marketToken: { token: string } } | string };
+
+const assertMarketIdentity = (data: MarketIdentityData, market: string): void => {
+  const base = "market" in data ? data.market : data;
+  assertMatchingAddress(
+    typeof base === "string" ? base : base.marketToken.token,
+    market,
+    "Live market"
+  );
+};
+
+const assertLenderIdentity = (data: { lender: string }, account: string): void => {
+  assertMatchingAddress(data.lender, account, "Live lender");
+};
+
+const assertMarketAccountIdentity = (
+  data: { market: MarketIdentityData; lenderStatus: { lender: string } },
+  market: string,
+  account: string
+): void => {
+  assertMarketIdentity(data.market, market);
+  assertLenderIdentity(data.lenderStatus, account);
+};
+
+const assertBatchIdentity = <Result>(
+  data: readonly Result[],
+  markets: readonly string[],
+  validate: (result: Result, market: string) => void,
+  context = "Live market"
+): void => {
+  assertReadIdentity(data.length === markets.length, `${context} result count mismatch`);
+  data.forEach((result, index) => validate(result, markets[index]));
+};
 
 const readMarketLens = async <Result>(
   chainId: SupportedChainId,
@@ -35,15 +76,18 @@ const readMarketLens = async <Result>(
   deploymentName: "MarketLens" | "MarketLensV2" | "MarketLensV2_5",
   abi: Abi,
   functionName: string,
-  args: readonly unknown[]
+  args: readonly unknown[],
+  validate?: (result: Result) => void
 ): Promise<Result> => {
-  return readViemContract<Result>(
+  const result = await readViemContract<Result>(
     getViemPublicClientFromEthers(provider),
     getDeploymentAddress(chainId, deploymentName),
     abi,
     functionName,
     args
   );
+  validate?.(result);
+  return result;
 };
 
 const getLatestLensTarget = (
@@ -60,10 +104,19 @@ const readLatestMarketLens = <Result>(
   chainId: SupportedChainId,
   provider: SignerOrProvider,
   functionName: string,
-  args: readonly unknown[]
+  args: readonly unknown[],
+  validate?: (result: Result) => void
 ): Promise<Result> => {
   const { deploymentName, abi } = getLatestLensTarget(chainId);
-  return readMarketLens<Result>(chainId, provider, deploymentName, abi, functionName, args);
+  return readMarketLens<Result>(
+    chainId,
+    provider,
+    deploymentName,
+    abi,
+    functionName,
+    args,
+    validate
+  );
 };
 
 const getCompatibleMarketDataV2_5 = (
@@ -77,7 +130,8 @@ const getCompatibleMarketDataV2_5 = (
     "MarketLensV2_5",
     marketLensV2_5Abi as Abi,
     "getMarketData",
-    [market as Address]
+    [market as Address],
+    (data) => assertMarketIdentity(data, market)
   );
 };
 
@@ -92,7 +146,8 @@ const getCompatibleMarketsDataV2_5 = (
     "MarketLensV2_5",
     marketLensV2_5Abi as Abi,
     "getMarketsData",
-    [markets as Address[]]
+    [markets as Address[]],
+    (data) => assertBatchIdentity(data, markets, assertMarketIdentity)
   );
 };
 
@@ -117,7 +172,8 @@ export const getLegacyMarketData = (
     "MarketLens",
     marketLensAbi as Abi,
     "getMarketData",
-    [market as Address]
+    [market as Address],
+    (data) => assertMarketIdentity(data, market)
   );
 };
 
@@ -132,7 +188,8 @@ export const getLegacyMarketsData = (
     "MarketLens",
     marketLensAbi as Abi,
     "getMarketsData",
-    [markets as Address[]]
+    [markets as Address[]],
+    (data) => assertBatchIdentity(data, markets, assertMarketIdentity)
   );
 };
 
@@ -162,7 +219,8 @@ export const getV2MarketData = (
     "MarketLensV2",
     marketLensV2Abi as Abi,
     "getMarketData",
-    [market as Address]
+    [market as Address],
+    (data) => assertMarketIdentity(data, market)
   );
 };
 
@@ -177,7 +235,8 @@ export const getV2MarketsData = (
     "MarketLensV2",
     marketLensV2Abi as Abi,
     "getMarketsData",
-    [markets as Address[]]
+    [markets as Address[]],
+    (data) => assertBatchIdentity(data, markets, assertMarketIdentity)
   );
 };
 
@@ -192,7 +251,8 @@ export const getUnifiedMarketDataV2 = (
     "MarketLensV2_5",
     marketLensV2_5Abi as Abi,
     "getMarketDataV2",
-    [market as Address]
+    [market as Address],
+    (data) => assertMarketIdentity(data, market)
   );
 };
 
@@ -207,7 +267,8 @@ export const getUnifiedMarketsDataV2 = (
     "MarketLensV2_5",
     marketLensV2_5Abi as Abi,
     "getMarketsDataV2",
-    [markets as Address[]]
+    [markets as Address[]],
+    (data) => assertBatchIdentity(data, markets, assertMarketIdentity)
   );
 };
 
@@ -220,7 +281,8 @@ export const getFullMarketsDataV2 = async (
   if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
     try {
       return await getUnifiedMarketsDataV2(chainId, provider, markets);
-    } catch (_) {
+    } catch (error) {
+      if (error instanceof ReadIdentityMismatchError) throw error;
       // Preserve the pre-unified read path on chains whose lens has not fully migrated.
     }
   }
@@ -238,7 +300,8 @@ export const getUnifiedMarketsLiveDataV2 = (
     "MarketLensV2_5",
     marketLensV2_5Abi as Abi,
     "getMarketsLiveDataV2",
-    [markets as Address[]]
+    [markets as Address[]],
+    (data) => assertBatchIdentity(data, markets, assertMarketIdentity)
   );
 };
 
@@ -254,7 +317,11 @@ export const getUnifiedMarketsLiveDataWithLenderStatusV2 = (
     "MarketLensV2_5",
     marketLensV2_5Abi as Abi,
     "getMarketsLiveDataWithLenderStatusV2",
-    [account as Address, markets as Address[]]
+    [account as Address, markets as Address[]],
+    (data) =>
+      assertBatchIdentity(data, markets, (entry, market) =>
+        assertMarketAccountIdentity(entry, market, account)
+      )
   );
 };
 
@@ -332,7 +399,8 @@ export const getLegacyMarketLenderStatus = (
     "MarketLens",
     marketLensAbi as Abi,
     "getMarketLenderStatus",
-    [account as Address, market as Address]
+    [account as Address, market as Address],
+    (data) => assertLenderIdentity(data, account)
   );
 };
 
@@ -348,7 +416,14 @@ export const getLegacyMarketsLenderStatus = (
     "MarketLens",
     marketLensAbi as Abi,
     "getMarketsLenderStatus",
-    [account as Address, markets as Address[]]
+    [account as Address, markets as Address[]],
+    (data) =>
+      assertBatchIdentity(
+        data,
+        markets,
+        (status) => assertLenderIdentity(status, account),
+        "Live lender"
+      )
   );
 };
 
@@ -362,7 +437,8 @@ export const getLatestLenderAccountData = (
     chainId,
     provider,
     "getLenderAccountData",
-    [account as Address, market as Address]
+    [account as Address, market as Address],
+    (data) => assertLenderIdentity(data, account)
   );
 };
 
@@ -385,7 +461,14 @@ export const getLatestLenderAccountsData = (
     deploymentName,
     batchLenderAccountAbi,
     "getLenderAccountData",
-    [account as Address, markets as Address[]]
+    [account as Address, markets as Address[]],
+    (data) =>
+      assertBatchIdentity(
+        data,
+        markets,
+        (status) => assertLenderIdentity(status, account),
+        "Live lender"
+      )
   );
 };
 
@@ -401,9 +484,10 @@ export const getLatestMarketDataWithLenderStatus = (
 > => {
   if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
     return Promise.all([
-      getUnifiedMarketDataV2(chainId, provider, market).catch(() =>
-        getCompatibleMarketDataV2_5(chainId, provider, market)
-      ),
+      getUnifiedMarketDataV2(chainId, provider, market).catch((error) => {
+        if (error instanceof ReadIdentityMismatchError) throw error;
+        return getCompatibleMarketDataV2_5(chainId, provider, market);
+      }),
       getLatestLenderAccountData(chainId, provider, account, market)
     ]).then(([marketData, lenderStatus]) =>
       withLenderStatusV2_5(marketData, lenderStatus as LenderAccountDataV2_5StructOutput)
@@ -411,7 +495,13 @@ export const getLatestMarketDataWithLenderStatus = (
   }
   return readLatestMarketLens<
     MarketDataWithLenderStatusV2StructOutput | MarketDataWithLenderStatusV2_5StructOutput
-  >(chainId, provider, "getMarketDataWithLenderStatus", [account as Address, market as Address]);
+  >(
+    chainId,
+    provider,
+    "getMarketDataWithLenderStatus",
+    [account as Address, market as Address],
+    (data) => assertMarketAccountIdentity(data, market, account)
+  );
 };
 
 export const getLatestMarketsDataWithLenderStatus = (
@@ -428,14 +518,12 @@ export const getLatestMarketsDataWithLenderStatus = (
 > => {
   if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
     return Promise.all([
-      getUnifiedMarketsDataV2(chainId, provider, markets).catch(() =>
-        getCompatibleMarketsDataV2_5(chainId, provider, markets)
-      ),
+      getUnifiedMarketsDataV2(chainId, provider, markets).catch((error) => {
+        if (error instanceof ReadIdentityMismatchError) throw error;
+        return getCompatibleMarketsDataV2_5(chainId, provider, markets);
+      }),
       getLatestLenderAccountsData(chainId, provider, account, markets)
     ]).then(([marketData, lenderStatuses]) => {
-      if (marketData.length !== lenderStatuses.length) {
-        throw new Error("V2.5 market and lender-account result lengths do not match");
-      }
       return marketData.map((market, index) =>
         withLenderStatusV2_5(market, lenderStatuses[index] as LenderAccountDataV2_5StructOutput)
       );
@@ -443,10 +531,16 @@ export const getLatestMarketsDataWithLenderStatus = (
   }
   return readLatestMarketLens<
     Array<MarketDataWithLenderStatusV2StructOutput | MarketDataWithLenderStatusV2_5StructOutput>
-  >(chainId, provider, "getMarketsDataWithLenderStatus", [
-    account as Address,
-    markets as Address[]
-  ]);
+  >(
+    chainId,
+    provider,
+    "getMarketsDataWithLenderStatus",
+    [account as Address, markets as Address[]],
+    (data) =>
+      assertBatchIdentity(data, markets, (entry, market) =>
+        assertMarketAccountIdentity(entry, market, account)
+      )
+  );
 };
 
 export const getLegacyMarketDataWithLenderStatus = (
@@ -461,7 +555,8 @@ export const getLegacyMarketDataWithLenderStatus = (
     "MarketLens",
     marketLensAbi as Abi,
     "getMarketDataWithLenderStatus",
-    [account as Address, market as Address]
+    [account as Address, market as Address],
+    (data) => assertMarketAccountIdentity(data, market, account)
   );
 };
 
@@ -477,7 +572,11 @@ export const getLegacyMarketsDataWithLenderStatus = (
     "MarketLens",
     marketLensAbi as Abi,
     "getMarketsDataWithLenderStatus",
-    [account as Address, markets as Address[]]
+    [account as Address, markets as Address[]],
+    (data) =>
+      assertBatchIdentity(data, markets, (entry, market) =>
+        assertMarketAccountIdentity(entry, market, account)
+      )
   );
 };
 
@@ -492,7 +591,8 @@ export const getLegacyAllMarketsDataWithLenderStatus = (
     "MarketLens",
     marketLensAbi as Abi,
     "getAllMarketsDataWithLenderStatus",
-    [account as Address]
+    [account as Address],
+    (data) => data.forEach((entry) => assertLenderIdentity(entry.lenderStatus, account))
   );
 };
 
@@ -509,7 +609,8 @@ export const getLegacyPaginatedMarketsDataWithLenderStatus = (
     "MarketLens",
     marketLensAbi as Abi,
     "getPaginatedMarketsDataWithLenderStatus",
-    [account as Address, BigInt(start), BigInt(count)]
+    [account as Address, BigInt(start), BigInt(count)],
+    (data) => data.forEach((entry) => assertLenderIdentity(entry.lenderStatus, account))
   );
 };
 

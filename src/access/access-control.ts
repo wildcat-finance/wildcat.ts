@@ -3,6 +3,7 @@ import { DefaultV2ParameterConstraints, SupportedChainId } from "../constants";
 import { MarketParameters } from "../controller";
 import { SubgraphHooksInstanceDataFragment } from "../gql/graphql";
 import { Token, TokenAmount } from "../token";
+import { assertMatchingToken } from "../internal/token-identity";
 import {
   AnyHooksInstanceDataStructOutput,
   DeployMarketInputsV2Struct,
@@ -383,6 +384,16 @@ export class OpenTermHooksTemplate extends ContractWrapper {
     salt,
     ...otherParameters
   }: OpenTermMarketDeploymentArgs): DeployMarketPreview {
+    assertMatchingToken(maxTotalSupply.token, asset, "Maximum supply");
+    if (minimumDeposit) assertMatchingToken(minimumDeposit.token, asset, "Minimum deposit");
+    if (this.fees.originationFeeAmount) {
+      if (!this.fees.originationFeeToken) throw Error("Origination fee token is required");
+      assertMatchingToken(
+        this.fees.originationFeeAmount.token,
+        this.fees.originationFeeToken,
+        "Origination fee"
+      );
+    }
     const targetMarketKind = marketKind ?? "standard";
     const deploymentStatus = getHooksTemplateDeploymentStatus(
       this,

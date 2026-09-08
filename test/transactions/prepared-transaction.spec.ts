@@ -7,6 +7,7 @@ import {
   wildcat4626WrapperAbi,
   wildcat4626WrapperFactoryAbi,
   wildcatMarketControllerAbi,
+  wildcatMarketControllerFactoryAbi,
   wildcatMarketV2Abi
 } from "../../src/abi";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
@@ -80,6 +81,59 @@ const makeHooksFlags = (overrides: Partial<ReturnType<typeof makeHooksFlagsBase>
 });
 
 describe("prepared transaction encoding", () => {
+  for (const isDeployed of [false, true]) {
+    it(`checks the asset of a V1 deployment amount with controller deployed=${isDeployed}`, () => {
+      const asset = new Token(
+        SupportedChainId.Sepolia,
+        makeAddress(50),
+        "Asset",
+        "AST",
+        6,
+        false,
+        provider
+      );
+      const controller = new MarketController(
+        SupportedChainId.Sepolia,
+        makeAddress(7),
+        makeAddress(8),
+        makeAddress(9),
+        true,
+        isDeployed,
+        fees,
+        constraints,
+        [],
+        provider.getSigner()
+      );
+      const parameters = {
+        asset,
+        namePrefix: "Market ",
+        symbolPrefix: "M-",
+        maxTotalSupply: asset.getAmount(1_234_567n),
+        annualInterestBips: 1_000,
+        reserveRatioBips: 1_000,
+        delinquencyFeeBips: 100,
+        delinquencyGracePeriod: 86_400,
+        withdrawalBatchDuration: 86_400
+      };
+      for (const [dimension, chainId, address, decimals] of [
+        ["chain", SupportedChainId.Mainnet, asset.address, 6],
+        ["address", asset.chainId, makeAddress(51), 6],
+        ["decimals", asset.chainId, asset.address, 18]
+      ] as const) {
+        const other = new Token(chainId, address, "Asset", "AST", decimals, false, provider);
+        expect(() =>
+          controller.encodeDeployMarket({ ...parameters, maxTotalSupply: other.getAmount(1n) })
+        ).to.throw(new RegExp(`token ${dimension} mismatch`));
+      }
+      const tx = controller.encodeDeployMarket(parameters);
+      const { args } = decodeFunctionData({
+        abi: isDeployed ? wildcatMarketControllerAbi : wildcatMarketControllerFactoryAbi,
+        data: tx.data as `0x${string}`
+      });
+      expect(args?.[3]).to.equal(parameters.maxTotalSupply.raw);
+    });
+  }
+
   it("encodes calldata with viem and converts explicitly to Safe payloads", () => {
     const token = makeAddress(1);
     const spender = makeAddress(2);
@@ -424,6 +478,7 @@ describe("prepared transaction encoding", () => {
       market: {
         address: marketAddress,
         borrower,
+        underlyingToken: token,
         version: MarketVersion.V2,
         hooksConfig: {
           kind: HooksKind.OpenTerm,
@@ -466,6 +521,7 @@ describe("prepared transaction encoding", () => {
       market: {
         address: makeAddress(36),
         borrower,
+        underlyingToken: token,
         version: MarketVersion.V2,
         hooksConfig: {
           kind: HooksKind.OpenTerm,
@@ -502,6 +558,7 @@ describe("prepared transaction encoding", () => {
       market: {
         address: marketAddress,
         borrower,
+        underlyingToken: token,
         chainId: SupportedChainId.Sepolia,
         version: MarketVersion.V2,
         hooksConfig: {

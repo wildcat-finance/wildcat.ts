@@ -13,6 +13,7 @@ import { Deployments } from "./deployments";
 
 export type SubgraphCompatibilityIssueCode =
   | "METADATA_QUERY_FAILED"
+  | "METADATA_QUERY_TIMEOUT"
   | "MISSING_DEPLOYMENT_METADATA"
   | "INVALID_DEPLOYMENT_METADATA"
   | "CHAIN_ID_MISMATCH"
@@ -273,19 +274,66 @@ export const getSubgraphCompatibilityIssues = (
 const errorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
-/** Read and normalize the deployment declaration without trusting it as compatible. */
-export const fetchIndexerDeploymentMetadata = async (
-  endpoint: string
+const SubgraphMetadataTimeoutMs = 10_000;
+
+const fetchClientIndexerDeploymentMetadata = async (
+  client: ApolloClient<NormalizedCacheObject>,
+  endpoint = "Apollo client"
 ): Promise<IndexerDeploymentMetadata> => {
-  const client = new ApolloClient({
-    cache: new InMemoryCache(),
-    link: new HttpLink({ uri: endpoint })
-  });
+  const controller = new AbortController();
+  const queryDefaults = client.defaultOptions.query;
+  const callerSignal = queryDefaults?.context?.fetchOptions?.signal as AbortSignal | undefined;
+  let onCallerAbort: (() => void) | undefined;
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  let subscription: { unsubscribe: () => void } | undefined;
 
   try {
-    const { data } = await client.query<SubgraphGetIndexerDeploymentQuery>({
-      query: GetIndexerDeploymentDocument,
-      fetchPolicy: "no-cache"
+    const data = await new Promise<SubgraphGetIndexerDeploymentQuery>((resolve, reject) => {
+      onCallerAbort = () => {
+        reject(new Error("Metadata query cancelled"));
+        controller.abort();
+      };
+      if (callerSignal?.aborted) {
+        onCallerAbort();
+        return;
+      }
+      callerSignal?.addEventListener("abort", onCallerAbort, { once: true });
+      timeout = setTimeout(() => {
+        // Reject independently of the transport: a custom link may ignore the abort signal.
+        reject(
+          new SubgraphCompatibilityError(endpoint, [
+            {
+              code: "METADATA_QUERY_TIMEOUT",
+              expected: `Response within ${SubgraphMetadataTimeoutMs}ms`
+            }
+          ])
+        );
+        controller.abort();
+      }, SubgraphMetadataTimeoutMs);
+      subscription = client
+        .watchQuery<SubgraphGetIndexerDeploymentQuery>({
+          ...queryDefaults,
+          query: GetIndexerDeploymentDocument,
+          fetchPolicy: "no-cache",
+          errorPolicy: queryDefaults?.errorPolicy ?? "none",
+          pollInterval: 0,
+          context: {
+            ...queryDefaults?.context,
+            fetchOptions: {
+              ...queryDefaults?.context?.fetchOptions,
+              signal: controller.signal
+            },
+            // SDK caches already share metadata reads. Keep cancellation separate from
+            // matching queries started by other users of a custom Apollo client.
+            queryDeduplication: false
+          }
+        })
+        .subscribe({
+          next: ({ data, loading }) => {
+            if (!loading) resolve(data);
+          },
+          error: reject
+        });
     });
     const deployment = data.indexerDeployments[0];
     if (!deployment) {
@@ -304,6 +352,23 @@ export const fetchIndexerDeploymentMetadata = async (
     throw new SubgraphCompatibilityError(endpoint, [
       { code: "METADATA_QUERY_FAILED", actual: errorMessage(error) }
     ]);
+  } finally {
+    if (timeout !== undefined) clearTimeout(timeout);
+    if (onCallerAbort) callerSignal?.removeEventListener("abort", onCallerAbort);
+    subscription?.unsubscribe();
+  }
+};
+
+/** Read and normalize the deployment declaration with a bounded, cancellable request. */
+export const fetchIndexerDeploymentMetadata = async (
+  endpoint: string
+): Promise<IndexerDeploymentMetadata> => {
+  const client = new ApolloClient({
+    cache: new InMemoryCache(),
+    link: new HttpLink({ uri: endpoint })
+  });
+  try {
+    return await fetchClientIndexerDeploymentMetadata(client, endpoint);
   } finally {
     client.stop();
   }
@@ -351,28 +416,6 @@ const subgraphClientMetadataPromises = new WeakMap<
   ApolloClient<NormalizedCacheObject>,
   Promise<IndexerDeploymentMetadata>
 >();
-
-const fetchClientIndexerDeploymentMetadata = async (
-  client: ApolloClient<NormalizedCacheObject>
-): Promise<IndexerDeploymentMetadata> => {
-  const { data } = await client.query<SubgraphGetIndexerDeploymentQuery>({
-    query: GetIndexerDeploymentDocument,
-    fetchPolicy: "no-cache"
-  });
-  const deployment = data.indexerDeployments[0];
-  if (!deployment) {
-    throw new SubgraphCompatibilityError("Apollo client", [
-      { code: "MISSING_DEPLOYMENT_METADATA" }
-    ]);
-  }
-  try {
-    return normalizeIndexerDeployment(deployment);
-  } catch (error) {
-    throw new SubgraphCompatibilityError("Apollo client", [
-      { code: "INVALID_DEPLOYMENT_METADATA", actual: errorMessage(error) }
-    ]);
-  }
-};
 
 /** Resolve declared endpoint features for SDK-managed or custom Apollo clients. */
 export const getSubgraphClientDeploymentMetadata = (
