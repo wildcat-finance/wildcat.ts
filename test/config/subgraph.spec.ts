@@ -11,6 +11,7 @@ import {
 } from "@apollo/client";
 import { expect } from "chai";
 import {
+  DefaultSubgraphMetadataTimeoutMs,
   SubgraphCompatibilityError,
   SubgraphDeploymentRequirementsByChain,
   SubgraphSchemaFamilies,
@@ -19,6 +20,7 @@ import {
   createSubgraphClient,
   fetchIndexerDeploymentMetadata,
   getSubgraphClientDeploymentMetadata,
+  getSubgraphClient,
   getSubgraphCompatibilityIssues,
   validateSubgraphEndpoint
 } from "../../src/config";
@@ -94,14 +96,20 @@ const close = (server: Server): Promise<void> =>
 describe("V2.5 subgraph endpoint compatibility", () => {
   it("pins the replacement Sepolia V2.5 endpoint", () => {
     expect(SubgraphUrls[SupportedChainId.Sepolia]).to.equal(
-      "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.5.11/gn"
+      "https://graph.wildcat.finance/sepolia/v2.5.12"
     );
   });
 
   it("pins production and Plasma to the 3.1.17-compatible V2.0.30 endpoints", () => {
-    expect(SubgraphUrls[SupportedChainId.Mainnet]).to.include("/mainnet/v2.0.30/gn");
-    expect(SubgraphUrls[SupportedChainId.PlasmaTestnet]).to.include("/plasma-testnet/v2.0.30/gn");
-    expect(SubgraphUrls[SupportedChainId.PlasmaMainnet]).to.include("/plasma-mainnet/v2.0.30/gn");
+    expect(SubgraphUrls[SupportedChainId.Mainnet]).to.equal(
+      "https://graph.wildcat.finance/mainnet/v2.0.30"
+    );
+    expect(SubgraphUrls[SupportedChainId.PlasmaTestnet]).to.equal(
+      "https://graph.wildcat.finance/plasma-testnet/v2.0.30"
+    );
+    expect(SubgraphUrls[SupportedChainId.PlasmaMainnet]).to.equal(
+      "https://graph.wildcat.finance/plasma-mainnet/v2.0.30"
+    );
   });
 
   it("routes only Sepolia through the native V2.5 schema", () => {
@@ -310,6 +318,206 @@ describe("V2.5 subgraph endpoint compatibility", () => {
     }
   });
 
+  describe("gateway connection options", () => {
+    const originalFetch = globalThis.fetch;
+    const query = gql`
+      query gatewayClientRead {
+        __typename
+      }
+    `;
+    let endpointId = 0;
+    let requests: Array<{
+      endpoint: string;
+      authorization: string | null;
+      operationName: string;
+      redirect: RequestRedirect | undefined;
+    }>;
+    let clients: Array<ApolloClient<unknown>>;
+
+    const endpoint = (): string => `https://gateway.example.invalid/${++endpointId}`;
+    const read = (client: ApolloClient<unknown>) =>
+      client.query({ query, fetchPolicy: "no-cache" });
+
+    beforeEach(() => {
+      requests = [];
+      clients = [];
+      globalThis.fetch = async (input, options) => {
+        const authorization = new Headers(options?.headers).get("authorization");
+        const operationName = JSON.parse(String(options?.body)).operationName as string;
+        requests.push({
+          endpoint: String(input),
+          authorization,
+          operationName,
+          redirect: options?.redirect
+        });
+        const unauthorized = authorization === "Bearer rejected-test-key";
+        const body = unauthorized
+          ? { errors: [{ message: "Unauthorized" }] }
+          : operationName === "getIndexerDeployment"
+          ? graphResponseFor(metadataFor(SupportedChainId.Sepolia))
+          : { data: { __typename: "Query" } };
+        return new Response(JSON.stringify(body), {
+          status: unauthorized ? 401 : 200,
+          headers: { "content-type": "application/json" }
+        });
+      };
+    });
+
+    afterEach(() => {
+      clients.forEach((client) => client.stop());
+      globalThis.fetch = originalFetch;
+    });
+
+    it("uses the public gateway and the pinned Sepolia release without credentials", async () => {
+      const client = createSubgraphClient(SupportedChainId.Sepolia);
+      clients.push(client);
+      await read(client);
+      expect(requests.map(({ endpoint }) => endpoint)).to.deep.equal([
+        "https://graph.wildcat.finance/sepolia/v2.5.12",
+        "https://graph.wildcat.finance/sepolia/v2.5.12"
+      ]);
+      expect(requests.every(({ authorization }) => authorization === null)).to.equal(true);
+    });
+
+    it("authenticates metadata and ordinary queries and shares metadata with feature reads", async () => {
+      const options = { endpoint: endpoint(), bearerToken: "server-test-key" };
+      const client = getSubgraphClient(SupportedChainId.Sepolia, options);
+      clients.push(client);
+      expect(getSubgraphClient(SupportedChainId.Sepolia, { ...options })).to.equal(client);
+      await read(client);
+      expect(await getSubgraphClientDeploymentMetadata(client)).to.deep.equal(
+        metadataFor(SupportedChainId.Sepolia)
+      );
+      expect(requests.map(({ operationName }) => operationName)).to.deep.equal([
+        "getIndexerDeployment",
+        "gatewayClientRead"
+      ]);
+      expect(
+        requests.every(({ authorization }) => authorization === "Bearer server-test-key")
+      ).to.equal(true);
+      expect(requests.every(({ redirect }) => redirect === "error")).to.equal(true);
+    });
+
+    it("supports standalone metadata requests with bearer configuration", async () => {
+      const url = endpoint();
+      const options = {
+        endpoint: "https://unused.example.invalid",
+        bearerToken: "metadata-test-key"
+      };
+      expect(await fetchIndexerDeploymentMetadata(url, options)).to.deep.equal(
+        metadataFor(SupportedChainId.Sepolia)
+      );
+      expect(requests[0].endpoint).to.equal(url);
+      expect(requests[0].authorization).to.equal("Bearer metadata-test-key");
+    });
+
+    it("supports relative browser proxy routes for both metadata and normal queries", async () => {
+      const proxy = `/api/gateway/graph/sepolia/v2.5.12?test=${++endpointId}`;
+      const client = createSubgraphClient(SupportedChainId.Sepolia, { endpoint: proxy });
+      clients.push(client);
+      await read(client);
+      expect(requests.map(({ endpoint }) => endpoint)).to.deep.equal([proxy, proxy]);
+      expect(requests.every(({ authorization }) => authorization === null)).to.equal(true);
+    });
+
+    it("authenticates legacy clients without sending V2.5 metadata queries", async () => {
+      const client = createSubgraphClient(SupportedChainId.Mainnet, {
+        endpoint: endpoint(),
+        bearerToken: "legacy-test-key"
+      });
+      clients.push(client);
+      await read(client);
+      expect(requests).to.have.length(1);
+      expect(requests[0].operationName).to.equal("gatewayClientRead");
+      expect(requests[0].authorization).to.equal("Bearer legacy-test-key");
+    });
+
+    it("isolates public access, token rotation and later changes to the options object", async () => {
+      const url = endpoint();
+      const publicClient = getSubgraphClient(SupportedChainId.Sepolia, url);
+      expect(getSubgraphClient(SupportedChainId.Sepolia, { endpoint: url })).to.equal(publicClient);
+      const options = { endpoint: url, bearerToken: "first-test-key" };
+      const firstClient = getSubgraphClient(SupportedChainId.Sepolia, options);
+      options.bearerToken = "second-test-key";
+      const secondClient = getSubgraphClient(SupportedChainId.Sepolia, options);
+      clients.push(publicClient, firstClient, secondClient);
+      expect(new Set(clients).size).to.equal(3);
+      await Promise.all(clients.map(read));
+      for (const authorization of [null, "Bearer first-test-key", "Bearer second-test-key"]) {
+        expect(
+          requests.filter((request) => request.authorization === authorization)
+        ).to.have.length(2);
+      }
+    });
+
+    it("does not reuse public validation for a rejected bearer or forward its pending query", async () => {
+      const url = endpoint();
+      await validateSubgraphEndpoint(SupportedChainId.Sepolia, url);
+      const client = getSubgraphClient(SupportedChainId.Sepolia, {
+        endpoint: url,
+        bearerToken: "rejected-test-key"
+      });
+      clients.push(client);
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const failure = await read(client).catch((error) => error);
+        expect(failure).to.be.instanceOf(ApolloError);
+        expect(failure.networkError).to.be.instanceOf(SubgraphCompatibilityError);
+      }
+      expect(requests).to.have.length(3);
+      expect(requests.map(({ authorization }) => authorization)).to.deep.equal([
+        null,
+        "Bearer rejected-test-key",
+        "Bearer rejected-test-key"
+      ]);
+      expect(
+        requests.every(({ operationName }) => operationName === "getIndexerDeployment")
+      ).to.equal(true);
+    });
+
+    it("separates cached clients by metadata deadline and endpoint", () => {
+      const url = endpoint();
+      const first = getSubgraphClient(SupportedChainId.Sepolia, url);
+      const second = getSubgraphClient(SupportedChainId.Sepolia, {
+        endpoint: url,
+        metadataTimeoutMs: 25_000
+      });
+      const third = getSubgraphClient(SupportedChainId.Sepolia, endpoint());
+      clients.push(first, second, third);
+      expect(new Set(clients).size).to.equal(3);
+    });
+
+    it("rejects empty credentials and invalid metadata timeouts before making requests", () => {
+      expect(() => createSubgraphClient(SupportedChainId.Sepolia, { bearerToken: "" })).to.throw(
+        "bearerToken"
+      );
+      for (const metadataTimeoutMs of [0, -1, NaN, Infinity, 1.5, 2_147_483_648]) {
+        expect(() =>
+          createSubgraphClient(SupportedChainId.Sepolia, { metadataTimeoutMs })
+        ).to.throw("HTTP timeout");
+      }
+      expect(requests).to.have.length(0);
+    });
+
+    it("omits endpoint credentials and bearer values from metadata failure diagnostics", async () => {
+      const url = "https://user:password@errors.example.invalid/private-path?key=private-query";
+      const bearerToken = "diagnostics-test-key";
+      globalThis.fetch = async () => {
+        throw new Error(
+          `Request failed for ${url}, bearer=${bearerToken}; normalized https://errors.example.invalid/private%2Dpath?key=private-query`
+        );
+      };
+      const failure = await fetchIndexerDeploymentMetadata(url, { bearerToken }).catch(
+        (error) => error
+      );
+      expect(failure).to.be.instanceOf(SubgraphCompatibilityError);
+      expect(failure.endpoint).to.equal("https://errors.example.invalid");
+      const diagnostic = `${failure.stack} ${JSON.stringify(failure)}`;
+      for (const secret of ["password", "private-path", "private-query", bearerToken]) {
+        expect(diagnostic).not.to.include(secret);
+      }
+    });
+  });
+
   describe("metadata deadlines", () => {
     const originalFetch = globalThis.fetch;
     const originalSetTimeout = globalThis.setTimeout;
@@ -347,11 +555,11 @@ describe("V2.5 subgraph endpoint compatibility", () => {
       }
     };
 
-    const expectTimeout = (reason: unknown): void => {
+    const expectTimeout = (reason: unknown, timeoutMs = DefaultSubgraphMetadataTimeoutMs): void => {
       const error = reason instanceof ApolloError ? reason.networkError : reason;
       expect(error).to.be.instanceOf(SubgraphCompatibilityError);
       expect((error as SubgraphCompatibilityError).issues).to.deep.equal([
-        { code: "METADATA_QUERY_TIMEOUT", expected: "Response within 10000ms" }
+        { code: "METADATA_QUERY_TIMEOUT", expected: `Response within ${timeoutMs}ms` }
       ]);
     };
 
@@ -394,7 +602,9 @@ describe("V2.5 subgraph endpoint compatibility", () => {
         ...args: unknown[]
       ) => {
         const timer = originalSetTimeout(callback, delay, ...args);
-        if (delay === 10_000) deadlines.set(timer, () => callback(...args));
+        if (delay === DefaultSubgraphMetadataTimeoutMs || delay === 25_000) {
+          deadlines.set(timer, () => callback(...args));
+        }
         return timer;
       }) as typeof setTimeout;
       globalThis.clearTimeout = ((timer: Parameters<typeof clearTimeout>[0]) => {
@@ -445,6 +655,24 @@ describe("V2.5 subgraph endpoint compatibility", () => {
       expectTimeout(await failure);
       expect(requests[0].signal.aborted).to.equal(true);
       expect(deadlines.size).to.equal(0);
+    });
+
+    it("allows a configured deadline and isolates it from validation using the default", async () => {
+      const url = endpoint();
+      const defaultValidation = validateSubgraphEndpoint(SupportedChainId.Sepolia, url);
+      const longerValidation = validateSubgraphEndpoint(SupportedChainId.Sepolia, {
+        endpoint: url,
+        metadataTimeoutMs: 25_000
+      });
+      const failures = Promise.allSettled([defaultValidation, longerValidation]);
+      await waitForRequests(2);
+      expect(deadlines.size).to.equal(2);
+      expireMetadata();
+      const results = await failures;
+      expect(results.map(({ status }) => status)).to.deep.equal(["rejected", "rejected"]);
+      if (results[0].status === "rejected") expectTimeout(results[0].reason);
+      if (results[1].status === "rejected") expectTimeout(results[1].reason, 25_000);
+      expect(requests.every(({ signal }) => signal.aborted)).to.equal(true);
     });
 
     it("releases shared validation callers and retries with a fresh request", async () => {
