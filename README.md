@@ -5,21 +5,113 @@
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Numeric Inputs and Ethers Compatibility](#numeric-inputs-and-ethers-compatibility)
-3. [Account and Signature Inspection](#account-and-signature-inspection)
-4. [Subgraph Metadata Timeouts](#subgraph-metadata-timeouts)
-5. [Complete Indexed Reads](#complete-indexed-reads)
-6. [v2.5 Market Deployment Salts](#v25-market-deployment-salts)
-7. [Development Workflow](#development-workflow)
-8. [App Integration Testing](#app-integration-testing)
-9. [Releases](#releases)
-10. [Branch Strategy](#branch-strategy)
+2. [Gateway Connections](#gateway-connections)
+3. [Numeric Inputs and Ethers Compatibility](#numeric-inputs-and-ethers-compatibility)
+4. [Account and Signature Inspection](#account-and-signature-inspection)
+5. [Subgraph Metadata Timeouts](#subgraph-metadata-timeouts)
+6. [Complete Indexed Reads](#complete-indexed-reads)
+7. [v2.5 Market Deployment Salts](#v25-market-deployment-salts)
+8. [Development Workflow](#development-workflow)
+9. [App Integration Testing](#app-integration-testing)
+10. [Releases](#releases)
+11. [Branch Strategy](#branch-strategy)
 
 ## Overview
 
 `wildcat.ts` exposes typed helpers for working with Wildcat markets: querying controllers, inspecting market state, and managing lender or borrower activity. the sdk bundles contract typings, gql fragments, utils and constants like deployment addresses, rpc urls, sugraph urls etc. [The main app](https://github.com/wildcat-finance/wildcat-app-v2/blob/989ae639d5f1160ac0a9d8c0a90609643d716a77/package.json#L40) is the consumer.
 
 The most likely scenario for working in this repo is while also working on app side. Theres a section below specifically on _how_ to manage this as a local dependency.
+
+## Gateway Connections
+
+SDK 3.2.9 defaults to Wildcat's public data gateway. RPC connections identify
+the chain; subgraph connections also pin the release understood by the SDK.
+Sepolia uses subgraph v2.5.12. The gateway manages upstream provider failover.
+Public access needs no credential and is subject to gateway quotas.
+
+For viem or wagmi, use `createRpcTransport`. For subgraph reads, use
+`getSubgraphClient` for a cached client or `createSubgraphClient` for a new one:
+
+```ts
+import { createPublicClient } from "viem";
+import { sepolia } from "viem/chains";
+import {
+  createRpcTransport,
+  getSubgraphClient,
+  SupportedChainId
+} from "@wildcatfi/wildcat-sdk";
+
+const chainId = SupportedChainId.Sepolia;
+const publicClient = createPublicClient({
+  chain: sepolia,
+  transport: createRpcTransport(chainId)
+});
+const subgraphClient = getSubgraphClient(chainId);
+```
+
+Pass an `endpoint` to replace either default. Existing
+`createSubgraphClient(chainId, endpointString)` and
+`validateSubgraphEndpoint(chainId, endpointString)` calls remain supported;
+both also accept the options object. Existing caller-created viem clients and
+ethers providers remain accepted by SDK market and account APIs.
+
+For trusted server access, supply `bearerToken`. The SDK reads no environment
+variables itself. Check required credentials in the server application:
+
+```ts
+const bearerToken = process.env.WILDCAT_GATEWAY_TOKEN;
+if (!bearerToken) throw new Error("WILDCAT_GATEWAY_TOKEN is required");
+
+const serverTransport = createRpcTransport(chainId, { bearerToken });
+const serverSubgraph = getSubgraphClient(chainId, { bearerToken });
+```
+
+Authorization is applied to subgraph metadata validation and ordinary
+queries. A rejected bearer fails the request. Empty tokens are configuration
+errors; omitting `bearerToken` selects public access. The SDK's authenticated
+viem and Graph transports reject HTTP redirects.
+
+For a browser app using a server proxy, configure the proxy URLs in the
+browser. Implement these routes in the consuming app and attach the gateway
+bearer on the server-to-gateway request:
+
+```ts
+const appTransport = createRpcTransport(chainId, {
+  endpoint: `/api/gateway/rpc/${chainId}`
+});
+const appSubgraph = getSubgraphClient(chainId, {
+  endpoint: "/api/gateway/graph/sepolia/v2.5.12"
+});
+```
+
+Relative URLs require a browser origin. Server callers must use absolute URLs.
+Private bearers must stay out of browser bundles, `NEXT_PUBLIC_*` variables,
+and proxy responses. The browser receives the proxy URL, not the gateway key.
+
+For ethers v5, `getRpcConnection` returns compatible connection settings:
+
+```ts
+import { providers } from "ethers";
+import { getRpcConnection } from "@wildcatfi/wildcat-sdk";
+
+const provider = new providers.StaticJsonRpcProvider(
+  getRpcConnection(chainId, { endpoint: "https://my-rpc.example" }),
+  chainId
+);
+```
+
+`getRpcConnection` also accepts `bearerToken`. Its result includes credential
+headers when supplied; keep connection objects out of logs. RPC helpers use a
+30-second per-request timeout, configurable with `timeoutMs`. The viem helper
+retains viem's ordinary retry behavior and does not enable JSON-RPC batching.
+
+`getSubgraphClient` caches by chain, endpoint, credential, and metadata timeout.
+Equivalent settings share a client; changing a token creates a separate client.
+Clients snapshot their settings at construction, so changing an options object
+does not retarget an existing client. `createSubgraphClient` creates a separate
+Apollo cache while matching connection settings can still share metadata
+validation. Subgraph compatibility errors identify the endpoint origin and
+omit its path, query, and userinfo to avoid exposing embedded credentials.
 
 ## Numeric Inputs and Ethers Compatibility
 
@@ -83,8 +175,12 @@ remains an interface heuristic and does not certify a wallet's implementation.
 ## Subgraph Metadata Timeouts
 
 SDK-managed V2.5 clients validate endpoint metadata before forwarding network
-queries. Starting with 3.2.9, metadata requests have a 10-second timeout. This
-also applies to feature-metadata reads through custom Apollo clients.
+queries. Starting with 3.2.9, metadata requests default to a 15-second timeout,
+allowing time for gateway failover. This default also applies to feature-metadata
+reads through custom Apollo clients. Set `metadataTimeoutMs` in SDK subgraph
+client options to change it, or pass it as the second argument's options to
+`fetchIndexerDeploymentMetadata(endpoint, options)`. The value must be a positive
+integer no greater than 2,147,483,647 ms.
 
 On timeout, metadata helpers reject with `SubgraphCompatibilityError` and issue
 code `METADATA_QUERY_TIMEOUT`; gated Apollo queries receive it as a network

@@ -174,7 +174,7 @@ describe("SDK deployment configuration", () => {
     ]);
 
     expect(error.message).to.include("CHAIN_ID_MISMATCH");
-    expect(error.endpoint).to.equal("https://example.invalid/subgraph");
+    expect(error.endpoint).to.equal("https://example.invalid");
     expect(error.issues[0]).to.deep.include({ expected: "1", actual: "11155111" });
   });
 });

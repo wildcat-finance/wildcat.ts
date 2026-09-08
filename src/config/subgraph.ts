@@ -6,10 +6,18 @@ import {
   NormalizedCacheObject,
   Observable
 } from "@apollo/client";
+import { keccak256, stringToHex } from "viem";
 import { IndexerDeploymentMetadata, PricingMode, parsePricingMode } from "../domain";
 import { GetIndexerDeploymentDocument, SubgraphGetIndexerDeploymentQuery } from "../gql/graphql";
+import {
+  getConnectionHeaders,
+  getEndpointLabel,
+  redactConnectionMessage,
+  resolveHttpTimeout
+} from "../internal/http-connection";
 import { SupportedChainId } from "./chains";
 import { Deployments } from "./deployments";
+import { GatewayConnectionOptions, GatewaySubgraphBaseUrl } from "./gateway";
 
 export type SubgraphCompatibilityIssueCode =
   | "METADATA_QUERY_FAILED"
@@ -37,11 +45,25 @@ export type SubgraphCompatibilityIssue = {
 
 export class SubgraphCompatibilityError extends Error {
   readonly name = "SubgraphCompatibilityError";
+  readonly endpoint: string;
+  readonly issues: readonly SubgraphCompatibilityIssue[];
 
-  constructor(readonly endpoint: string, readonly issues: readonly SubgraphCompatibilityIssue[]) {
+  constructor(endpoint: string, issues: readonly SubgraphCompatibilityIssue[]) {
     super(
-      `Subgraph endpoint ${endpoint} is incompatible: ${issues.map(({ code }) => code).join(", ")}`
+      `Subgraph endpoint ${getEndpointLabel(endpoint)} is incompatible: ${issues
+        .map(({ code }) => code)
+        .join(", ")}`
     );
+    this.endpoint = getEndpointLabel(endpoint);
+    this.issues = issues.map((issue) => ({
+      ...issue,
+      ...(issue.expected === undefined
+        ? {}
+        : { expected: redactConnectionMessage(issue.expected, endpoint) }),
+      ...(issue.actual === undefined
+        ? {}
+        : { actual: redactConnectionMessage(issue.actual, endpoint) })
+    }));
   }
 }
 
@@ -98,15 +120,49 @@ export const getSubgraphFeatureAvailability = (
 };
 
 export const SubgraphUrls: Record<SupportedChainId, string> = {
-  [SupportedChainId.Sepolia]:
-    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.5.11/gn",
-  [SupportedChainId.Mainnet]:
-    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.30/gn",
-  [SupportedChainId.PlasmaTestnet]:
-    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-testnet/v2.0.30/gn",
-  [SupportedChainId.PlasmaMainnet]:
-    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-mainnet/v2.0.30/gn"
+  [SupportedChainId.Sepolia]: `${GatewaySubgraphBaseUrl}/sepolia/v2.5.12`,
+  [SupportedChainId.Mainnet]: `${GatewaySubgraphBaseUrl}/mainnet/v2.0.30`,
+  [SupportedChainId.PlasmaTestnet]: `${GatewaySubgraphBaseUrl}/plasma-testnet/v2.0.30`,
+  [SupportedChainId.PlasmaMainnet]: `${GatewaySubgraphBaseUrl}/plasma-mainnet/v2.0.30`
 };
+
+export type SubgraphClientOptions = GatewayConnectionOptions & {
+  /** Deadline for metadata validation, including gateway failover and proxy overhead. */
+  metadataTimeoutMs?: number;
+};
+
+export const DefaultSubgraphMetadataTimeoutMs = 15_000;
+
+type SubgraphConnection = {
+  endpoint: string;
+  bearerToken?: string;
+  metadataTimeoutMs: number;
+};
+
+const resolveSubgraphConnection = (
+  defaultEndpoint: string,
+  options: string | SubgraphClientOptions
+): SubgraphConnection => {
+  const config = typeof options === "string" ? { endpoint: options } : options;
+  const endpoint = config.endpoint ?? defaultEndpoint;
+  if (!endpoint.trim()) throw new Error("Subgraph endpoint must not be empty");
+  getConnectionHeaders(config.bearerToken);
+  return {
+    endpoint,
+    bearerToken: config.bearerToken,
+    metadataTimeoutMs: resolveHttpTimeout(
+      config.metadataTimeoutMs,
+      DefaultSubgraphMetadataTimeoutMs
+    )
+  };
+};
+
+const createSubgraphHttpLink = ({ endpoint, bearerToken }: SubgraphConnection): HttpLink =>
+  new HttpLink({
+    uri: endpoint,
+    headers: getConnectionHeaders(bearerToken),
+    fetchOptions: bearerToken === undefined ? {} : { redirect: "error" }
+  });
 
 export type SubgraphSchemaFamily = "legacy-v2" | "v2.5";
 
@@ -274,11 +330,11 @@ export const getSubgraphCompatibilityIssues = (
 const errorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
-const SubgraphMetadataTimeoutMs = 10_000;
-
 const fetchClientIndexerDeploymentMetadata = async (
   client: ApolloClient<NormalizedCacheObject>,
-  endpoint = "Apollo client"
+  endpoint = "Apollo client",
+  metadataTimeoutMs = DefaultSubgraphMetadataTimeoutMs,
+  bearerToken?: string
 ): Promise<IndexerDeploymentMetadata> => {
   const controller = new AbortController();
   const queryDefaults = client.defaultOptions.query;
@@ -304,12 +360,12 @@ const fetchClientIndexerDeploymentMetadata = async (
           new SubgraphCompatibilityError(endpoint, [
             {
               code: "METADATA_QUERY_TIMEOUT",
-              expected: `Response within ${SubgraphMetadataTimeoutMs}ms`
+              expected: `Response within ${metadataTimeoutMs}ms`
             }
           ])
         );
         controller.abort();
-      }, SubgraphMetadataTimeoutMs);
+      }, metadataTimeoutMs);
       subscription = client
         .watchQuery<SubgraphGetIndexerDeploymentQuery>({
           ...queryDefaults,
@@ -344,13 +400,19 @@ const fetchClientIndexerDeploymentMetadata = async (
       return normalizeIndexerDeployment(deployment);
     } catch (error) {
       throw new SubgraphCompatibilityError(endpoint, [
-        { code: "INVALID_DEPLOYMENT_METADATA", actual: errorMessage(error) }
+        {
+          code: "INVALID_DEPLOYMENT_METADATA",
+          actual: redactConnectionMessage(errorMessage(error), endpoint, bearerToken)
+        }
       ]);
     }
   } catch (error) {
     if (error instanceof SubgraphCompatibilityError) throw error;
     throw new SubgraphCompatibilityError(endpoint, [
-      { code: "METADATA_QUERY_FAILED", actual: errorMessage(error) }
+      {
+        code: "METADATA_QUERY_FAILED",
+        actual: redactConnectionMessage(errorMessage(error), endpoint, bearerToken)
+      }
     ]);
   } finally {
     if (timeout !== undefined) clearTimeout(timeout);
@@ -361,14 +423,21 @@ const fetchClientIndexerDeploymentMetadata = async (
 
 /** Read and normalize the deployment declaration with a bounded, cancellable request. */
 export const fetchIndexerDeploymentMetadata = async (
-  endpoint: string
+  endpoint: string,
+  options: Omit<SubgraphClientOptions, "endpoint"> = {}
 ): Promise<IndexerDeploymentMetadata> => {
+  const connection = resolveSubgraphConnection(endpoint, { ...options, endpoint });
   const client = new ApolloClient({
     cache: new InMemoryCache(),
-    link: new HttpLink({ uri: endpoint })
+    link: createSubgraphHttpLink(connection)
   });
   try {
-    return await fetchClientIndexerDeploymentMetadata(client, endpoint);
+    return await fetchClientIndexerDeploymentMetadata(
+      client,
+      connection.endpoint,
+      connection.metadataTimeoutMs,
+      connection.bearerToken
+    );
   } finally {
     client.stop();
   }
@@ -376,23 +445,32 @@ export const fetchIndexerDeploymentMetadata = async (
 
 const endpointValidationPromises = new Map<string, Promise<IndexerDeploymentMetadata>>();
 
-const validationCacheKey = (chainId: SupportedChainId, endpoint: string): string =>
-  `${chainId}:${endpoint}`;
+const validationCacheKey = (chainId: SupportedChainId, connection: SubgraphConnection): string =>
+  JSON.stringify([
+    chainId,
+    connection.endpoint,
+    // Keep credentials out of cache keys while distinguishing rotations and public access.
+    connection.bearerToken === undefined ? null : keccak256(stringToHex(connection.bearerToken)),
+    connection.metadataTimeoutMs
+  ]);
 
-/** Validate once per chain/endpoint pair; failed attempts are evicted so callers may retry. */
+/** Share validation for matching connection settings; evict failures so callers may retry. */
 export const validateSubgraphEndpoint = (
   chainId: SupportedChainId,
-  endpoint: string = SubgraphUrls[chainId]
+  options: string | SubgraphClientOptions = {}
 ): Promise<IndexerDeploymentMetadata> => {
-  const cacheKey = validationCacheKey(chainId, endpoint);
+  const connection = resolveSubgraphConnection(SubgraphUrls[chainId], options);
+  const cacheKey = validationCacheKey(chainId, connection);
   const cachedValidation = endpointValidationPromises.get(cacheKey);
   if (cachedValidation) return cachedValidation;
 
-  const validation = fetchIndexerDeploymentMetadata(endpoint).then((metadata) => {
-    const issues = getSubgraphCompatibilityIssues(chainId, metadata);
-    if (issues.length > 0) throw new SubgraphCompatibilityError(endpoint, issues);
-    return metadata;
-  });
+  const validation = fetchIndexerDeploymentMetadata(connection.endpoint, connection).then(
+    (metadata) => {
+      const issues = getSubgraphCompatibilityIssues(chainId, metadata);
+      if (issues.length > 0) throw new SubgraphCompatibilityError(connection.endpoint, issues);
+      return metadata;
+    }
+  );
   endpointValidationPromises.set(cacheKey, validation);
   void validation.catch(() => {
     if (endpointValidationPromises.get(cacheKey) === validation) {
@@ -474,12 +552,13 @@ const getLegacySubgraphDeploymentMetadata = (
 /** Construct a client for the chain's configured schema family. */
 export const createSubgraphClient = (
   chainId: SupportedChainId,
-  endpoint: string = SubgraphUrls[chainId]
+  options: string | SubgraphClientOptions = {}
 ): ApolloClient<NormalizedCacheObject> => {
+  const connection = resolveSubgraphConnection(SubgraphUrls[chainId], options);
   if (usesLegacySubgraphSchema(chainId)) {
     const client = new ApolloClient({
       cache: new InMemoryCache(),
-      link: new HttpLink({ uri: endpoint })
+      link: createSubgraphHttpLink(connection)
     });
     subgraphClientSchemaFamilies.set(client, "legacy-v2");
     subgraphClientChainIds.set(client, chainId);
@@ -495,7 +574,7 @@ export const createSubgraphClient = (
         let cancelled = false;
         let operationSubscription: { unsubscribe: () => void } | undefined;
 
-        void validateSubgraphEndpoint(chainId, endpoint)
+        void validateSubgraphEndpoint(chainId, connection)
           .then(() => {
             if (cancelled) return;
             operationSubscription = forward(operation).subscribe({
@@ -517,23 +596,24 @@ export const createSubgraphClient = (
 
   const client = new ApolloClient({
     cache: new InMemoryCache(),
-    link: validationLink.concat(new HttpLink({ uri: endpoint }))
+    link: validationLink.concat(createSubgraphHttpLink(connection))
   });
   subgraphClientSchemaFamilies.set(client, "v2.5");
   subgraphClientChainIds.set(client, chainId);
-  subgraphClientMetadataResolvers.set(client, () => validateSubgraphEndpoint(chainId, endpoint));
+  subgraphClientMetadataResolvers.set(client, () => validateSubgraphEndpoint(chainId, connection));
   return client;
 };
 
 export const getSubgraphClient = (
-  chainId: SupportedChainId
+  chainId: SupportedChainId,
+  options: string | SubgraphClientOptions = {}
 ): ApolloClient<NormalizedCacheObject> => {
-  const endpoint = SubgraphUrls[chainId];
-  const cacheKey = validationCacheKey(chainId, endpoint);
+  const connection = resolveSubgraphConnection(SubgraphUrls[chainId], options);
+  const cacheKey = validationCacheKey(chainId, connection);
   const cachedClient = subgraphClients.get(cacheKey);
   if (cachedClient) return cachedClient;
 
-  const client = createSubgraphClient(chainId, endpoint);
+  const client = createSubgraphClient(chainId, connection);
   subgraphClients.set(cacheKey, client);
   return client;
 };
