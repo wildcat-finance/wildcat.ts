@@ -383,10 +383,11 @@ export class MarketAccount {
    */
   getApprovalAmountForCloseMarket(forAllowanceCheck?: boolean): TokenAmount {
     const baseAmount = this.market.outstandingDebt;
+    // Normalized market-token amounts have the same units as the underlying asset.
     const interestForNextHour = this.market.underlyingToken.getAmount(
       this.market.totalSupply
         .rayMul(this.market.effectiveBorrowerAPR)
-        .mulDiv(forAllowanceCheck ? 600 : 7_200, SECONDS_IN_365_DAYS)
+        .mulDiv(forAllowanceCheck ? 600 : 7_200, SECONDS_IN_365_DAYS).raw
     );
     return baseAmount.add(interestForNextHour);
   }
