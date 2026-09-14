@@ -16,6 +16,7 @@ export * from "./collateral";
 export * from "./constants";
 export * from "./controller";
 export * from "./market";
+export * from "./market-read-error";
 export * from "./mockerc20factory";
 export * from "./periodic-settlement";
 export * from "./token";

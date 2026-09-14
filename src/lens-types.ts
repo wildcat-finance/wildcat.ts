@@ -215,6 +215,10 @@ export type MarketDataV2_5StructOutput = {
   drawnAmount: OptionalUintDataV2_5StructOutput;
 };
 
+/** Base and live lens reads composed without inventing unavailable identity metadata. */
+export type CompatibleMarketDataV2_5 = MarketDataBaseV2_5StructOutput &
+  Pick<MarketDataV2_5StructOutput, "commitmentFeeBips" | "drawnAmount">;
+
 export type ControllerDataStructOutput = {
   borrower: string;
   controller: string;

@@ -2,6 +2,7 @@ import type { Abi, Address } from "viem";
 import { marketLensAbi, marketLensV2Abi, marketLensV2_5Abi } from "../abi";
 import { getDeploymentAddress, getLatestLensDeploymentName, SupportedChainId } from "../constants";
 import type {
+  CompatibleMarketDataV2_5,
   ControllerDataStructOutput,
   FactoryScopedHooksTemplateDataV2_5StructOutput,
   HooksDataForBorrowerStructOutput,
@@ -25,6 +26,8 @@ import type {
   WithdrawalBatchDataWithLenderStatusStructOutput,
   WithdrawalBatchDataWithLenderStatusV2_5StructOutput
 } from "../lens-types";
+import { MarketReadError } from "../market-read-error";
+import { toNumber } from "../utils/bigint";
 import type { SignerOrProvider } from "../types";
 import { getViemPublicClientFromEthers } from "./ethers-viem";
 import { readViemContract } from "./viem-read";
@@ -132,22 +135,6 @@ const getCompatibleMarketDataV2_5 = (
     "getMarketData",
     [market as Address],
     (data) => assertMarketIdentity(data, market)
-  );
-};
-
-const getCompatibleMarketsDataV2_5 = (
-  chainId: SupportedChainId,
-  provider: SignerOrProvider,
-  markets: string[]
-): Promise<MarketDataBaseV2_5StructOutput[]> => {
-  return readMarketLens<MarketDataBaseV2_5StructOutput[]>(
-    chainId,
-    provider,
-    "MarketLensV2_5",
-    marketLensV2_5Abi as Abi,
-    "getMarketsData",
-    [markets as Address[]],
-    (data) => assertBatchIdentity(data, markets, assertMarketIdentity)
   );
 };
 
@@ -272,21 +259,91 @@ export const getUnifiedMarketsDataV2 = (
   );
 };
 
+/** Preserve the configured lens's hooks schema for markets predating identity getters. */
+const getLatestFullMarketDataV2 = async (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  market: string
+): Promise<MarketDataV2_5StructOutput | CompatibleMarketDataV2_5> => {
+  try {
+    return await getUnifiedMarketDataV2(chainId, provider, market);
+  } catch (cause) {
+    if (cause instanceof ReadIdentityMismatchError) throw cause;
+    try {
+      const base = await getCompatibleMarketDataV2_5(chainId, provider, market);
+      const hooksKind = toNumber(base.hooksConfig.kind);
+      if (![1, 2, 3].includes(hooksKind)) {
+        throw new Error(
+          `Unknown hooks kind: ${base.hooks.hooksTemplate.name}, version #${hooksKind}`
+        );
+      }
+      // The base tuple omits revolving fields. Read them with the accrued live state,
+      // so a historical revolving market cannot silently become a standard market.
+      const [live] = await getUnifiedMarketsLiveDataV2(chainId, provider, [market]);
+      const { market: _market, ...liveFields } = live;
+      void _market;
+      return { ...base, ...liveFields };
+    } catch (fallbackError) {
+      if (fallbackError instanceof ReadIdentityMismatchError) throw fallbackError;
+      throw new MarketReadError(
+        `Unable to read market ${market} on chain ${chainId} through the configured V2.5 lens`,
+        cause,
+        fallbackError
+      );
+    }
+  }
+};
+
+export const getFullMarketDataV2 = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  market: string
+): Promise<MarketDataV2StructOutput | MarketDataV2_5StructOutput | CompatibleMarketDataV2_5> => {
+  return getLatestLensDeploymentName(chainId) === "MarketLensV2_5"
+    ? getLatestFullMarketDataV2(chainId, provider, market)
+    : getV2MarketData(chainId, provider, market);
+};
+
+const getLatestFullMarketsDataV2 = async (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider,
+  markets: string[]
+): Promise<Array<MarketDataV2_5StructOutput | CompatibleMarketDataV2_5>> => {
+  try {
+    return await getUnifiedMarketsDataV2(chainId, provider, markets);
+  } catch (cause) {
+    if (cause instanceof ReadIdentityMismatchError) throw cause;
+    if (markets.length === 0) throw cause;
+    try {
+      // Recover individually so one historical market does not downgrade the whole batch.
+      // Sequential recovery also avoids an unbounded burst of RPCs on the failure path.
+      const results = [];
+      for (const market of markets) {
+        results.push(await getLatestFullMarketDataV2(chainId, provider, market));
+      }
+      return results;
+    } catch (fallbackError) {
+      if (fallbackError instanceof ReadIdentityMismatchError) throw fallbackError;
+      throw new MarketReadError(
+        `Unable to read market batch on chain ${chainId} through the configured V2.5 lens`,
+        cause,
+        fallbackError
+      );
+    }
+  }
+};
+
 /** Broad V2 reads without constructing objects that would discard indexed context. */
 export const getFullMarketsDataV2 = async (
   chainId: SupportedChainId,
   provider: SignerOrProvider,
   markets: string[]
-): Promise<Array<MarketDataV2StructOutput | MarketDataV2_5StructOutput>> => {
-  if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
-    try {
-      return await getUnifiedMarketsDataV2(chainId, provider, markets);
-    } catch (error) {
-      if (error instanceof ReadIdentityMismatchError) throw error;
-      // Preserve the pre-unified read path on chains whose lens has not fully migrated.
-    }
-  }
-  return getV2MarketsData(chainId, provider, markets);
+): Promise<
+  Array<MarketDataV2StructOutput | MarketDataV2_5StructOutput | CompatibleMarketDataV2_5>
+> => {
+  return getLatestLensDeploymentName(chainId) === "MarketLensV2_5"
+    ? getLatestFullMarketsDataV2(chainId, provider, markets)
+    : getV2MarketsData(chainId, provider, markets);
 };
 
 export const getUnifiedMarketsLiveDataV2 = (
@@ -484,10 +541,7 @@ export const getLatestMarketDataWithLenderStatus = (
 > => {
   if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
     return Promise.all([
-      getUnifiedMarketDataV2(chainId, provider, market).catch((error) => {
-        if (error instanceof ReadIdentityMismatchError) throw error;
-        return getCompatibleMarketDataV2_5(chainId, provider, market);
-      }),
+      getLatestFullMarketDataV2(chainId, provider, market),
       getLatestLenderAccountData(chainId, provider, account, market)
     ]).then(([marketData, lenderStatus]) =>
       withLenderStatusV2_5(marketData, lenderStatus as LenderAccountDataV2_5StructOutput)
@@ -518,10 +572,7 @@ export const getLatestMarketsDataWithLenderStatus = (
 > => {
   if (getLatestLensDeploymentName(chainId) === "MarketLensV2_5") {
     return Promise.all([
-      getUnifiedMarketsDataV2(chainId, provider, markets).catch((error) => {
-        if (error instanceof ReadIdentityMismatchError) throw error;
-        return getCompatibleMarketsDataV2_5(chainId, provider, markets);
-      }),
+      getLatestFullMarketsDataV2(chainId, provider, markets),
       getLatestLenderAccountsData(chainId, provider, account, markets)
     ]).then(([marketData, lenderStatuses]) => {
       return marketData.map((market, index) =>

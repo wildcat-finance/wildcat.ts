@@ -1,5 +1,6 @@
 import { encodeFunctionData, zeroAddress } from "viem";
 import {
+  CompatibleMarketDataV2_5,
   MarketDataBaseV2_5StructOutput,
   MarketDataStructOutput,
   MarketDataV2_5StructOutput,
@@ -19,14 +20,13 @@ import {
   getRegisteredMarketsPage
 } from "./internal/arch-controller";
 import {
+  getFullMarketDataV2,
   getFullMarketsDataV2,
   getLegacyMarketData,
   getLegacyMarketsData,
-  getUnifiedMarketDataV2,
-  getUnifiedMarketsDataV2,
-  getUnifiedMarketsLiveDataV2,
-  getV2MarketData
+  getUnifiedMarketsLiveDataV2
 } from "./internal/market-lens";
+import { MarketReadError } from "./market-read-error";
 import { TokenAmount, Token, toRawAmount } from "./token";
 import {
   SignerOrProvider,
@@ -171,7 +171,7 @@ const hasUnifiedLatestLensForDirectReads = (chainId: SupportedChainId): boolean 
 };
 
 const toUnifiedMarketDataV2 = (
-  data: MarketDataBaseV2_5StructOutput | MarketDataV2_5StructOutput
+  data: MarketDataBaseV2_5StructOutput | MarketDataV2_5StructOutput | CompatibleMarketDataV2_5
 ): MarketDataV2_5StructOutput => {
   if ("market" in data) {
     return data;
@@ -183,14 +183,20 @@ const toUnifiedMarketDataV2 = (
     pendingBorrower: zeroAddress,
     pendingBorrowerPrincipal: zeroAddress,
     borrowerIdentityRegistry: zeroAddress,
-    commitmentFeeBips: {
-      isPresent: false,
-      value: 0n
-    },
-    drawnAmount: {
-      isPresent: false,
-      value: 0n
-    }
+    commitmentFeeBips:
+      "commitmentFeeBips" in data
+        ? data.commitmentFeeBips
+        : {
+            isPresent: false,
+            value: 0n
+          },
+    drawnAmount:
+      "drawnAmount" in data
+        ? data.drawnAmount
+        : {
+            isPresent: false,
+            value: 0n
+          }
   } as unknown as MarketDataV2_5StructOutput;
 };
 
@@ -1048,17 +1054,7 @@ export class Market extends ContractWrapper {
 
   async update(): Promise<void> {
     if (this.version === MarketVersion.V2) {
-      if (hasUnifiedLatestLensForDirectReads(this.chainId)) {
-        try {
-          const market = await getUnifiedMarketDataV2(this.chainId, this.provider, this.address);
-          this.updateWith(market);
-          return;
-        } catch (error) {
-          if (error instanceof ReadIdentityMismatchError) throw error;
-          // Fall back to the pre-2.5 V2 lens until unified lens deployment is reliable.
-        }
-      }
-      const market = await getV2MarketData(this.chainId, this.provider, this.address);
+      const market = await getFullMarketDataV2(this.chainId, this.provider, this.address);
       this.updateWith(market);
       return;
     }
@@ -1092,6 +1088,7 @@ export class Market extends ContractWrapper {
       | MarketDataV2StructOutput
       | MarketDataBaseV2_5StructOutput
       | MarketDataV2_5StructOutput
+      | CompatibleMarketDataV2_5
   ): void {
     const baseData = "market" in data ? data.market : data;
     // Validate retained identities before mutating balances or marking the model live.
@@ -1224,7 +1221,7 @@ export class Market extends ContractWrapper {
     } else {
       assert(this.version === MarketVersion.V1, `Can not push V1 lens data to V2 market!`);
     }
-    if ("market" in data) {
+    if ("commitmentFeeBips" in data) {
       this.commitmentFeeBips = data.commitmentFeeBips.isPresent
         ? toNumber(data.commitmentFeeBips.value)
         : undefined;
@@ -1833,7 +1830,7 @@ export class Market extends ContractWrapper {
   static async fromUnifiedMarketData(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
-    data: MarketDataBaseV2_5StructOutput | MarketDataV2_5StructOutput,
+    data: MarketDataBaseV2_5StructOutput | MarketDataV2_5StructOutput | CompatibleMarketDataV2_5,
     signerAddress?: string
   ): Promise<Market> {
     const hasGenerationMetadata = "market" in data;
@@ -1858,11 +1855,20 @@ export class Market extends ContractWrapper {
     const signerAddress = await getEthersSignerAddress(provider);
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
-        const data = await getUnifiedMarketDataV2(chainId, provider, market);
-        return Market.fromUnifiedMarketData(chainId, provider, data, signerAddress);
-      } catch (error) {
-        if (error instanceof ReadIdentityMismatchError) throw error;
-        // Fall back to the legacy lens for V1 markets and pre-unified deployments.
+        return await Market.getMarketV2(chainId, market, provider);
+      } catch (cause) {
+        if (cause instanceof ReadIdentityMismatchError) throw cause;
+        try {
+          const data = await getLegacyMarketData(chainId, provider, market);
+          return Market.fromMarketData(chainId, data, provider, signerAddress);
+        } catch (fallbackError) {
+          if (fallbackError instanceof ReadIdentityMismatchError) throw fallbackError;
+          throw new MarketReadError(
+            `Unable to read market ${market} on chain ${chainId} as V2 or V1`,
+            cause,
+            fallbackError
+          );
+        }
       }
     }
     const data = await getLegacyMarketData(chainId, provider, market);
@@ -1877,17 +1883,10 @@ export class Market extends ContractWrapper {
     provider: SignerOrProvider
   ): Promise<Market> {
     const signerAddress = await getEthersSignerAddress(provider);
-    if (hasUnifiedLatestLensForDirectReads(chainId)) {
-      try {
-        const data = await getUnifiedMarketDataV2(chainId, provider, market);
-        return Market.fromUnifiedMarketData(chainId, provider, data, signerAddress);
-      } catch (error) {
-        if (error instanceof ReadIdentityMismatchError) throw error;
-        // Fall back to the pre-2.5 V2 lens for chains that have not fully migrated.
-      }
-    }
-    const data = await getV2MarketData(chainId, provider, market);
-    return Market.fromMarketDataV2(chainId, provider, data, signerAddress);
+    const data = await getFullMarketDataV2(chainId, provider, market);
+    return "commitmentFeeBips" in data
+      ? Market.fromUnifiedMarketData(chainId, provider, data, signerAddress)
+      : Market.fromMarketDataV2(chainId, provider, data, signerAddress);
   }
 
   /**
@@ -1903,7 +1902,7 @@ export class Market extends ContractWrapper {
     const data = await getFullMarketsDataV2(chainId, provider, markets);
     return Promise.all(
       data.map((market) =>
-        "market" in market
+        "commitmentFeeBips" in market
           ? Market.fromUnifiedMarketData(chainId, provider, market, signerAddress)
           : Market.fromMarketDataV2(chainId, provider, market, signerAddress)
       )
@@ -1986,15 +1985,24 @@ export class Market extends ContractWrapper {
     const signerAddress = await getEthersSignerAddress(provider);
     if (hasUnifiedLatestLensForDirectReads(chainId)) {
       try {
-        const data = await getUnifiedMarketsDataV2(chainId, provider, markets);
-        return Promise.all(
-          data.map((market) =>
-            Market.fromUnifiedMarketData(chainId, provider, market, signerAddress)
-          )
-        );
-      } catch (error) {
-        if (error instanceof ReadIdentityMismatchError) throw error;
-        return Promise.all(markets.map((market) => Market.getMarket(chainId, market, provider)));
+        return await Market.getMarketsV2(chainId, markets, provider);
+      } catch (cause) {
+        if (cause instanceof ReadIdentityMismatchError) throw cause;
+        if (markets.length === 0) throw cause;
+        try {
+          const results = [];
+          for (const market of markets) {
+            results.push(await Market.getMarket(chainId, market, provider));
+          }
+          return results;
+        } catch (fallbackError) {
+          if (fallbackError instanceof ReadIdentityMismatchError) throw fallbackError;
+          throw new MarketReadError(
+            `Unable to read market batch on chain ${chainId} as V2 or V1`,
+            cause,
+            fallbackError
+          );
+        }
       }
     }
     const data = await getLegacyMarketsData(chainId, provider, markets);

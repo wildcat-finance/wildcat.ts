@@ -882,6 +882,11 @@ describe("Account and token read routing", () => {
       if (decoded.functionName === "getMarketData") {
         return encodeLensResult(marketLensV2_5Abi as Abi, decoded.functionName, marketData);
       }
+      if (decoded.functionName === "getMarketsLiveDataV2") {
+        return encodeLensResult(marketLensV2_5Abi as Abi, decoded.functionName, [
+          makeMarketLiveData(hooksFactory)
+        ]);
+      }
       if (decoded.functionName === "getLenderAccountData") {
         return encodeLensResult(
           marketLensV2_5Abi as Abi,
@@ -902,7 +907,8 @@ describe("Account and token read routing", () => {
     expect(seenFunctions.sort()).to.deep.equal([
       "getLenderAccountData",
       "getMarketData",
-      "getMarketDataV2"
+      "getMarketDataV2",
+      "getMarketsLiveDataV2"
     ]);
     expect(marketAccount.market.address.toLowerCase()).to.equal(marketAddress.toLowerCase());
     expect(marketAccount.market.borrowerPrincipal).to.equal(undefined);
@@ -934,11 +940,27 @@ describe("Account and token read routing", () => {
       const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
       seenFunctions.push(decoded.functionName);
 
-      if (decoded.functionName === "getMarketsDataV2") {
+      if (
+        decoded.functionName === "getMarketsDataV2" ||
+        decoded.functionName === "getMarketDataV2"
+      ) {
         throw new Error("NotV2_5Market");
       }
-      if (decoded.functionName === "getMarketsData") {
-        return encodeLensResult(marketLensV2_5Abi as Abi, decoded.functionName, marketData);
+      if (decoded.functionName === "getMarketData") {
+        const market = marketData.find(
+          (m) => m.marketToken.token === (decoded.args?.[0] as string).toLowerCase()
+        );
+        return encodeLensResult(marketLensV2_5Abi as Abi, decoded.functionName, market);
+      }
+      if (decoded.functionName === "getMarketsLiveDataV2") {
+        return encodeLensResult(
+          marketLensV2_5Abi as Abi,
+          decoded.functionName,
+          (decoded.args?.[0] as string[]).map((market) => ({
+            ...makeMarketLiveData(hooksFactory),
+            market
+          }))
+        );
       }
       if (decoded.functionName === "getLenderAccountData") {
         const batchLenderAccountAbi = (marketLensV2_5Abi as Abi).filter(
@@ -964,8 +986,13 @@ describe("Account and token read routing", () => {
 
     expect(seenFunctions.sort()).to.deep.equal([
       "getLenderAccountData",
-      "getMarketsData",
-      "getMarketsDataV2"
+      "getMarketData",
+      "getMarketData",
+      "getMarketDataV2",
+      "getMarketDataV2",
+      "getMarketsDataV2",
+      "getMarketsLiveDataV2",
+      "getMarketsLiveDataV2"
     ]);
     expect(marketAccounts.map(({ market }) => market.address.toLowerCase())).to.deep.equal(
       marketAddresses
@@ -1302,13 +1329,28 @@ describe("account read identity", () => {
             if (mode === "V1" && call.to?.toLowerCase() !== legacyLens.toLowerCase()) {
               throw new Error("NotV2Market");
             }
-            const { functionName } = decodeLensCall(abi, call);
+            const { functionName, args } = decodeLensCall(abi, call);
             if (functionName === "getMarketDataV2" || functionName === "getMarketsDataV2") {
               if (mode === "V2.5 compatibility") throw new Error("NotV2_5Market");
               return encodeLensResult(abi, functionName, batch ? marketData : marketData[0]);
             }
             if (functionName === "getMarketData" || functionName === "getMarketsData") {
-              return encodeLensResult(abi, functionName, batch ? marketData : marketData[0]);
+              const index = markets.indexOf((args?.[0] as string).toLowerCase());
+              return encodeLensResult(
+                abi,
+                functionName,
+                functionName === "getMarketsData" ? marketData : marketData[index]
+              );
+            }
+            if (functionName === "getMarketsLiveDataV2") {
+              return encodeLensResult(
+                abi,
+                functionName,
+                (args?.[0] as string[]).map((market) => ({
+                  ...makeMarketLiveData(hooksFactory),
+                  market
+                }))
+              );
             }
             if (functionName === "getLenderAccountData") {
               const methodAbi = abi.filter(
@@ -1338,7 +1380,9 @@ describe("account read identity", () => {
               ? /Live lender address mismatch/
               : /Live (market|lender) result count mismatch/
           );
-          expect(rpc.calls).to.have.lengthOf(expectedCalls);
+          expect(rpc.calls).to.have.lengthOf(
+            mode === "V2.5 compatibility" && batch && mismatch === "market" ? 7 : expectedCalls
+          );
         });
       }
     }

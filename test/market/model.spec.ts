@@ -709,29 +709,33 @@ describe("Market direct read routing", () => {
 
     expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([
       unifiedLensAddress,
+      unifiedLensAddress,
       legacyLensAddress
     ]);
     expect(market.version).to.equal(MarketVersion.V1);
     expect(market.hooksFactory).to.equal(undefined);
   });
 
-  it("falls back from unified reads to the V2 lens through viem", async () => {
+  it("falls back to base and live reads on the configured V2.5 lens through viem", async () => {
     const marketAddress = makeAddress(105);
     const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
-    const data = makeFactoryBackedMarketData(hooksFactory);
-    data.marketToken.token = marketAddress;
+    const data = makeUnifiedMarketDataV2(hooksFactory);
+    data.market.marketToken.token = marketAddress;
     const unifiedLensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2_5");
-    const v2LensAddress = getDeploymentAddress(SupportedChainId.Sepolia, "MarketLensV2");
     const viemProvider = new FakeViemProvider((call) => {
-      if (call.to === unifiedLensAddress) {
-        throw new Error("NotV2Market");
+      expect(call.to).to.equal(unifiedLensAddress);
+      const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+      if (decoded.functionName === "getMarketDataV2") {
+        throw new Error("Identity getter unavailable");
       }
-
-      const decoded = decodeLensCall(marketLensV2Abi as Abi, call);
-      expect(call.to).to.equal(v2LensAddress);
-      expect(decoded.functionName).to.equal("getMarketData");
-      expect((decoded.args?.[0] as string).toLowerCase()).to.equal(marketAddress);
-      return encodeLensResult(marketLensV2Abi as Abi, "getMarketData", data);
+      if (decoded.functionName === "getMarketData") {
+        expect((decoded.args?.[0] as string).toLowerCase()).to.equal(marketAddress);
+        return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketData", data.market);
+      }
+      expect(decoded.functionName).to.equal("getMarketsLiveDataV2");
+      return encodeLensResult(marketLensV2_5Abi as Abi, "getMarketsLiveDataV2", [
+        makeMarketLiveDataV2(data)
+      ]);
     });
 
     const market = await Market.getMarketV2(
@@ -742,7 +746,8 @@ describe("Market direct read routing", () => {
 
     expect(viemProvider.calls.map((call) => call.to)).to.deep.equal([
       unifiedLensAddress,
-      v2LensAddress
+      unifiedLensAddress,
+      unifiedLensAddress
     ]);
     expect(market.version).to.equal(MarketVersion.V2);
     expect(market.hooksFactory).to.equal(hooksFactory);
@@ -837,7 +842,14 @@ describe("Market direct read routing", () => {
           chainId === SupportedChainId.Sepolia &&
           call.to === getDeploymentAddress(chainId, "MarketLensV2_5")
         ) {
-          throw Error("Unified endpoint unavailable");
+          const decoded = decodeLensCall(marketLensV2_5Abi as Abi, call);
+          if (decoded.functionName === "getMarketsLiveDataV2") {
+            throw Error("Compact endpoint unavailable");
+          }
+          expect(decoded.functionName).to.equal("getMarketsDataV2");
+          const update = makeUnifiedMarketDataV2(hooksFactory);
+          update.market.annualInterestBips = 1_350;
+          return encodeLensResult(marketLensV2_5Abi as Abi, decoded.functionName, [update]);
         }
         const decoded = decodeLensCall(marketLensV2Abi as Abi, call);
         expect(decoded.functionName).to.equal("getMarketsData");

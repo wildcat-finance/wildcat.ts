@@ -1,6 +1,7 @@
 import { Token, TokenAmount, minTokenAmount, toRawAmount } from "../token";
 import { assertMatchingToken, assertNormalizedMarketAmount } from "../internal/token-identity";
 import { Market } from "../market";
+import { MarketReadError } from "../market-read-error";
 import { ReadIdentityMismatchError } from "../internal/read-identity";
 import {
   MarketLenderStatusStructOutput,
@@ -1404,11 +1405,20 @@ export class MarketAccount {
     }
     try {
       const info = await getLatestMarketDataWithLenderStatus(chainId, provider, account, market);
-      return MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info);
-    } catch (error) {
-      if (error instanceof ReadIdentityMismatchError) throw error;
-      const info = await getLegacyMarketDataWithLenderStatus(chainId, provider, account, market);
-      return MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info);
+      return await MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info);
+    } catch (cause) {
+      if (cause instanceof ReadIdentityMismatchError) throw cause;
+      try {
+        const info = await getLegacyMarketDataWithLenderStatus(chainId, provider, account, market);
+        return await MarketAccount.fromMarketDataWithLenderStatus(chainId, provider, account, info);
+      } catch (fallbackError) {
+        if (fallbackError instanceof ReadIdentityMismatchError) throw fallbackError;
+        throw new MarketReadError(
+          `Unable to read market account ${account} for ${market} on chain ${chainId} as V2 or V1`,
+          cause,
+          fallbackError
+        );
+      }
     }
   }
 
@@ -1493,11 +1503,25 @@ export class MarketAccount {
     }
     try {
       const infos = await getLatestMarketsDataWithLenderStatus(chainId, provider, account, markets);
-      return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
-    } catch (error) {
-      if (error instanceof ReadIdentityMismatchError) throw error;
-      const infos = await getLegacyMarketsDataWithLenderStatus(chainId, provider, account, markets);
-      return MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
+      return await MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
+    } catch (cause) {
+      if (cause instanceof ReadIdentityMismatchError) throw cause;
+      try {
+        const infos = await getLegacyMarketsDataWithLenderStatus(
+          chainId,
+          provider,
+          account,
+          markets
+        );
+        return await MarketAccount.hydrateMarketAccounts(chainId, provider, account, infos);
+      } catch (fallbackError) {
+        if (fallbackError instanceof ReadIdentityMismatchError) throw fallbackError;
+        throw new MarketReadError(
+          `Unable to read market accounts for ${account} on chain ${chainId} as V2 or V1`,
+          cause,
+          fallbackError
+        );
+      }
     }
   }
 
