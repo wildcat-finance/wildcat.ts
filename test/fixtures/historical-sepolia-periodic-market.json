@@ -1,0 +1,207 @@
+{
+  "chainId": 11155111,
+  "blockNumber": 11699651,
+  "blockHash": "0xf8cde77b215714abd82b559756620326f94bc353a144f54fc646cc9679b9afe0",
+  "lens": "0x204BAe0AE3De919a88812065866Dd03b097BC6A7",
+  "market": "0x00e01c5d6ea5ba136f24acce0399b1a6119d4bb0",
+  "unifiedError": {
+    "code": 3,
+    "message": "execution reverted"
+  },
+  "base": {
+    "marketToken": {
+      "token": "0x00e01C5d6eA5bA136F24acCe0399B1A6119d4bb0",
+      "name": "dasd Dai Stablecoin",
+      "symbol": "asdasdDAI",
+      "decimals": "18",
+      "isMock": false
+    },
+    "underlyingToken": {
+      "token": "0x3B8880Dd0E2F75a970e7F811C5170ee183a0070D",
+      "name": "Dai Stablecoin",
+      "symbol": "DAI",
+      "decimals": "18",
+      "isMock": true
+    },
+    "hooksFactory": "0x76Fe050d91940a72133e1819BF34c1042d8DBe73",
+    "borrower": "0x76c993e7C341b1B9899689323d93B8071bcA3ce7",
+    "hooksConfig": {
+      "hooksAddress": "0x3Fe664DC297382E933E9B7772650502bCcA51C1a",
+      "flags": {
+        "useOnDeposit": true,
+        "useOnQueueWithdrawal": true,
+        "useOnExecuteWithdrawal": false,
+        "useOnTransfer": false,
+        "useOnBorrow": false,
+        "useOnRepay": false,
+        "useOnCloseMarket": true,
+        "useOnNukeFromOrbit": false,
+        "useOnSetMaxTotalSupply": false,
+        "useOnSetAnnualInterestAndReserveRatioBips": true,
+        "useOnSetProtocolFeeBips": false,
+        "useOnExecutePendingAnnualInterestBipsReduction": true
+      },
+      "kind": 3,
+      "transferRequiresAccess": false,
+      "depositRequiresAccess": true,
+      "minimumDeposit": "4000000000000000000",
+      "transfersDisabled": false,
+      "withdrawalRequiresAccess": false,
+      "fixedTermEndTime": 0,
+      "allowClosureBeforeTerm": false,
+      "allowTermReduction": false,
+      "firstWithdrawalWindowStart": 1785682680,
+      "periodDuration": 360,
+      "withdrawalWindowDuration": 300,
+      "periodicTermClosed": false
+    },
+    "withdrawalBatchDuration": "14400",
+    "feeRecipient": "0xca732651410E915090d7A7D889A1E44eF4575fcE",
+    "delinquencyFeeBips": "400",
+    "delinquencyGracePeriod": "14400",
+    "hooks": {
+      "hooksAddress": "0x3Fe664DC297382E933E9B7772650502bCcA51C1a",
+      "administrator": "0x76c993e7C341b1B9899689323d93B8071bcA3ce7",
+      "pendingAdministrator": "0x0000000000000000000000000000000000000000",
+      "name": "Test",
+      "kind": 3,
+      "hooksTemplate": {
+        "hooksTemplate": "0x52D1B53fc667ef5cbf1A792494266946cDa86fa7",
+        "fees": {
+          "feeRecipient": "0xca732651410E915090d7A7D889A1E44eF4575fcE",
+          "protocolFeeBips": 500,
+          "originationFeeToken": {
+            "token": "0x0000000000000000000000000000000000000000",
+            "name": "",
+            "symbol": "",
+            "decimals": "0",
+            "isMock": false
+          },
+          "originationFeeAmount": "0",
+          "borrowerOriginationFeeBalance": "0",
+          "borrowerOriginationFeeApproval": "0"
+        },
+        "exists": true,
+        "enabled": true,
+        "index": 2,
+        "name": "PeriodicTermHooks",
+        "totalMarkets": "6"
+      },
+      "constraints": {
+        "minimumDelinquencyGracePeriod": 0,
+        "maximumDelinquencyGracePeriod": 7776000,
+        "minimumReserveRatioBips": 0,
+        "maximumReserveRatioBips": 10000,
+        "minimumDelinquencyFeeBips": 0,
+        "maximumDelinquencyFeeBips": 10000,
+        "minimumWithdrawalBatchDuration": 0,
+        "maximumWithdrawalBatchDuration": 31536000,
+        "minimumAnnualInterestBips": 0,
+        "maximumAnnualInterestBips": 10000
+      },
+      "deploymentFlags": {
+        "optional": {
+          "useOnDeposit": true,
+          "useOnQueueWithdrawal": false,
+          "useOnExecuteWithdrawal": false,
+          "useOnTransfer": true,
+          "useOnBorrow": false,
+          "useOnRepay": false,
+          "useOnCloseMarket": false,
+          "useOnNukeFromOrbit": false,
+          "useOnSetMaxTotalSupply": false,
+          "useOnSetAnnualInterestAndReserveRatioBips": false,
+          "useOnSetProtocolFeeBips": false,
+          "useOnExecutePendingAnnualInterestBipsReduction": false
+        },
+        "required": {
+          "useOnDeposit": false,
+          "useOnQueueWithdrawal": true,
+          "useOnExecuteWithdrawal": false,
+          "useOnTransfer": false,
+          "useOnBorrow": false,
+          "useOnRepay": false,
+          "useOnCloseMarket": true,
+          "useOnNukeFromOrbit": false,
+          "useOnSetMaxTotalSupply": false,
+          "useOnSetAnnualInterestAndReserveRatioBips": true,
+          "useOnSetProtocolFeeBips": false,
+          "useOnExecutePendingAnnualInterestBipsReduction": true
+        }
+      },
+      "pullProviders": [
+        {
+          "timeToLive": 7776000,
+          "providerAddress": "0x9aCdE253F7A51456c48604185C0ceA4Fc9e58E3a",
+          "pullProviderIndex": 0,
+          "pushProviderIndex": 16777215,
+          "isManaged": false,
+          "administrator": "0x0000000000000000000000000000000000000000",
+          "pendingAdministrator": "0x0000000000000000000000000000000000000000"
+        }
+      ],
+      "pushProviders": [
+        {
+          "timeToLive": 4294967295,
+          "providerAddress": "0x76c993e7C341b1B9899689323d93B8071bcA3ce7",
+          "pullProviderIndex": 16777215,
+          "pushProviderIndex": 0,
+          "isManaged": false,
+          "administrator": "0x0000000000000000000000000000000000000000",
+          "pendingAdministrator": "0x0000000000000000000000000000000000000000"
+        }
+      ],
+      "totalMarkets": "1"
+    },
+    "temporaryReserveRatio": false,
+    "originalAnnualInterestBips": "0",
+    "originalReserveRatioBips": "0",
+    "temporaryReserveRatioExpiry": "0",
+    "isClosed": false,
+    "protocolFeeBips": "500",
+    "reserveRatioBips": "400",
+    "annualInterestBips": "400",
+    "scaleFactor": "1000002381003108780581209321",
+    "totalSupply": "0",
+    "maxTotalSupply": "324324000000000000000000",
+    "scaledTotalSupply": "0",
+    "totalAssets": "15000020744300953009",
+    "lastAccruedProtocolFees": "1019787373607",
+    "normalizedUnclaimedWithdrawals": "14000020395747472159",
+    "scaledPendingWithdrawals": "0",
+    "pendingWithdrawalExpiry": "1785697536",
+    "isDelinquent": false,
+    "timeDelinquent": "0",
+    "lastInterestAccruedTimestamp": "1789348764",
+    "unpaidWithdrawalBatchExpiries": [],
+    "coverageLiquidity": "14000021415534845766"
+  },
+  "live": {
+    "market": "0x00e01C5d6eA5bA136F24acCe0399B1A6119d4bb0",
+    "isClosed": false,
+    "protocolFeeBips": "500",
+    "reserveRatioBips": "400",
+    "annualInterestBips": "400",
+    "scaleFactor": "1000002381003108780581209321",
+    "totalSupply": "0",
+    "maxTotalSupply": "324324000000000000000000",
+    "scaledTotalSupply": "0",
+    "totalAssets": "15000020744300953009",
+    "lastAccruedProtocolFees": "1019787373607",
+    "normalizedUnclaimedWithdrawals": "14000020395747472159",
+    "scaledPendingWithdrawals": "0",
+    "pendingWithdrawalExpiry": "1785697536",
+    "isDelinquent": false,
+    "timeDelinquent": "0",
+    "lastInterestAccruedTimestamp": "1789348764",
+    "coverageLiquidity": "14000021415534845766",
+    "commitmentFeeBips": {
+      "isPresent": true,
+      "value": "400"
+    },
+    "drawnAmount": {
+      "isPresent": true,
+      "value": "0"
+    }
+  }
+}
