@@ -5,6 +5,7 @@ import * as typechain from "../../src/typechain";
 describe("SDK public surface smoke", () => {
   it("exports the canonical read helpers and explicit V2 compatibility wrappers", () => {
     expect(typeof sdk.getMarket).to.equal("function");
+    expect(typeof sdk.getMarketDefaultStatus).to.equal("function");
     expect(typeof sdk.getMarketV2).to.equal("function");
     expect(typeof sdk.getMarkets).to.equal("function");
     expect(typeof sdk.getAllMarkets).to.equal("function");

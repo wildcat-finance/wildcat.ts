@@ -1,0 +1,111 @@
+{
+  "observedAt": "2026-10-04T22:37:49.334Z",
+  "meta": {
+    "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+    "block": {
+      "number": 26122027,
+      "timestamp": 1791153455,
+      "hash": "0xccba133eef538893d6b24e74f45014250f8482e7f55169b4b9f9546dd2060517",
+      "__typename": "_Block_"
+    },
+    "hasIndexingErrors": false,
+    "__typename": "_Meta_"
+  },
+  "simulation": "A later state update advances lastInterestAccruedTimestamp while the legacy zero-fee timeDelinquent remains zero; no transaction was sent.",
+  "results": [
+    {
+      "market": "0x02e0415e828a5f97309f93f001885b5db8a87d71",
+      "currentResult": 1788721691,
+      "simulatedStateUpdateResult": "unknown",
+      "snapshot": {
+        "id": "0x02e0415e828a5f97309f93f001885b5db8a87d71",
+        "createdAt": 1771476431,
+        "delinquencyFeeBips": 0,
+        "delinquencyGracePeriod": 345600,
+        "delinquencyStatusChangedIndex": 3,
+        "timeDelinquent": 0,
+        "isDelinquent": true,
+        "isClosed": false,
+        "lastInterestAccruedTimestamp": 1780600091,
+        "marketClosedEvent": null,
+        "__typename": "Market"
+      },
+      "delinquencyRecords": [
+        {
+          "id": "RECORD-0x02e0415e828a5f97309f93f001885b5db8a87d71-17",
+          "delinquencyStatusChangedIndex": 0,
+          "isDelinquent": true,
+          "blockNumber": 24945819,
+          "blockTimestamp": 1776985499,
+          "blockLogIndex": 807,
+          "__typename": "DelinquencyStatusChanged"
+        },
+        {
+          "id": "RECORD-0x02e0415e828a5f97309f93f001885b5db8a87d71-20",
+          "delinquencyStatusChangedIndex": 1,
+          "isDelinquent": false,
+          "blockNumber": 24949502,
+          "blockTimestamp": 1777029803,
+          "blockLogIndex": 153,
+          "__typename": "DelinquencyStatusChanged"
+        },
+        {
+          "id": "RECORD-0x02e0415e828a5f97309f93f001885b5db8a87d71-23",
+          "delinquencyStatusChangedIndex": 2,
+          "isDelinquent": true,
+          "blockNumber": 25246011,
+          "blockTimestamp": 1780600091,
+          "blockLogIndex": 562,
+          "__typename": "DelinquencyStatusChanged"
+        }
+      ]
+    },
+    {
+      "market": "0x0886dc1d5db7288e2818a80c308de8eb2f13790c",
+      "currentResult": 1790979551,
+      "simulatedStateUpdateResult": "unknown",
+      "snapshot": {
+        "id": "0x0886dc1d5db7288e2818a80c308de8eb2f13790c",
+        "createdAt": 1771476767,
+        "delinquencyFeeBips": 0,
+        "delinquencyGracePeriod": 345600,
+        "delinquencyStatusChangedIndex": 3,
+        "timeDelinquent": 0,
+        "isDelinquent": true,
+        "isClosed": false,
+        "lastInterestAccruedTimestamp": 1782857951,
+        "marketClosedEvent": null,
+        "__typename": "Market"
+      },
+      "delinquencyRecords": [
+        {
+          "id": "RECORD-0x0886dc1d5db7288e2818a80c308de8eb2f13790c-15",
+          "delinquencyStatusChangedIndex": 0,
+          "isDelinquent": true,
+          "blockNumber": 24945820,
+          "blockTimestamp": 1776985511,
+          "blockLogIndex": 854,
+          "__typename": "DelinquencyStatusChanged"
+        },
+        {
+          "id": "RECORD-0x0886dc1d5db7288e2818a80c308de8eb2f13790c-18",
+          "delinquencyStatusChangedIndex": 1,
+          "isDelinquent": false,
+          "blockNumber": 24949515,
+          "blockTimestamp": 1777029959,
+          "blockLogIndex": 120,
+          "__typename": "DelinquencyStatusChanged"
+        },
+        {
+          "id": "RECORD-0x0886dc1d5db7288e2818a80c308de8eb2f13790c-25",
+          "delinquencyStatusChangedIndex": 2,
+          "isDelinquent": true,
+          "blockNumber": 25433435,
+          "blockTimestamp": 1782857951,
+          "blockLogIndex": 707,
+          "__typename": "DelinquencyStatusChanged"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,457 @@
+{
+  "observedAt": "2026-10-04T20:49:19.564Z",
+  "sourceBase": "0c2c06c867674cdcf6128a94829d5c40c8380394",
+  "chains": [
+    {
+      "name": "mainnet",
+      "metadata": {
+        "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+        "hasIndexingErrors": false,
+        "block": {
+          "number": 26121486,
+          "timestamp": 1791146951,
+          "__typename": "_Block_"
+        },
+        "__typename": "_Meta_"
+      },
+      "results": [
+        {
+          "address": "0x5850afc80561932b0abb63dd13cdc129395323a3",
+          "isClosed": true,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x5850afc80561932b0abb63dd13cdc129395323a3",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146951,
+            "indexedAt": {
+              "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+              "blockNumber": "26121486",
+              "blockTimestamp": "1791146951",
+              "blockHash": "0xc1957149c4f287bc2a9dd1eaefb32e13d72052b787a620c58ddb9dfe1b4045b4",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x25083923f2174c5ff00d26cd6bc497221713c5b9",
+          "isClosed": true,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x25083923f2174c5ff00d26cd6bc497221713c5b9",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146951,
+            "indexedAt": {
+              "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+              "blockNumber": "26121486",
+              "blockTimestamp": "1791146951",
+              "blockHash": "0xc1957149c4f287bc2a9dd1eaefb32e13d72052b787a620c58ddb9dfe1b4045b4",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x50ebdf73a0df61b782cea489e8102b3bfde0bda6",
+          "isClosed": true,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x50ebdf73a0df61b782cea489e8102b3bfde0bda6",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146951,
+            "indexedAt": {
+              "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+              "blockNumber": "26121486",
+              "blockTimestamp": "1791146951",
+              "blockHash": "0xc1957149c4f287bc2a9dd1eaefb32e13d72052b787a620c58ddb9dfe1b4045b4",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x20632bd54e16fcbcd35dcb2c8882a8a8802ad38d",
+          "isClosed": false,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x20632bd54e16fcbcd35dcb2c8882a8a8802ad38d",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146963,
+            "indexedAt": {
+              "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+              "blockNumber": "26121487",
+              "blockTimestamp": "1791146963",
+              "blockHash": "0xa8f48b9a8cc052e2bc5cff373087016a3ff81d87ae1d2eccfe6d062b7ac0c7e7",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x5285766d5058d519bf7b37dce0a8f9a4ce008bed",
+          "isClosed": false,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x5285766d5058d519bf7b37dce0a8f9a4ce008bed",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146963,
+            "indexedAt": {
+              "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+              "blockNumber": "26121487",
+              "blockTimestamp": "1791146963",
+              "blockHash": "0xa8f48b9a8cc052e2bc5cff373087016a3ff81d87ae1d2eccfe6d062b7ac0c7e7",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0xa8139699360b255c5c02d0616e75f20b92adf1c3",
+          "isClosed": false,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0xa8139699360b255c5c02d0616e75f20b92adf1c3",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146963,
+            "indexedAt": {
+              "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+              "blockNumber": "26121487",
+              "blockTimestamp": "1791146963",
+              "blockHash": "0xa8f48b9a8cc052e2bc5cff373087016a3ff81d87ae1d2eccfe6d062b7ac0c7e7",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x262dd546703760adda0c06279508e04bd1f60dee",
+          "isClosed": false,
+          "previousAppHeuristic": true,
+          "result": {
+            "market": "0x262dd546703760adda0c06279508e04bd1f60dee",
+            "isDefaulted": true,
+            "source": "legacy-history",
+            "defaultedAt": 1767252479,
+            "asOfTimestamp": 1791146963,
+            "indexedAt": {
+              "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+              "blockNumber": "26121487",
+              "blockTimestamp": "1791146963",
+              "blockHash": "0xa8f48b9a8cc052e2bc5cff373087016a3ff81d87ae1d2eccfe6d062b7ac0c7e7",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0xbe8b1f70c5c20fe240cfa7e55b434545398279f3",
+          "isClosed": false,
+          "previousAppHeuristic": true,
+          "result": {
+            "market": "0xbe8b1f70c5c20fe240cfa7e55b434545398279f3",
+            "isDefaulted": true,
+            "source": "legacy-history",
+            "defaultedAt": 1785469955,
+            "asOfTimestamp": 1791146963,
+            "indexedAt": {
+              "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+              "blockNumber": "26121487",
+              "blockTimestamp": "1791146963",
+              "blockHash": "0xa8f48b9a8cc052e2bc5cff373087016a3ff81d87ae1d2eccfe6d062b7ac0c7e7",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x7e496c5678b1722289d9c4a13c9aa53631ca7607",
+          "isClosed": false,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x7e496c5678b1722289d9c4a13c9aa53631ca7607",
+            "isDefaulted": true,
+            "source": "legacy-history",
+            "defaultedAt": 1783026923,
+            "asOfTimestamp": 1791146963,
+            "indexedAt": {
+              "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+              "blockNumber": "26121487",
+              "blockTimestamp": "1791146963",
+              "blockHash": "0xa8f48b9a8cc052e2bc5cff373087016a3ff81d87ae1d2eccfe6d062b7ac0c7e7",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x90d0ff1a7b1abef69eaf3952641058673439e2e3",
+          "isClosed": true,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x90d0ff1a7b1abef69eaf3952641058673439e2e3",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146963,
+            "indexedAt": {
+              "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+              "blockNumber": "26121487",
+              "blockTimestamp": "1791146963",
+              "blockHash": "0xa8f48b9a8cc052e2bc5cff373087016a3ff81d87ae1d2eccfe6d062b7ac0c7e7",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x18b3794b9f0ffd999442815e537fe603b67fa029",
+          "isClosed": true,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x18b3794b9f0ffd999442815e537fe603b67fa029",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146963,
+            "indexedAt": {
+              "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+              "blockNumber": "26121487",
+              "blockTimestamp": "1791146963",
+              "blockHash": "0xa8f48b9a8cc052e2bc5cff373087016a3ff81d87ae1d2eccfe6d062b7ac0c7e7",
+              "hasIndexingErrors": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "sepolia",
+      "metadata": {
+        "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+        "hasIndexingErrors": false,
+        "block": {
+          "number": 11844466,
+          "timestamp": 1791146976,
+          "__typename": "_Block_"
+        },
+        "__typename": "_Meta_"
+      },
+      "results": [
+        {
+          "address": "0x9c85551d71735071f3e26cd04242e3ceca3b5e20",
+          "isClosed": false,
+          "previousAppHeuristic": true,
+          "result": {
+            "market": "0x9c85551d71735071f3e26cd04242e3ceca3b5e20",
+            "isDefaulted": true,
+            "source": "legacy-history",
+            "defaultedAt": 1709156652,
+            "asOfTimestamp": 1791146976,
+            "indexedAt": {
+              "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+              "blockNumber": "11844466",
+              "blockTimestamp": "1791146976",
+              "blockHash": "0xe4e7306361fe7b3b495ac17d0c6245371ed9716e632ef9fbe169bb00bd77b3df",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x2a4c9d5d8e8dfb87983822f2af097556eb8bc6ca",
+          "isClosed": true,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x2a4c9d5d8e8dfb87983822f2af097556eb8bc6ca",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146976,
+            "indexedAt": {
+              "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+              "blockNumber": "11844466",
+              "blockTimestamp": "1791146976",
+              "blockHash": "0xe4e7306361fe7b3b495ac17d0c6245371ed9716e632ef9fbe169bb00bd77b3df",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x112b4b6dacb43a9765ab06593dfa6dbc9a986df1",
+          "isClosed": true,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x112b4b6dacb43a9765ab06593dfa6dbc9a986df1",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146976,
+            "indexedAt": {
+              "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+              "blockNumber": "11844466",
+              "blockTimestamp": "1791146976",
+              "blockHash": "0xe4e7306361fe7b3b495ac17d0c6245371ed9716e632ef9fbe169bb00bd77b3df",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x31dc7d2a6ec870e56289d48bdd6e11a743bfb51c",
+          "isClosed": false,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x31dc7d2a6ec870e56289d48bdd6e11a743bfb51c",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146976,
+            "indexedAt": {
+              "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+              "blockNumber": "11844466",
+              "blockTimestamp": "1791146976",
+              "blockHash": "0xe4e7306361fe7b3b495ac17d0c6245371ed9716e632ef9fbe169bb00bd77b3df",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x6d54a104722300f1a58ae32a4aab486bee9636a8",
+          "isClosed": false,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x6d54a104722300f1a58ae32a4aab486bee9636a8",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146976,
+            "indexedAt": {
+              "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+              "blockNumber": "11844466",
+              "blockTimestamp": "1791146976",
+              "blockHash": "0xe4e7306361fe7b3b495ac17d0c6245371ed9716e632ef9fbe169bb00bd77b3df",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x49e54aff0919b99d4b220cead5da1e8a16a4e7d0",
+          "isClosed": false,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x49e54aff0919b99d4b220cead5da1e8a16a4e7d0",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146976,
+            "indexedAt": {
+              "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+              "blockNumber": "11844466",
+              "blockTimestamp": "1791146976",
+              "blockHash": "0xe4e7306361fe7b3b495ac17d0c6245371ed9716e632ef9fbe169bb00bd77b3df",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x0b3a9a29acde8f1d5a27100420eb84e73757f7cd",
+          "isClosed": false,
+          "previousAppHeuristic": true,
+          "result": {
+            "market": "0x0b3a9a29acde8f1d5a27100420eb84e73757f7cd",
+            "isDefaulted": true,
+            "source": "legacy-history",
+            "defaultedAt": 1709439624,
+            "asOfTimestamp": 1791146976,
+            "indexedAt": {
+              "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+              "blockNumber": "11844466",
+              "blockTimestamp": "1791146976",
+              "blockHash": "0xe4e7306361fe7b3b495ac17d0c6245371ed9716e632ef9fbe169bb00bd77b3df",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0xb312244ebfe257b01b9a1e72e2e090ac6e2c421d",
+          "isClosed": false,
+          "previousAppHeuristic": true,
+          "result": {
+            "market": "0xb312244ebfe257b01b9a1e72e2e090ac6e2c421d",
+            "isDefaulted": true,
+            "source": "legacy-history",
+            "defaultedAt": 1746099804,
+            "asOfTimestamp": 1791146976,
+            "indexedAt": {
+              "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+              "blockNumber": "11844466",
+              "blockTimestamp": "1791146976",
+              "blockHash": "0xe4e7306361fe7b3b495ac17d0c6245371ed9716e632ef9fbe169bb00bd77b3df",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x1881e2994cf0f9c907fc9af776ecfc51ad7d6e04",
+          "isClosed": false,
+          "previousAppHeuristic": true,
+          "result": {
+            "market": "0x1881e2994cf0f9c907fc9af776ecfc51ad7d6e04",
+            "isDefaulted": true,
+            "source": "legacy-history",
+            "defaultedAt": 1773190320,
+            "asOfTimestamp": 1791146976,
+            "indexedAt": {
+              "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+              "blockNumber": "11844466",
+              "blockTimestamp": "1791146976",
+              "blockHash": "0xe4e7306361fe7b3b495ac17d0c6245371ed9716e632ef9fbe169bb00bd77b3df",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x8d06474b252725cb56ac598719ff801b2e8470c7",
+          "isClosed": true,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x8d06474b252725cb56ac598719ff801b2e8470c7",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146976,
+            "indexedAt": {
+              "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+              "blockNumber": "11844466",
+              "blockTimestamp": "1791146976",
+              "blockHash": "0xe4e7306361fe7b3b495ac17d0c6245371ed9716e632ef9fbe169bb00bd77b3df",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x59d413b655af83a5b6b0134c738e26747c922b0d",
+          "isClosed": true,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x59d413b655af83a5b6b0134c738e26747c922b0d",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146976,
+            "indexedAt": {
+              "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+              "blockNumber": "11844466",
+              "blockTimestamp": "1791146976",
+              "blockHash": "0xe4e7306361fe7b3b495ac17d0c6245371ed9716e632ef9fbe169bb00bd77b3df",
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        {
+          "address": "0x3077144899cd2d06ab24efa7419d4eec92b7dccb",
+          "isClosed": true,
+          "previousAppHeuristic": false,
+          "result": {
+            "market": "0x3077144899cd2d06ab24efa7419d4eec92b7dccb",
+            "isDefaulted": false,
+            "source": "legacy-history",
+            "asOfTimestamp": 1791146976,
+            "indexedAt": {
+              "deployment": "QmVF3tjg5xEDCbR94qPX2a7s3HkG4bzcn8h9AjXuaysR2V",
+              "blockNumber": "11844466",
+              "blockTimestamp": "1791146976",
+              "blockHash": "0xe4e7306361fe7b3b495ac17d0c6245371ed9716e632ef9fbe169bb00bd77b3df",
+              "hasIndexingErrors": false
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

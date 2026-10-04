@@ -22,7 +22,10 @@
 
 The most likely scenario for working in this repo is while also working on app side. Theres a section below specifically on _how_ to manage this as a local dependency.
 
-See the [3.2.14-beta release notes](docs/releases/3.2.14-beta.md) for Sepolia
+See the [3.2.16-beta release notes](docs/releases/3.2.16-beta.md) for zero-penalty-APR
+legacy default validation. The [3.2.15-beta release notes](docs/releases/3.2.15-beta.md) cover the shared
+default-status API, including legacy history reconstruction. The
+[3.2.14-beta release notes](docs/releases/3.2.14-beta.md) cover Sepolia
 V2.5.6 hook parameter freezes, subgraph V2.5.14 routing, and pending integration
 checks. The [3.2.13-beta notes](docs/releases/3.2.13-beta.md) cover the retained
 repayment lifecycle, live liquidity, withdrawal carry, and app migration.

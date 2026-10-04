@@ -1,0 +1,271 @@
+{
+  "observedAt": "2026-10-04T22:40:37.605Z",
+  "sdkVersion": "3.2.16-beta",
+  "chainId": 1,
+  "latestBlock": {
+    "number": 26122041,
+    "timestamp": 1791153623
+  },
+  "results": [
+    {
+      "address": "0x3747a7d6c887348fe249fdff29145b25cf0311f9",
+      "name": "HalalCash Staked USDe",
+      "borrower": "0x40A42340c7829D1b31EED3860928B4862715e5de",
+      "isClosed": false,
+      "isDelinquent": false,
+      "timeDelinquent": 0,
+      "lastInterestAccruedTimestamp": 1791153623,
+      "delinquencyGracePeriod": 345600,
+      "delinquencyFeeBips": 2500,
+      "annualInterestBips": 1850,
+      "totalSupply": "0",
+      "totalDebts": "0",
+      "priorAppHeuristic": false,
+      "result": {
+        "market": "0x3747a7d6c887348fe249fdff29145b25cf0311f9",
+        "isDefaulted": false,
+        "source": "legacy-history",
+        "asOfTimestamp": 1791153623,
+        "indexedAt": {
+          "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+          "blockNumber": "26122041",
+          "blockTimestamp": "1791153623",
+          "blockHash": "0x714f91ddb7f61e4ab7b619e01b386037af3e4bc9f231787957f0072f3861a95b",
+          "hasIndexingErrors": false
+        }
+      }
+    },
+    {
+      "address": "0x0886dc1d5db7288e2818a80c308de8eb2f13790c",
+      "name": "Halalcash Levered USD Coin",
+      "borrower": "0x40A42340c7829D1b31EED3860928B4862715e5de",
+      "isClosed": false,
+      "isDelinquent": true,
+      "timeDelinquent": 0,
+      "lastInterestAccruedTimestamp": 1791153623,
+      "delinquencyGracePeriod": 345600,
+      "delinquencyFeeBips": 0,
+      "annualInterestBips": 1850,
+      "totalSupply": "110090.967543",
+      "totalDebts": "110382.915919",
+      "priorAppHeuristic": false,
+      "result": {
+        "market": "0x0886dc1d5db7288e2818a80c308de8eb2f13790c",
+        "isDefaulted": true,
+        "source": "legacy-history",
+        "defaultedAt": 1790979551,
+        "asOfTimestamp": 1791153623,
+        "indexedAt": {
+          "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+          "blockNumber": "26122041",
+          "blockTimestamp": "1791153623",
+          "blockHash": "0x714f91ddb7f61e4ab7b619e01b386037af3e4bc9f231787957f0072f3861a95b",
+          "hasIndexingErrors": false
+        }
+      }
+    },
+    {
+      "address": "0x02e0415e828a5f97309f93f001885b5db8a87d71",
+      "name": "Halal Cash Levered Tether USD",
+      "borrower": "0x40A42340c7829D1b31EED3860928B4862715e5de",
+      "isClosed": false,
+      "isDelinquent": true,
+      "timeDelinquent": 0,
+      "lastInterestAccruedTimestamp": 1791153623,
+      "delinquencyGracePeriod": 345600,
+      "delinquencyFeeBips": 0,
+      "annualInterestBips": 1850,
+      "totalSupply": "110084.558059",
+      "totalDebts": "110433.535964",
+      "priorAppHeuristic": false,
+      "result": {
+        "market": "0x02e0415e828a5f97309f93f001885b5db8a87d71",
+        "isDefaulted": true,
+        "source": "legacy-history",
+        "defaultedAt": 1788721691,
+        "asOfTimestamp": 1791153623,
+        "indexedAt": {
+          "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+          "blockNumber": "26122041",
+          "blockTimestamp": "1791153623",
+          "blockHash": "0x714f91ddb7f61e4ab7b619e01b386037af3e4bc9f231787957f0072f3861a95b",
+          "hasIndexingErrors": false
+        }
+      }
+    },
+    {
+      "address": "0x92bb70d7d8ff1618ba5a0e20fb2240ee1a133732",
+      "name": "Halalcash Levered USD Coin USD Coin",
+      "borrower": "0x40A42340c7829D1b31EED3860928B4862715e5de",
+      "isClosed": false,
+      "isDelinquent": false,
+      "timeDelinquent": 0,
+      "lastInterestAccruedTimestamp": 1791153623,
+      "delinquencyGracePeriod": 345600,
+      "delinquencyFeeBips": 1000,
+      "annualInterestBips": 1800,
+      "totalSupply": "0",
+      "totalDebts": "0",
+      "priorAppHeuristic": false,
+      "result": {
+        "market": "0x92bb70d7d8ff1618ba5a0e20fb2240ee1a133732",
+        "isDefaulted": false,
+        "source": "legacy-history",
+        "asOfTimestamp": 1791153623,
+        "indexedAt": {
+          "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+          "blockNumber": "26122041",
+          "blockTimestamp": "1791153623",
+          "blockHash": "0x714f91ddb7f61e4ab7b619e01b386037af3e4bc9f231787957f0072f3861a95b",
+          "hasIndexingErrors": false
+        }
+      }
+    },
+    {
+      "address": "0x8c06d86596d671798a67e80dc44a281c8d822fd3",
+      "name": "Open Term Halalcash Tether USD",
+      "borrower": "0x40A42340c7829D1b31EED3860928B4862715e5de",
+      "isClosed": true,
+      "isDelinquent": false,
+      "timeDelinquent": 0,
+      "lastInterestAccruedTimestamp": 1791153623,
+      "delinquencyGracePeriod": 345600,
+      "delinquencyFeeBips": 1000,
+      "annualInterestBips": 0,
+      "totalSupply": "0",
+      "totalDebts": "0",
+      "priorAppHeuristic": false,
+      "result": {
+        "market": "0x8c06d86596d671798a67e80dc44a281c8d822fd3",
+        "isDefaulted": false,
+        "source": "legacy-history",
+        "asOfTimestamp": 1791153623,
+        "indexedAt": {
+          "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+          "blockNumber": "26122041",
+          "blockTimestamp": "1791153623",
+          "blockHash": "0x714f91ddb7f61e4ab7b619e01b386037af3e4bc9f231787957f0072f3861a95b",
+          "hasIndexingErrors": false
+        }
+      }
+    },
+    {
+      "address": "0x7e496c5678b1722289d9c4a13c9aa53631ca7607",
+      "name": "Halalcash Levered USD Coin",
+      "borrower": "0x40A42340c7829D1b31EED3860928B4862715e5de",
+      "isClosed": false,
+      "isDelinquent": true,
+      "timeDelinquent": 16248300,
+      "lastInterestAccruedTimestamp": 1791153623,
+      "delinquencyGracePeriod": 345600,
+      "delinquencyFeeBips": 1000,
+      "annualInterestBips": 1850,
+      "totalSupply": "47449.218903",
+      "totalDebts": "47603.466775",
+      "priorAppHeuristic": true,
+      "result": {
+        "market": "0x7e496c5678b1722289d9c4a13c9aa53631ca7607",
+        "isDefaulted": true,
+        "source": "legacy-history",
+        "defaultedAt": 1783026923,
+        "asOfTimestamp": 1791153623,
+        "indexedAt": {
+          "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+          "blockNumber": "26122041",
+          "blockTimestamp": "1791153623",
+          "blockHash": "0x714f91ddb7f61e4ab7b619e01b386037af3e4bc9f231787957f0072f3861a95b",
+          "hasIndexingErrors": false
+        }
+      }
+    },
+    {
+      "address": "0xbe8b1f70c5c20fe240cfa7e55b434545398279f3",
+      "name": "Halalcash Levered Tether USD",
+      "borrower": "0x40A42340c7829D1b31EED3860928B4862715e5de",
+      "isClosed": false,
+      "isDelinquent": true,
+      "timeDelinquent": 13805268,
+      "lastInterestAccruedTimestamp": 1791153623,
+      "delinquencyGracePeriod": 345600,
+      "delinquencyFeeBips": 1000,
+      "annualInterestBips": 1850,
+      "totalSupply": "233842.368897",
+      "totalDebts": "234700.584025",
+      "priorAppHeuristic": true,
+      "result": {
+        "market": "0xbe8b1f70c5c20fe240cfa7e55b434545398279f3",
+        "isDefaulted": true,
+        "source": "legacy-history",
+        "defaultedAt": 1785469955,
+        "asOfTimestamp": 1791153623,
+        "indexedAt": {
+          "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+          "blockNumber": "26122041",
+          "blockTimestamp": "1791153623",
+          "blockHash": "0x714f91ddb7f61e4ab7b619e01b386037af3e4bc9f231787957f0072f3861a95b",
+          "hasIndexingErrors": false
+        }
+      }
+    },
+    {
+      "address": "0x5a516928be2005e9852e342f71bfcc52ca5bdace",
+      "name": "TRV USD Coin",
+      "borrower": "0x0792dCb7080466e4Bbc678Bdb873FE7D969832B8",
+      "isClosed": false,
+      "isDelinquent": true,
+      "timeDelinquent": 15719136,
+      "lastInterestAccruedTimestamp": 1791153623,
+      "delinquencyGracePeriod": 604800,
+      "delinquencyFeeBips": 100,
+      "annualInterestBips": 1200,
+      "totalSupply": "210605.069263",
+      "totalDebts": "228366.864408",
+      "priorAppHeuristic": true,
+      "result": {
+        "market": "0x5a516928be2005e9852e342f71bfcc52ca5bdace",
+        "isDefaulted": true,
+        "source": "legacy-history",
+        "defaultedAt": 1784761367,
+        "asOfTimestamp": 1791153623,
+        "indexedAt": {
+          "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+          "blockNumber": "26122041",
+          "blockTimestamp": "1791153623",
+          "blockHash": "0x714f91ddb7f61e4ab7b619e01b386037af3e4bc9f231787957f0072f3861a95b",
+          "hasIndexingErrors": false
+        }
+      }
+    },
+    {
+      "address": "0x262dd546703760adda0c06279508e04bd1f60dee",
+      "name": "Kinto Phoenix Facility USD Coin",
+      "borrower": "0x2E7111Ef34D39b36EC84C656b947CA746e495Ff6",
+      "isClosed": false,
+      "isDelinquent": true,
+      "timeDelinquent": 31936344,
+      "lastInterestAccruedTimestamp": 1791153623,
+      "delinquencyGracePeriod": 259200,
+      "delinquencyFeeBips": 1000,
+      "annualInterestBips": 5000,
+      "totalSupply": "1415180.105386",
+      "totalDebts": "1439816.088924",
+      "priorAppHeuristic": true,
+      "result": {
+        "market": "0x262dd546703760adda0c06279508e04bd1f60dee",
+        "isDefaulted": true,
+        "source": "legacy-history",
+        "defaultedAt": 1767252479,
+        "asOfTimestamp": 1791153623,
+        "indexedAt": {
+          "deployment": "QmZE3qXE1JzYJwuquaNktyDokNZCWSnAbQKbeCChPhDLrN",
+          "blockNumber": "26122041",
+          "blockTimestamp": "1791153623",
+          "blockHash": "0x714f91ddb7f61e4ab7b619e01b386037af3e4bc9f231787957f0072f3861a95b",
+          "hasIndexingErrors": false
+        }
+      }
+    }
+  ],
+  "defaults": 6,
+  "unknown": 0
+}
