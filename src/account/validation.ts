@@ -62,6 +62,7 @@ export type CloseMarketPreview =
 
 export enum SetMaxTotalSupplyStatus {
   NotBorrower = "NotBorrower",
+  MarketInRepayment = "MarketInRepayment",
   Ready = "Ready",
   BelowCurrentSupply = "BelowCurrentSupply"
 }
@@ -167,6 +168,7 @@ export type ForceBuyBackPreview = { status: ForceBuyBackStatus };
 
 export enum SetMinimumDepositStatus {
   Ready = "Ready",
+  MarketInRepayment = "MarketInRepayment",
   NotBorrower = "NotBorrower",
   NotV2Market = "NotV2Market",
   DepositHookNotEnabled = "DepositHookNotEnabled",
@@ -177,6 +179,7 @@ export type SetMinimumDepositPreview = { status: SetMinimumDepositStatus };
 
 export enum ProposeAnnualInterestBipsStatus {
   Ready = "Ready",
+  MarketInRepayment = "MarketInRepayment",
   NotBorrower = "NotBorrower",
   NotV2Market = "NotV2Market",
   NotPeriodicTermMarket = "NotPeriodicTermMarket",
@@ -189,6 +192,7 @@ export type ProposeAnnualInterestBipsPreview = { status: ProposeAnnualInterestBi
 
 export enum SetFixedTermEndTimeStatus {
   Ready = "Ready",
+  MarketInRepayment = "MarketInRepayment",
   NotBorrower = "NotBorrower",
   NotV2Market = "NotV2Market",
   NotFixedTermMarket = "NotFixedTermMarket",

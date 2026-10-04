@@ -6,6 +6,23 @@ import { DeployMarketStatus } from "./validation";
 import { toNumber } from "../utils/bigint";
 import type { Numeric } from "../lens-types";
 
+// Sepolia template-update-v2.5.6.json. Existing instances of older templates retain
+// their original behavior even when registered on the same V2.5.5 factories.
+const repaymentFreezeTemplates = new Set([
+  "0xbca425d384da256040779df532b6d2e8d3b3f1ad",
+  "0xa3fe06137cc893e19c2e4764a4a7b001e988ba2b",
+  "0x79da352868305d37d0179f460ded88886d4ee524"
+]);
+
+/** Whether the identified hook implementation freezes financial settings at repayment. */
+export const supportsRepaymentParameterFreeze = (
+  chainId: SupportedChainId,
+  hooksTemplateAddress: string | undefined
+): boolean =>
+  chainId === SupportedChainId.Sepolia &&
+  hooksTemplateAddress !== undefined &&
+  repaymentFreezeTemplates.has(hooksTemplateAddress.toLowerCase());
+
 /** ABI for the configured deployment target, not for arbitrary historical factories. */
 export const getHooksFactoryDeploymentAbi = (
   chainId: SupportedChainId,

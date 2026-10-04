@@ -39,7 +39,7 @@ const makeFactoryMetadata = (
 });
 
 describe("SDK deployment configuration", () => {
-  it("pins the Sepolia V2.5.5 deployment addresses indexed by subgraph V2.5.13", () => {
+  it("retains the Sepolia V2.5.5 factories and lens used by protocol V2.5.6", () => {
     expect(Deployments[SupportedChainId.Sepolia]).to.include({
       HooksFactoryStandard: "0x0E12301A4F4b81A2B9965E4959e21faDf1754Ead",
       HooksFactoryRevolving: "0x130E07D24e2aF6ea4554032d4F53fcBAe000d1b1",

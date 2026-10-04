@@ -120,7 +120,7 @@ export const getSubgraphFeatureAvailability = (
 };
 
 export const SubgraphUrls: Record<SupportedChainId, string> = {
-  [SupportedChainId.Sepolia]: `${GatewaySubgraphBaseUrl}/sepolia/v2.5.13`,
+  [SupportedChainId.Sepolia]: `${GatewaySubgraphBaseUrl}/sepolia/v2.5.14`,
   [SupportedChainId.Mainnet]: `${GatewaySubgraphBaseUrl}/mainnet/v2.0.30`,
   [SupportedChainId.PlasmaTestnet]: `${GatewaySubgraphBaseUrl}/plasma-testnet/v2.0.30`,
   [SupportedChainId.PlasmaMainnet]: `${GatewaySubgraphBaseUrl}/plasma-mainnet/v2.0.30`

@@ -22,15 +22,16 @@
 
 The most likely scenario for working in this repo is while also working on app side. Theres a section below specifically on _how_ to manage this as a local dependency.
 
-See the [3.2.13-beta release notes](docs/releases/3.2.13-beta.md) for Sepolia
-V2.5.5 deployment targets, repayment lifecycle, live liquidity, withdrawal carry,
-and app migration notes for subgraph V2.5.13.
+See the [3.2.14-beta release notes](docs/releases/3.2.14-beta.md) for Sepolia
+V2.5.6 hook parameter freezes, subgraph V2.5.14 routing, and pending integration
+checks. The [3.2.13-beta notes](docs/releases/3.2.13-beta.md) cover the retained
+repayment lifecycle, live liquidity, withdrawal carry, and app migration.
 
 ## Gateway Connections
 
 SDK 3.2.9 and later default to Wildcat's public data gateway. RPC connections identify
 the chain; subgraph connections also pin the release understood by the SDK.
-Sepolia uses subgraph v2.5.13. The gateway manages upstream provider failover.
+Sepolia uses subgraph v2.5.14. The gateway manages upstream provider failover.
 Public access needs no credential and is subject to gateway quotas.
 
 For viem or wagmi, use `createRpcTransport`. For subgraph reads, use
@@ -84,7 +85,7 @@ const appTransport = createRpcTransport(chainId, {
   endpoint: `/api/gateway/rpc/${chainId}`
 });
 const appSubgraph = getSubgraphClient(chainId, {
-  endpoint: "/api/gateway/graph/sepolia/v2.5.13"
+  endpoint: "/api/gateway/graph/sepolia/v2.5.14"
 });
 ```
 

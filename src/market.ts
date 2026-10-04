@@ -85,6 +85,7 @@ import {
   toNumber
 } from "./utils";
 import { hooksTemplateFromSubgraph } from "./access";
+import { supportsRepaymentParameterFreeze } from "./access/repayment";
 import { roleProviderFromLensData } from "./access/utils";
 import { iPeriodicTermHooksAbi, wildcatMarketAbi } from "./abi";
 import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
@@ -293,6 +294,8 @@ export type MarketArgs = {
   marketToken: Token;
   underlyingToken: Token;
   hooksFactory?: string;
+  /** Immutable template identity, available from indexed and full lens reads. */
+  hooksTemplateAddress?: string;
   marketKind: MarketKind;
   hooksConfig?: HooksConfig;
   /**
@@ -581,6 +584,17 @@ export class Market extends ContractWrapper {
 
   get isInRepayment(): boolean {
     return !this.isClosed && this.hasReachedRepaymentDate === true;
+  }
+
+  /** At the observed repayment date, V2.5.6 hook settings stay frozen after closure too. */
+  get hasFrozenHookParameters(): boolean {
+    return (
+      this.hasReachedRepaymentDate === true &&
+      supportsRepaymentParameterFreeze(
+        this.chainId,
+        this.hooksTemplateAddress ?? this.hooksConfig?.template?.hooksTemplate
+      )
+    );
   }
 
   /** A permanent recorded default can coexist with a closed, fully repaid market. */
@@ -1231,6 +1245,14 @@ export class Market extends ContractWrapper {
         this.hooksConfig.hooksAddress,
         "Live market hooks instance"
       );
+      const templateAddress = this.hooksTemplateAddress ?? this.hooksConfig.template?.hooksTemplate;
+      if (templateAddress !== undefined) {
+        assertMatchingAddress(
+          baseData.hooks.hooksTemplate.hooksTemplate,
+          templateAddress,
+          "Live market hooks template"
+        );
+      }
       assertReadIdentity(
         toNumber(baseData.hooks.kind) === toNumber(baseData.hooksConfig.kind),
         "Live market hooks instance kind mismatch"
@@ -1311,6 +1333,7 @@ export class Market extends ContractWrapper {
     this.coverageLiquidity = this.underlyingToken.getAmount(baseData.coverageLiquidity);
     if ("hooksFactory" in baseData) {
       this.hooksFactory = baseData.hooksFactory;
+      this.hooksTemplateAddress = baseData.hooks.hooksTemplate.hooksTemplate;
     }
     if ("hooksConfig" in baseData) {
       assert(this.version === MarketVersion.V2, `Can not push V2 lens data to V1 market!`);
@@ -1627,6 +1650,7 @@ export class Market extends ContractWrapper {
       version: data.version,
       eventGeneration: provenance.eventGeneration,
       hooksFactory,
+      hooksTemplateAddress: hooksConfig?.template?.hooksTemplate,
       marketKind,
       hooksConfig,
       roleProviders,
@@ -1829,6 +1853,7 @@ export class Market extends ContractWrapper {
     return new Market({
       provider,
       hooksFactory: data.hooksFactory,
+      hooksTemplateAddress: hooks.hooksTemplate.hooksTemplate,
       marketKind: getConfiguredMarketKindForHooksFactory(chainId, data.hooksFactory),
       hooksConfig,
       roleProviders: roleProvidersFromLens(hooks),
@@ -1958,6 +1983,7 @@ export class Market extends ContractWrapper {
     return new Market({
       provider,
       hooksFactory: data.hooksFactory,
+      hooksTemplateAddress: hooks.hooksTemplate.hooksTemplate,
       marketKind: marketKindFromRevolvingFields(commitmentFeeBips.isPresent, drawnAmount.isPresent),
       hooksConfig,
       roleProviders: roleProvidersFromLens(hooks),

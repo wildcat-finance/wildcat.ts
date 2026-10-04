@@ -971,6 +971,44 @@ describe("Market direct read routing", () => {
 });
 
 describe("Market model routing metadata", () => {
+  it("retains template identity from indexed, legacy lens and current lens reads", () => {
+    const indexed = makeSubgraphMarketData();
+    const indexedMarket = Market.fromSubgraphMarketData(
+      SupportedChainId.Sepolia,
+      provider,
+      indexed
+    );
+    expect(indexedMarket.hooksTemplateAddress).to.equal(
+      indexed.hooks!.templateRegistration.hooksTemplate.address
+    );
+    const factory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
+    const legacy = makeFactoryBackedMarketData(factory);
+    expect(
+      Market.fromMarketDataV2(SupportedChainId.Sepolia, provider, legacy).hooksTemplateAddress
+    ).to.equal(legacy.hooks.hooksTemplate.hooksTemplate);
+
+    const data = makeUnifiedMarketDataV2(factory);
+    data.market.hooks.hooksTemplate.hooksTemplate = "0xBcA425d384Da256040779DF532B6D2E8d3B3f1aD";
+    data.market.lastInterestAccruedTimestamp = 100;
+    data.lifecycle = {
+      isPresent: true,
+      repaymentDate: 100,
+      repaymentPeriod: 60,
+      repaymentDeadline: 160,
+      defaultedAt: 0,
+      isInRepayment: true
+    };
+    const market = Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
+    expect(market.hasFrozenHookParameters).to.equal(true);
+    market.updateWithLiveData(makeMarketLiveDataV2(data));
+    expect(market.hooksTemplateAddress).to.equal(data.market.hooks.hooksTemplate.hooksTemplate);
+    expect(market.hasFrozenHookParameters).to.equal(true);
+
+    data.market.hooks.hooksTemplate.hooksTemplate = "0x4aC04D306F3D2352998Ce48E2e8D357213683415";
+    expect(() => market.updateWith(data)).to.throw("Live market hooks template");
+    expect(market.hasFrozenHookParameters).to.equal(true);
+  });
+
   it("normalizes fixed-block provenance for every supported market generation", () => {
     const v1 = makeSubgraphMarketData();
     v1.version = SubgraphMarketVersion.V1;
@@ -1576,6 +1614,8 @@ describe("Market model routing metadata", () => {
     liveData.underlyingToken.token = data._asset.address;
     liveData.hooksConfig.hooksAddress = data.hooks!.address;
     liveData.hooks.hooksAddress = data.hooks!.address;
+    liveData.hooks.hooksTemplate.hooksTemplate =
+      data.hooks!.templateRegistration.hooksTemplate.address;
     market.updateWith(liveData);
 
     expect(market.stateSource).to.equal("live");

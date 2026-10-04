@@ -557,6 +557,9 @@ export class MarketAccount {
     if (config?.kind !== HooksKind.PeriodicTerm) {
       return { status: ProposeAnnualInterestBipsStatus.NotPeriodicTermMarket };
     }
+    if (this.market.hasFrozenHookParameters) {
+      return { status: ProposeAnnualInterestBipsStatus.MarketInRepayment };
+    }
     if (apr >= this.market.annualInterestBips) {
       return { status: ProposeAnnualInterestBipsStatus.NotReduction };
     }
@@ -569,6 +572,9 @@ export class MarketAccount {
   previewSetMaxTotalSupply(amount: TokenAmount): SetMaxTotalSupplyPreview {
     assertNormalizedMarketAmount(amount, this.market, "Maximum supply");
     if (!this.isBorrower) return { status: SetMaxTotalSupplyStatus.NotBorrower };
+    if (this.market.hasFrozenHookParameters) {
+      return { status: SetMaxTotalSupplyStatus.MarketInRepayment };
+    }
     if (this.market.version === MarketVersion.V1 && amount.raw < this.market.totalSupply.raw) {
       return { status: SetMaxTotalSupplyStatus.BelowCurrentSupply };
     }
@@ -580,6 +586,9 @@ export class MarketAccount {
     if (this.market.version !== MarketVersion.V2)
       return { status: SetMinimumDepositStatus.NotV2Market };
     if (!this.isBorrower) return { status: SetMinimumDepositStatus.NotBorrower };
+    if (this.market.hasFrozenHookParameters) {
+      return { status: SetMinimumDepositStatus.MarketInRepayment };
+    }
     const config = this.market.hooksConfig;
     assert(config !== undefined, `V2 market missing hooksConfig`);
     if (amount.gt(0) && !config.flags.useOnDeposit) {
@@ -597,6 +606,9 @@ export class MarketAccount {
     if (!this.isBorrower) return { status: SetFixedTermEndTimeStatus.NotBorrower };
     const config = this.market.hooksConfig;
     if (config && config.kind === HooksKind.FixedTerm) {
+      if (this.market.hasFrozenHookParameters) {
+        return { status: SetFixedTermEndTimeStatus.MarketInRepayment };
+      }
       if (!config.allowTermReduction && endTime <= config.fixedTermEndTime) {
         return { status: SetFixedTermEndTimeStatus.FixedTermEndTimeNotChangeable };
       }
@@ -739,7 +751,7 @@ export class MarketAccount {
 
   async setMaxTotalSupply(amount: TokenAmount): Promise<TransactionHash> {
     const { status } = this.previewSetMaxTotalSupply(amount);
-    assert(status === SetMaxTotalSupplyStatus.Ready, `Cannot close market: ${status}`);
+    assert(status === SetMaxTotalSupplyStatus.Ready, `Cannot set maximum supply: ${status}`);
     if (this.market.version === MarketVersion.V1) {
       assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
       return submitPreparedTransaction(
