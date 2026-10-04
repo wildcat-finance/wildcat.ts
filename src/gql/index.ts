@@ -29,3 +29,5 @@ export type {
 export * from "./getPolicyMarketsAndLenders";
 
 export { MakeOptional } from "../utils/misc";
+
+export * from "./getMarketRepaymentHistory";

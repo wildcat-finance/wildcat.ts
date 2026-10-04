@@ -1,8 +1,7 @@
+import { getHooksFactoryDeploymentAbi, withFactoryRepaymentTerms } from "./access/repayment";
 import { encodeFunctionData, type Abi, type Address, type Hex } from "viem";
 import {
   collateralLensAbi,
-  hooksFactoryAbi,
-  hooksFactoryRevolvingAbi,
   marketLensAbi,
   marketLensV2Abi,
   marketLensV2_5Abi,
@@ -288,25 +287,25 @@ export const getStandardHooksFactoryContract = (
   provider: SignerOrProvider
 ): StandardHooksFactoryContract => {
   const address = getDeploymentAddress(chainId, "HooksFactoryStandard");
+  const abi = getHooksFactoryDeploymentAbi(chainId, "standard");
   return {
     address,
-    interface: encodeWithAbi(hooksFactoryAbi as Abi),
+    interface: {
+      encodeFunctionData: (name, args = []) =>
+        encodeWithAbi(abi).encodeFunctionData(name, withFactoryRepaymentTerms(chainId, name, args))
+    },
     computeMarketAddress: (salt) =>
-      readViemContract(
-        getViemClient(provider),
-        address,
-        hooksFactoryAbi as Abi,
-        "computeMarketAddress",
-        [salt as Hex]
-      ),
+      readViemContract(getViemClient(provider), address, abi, "computeMarketAddress", [
+        salt as Hex
+      ]),
     deployMarket: (...args) =>
       sendPreparedTransaction(
         provider,
         prepareTransaction({
           to: address,
-          abi: hooksFactoryAbi,
+          abi,
           functionName: "deployMarket",
-          args
+          args: withFactoryRepaymentTerms(chainId, "deployMarket", args)
         })
       ),
     deployMarketAndHooks: (...args) =>
@@ -314,9 +313,9 @@ export const getStandardHooksFactoryContract = (
         provider,
         prepareTransaction({
           to: address,
-          abi: hooksFactoryAbi,
+          abi,
           functionName: "deployMarketAndHooks",
-          args
+          args: withFactoryRepaymentTerms(chainId, "deployMarketAndHooks", args)
         })
       )
   };
@@ -327,25 +326,25 @@ export const getRevolvingHooksFactoryContract = (
   provider: SignerOrProvider
 ): RevolvingHooksFactoryContract => {
   const address = getDeploymentAddress(chainId, "HooksFactoryRevolving");
+  const abi = getHooksFactoryDeploymentAbi(chainId, "revolving");
   return {
     address,
-    interface: encodeWithAbi(hooksFactoryRevolvingAbi as Abi),
+    interface: {
+      encodeFunctionData: (name, args = []) =>
+        encodeWithAbi(abi).encodeFunctionData(name, withFactoryRepaymentTerms(chainId, name, args))
+    },
     computeMarketAddress: (salt) =>
-      readViemContract(
-        getViemClient(provider),
-        address,
-        hooksFactoryRevolvingAbi as Abi,
-        "computeMarketAddress",
-        [salt as Hex]
-      ),
+      readViemContract(getViemClient(provider), address, abi, "computeMarketAddress", [
+        salt as Hex
+      ]),
     deployMarket: (...args) =>
       sendPreparedTransaction(
         provider,
         prepareTransaction({
           to: address,
-          abi: hooksFactoryRevolvingAbi,
+          abi,
           functionName: "deployMarket",
-          args
+          args: withFactoryRepaymentTerms(chainId, "deployMarket", args)
         })
       ),
     deployMarketAndHooks: (...args) =>
@@ -353,9 +352,9 @@ export const getRevolvingHooksFactoryContract = (
         provider,
         prepareTransaction({
           to: address,
-          abi: hooksFactoryRevolvingAbi,
+          abi,
           functionName: "deployMarketAndHooks",
-          args
+          args: withFactoryRepaymentTerms(chainId, "deployMarketAndHooks", args)
         })
       )
   };

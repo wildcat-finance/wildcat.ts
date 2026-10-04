@@ -1,3 +1,10 @@
+import {
+  unsupportedLifecycle,
+  unsupportedTemplateHash,
+  unsupportedAprProposal,
+  legacyRepaymentBounds,
+  legacyLiquidity
+} from "../helpers/v2.5-lens";
 import { expect } from "chai";
 import { rejects } from "assert";
 import { BigNumber, constants, providers } from "ethers";
@@ -288,9 +295,16 @@ const makeUnifiedMarketData = (hooksFactory: string) => {
 
   return {
     ...marketData,
-    hooksConfig,
+    hooksConfig: {
+      ...hooksConfig,
+      periodicWithdrawalWindowOpen: false,
+      pendingAprChange: unsupportedAprProposal
+    },
     hooks: {
       ...hooks,
+      hooksTemplate: { ...hooks.hooksTemplate, initCodeHash: unsupportedTemplateHash },
+      constraints: { ...hooks.constraints, ...legacyRepaymentBounds },
+      repaymentConstraintsAvailable: false,
       administrator: hooksAdministrator,
       pendingAdministrator: constants.AddressZero
     }
@@ -308,6 +322,9 @@ const makeFullUnifiedMarketData = (
   } = {}
 ) => ({
   market: makeUnifiedMarketData(hooksFactory),
+  registeredWrapper: makeAddress(0),
+  lifecycle: unsupportedLifecycle,
+  liquidity: legacyLiquidity(makeUnifiedMarketData(hooksFactory)),
   borrowerPrincipal: makeAddress(30),
   pendingBorrower: constants.AddressZero,
   pendingBorrowerPrincipal: constants.AddressZero,
@@ -329,6 +346,8 @@ const makeMarketLiveData = (
   const data = makeFactoryBackedMarketData(hooksFactory);
   return {
     market: data.marketToken.token,
+    lifecycle: unsupportedLifecycle,
+    liquidity: legacyLiquidity(data),
     isClosed: data.isClosed,
     protocolFeeBips: data.protocolFeeBips,
     reserveRatioBips: data.reserveRatioBips,

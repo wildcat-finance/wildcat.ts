@@ -7,6 +7,7 @@ export enum DepositStatus {
   ExceedsMaximumDeposit = "ExceedsMaximumDeposit",
   BelowMinimumDeposit = "BelowMinimumDeposit",
   MarketClosed = "MarketClosed",
+  MarketInRepayment = "MarketInRepayment",
   InsufficientAllowance = "InsufficientAllowance",
   Blocked = "Blocked",
   // V1
@@ -16,6 +17,17 @@ export enum DepositStatus {
 }
 
 export type DepositPreview = { status: DepositStatus };
+
+export enum RecoverUnderlyingStatus {
+  Ready = "Ready",
+  UnsupportedMarket = "UnsupportedMarket",
+  NotBorrower = "NotBorrower",
+  MarketOpen = "MarketOpen",
+  LiveDataRequired = "LiveDataRequired",
+  NoRecoverableUnderlying = "NoRecoverableUnderlying"
+}
+
+export type RecoverUnderlyingPreview = { status: RecoverUnderlyingStatus; amount: TokenAmount };
 
 export enum RepayStatus {
   Ready = "Ready",

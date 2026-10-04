@@ -1,3 +1,10 @@
+import {
+  unsupportedLifecycle,
+  unsupportedTemplateHash,
+  unsupportedAprProposal,
+  legacyRepaymentBounds,
+  legacyLiquidity
+} from "../helpers/v2.5-lens";
 import { expect } from "chai";
 import { rejects } from "assert";
 import { BigNumber, providers } from "ethers";
@@ -299,6 +306,8 @@ const makeUnifiedMarketData = (hooksFactory: string): MarketDataBaseV2_5StructOu
     ...data,
     hooksConfig: {
       ...data.hooksConfig,
+      periodicWithdrawalWindowOpen: false,
+      pendingAprChange: unsupportedAprProposal,
       flags: {
         ...data.hooksConfig.flags,
         useOnExecutePendingAnnualInterestBipsReduction: false
@@ -306,6 +315,9 @@ const makeUnifiedMarketData = (hooksFactory: string): MarketDataBaseV2_5StructOu
     },
     hooks: {
       ...data.hooks,
+      hooksTemplate: { ...data.hooks.hooksTemplate, initCodeHash: unsupportedTemplateHash },
+      constraints: { ...data.hooks.constraints, ...legacyRepaymentBounds },
+      repaymentConstraintsAvailable: false,
       administrator: data.hooks.borrower,
       pendingAdministrator: makeAddress(0),
       deploymentFlags: {
@@ -335,6 +347,9 @@ const makeUnifiedMarketDataV2 = (
   } = {}
 ): MarketDataV2_5StructOutput => ({
   market: makeUnifiedMarketData(hooksFactory),
+  registeredWrapper: makeAddress(0),
+  lifecycle: unsupportedLifecycle,
+  liquidity: legacyLiquidity(makeUnifiedMarketData(hooksFactory)),
   borrowerPrincipal: makeAddress(9),
   pendingBorrower: makeAddress(0),
   pendingBorrowerPrincipal: makeAddress(0),
@@ -347,6 +362,8 @@ const makeMarketLiveDataV2 = (
   data: MarketDataV2_5StructOutput
 ): MarketLiveDataV2_5StructOutput => ({
   market: data.market.marketToken.token,
+  lifecycle: data.lifecycle,
+  liquidity: legacyLiquidity(data.market),
   isClosed: data.market.isClosed,
   protocolFeeBips: data.market.protocolFeeBips,
   reserveRatioBips: data.market.reserveRatioBips,
@@ -1602,6 +1619,8 @@ describe("Market reserve ratio previews", () => {
     data.market.scaledPendingWithdrawals = BigNumber.from(200);
     data.market.normalizedUnclaimedWithdrawals = BigNumber.from(20);
     data.market.totalAssets = BigNumber.from(500);
+    data.market.coverageLiquidity = BigNumber.from(310);
+    data.liquidity = legacyLiquidity(data.market);
     const market = Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
 
     const minimumReserves = market.minimumReserves;
@@ -1626,6 +1645,7 @@ describe("Market reserve ratio previews", () => {
     const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
     const scaleFactor = BigNumber.from(2).pow(22).mul(BigNumber.from(10).pow(27));
     const data = makeUnifiedMarketDataV2(hooksFactory);
+    data.liquidity = undefined; // Exercise local projections without an authoritative lens quote.
     data.market.scaleFactor = scaleFactor;
     data.market.scaledTotalSupply = BigNumber.from(1);
     data.market.totalSupply = BigNumber.from(2).pow(22);

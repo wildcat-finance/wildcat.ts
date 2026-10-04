@@ -156,6 +156,9 @@ export type MarketParameterConstraints = {
   maximumWithdrawalBatchDuration: number;
   minimumAnnualInterestBips: number;
   maximumAnnualInterestBips: number;
+  /** Undefined when the hooks do not expose repayment bounds. */
+  maximumRepaymentPeriod?: number;
+  maximumRepaymentDateDelay?: number;
 };
 
 export type HooksFlags = {
@@ -242,6 +245,9 @@ export type PeriodicTermHooksConfig = {
   periodDuration: number;
   withdrawalWindowDuration: number;
   periodicTermClosed: boolean;
+  /** Result at the full lens read block; undefined after a compact refresh. */
+  periodicWithdrawalWindowOpen?: boolean;
+  pendingAprChangeAvailable?: boolean;
   pendingAprChangeAnnualInterestBips: number;
   pendingAprChangeProposalTimestamp: number;
   pendingAprChangeResponseWindowStart: number;

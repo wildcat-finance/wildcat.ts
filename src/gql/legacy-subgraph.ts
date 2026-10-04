@@ -1,3 +1,4 @@
+import { legacyWithdrawalDocument } from "./legacy-withdrawal-document";
 import { gql } from "@apollo/client";
 import { SupportedChainId } from "../config/chains";
 import { Deployments, getHooksFactoryAddress } from "../config/deployments";
@@ -766,7 +767,7 @@ export const LegacyGetIndexedLenderAccountSummaryForMarketDocument = gql`
   ${LegacyLenderAccountSummaryFragment}
 `;
 
-export const LegacyGetLenderWithdrawalsForMarketDocument = gql`
+export const LegacyGetLenderWithdrawalsForMarketDocument = legacyWithdrawalDocument(gql`
   query legacyGetLenderWithdrawalsForMarket(
     $market: ID!
     $lender: Bytes!
@@ -810,9 +811,9 @@ export const LegacyGetLenderWithdrawalsForMarketDocument = gql`
   ${WithdrawalBatchPaymentPropertiesFragmentDoc}
   ${WithdrawalRequestPropertiesFragmentDoc}
   ${WithdrawalExecutionPropertiesFragmentDoc}
-`;
+`);
 
-export const LegacyGetIncompleteLenderWithdrawalsForMarketDocument = gql`
+export const LegacyGetIncompleteLenderWithdrawalsForMarketDocument = legacyWithdrawalDocument(gql`
   query legacyGetIncompleteLenderWithdrawalsForMarket(
     $market: ID!
     $lender: Bytes!
@@ -847,7 +848,7 @@ export const LegacyGetIncompleteLenderWithdrawalsForMarketDocument = gql`
   ${WithdrawalBatchPaymentPropertiesFragmentDoc}
   ${WithdrawalRequestPropertiesFragmentDoc}
   ${WithdrawalExecutionPropertiesFragmentDoc}
-`;
+`);
 
 export const LegacyGetMarketEventsDocument = gql`
   query legacyGetMarketEvents(

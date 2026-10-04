@@ -68,6 +68,8 @@ import {
 } from "../gql/graphql";
 import {
   DepositStatus,
+  RecoverUnderlyingStatus,
+  RecoverUnderlyingPreview,
   RepayStatus,
   CloseMarketPreview,
   SetAprPreview,
@@ -314,6 +316,7 @@ export class MarketAccount {
 
   get depositAvailability(): DepositStatus {
     if (this.market.isClosed) return DepositStatus.MarketClosed;
+    if (this.market.isInRepayment) return DepositStatus.MarketInRepayment;
     if (this.market.version === MarketVersion.V1) {
       if (this.role === LenderRole.Blocked) return DepositStatus.Blocked;
       if (
@@ -339,6 +342,9 @@ export class MarketAccount {
   }
 
   get withdrawalAvailability(): QueueWithdrawalStatus {
+    // Scheduled repayment bypasses hook admission, including credentials and periodic windows.
+    // Market-level sanctions and balance checks still apply onchain.
+    if (this.market.hasReachedRepaymentDate) return QueueWithdrawalStatus.Ready;
     if (this.market.version === MarketVersion.V1) {
       if (
         this.role === LenderRole.WithdrawOnly ||
@@ -672,6 +678,43 @@ export class MarketAccount {
 
   async closeMarket(): Promise<TransactionHash> {
     return submitPreparedTransaction(this.market.signer, this.populateCloseMarket());
+  }
+
+  /** Refresh the market before relying on this quote; recovery never consumes lender liabilities. */
+  previewRecoverUnderlying(): RecoverUnderlyingPreview {
+    const amount = this.market.recoverableUnderlying;
+    if (this.market.repaymentDate === undefined)
+      return { status: RecoverUnderlyingStatus.UnsupportedMarket, amount };
+    if (!this.isBorrower) return { status: RecoverUnderlyingStatus.NotBorrower, amount };
+    if (this.market.stateSource !== "live" || !this.market.liquidity)
+      return { status: RecoverUnderlyingStatus.LiveDataRequired, amount };
+    if (!this.market.isClosed) return { status: RecoverUnderlyingStatus.MarketOpen, amount };
+    return {
+      status: amount.gt(0)
+        ? RecoverUnderlyingStatus.Ready
+        : RecoverUnderlyingStatus.NoRecoverableUnderlying,
+      amount
+    };
+  }
+
+  populateRecoverUnderlying(): PartialTransaction {
+    const { status } = this.previewRecoverUnderlying();
+    assert(status === RecoverUnderlyingStatus.Ready, `Cannot recover underlying: ${status}`);
+    return prepareTransaction({
+      to: this.market.address,
+      abi: wildcatMarketV2Abi,
+      functionName: "rescueTokens",
+      args: [this.market.underlyingToken.address]
+    });
+  }
+
+  async recoverUnderlying(): Promise<TransactionHash> {
+    const signer = await this.market.signer.getAddress();
+    assert(
+      signer.toLowerCase() === this.account.toLowerCase(),
+      "Recovery signer does not match account"
+    );
+    return submitPreparedTransaction(this.market.signer, this.populateRecoverUnderlying());
   }
 
   populateCloseMarket(): PartialTransaction {

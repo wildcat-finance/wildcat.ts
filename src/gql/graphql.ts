@@ -757,6 +757,7 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -765,6 +766,7 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -805,6 +807,10 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -836,6 +842,7 @@ export enum SubgraphAccountMadeFirstDeposit_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -1006,14 +1013,6 @@ export enum SubgraphAdministratorChangeKind {
   TRANSFER_REQUESTED = 'TRANSFER_REQUESTED'
 }
 
-/** Indicates whether the current, partially filled bucket should be included in the response. Defaults to `exclude` */
-export enum SubgraphAggregation_Current {
-  /** Exclude the current, partially filled bucket from the response */
-  exclude = 'exclude',
-  /** Include the current, partially filled bucket in the response */
-  include = 'include'
-}
-
 export enum SubgraphAggregation_Interval {
   day = 'day',
   hour = 'hour'
@@ -1176,6 +1175,7 @@ export enum SubgraphAnnualInterestBipsReductionExecuted_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -1184,6 +1184,7 @@ export enum SubgraphAnnualInterestBipsReductionExecuted_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -1224,6 +1225,10 @@ export enum SubgraphAnnualInterestBipsReductionExecuted_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -1255,6 +1260,7 @@ export enum SubgraphAnnualInterestBipsReductionExecuted_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -1406,6 +1412,7 @@ export enum SubgraphAnnualInterestBipsReductionProposalCancelled_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -1414,6 +1421,7 @@ export enum SubgraphAnnualInterestBipsReductionProposalCancelled_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -1454,6 +1462,10 @@ export enum SubgraphAnnualInterestBipsReductionProposalCancelled_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -1485,6 +1497,7 @@ export enum SubgraphAnnualInterestBipsReductionProposalCancelled_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -1673,6 +1686,7 @@ export enum SubgraphAnnualInterestBipsReductionProposed_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -1681,6 +1695,7 @@ export enum SubgraphAnnualInterestBipsReductionProposed_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -1721,6 +1736,10 @@ export enum SubgraphAnnualInterestBipsReductionProposed_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -1752,6 +1771,7 @@ export enum SubgraphAnnualInterestBipsReductionProposed_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   proposalTimestamp = 'proposalTimestamp',
   responseWindowEnd = 'responseWindowEnd',
@@ -1903,6 +1923,7 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -1911,6 +1932,7 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -1951,6 +1973,10 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -1982,6 +2008,7 @@ export enum SubgraphAnnualInterestBipsUpdated_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   newAnnualInterestBips = 'newAnnualInterestBips',
   oldAnnualInterestBips = 'oldAnnualInterestBips',
@@ -2113,6 +2140,7 @@ export enum SubgraphApproval_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -2121,6 +2149,7 @@ export enum SubgraphApproval_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -2161,6 +2190,10 @@ export enum SubgraphApproval_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -2192,6 +2225,7 @@ export enum SubgraphApproval_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   owner = 'owner',
   spender = 'spender',
@@ -2599,6 +2633,7 @@ export enum SubgraphBorrow_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -2607,6 +2642,7 @@ export enum SubgraphBorrow_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -2647,6 +2683,10 @@ export enum SubgraphBorrow_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -2678,6 +2718,7 @@ export enum SubgraphBorrow_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -5680,6 +5721,7 @@ export enum SubgraphDebtRepaid_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -5688,6 +5730,7 @@ export enum SubgraphDebtRepaid_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -5728,6 +5771,10 @@ export enum SubgraphDebtRepaid_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -5759,6 +5806,7 @@ export enum SubgraphDebtRepaid_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -5902,6 +5950,7 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -5910,6 +5959,7 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -5950,6 +6000,10 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -5981,6 +6035,7 @@ export enum SubgraphDelinquencyStatusChanged_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   totalAssets = 'totalAssets',
   transactionHash = 'transactionHash'
@@ -6154,6 +6209,7 @@ export enum SubgraphDeposit_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -6162,6 +6218,7 @@ export enum SubgraphDeposit_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -6202,6 +6259,10 @@ export enum SubgraphDeposit_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -6233,6 +6294,7 @@ export enum SubgraphDeposit_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   scaledAmount = 'scaledAmount',
   transactionHash = 'transactionHash'
@@ -6385,6 +6447,7 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -6393,6 +6456,7 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -6433,6 +6497,10 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -6464,6 +6532,7 @@ export enum SubgraphDisabledForceBuyBacks_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -6580,6 +6649,7 @@ export enum SubgraphDrawnAmountUpdate_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -6588,6 +6658,7 @@ export enum SubgraphDrawnAmountUpdate_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -6628,6 +6699,10 @@ export enum SubgraphDrawnAmountUpdate_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -6659,6 +6734,7 @@ export enum SubgraphDrawnAmountUpdate_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   newDrawnAmount = 'newDrawnAmount',
   previousDrawnAmount = 'previousDrawnAmount',
@@ -7165,6 +7241,7 @@ export enum SubgraphFeesCollected_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -7173,6 +7250,7 @@ export enum SubgraphFeesCollected_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -7213,6 +7291,10 @@ export enum SubgraphFeesCollected_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -7244,6 +7326,7 @@ export enum SubgraphFeesCollected_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -7435,6 +7518,7 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -7443,6 +7527,7 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -7483,6 +7568,10 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -7514,6 +7603,7 @@ export enum SubgraphFixedTermUpdated_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   newFixedTermEndTime = 'newFixedTermEndTime',
   oldFixedTermEndTime = 'oldFixedTermEndTime',
@@ -7696,6 +7786,7 @@ export enum SubgraphForceBuyBack_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -7704,6 +7795,7 @@ export enum SubgraphForceBuyBack_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -7744,6 +7836,10 @@ export enum SubgraphForceBuyBack_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -7775,6 +7871,7 @@ export enum SubgraphForceBuyBack_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   normalizedAmount = 'normalizedAmount',
   scaledAmount = 'scaledAmount',
@@ -8253,6 +8350,7 @@ export enum SubgraphHooksConfig_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -8261,6 +8359,7 @@ export enum SubgraphHooksConfig_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -8301,6 +8400,10 @@ export enum SubgraphHooksConfig_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -8332,6 +8435,7 @@ export enum SubgraphHooksConfig_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   minimumDeposit = 'minimumDeposit',
   pendingAprChangeAnnualInterestBips = 'pendingAprChangeAnnualInterestBips',
@@ -9008,6 +9112,7 @@ export enum SubgraphHooksInstanceDeployed_OrderBy {
   templateRegistration__createdAtTransaction = 'templateRegistration__createdAtTransaction',
   templateRegistration__feeRecipient = 'templateRegistration__feeRecipient',
   templateRegistration__id = 'templateRegistration__id',
+  templateRegistration__initCodeHash = 'templateRegistration__initCodeHash',
   templateRegistration__isEnabled = 'templateRegistration__isEnabled',
   templateRegistration__name = 'templateRegistration__name',
   templateRegistration__originationFeeAmount = 'templateRegistration__originationFeeAmount',
@@ -9098,12 +9203,16 @@ export type SubgraphHooksInstanceRoleProviderSnapshot_Filter = {
   or?: InputMaybe<Array<InputMaybe<SubgraphHooksInstanceRoleProviderSnapshot_Filter>>>;
   pullProviders?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pullProviders_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pullProviders_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pullProviders_not?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pullProviders_not_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pullProviders_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pushProviders?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pushProviders_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pushProviders_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pushProviders_not?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   pushProviders_not_contains?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  pushProviders_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
   transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
@@ -9509,6 +9618,7 @@ export enum SubgraphHooksInstance_OrderBy {
   templateRegistration__createdAtTransaction = 'templateRegistration__createdAtTransaction',
   templateRegistration__feeRecipient = 'templateRegistration__feeRecipient',
   templateRegistration__id = 'templateRegistration__id',
+  templateRegistration__initCodeHash = 'templateRegistration__initCodeHash',
   templateRegistration__isEnabled = 'templateRegistration__isEnabled',
   templateRegistration__name = 'templateRegistration__name',
   templateRegistration__originationFeeAmount = 'templateRegistration__originationFeeAmount',
@@ -9735,6 +9845,192 @@ export type SubgraphHooksTemplateRegistrationsArgs = {
   where?: InputMaybe<SubgraphHooksTemplateRegistration_Filter>;
 };
 
+export type SubgraphHooksTemplateInitCodeHashRecord = {
+  __typename: 'HooksTemplateInitCodeHashRecord';
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  hooksFactory: SubgraphHooksFactory;
+  hooksTemplate: SubgraphHooksTemplate;
+  id: Scalars['ID']['output'];
+  initCodeHash: Scalars['Bytes']['output'];
+  registration: SubgraphHooksTemplateRegistration;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphHooksTemplateInitCodeHashRecord_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphHooksTemplateInitCodeHashRecord_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  hooksFactory?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_?: InputMaybe<SubgraphHooksFactory_Filter>;
+  hooksFactory_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_gt?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_gte?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksFactory_lt?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_lte?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksFactory_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_?: InputMaybe<SubgraphHooksTemplate_Filter>;
+  hooksTemplate_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_gt?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_gte?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksTemplate_lt?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_lte?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksTemplate_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksTemplate_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  initCodeHash?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  initCodeHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphHooksTemplateInitCodeHashRecord_Filter>>>;
+  registration?: InputMaybe<Scalars['String']['input']>;
+  registration_?: InputMaybe<SubgraphHooksTemplateRegistration_Filter>;
+  registration_contains?: InputMaybe<Scalars['String']['input']>;
+  registration_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  registration_ends_with?: InputMaybe<Scalars['String']['input']>;
+  registration_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registration_gt?: InputMaybe<Scalars['String']['input']>;
+  registration_gte?: InputMaybe<Scalars['String']['input']>;
+  registration_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  registration_lt?: InputMaybe<Scalars['String']['input']>;
+  registration_lte?: InputMaybe<Scalars['String']['input']>;
+  registration_not?: InputMaybe<Scalars['String']['input']>;
+  registration_not_contains?: InputMaybe<Scalars['String']['input']>;
+  registration_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  registration_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  registration_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registration_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  registration_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  registration_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  registration_starts_with?: InputMaybe<Scalars['String']['input']>;
+  registration_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphHooksTemplateInitCodeHashRecord_OrderBy {
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  hooksFactory = 'hooksFactory',
+  hooksFactory__abiFamily = 'hooksFactory__abiFamily',
+  hooksFactory__address = 'hooksFactory__address',
+  hooksFactory__configured = 'hooksFactory__configured',
+  hooksFactory__configuredStartBlock = 'hooksFactory__configuredStartBlock',
+  hooksFactory__deploymentTarget = 'hooksFactory__deploymentTarget',
+  hooksFactory__eventGeneration = 'hooksFactory__eventGeneration',
+  hooksFactory__eventIndex = 'hooksFactory__eventIndex',
+  hooksFactory__generation = 'hooksFactory__generation',
+  hooksFactory__hookedMarketAbi = 'hooksFactory__hookedMarketAbi',
+  hooksFactory__id = 'hooksFactory__id',
+  hooksFactory__indexed = 'hooksFactory__indexed',
+  hooksFactory__isRegistered = 'hooksFactory__isRegistered',
+  hooksFactory__label = 'hooksFactory__label',
+  hooksFactory__lifecycle = 'hooksFactory__lifecycle',
+  hooksFactory__marketKind = 'hooksFactory__marketKind',
+  hooksFactory__registrationUpdatedAtBlock = 'hooksFactory__registrationUpdatedAtBlock',
+  hooksFactory__registrationUpdatedAtTimestamp = 'hooksFactory__registrationUpdatedAtTimestamp',
+  hooksFactory__sentinel = 'hooksFactory__sentinel',
+  hooksTemplate = 'hooksTemplate',
+  hooksTemplate__abiFamily = 'hooksTemplate__abiFamily',
+  hooksTemplate__address = 'hooksTemplate__address',
+  hooksTemplate__id = 'hooksTemplate__id',
+  hooksTemplate__kind = 'hooksTemplate__kind',
+  hooksTemplate__version = 'hooksTemplate__version',
+  id = 'id',
+  initCodeHash = 'initCodeHash',
+  registration = 'registration',
+  registration__createdAtBlock = 'registration__createdAtBlock',
+  registration__createdAtLogIndex = 'registration__createdAtLogIndex',
+  registration__createdAtTimestamp = 'registration__createdAtTimestamp',
+  registration__createdAtTransaction = 'registration__createdAtTransaction',
+  registration__feeRecipient = 'registration__feeRecipient',
+  registration__id = 'registration__id',
+  registration__initCodeHash = 'registration__initCodeHash',
+  registration__isEnabled = 'registration__isEnabled',
+  registration__name = 'registration__name',
+  registration__originationFeeAmount = 'registration__originationFeeAmount',
+  registration__protocolFeeBips = 'registration__protocolFeeBips',
+  registration__templateAddress = 'registration__templateAddress',
+  registration__updatedAtBlock = 'registration__updatedAtBlock',
+  registration__updatedAtLogIndex = 'registration__updatedAtLogIndex',
+  registration__updatedAtTimestamp = 'registration__updatedAtTimestamp',
+  registration__updatedAtTransaction = 'registration__updatedAtTransaction',
+  transactionHash = 'transactionHash'
+}
+
 /** Mutable state for one template registered on one hooks factory. */
 export type SubgraphHooksTemplateRegistration = {
   __typename: 'HooksTemplateRegistration';
@@ -9749,6 +10045,8 @@ export type SubgraphHooksTemplateRegistration = {
   hooksInstances: Array<SubgraphHooksInstance>;
   hooksTemplate: SubgraphHooksTemplate;
   id: Scalars['ID']['output'];
+  initCodeHash?: Maybe<Scalars['Bytes']['output']>;
+  initCodeHashRecord?: Maybe<SubgraphHooksTemplateInitCodeHashRecord>;
   isEnabled: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   originationFeeAmount: Scalars['BigInt']['output'];
@@ -10137,6 +10435,7 @@ export enum SubgraphHooksTemplateRegistrationEvent_OrderBy {
   registration__createdAtTransaction = 'registration__createdAtTransaction',
   registration__feeRecipient = 'registration__feeRecipient',
   registration__id = 'registration__id',
+  registration__initCodeHash = 'registration__initCodeHash',
   registration__isEnabled = 'registration__isEnabled',
   registration__name = 'registration__name',
   registration__originationFeeAmount = 'registration__originationFeeAmount',
@@ -10250,6 +10549,17 @@ export type SubgraphHooksTemplateRegistration_Filter = {
   id_lte?: InputMaybe<Scalars['ID']['input']>;
   id_not?: InputMaybe<Scalars['ID']['input']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  initCodeHash?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHashRecord_?: InputMaybe<SubgraphHooksTemplateInitCodeHashRecord_Filter>;
+  initCodeHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  initCodeHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  initCodeHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   isEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isEnabled_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
   isEnabled_not?: InputMaybe<Scalars['Boolean']['input']>;
@@ -10393,6 +10703,14 @@ export enum SubgraphHooksTemplateRegistration_OrderBy {
   hooksTemplate__kind = 'hooksTemplate__kind',
   hooksTemplate__version = 'hooksTemplate__version',
   id = 'id',
+  initCodeHash = 'initCodeHash',
+  initCodeHashRecord = 'initCodeHashRecord',
+  initCodeHashRecord__blockLogIndex = 'initCodeHashRecord__blockLogIndex',
+  initCodeHashRecord__blockNumber = 'initCodeHashRecord__blockNumber',
+  initCodeHashRecord__blockTimestamp = 'initCodeHashRecord__blockTimestamp',
+  initCodeHashRecord__id = 'initCodeHashRecord__id',
+  initCodeHashRecord__initCodeHash = 'initCodeHashRecord__initCodeHash',
+  initCodeHashRecord__transactionHash = 'initCodeHashRecord__transactionHash',
   isEnabled = 'isEnabled',
   name = 'name',
   originationFeeAmount = 'originationFeeAmount',
@@ -10960,6 +11278,7 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -10968,6 +11287,7 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -11008,6 +11328,10 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -11039,6 +11363,7 @@ export enum SubgraphKnownLenderStatus_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex'
 }
 
@@ -11489,6 +11814,7 @@ export enum SubgraphLenderAccount_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -11497,6 +11823,7 @@ export enum SubgraphLenderAccount_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -11537,6 +11864,10 @@ export enum SubgraphLenderAccount_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -11568,6 +11899,7 @@ export enum SubgraphLenderAccount_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   numPendingWithdrawalBatches = 'numPendingWithdrawalBatches',
   principalBasis = 'principalBasis',
@@ -12346,6 +12678,7 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -12354,6 +12687,7 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -12394,6 +12728,10 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -12425,6 +12763,7 @@ export enum SubgraphLenderInterestAccrued_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -12758,6 +13097,7 @@ export enum SubgraphLenderWithdrawalStatus_OrderBy {
   batch__lenderWithdrawalsCount = 'batch__lenderWithdrawalsCount',
   batch__normalizedAmountClaimed = 'batch__normalizedAmountClaimed',
   batch__normalizedAmountPaid = 'batch__normalizedAmountPaid',
+  batch__paymentRemainder = 'batch__paymentRemainder',
   batch__paymentsCount = 'batch__paymentsCount',
   batch__scaledAmountBurned = 'batch__scaledAmountBurned',
   batch__scaledTotalAmount = 'batch__scaledTotalAmount',
@@ -13022,6 +13362,7 @@ export type SubgraphMarket = {
   borrowerIdentityRegistryAddress?: Maybe<Scalars['Bytes']['output']>;
   borrowerPrincipal: Scalars['Bytes']['output'];
   borrowerProfile?: Maybe<SubgraphBorrower>;
+  closedAt?: Maybe<Scalars['BigInt']['output']>;
   collateralContracts: Array<SubgraphSimpleCollateralContract>;
   commitmentFeeBips?: Maybe<Scalars['BigInt']['output']>;
   controller?: Maybe<SubgraphController>;
@@ -13034,6 +13375,8 @@ export type SubgraphMarket = {
   dailyStats: Array<SubgraphMarketDailyStats>;
   debtRepaidIndex: Scalars['Int']['output'];
   decimals: Scalars['Int']['output'];
+  defaultRecord?: Maybe<SubgraphMarketDefaultRecorded>;
+  defaultedAt?: Maybe<Scalars['BigInt']['output']>;
   delinquencyFeeBips: Scalars['Int']['output'];
   delinquencyGracePeriod: Scalars['Int']['output'];
   delinquencyRecords: Array<SubgraphDelinquencyStatusChanged>;
@@ -13098,7 +13441,13 @@ export type SubgraphMarket = {
   protocolFeeBipsUpdatedIndex: Scalars['Int']['output'];
   protocolFeeBipsUpdatedRecords: Array<SubgraphProtocolFeeBipsUpdated>;
   removal?: Maybe<SubgraphMarketRemoved>;
+  repaymentActivatedAt?: Maybe<Scalars['BigInt']['output']>;
+  repaymentDate?: Maybe<Scalars['BigInt']['output']>;
+  repaymentDateReached?: Maybe<SubgraphMarketRepaymentDateReached>;
+  repaymentDeadline?: Maybe<Scalars['BigInt']['output']>;
+  repaymentPeriod?: Maybe<Scalars['BigInt']['output']>;
   repaymentRecords: Array<SubgraphDebtRepaid>;
+  repaymentTerms?: Maybe<SubgraphMarketRepaymentTerms>;
   requestedHooks?: Maybe<Scalars['BigInt']['output']>;
   reserveRatioBips: Scalars['Int']['output'];
   reserveRatioBipsUpdatedRecords: Array<SubgraphReserveRatioBipsUpdated>;
@@ -13137,6 +13486,7 @@ export type SubgraphMarket = {
   withdrawalBatchDuration: Scalars['Int']['output'];
   withdrawalBatches: Array<SubgraphWithdrawalBatch>;
   withdrawalExecutionRecords: Array<SubgraphWithdrawalExecution>;
+  withdrawalRemainder?: Maybe<Scalars['BigInt']['output']>;
   withdrawalRequestRecords: Array<SubgraphWithdrawalRequest>;
   withdrawalRequestsIndex: Scalars['Int']['output'];
   wrapperRegistrations: Array<SubgraphMarketWrapperRegistration>;
@@ -13580,6 +13930,7 @@ export enum SubgraphMarketAdded_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -13588,6 +13939,7 @@ export enum SubgraphMarketAdded_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -13628,6 +13980,10 @@ export enum SubgraphMarketAdded_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -13659,6 +14015,7 @@ export enum SubgraphMarketAdded_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -13905,6 +14262,7 @@ export enum SubgraphMarketBorrowerChange_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -13913,6 +14271,7 @@ export enum SubgraphMarketBorrowerChange_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -13953,6 +14312,10 @@ export enum SubgraphMarketBorrowerChange_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -13984,6 +14347,7 @@ export enum SubgraphMarketBorrowerChange_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   newBorrower = 'newBorrower',
   newBorrowerPrincipal = 'newBorrowerPrincipal',
@@ -14121,6 +14485,7 @@ export enum SubgraphMarketClosed_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -14129,6 +14494,7 @@ export enum SubgraphMarketClosed_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -14169,6 +14535,10 @@ export enum SubgraphMarketClosed_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -14200,6 +14570,7 @@ export enum SubgraphMarketClosed_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   timestamp = 'timestamp',
   transactionHash = 'transactionHash'
@@ -14540,6 +14911,7 @@ export enum SubgraphMarketDailyStats_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -14548,6 +14920,7 @@ export enum SubgraphMarketDailyStats_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -14588,6 +14961,10 @@ export enum SubgraphMarketDailyStats_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -14619,6 +14996,7 @@ export enum SubgraphMarketDailyStats_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   scaleFactor = 'scaleFactor',
   scaledTotalSupply = 'scaledTotalSupply',
@@ -14640,6 +15018,200 @@ export enum SubgraphMarketDailyStats_OrderBy {
   totalWithdrawalsRequested = 'totalWithdrawalsRequested',
   totalWithdrawalsRequestedUSD = 'totalWithdrawalsRequestedUSD',
   usdPrice = 'usdPrice'
+}
+
+export type SubgraphMarketDefaultRecorded = {
+  __typename: 'MarketDefaultRecorded';
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  effectiveTimestamp: Scalars['BigInt']['output'];
+  id: Scalars['ID']['output'];
+  market: SubgraphMarket;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphMarketDefaultRecorded_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphMarketDefaultRecorded_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  effectiveTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  effectiveTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  effectiveTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  effectiveTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  effectiveTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  effectiveTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  effectiveTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  effectiveTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  market?: InputMaybe<Scalars['String']['input']>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars['String']['input']>;
+  market_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_gt?: InputMaybe<Scalars['String']['input']>;
+  market_gte?: InputMaybe<Scalars['String']['input']>;
+  market_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_lt?: InputMaybe<Scalars['String']['input']>;
+  market_lte?: InputMaybe<Scalars['String']['input']>;
+  market_not?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphMarketDefaultRecorded_Filter>>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphMarketDefaultRecorded_OrderBy {
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  effectiveTimestamp = 'effectiveTimestamp',
+  id = 'id',
+  market = 'market',
+  market__abiFamily = 'market__abiFamily',
+  market__address = 'market__address',
+  market__annualInterestBips = 'market__annualInterestBips',
+  market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
+  market__borrowIndex = 'market__borrowIndex',
+  market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
+  market__commitmentFeeBips = 'market__commitmentFeeBips',
+  market__createdAt = 'market__createdAt',
+  market__createdAtBlock = 'market__createdAtBlock',
+  market__createdAtLogIndex = 'market__createdAtLogIndex',
+  market__createdAtTimestamp = 'market__createdAtTimestamp',
+  market__createdAtTransaction = 'market__createdAtTransaction',
+  market__debtRepaidIndex = 'market__debtRepaidIndex',
+  market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
+  market__delinquencyFeeBips = 'market__delinquencyFeeBips',
+  market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
+  market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
+  market__depositIndex = 'market__depositIndex',
+  market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
+  market__eventIndex = 'market__eventIndex',
+  market__feeRecipient = 'market__feeRecipient',
+  market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
+  market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
+  market__forceBuyBackIndex = 'market__forceBuyBackIndex',
+  market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
+  market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
+  market__isClosed = 'market__isClosed',
+  market__isDelinquent = 'market__isDelinquent',
+  market__isIncurringPenalties = 'market__isIncurringPenalties',
+  market__isRegistered = 'market__isRegistered',
+  market__lastInterestAccruedBlockNumber = 'market__lastInterestAccruedBlockNumber',
+  market__lastInterestAccruedTimestamp = 'market__lastInterestAccruedTimestamp',
+  market__marketKind = 'market__marketKind',
+  market__maxTotalSupply = 'market__maxTotalSupply',
+  market__maxTotalSupplyUpdatedIndex = 'market__maxTotalSupplyUpdatedIndex',
+  market__minimumDepositUpdatedIndex = 'market__minimumDepositUpdatedIndex',
+  market__name = 'market__name',
+  market__normalizedUnclaimedWithdrawals = 'market__normalizedUnclaimedWithdrawals',
+  market__numCollateralContracts = 'market__numCollateralContracts',
+  market__originKind = 'market__originKind',
+  market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
+  market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
+  market__pendingProtocolFees = 'market__pendingProtocolFees',
+  market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
+  market__protocolFeeBips = 'market__protocolFeeBips',
+  market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
+  market__requestedHooks = 'market__requestedHooks',
+  market__reserveRatioBips = 'market__reserveRatioBips',
+  market__scaleFactor = 'market__scaleFactor',
+  market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
+  market__scaledTotalSupply = 'market__scaledTotalSupply',
+  market__sentinel = 'market__sentinel',
+  market__symbol = 'market__symbol',
+  market__temporaryReserveRatioActive = 'market__temporaryReserveRatioActive',
+  market__temporaryReserveRatioExpiry = 'market__temporaryReserveRatioExpiry',
+  market__timeDelinquent = 'market__timeDelinquent',
+  market__totalAssets = 'market__totalAssets',
+  market__totalBaseInterestAccrued = 'market__totalBaseInterestAccrued',
+  market__totalBaseInterestAccruedUSD = 'market__totalBaseInterestAccruedUSD',
+  market__totalBorrowed = 'market__totalBorrowed',
+  market__totalBorrowedUSD = 'market__totalBorrowedUSD',
+  market__totalDebtUSD = 'market__totalDebtUSD',
+  market__totalDelinquencyFeesAccrued = 'market__totalDelinquencyFeesAccrued',
+  market__totalDelinquencyFeesAccruedUSD = 'market__totalDelinquencyFeesAccruedUSD',
+  market__totalDeposited = 'market__totalDeposited',
+  market__totalDepositedUSD = 'market__totalDepositedUSD',
+  market__totalProtocolFeesAccrued = 'market__totalProtocolFeesAccrued',
+  market__totalProtocolFeesAccruedUSD = 'market__totalProtocolFeesAccruedUSD',
+  market__totalRepaid = 'market__totalRepaid',
+  market__totalRepaidUSD = 'market__totalRepaidUSD',
+  market__totalWithdrawalsExecuted = 'market__totalWithdrawalsExecuted',
+  market__totalWithdrawalsExecutedUSD = 'market__totalWithdrawalsExecutedUSD',
+  market__totalWithdrawalsRequested = 'market__totalWithdrawalsRequested',
+  market__totalWithdrawalsRequestedUSD = 'market__totalWithdrawalsRequestedUSD',
+  market__usdTotalsComplete = 'market__usdTotalsComplete',
+  market__version = 'market__version',
+  market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
+  market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
+  transactionHash = 'transactionHash'
 }
 
 export type SubgraphMarketDeployed = {
@@ -14983,6 +15555,7 @@ export enum SubgraphMarketDeployed_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -14991,6 +15564,7 @@ export enum SubgraphMarketDeployed_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -15031,6 +15605,10 @@ export enum SubgraphMarketDeployed_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -15062,6 +15640,7 @@ export enum SubgraphMarketDeployed_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   name = 'name',
   requestedHooks = 'requestedHooks',
@@ -15283,6 +15862,7 @@ export enum SubgraphMarketDeploymentConfig_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -15291,6 +15871,7 @@ export enum SubgraphMarketDeploymentConfig_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -15331,6 +15912,10 @@ export enum SubgraphMarketDeploymentConfig_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -15362,6 +15947,7 @@ export enum SubgraphMarketDeploymentConfig_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   maxTotalSupply = 'maxTotalSupply',
   originationFeeAmount = 'originationFeeAmount',
@@ -15460,6 +16046,7 @@ export enum SubgraphMarketEventCursor_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -15468,6 +16055,7 @@ export enum SubgraphMarketEventCursor_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -15508,6 +16096,10 @@ export enum SubgraphMarketEventCursor_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -15539,6 +16131,7 @@ export enum SubgraphMarketEventCursor_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   nextSequence = 'nextSequence'
 }
@@ -15557,6 +16150,7 @@ export enum SubgraphMarketEventKind {
   BORROWER_TRANSFER_CANCELLED = 'BORROWER_TRANSFER_CANCELLED',
   BORROWER_TRANSFER_REQUESTED = 'BORROWER_TRANSFER_REQUESTED',
   DEBT_REPAID = 'DEBT_REPAID',
+  DEFAULT_RECORDED = 'DEFAULT_RECORDED',
   DEPOSIT = 'DEPOSIT',
   DRAWN_AMOUNT_UPDATED = 'DRAWN_AMOUNT_UPDATED',
   FEES_COLLECTED = 'FEES_COLLECTED',
@@ -15573,6 +16167,8 @@ export enum SubgraphMarketEventKind {
   PERIODIC_TERM_CLOSED = 'PERIODIC_TERM_CLOSED',
   PERIODIC_TERM_UPDATED = 'PERIODIC_TERM_UPDATED',
   PROTOCOL_FEE_BIPS_UPDATED = 'PROTOCOL_FEE_BIPS_UPDATED',
+  REPAYMENT_DATE_REACHED = 'REPAYMENT_DATE_REACHED',
+  REPAYMENT_TERMS = 'REPAYMENT_TERMS',
   RESERVE_RATIO_BIPS_UPDATED = 'RESERVE_RATIO_BIPS_UPDATED',
   SANCTIONED_ASSETS_QUEUED = 'SANCTIONED_ASSETS_QUEUED',
   SANCTIONED_ASSETS_SENT_TO_ESCROW = 'SANCTIONED_ASSETS_SENT_TO_ESCROW',
@@ -15691,6 +16287,7 @@ export enum SubgraphMarketEvent_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -15699,6 +16296,7 @@ export enum SubgraphMarketEvent_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -15739,6 +16337,10 @@ export enum SubgraphMarketEvent_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -15770,6 +16372,7 @@ export enum SubgraphMarketEvent_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   sequence = 'sequence',
   transactionHash = 'transactionHash'
@@ -15881,6 +16484,7 @@ export enum SubgraphMarketHooksData_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -15889,6 +16493,7 @@ export enum SubgraphMarketHooksData_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -15929,6 +16534,10 @@ export enum SubgraphMarketHooksData_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -15960,6 +16569,7 @@ export enum SubgraphMarketHooksData_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -16135,6 +16745,7 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -16143,6 +16754,7 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -16183,6 +16795,10 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -16214,6 +16830,7 @@ export enum SubgraphMarketInterestAccrued_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   protocolFeesAccrued = 'protocolFeesAccrued',
   timeWithPenalties = 'timeWithPenalties',
@@ -16326,6 +16943,7 @@ export enum SubgraphMarketRemoved_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -16334,6 +16952,7 @@ export enum SubgraphMarketRemoved_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -16374,6 +16993,10 @@ export enum SubgraphMarketRemoved_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -16405,7 +17028,407 @@ export enum SubgraphMarketRemoved_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
+  transactionHash = 'transactionHash'
+}
+
+export type SubgraphMarketRepaymentDateReached = {
+  __typename: 'MarketRepaymentDateReached';
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  effectiveTimestamp: Scalars['BigInt']['output'];
+  id: Scalars['ID']['output'];
+  market: SubgraphMarket;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphMarketRepaymentDateReached_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphMarketRepaymentDateReached_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  effectiveTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  effectiveTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  effectiveTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  effectiveTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  effectiveTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  effectiveTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  effectiveTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  effectiveTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  market?: InputMaybe<Scalars['String']['input']>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars['String']['input']>;
+  market_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_gt?: InputMaybe<Scalars['String']['input']>;
+  market_gte?: InputMaybe<Scalars['String']['input']>;
+  market_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_lt?: InputMaybe<Scalars['String']['input']>;
+  market_lte?: InputMaybe<Scalars['String']['input']>;
+  market_not?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphMarketRepaymentDateReached_Filter>>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphMarketRepaymentDateReached_OrderBy {
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  effectiveTimestamp = 'effectiveTimestamp',
+  id = 'id',
+  market = 'market',
+  market__abiFamily = 'market__abiFamily',
+  market__address = 'market__address',
+  market__annualInterestBips = 'market__annualInterestBips',
+  market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
+  market__borrowIndex = 'market__borrowIndex',
+  market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
+  market__commitmentFeeBips = 'market__commitmentFeeBips',
+  market__createdAt = 'market__createdAt',
+  market__createdAtBlock = 'market__createdAtBlock',
+  market__createdAtLogIndex = 'market__createdAtLogIndex',
+  market__createdAtTimestamp = 'market__createdAtTimestamp',
+  market__createdAtTransaction = 'market__createdAtTransaction',
+  market__debtRepaidIndex = 'market__debtRepaidIndex',
+  market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
+  market__delinquencyFeeBips = 'market__delinquencyFeeBips',
+  market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
+  market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
+  market__depositIndex = 'market__depositIndex',
+  market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
+  market__eventIndex = 'market__eventIndex',
+  market__feeRecipient = 'market__feeRecipient',
+  market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
+  market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
+  market__forceBuyBackIndex = 'market__forceBuyBackIndex',
+  market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
+  market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
+  market__isClosed = 'market__isClosed',
+  market__isDelinquent = 'market__isDelinquent',
+  market__isIncurringPenalties = 'market__isIncurringPenalties',
+  market__isRegistered = 'market__isRegistered',
+  market__lastInterestAccruedBlockNumber = 'market__lastInterestAccruedBlockNumber',
+  market__lastInterestAccruedTimestamp = 'market__lastInterestAccruedTimestamp',
+  market__marketKind = 'market__marketKind',
+  market__maxTotalSupply = 'market__maxTotalSupply',
+  market__maxTotalSupplyUpdatedIndex = 'market__maxTotalSupplyUpdatedIndex',
+  market__minimumDepositUpdatedIndex = 'market__minimumDepositUpdatedIndex',
+  market__name = 'market__name',
+  market__normalizedUnclaimedWithdrawals = 'market__normalizedUnclaimedWithdrawals',
+  market__numCollateralContracts = 'market__numCollateralContracts',
+  market__originKind = 'market__originKind',
+  market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
+  market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
+  market__pendingProtocolFees = 'market__pendingProtocolFees',
+  market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
+  market__protocolFeeBips = 'market__protocolFeeBips',
+  market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
+  market__requestedHooks = 'market__requestedHooks',
+  market__reserveRatioBips = 'market__reserveRatioBips',
+  market__scaleFactor = 'market__scaleFactor',
+  market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
+  market__scaledTotalSupply = 'market__scaledTotalSupply',
+  market__sentinel = 'market__sentinel',
+  market__symbol = 'market__symbol',
+  market__temporaryReserveRatioActive = 'market__temporaryReserveRatioActive',
+  market__temporaryReserveRatioExpiry = 'market__temporaryReserveRatioExpiry',
+  market__timeDelinquent = 'market__timeDelinquent',
+  market__totalAssets = 'market__totalAssets',
+  market__totalBaseInterestAccrued = 'market__totalBaseInterestAccrued',
+  market__totalBaseInterestAccruedUSD = 'market__totalBaseInterestAccruedUSD',
+  market__totalBorrowed = 'market__totalBorrowed',
+  market__totalBorrowedUSD = 'market__totalBorrowedUSD',
+  market__totalDebtUSD = 'market__totalDebtUSD',
+  market__totalDelinquencyFeesAccrued = 'market__totalDelinquencyFeesAccrued',
+  market__totalDelinquencyFeesAccruedUSD = 'market__totalDelinquencyFeesAccruedUSD',
+  market__totalDeposited = 'market__totalDeposited',
+  market__totalDepositedUSD = 'market__totalDepositedUSD',
+  market__totalProtocolFeesAccrued = 'market__totalProtocolFeesAccrued',
+  market__totalProtocolFeesAccruedUSD = 'market__totalProtocolFeesAccruedUSD',
+  market__totalRepaid = 'market__totalRepaid',
+  market__totalRepaidUSD = 'market__totalRepaidUSD',
+  market__totalWithdrawalsExecuted = 'market__totalWithdrawalsExecuted',
+  market__totalWithdrawalsExecutedUSD = 'market__totalWithdrawalsExecutedUSD',
+  market__totalWithdrawalsRequested = 'market__totalWithdrawalsRequested',
+  market__totalWithdrawalsRequestedUSD = 'market__totalWithdrawalsRequestedUSD',
+  market__usdTotalsComplete = 'market__usdTotalsComplete',
+  market__version = 'market__version',
+  market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
+  market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
+  transactionHash = 'transactionHash'
+}
+
+/** Immutable repayment terms emitted by the originating factory, including unscheduled (0, 0) terms. */
+export type SubgraphMarketRepaymentTerms = {
+  __typename: 'MarketRepaymentTerms';
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  id: Scalars['ID']['output'];
+  market: SubgraphMarket;
+  repaymentDate: Scalars['BigInt']['output'];
+  repaymentPeriod: Scalars['BigInt']['output'];
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphMarketRepaymentTerms_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphMarketRepaymentTerms_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  market?: InputMaybe<Scalars['String']['input']>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars['String']['input']>;
+  market_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_gt?: InputMaybe<Scalars['String']['input']>;
+  market_gte?: InputMaybe<Scalars['String']['input']>;
+  market_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_lt?: InputMaybe<Scalars['String']['input']>;
+  market_lte?: InputMaybe<Scalars['String']['input']>;
+  market_not?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphMarketRepaymentTerms_Filter>>>;
+  repaymentDate?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentDate_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_not?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentPeriod?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentPeriod_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_not?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphMarketRepaymentTerms_OrderBy {
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  id = 'id',
+  market = 'market',
+  market__abiFamily = 'market__abiFamily',
+  market__address = 'market__address',
+  market__annualInterestBips = 'market__annualInterestBips',
+  market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
+  market__borrowIndex = 'market__borrowIndex',
+  market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
+  market__commitmentFeeBips = 'market__commitmentFeeBips',
+  market__createdAt = 'market__createdAt',
+  market__createdAtBlock = 'market__createdAtBlock',
+  market__createdAtLogIndex = 'market__createdAtLogIndex',
+  market__createdAtTimestamp = 'market__createdAtTimestamp',
+  market__createdAtTransaction = 'market__createdAtTransaction',
+  market__debtRepaidIndex = 'market__debtRepaidIndex',
+  market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
+  market__delinquencyFeeBips = 'market__delinquencyFeeBips',
+  market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
+  market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
+  market__depositIndex = 'market__depositIndex',
+  market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
+  market__eventIndex = 'market__eventIndex',
+  market__feeRecipient = 'market__feeRecipient',
+  market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
+  market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
+  market__forceBuyBackIndex = 'market__forceBuyBackIndex',
+  market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
+  market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
+  market__isClosed = 'market__isClosed',
+  market__isDelinquent = 'market__isDelinquent',
+  market__isIncurringPenalties = 'market__isIncurringPenalties',
+  market__isRegistered = 'market__isRegistered',
+  market__lastInterestAccruedBlockNumber = 'market__lastInterestAccruedBlockNumber',
+  market__lastInterestAccruedTimestamp = 'market__lastInterestAccruedTimestamp',
+  market__marketKind = 'market__marketKind',
+  market__maxTotalSupply = 'market__maxTotalSupply',
+  market__maxTotalSupplyUpdatedIndex = 'market__maxTotalSupplyUpdatedIndex',
+  market__minimumDepositUpdatedIndex = 'market__minimumDepositUpdatedIndex',
+  market__name = 'market__name',
+  market__normalizedUnclaimedWithdrawals = 'market__normalizedUnclaimedWithdrawals',
+  market__numCollateralContracts = 'market__numCollateralContracts',
+  market__originKind = 'market__originKind',
+  market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
+  market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
+  market__pendingProtocolFees = 'market__pendingProtocolFees',
+  market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
+  market__protocolFeeBips = 'market__protocolFeeBips',
+  market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
+  market__requestedHooks = 'market__requestedHooks',
+  market__reserveRatioBips = 'market__reserveRatioBips',
+  market__scaleFactor = 'market__scaleFactor',
+  market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
+  market__scaledTotalSupply = 'market__scaledTotalSupply',
+  market__sentinel = 'market__sentinel',
+  market__symbol = 'market__symbol',
+  market__temporaryReserveRatioActive = 'market__temporaryReserveRatioActive',
+  market__temporaryReserveRatioExpiry = 'market__temporaryReserveRatioExpiry',
+  market__timeDelinquent = 'market__timeDelinquent',
+  market__totalAssets = 'market__totalAssets',
+  market__totalBaseInterestAccrued = 'market__totalBaseInterestAccrued',
+  market__totalBaseInterestAccruedUSD = 'market__totalBaseInterestAccruedUSD',
+  market__totalBorrowed = 'market__totalBorrowed',
+  market__totalBorrowedUSD = 'market__totalBorrowedUSD',
+  market__totalDebtUSD = 'market__totalDebtUSD',
+  market__totalDelinquencyFeesAccrued = 'market__totalDelinquencyFeesAccrued',
+  market__totalDelinquencyFeesAccruedUSD = 'market__totalDelinquencyFeesAccruedUSD',
+  market__totalDeposited = 'market__totalDeposited',
+  market__totalDepositedUSD = 'market__totalDepositedUSD',
+  market__totalProtocolFeesAccrued = 'market__totalProtocolFeesAccrued',
+  market__totalProtocolFeesAccruedUSD = 'market__totalProtocolFeesAccruedUSD',
+  market__totalRepaid = 'market__totalRepaid',
+  market__totalRepaidUSD = 'market__totalRepaidUSD',
+  market__totalWithdrawalsExecuted = 'market__totalWithdrawalsExecuted',
+  market__totalWithdrawalsExecutedUSD = 'market__totalWithdrawalsExecutedUSD',
+  market__totalWithdrawalsRequested = 'market__totalWithdrawalsRequested',
+  market__totalWithdrawalsRequestedUSD = 'market__totalWithdrawalsRequestedUSD',
+  market__usdTotalsComplete = 'market__usdTotalsComplete',
+  market__version = 'market__version',
+  market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
+  market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
+  repaymentDate = 'repaymentDate',
+  repaymentPeriod = 'repaymentPeriod',
   transactionHash = 'transactionHash'
 }
 
@@ -16413,7 +17436,9 @@ export enum SubgraphMarketRemoved_OrderBy {
 export type SubgraphMarketSnapshot = {
   __typename: 'MarketSnapshot';
   annualInterestBips: Scalars['Int']['output'];
+  closedAt?: Maybe<Scalars['BigInt']['output']>;
   commitmentFeeBips?: Maybe<Scalars['BigInt']['output']>;
+  defaultedAt?: Maybe<Scalars['BigInt']['output']>;
   drawnAmount?: Maybe<Scalars['BigInt']['output']>;
   id: Scalars['ID']['output'];
   isClosed: Scalars['Boolean']['output'];
@@ -16429,6 +17454,10 @@ export type SubgraphMarketSnapshot = {
   pendingProtocolFees: Scalars['BigInt']['output'];
   pendingWithdrawalExpiry: Scalars['BigInt']['output'];
   protocolFeeBips: Scalars['Int']['output'];
+  repaymentActivatedAt?: Maybe<Scalars['BigInt']['output']>;
+  repaymentDate?: Maybe<Scalars['BigInt']['output']>;
+  repaymentDeadline?: Maybe<Scalars['BigInt']['output']>;
+  repaymentPeriod?: Maybe<Scalars['BigInt']['output']>;
   reserveRatioBips: Scalars['Int']['output'];
   scaleFactor: Scalars['BigInt']['output'];
   scaledPendingWithdrawals: Scalars['BigInt']['output'];
@@ -16442,6 +17471,7 @@ export type SubgraphMarketSnapshot = {
   updatedAtLogIndex: Scalars['BigInt']['output'];
   updatedAtTimestamp: Scalars['BigInt']['output'];
   updatedAtTransaction: Scalars['Bytes']['output'];
+  withdrawalRemainder?: Maybe<Scalars['BigInt']['output']>;
 };
 
 export type SubgraphMarketSnapshot_Filter = {
@@ -16456,6 +17486,14 @@ export type SubgraphMarketSnapshot_Filter = {
   annualInterestBips_lte?: InputMaybe<Scalars['Int']['input']>;
   annualInterestBips_not?: InputMaybe<Scalars['Int']['input']>;
   annualInterestBips_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  closedAt?: InputMaybe<Scalars['BigInt']['input']>;
+  closedAt_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  closedAt_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  closedAt_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  closedAt_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  closedAt_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  closedAt_not?: InputMaybe<Scalars['BigInt']['input']>;
+  closedAt_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   commitmentFeeBips?: InputMaybe<Scalars['BigInt']['input']>;
   commitmentFeeBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
   commitmentFeeBips_gte?: InputMaybe<Scalars['BigInt']['input']>;
@@ -16464,6 +17502,14 @@ export type SubgraphMarketSnapshot_Filter = {
   commitmentFeeBips_lte?: InputMaybe<Scalars['BigInt']['input']>;
   commitmentFeeBips_not?: InputMaybe<Scalars['BigInt']['input']>;
   commitmentFeeBips_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  defaultedAt?: InputMaybe<Scalars['BigInt']['input']>;
+  defaultedAt_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  defaultedAt_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  defaultedAt_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  defaultedAt_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  defaultedAt_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  defaultedAt_not?: InputMaybe<Scalars['BigInt']['input']>;
+  defaultedAt_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   drawnAmount?: InputMaybe<Scalars['BigInt']['input']>;
   drawnAmount_gt?: InputMaybe<Scalars['BigInt']['input']>;
   drawnAmount_gte?: InputMaybe<Scalars['BigInt']['input']>;
@@ -16586,6 +17632,38 @@ export type SubgraphMarketSnapshot_Filter = {
   protocolFeeBips_lte?: InputMaybe<Scalars['Int']['input']>;
   protocolFeeBips_not?: InputMaybe<Scalars['Int']['input']>;
   protocolFeeBips_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  repaymentActivatedAt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentActivatedAt_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentActivatedAt_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentActivatedAt_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentActivatedAt_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentActivatedAt_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentActivatedAt_not?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentActivatedAt_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentDate?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentDate_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_not?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentDeadline?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDeadline_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDeadline_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDeadline_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentDeadline_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDeadline_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDeadline_not?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDeadline_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentPeriod?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentPeriod_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_not?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   reserveRatioBips?: InputMaybe<Scalars['Int']['input']>;
   reserveRatioBips_gt?: InputMaybe<Scalars['Int']['input']>;
   reserveRatioBips_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -16684,11 +17762,21 @@ export type SubgraphMarketSnapshot_Filter = {
   updatedAtTransaction_not?: InputMaybe<Scalars['Bytes']['input']>;
   updatedAtTransaction_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   updatedAtTransaction_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  withdrawalRemainder?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalRemainder_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalRemainder_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalRemainder_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  withdrawalRemainder_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalRemainder_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalRemainder_not?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalRemainder_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
 };
 
 export enum SubgraphMarketSnapshot_OrderBy {
   annualInterestBips = 'annualInterestBips',
+  closedAt = 'closedAt',
   commitmentFeeBips = 'commitmentFeeBips',
+  defaultedAt = 'defaultedAt',
   drawnAmount = 'drawnAmount',
   id = 'id',
   isClosed = 'isClosed',
@@ -16705,6 +17793,7 @@ export enum SubgraphMarketSnapshot_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -16713,6 +17802,7 @@ export enum SubgraphMarketSnapshot_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -16753,6 +17843,10 @@ export enum SubgraphMarketSnapshot_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -16784,6 +17878,7 @@ export enum SubgraphMarketSnapshot_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   maxTotalSupply = 'maxTotalSupply',
   normalizedUnclaimedWithdrawals = 'normalizedUnclaimedWithdrawals',
@@ -16792,6 +17887,10 @@ export enum SubgraphMarketSnapshot_OrderBy {
   pendingProtocolFees = 'pendingProtocolFees',
   pendingWithdrawalExpiry = 'pendingWithdrawalExpiry',
   protocolFeeBips = 'protocolFeeBips',
+  repaymentActivatedAt = 'repaymentActivatedAt',
+  repaymentDate = 'repaymentDate',
+  repaymentDeadline = 'repaymentDeadline',
+  repaymentPeriod = 'repaymentPeriod',
   reserveRatioBips = 'reserveRatioBips',
   scaleFactor = 'scaleFactor',
   scaledPendingWithdrawals = 'scaledPendingWithdrawals',
@@ -16804,7 +17903,8 @@ export enum SubgraphMarketSnapshot_OrderBy {
   updatedAtBlock = 'updatedAtBlock',
   updatedAtLogIndex = 'updatedAtLogIndex',
   updatedAtTimestamp = 'updatedAtTimestamp',
-  updatedAtTransaction = 'updatedAtTransaction'
+  updatedAtTransaction = 'updatedAtTransaction',
+  withdrawalRemainder = 'withdrawalRemainder'
 }
 
 export enum SubgraphMarketVersion {
@@ -16917,6 +18017,7 @@ export enum SubgraphMarketWrapperRegistration_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -16925,6 +18026,7 @@ export enum SubgraphMarketWrapperRegistration_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -16965,6 +18067,10 @@ export enum SubgraphMarketWrapperRegistration_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -16996,6 +18102,7 @@ export enum SubgraphMarketWrapperRegistration_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash',
   wrapper = 'wrapper'
@@ -17201,6 +18308,14 @@ export type SubgraphMarket_Filter = {
   borrower_not?: InputMaybe<Scalars['Bytes']['input']>;
   borrower_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
   borrower_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  closedAt?: InputMaybe<Scalars['BigInt']['input']>;
+  closedAt_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  closedAt_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  closedAt_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  closedAt_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  closedAt_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  closedAt_not?: InputMaybe<Scalars['BigInt']['input']>;
+  closedAt_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   collateralContracts_?: InputMaybe<SubgraphSimpleCollateralContract_Filter>;
   commitmentFeeBips?: InputMaybe<Scalars['BigInt']['input']>;
   commitmentFeeBips_gt?: InputMaybe<Scalars['BigInt']['input']>;
@@ -17290,6 +18405,15 @@ export type SubgraphMarket_Filter = {
   decimals_lte?: InputMaybe<Scalars['Int']['input']>;
   decimals_not?: InputMaybe<Scalars['Int']['input']>;
   decimals_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  defaultRecord_?: InputMaybe<SubgraphMarketDefaultRecorded_Filter>;
+  defaultedAt?: InputMaybe<Scalars['BigInt']['input']>;
+  defaultedAt_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  defaultedAt_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  defaultedAt_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  defaultedAt_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  defaultedAt_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  defaultedAt_not?: InputMaybe<Scalars['BigInt']['input']>;
+  defaultedAt_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   delinquencyFeeBips?: InputMaybe<Scalars['Int']['input']>;
   delinquencyFeeBips_gt?: InputMaybe<Scalars['Int']['input']>;
   delinquencyFeeBips_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -17723,7 +18847,41 @@ export type SubgraphMarket_Filter = {
   protocolFeeBips_not?: InputMaybe<Scalars['Int']['input']>;
   protocolFeeBips_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   removal_?: InputMaybe<SubgraphMarketRemoved_Filter>;
+  repaymentActivatedAt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentActivatedAt_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentActivatedAt_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentActivatedAt_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentActivatedAt_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentActivatedAt_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentActivatedAt_not?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentActivatedAt_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentDate?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDateReached_?: InputMaybe<SubgraphMarketRepaymentDateReached_Filter>;
+  repaymentDate_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentDate_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_not?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDate_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentDeadline?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDeadline_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDeadline_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDeadline_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentDeadline_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDeadline_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDeadline_not?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentDeadline_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentPeriod?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  repaymentPeriod_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_not?: InputMaybe<Scalars['BigInt']['input']>;
+  repaymentPeriod_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   repaymentRecords_?: InputMaybe<SubgraphDebtRepaid_Filter>;
+  repaymentTerms_?: InputMaybe<SubgraphMarketRepaymentTerms_Filter>;
   requestedHooks?: InputMaybe<Scalars['BigInt']['input']>;
   requestedHooks_gt?: InputMaybe<Scalars['BigInt']['input']>;
   requestedHooks_gte?: InputMaybe<Scalars['BigInt']['input']>;
@@ -18021,6 +19179,14 @@ export type SubgraphMarket_Filter = {
   withdrawalBatchDuration_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
   withdrawalBatches_?: InputMaybe<SubgraphWithdrawalBatch_Filter>;
   withdrawalExecutionRecords_?: InputMaybe<SubgraphWithdrawalExecution_Filter>;
+  withdrawalRemainder?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalRemainder_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalRemainder_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalRemainder_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  withdrawalRemainder_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalRemainder_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalRemainder_not?: InputMaybe<Scalars['BigInt']['input']>;
+  withdrawalRemainder_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   withdrawalRequestRecords_?: InputMaybe<SubgraphWithdrawalRequest_Filter>;
   withdrawalRequestsIndex?: InputMaybe<Scalars['Int']['input']>;
   withdrawalRequestsIndex_gt?: InputMaybe<Scalars['Int']['input']>;
@@ -18087,6 +19253,7 @@ export enum SubgraphMarket_OrderBy {
   borrowerProfile__lastSeenLogIndex = 'borrowerProfile__lastSeenLogIndex',
   borrowerProfile__lastSeenTimestamp = 'borrowerProfile__lastSeenTimestamp',
   borrowerProfile__lastSeenTransaction = 'borrowerProfile__lastSeenTransaction',
+  closedAt = 'closedAt',
   collateralContracts = 'collateralContracts',
   commitmentFeeBips = 'commitmentFeeBips',
   controller = 'controller',
@@ -18102,6 +19269,14 @@ export enum SubgraphMarket_OrderBy {
   dailyStats = 'dailyStats',
   debtRepaidIndex = 'debtRepaidIndex',
   decimals = 'decimals',
+  defaultRecord = 'defaultRecord',
+  defaultRecord__blockLogIndex = 'defaultRecord__blockLogIndex',
+  defaultRecord__blockNumber = 'defaultRecord__blockNumber',
+  defaultRecord__blockTimestamp = 'defaultRecord__blockTimestamp',
+  defaultRecord__effectiveTimestamp = 'defaultRecord__effectiveTimestamp',
+  defaultRecord__id = 'defaultRecord__id',
+  defaultRecord__transactionHash = 'defaultRecord__transactionHash',
+  defaultedAt = 'defaultedAt',
   delinquencyFeeBips = 'delinquencyFeeBips',
   delinquencyGracePeriod = 'delinquencyGracePeriod',
   delinquencyRecords = 'delinquencyRecords',
@@ -18303,7 +19478,26 @@ export enum SubgraphMarket_OrderBy {
   removal__blockTimestamp = 'removal__blockTimestamp',
   removal__id = 'removal__id',
   removal__transactionHash = 'removal__transactionHash',
+  repaymentActivatedAt = 'repaymentActivatedAt',
+  repaymentDate = 'repaymentDate',
+  repaymentDateReached = 'repaymentDateReached',
+  repaymentDateReached__blockLogIndex = 'repaymentDateReached__blockLogIndex',
+  repaymentDateReached__blockNumber = 'repaymentDateReached__blockNumber',
+  repaymentDateReached__blockTimestamp = 'repaymentDateReached__blockTimestamp',
+  repaymentDateReached__effectiveTimestamp = 'repaymentDateReached__effectiveTimestamp',
+  repaymentDateReached__id = 'repaymentDateReached__id',
+  repaymentDateReached__transactionHash = 'repaymentDateReached__transactionHash',
+  repaymentDeadline = 'repaymentDeadline',
+  repaymentPeriod = 'repaymentPeriod',
   repaymentRecords = 'repaymentRecords',
+  repaymentTerms = 'repaymentTerms',
+  repaymentTerms__blockLogIndex = 'repaymentTerms__blockLogIndex',
+  repaymentTerms__blockNumber = 'repaymentTerms__blockNumber',
+  repaymentTerms__blockTimestamp = 'repaymentTerms__blockTimestamp',
+  repaymentTerms__id = 'repaymentTerms__id',
+  repaymentTerms__repaymentDate = 'repaymentTerms__repaymentDate',
+  repaymentTerms__repaymentPeriod = 'repaymentTerms__repaymentPeriod',
+  repaymentTerms__transactionHash = 'repaymentTerms__transactionHash',
   requestedHooks = 'requestedHooks',
   reserveRatioBips = 'reserveRatioBips',
   reserveRatioBipsUpdatedRecords = 'reserveRatioBipsUpdatedRecords',
@@ -18320,7 +19514,9 @@ export enum SubgraphMarket_OrderBy {
   sentinel = 'sentinel',
   snapshot = 'snapshot',
   snapshot__annualInterestBips = 'snapshot__annualInterestBips',
+  snapshot__closedAt = 'snapshot__closedAt',
   snapshot__commitmentFeeBips = 'snapshot__commitmentFeeBips',
+  snapshot__defaultedAt = 'snapshot__defaultedAt',
   snapshot__drawnAmount = 'snapshot__drawnAmount',
   snapshot__id = 'snapshot__id',
   snapshot__isClosed = 'snapshot__isClosed',
@@ -18335,6 +19531,10 @@ export enum SubgraphMarket_OrderBy {
   snapshot__pendingProtocolFees = 'snapshot__pendingProtocolFees',
   snapshot__pendingWithdrawalExpiry = 'snapshot__pendingWithdrawalExpiry',
   snapshot__protocolFeeBips = 'snapshot__protocolFeeBips',
+  snapshot__repaymentActivatedAt = 'snapshot__repaymentActivatedAt',
+  snapshot__repaymentDate = 'snapshot__repaymentDate',
+  snapshot__repaymentDeadline = 'snapshot__repaymentDeadline',
+  snapshot__repaymentPeriod = 'snapshot__repaymentPeriod',
   snapshot__reserveRatioBips = 'snapshot__reserveRatioBips',
   snapshot__scaleFactor = 'snapshot__scaleFactor',
   snapshot__scaledPendingWithdrawals = 'snapshot__scaledPendingWithdrawals',
@@ -18348,6 +19548,7 @@ export enum SubgraphMarket_OrderBy {
   snapshot__updatedAtLogIndex = 'snapshot__updatedAtLogIndex',
   snapshot__updatedAtTimestamp = 'snapshot__updatedAtTimestamp',
   snapshot__updatedAtTransaction = 'snapshot__updatedAtTransaction',
+  snapshot__withdrawalRemainder = 'snapshot__withdrawalRemainder',
   symbol = 'symbol',
   temporaryReserveRatioActive = 'temporaryReserveRatioActive',
   temporaryReserveRatioExpiry = 'temporaryReserveRatioExpiry',
@@ -18396,6 +19597,7 @@ export enum SubgraphMarket_OrderBy {
   withdrawalBatchDuration = 'withdrawalBatchDuration',
   withdrawalBatches = 'withdrawalBatches',
   withdrawalExecutionRecords = 'withdrawalExecutionRecords',
+  withdrawalRemainder = 'withdrawalRemainder',
   withdrawalRequestRecords = 'withdrawalRequestRecords',
   withdrawalRequestsIndex = 'withdrawalRequestsIndex',
   wrapperRegistrations = 'wrapperRegistrations'
@@ -18544,6 +19746,7 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -18552,6 +19755,7 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -18592,6 +19796,10 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -18623,6 +19831,7 @@ export enum SubgraphMaxTotalSupplyUpdated_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   maxTotalSupplyUpdatedIndex = 'maxTotalSupplyUpdatedIndex',
   newMaxTotalSupply = 'newMaxTotalSupply',
@@ -18821,6 +20030,7 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -18829,6 +20039,7 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -18869,6 +20080,10 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -18900,6 +20115,7 @@ export enum SubgraphMinimumDepositUpdated_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   minimumDepositUpdatedIndex = 'minimumDepositUpdatedIndex',
   newMinimumDeposit = 'newMinimumDeposit',
@@ -20161,6 +21377,7 @@ export enum SubgraphPeriodicTermClosed_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -20169,6 +21386,7 @@ export enum SubgraphPeriodicTermClosed_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -20209,6 +21427,10 @@ export enum SubgraphPeriodicTermClosed_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -20240,6 +21462,7 @@ export enum SubgraphPeriodicTermClosed_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -20457,6 +21680,7 @@ export enum SubgraphPeriodicTermUpdated_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -20465,6 +21689,7 @@ export enum SubgraphPeriodicTermUpdated_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -20505,6 +21730,10 @@ export enum SubgraphPeriodicTermUpdated_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -20536,6 +21765,7 @@ export enum SubgraphPeriodicTermUpdated_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   newFirstWithdrawalWindowStart = 'newFirstWithdrawalWindowStart',
   newPeriodDuration = 'newPeriodDuration',
@@ -20989,6 +22219,7 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -20997,6 +22228,7 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -21037,6 +22269,10 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -21068,6 +22304,7 @@ export enum SubgraphProtocolFeeBipsUpdated_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   newProtocolFeeBips = 'newProtocolFeeBips',
   oldProtocolFeeBips = 'oldProtocolFeeBips',
@@ -21362,6 +22599,8 @@ export type SubgraphQuery = {
   hooksNameUpdated?: Maybe<SubgraphHooksNameUpdated>;
   hooksNameUpdateds: Array<SubgraphHooksNameUpdated>;
   hooksTemplate?: Maybe<SubgraphHooksTemplate>;
+  hooksTemplateInitCodeHashRecord?: Maybe<SubgraphHooksTemplateInitCodeHashRecord>;
+  hooksTemplateInitCodeHashRecords: Array<SubgraphHooksTemplateInitCodeHashRecord>;
   hooksTemplateRegistration?: Maybe<SubgraphHooksTemplateRegistration>;
   hooksTemplateRegistrationEvent?: Maybe<SubgraphHooksTemplateRegistrationEvent>;
   hooksTemplateRegistrationEvents: Array<SubgraphHooksTemplateRegistrationEvent>;
@@ -21404,6 +22643,8 @@ export type SubgraphQuery = {
   marketCloseds: Array<SubgraphMarketClosed>;
   marketDailyStats?: Maybe<SubgraphMarketDailyStats>;
   marketDailyStats_collection: Array<SubgraphMarketDailyStats>;
+  marketDefaultRecorded?: Maybe<SubgraphMarketDefaultRecorded>;
+  marketDefaultRecordeds: Array<SubgraphMarketDefaultRecorded>;
   marketDeployed?: Maybe<SubgraphMarketDeployed>;
   marketDeployeds: Array<SubgraphMarketDeployed>;
   marketDeploymentConfig?: Maybe<SubgraphMarketDeploymentConfig>;
@@ -21418,6 +22659,10 @@ export type SubgraphQuery = {
   marketInterestAccrueds: Array<SubgraphMarketInterestAccrued>;
   marketRemoved?: Maybe<SubgraphMarketRemoved>;
   marketRemoveds: Array<SubgraphMarketRemoved>;
+  marketRepaymentDateReached?: Maybe<SubgraphMarketRepaymentDateReached>;
+  marketRepaymentDateReacheds: Array<SubgraphMarketRepaymentDateReached>;
+  marketRepaymentTerms?: Maybe<SubgraphMarketRepaymentTerms>;
+  marketRepaymentTerms_collection: Array<SubgraphMarketRepaymentTerms>;
   marketSnapshot?: Maybe<SubgraphMarketSnapshot>;
   marketSnapshots: Array<SubgraphMarketSnapshot>;
   marketWrapperRegistration?: Maybe<SubgraphMarketWrapperRegistration>;
@@ -22436,6 +23681,24 @@ export type SubgraphQueryHooksTemplateArgs = {
 };
 
 
+export type SubgraphQueryHooksTemplateInitCodeHashRecordArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryHooksTemplateInitCodeHashRecordsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphHooksTemplateInitCodeHashRecord_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphHooksTemplateInitCodeHashRecord_Filter>;
+};
+
+
 export type SubgraphQueryHooksTemplateRegistrationArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
@@ -22814,6 +24077,24 @@ export type SubgraphQueryMarketDailyStats_CollectionArgs = {
 };
 
 
+export type SubgraphQueryMarketDefaultRecordedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryMarketDefaultRecordedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketDefaultRecorded_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketDefaultRecorded_Filter>;
+};
+
+
 export type SubgraphQueryMarketDeployedArgs = {
   block?: InputMaybe<SubgraphBlock_Height>;
   id: Scalars['ID']['input'];
@@ -22937,6 +24218,42 @@ export type SubgraphQueryMarketRemovedsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
   where?: InputMaybe<SubgraphMarketRemoved_Filter>;
+};
+
+
+export type SubgraphQueryMarketRepaymentDateReachedArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryMarketRepaymentDateReachedsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketRepaymentDateReached_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketRepaymentDateReached_Filter>;
+};
+
+
+export type SubgraphQueryMarketRepaymentTermsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryMarketRepaymentTerms_CollectionArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphMarketRepaymentTerms_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphMarketRepaymentTerms_Filter>;
 };
 
 
@@ -24427,6 +25744,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -24435,6 +25753,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -24475,6 +25794,10 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -24506,6 +25829,7 @@ export enum SubgraphReserveRatioBipsUpdated_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   newReserveRatioBips = 'newReserveRatioBips',
   oldReserveRatioBips = 'oldReserveRatioBips',
@@ -24616,6 +25940,7 @@ export enum SubgraphRevolvingMarketDeployment_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -24624,6 +25949,7 @@ export enum SubgraphRevolvingMarketDeployment_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -24664,6 +25990,10 @@ export enum SubgraphRevolvingMarketDeployment_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -24695,6 +26025,7 @@ export enum SubgraphRevolvingMarketDeployment_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -27280,6 +28611,7 @@ export enum SubgraphSanctionedAccountAssetsQueuedForWithdrawal_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -27288,6 +28620,7 @@ export enum SubgraphSanctionedAccountAssetsQueuedForWithdrawal_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -27328,6 +28661,10 @@ export enum SubgraphSanctionedAccountAssetsQueuedForWithdrawal_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -27359,6 +28696,7 @@ export enum SubgraphSanctionedAccountAssetsQueuedForWithdrawal_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   normalizedAmount = 'normalizedAmount',
   scaledAmount = 'scaledAmount',
@@ -27493,6 +28831,7 @@ export enum SubgraphSanctionedAccountAssetsSentToEscrow_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -27501,6 +28840,7 @@ export enum SubgraphSanctionedAccountAssetsSentToEscrow_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -27541,6 +28881,10 @@ export enum SubgraphSanctionedAccountAssetsSentToEscrow_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -27572,6 +28916,7 @@ export enum SubgraphSanctionedAccountAssetsSentToEscrow_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -27714,6 +29059,7 @@ export enum SubgraphSanctionedAccountWithdrawalSentToEscrow_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -27722,6 +29068,7 @@ export enum SubgraphSanctionedAccountWithdrawalSentToEscrow_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -27762,6 +29109,10 @@ export enum SubgraphSanctionedAccountWithdrawalSentToEscrow_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -27793,6 +29144,7 @@ export enum SubgraphSanctionedAccountWithdrawalSentToEscrow_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -28277,6 +29629,7 @@ export enum SubgraphSimpleCollateralContractCreated_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -28285,6 +29638,7 @@ export enum SubgraphSimpleCollateralContractCreated_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -28325,6 +29679,10 @@ export enum SubgraphSimpleCollateralContractCreated_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -28356,6 +29714,7 @@ export enum SubgraphSimpleCollateralContractCreated_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -29821,6 +31180,7 @@ export enum SubgraphSimpleCollateralContract_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -29829,6 +31189,7 @@ export enum SubgraphSimpleCollateralContract_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -29869,6 +31230,10 @@ export enum SubgraphSimpleCollateralContract_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -29900,6 +31265,7 @@ export enum SubgraphSimpleCollateralContract_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   nextLiquidationTrigger = 'nextLiquidationTrigger',
   reclaims = 'reclaims',
@@ -30642,6 +32008,7 @@ export enum SubgraphTransfer_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -30650,6 +32017,7 @@ export enum SubgraphTransfer_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -30690,6 +32058,10 @@ export enum SubgraphTransfer_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -30721,6 +32093,7 @@ export enum SubgraphTransfer_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   principalBasisAmount = 'principalBasisAmount',
   scaledAmount = 'scaledAmount',
@@ -31298,6 +32671,7 @@ export enum SubgraphWildcat4626WrapperDeployed_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -31306,6 +32680,7 @@ export enum SubgraphWildcat4626WrapperDeployed_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -31346,6 +32721,10 @@ export enum SubgraphWildcat4626WrapperDeployed_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -31377,6 +32756,7 @@ export enum SubgraphWildcat4626WrapperDeployed_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash',
   wrapper = 'wrapper',
@@ -32804,6 +34184,7 @@ export enum SubgraphWildcat4626Wrapper_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -32812,6 +34193,7 @@ export enum SubgraphWildcat4626Wrapper_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -32852,6 +34234,10 @@ export enum SubgraphWildcat4626Wrapper_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -32883,6 +34269,7 @@ export enum SubgraphWildcat4626Wrapper_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   principalBasis = 'principalBasis',
   token = 'token',
@@ -32922,6 +34309,7 @@ export type SubgraphWithdrawalBatch = {
   market: SubgraphMarket;
   normalizedAmountClaimed: Scalars['BigInt']['output'];
   normalizedAmountPaid: Scalars['BigInt']['output'];
+  paymentRemainder?: Maybe<Scalars['BigInt']['output']>;
   payments: Array<SubgraphWithdrawalBatchPayment>;
   paymentsCount: Scalars['Int']['output'];
   requests: Array<SubgraphWithdrawalRequest>;
@@ -33074,6 +34462,7 @@ export enum SubgraphWithdrawalBatchCreated_OrderBy {
   batch__lenderWithdrawalsCount = 'batch__lenderWithdrawalsCount',
   batch__normalizedAmountClaimed = 'batch__normalizedAmountClaimed',
   batch__normalizedAmountPaid = 'batch__normalizedAmountPaid',
+  batch__paymentRemainder = 'batch__paymentRemainder',
   batch__paymentsCount = 'batch__paymentsCount',
   batch__scaledAmountBurned = 'batch__scaledAmountBurned',
   batch__scaledTotalAmount = 'batch__scaledTotalAmount',
@@ -33219,6 +34608,7 @@ export enum SubgraphWithdrawalBatchExpired_OrderBy {
   batch__lenderWithdrawalsCount = 'batch__lenderWithdrawalsCount',
   batch__normalizedAmountClaimed = 'batch__normalizedAmountClaimed',
   batch__normalizedAmountPaid = 'batch__normalizedAmountPaid',
+  batch__paymentRemainder = 'batch__paymentRemainder',
   batch__paymentsCount = 'batch__paymentsCount',
   batch__scaledAmountBurned = 'batch__scaledAmountBurned',
   batch__scaledTotalAmount = 'batch__scaledTotalAmount',
@@ -33354,6 +34744,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   batch__lenderWithdrawalsCount = 'batch__lenderWithdrawalsCount',
   batch__normalizedAmountClaimed = 'batch__normalizedAmountClaimed',
   batch__normalizedAmountPaid = 'batch__normalizedAmountPaid',
+  batch__paymentRemainder = 'batch__paymentRemainder',
   batch__paymentsCount = 'batch__paymentsCount',
   batch__scaledAmountBurned = 'batch__scaledAmountBurned',
   batch__scaledTotalAmount = 'batch__scaledTotalAmount',
@@ -33376,6 +34767,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -33384,6 +34776,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -33424,6 +34817,10 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -33455,6 +34852,7 @@ export enum SubgraphWithdrawalBatchInterestAccrued_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
@@ -33570,6 +34968,7 @@ export enum SubgraphWithdrawalBatchPayment_OrderBy {
   batch__lenderWithdrawalsCount = 'batch__lenderWithdrawalsCount',
   batch__normalizedAmountClaimed = 'batch__normalizedAmountClaimed',
   batch__normalizedAmountPaid = 'batch__normalizedAmountPaid',
+  batch__paymentRemainder = 'batch__paymentRemainder',
   batch__paymentsCount = 'batch__paymentsCount',
   batch__scaledAmountBurned = 'batch__scaledAmountBurned',
   batch__scaledTotalAmount = 'batch__scaledTotalAmount',
@@ -33714,6 +35113,14 @@ export type SubgraphWithdrawalBatch_Filter = {
   normalizedAmountPaid_not?: InputMaybe<Scalars['BigInt']['input']>;
   normalizedAmountPaid_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   or?: InputMaybe<Array<InputMaybe<SubgraphWithdrawalBatch_Filter>>>;
+  paymentRemainder?: InputMaybe<Scalars['BigInt']['input']>;
+  paymentRemainder_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  paymentRemainder_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  paymentRemainder_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  paymentRemainder_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  paymentRemainder_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  paymentRemainder_not?: InputMaybe<Scalars['BigInt']['input']>;
+  paymentRemainder_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   paymentsCount?: InputMaybe<Scalars['Int']['input']>;
   paymentsCount_gt?: InputMaybe<Scalars['Int']['input']>;
   paymentsCount_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -33830,6 +35237,7 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -33838,6 +35246,7 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -33878,6 +35287,10 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -33909,9 +35322,11 @@ export enum SubgraphWithdrawalBatch_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   normalizedAmountClaimed = 'normalizedAmountClaimed',
   normalizedAmountPaid = 'normalizedAmountPaid',
+  paymentRemainder = 'paymentRemainder',
   payments = 'payments',
   paymentsCount = 'paymentsCount',
   requests = 'requests',
@@ -34116,6 +35531,7 @@ export enum SubgraphWithdrawalExecution_OrderBy {
   batch__lenderWithdrawalsCount = 'batch__lenderWithdrawalsCount',
   batch__normalizedAmountClaimed = 'batch__normalizedAmountClaimed',
   batch__normalizedAmountPaid = 'batch__normalizedAmountPaid',
+  batch__paymentRemainder = 'batch__paymentRemainder',
   batch__paymentsCount = 'batch__paymentsCount',
   batch__scaledAmountBurned = 'batch__scaledAmountBurned',
   batch__scaledTotalAmount = 'batch__scaledTotalAmount',
@@ -34139,6 +35555,7 @@ export enum SubgraphWithdrawalExecution_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -34147,6 +35564,7 @@ export enum SubgraphWithdrawalExecution_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -34187,6 +35605,10 @@ export enum SubgraphWithdrawalExecution_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -34218,6 +35640,7 @@ export enum SubgraphWithdrawalExecution_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   normalizedAmount = 'normalizedAmount',
   status = 'status',
@@ -34471,6 +35894,7 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   batch__lenderWithdrawalsCount = 'batch__lenderWithdrawalsCount',
   batch__normalizedAmountClaimed = 'batch__normalizedAmountClaimed',
   batch__normalizedAmountPaid = 'batch__normalizedAmountPaid',
+  batch__paymentRemainder = 'batch__paymentRemainder',
   batch__paymentsCount = 'batch__paymentsCount',
   batch__scaledAmountBurned = 'batch__scaledAmountBurned',
   batch__scaledTotalAmount = 'batch__scaledTotalAmount',
@@ -34494,6 +35918,7 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   market__borrower = 'market__borrower',
   market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
   market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
   market__commitmentFeeBips = 'market__commitmentFeeBips',
   market__createdAt = 'market__createdAt',
   market__createdAtBlock = 'market__createdAtBlock',
@@ -34502,6 +35927,7 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   market__createdAtTransaction = 'market__createdAtTransaction',
   market__debtRepaidIndex = 'market__debtRepaidIndex',
   market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
   market__delinquencyFeeBips = 'market__delinquencyFeeBips',
   market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
   market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
@@ -34542,6 +35968,10 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
   market__protocolFeeBips = 'market__protocolFeeBips',
   market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
   market__requestedHooks = 'market__requestedHooks',
   market__reserveRatioBips = 'market__reserveRatioBips',
   market__scaleFactor = 'market__scaleFactor',
@@ -34573,6 +36003,7 @@ export enum SubgraphWithdrawalRequest_OrderBy {
   market__usdTotalsComplete = 'market__usdTotalsComplete',
   market__version = 'market__version',
   market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
   market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   normalizedAmount = 'normalizedAmount',
   principalBasisAfter = 'principalBasisAfter',
@@ -34720,7 +36151,7 @@ export type SubgraphAllAuthorizedLendersViewFragment = { __typename: 'LenderAuth
 
 export type SubgraphMinimalControllerDataFragment = { __typename: 'Controller', id: string, borrower: string, numMarkets: number, isRegistered: boolean, controllerFactory: { __typename: 'ControllerFactory', id: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, constraints: { __typename: 'ParameterConstraints', minimumDelinquencyGracePeriod: number, maximumDelinquencyGracePeriod: number, minimumReserveRatioBips: number, maximumReserveRatioBips: number, minimumDelinquencyFeeBips: number, maximumDelinquencyFeeBips: number, minimumWithdrawalBatchDuration: number, maximumWithdrawalBatchDuration: number, minimumAnnualInterestBips: number, maximumAnnualInterestBips: number }, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null }, archController: { __typename: 'ArchController', id: string } };
 
-export type SubgraphMarketDataFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
+export type SubgraphMarketDataFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null };
 
 export type SubgraphParameterConstraintsDataFragment = { __typename: 'ParameterConstraints', minimumDelinquencyGracePeriod: number, maximumDelinquencyGracePeriod: number, minimumReserveRatioBips: number, maximumReserveRatioBips: number, minimumDelinquencyFeeBips: number, maximumDelinquencyFeeBips: number, minimumWithdrawalBatchDuration: number, maximumWithdrawalBatchDuration: number, minimumAnnualInterestBips: number, maximumAnnualInterestBips: number };
 
@@ -34732,11 +36163,11 @@ export type SubgraphMarketDeployedEventFragment = { __typename: 'MarketDeployed'
 
 export type SubgraphMarketEventDataFragment = { __typename: 'MarketEvent', id: string, sequence: number, kind: SubgraphMarketEventKind, blockNumber: string, blockTimestamp: string, transactionHash: string, logIndex: string, market: { __typename: 'Market', address: string } };
 
-export type SubgraphMarketDataWithEventsFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> };
+export type SubgraphMarketDataWithEventsFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> };
 
-export type SubgraphMarketListDataFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } } } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
+export type SubgraphMarketListDataFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null } } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null };
 
-export type SubgraphMarketSnapshotDataFragment = { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string };
+export type SubgraphMarketSnapshotDataFragment = { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null };
 
 export type SubgraphWithdrawalBatchPaymentPropertiesFragment = { __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string };
 
@@ -34764,11 +36195,11 @@ export type SubgraphPeriodicTermClosedDataFragment = { __typename: 'PeriodicTerm
 
 export type SubgraphAnnualInterestBipsReductionProposedDataFragment = { __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number };
 
-export type SubgraphLenderWithdrawalPropertiesWithEventsFragment = { __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } };
+export type SubgraphLenderWithdrawalPropertiesWithEventsFragment = { __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, paymentRemainder?: string | null, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } };
 
-export type SubgraphWithdrawalBatchPropertiesFragment = { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> };
+export type SubgraphWithdrawalBatchPropertiesFragment = { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, paymentRemainder?: string | null, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> };
 
-export type SubgraphWithdrawalBatchPropertiesWithEventsFragment = { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, withdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, account: { __typename: 'LenderAccount', address: string } }>, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> };
+export type SubgraphWithdrawalBatchPropertiesWithEventsFragment = { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, paymentRemainder?: string | null, withdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, account: { __typename: 'LenderAccount', address: string } }>, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> };
 
 export type SubgraphMarketRecordsFragment = { __typename: 'Market', depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> };
 
@@ -34786,7 +36217,7 @@ export type SubgraphMarketClosedDataFragment = { __typename: 'MarketClosed', eve
 
 export type SubgraphHooksConfigDataForMarketFragment = { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number };
 
-export type SubgraphHooksInstanceDataFragment = { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> };
+export type SubgraphHooksInstanceDataFragment = { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> };
 
 export type SubgraphBorrowerAccountIdentityDataFragment = { __typename: 'BorrowerAccount', id: string, address: string, principalAddress: string, pendingPrincipalAddress?: string | null, registeredAtBlock: string, registeredAtTimestamp: string, registeredAtTransaction: string, registeredAtLogIndex: string, registry: { __typename: 'BorrowerIdentityRegistry', id: string, address: string }, accountFactory: { __typename: 'BorrowerAccountFactory', id: string, address: string, isApproved: boolean } };
 
@@ -34818,7 +36249,7 @@ export type SubgraphHooksTemplateDataFragment = { __typename: 'HooksTemplate', i
 
 export type SubgraphHooksFactoryDataFragment = { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } };
 
-export type SubgraphHooksTemplateRegistrationDataFragment = { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } };
+export type SubgraphHooksTemplateRegistrationDataFragment = { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null };
 
 export type SubgraphSimpleCollateralContractDataFragment = { __typename: 'SimpleCollateralContract', id: string, liquidationCooldown?: number | null, nextLiquidationTrigger: number, totalDeposited: string, totalReclaimed: string, totalLiquidated: string, totalShares: string, availableCollateral: string, lastFullLiquidationIndex: number, depositIndex: number, eventIndex: number, factory: { __typename: 'SimpleCollateralFactory', id: string, approvedExchanges: Array<{ __typename: 'ApprovedCollateralExchange', exchange: string }> }, market?: { __typename: 'Market', id: string, isClosed: boolean, isDelinquent: boolean, timeDelinquent: number, delinquencyGracePeriod: number, underlyingAsset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } } | null, collateralAsset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, snapshot?: { __typename: 'SimpleCollateralContractSnapshot', source: SubgraphSnapshotSource, totalDeposited: string, totalReclaimed: string, totalLiquidated: string, totalShares: string, availableCollateral: string, lastFullLiquidationIndex: number, depositIndex: number, liquidationCooldown?: number | null, nextLiquidationTrigger: number, eventIndex: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
 
@@ -34838,7 +36269,7 @@ export type SubgraphIndexedQueryMetadataDataFragment = { __typename: '_Meta_', d
 
 export type SubgraphAnalyticsTokenDataFragment = { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null };
 
-export type SubgraphAnalyticsMarketReferenceDataFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } };
+export type SubgraphAnalyticsMarketReferenceDataFragment = { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } };
 
 export type SubgraphBorrowerAnalyticsIdentityDataFragment = { __typename: 'Borrower', id: string, address: string, firstSeenBlock: string, firstSeenTimestamp: string, firstSeenTransaction: string, firstSeenLogIndex: string, lastSeenBlock: string, lastSeenTimestamp: string, lastSeenTransaction: string, lastSeenLogIndex: string, registrations: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean, archController: { __typename: 'ArchController', id: string } }> };
 
@@ -34850,35 +36281,35 @@ export type SubgraphLenderAnalyticsStatsDataFragment = { __typename: 'LenderStat
 
 export type SubgraphLenderDailyStatsDataFragment = { __typename: 'LenderDailyStats', id: string, lender: string, startTimestamp: number, endTimestamp: number, dayDepositedUSD: string, dayWithdrawalsRequestedUSD: string, dayWithdrawalsExecutedUSD: string, dayInterestEarnedUSD: string, totalDepositedUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalInterestEarnedUSD: string, numMarkets: number, numActiveMarkets: number };
 
-export type SubgraphMarketDailyStatsDataFragment = { __typename: 'MarketDailyStats', id: string, startTimestamp: number, endTimestamp: number, dayDeposited: string, dayWithdrawalsRequested: string, dayWithdrawalsExecuted: string, dayBorrowed: string, dayRepaid: string, dayBaseInterestAccrued: string, dayDelinquencyFeesAccrued: string, dayProtocolFeesAccrued: string, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, totalWithdrawalsRequested: string, totalWithdrawalsExecuted: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, totalDepositedUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, scaledTotalSupply: string, scaleFactor: string, usdPrice?: string | null, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+export type SubgraphMarketDailyStatsDataFragment = { __typename: 'MarketDailyStats', id: string, startTimestamp: number, endTimestamp: number, dayDeposited: string, dayWithdrawalsRequested: string, dayWithdrawalsExecuted: string, dayBorrowed: string, dayRepaid: string, dayBaseInterestAccrued: string, dayDelinquencyFeesAccrued: string, dayProtocolFeesAccrued: string, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, totalWithdrawalsRequested: string, totalWithdrawalsExecuted: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, totalDepositedUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, scaledTotalSupply: string, scaleFactor: string, usdPrice?: string | null, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
 
-export type SubgraphDelinquencyStatusChangeDataFragment = { __typename: 'DelinquencyStatusChanged', id: string, isDelinquent: boolean, liquidityCoverageRequired: string, totalAssets: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+export type SubgraphDelinquencyStatusChangeDataFragment = { __typename: 'DelinquencyStatusChanged', id: string, isDelinquent: boolean, liquidityCoverageRequired: string, totalAssets: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
 
-export type SubgraphMarketInterestAccrualDataFragment = { __typename: 'MarketInterestAccrued', id: string, fromTimestamp: number, toTimestamp: number, timeWithPenalties: number, baseInterestRay: string, delinquencyFeeRay: string, baseInterestAccrued: string, delinquencyFeesAccrued: string, protocolFeesAccrued: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+export type SubgraphMarketInterestAccrualDataFragment = { __typename: 'MarketInterestAccrued', id: string, fromTimestamp: number, toTimestamp: number, timeWithPenalties: number, baseInterestRay: string, delinquencyFeeRay: string, baseInterestAccrued: string, delinquencyFeesAccrued: string, protocolFeesAccrued: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
 
-export type SubgraphAnnualInterestBipsUpdateDataFragment = { __typename: 'AnnualInterestBipsUpdated', id: string, oldAnnualInterestBips: number, newAnnualInterestBips: number, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+export type SubgraphAnnualInterestBipsUpdateDataFragment = { __typename: 'AnnualInterestBipsUpdated', id: string, oldAnnualInterestBips: number, newAnnualInterestBips: number, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
 
-export type SubgraphAnalyticsMarketBorrowDataFragment = { __typename: 'Borrow', id: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+export type SubgraphAnalyticsMarketBorrowDataFragment = { __typename: 'Borrow', id: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
 
-export type SubgraphAnalyticsMarketDebtRepaymentDataFragment = { __typename: 'DebtRepaid', id: string, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+export type SubgraphAnalyticsMarketDebtRepaymentDataFragment = { __typename: 'DebtRepaid', id: string, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
 
-export type SubgraphAnalyticsMaxTotalSupplyUpdateDataFragment = { __typename: 'MaxTotalSupplyUpdated', id: string, oldMaxTotalSupply: string, newMaxTotalSupply: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+export type SubgraphAnalyticsMaxTotalSupplyUpdateDataFragment = { __typename: 'MaxTotalSupplyUpdated', id: string, oldMaxTotalSupply: string, newMaxTotalSupply: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
 
-export type SubgraphAnalyticsMarketAggregateDataFragment = { __typename: 'Market', id: string, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, totalWithdrawalsRequested: string, totalWithdrawalsExecuted: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } };
+export type SubgraphAnalyticsMarketAggregateDataFragment = { __typename: 'Market', id: string, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, totalWithdrawalsRequested: string, totalWithdrawalsExecuted: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } };
 
-export type SubgraphBorrowerWithdrawalReliabilityDataFragment = { __typename: 'WithdrawalBatch', id: string, expiry: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, expiration?: { __typename: 'WithdrawalBatchExpired', normalizedAmountPaid: string, normalizedAmountOwed: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number } | null };
+export type SubgraphBorrowerWithdrawalReliabilityDataFragment = { __typename: 'WithdrawalBatch', id: string, expiry: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, expiration?: { __typename: 'WithdrawalBatchExpired', normalizedAmountPaid: string, normalizedAmountOwed: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number } | null };
 
-export type SubgraphLenderPositionDataFragment = { __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, principalBasis: string, totalDeposited: string, totalInterestEarned: string, lastScaleFactor: string, addedTimestamp: number, lastUpdatedTimestamp: number, numPendingWithdrawalBatches: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
+export type SubgraphLenderPositionDataFragment = { __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, principalBasis: string, totalDeposited: string, totalInterestEarned: string, lastScaleFactor: string, addedTimestamp: number, lastUpdatedTimestamp: number, numPendingWithdrawalBatches: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null };
 
-export type SubgraphLenderDepositDataFragment = { __typename: 'Deposit', id: string, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
+export type SubgraphLenderDepositDataFragment = { __typename: 'Deposit', id: string, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } };
 
-export type SubgraphLenderWithdrawalRequestDataFragment = { __typename: 'WithdrawalRequest', id: string, scaledAmount: string, normalizedAmount: string, principalBasisBefore: string, principalBasisAfter: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string } };
+export type SubgraphLenderWithdrawalRequestDataFragment = { __typename: 'WithdrawalRequest', id: string, scaledAmount: string, normalizedAmount: string, principalBasisBefore: string, principalBasisAfter: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string } };
 
-export type SubgraphLenderWithdrawalExecutionDataFragment = { __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } } };
+export type SubgraphLenderWithdrawalExecutionDataFragment = { __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } } };
 
-export type SubgraphLenderTransferDataFragment = { __typename: 'Transfer', id: string, amount: string, scaledAmount: string, principalBasisAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, from: { __typename: 'LenderAccount', id: string, address: string }, to: { __typename: 'LenderAccount', id: string, address: string } };
+export type SubgraphLenderTransferDataFragment = { __typename: 'Transfer', id: string, amount: string, scaledAmount: string, principalBasisAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, from: { __typename: 'LenderAccount', id: string, address: string }, to: { __typename: 'LenderAccount', id: string, address: string } };
 
-export type SubgraphLenderWithdrawalStatusDataFragment = { __typename: 'LenderWithdrawalStatus', id: string, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, account: { __typename: 'LenderAccount', id: string, address: string, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, isClosed: boolean, isExpired: boolean, isCompleted: boolean, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number } } };
+export type SubgraphLenderWithdrawalStatusDataFragment = { __typename: 'LenderWithdrawalStatus', id: string, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, account: { __typename: 'LenderAccount', id: string, address: string, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, isClosed: boolean, isExpired: boolean, isCompleted: boolean, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number } } };
 
 export type SubgraphProtocolAnalyticsStatsDataFragment = { __typename: 'ProtocolStats', id: string, totalDepositedUSD: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, numMarkets: number, numActiveMarkets: number, numDelinquentMarkets: number, numClosedMarkets: number, numActiveBorrowers: number, numActiveLenders: number, numActiveLenderAccounts: number };
 
@@ -34936,7 +36367,7 @@ export type SubgraphGetLenderAccountWithMarketQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetLenderAccountWithMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null } | null };
+export type SubgraphGetLenderAccountWithMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null } | null };
 
 export type SubgraphGetBasicBorrowerDataQueryVariables = Exact<{
   borrower: Scalars['Bytes']['input'];
@@ -34967,7 +36398,7 @@ export type SubgraphGetAllMarketsForLenderViewQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetAllMarketsForLenderViewQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, latestDeposit: Array<{ __typename: 'Deposit', blockTimestamp: number }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerAuthorizations: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, controller: { __typename: 'Controller', markets: Array<{ __typename: 'Market', id: string }> } }> };
+export type SubgraphGetAllMarketsForLenderViewQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, latestDeposit: Array<{ __typename: 'Deposit', blockTimestamp: number }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null }>, controllerAuthorizations: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, controller: { __typename: 'Controller', markets: Array<{ __typename: 'Market', id: string }> } }> };
 
 export type SubgraphGetAllMarketsForLenderListViewQueryVariables = Exact<{
   lender?: InputMaybe<Scalars['Bytes']['input']>;
@@ -34979,7 +36410,7 @@ export type SubgraphGetAllMarketsForLenderListViewQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetAllMarketsForLenderListViewQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, latestDeposit: Array<{ __typename: 'Deposit', blockTimestamp: number }>, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } } } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerAuthorizations: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, controller: { __typename: 'Controller', markets: Array<{ __typename: 'Market', id: string }> } }> };
+export type SubgraphGetAllMarketsForLenderListViewQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, latestDeposit: Array<{ __typename: 'Deposit', blockTimestamp: number }>, lenders: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null } } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null }>, controllerAuthorizations: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, controller: { __typename: 'Controller', markets: Array<{ __typename: 'Market', id: string }> } }> };
 
 export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables = Exact<{
   lender: Scalars['Bytes']['input'];
@@ -34999,7 +36430,7 @@ export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQueryVariables = Exa
 }>;
 
 
-export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = { __typename: 'Query', lenderAccounts: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerAuthorizations: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, controller: { __typename: 'Controller', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> } }> };
+export type SubgraphGetAccountsWhereLenderAuthorizedOrActiveQuery = { __typename: 'Query', lenderAccounts: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null }, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, hooksAccess?: { __typename: 'LenderHooksAccess', id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, addedTimestamp: number, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null } | null, knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerAuthorizations: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, controller: { __typename: 'Controller', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null }> } }> };
 
 export type SubgraphGetLenderWithdrawalsForMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -35011,7 +36442,7 @@ export type SubgraphGetLenderWithdrawalsForMarketQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetLenderWithdrawalsForMarketQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', block: { __typename: '_Block_', number: number } } | null, market?: { __typename: 'Market', id: string, lenders: Array<{ __typename: 'LenderAccount', incompleteWithdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } }>, completeWithdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } }> }> } | null };
+export type SubgraphGetLenderWithdrawalsForMarketQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', block: { __typename: '_Block_', number: number } } | null, market?: { __typename: 'Market', id: string, lenders: Array<{ __typename: 'LenderAccount', incompleteWithdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, paymentRemainder?: string | null, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } }>, completeWithdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, paymentRemainder?: string | null, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } }> }> } | null };
 
 export type SubgraphGetIncompleteLenderWithdrawalsForMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -35023,7 +36454,7 @@ export type SubgraphGetIncompleteLenderWithdrawalsForMarketQueryVariables = Exac
 }>;
 
 
-export type SubgraphGetIncompleteLenderWithdrawalsForMarketQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', block: { __typename: '_Block_', number: number } } | null, market?: { __typename: 'Market', id: string, lenders: Array<{ __typename: 'LenderAccount', incompleteWithdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } }> }> } | null };
+export type SubgraphGetIncompleteLenderWithdrawalsForMarketQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', block: { __typename: '_Block_', number: number } } | null, market?: { __typename: 'Market', id: string, lenders: Array<{ __typename: 'LenderAccount', incompleteWithdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, paymentRemainder?: string | null, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } }> }> } | null };
 
 export type SubgraphGetLenderAuthorizationByMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -35050,7 +36481,7 @@ export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQueryVariables
 }>;
 
 
-export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery = { __typename: 'Query', lenderAccounts: Array<{ __typename: 'LenderAccount', scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, totalInterestEarned: string, market: { __typename: 'Market', id: string }, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, withdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } }>, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }> }> };
+export type SubgraphGetMarketsAndLogsWhereLenderAuthorizedOrActiveQuery = { __typename: 'Query', lenderAccounts: Array<{ __typename: 'LenderAccount', scaledBalance: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, totalInterestEarned: string, market: { __typename: 'Market', id: string }, controllerAuthorization?: { __typename: 'LenderAuthorization', authorized: boolean } | null, withdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, paymentRemainder?: string | null, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, account: { __typename: 'LenderAccount', address: string } }>, deposits: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }> }> };
 
 export type SubgraphGetAllHooksTemplatesQueryVariables = Exact<{
   borrower?: InputMaybe<Scalars['Bytes']['input']>;
@@ -35058,21 +36489,21 @@ export type SubgraphGetAllHooksTemplatesQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetAllHooksTemplatesQuery = { __typename: 'Query', hooksTemplateRegistrations: Array<{ __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }>, registeredBorrowers?: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean }>, borrowerAccounts?: Array<{ __typename: 'BorrowerAccount', registry: { __typename: 'BorrowerIdentityRegistry', archController: { __typename: 'ArchController', id: string } }, principal: { __typename: 'Borrower', registrations: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean, archController: { __typename: 'ArchController', id: string } }> } }> };
+export type SubgraphGetAllHooksTemplatesQuery = { __typename: 'Query', hooksTemplateRegistrations: Array<{ __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }>, registeredBorrowers?: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean }>, borrowerAccounts?: Array<{ __typename: 'BorrowerAccount', registry: { __typename: 'BorrowerIdentityRegistry', archController: { __typename: 'ArchController', id: string } }, principal: { __typename: 'Borrower', registrations: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean, archController: { __typename: 'ArchController', id: string } }> } }> };
 
 export type SubgraphGetHooksInstancesForBorrowerQueryVariables = Exact<{
   borrower: Scalars['Bytes']['input'];
 }>;
 
 
-export type SubgraphGetHooksInstancesForBorrowerQuery = { __typename: 'Query', hooksInstances: Array<{ __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> }> };
+export type SubgraphGetHooksInstancesForBorrowerQuery = { __typename: 'Query', hooksInstances: Array<{ __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> }> };
 
 export type SubgraphGetAllHooksDataForBorrowerQueryVariables = Exact<{
   borrower: Scalars['Bytes']['input'];
 }>;
 
 
-export type SubgraphGetAllHooksDataForBorrowerQuery = { __typename: 'Query', hooksTemplateRegistrations: Array<{ __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }>, hooksInstances: Array<{ __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> }>, registeredBorrowers: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean }>, borrowerAccounts: Array<{ __typename: 'BorrowerAccount', registry: { __typename: 'BorrowerIdentityRegistry', archController: { __typename: 'ArchController', id: string } }, principal: { __typename: 'Borrower', registrations: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean, archController: { __typename: 'ArchController', id: string } }> } }>, controllers: Array<{ __typename: 'Controller', id: string, borrower: string, numMarkets: number, isRegistered: boolean, controllerFactory: { __typename: 'ControllerFactory', id: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, constraints: { __typename: 'ParameterConstraints', minimumDelinquencyGracePeriod: number, maximumDelinquencyGracePeriod: number, minimumReserveRatioBips: number, maximumReserveRatioBips: number, minimumDelinquencyFeeBips: number, maximumDelinquencyFeeBips: number, minimumWithdrawalBatchDuration: number, maximumWithdrawalBatchDuration: number, minimumAnnualInterestBips: number, maximumAnnualInterestBips: number }, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null }, archController: { __typename: 'ArchController', id: string } }> };
+export type SubgraphGetAllHooksDataForBorrowerQuery = { __typename: 'Query', hooksTemplateRegistrations: Array<{ __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }>, hooksInstances: Array<{ __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> }>, registeredBorrowers: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean }>, borrowerAccounts: Array<{ __typename: 'BorrowerAccount', registry: { __typename: 'BorrowerIdentityRegistry', archController: { __typename: 'ArchController', id: string } }, principal: { __typename: 'Borrower', registrations: Array<{ __typename: 'RegisteredBorrower', isRegistered: boolean, archController: { __typename: 'ArchController', id: string } }> } }>, controllers: Array<{ __typename: 'Controller', id: string, borrower: string, numMarkets: number, isRegistered: boolean, controllerFactory: { __typename: 'ControllerFactory', id: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, constraints: { __typename: 'ParameterConstraints', minimumDelinquencyGracePeriod: number, maximumDelinquencyGracePeriod: number, minimumReserveRatioBips: number, maximumReserveRatioBips: number, minimumDelinquencyFeeBips: number, maximumDelinquencyFeeBips: number, minimumWithdrawalBatchDuration: number, maximumWithdrawalBatchDuration: number, minimumAnnualInterestBips: number, maximumAnnualInterestBips: number }, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null }, archController: { __typename: 'ArchController', id: string } }> };
 
 export type SubgraphGetBorrowerPrincipalIdentityQueryVariables = Exact<{
   principal: Scalars['ID']['input'];
@@ -35190,7 +36621,7 @@ export type SubgraphGetHooksTemplateRegistrationsQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetHooksTemplateRegistrationsQuery = { __typename: 'Query', hooksTemplateRegistrations: Array<{ __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }> };
+export type SubgraphGetHooksTemplateRegistrationsQuery = { __typename: 'Query', hooksTemplateRegistrations: Array<{ __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }> };
 
 export type SubgraphGetMarketEventsQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -35243,7 +36674,7 @@ export type SubgraphGetMarketsWithEventsQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMarketsWithEventsQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> }> };
+export type SubgraphGetMarketsWithEventsQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> }> };
 
 export type SubgraphGetMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -35267,7 +36698,7 @@ export type SubgraphGetMarketQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> } | null };
+export type SubgraphGetMarketQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, depositRecords: Array<{ __typename: 'Deposit', id: string, eventIndex: number, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, borrowRecords: Array<{ __typename: 'Borrow', eventIndex: number, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, feeCollectionRecords: Array<{ __typename: 'FeesCollected', eventIndex: number, feesCollected: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, repaymentRecords: Array<{ __typename: 'DebtRepaid', eventIndex: number, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string }>, periodicTermUpdatedRecords: Array<{ __typename: 'PeriodicTermUpdated', id: string, oldFirstWithdrawalWindowStart: number, oldPeriodDuration: number, oldWithdrawalWindowDuration: number, newFirstWithdrawalWindowStart: number, newPeriodDuration: number, newWithdrawalWindowDuration: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }>, periodicTermClosedRecord?: { __typename: 'PeriodicTermClosed', id: string, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number } | null, annualInterestBipsReductionProposalRecords: Array<{ __typename: 'AnnualInterestBipsReductionProposed', id: string, annualInterestBips: number, proposalTimestamp: number, responseWindowStart: number, responseWindowEnd: number, blockNumber: number, blockTimestamp: number, transactionHash: string, eventIndex: number }> } | null };
 
 export type SubgraphGetMarketEventPageQueryVariables = Exact<{
   market: Scalars['String']['input'];
@@ -35296,7 +36727,7 @@ export type SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables = Exac
 }>;
 
 
-export type SubgraphGetAllPendingWithdrawalBatchesForMarketQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', block: { __typename: '_Block_', number: number } } | null, market?: { __typename: 'Market', withdrawalBatches: Array<{ __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, withdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, account: { __typename: 'LenderAccount', address: string } }>, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }> } | null };
+export type SubgraphGetAllPendingWithdrawalBatchesForMarketQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', block: { __typename: '_Block_', number: number } } | null, market?: { __typename: 'Market', withdrawalBatches: Array<{ __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, paymentRemainder?: string | null, withdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, account: { __typename: 'LenderAccount', address: string } }>, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }> } | null };
 
 export type SubgraphGetIncompleteWithdrawalsForMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -35307,7 +36738,7 @@ export type SubgraphGetIncompleteWithdrawalsForMarketQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetIncompleteWithdrawalsForMarketQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', block: { __typename: '_Block_', number: number } } | null, market?: { __typename: 'Market', withdrawalBatches: Array<{ __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, withdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, account: { __typename: 'LenderAccount', address: string } }>, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }> } | null };
+export type SubgraphGetIncompleteWithdrawalsForMarketQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', block: { __typename: '_Block_', number: number } } | null, market?: { __typename: 'Market', withdrawalBatches: Array<{ __typename: 'WithdrawalBatch', id: string, expiry: string, scaledTotalAmount: string, scaledAmountBurned: string, normalizedAmountPaid: string, normalizedAmountClaimed: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, paymentsCount: number, lastScaleFactor: string, lastUpdatedTimestamp: number, totalInterestEarned: string, paymentRemainder?: string | null, withdrawals: Array<{ __typename: 'LenderWithdrawalStatus', id: string, requestsCount: number, executionsCount: number, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, account: { __typename: 'LenderAccount', address: string } }>, requests: Array<{ __typename: 'WithdrawalRequest', id: string, eventIndex: number, requestIndex: number, scaledAmount: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, executions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, account: { __typename: 'LenderAccount', address: string } }>, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string }, payments: Array<{ __typename: 'WithdrawalBatchPayment', id: string, scaledAmountBurned: string, normalizedAmountPaid: string, blockNumber: number, blockTimestamp: number, transactionHash: string }> }> } | null };
 
 export type SubgraphGetWithdrawalBatchChildrenQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -35331,7 +36762,7 @@ export type SubgraphGetLenderWithdrawalChildrenQuery = { __typename: 'Query', le
 export type SubgraphGetAllMarketsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SubgraphGetAllMarketsQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> };
+export type SubgraphGetAllMarketsQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null }> };
 
 export type SubgraphGetMarketListQueryVariables = Exact<{
   marketFilter?: InputMaybe<SubgraphMarket_Filter>;
@@ -35342,7 +36773,7 @@ export type SubgraphGetMarketListQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMarketListQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, latestDeposit: Array<{ __typename: 'Deposit', blockTimestamp: number }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } } } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> };
+export type SubgraphGetMarketListQuery = { __typename: 'Query', markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, latestDeposit: Array<{ __typename: 'Deposit', blockTimestamp: number }>, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null } } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null }> };
 
 export type SubgraphGetAuthorizedLendersByMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -35391,7 +36822,7 @@ export type SubgraphGetLendersByHooksInstanceOrControllerQueryVariables = Exact<
 }>;
 
 
-export type SubgraphGetLendersByHooksInstanceOrControllerQuery = { __typename: 'Query', hooksInstance?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }>, lenders: Array<{ __typename: 'LenderHooksAccess', addedTimestamp: number, id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, market: { __typename: 'Market', id: string, name: string } }>, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null }> } | null, controller?: { __typename: 'Controller', authorizedLenders: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, addedTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', role: SubgraphLenderStatus, market: { __typename: 'Market', id: string, name: string } }> }> } | null };
+export type SubgraphGetLendersByHooksInstanceOrControllerQuery = { __typename: 'Query', hooksInstance?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }>, lenders: Array<{ __typename: 'LenderHooksAccess', addedTimestamp: number, id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, market: { __typename: 'Market', id: string, name: string } }>, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null }> } | null, controller?: { __typename: 'Controller', authorizedLenders: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, addedTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', role: SubgraphLenderStatus, market: { __typename: 'Market', id: string, name: string } }> }> } | null };
 
 export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables = Exact<{
   contractAddress: Scalars['ID']['input'];
@@ -35411,7 +36842,7 @@ export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariable
 }>;
 
 
-export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery = { __typename: 'Query', hooksInstance?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }>, lenders: Array<{ __typename: 'LenderHooksAccess', addedTimestamp: number, id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, market: { __typename: 'Market', id: string, name: string } }>, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null }> } | null, controller?: { __typename: 'Controller', id: string, borrower: string, numMarkets: number, isRegistered: boolean, markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }>, controllerFactory: { __typename: 'ControllerFactory', id: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, constraints: { __typename: 'ParameterConstraints', minimumDelinquencyGracePeriod: number, maximumDelinquencyGracePeriod: number, minimumReserveRatioBips: number, maximumReserveRatioBips: number, minimumDelinquencyFeeBips: number, maximumDelinquencyFeeBips: number, minimumWithdrawalBatchDuration: number, maximumWithdrawalBatchDuration: number, minimumAnnualInterestBips: number, maximumAnnualInterestBips: number }, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null }, archController: { __typename: 'ArchController', id: string }, authorizedLenders: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, addedTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', role: SubgraphLenderStatus, market: { __typename: 'Market', id: string, name: string } }> }> } | null };
+export type SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery = { __typename: 'Query', hooksInstance?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null }>, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }>, lenders: Array<{ __typename: 'LenderHooksAccess', addedTimestamp: number, id: string, lender: string, isBlockedFromDeposits: boolean, canRefresh: boolean, lastApprovalTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', knownLenderStatus?: { __typename: 'KnownLenderStatus', id: string } | null, market: { __typename: 'Market', id: string, name: string } }>, lastProvider?: { __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } } | null }> } | null, controller?: { __typename: 'Controller', id: string, borrower: string, numMarkets: number, isRegistered: boolean, markets: Array<{ __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, marketKind: SubgraphMarketKind, originKind: SubgraphMarketOriginKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, isRegistered: boolean, isClosed: boolean, borrower: string, borrowerPrincipal: string, pendingBorrower?: string | null, pendingBorrowerPrincipal?: string | null, borrowerIdentityRegistryAddress?: string | null, sentinel: string, feeRecipient: string, name: string, symbol: string, decimals: number, protocolFeeBips: number, delinquencyGracePeriod: number, delinquencyFeeBips: number, withdrawalBatchDuration: number, numCollateralContracts: number, maxTotalSupply: string, totalAssets: string, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, eventIndex: number, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null, archController: { __typename: 'ArchController', id: string }, hooksFactory?: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } } | null, controller?: { __typename: 'Controller', id: string } | null, _asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean }, hooksConfig?: { __typename: 'HooksConfig', id: string, useOnDeposit: boolean, useOnQueueWithdrawal: boolean, useOnExecuteWithdrawal: boolean, useOnTransfer: boolean, useOnBorrow: boolean, useOnRepay: boolean, useOnCloseMarket: boolean, useOnNukeFromOrbit: boolean, useOnSetMaxTotalSupply: boolean, useOnSetAnnualInterestAndReserveRatioBips: boolean, useOnSetProtocolFeeBips: boolean, depositRequiresAccess: boolean, transferRequiresAccess: boolean, transfersDisabled: boolean, minimumDeposit?: string | null, allowForceBuyBacks: boolean, queueWithdrawalRequiresAccess: boolean, fixedTermEndTime: number, allowClosureBeforeTerm: boolean, allowTermReduction: boolean, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean, pendingAprChangeAnnualInterestBips: number, pendingAprChangeProposalTimestamp: number, pendingAprChangeResponseWindowStart: number, pendingAprChangeResponseWindowEnd: number } | null, hooks?: { __typename: 'HooksInstance', id: string, address: string, borrower: string, administrator: string, pendingAdministrator?: string | null, name: string, kind: SubgraphHooksKind, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, numMarkets: number, eventIndex: number, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, templateRegistration: { __typename: 'HooksTemplateRegistration', id: string, templateAddress: string, name: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, isEnabled: boolean, createdAtBlock: string, createdAtTimestamp: string, createdAtTransaction: string, createdAtLogIndex: string, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, initCodeHash?: string | null, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null, hooksTemplate: { __typename: 'HooksTemplate', id: string, address: string, kind: SubgraphHooksKind, version: string, abiFamily: string }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, initCodeHashRecord?: { __typename: 'HooksTemplateInitCodeHashRecord', initCodeHash: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null }, hooksFactory: { __typename: 'HooksFactory', id: string, address: string, label: string, sentinel: string, marketKind: SubgraphMarketKind, generation: string, abiFamily: string, eventGeneration: SubgraphEventGeneration, hookedMarketAbi: SubgraphHookedMarketAbi, configuredStartBlock: string, indexed: boolean, deploymentTarget: boolean, lifecycle: SubgraphFactoryLifecycle, configured: boolean, isRegistered: boolean, registrationUpdatedAtBlock?: string | null, registrationUpdatedAtTimestamp?: string | null, archController: { __typename: 'ArchController', id: string } }, providers: Array<{ __typename: 'RoleProvider', id: string, providerAddress: string, timeToLive: string, isPullProvider: boolean, pullProviderIndex: number, isPushProvider: boolean, pushProviderIndex: number, isApproved: boolean, providerInstance: { __typename: 'RoleProviderInstance', kind: SubgraphRoleProviderKind, administrator?: string | null, pendingAdministrator?: string | null } }> } | null, deployedEvent: { __typename: 'MarketDeployed', blockNumber: number, blockTimestamp: number, transactionHash: string }, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null }>, controllerFactory: { __typename: 'ControllerFactory', id: string, feeRecipient: string, protocolFeeBips: number, originationFeeAmount: string, constraints: { __typename: 'ParameterConstraints', minimumDelinquencyGracePeriod: number, maximumDelinquencyGracePeriod: number, minimumReserveRatioBips: number, maximumReserveRatioBips: number, minimumDelinquencyFeeBips: number, maximumDelinquencyFeeBips: number, minimumWithdrawalBatchDuration: number, maximumWithdrawalBatchDuration: number, minimumAnnualInterestBips: number, maximumAnnualInterestBips: number }, originationFeeAsset?: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean } | null }, archController: { __typename: 'ArchController', id: string }, authorizedLenders: Array<{ __typename: 'LenderAuthorization', lender: string, authorized: boolean, addedTimestamp: number, marketAccounts: Array<{ __typename: 'LenderAccount', role: SubgraphLenderStatus, market: { __typename: 'Market', id: string, name: string } }> }> } | null };
 
 export type SubgraphGetActiveLendersByMarketQueryVariables = Exact<{
   market: Scalars['ID']['input'];
@@ -35543,7 +36974,7 @@ export type SubgraphGetMarketDailyStatsPageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMarketDailyStatsPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, marketDailyStats_collection: Array<{ __typename: 'MarketDailyStats', id: string, startTimestamp: number, endTimestamp: number, dayDeposited: string, dayWithdrawalsRequested: string, dayWithdrawalsExecuted: string, dayBorrowed: string, dayRepaid: string, dayBaseInterestAccrued: string, dayDelinquencyFeesAccrued: string, dayProtocolFeesAccrued: string, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, totalWithdrawalsRequested: string, totalWithdrawalsExecuted: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, totalDepositedUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, scaledTotalSupply: string, scaleFactor: string, usdPrice?: string | null, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+export type SubgraphGetMarketDailyStatsPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, marketDailyStats_collection: Array<{ __typename: 'MarketDailyStats', id: string, startTimestamp: number, endTimestamp: number, dayDeposited: string, dayWithdrawalsRequested: string, dayWithdrawalsExecuted: string, dayBorrowed: string, dayRepaid: string, dayBaseInterestAccrued: string, dayDelinquencyFeesAccrued: string, dayProtocolFeesAccrued: string, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, totalWithdrawalsRequested: string, totalWithdrawalsExecuted: string, totalBorrowedUSD: string, totalRepaidUSD: string, totalBaseInterestAccruedUSD: string, totalDelinquencyFeesAccruedUSD: string, totalProtocolFeesAccruedUSD: string, totalDepositedUSD: string, totalWithdrawalsRequestedUSD: string, totalWithdrawalsExecutedUSD: string, scaledTotalSupply: string, scaleFactor: string, usdPrice?: string | null, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
 
 export type SubgraphGetDelinquencyStatusChangePageQueryVariables = Exact<{
   filter: SubgraphDelinquencyStatusChanged_Filter;
@@ -35552,7 +36983,7 @@ export type SubgraphGetDelinquencyStatusChangePageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetDelinquencyStatusChangePageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, delinquencyStatusChangeds: Array<{ __typename: 'DelinquencyStatusChanged', id: string, isDelinquent: boolean, liquidityCoverageRequired: string, totalAssets: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+export type SubgraphGetDelinquencyStatusChangePageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, delinquencyStatusChangeds: Array<{ __typename: 'DelinquencyStatusChanged', id: string, isDelinquent: boolean, liquidityCoverageRequired: string, totalAssets: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
 
 export type SubgraphGetMarketInterestAccrualPageQueryVariables = Exact<{
   filter: SubgraphMarketInterestAccrued_Filter;
@@ -35561,7 +36992,7 @@ export type SubgraphGetMarketInterestAccrualPageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMarketInterestAccrualPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, marketInterestAccrueds: Array<{ __typename: 'MarketInterestAccrued', id: string, fromTimestamp: number, toTimestamp: number, timeWithPenalties: number, baseInterestRay: string, delinquencyFeeRay: string, baseInterestAccrued: string, delinquencyFeesAccrued: string, protocolFeesAccrued: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+export type SubgraphGetMarketInterestAccrualPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, marketInterestAccrueds: Array<{ __typename: 'MarketInterestAccrued', id: string, fromTimestamp: number, toTimestamp: number, timeWithPenalties: number, baseInterestRay: string, delinquencyFeeRay: string, baseInterestAccrued: string, delinquencyFeesAccrued: string, protocolFeesAccrued: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
 
 export type SubgraphGetAnnualInterestBipsUpdatePageQueryVariables = Exact<{
   filter: SubgraphAnnualInterestBipsUpdated_Filter;
@@ -35570,7 +37001,7 @@ export type SubgraphGetAnnualInterestBipsUpdatePageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetAnnualInterestBipsUpdatePageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, annualInterestBipsUpdateds: Array<{ __typename: 'AnnualInterestBipsUpdated', id: string, oldAnnualInterestBips: number, newAnnualInterestBips: number, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+export type SubgraphGetAnnualInterestBipsUpdatePageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, annualInterestBipsUpdateds: Array<{ __typename: 'AnnualInterestBipsUpdated', id: string, oldAnnualInterestBips: number, newAnnualInterestBips: number, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
 
 export type SubgraphGetMarketBorrowPageQueryVariables = Exact<{
   filter: SubgraphBorrow_Filter;
@@ -35579,7 +37010,7 @@ export type SubgraphGetMarketBorrowPageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMarketBorrowPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, borrows: Array<{ __typename: 'Borrow', id: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+export type SubgraphGetMarketBorrowPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, borrows: Array<{ __typename: 'Borrow', id: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
 
 export type SubgraphGetMarketDebtRepaymentPageQueryVariables = Exact<{
   filter: SubgraphDebtRepaid_Filter;
@@ -35588,7 +37019,7 @@ export type SubgraphGetMarketDebtRepaymentPageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMarketDebtRepaymentPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, debtRepaids: Array<{ __typename: 'DebtRepaid', id: string, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+export type SubgraphGetMarketDebtRepaymentPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, debtRepaids: Array<{ __typename: 'DebtRepaid', id: string, from: string, assetAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
 
 export type SubgraphGetMaxTotalSupplyUpdatePageQueryVariables = Exact<{
   filter: SubgraphMaxTotalSupplyUpdated_Filter;
@@ -35597,7 +37028,7 @@ export type SubgraphGetMaxTotalSupplyUpdatePageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMaxTotalSupplyUpdatePageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, maxTotalSupplyUpdateds: Array<{ __typename: 'MaxTotalSupplyUpdated', id: string, oldMaxTotalSupply: string, newMaxTotalSupply: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+export type SubgraphGetMaxTotalSupplyUpdatePageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, maxTotalSupplyUpdateds: Array<{ __typename: 'MaxTotalSupplyUpdated', id: string, oldMaxTotalSupply: string, newMaxTotalSupply: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
 
 export type SubgraphGetMarketAggregatePageQueryVariables = Exact<{
   filter: SubgraphMarket_Filter;
@@ -35606,7 +37037,7 @@ export type SubgraphGetMarketAggregatePageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetMarketAggregatePageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, markets: Array<{ __typename: 'Market', id: string, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, totalWithdrawalsRequested: string, totalWithdrawalsExecuted: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }> };
+export type SubgraphGetMarketAggregatePageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, markets: Array<{ __typename: 'Market', id: string, totalBorrowed: string, totalRepaid: string, totalBaseInterestAccrued: string, totalDelinquencyFeesAccrued: string, totalProtocolFeesAccrued: string, totalDeposited: string, totalWithdrawalsRequested: string, totalWithdrawalsExecuted: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }> };
 
 export type SubgraphGetBorrowerWithdrawalReliabilityPageQueryVariables = Exact<{
   filter: SubgraphWithdrawalBatch_Filter;
@@ -35615,7 +37046,7 @@ export type SubgraphGetBorrowerWithdrawalReliabilityPageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetBorrowerWithdrawalReliabilityPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, withdrawalBatches: Array<{ __typename: 'WithdrawalBatch', id: string, expiry: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, expiration?: { __typename: 'WithdrawalBatchExpired', normalizedAmountPaid: string, normalizedAmountOwed: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number } | null }> };
+export type SubgraphGetBorrowerWithdrawalReliabilityPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, withdrawalBatches: Array<{ __typename: 'WithdrawalBatch', id: string, expiry: string, totalNormalizedRequests: string, isExpired: boolean, isClosed: boolean, isCompleted: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, expiration?: { __typename: 'WithdrawalBatchExpired', normalizedAmountPaid: string, normalizedAmountOwed: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number } | null }> };
 
 export type SubgraphGetLenderAnalyticsProfileQueryVariables = Exact<{
   lender: Scalars['Bytes']['input'];
@@ -35631,7 +37062,7 @@ export type SubgraphGetLenderPositionPageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetLenderPositionPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, lenderAccounts: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, principalBasis: string, totalDeposited: string, totalInterestEarned: string, lastScaleFactor: string, addedTimestamp: number, lastUpdatedTimestamp: number, numPendingWithdrawalBatches: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> };
+export type SubgraphGetLenderPositionPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, lenderAccounts: Array<{ __typename: 'LenderAccount', id: string, address: string, scaledBalance: string, principalBasis: string, totalDeposited: string, totalInterestEarned: string, lastScaleFactor: string, addedTimestamp: number, lastUpdatedTimestamp: number, numPendingWithdrawalBatches: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, snapshot?: { __typename: 'LenderAccountSnapshot', source: SubgraphSnapshotSource, scaledBalance: string, principalBasis: string, role: SubgraphLenderStatus, totalDeposited: string, lastScaleFactor: string, lastUpdatedTimestamp: number, lastUpdatedBlockNumber: number, totalInterestEarned: string, numPendingWithdrawalBatches: number, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null }> };
 
 export type SubgraphGetLenderDailyStatsPageQueryVariables = Exact<{
   filter: SubgraphLenderDailyStats_Filter;
@@ -35649,7 +37080,7 @@ export type SubgraphGetLenderDepositPageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetLenderDepositPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, deposits: Array<{ __typename: 'Deposit', id: string, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
+export type SubgraphGetLenderDepositPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, deposits: Array<{ __typename: 'Deposit', id: string, assetAmount: string, scaledAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }> };
 
 export type SubgraphGetLenderWithdrawalRequestPageQueryVariables = Exact<{
   filter: SubgraphWithdrawalRequest_Filter;
@@ -35658,7 +37089,7 @@ export type SubgraphGetLenderWithdrawalRequestPageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetLenderWithdrawalRequestPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, withdrawalRequests: Array<{ __typename: 'WithdrawalRequest', id: string, scaledAmount: string, normalizedAmount: string, principalBasisBefore: string, principalBasisAfter: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string } }> };
+export type SubgraphGetLenderWithdrawalRequestPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, withdrawalRequests: Array<{ __typename: 'WithdrawalRequest', id: string, scaledAmount: string, normalizedAmount: string, principalBasisBefore: string, principalBasisAfter: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string } }> };
 
 export type SubgraphGetLenderWithdrawalExecutionPageQueryVariables = Exact<{
   filter: SubgraphWithdrawalExecution_Filter;
@@ -35667,7 +37098,7 @@ export type SubgraphGetLenderWithdrawalExecutionPageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetLenderWithdrawalExecutionPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, withdrawalExecutions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } } }> };
+export type SubgraphGetLenderWithdrawalExecutionPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, withdrawalExecutions: Array<{ __typename: 'WithdrawalExecution', id: string, normalizedAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, account: { __typename: 'LenderAccount', id: string, address: string }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } } }> };
 
 export type SubgraphGetLenderTransferPageQueryVariables = Exact<{
   filter: SubgraphTransfer_Filter;
@@ -35676,7 +37107,7 @@ export type SubgraphGetLenderTransferPageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetLenderTransferPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, transfers: Array<{ __typename: 'Transfer', id: string, amount: string, scaledAmount: string, principalBasisAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, from: { __typename: 'LenderAccount', id: string, address: string }, to: { __typename: 'LenderAccount', id: string, address: string } }> };
+export type SubgraphGetLenderTransferPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, transfers: Array<{ __typename: 'Transfer', id: string, amount: string, scaledAmount: string, principalBasisAmount: string, blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } }, from: { __typename: 'LenderAccount', id: string, address: string }, to: { __typename: 'LenderAccount', id: string, address: string } }> };
 
 export type SubgraphGetLenderWithdrawalStatusPageQueryVariables = Exact<{
   filter: SubgraphLenderWithdrawalStatus_Filter;
@@ -35685,7 +37116,7 @@ export type SubgraphGetLenderWithdrawalStatusPageQueryVariables = Exact<{
 }>;
 
 
-export type SubgraphGetLenderWithdrawalStatusPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, lenderWithdrawalStatuses: Array<{ __typename: 'LenderWithdrawalStatus', id: string, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, account: { __typename: 'LenderAccount', id: string, address: string, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, isClosed: boolean, isExpired: boolean, isCompleted: boolean, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number } } }> };
+export type SubgraphGetLenderWithdrawalStatusPageQuery = { __typename: 'Query', _meta?: { __typename: '_Meta_', deployment: string, hasIndexingErrors: boolean, block: { __typename: '_Block_', number: number, timestamp?: number | null, hash?: string | null } } | null, lenderWithdrawalStatuses: Array<{ __typename: 'LenderWithdrawalStatus', id: string, scaledAmount: string, normalizedAmountWithdrawn: string, totalNormalizedRequests: string, isCompleted: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, account: { __typename: 'LenderAccount', id: string, address: string, market: { __typename: 'Market', id: string, address: string, version: SubgraphMarketVersion, name: string, borrower: string, createdAtTimestamp: string, isClosed: boolean, annualInterestBips: number, originalAnnualInterestBips: number, delinquencyGracePeriod: number, maxTotalSupply: string, scaledTotalSupply: string, scaleFactor: string, isDelinquent: boolean, isIncurringPenalties: boolean, totalDebtUSD?: string | null, hooks?: { __typename: 'HooksInstance', kind: SubgraphHooksKind } | null, hooksConfig?: { __typename: 'HooksConfig', fixedTermEndTime: number, firstWithdrawalWindowStart: number, periodDuration: number, withdrawalWindowDuration: number, periodicTermClosed: boolean } | null, snapshot?: { __typename: 'MarketSnapshot', source: SubgraphSnapshotSource, isClosed: boolean, maxTotalSupply: string, totalAssets: string, protocolFeeBips: number, pendingProtocolFees: string, normalizedUnclaimedWithdrawals: string, scaledTotalSupply: string, scaledPendingWithdrawals: string, pendingWithdrawalExpiry: string, isDelinquent: boolean, isIncurringPenalties: boolean, timeDelinquent: number, annualInterestBips: number, commitmentFeeBips?: string | null, reserveRatioBips: number, drawnAmount?: string | null, scaleFactor: string, lastInterestAccruedTimestamp: number, lastInterestAccruedBlockNumber: number, originalAnnualInterestBips: number, originalReserveRatioBips: number, temporaryReserveRatioExpiry: number, temporaryReserveRatioActive: boolean, updatedAtBlock: string, updatedAtTimestamp: string, updatedAtTransaction: string, updatedAtLogIndex: string, repaymentDate?: string | null, repaymentPeriod?: string | null, repaymentDeadline?: string | null, closedAt?: string | null, repaymentActivatedAt?: string | null, defaultedAt?: string | null, withdrawalRemainder?: string | null } | null, asset: { __typename: 'Token', id: string, address: string, name: string, symbol: string, decimals: number, isMock: boolean, isUsdStablecoin: boolean, priceSource?: SubgraphPriceSourceKind | null, priceFeed0?: string | null, priceFeed1?: string | null } } }, batch: { __typename: 'WithdrawalBatch', id: string, expiry: string, isClosed: boolean, isExpired: boolean, isCompleted: boolean, creation: { __typename: 'WithdrawalBatchCreated', blockNumber: number, blockTimestamp: number, transactionHash: string, blockLogIndex: number } } }> };
 
 export type SubgraphGetProtocolAnalyticsStatsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -35750,6 +37181,14 @@ export type SubgraphGetIndexedTokenWrapperActivityQueryVariables = Exact<{
 
 
 export type SubgraphGetIndexedTokenWrapperActivityQuery = { __typename: 'Query', wildcat4626Wrapper?: { __typename: 'Wildcat4626Wrapper', id: string, deposits: Array<{ __typename: 'Wildcat4626WrapperDeposit', id: string, caller: string, assets: string, shares: string, principalBasisAmount: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, account: { __typename: 'Wildcat4626WrapperAccount', address: string }, marketTransfer?: { __typename: 'Transfer', id: string } | null }>, withdrawals: Array<{ __typename: 'Wildcat4626WrapperWithdrawal', id: string, caller: string, receiver: string, assets: string, shares: string, principalBasisAmount: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, account: { __typename: 'Wildcat4626WrapperAccount', address: string }, marketTransfer?: { __typename: 'Transfer', id: string } | null }>, transfers: Array<{ __typename: 'Wildcat4626WrapperTransfer', id: string, fromAddress: string, toAddress: string, shares: string, principalBasisAmount: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, from?: { __typename: 'Wildcat4626WrapperAccount', address: string } | null, to?: { __typename: 'Wildcat4626WrapperAccount', address: string } | null }>, tokenSweeps: Array<{ __typename: 'Wildcat4626WrapperTokensSwept', id: string, token: string, receiver: string, amount: string, principalBasisAmount: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string, marketTransfer?: { __typename: 'Transfer', id: string } | null }> } | null };
+
+export type SubgraphGetMarketRepaymentHistoryQueryVariables = Exact<{
+  market: Scalars['ID']['input'];
+  block?: InputMaybe<SubgraphBlock_Height>;
+}>;
+
+
+export type SubgraphGetMarketRepaymentHistoryQuery = { __typename: 'Query', market?: { __typename: 'Market', id: string, repaymentTerms?: { __typename: 'MarketRepaymentTerms', repaymentDate: string, repaymentPeriod: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null, repaymentDateReached?: { __typename: 'MarketRepaymentDateReached', effectiveTimestamp: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null, defaultRecord?: { __typename: 'MarketDefaultRecorded', effectiveTimestamp: string, blockNumber: string, blockTimestamp: string, transactionHash: string, blockLogIndex: string } | null } | null, _meta?: { __typename: '_Meta_', block: { __typename: '_Block_', number: number } } | null };
 
 export const LenderAccountSnapshotDataFragmentDoc = gql`
     fragment LenderAccountSnapshotData on LenderAccountSnapshot {
@@ -36059,6 +37498,14 @@ export const HooksTemplateRegistrationDataFragmentDoc = gql`
   hooksFactory {
     ...HooksFactoryData
   }
+  initCodeHash
+  initCodeHashRecord {
+    initCodeHash
+    blockNumber
+    blockTimestamp
+    transactionHash
+    blockLogIndex
+  }
 }
     `;
 export const HooksInstanceDataFragmentDoc = gql`
@@ -36126,6 +37573,13 @@ export const MarketSnapshotDataFragmentDoc = gql`
   updatedAtTimestamp
   updatedAtTransaction
   updatedAtLogIndex
+  repaymentDate
+  repaymentPeriod
+  repaymentDeadline
+  closedAt
+  repaymentActivatedAt
+  defaultedAt
+  withdrawalRemainder
 }
     `;
 export const MarketDataFragmentDoc = gql`
@@ -36209,6 +37663,13 @@ export const MarketDataFragmentDoc = gql`
   snapshot {
     ...MarketSnapshotData
   }
+  repaymentDate
+  repaymentPeriod
+  repaymentDeadline
+  closedAt
+  repaymentActivatedAt
+  defaultedAt
+  withdrawalRemainder
 }
     `;
 export const BorrowDataFragmentDoc = gql`
@@ -36405,6 +37866,13 @@ export const MarketListDataFragmentDoc = gql`
   snapshot {
     ...MarketSnapshotData
   }
+  repaymentDate
+  repaymentPeriod
+  repaymentDeadline
+  closedAt
+  repaymentActivatedAt
+  defaultedAt
+  withdrawalRemainder
 }
     `;
 export const MarketWithdrawalExecutionDataFragmentDoc = gql`
@@ -36527,6 +37995,7 @@ export const WithdrawalBatchPropertiesFragmentDoc = gql`
   payments(first: 100, orderBy: id, orderDirection: asc) {
     ...WithdrawalBatchPaymentProperties
   }
+  paymentRemainder
 }
     `;
 export const WithdrawalRequestPropertiesFragmentDoc = gql`
@@ -39609,3 +41078,38 @@ ${TokenWrapperWithdrawalDataFragmentDoc}
 ${TokenWrapperTransferDataFragmentDoc}
 ${TokenWrapperTokensSweptDataFragmentDoc}`;
 export type GetIndexedTokenWrapperActivityQueryResult = Apollo.QueryResult<SubgraphGetIndexedTokenWrapperActivityQuery, SubgraphGetIndexedTokenWrapperActivityQueryVariables>;
+export const GetMarketRepaymentHistoryDocument = gql`
+    query getMarketRepaymentHistory($market: ID!, $block: Block_height) {
+  market(id: $market, block: $block) {
+    id
+    repaymentTerms {
+      repaymentDate
+      repaymentPeriod
+      blockNumber
+      blockTimestamp
+      transactionHash
+      blockLogIndex
+    }
+    repaymentDateReached {
+      effectiveTimestamp
+      blockNumber
+      blockTimestamp
+      transactionHash
+      blockLogIndex
+    }
+    defaultRecord {
+      effectiveTimestamp
+      blockNumber
+      blockTimestamp
+      transactionHash
+      blockLogIndex
+    }
+  }
+  _meta(block: $block) {
+    block {
+      number
+    }
+  }
+}
+    `;
+export type GetMarketRepaymentHistoryQueryResult = Apollo.QueryResult<SubgraphGetMarketRepaymentHistoryQuery, SubgraphGetMarketRepaymentHistoryQueryVariables>;

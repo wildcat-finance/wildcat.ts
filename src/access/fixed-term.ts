@@ -1,3 +1,4 @@
+import { getHooksFactoryDeploymentAbi, getRepaymentTermsStatus } from "./repayment";
 import { encodeAbiParameters, zeroAddress } from "viem";
 import { DefaultV2ParameterConstraints, SupportedChainId } from "../constants";
 import { MarketParameters } from "../controller";
@@ -29,7 +30,6 @@ import {
   assert,
   encodeHooksConfig,
   parseFeeConfigurationV2,
-  parseMarketParameterConstraints,
   prepareTransaction,
   toNumber
 } from "../utils";
@@ -57,9 +57,10 @@ import {
   getHooksPendingAdministrator,
   hasRoleProviderFactory,
   roleProviderFromLensData,
+  getHooksParameterConstraints,
   HooksFactoryContractFacade
 } from "./utils";
-import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iFixedTermHooksAbi } from "../abi";
+import { iFixedTermHooksAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -89,6 +90,7 @@ export class FixedTermHooks extends ContractWrapper {
     this.administrator = getHooksAdministrator(data);
     this.pendingAdministrator = getHooksPendingAdministrator(data);
     this.borrower = this.administrator;
+    this.constraints = getHooksParameterConstraints(data);
     this.roleProviders = [...data.pullProviders, ...data.pushProviders].map(
       roleProviderFromLensData
     );
@@ -182,7 +184,7 @@ export class FixedTermHooks extends ContractWrapper {
       borrower: administrator,
       administrator,
       pendingAdministrator: getHooksPendingAdministrator(data),
-      constraints: parseMarketParameterConstraints(data.constraints),
+      constraints: getHooksParameterConstraints(data),
       roleProviders: [...data.pullProviders, ...data.pushProviders].map(roleProviderFromLensData)
     });
   }
@@ -259,6 +261,7 @@ export type FixedTermHooksTemplateArgs = {
   name: string;
   totalMarkets: number;
   registration?: HooksTemplateRegistrationMetadata;
+  initCodeHash?: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -288,6 +291,7 @@ export class FixedTermHooksTemplate extends ContractWrapper {
     this.index = toNumber(data.index);
     this.name = data.name;
     this.totalMarkets = toNumber(data.totalMarkets);
+    this.initCodeHash = data.initCodeHash?.isPresent ? data.initCodeHash.value : undefined;
     this.signerAddress = context.signerAddress;
     this.isRegisteredBorrower = context.isRegisteredBorrower;
     this.isRegisteredHooksFactory = context.isRegisteredHooksFactory;
@@ -310,6 +314,7 @@ export class FixedTermHooksTemplate extends ContractWrapper {
       index: toNumber(data.index),
       name: data.name,
       totalMarkets: toNumber(data.totalMarkets),
+      initCodeHash: data.initCodeHash?.isPresent ? data.initCodeHash.value : undefined,
       signerAddress: context.signerAddress,
       isRegisteredBorrower: context.isRegisteredBorrower,
       isRegisteredHooksFactory: context.isRegisteredHooksFactory,
@@ -357,7 +362,8 @@ export class FixedTermHooksTemplate extends ContractWrapper {
       totalMarkets: 0, // @todo
       signerAddress: context.signerAddress,
       isRegisteredBorrower: context.isRegisteredBorrower,
-      registration
+      registration,
+      initCodeHash: registration?.initCodeHash
     });
   }
 
@@ -383,6 +389,8 @@ export class FixedTermHooksTemplate extends ContractWrapper {
     asset,
     maxTotalSupply,
     salt,
+    repaymentDate = 0,
+    repaymentPeriod = 0,
     fixedTermEndTime,
     allowClosureBeforeTerm,
     allowTermReduction,
@@ -405,6 +413,11 @@ export class FixedTermHooksTemplate extends ContractWrapper {
       !!hooksAddress
     );
     if (deploymentStatus) return { status: deploymentStatus };
+    const repaymentStatus = getRepaymentTermsStatus(this.chainId, repaymentDate, repaymentPeriod);
+    if (repaymentStatus) return { status: repaymentStatus };
+    if (repaymentDate !== 0 && repaymentDate < fixedTermEndTime) {
+      return { status: DeployMarketStatus.InvalidRepaymentTerms };
+    }
     if (!isMarketSaltFormatValid(salt)) {
       return { status: DeployMarketStatus.InvalidMarketSaltFormat };
     }
@@ -466,7 +479,9 @@ export class FixedTermHooksTemplate extends ContractWrapper {
       ...otherParameters,
       asset: asset.address,
       maxTotalSupply: maxTotalSupply.raw,
-      hooks: hooksConfig
+      hooks: hooksConfig,
+      repaymentDate,
+      repaymentPeriod
     } as DeployMarketInputsV2Struct;
     const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0;
     const originationFeeToken = this.fees.originationFeeToken?.address ?? zeroAddress;
@@ -531,7 +546,7 @@ export class FixedTermHooksTemplate extends ContractWrapper {
       this.signer,
       prepareTransaction({
         to: this.hooksFactory,
-        abi: result.marketKind === "standard" ? hooksFactoryAbi : hooksFactoryRevolvingAbi,
+        abi: getHooksFactoryDeploymentAbi(this.chainId, result.marketKind),
         functionName: result.fn,
         args: result.args
       })
@@ -540,6 +555,9 @@ export class FixedTermHooksTemplate extends ContractWrapper {
 }
 
 type FixedTermCommonMarketDeploymentArgs = MarketParameters & {
+  /** Unix seconds; both default to zero for an unscheduled market. */
+  repaymentDate?: number;
+  repaymentPeriod?: number;
   /** CREATE2 salt encoded as immediate factory caller followed by a 12-byte nonce. */
   salt: string;
   /** Time at which the market converts to open-term */

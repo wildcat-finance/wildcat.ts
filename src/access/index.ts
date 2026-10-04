@@ -328,3 +328,5 @@ export function hooksInstanceFromLens(
     throw Error(`Unknown hooks template: ${data.kind}`);
   }
 }
+
+export * from "./repayment";

@@ -1,3 +1,5 @@
+import { usesLegacySubgraphSchema } from "../config";
+import { legacyWithdrawalDocument } from "./legacy-withdrawal-document";
 import { IndexedTraversalOptions } from "../indexed-pagination";
 import { withIndexedTraversal } from "../internal/indexed-traversal";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
@@ -40,7 +42,9 @@ export async function getIncompleteWithdrawalsForMarket(
       SubgraphGetIncompleteWithdrawalsForMarketQuery,
       SubgraphGetIncompleteWithdrawalsForMarketQueryVariables
     >(subgraphClient, {
-      query: GetIncompleteWithdrawalsForMarketDocument,
+      query: usesLegacySubgraphSchema(market.chainId)
+        ? legacyWithdrawalDocument(GetIncompleteWithdrawalsForMarketDocument)
+        : GetIncompleteWithdrawalsForMarketDocument,
       variables: {
         market: market.address.toLowerCase(),
         numWithdrawalBatches: first,

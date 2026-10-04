@@ -39,21 +39,21 @@ const makeFactoryMetadata = (
 });
 
 describe("SDK deployment configuration", () => {
-  it("pins the Sepolia V2.5.4 deployment addresses indexed by subgraph V2.5.12", () => {
+  it("pins the Sepolia V2.5.5 deployment addresses indexed by subgraph V2.5.13", () => {
     expect(Deployments[SupportedChainId.Sepolia]).to.include({
-      HooksFactoryStandard: "0x5ae696F4F1A771799e8d03Dc232C8F843f44417f",
-      HooksFactoryRevolving: "0x01c3E16434eCd4c76e2ff3a88D1e6Bf82BBda07e",
-      MarketLensV2_5: "0x204BAe0AE3De919a88812065866Dd03b097BC6A7",
+      HooksFactoryStandard: "0x0E12301A4F4b81A2B9965E4959e21faDf1754Ead",
+      HooksFactoryRevolving: "0x130E07D24e2aF6ea4554032d4F53fcBAe000d1b1",
+      MarketLensV2_5: "0xB77e7895A76283472209239f5161591D3bc1Eccb",
       MockArchControllerOwner: "0x981f1Fb406bD7a8385f9373c08Ab4c832Ed0d508",
-      AccessListRoleProviderFactory: "0x92995EA2ba572E4Cb8bB41E30f813BeB77FD4974",
+      AccessListRoleProviderFactory: "0xE6D5bDd5011568C46fAf257cf426Ea822bC4255F",
       WildcatBorrowerIdentityRegistry: "0xc2cF90781595203D1e75c28246b306C95d4b8b21",
-      Wildcat4626WrapperFactory: "0xA159f68003e37cC77921e5e52F4c0e9A01D66262"
+      Wildcat4626WrapperFactory: "0x1986DF1c77d25670e8D55865B83C5fFeD00e0134"
     });
   });
 
   it("supports only wrapper factories whose embedded implementation is current", () => {
     expect(getSupportedWrapperFactoryAddresses(SupportedChainId.Sepolia)).to.deep.equal([
-      "0xA159f68003e37cC77921e5e52F4c0e9A01D66262"
+      "0x1986DF1c77d25670e8D55865B83C5fFeD00e0134"
     ]);
     expect(getSupportedWrapperFactoryAddresses(SupportedChainId.PlasmaMainnet)).to.deep.equal([]);
   });

@@ -75,6 +75,16 @@ export const normalizeSubgraphHooksTemplateRegistrationData = (
   originationFeeAsset: data.originationFeeAsset?.address,
   originationFeeAmount: BigInt(data.originationFeeAmount),
   isEnabled: data.isEnabled,
+  initCodeHash: data.initCodeHash ?? undefined,
+  initCodeHashRecord: data.initCodeHashRecord
+    ? {
+        initCodeHash: data.initCodeHashRecord.initCodeHash,
+        blockNumber: BigInt(data.initCodeHashRecord.blockNumber),
+        blockTimestamp: BigInt(data.initCodeHashRecord.blockTimestamp),
+        transactionHash: data.initCodeHashRecord.transactionHash,
+        logIndex: BigInt(data.initCodeHashRecord.blockLogIndex)
+      }
+    : undefined,
   createdAt: {
     blockNumber: BigInt(data.createdAtBlock),
     blockTimestamp: BigInt(data.createdAtTimestamp),
@@ -133,6 +143,7 @@ export const normalizeSubgraphMarketSnapshot = (
     ? {
         source: parseSnapshotSource(data.source),
         isClosed: data.isClosed,
+        ...normalizeIndexedLifecycle(data),
         maxTotalSupply: BigInt(data.maxTotalSupply),
         totalAssets: BigInt(data.totalAssets),
         protocolFeeBips: data.protocolFeeBips,
@@ -239,4 +250,34 @@ export const normalizeSubgraphMarketEvent = (
   blockTimestamp: BigInt(data.blockTimestamp),
   transactionHash: data.transactionHash,
   logIndex: BigInt(data.logIndex)
+});
+
+/** Null denotes unsupported historical deployments; a supported zero remains zero. */
+export const normalizeIndexedLifecycle = (data: {
+  repaymentDate?: string | null;
+  repaymentPeriod?: string | null;
+  repaymentDeadline?: string | null;
+  closedAt?: string | null;
+  repaymentActivatedAt?: string | null;
+  defaultedAt?: string | null;
+  withdrawalRemainder?: string | null;
+}): Pick<
+  IndexedMarketSnapshot,
+  | "repaymentDate"
+  | "repaymentPeriod"
+  | "repaymentDeadline"
+  | "closedAt"
+  | "repaymentActivatedAt"
+  | "defaultedAt"
+  | "withdrawalRemainder"
+> => ({
+  repaymentDate: data.repaymentDate == null ? undefined : Number(data.repaymentDate),
+  repaymentPeriod: data.repaymentPeriod == null ? undefined : Number(data.repaymentPeriod),
+  repaymentDeadline: data.repaymentDeadline == null ? undefined : Number(data.repaymentDeadline),
+  closedAt: data.closedAt == null ? undefined : Number(data.closedAt),
+  repaymentActivatedAt:
+    data.repaymentActivatedAt == null ? undefined : Number(data.repaymentActivatedAt),
+  defaultedAt: data.defaultedAt == null ? undefined : Number(data.defaultedAt),
+  withdrawalRemainder:
+    data.withdrawalRemainder == null ? undefined : BigInt(data.withdrawalRemainder)
 });

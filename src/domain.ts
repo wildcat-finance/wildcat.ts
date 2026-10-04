@@ -260,6 +260,8 @@ export type HooksTemplateRegistrationMetadata = {
   originationFeeAsset?: string;
   originationFeeAmount: bigint;
   isEnabled: boolean;
+  initCodeHash?: string;
+  initCodeHashRecord?: IndexedAt & { initCodeHash: string };
   createdAt: IndexedAt;
   updatedAt: IndexedAt;
 };
@@ -287,6 +289,13 @@ export type MarketProvenance = {
 };
 
 export type IndexedMarketSnapshot = IndexedSnapshotMetadata & {
+  repaymentDate?: number;
+  repaymentPeriod?: number;
+  repaymentDeadline?: number;
+  closedAt?: number;
+  repaymentActivatedAt?: number;
+  defaultedAt?: number;
+  withdrawalRemainder?: bigint;
   isClosed: boolean;
   maxTotalSupply: bigint;
   totalAssets: bigint;

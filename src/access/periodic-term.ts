@@ -1,3 +1,4 @@
+import { getHooksFactoryDeploymentAbi, getRepaymentTermsStatus } from "./repayment";
 import { encodeAbiParameters, zeroAddress } from "viem";
 import { DefaultV2ParameterConstraints, SupportedChainId } from "../constants";
 import { MarketParameters } from "../controller";
@@ -29,7 +30,6 @@ import {
   assert,
   encodeHooksConfig,
   parseFeeConfigurationV2,
-  parseMarketParameterConstraints,
   prepareTransaction,
   toNumber
 } from "../utils";
@@ -47,7 +47,7 @@ import {
 import { encodeRevolvingMarketData } from "./revolving";
 import { HooksAccountContext, HooksLensReadContext } from "./context";
 import { isMarketSaltFormatValid } from "./market-salt";
-import { hooksFactoryAbi, hooksFactoryRevolvingAbi, iPeriodicTermHooksAbi } from "../abi";
+import { iPeriodicTermHooksAbi } from "../abi";
 import { submitPreparedTransaction } from "../internal/viem-write";
 import { normalizeSubgraphHooksTemplateData, SubgraphHooksTemplateLike } from "./subgraph-template";
 import { readMarketTransferRecipientAllowed } from "./transfer-policy";
@@ -59,6 +59,7 @@ import {
   getHooksPendingAdministrator,
   hasRoleProviderFactory,
   roleProviderFromLensData,
+  getHooksParameterConstraints,
   HooksFactoryContractFacade
 } from "./utils";
 
@@ -92,6 +93,7 @@ export class PeriodicTermHooks extends ContractWrapper {
     this.administrator = getHooksAdministrator(data);
     this.pendingAdministrator = getHooksPendingAdministrator(data);
     this.borrower = this.administrator;
+    this.constraints = getHooksParameterConstraints(data);
     this.roleProviders = [...data.pullProviders, ...data.pushProviders].map(
       roleProviderFromLensData
     );
@@ -173,7 +175,7 @@ export class PeriodicTermHooks extends ContractWrapper {
       borrower: administrator,
       administrator,
       pendingAdministrator: getHooksPendingAdministrator(data),
-      constraints: parseMarketParameterConstraints(data.constraints),
+      constraints: getHooksParameterConstraints(data),
       roleProviders: [...data.pullProviders, ...data.pushProviders].map(roleProviderFromLensData)
     });
   }
@@ -250,6 +252,7 @@ export type PeriodicTermHooksTemplateArgs = {
   name: string;
   totalMarkets: number;
   registration?: HooksTemplateRegistrationMetadata;
+  initCodeHash?: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -279,6 +282,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
     this.index = toNumber(data.index);
     this.name = data.name;
     this.totalMarkets = toNumber(data.totalMarkets);
+    this.initCodeHash = data.initCodeHash?.isPresent ? data.initCodeHash.value : undefined;
     this.signerAddress = context.signerAddress;
     this.isRegisteredBorrower = context.isRegisteredBorrower;
     this.isRegisteredHooksFactory = context.isRegisteredHooksFactory;
@@ -301,6 +305,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
       index: toNumber(data.index),
       name: data.name,
       totalMarkets: toNumber(data.totalMarkets),
+      initCodeHash: data.initCodeHash?.isPresent ? data.initCodeHash.value : undefined,
       signerAddress: context.signerAddress,
       isRegisteredBorrower: context.isRegisteredBorrower,
       isRegisteredHooksFactory: context.isRegisteredHooksFactory,
@@ -348,7 +353,8 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
       totalMarkets: 0,
       signerAddress: context.signerAddress,
       isRegisteredBorrower: context.isRegisteredBorrower,
-      registration
+      registration,
+      initCodeHash: registration?.initCodeHash
     });
   }
 
@@ -374,6 +380,8 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
     asset,
     maxTotalSupply,
     salt,
+    repaymentDate = 0,
+    repaymentPeriod = 0,
     firstWithdrawalWindowStart,
     periodDuration,
     withdrawalWindowDuration,
@@ -396,6 +404,8 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
       !!hooksAddress
     );
     if (deploymentStatus) return { status: deploymentStatus };
+    const repaymentStatus = getRepaymentTermsStatus(this.chainId, repaymentDate, repaymentPeriod);
+    if (repaymentStatus) return { status: repaymentStatus };
     if (!isMarketSaltFormatValid(salt)) {
       return { status: DeployMarketStatus.InvalidMarketSaltFormat };
     }
@@ -460,7 +470,9 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
       ...otherParameters,
       asset: asset.address,
       maxTotalSupply: maxTotalSupply.raw,
-      hooks: hooksConfig
+      hooks: hooksConfig,
+      repaymentDate,
+      repaymentPeriod
     } as DeployMarketInputsV2Struct;
     const originationFeeAmount = this.fees.originationFeeAmount?.raw ?? 0n;
     const originationFeeToken = this.fees.originationFeeToken?.address ?? zeroAddress;
@@ -523,7 +535,7 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
       this.signer,
       prepareTransaction({
         to: this.hooksFactory,
-        abi: result.marketKind === "standard" ? hooksFactoryAbi : hooksFactoryRevolvingAbi,
+        abi: getHooksFactoryDeploymentAbi(this.chainId, result.marketKind),
         functionName: result.fn,
         args: result.args
       })
@@ -532,6 +544,9 @@ export class PeriodicTermHooksTemplate extends ContractWrapper {
 }
 
 type PeriodicTermCommonMarketDeploymentArgs = MarketParameters & {
+  /** Unix seconds; both default to zero for an unscheduled market. */
+  repaymentDate?: number;
+  repaymentPeriod?: number;
   /** CREATE2 salt encoded as immediate factory caller followed by a 12-byte nonce. */
   salt: string;
   /** First timestamp at which lenders can queue withdrawals */

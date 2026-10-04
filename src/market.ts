@@ -1,3 +1,4 @@
+import { normalizeIndexedLifecycle } from "./gql/normalizers";
 import { encodeFunctionData, zeroAddress } from "viem";
 import {
   CompatibleMarketDataV2_5,
@@ -6,6 +7,8 @@ import {
   MarketDataV2_5StructOutput,
   MarketDataV2StructOutput,
   MarketLiveDataV2_5StructOutput,
+  MarketLifecycleDataStructOutput,
+  MarketLiquidityDataStructOutput,
   RoleProviderDataStructOutput,
   RoleProviderDataV2_5StructOutput
 } from "./lens-types";
@@ -179,6 +182,7 @@ const toUnifiedMarketDataV2 = (
 
   return {
     market: data,
+    ...("lifecycle" in data ? { lifecycle: data.lifecycle, liquidity: data.liquidity } : {}),
     borrowerPrincipal: zeroAddress,
     pendingBorrower: zeroAddress,
     pendingBorrowerPrincipal: zeroAddress,
@@ -249,6 +253,38 @@ const roleProvidersFromLens = ({
   pushProviders: ReadonlyArray<RoleProviderDataStructOutput | RoleProviderDataV2_5StructOutput>;
 }): RoleProvider[] => [...pullProviders, ...pushProviders].map(roleProviderFromLensData);
 
+/** Accounting capacity at the live lens read block, denominated in the underlying token.
+ * Hooks, authority checks, sanctions and token transfers can still prevent an action. */
+export type MarketLiquidity = {
+  maximumDeposit: TokenAmount;
+  borrowableAssets: TokenAmount;
+  totalDebts: TokenAmount;
+  recoverableUnderlying: TokenAmount;
+};
+
+const normalizeLensLifecycle = (
+  data: {
+    lifecycle?: MarketLifecycleDataStructOutput;
+    liquidity?: MarketLiquidityDataStructOutput;
+  },
+  token: Token
+) => ({
+  repaymentDate: data.lifecycle?.isPresent ? toNumber(data.lifecycle.repaymentDate) : undefined,
+  repaymentPeriod: data.lifecycle?.isPresent ? toNumber(data.lifecycle.repaymentPeriod) : undefined,
+  repaymentDeadline: data.lifecycle?.isPresent
+    ? toNumber(data.lifecycle.repaymentDeadline)
+    : undefined,
+  defaultedAt: data.lifecycle?.isPresent ? toNumber(data.lifecycle.defaultedAt) : undefined,
+  liquidity: data.liquidity
+    ? {
+        maximumDeposit: token.getAmount(data.liquidity.maximumDeposit),
+        borrowableAssets: token.getAmount(data.liquidity.borrowableAssets),
+        totalDebts: token.getAmount(data.liquidity.totalDebts),
+        recoverableUnderlying: token.getAmount(data.liquidity.recoverableUnderlying)
+      }
+    : undefined
+});
+
 export type MarketArgs = {
   provider: SignerOrProvider;
   chainId: SupportedChainId;
@@ -307,6 +343,19 @@ export type MarketArgs = {
   unpaidWithdrawalBatchExpiries: number[];
   // Amount of underlying assets that should be held in reserve for current supply
   coverageLiquidity: TokenAmount;
+  /** Undefined on unsupported historical deployments; zero means supported and unscheduled. */
+  repaymentDate?: number;
+  repaymentPeriod?: number;
+  repaymentDeadline?: number;
+  /** Committed default timestamp only; zero does not prove an unwritten deadline was met. */
+  defaultedAt?: number;
+  /** Indexed effective event times, retained separately from live accounting. */
+  closedAt?: number;
+  repaymentActivatedAt?: number;
+  /** Ray numerator carried by indexed withdrawal batches; not an interest-bearing balance. */
+  withdrawalRemainder?: bigint;
+  registeredWrapper?: string;
+  liquidity?: MarketLiquidity;
   numCollateralContracts?: number;
   totalBorrowed?: TokenAmount;
   totalRepaid?: TokenAmount;
@@ -367,9 +416,11 @@ const calculateLiquidityCoverage = ({
   reserveRatioBips,
   scaleFactor,
   accruedProtocolFees,
-  normalizedUnclaimedWithdrawals
+  normalizedUnclaimedWithdrawals,
+  withdrawalRemainder = 0n
 }: {
   eventGeneration: ProtocolEventGeneration;
+  withdrawalRemainder?: bigint;
   scaledTotalSupply: bigint;
   scaledPendingWithdrawals: bigint;
   reserveRatioBips: number;
@@ -379,13 +430,16 @@ const calculateLiquidityCoverage = ({
 }): bigint => {
   let normalizedSupplyRequired: bigint;
   if (eventGeneration === "v2.5") {
-    const normalizedPendingWithdrawals = rayMulBigint(scaledPendingWithdrawals, scaleFactor);
+    const normalizedPendingWithdrawals =
+      (scaledPendingWithdrawals * scaleFactor + withdrawalRemainder + RAY_BIGINT / 2n) / RAY_BIGINT;
     if (reserveRatioBips === 0) {
       normalizedSupplyRequired = normalizedPendingWithdrawals;
     } else if (reserveRatioBips === Number(BIP_BIGINT)) {
-      normalizedSupplyRequired = rayMulBigint(scaledTotalSupply, scaleFactor);
+      normalizedSupplyRequired =
+        (scaledTotalSupply * scaleFactor + withdrawalRemainder + RAY_BIGINT / 2n) / RAY_BIGINT;
     } else {
-      const normalizedTotalSupply = rayMulBigint(scaledTotalSupply, scaleFactor);
+      const normalizedTotalSupply =
+        (scaledTotalSupply * scaleFactor + withdrawalRemainder + RAY_BIGINT / 2n) / RAY_BIGINT;
       const normalizedOutstandingSupply = normalizedTotalSupply - normalizedPendingWithdrawals;
       normalizedSupplyRequired =
         normalizedPendingWithdrawals + bipMulBigint(normalizedOutstandingSupply, reserveRatioBips);
@@ -518,6 +572,29 @@ export class Market extends ContractWrapper {
   /*                              Property Getters                              */
   /* -------------------------------------------------------------------------- */
 
+  /** State at the indexed snapshot or live read, not a prediction based on the wall clock. */
+  get hasReachedRepaymentDate(): boolean | undefined {
+    return this.repaymentDate === undefined
+      ? undefined
+      : this.repaymentDate !== 0 && this.lastInterestAccruedTimestamp >= this.repaymentDate;
+  }
+
+  get isInRepayment(): boolean {
+    return !this.isClosed && this.hasReachedRepaymentDate === true;
+  }
+
+  /** A permanent recorded default can coexist with a closed, fully repaid market. */
+  get hasRecordedDefault(): boolean | undefined {
+    return this.defaultedAt === undefined ? undefined : this.defaultedAt !== 0;
+  }
+
+  get recoverableUnderlying(): TokenAmount {
+    if (this.liquidity) return this.liquidity.recoverableUnderlying;
+    return this.isClosed
+      ? this.totalAssets.satsub(this.totalDebts)
+      : this.underlyingToken.getAmount(0);
+  }
+
   get hooksKind(): HooksKind | undefined {
     return this.hooksConfig?.kind;
   }
@@ -578,6 +655,8 @@ export class Market extends ContractWrapper {
 
   /** @returns Maximum amount of underlying token that can be deposited */
   get maximumDeposit(): TokenAmount {
+    if (this.liquidity) return this.liquidity.maximumDeposit;
+    if (this.isClosed || this.isInRepayment) return this.underlyingToken.getAmount(0);
     return this.underlyingToken.getAmount(this.maxTotalSupply.satsub(this.totalSupply).raw);
   }
 
@@ -669,6 +748,8 @@ export class Market extends ContractWrapper {
 
   /** @returns Whether the borrower is in penalized delinquency */
   get isIncurringPenalties(): boolean {
+    if (this.isClosed) return false;
+    if (this.isInRepayment) return this.totalAssets.lt(this.coverageLiquidity);
     return this.timeDelinquent > this.delinquencyGracePeriod;
   }
 
@@ -682,8 +763,14 @@ export class Market extends ContractWrapper {
 
   /** @returns Total debts of the market without subtracting assets */
   get totalDebts(): TokenAmount {
+    if (this.liquidity) return this.liquidity.totalDebts;
+    const normalizedDebt =
+      this.withdrawalRemainder === undefined
+        ? this.totalSupply.raw
+        : (this.scaledTotalSupply * this.scaleFactor + this.withdrawalRemainder + RAY_BIGINT / 2n) /
+          RAY_BIGINT;
     return this.normalizedUnclaimedWithdrawals
-      .add(this.totalSupply.raw)
+      .add(normalizedDebt)
       .add(this.lastAccruedProtocolFees);
   }
 
@@ -763,10 +850,33 @@ export class Market extends ContractWrapper {
   }
 
   get borrowableAssets(): TokenAmount {
+    if (this.liquidity) return this.liquidity.borrowableAssets;
+    if (this.isClosed || this.isInRepayment) return this.underlyingToken.getAmount(0);
     return this.totalAssets.satsub(this.coverageLiquidity);
   }
 
   getTotalDebtBreakdown(): TotalDebtBreakdown {
+    if (this.liquidity || this.withdrawalRemainder !== undefined) {
+      const totalDebt = this.totalDebts;
+      const collateralObligation = this.coverageLiquidity;
+      if (this.totalAssets.lt(collateralObligation)) {
+        return {
+          status: "delinquent",
+          borrowed: totalDebt.satsub(collateralObligation),
+          delinquentDebt: collateralObligation.sub(this.totalAssets),
+          reserves: this.totalAssets,
+          collateralObligation,
+          totalDebt
+        };
+      }
+      return {
+        status: "healthy",
+        borrowable: this.borrowableAssets,
+        borrowed: totalDebt.satsub(this.totalAssets),
+        collateralObligation,
+        totalDebt
+      };
+    }
     const minimumReserves = this.minimumReserves;
     const reserves = this.totalAssets;
     const pendingWithdrawals = this.normalizedPendingWithdrawals;
@@ -1007,9 +1117,12 @@ export class Market extends ContractWrapper {
   }
 
   calculateLiquidityCoverageForReserveRatio(reserveRatio: number): TokenAmount {
+    // Full and compact lens reads include exact current coverage, but omit raw carry.
+    if (this.liquidity && reserveRatio === this.reserveRatioBips) return this.coverageLiquidity;
     return this.underlyingToken.getAmount(
       calculateLiquidityCoverage({
         eventGeneration: this.eventGeneration,
+        withdrawalRemainder: this.withdrawalRemainder,
         scaledTotalSupply: this.scaledTotalSupply,
         scaledPendingWithdrawals: this.scaledPendingWithdrawals,
         reserveRatioBips: reserveRatio,
@@ -1214,6 +1327,15 @@ export class Market extends ContractWrapper {
         config.periodDuration = toNumber(baseData.hooksConfig.periodDuration);
         config.withdrawalWindowDuration = toNumber(baseData.hooksConfig.withdrawalWindowDuration);
         config.periodicTermClosed = baseData.hooksConfig.periodicTermClosed;
+        if ("pendingAprChange" in baseData.hooksConfig) {
+          const proposal = baseData.hooksConfig.pendingAprChange;
+          config.pendingAprChangeAvailable = proposal?.isPresent;
+          config.pendingAprChangeAnnualInterestBips = toNumber(proposal?.annualInterestBips ?? 0);
+          config.pendingAprChangeProposalTimestamp = toNumber(proposal?.proposalTimestamp ?? 0);
+          config.pendingAprChangeResponseWindowStart = toNumber(proposal?.responseWindowStart ?? 0);
+          config.pendingAprChangeResponseWindowEnd = toNumber(proposal?.responseWindowEnd ?? 0);
+          config.periodicWithdrawalWindowOpen = baseData.hooksConfig.periodicWithdrawalWindowOpen;
+        }
       }
       if ("hooks" in baseData) {
         this.roleProviders = roleProvidersFromLens(baseData.hooks);
@@ -1244,11 +1366,36 @@ export class Market extends ContractWrapper {
           ? this.provenance.marketKind
           : nextMarketKind;
     }
+    Object.assign(
+      this,
+      normalizeLensLifecycle(
+        data as {
+          lifecycle?: MarketLifecycleDataStructOutput;
+          liquidity?: MarketLiquidityDataStructOutput;
+        },
+        this.underlyingToken
+      )
+    );
+    this.withdrawalRemainder = undefined;
+    if ("registeredWrapper" in data) {
+      this.registeredWrapper =
+        data.registeredWrapper && data.registeredWrapper.toLowerCase() !== zeroAddress
+          ? data.registeredWrapper
+          : undefined;
+    }
+    if (this.isClosed && this.periodicHooksConfig) {
+      this.periodicHooksConfig.periodicTermClosed = true;
+      this.periodicHooksConfig.pendingAprChangeAnnualInterestBips = 0;
+      this.periodicHooksConfig.pendingAprChangeProposalTimestamp = 0;
+      this.periodicHooksConfig.pendingAprChangeResponseWindowStart = 0;
+      this.periodicHooksConfig.pendingAprChangeResponseWindowEnd = 0;
+    }
     this.stateSource = "live";
   }
 
   updateWithLiveData(data: MarketLiveDataV2_5StructOutput): void {
     assertMatchingAddress(data.market, this.address, "Live market data");
+    if (this.periodicHooksConfig) this.periodicHooksConfig.periodicWithdrawalWindowOpen = undefined;
 
     const nextScaleFactor = toRawAmount(data.scaleFactor);
     const nextScaledTotalSupply = toRawAmount(data.scaledTotalSupply);
@@ -1305,6 +1452,25 @@ export class Market extends ContractWrapper {
       data.commitmentFeeBips.isPresent,
       data.drawnAmount.isPresent
     );
+    Object.assign(
+      this,
+      normalizeLensLifecycle(
+        data as {
+          lifecycle?: MarketLifecycleDataStructOutput;
+          liquidity?: MarketLiquidityDataStructOutput;
+        },
+        this.underlyingToken
+      )
+    );
+    this.withdrawalRemainder = undefined;
+
+    if (this.isClosed && this.periodicHooksConfig) {
+      this.periodicHooksConfig.periodicTermClosed = true;
+      this.periodicHooksConfig.pendingAprChangeAnnualInterestBips = 0;
+      this.periodicHooksConfig.pendingAprChangeProposalTimestamp = 0;
+      this.periodicHooksConfig.pendingAprChangeResponseWindowStart = 0;
+      this.periodicHooksConfig.pendingAprChangeResponseWindowEnd = 0;
+    }
     this.stateSource = "live";
   }
 
@@ -1338,6 +1504,10 @@ export class Market extends ContractWrapper {
     const scaledWithdrawals = toRawAmount(indexedState.scaledPendingWithdrawals);
     const coverageLiquidity = calculateLiquidityCoverage({
       eventGeneration: provenance.eventGeneration,
+      withdrawalRemainder:
+        indexedState.withdrawalRemainder == null
+          ? undefined
+          : BigInt(indexedState.withdrawalRemainder),
       scaledTotalSupply,
       scaledPendingWithdrawals: scaledWithdrawals,
       reserveRatioBips: indexedState.reserveRatioBips,
@@ -1529,7 +1699,8 @@ export class Market extends ContractWrapper {
       signerAddress,
       provenance,
       indexedSnapshot,
-      stateSource: "indexed"
+      stateSource: "indexed",
+      ...normalizeIndexedLifecycle(indexedState)
     });
   }
 
@@ -1711,7 +1882,10 @@ export class Market extends ContractWrapper {
       pendingBorrowerPrincipal,
       borrowerIdentityRegistry,
       commitmentFeeBips,
-      drawnAmount
+      drawnAmount,
+      lifecycle,
+      liquidity,
+      registeredWrapper
     }: MarketDataV2_5StructOutput,
     allowForceBuyBacks: boolean,
     signerAddress?: string
@@ -1763,10 +1937,20 @@ export class Market extends ContractWrapper {
         periodDuration: toNumber(hooksConfigData.periodDuration),
         withdrawalWindowDuration: toNumber(hooksConfigData.withdrawalWindowDuration),
         periodicTermClosed: hooksConfigData.periodicTermClosed,
-        pendingAprChangeAnnualInterestBips: 0,
-        pendingAprChangeProposalTimestamp: 0,
-        pendingAprChangeResponseWindowStart: 0,
-        pendingAprChangeResponseWindowEnd: 0
+        periodicWithdrawalWindowOpen: hooksConfigData.periodicWithdrawalWindowOpen,
+        pendingAprChangeAvailable: hooksConfigData.pendingAprChange?.isPresent,
+        pendingAprChangeAnnualInterestBips: toNumber(
+          hooksConfigData.pendingAprChange?.annualInterestBips ?? 0
+        ),
+        pendingAprChangeProposalTimestamp: toNumber(
+          hooksConfigData.pendingAprChange?.proposalTimestamp ?? 0
+        ),
+        pendingAprChangeResponseWindowStart: toNumber(
+          hooksConfigData.pendingAprChange?.responseWindowStart ?? 0
+        ),
+        pendingAprChangeResponseWindowEnd: toNumber(
+          hooksConfigData.pendingAprChange?.responseWindowEnd ?? 0
+        )
       } as PeriodicTermHooksConfig;
     } else {
       throw Error(`Unknown hooks kind: ${hooks.hooksTemplate.name}, version #${hooksKind}`);
@@ -1823,6 +2007,11 @@ export class Market extends ContractWrapper {
         ? toNumber(commitmentFeeBips.value)
         : undefined,
       drawnAmount: drawnAmount.isPresent ? underlyingToken.getAmount(drawnAmount.value) : undefined,
+      ...normalizeLensLifecycle({ lifecycle, liquidity }, underlyingToken),
+      registeredWrapper:
+        registeredWrapper && registeredWrapper.toLowerCase() !== zeroAddress
+          ? registeredWrapper
+          : undefined,
       signerAddress
     });
   }

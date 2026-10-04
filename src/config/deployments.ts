@@ -78,15 +78,15 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     Wildcat4626WrapperFactory: "0xEA6DE11f8F3F83c79bD9d8Db5517fCFDf2Bb148a"
   },
   [SupportedChainId.Sepolia]: {
-    HooksFactoryStandard: "0x5ae696F4F1A771799e8d03Dc232C8F843f44417f",
-    HooksFactoryRevolving: "0x01c3E16434eCd4c76e2ff3a88D1e6Bf82BBda07e",
+    HooksFactoryStandard: "0x0E12301A4F4b81A2B9965E4959e21faDf1754Ead",
+    HooksFactoryRevolving: "0x130E07D24e2aF6ea4554032d4F53fcBAe000d1b1",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
     MarketLensV2: "0x5D8cEacEe19c06C3b4108b8Ae5B881eb0240B9c7",
-    MarketLensV2_5: "0x204BAe0AE3De919a88812065866Dd03b097BC6A7",
+    MarketLensV2_5: "0xB77e7895A76283472209239f5161591D3bc1Eccb",
     MockArchControllerOwner: "0x981f1Fb406bD7a8385f9373c08Ab4c832Ed0d508",
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
-    AccessListRoleProviderFactory: "0x92995EA2ba572E4Cb8bB41E30f813BeB77FD4974",
+    AccessListRoleProviderFactory: "0xE6D5bDd5011568C46fAf257cf426Ea822bC4255F",
     WildcatBorrowerIdentityRegistry: "0xc2cF90781595203D1e75c28246b306C95d4b8b21",
     WildcatArchController: "0xC003f20F2642c76B81e5e1620c6D8cdEE826408f",
     WildcatMarketControllerFactory: "0xEb97C8E52d7Fdf978a64a538F28271Fd8499b864",
@@ -96,7 +96,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatCollateralFactory: "0x58Ab4755221869cfcAe2A4F3EE31d591bA6AE1D0",
     BebopSettlementContract: "0x513826b6bb38fc159f152a4bf6e1ec3650a7ee46",
     CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578",
-    Wildcat4626WrapperFactory: "0xA159f68003e37cC77921e5e52F4c0e9A01D66262"
+    Wildcat4626WrapperFactory: "0x1986DF1c77d25670e8D55865B83C5fFeD00e0134"
   },
   [SupportedChainId.PlasmaTestnet]: {
     HooksFactoryStandard: "0x5Ad00b665eA71E27628D75102B1497CC75E531FB",

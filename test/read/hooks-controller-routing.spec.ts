@@ -1,3 +1,4 @@
+import { unsupportedTemplateHash, legacyRepaymentBounds } from "../helpers/v2.5-lens";
 import { expect } from "chai";
 import { BigNumber, constants, providers } from "ethers";
 import { decodeFunctionData, encodeFunctionResult, type Abi } from "viem";
@@ -99,6 +100,7 @@ const makeHooksFlags = () => ({
 });
 
 const makeConstraints = () => ({
+  ...legacyRepaymentBounds,
   minimumDelinquencyGracePeriod: 0,
   maximumDelinquencyGracePeriod: 90 * 86_400,
   minimumReserveRatioBips: 0,
@@ -113,6 +115,7 @@ const makeConstraints = () => ({
 
 const makeHooksTemplate = (template: string, name = "OpenTermHooks") => ({
   hooksTemplate: template,
+  initCodeHash: unsupportedTemplateHash,
   fees: {
     feeRecipient: makeAddress(11),
     protocolFeeBips: 25,
@@ -151,6 +154,7 @@ const makeV2_5HooksInstance = (
   const hooksInstance = makeHooksInstance(administrator, template);
   return {
     ...hooksInstance,
+    repaymentConstraintsAvailable: false,
     administrator,
     pendingAdministrator: constants.AddressZero
   };

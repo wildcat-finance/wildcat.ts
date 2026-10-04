@@ -1,3 +1,4 @@
+import { parseMarketParameterConstraints } from "../utils/type-parsers";
 import {
   decodeEventLog,
   encodeAbiParameters,
@@ -15,6 +16,7 @@ import {
 import {
   HooksCredential,
   MarketHooksInstanceInputs,
+  MarketParameterConstraints,
   ReadStateSource,
   RoleProvider
 } from "../types";
@@ -227,3 +229,14 @@ export function encodeMarketHooksInstanceInputs(args: MarketHooksInstanceInputs)
     ]
   );
 }
+
+export const getHooksParameterConstraints = (
+  data: AnyHooksInstanceDataStructOutput
+): MarketParameterConstraints => {
+  const constraints = parseMarketParameterConstraints(data.constraints);
+  if (!("repaymentConstraintsAvailable" in data) || !data.repaymentConstraintsAvailable) {
+    delete constraints.maximumRepaymentPeriod;
+    delete constraints.maximumRepaymentDateDelay;
+  }
+  return constraints;
+};
