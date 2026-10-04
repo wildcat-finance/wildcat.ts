@@ -263,6 +263,13 @@ fragment MarketData on Market {
   snapshot {
     ...MarketSnapshotData
   }
+  repaymentDate
+  repaymentPeriod
+  repaymentDeadline
+  closedAt
+  repaymentActivatedAt
+  defaultedAt
+  withdrawalRemainder
 }
 
 fragment ParameterConstraintsData on ParameterConstraints {
@@ -407,6 +414,13 @@ fragment MarketListData on Market {
   snapshot {
     ...MarketSnapshotData
   }
+  repaymentDate
+  repaymentPeriod
+  repaymentDeadline
+  closedAt
+  repaymentActivatedAt
+  defaultedAt
+  withdrawalRemainder
 }
 
 fragment MarketSnapshotData on MarketSnapshot {
@@ -438,6 +452,13 @@ fragment MarketSnapshotData on MarketSnapshot {
   updatedAtTimestamp
   updatedAtTransaction
   updatedAtLogIndex
+  repaymentDate
+  repaymentPeriod
+  repaymentDeadline
+  closedAt
+  repaymentActivatedAt
+  defaultedAt
+  withdrawalRemainder
 }
 
 fragment WithdrawalBatchPaymentProperties on WithdrawalBatchPayment {
@@ -626,6 +647,7 @@ fragment WithdrawalBatchProperties on WithdrawalBatch {
   payments(first: 100, orderBy: id, orderDirection: asc) {
     ...WithdrawalBatchPaymentProperties
   }
+  paymentRemainder
 }
 
 fragment WithdrawalBatchPropertiesWithEvents on WithdrawalBatch {
@@ -1093,6 +1115,14 @@ fragment HooksTemplateRegistrationData on HooksTemplateRegistration {
   }
   hooksFactory {
     ...HooksFactoryData
+  }
+  initCodeHash
+  initCodeHashRecord {
+    initCodeHash
+    blockNumber
+    blockTimestamp
+    transactionHash
+    blockLogIndex
   }
 }
 

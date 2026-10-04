@@ -1,3 +1,10 @@
+import {
+  unsupportedLifecycle,
+  unsupportedTemplateHash,
+  unsupportedAprProposal,
+  legacyRepaymentBounds,
+  legacyLiquidity
+} from "../helpers/v2.5-lens";
 import { expect } from "chai";
 import { rejects } from "assert";
 import { BigNumber, providers } from "ethers";
@@ -299,6 +306,8 @@ const makeUnifiedMarketData = (hooksFactory: string): MarketDataBaseV2_5StructOu
     ...data,
     hooksConfig: {
       ...data.hooksConfig,
+      periodicWithdrawalWindowOpen: false,
+      pendingAprChange: unsupportedAprProposal,
       flags: {
         ...data.hooksConfig.flags,
         useOnExecutePendingAnnualInterestBipsReduction: false
@@ -306,6 +315,9 @@ const makeUnifiedMarketData = (hooksFactory: string): MarketDataBaseV2_5StructOu
     },
     hooks: {
       ...data.hooks,
+      hooksTemplate: { ...data.hooks.hooksTemplate, initCodeHash: unsupportedTemplateHash },
+      constraints: { ...data.hooks.constraints, ...legacyRepaymentBounds },
+      repaymentConstraintsAvailable: false,
       administrator: data.hooks.borrower,
       pendingAdministrator: makeAddress(0),
       deploymentFlags: {
@@ -335,6 +347,9 @@ const makeUnifiedMarketDataV2 = (
   } = {}
 ): MarketDataV2_5StructOutput => ({
   market: makeUnifiedMarketData(hooksFactory),
+  registeredWrapper: makeAddress(0),
+  lifecycle: unsupportedLifecycle,
+  liquidity: legacyLiquidity(makeUnifiedMarketData(hooksFactory)),
   borrowerPrincipal: makeAddress(9),
   pendingBorrower: makeAddress(0),
   pendingBorrowerPrincipal: makeAddress(0),
@@ -347,6 +362,8 @@ const makeMarketLiveDataV2 = (
   data: MarketDataV2_5StructOutput
 ): MarketLiveDataV2_5StructOutput => ({
   market: data.market.marketToken.token,
+  lifecycle: data.lifecycle,
+  liquidity: legacyLiquidity(data.market),
   isClosed: data.market.isClosed,
   protocolFeeBips: data.market.protocolFeeBips,
   reserveRatioBips: data.market.reserveRatioBips,
@@ -954,6 +971,44 @@ describe("Market direct read routing", () => {
 });
 
 describe("Market model routing metadata", () => {
+  it("retains template identity from indexed, legacy lens and current lens reads", () => {
+    const indexed = makeSubgraphMarketData();
+    const indexedMarket = Market.fromSubgraphMarketData(
+      SupportedChainId.Sepolia,
+      provider,
+      indexed
+    );
+    expect(indexedMarket.hooksTemplateAddress).to.equal(
+      indexed.hooks!.templateRegistration.hooksTemplate.address
+    );
+    const factory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
+    const legacy = makeFactoryBackedMarketData(factory);
+    expect(
+      Market.fromMarketDataV2(SupportedChainId.Sepolia, provider, legacy).hooksTemplateAddress
+    ).to.equal(legacy.hooks.hooksTemplate.hooksTemplate);
+
+    const data = makeUnifiedMarketDataV2(factory);
+    data.market.hooks.hooksTemplate.hooksTemplate = "0xBcA425d384Da256040779DF532B6D2E8d3B3f1aD";
+    data.market.lastInterestAccruedTimestamp = 100;
+    data.lifecycle = {
+      isPresent: true,
+      repaymentDate: 100,
+      repaymentPeriod: 60,
+      repaymentDeadline: 160,
+      defaultedAt: 0,
+      isInRepayment: true
+    };
+    const market = Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
+    expect(market.hasFrozenHookParameters).to.equal(true);
+    market.updateWithLiveData(makeMarketLiveDataV2(data));
+    expect(market.hooksTemplateAddress).to.equal(data.market.hooks.hooksTemplate.hooksTemplate);
+    expect(market.hasFrozenHookParameters).to.equal(true);
+
+    data.market.hooks.hooksTemplate.hooksTemplate = "0x4aC04D306F3D2352998Ce48E2e8D357213683415";
+    expect(() => market.updateWith(data)).to.throw("Live market hooks template");
+    expect(market.hasFrozenHookParameters).to.equal(true);
+  });
+
   it("normalizes fixed-block provenance for every supported market generation", () => {
     const v1 = makeSubgraphMarketData();
     v1.version = SubgraphMarketVersion.V1;
@@ -1559,6 +1614,8 @@ describe("Market model routing metadata", () => {
     liveData.underlyingToken.token = data._asset.address;
     liveData.hooksConfig.hooksAddress = data.hooks!.address;
     liveData.hooks.hooksAddress = data.hooks!.address;
+    liveData.hooks.hooksTemplate.hooksTemplate =
+      data.hooks!.templateRegistration.hooksTemplate.address;
     market.updateWith(liveData);
 
     expect(market.stateSource).to.equal("live");
@@ -1602,6 +1659,8 @@ describe("Market reserve ratio previews", () => {
     data.market.scaledPendingWithdrawals = BigNumber.from(200);
     data.market.normalizedUnclaimedWithdrawals = BigNumber.from(20);
     data.market.totalAssets = BigNumber.from(500);
+    data.market.coverageLiquidity = BigNumber.from(310);
+    data.liquidity = legacyLiquidity(data.market);
     const market = Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
 
     const minimumReserves = market.minimumReserves;
@@ -1626,6 +1685,7 @@ describe("Market reserve ratio previews", () => {
     const hooksFactory = getDeploymentAddress(SupportedChainId.Sepolia, "HooksFactoryStandard");
     const scaleFactor = BigNumber.from(2).pow(22).mul(BigNumber.from(10).pow(27));
     const data = makeUnifiedMarketDataV2(hooksFactory);
+    data.liquidity = undefined; // Exercise local projections without an authoritative lens quote.
     data.market.scaleFactor = scaleFactor;
     data.market.scaledTotalSupply = BigNumber.from(1);
     data.market.totalSupply = BigNumber.from(2).pow(22);

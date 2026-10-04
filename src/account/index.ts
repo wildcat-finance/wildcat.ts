@@ -68,6 +68,8 @@ import {
 } from "../gql/graphql";
 import {
   DepositStatus,
+  RecoverUnderlyingStatus,
+  RecoverUnderlyingPreview,
   RepayStatus,
   CloseMarketPreview,
   SetAprPreview,
@@ -314,6 +316,7 @@ export class MarketAccount {
 
   get depositAvailability(): DepositStatus {
     if (this.market.isClosed) return DepositStatus.MarketClosed;
+    if (this.market.isInRepayment) return DepositStatus.MarketInRepayment;
     if (this.market.version === MarketVersion.V1) {
       if (this.role === LenderRole.Blocked) return DepositStatus.Blocked;
       if (
@@ -339,6 +342,9 @@ export class MarketAccount {
   }
 
   get withdrawalAvailability(): QueueWithdrawalStatus {
+    // Scheduled repayment bypasses hook admission, including credentials and periodic windows.
+    // Market-level sanctions and balance checks still apply onchain.
+    if (this.market.hasReachedRepaymentDate) return QueueWithdrawalStatus.Ready;
     if (this.market.version === MarketVersion.V1) {
       if (
         this.role === LenderRole.WithdrawOnly ||
@@ -551,6 +557,9 @@ export class MarketAccount {
     if (config?.kind !== HooksKind.PeriodicTerm) {
       return { status: ProposeAnnualInterestBipsStatus.NotPeriodicTermMarket };
     }
+    if (this.market.hasFrozenHookParameters) {
+      return { status: ProposeAnnualInterestBipsStatus.MarketInRepayment };
+    }
     if (apr >= this.market.annualInterestBips) {
       return { status: ProposeAnnualInterestBipsStatus.NotReduction };
     }
@@ -563,6 +572,9 @@ export class MarketAccount {
   previewSetMaxTotalSupply(amount: TokenAmount): SetMaxTotalSupplyPreview {
     assertNormalizedMarketAmount(amount, this.market, "Maximum supply");
     if (!this.isBorrower) return { status: SetMaxTotalSupplyStatus.NotBorrower };
+    if (this.market.hasFrozenHookParameters) {
+      return { status: SetMaxTotalSupplyStatus.MarketInRepayment };
+    }
     if (this.market.version === MarketVersion.V1 && amount.raw < this.market.totalSupply.raw) {
       return { status: SetMaxTotalSupplyStatus.BelowCurrentSupply };
     }
@@ -574,6 +586,9 @@ export class MarketAccount {
     if (this.market.version !== MarketVersion.V2)
       return { status: SetMinimumDepositStatus.NotV2Market };
     if (!this.isBorrower) return { status: SetMinimumDepositStatus.NotBorrower };
+    if (this.market.hasFrozenHookParameters) {
+      return { status: SetMinimumDepositStatus.MarketInRepayment };
+    }
     const config = this.market.hooksConfig;
     assert(config !== undefined, `V2 market missing hooksConfig`);
     if (amount.gt(0) && !config.flags.useOnDeposit) {
@@ -591,6 +606,9 @@ export class MarketAccount {
     if (!this.isBorrower) return { status: SetFixedTermEndTimeStatus.NotBorrower };
     const config = this.market.hooksConfig;
     if (config && config.kind === HooksKind.FixedTerm) {
+      if (this.market.hasFrozenHookParameters) {
+        return { status: SetFixedTermEndTimeStatus.MarketInRepayment };
+      }
       if (!config.allowTermReduction && endTime <= config.fixedTermEndTime) {
         return { status: SetFixedTermEndTimeStatus.FixedTermEndTimeNotChangeable };
       }
@@ -674,6 +692,43 @@ export class MarketAccount {
     return submitPreparedTransaction(this.market.signer, this.populateCloseMarket());
   }
 
+  /** Refresh the market before relying on this quote; recovery never consumes lender liabilities. */
+  previewRecoverUnderlying(): RecoverUnderlyingPreview {
+    const amount = this.market.recoverableUnderlying;
+    if (this.market.repaymentDate === undefined)
+      return { status: RecoverUnderlyingStatus.UnsupportedMarket, amount };
+    if (!this.isBorrower) return { status: RecoverUnderlyingStatus.NotBorrower, amount };
+    if (this.market.stateSource !== "live" || !this.market.liquidity)
+      return { status: RecoverUnderlyingStatus.LiveDataRequired, amount };
+    if (!this.market.isClosed) return { status: RecoverUnderlyingStatus.MarketOpen, amount };
+    return {
+      status: amount.gt(0)
+        ? RecoverUnderlyingStatus.Ready
+        : RecoverUnderlyingStatus.NoRecoverableUnderlying,
+      amount
+    };
+  }
+
+  populateRecoverUnderlying(): PartialTransaction {
+    const { status } = this.previewRecoverUnderlying();
+    assert(status === RecoverUnderlyingStatus.Ready, `Cannot recover underlying: ${status}`);
+    return prepareTransaction({
+      to: this.market.address,
+      abi: wildcatMarketV2Abi,
+      functionName: "rescueTokens",
+      args: [this.market.underlyingToken.address]
+    });
+  }
+
+  async recoverUnderlying(): Promise<TransactionHash> {
+    const signer = await this.market.signer.getAddress();
+    assert(
+      signer.toLowerCase() === this.account.toLowerCase(),
+      "Recovery signer does not match account"
+    );
+    return submitPreparedTransaction(this.market.signer, this.populateRecoverUnderlying());
+  }
+
   populateCloseMarket(): PartialTransaction {
     const { status } = this.previewCloseMarket();
     assert(status === CloseMarketStatus.Ready, `Cannot close market: ${status}`);
@@ -696,7 +751,7 @@ export class MarketAccount {
 
   async setMaxTotalSupply(amount: TokenAmount): Promise<TransactionHash> {
     const { status } = this.previewSetMaxTotalSupply(amount);
-    assert(status === SetMaxTotalSupplyStatus.Ready, `Cannot close market: ${status}`);
+    assert(status === SetMaxTotalSupplyStatus.Ready, `Cannot set maximum supply: ${status}`);
     if (this.market.version === MarketVersion.V1) {
       assert(this.market.controller !== undefined, "Controller address is required for V1 markets");
       return submitPreparedTransaction(

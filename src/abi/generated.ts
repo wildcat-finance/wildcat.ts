@@ -18934,7 +18934,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "originationFeeToken",
                 "type": "tuple"
               },
@@ -18954,7 +18954,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct FeeConfigurationV2_5",
+            "internalType": "struct MarketLensV2_5.FeeConfiguration",
             "name": "fees",
             "type": "tuple"
           },
@@ -18982,9 +18982,26 @@ export const marketLensV2_5Abi = [
             "internalType": "uint256",
             "name": "totalMarkets",
             "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "value",
+                "type": "bytes32"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+            "name": "initCodeHash",
+            "type": "tuple"
           }
         ],
-        "internalType": "struct HooksTemplateDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.HooksTemplateData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -19032,7 +19049,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "marketToken",
             "type": "tuple"
           },
@@ -19064,7 +19081,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "underlyingToken",
             "type": "tuple"
           },
@@ -19148,12 +19165,12 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "flags",
                 "type": "tuple"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -19216,9 +19233,46 @@ export const marketLensV2_5Abi = [
                 "internalType": "bool",
                 "name": "periodicTermClosed",
                 "type": "bool"
+              },
+              {
+                "internalType": "bool",
+                "name": "periodicWithdrawalWindowOpen",
+                "type": "bool"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint16",
+                    "name": "annualInterestBips",
+                    "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "proposalTimestamp",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowStart",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowEnd",
+                    "type": "uint32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                "name": "pendingAprChange",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct MarketHooksDataV2_5",
+            "internalType": "struct MarketLensV2_5.MarketHooksData",
             "name": "hooksConfig",
             "type": "tuple"
           },
@@ -19265,7 +19319,7 @@ export const marketLensV2_5Abi = [
                 "type": "string"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -19316,7 +19370,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct TokenMetadataV2_5",
+                        "internalType": "struct MarketLensV2_5.TokenMetadata",
                         "name": "originationFeeToken",
                         "type": "tuple"
                       },
@@ -19336,7 +19390,7 @@ export const marketLensV2_5Abi = [
                         "type": "uint256"
                       }
                     ],
-                    "internalType": "struct FeeConfigurationV2_5",
+                    "internalType": "struct MarketLensV2_5.FeeConfiguration",
                     "name": "fees",
                     "type": "tuple"
                   },
@@ -19364,9 +19418,26 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bytes32",
+                        "name": "value",
+                        "type": "bytes32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                    "name": "initCodeHash",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksTemplateDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksTemplateData",
                 "name": "hooksTemplate",
                 "type": "tuple"
               },
@@ -19421,9 +19492,19 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint16",
                     "name": "maximumAnnualInterestBips",
                     "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentPeriod",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentDateDelay",
+                    "type": "uint32"
                   }
                 ],
-                "internalType": "struct MarketParameterConstraintsV2_5",
+                "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                 "name": "constraints",
                 "type": "tuple"
               },
@@ -19492,7 +19573,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "optional",
                     "type": "tuple"
                   },
@@ -19559,12 +19640,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "required",
                     "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksDeploymentFlagsV2_5",
+                "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                 "name": "deploymentFlags",
                 "type": "tuple"
               },
@@ -19606,7 +19687,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pullProviders",
                 "type": "tuple[]"
               },
@@ -19648,7 +19729,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pushProviders",
                 "type": "tuple[]"
               },
@@ -19656,9 +19737,14 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "repaymentConstraintsAvailable",
+                "type": "bool"
               }
             ],
-            "internalType": "struct HooksInstanceDataV2_5",
+            "internalType": "struct MarketLensV2_5.HooksInstanceData",
             "name": "hooks",
             "type": "tuple"
           },
@@ -19773,7 +19859,7 @@ export const marketLensV2_5Abi = [
             "type": "uint256"
           }
         ],
-        "internalType": "struct MarketDataBaseV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -19823,7 +19909,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "marketToken",
                 "type": "tuple"
               },
@@ -19855,7 +19941,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "underlyingToken",
                 "type": "tuple"
               },
@@ -19939,12 +20025,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "flags",
                     "type": "tuple"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -20007,9 +20093,46 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "periodicTermClosed",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "periodicWithdrawalWindowOpen",
+                    "type": "bool"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "uint16",
+                        "name": "annualInterestBips",
+                        "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "proposalTimestamp",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowStart",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowEnd",
+                        "type": "uint32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                    "name": "pendingAprChange",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct MarketHooksDataV2_5",
+                "internalType": "struct MarketLensV2_5.MarketHooksData",
                 "name": "hooksConfig",
                 "type": "tuple"
               },
@@ -20056,7 +20179,7 @@ export const marketLensV2_5Abi = [
                     "type": "string"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -20107,7 +20230,7 @@ export const marketLensV2_5Abi = [
                                 "type": "bool"
                               }
                             ],
-                            "internalType": "struct TokenMetadataV2_5",
+                            "internalType": "struct MarketLensV2_5.TokenMetadata",
                             "name": "originationFeeToken",
                             "type": "tuple"
                           },
@@ -20127,7 +20250,7 @@ export const marketLensV2_5Abi = [
                             "type": "uint256"
                           }
                         ],
-                        "internalType": "struct FeeConfigurationV2_5",
+                        "internalType": "struct MarketLensV2_5.FeeConfiguration",
                         "name": "fees",
                         "type": "tuple"
                       },
@@ -20155,9 +20278,26 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint256",
                         "name": "totalMarkets",
                         "type": "uint256"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bool",
+                            "name": "isPresent",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bytes32",
+                            "name": "value",
+                            "type": "bytes32"
+                          }
+                        ],
+                        "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                        "name": "initCodeHash",
+                        "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksTemplateDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksTemplateData",
                     "name": "hooksTemplate",
                     "type": "tuple"
                   },
@@ -20212,9 +20352,19 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint16",
                         "name": "maximumAnnualInterestBips",
                         "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentPeriod",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentDateDelay",
+                        "type": "uint32"
                       }
                     ],
-                    "internalType": "struct MarketParameterConstraintsV2_5",
+                    "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                     "name": "constraints",
                     "type": "tuple"
                   },
@@ -20283,7 +20433,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "optional",
                         "type": "tuple"
                       },
@@ -20350,12 +20500,12 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "required",
                         "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksDeploymentFlagsV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                     "name": "deploymentFlags",
                     "type": "tuple"
                   },
@@ -20397,7 +20547,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pullProviders",
                     "type": "tuple[]"
                   },
@@ -20439,7 +20589,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pushProviders",
                     "type": "tuple[]"
                   },
@@ -20447,9 +20597,14 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "repaymentConstraintsAvailable",
+                    "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksInstanceDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksInstanceData",
                 "name": "hooks",
                 "type": "tuple"
               },
@@ -20564,7 +20719,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct MarketDataBaseV2_5",
+            "internalType": "struct MarketLensV2_5.MarketData",
             "name": "market",
             "type": "tuple"
           },
@@ -20601,7 +20756,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "commitmentFeeBips",
             "type": "tuple"
           },
@@ -20618,12 +20773,81 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "drawnAmount",
+            "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "registeredWrapper",
+            "type": "address"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentPeriod",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDeadline",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "defaultedAt",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "isInRepayment",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLifecycleData",
+            "name": "lifecycle",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "maximumDeposit",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "borrowableAssets",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "totalDebts",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "recoverableUnderlying",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLiquidityData",
+            "name": "liquidity",
             "type": "tuple"
           }
         ],
-        "internalType": "struct MarketDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketDataV2_5[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -20700,7 +20924,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct TokenMetadataV2_5",
+                    "internalType": "struct MarketLensV2_5.TokenMetadata",
                     "name": "originationFeeToken",
                     "type": "tuple"
                   },
@@ -20720,7 +20944,7 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct FeeConfigurationV2_5",
+                "internalType": "struct MarketLensV2_5.FeeConfiguration",
                 "name": "fees",
                 "type": "tuple"
               },
@@ -20748,9 +20972,26 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bytes32",
+                    "name": "value",
+                    "type": "bytes32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                "name": "initCodeHash",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct HooksTemplateDataV2_5[]",
+            "internalType": "struct MarketLensV2_5.HooksTemplateData[]",
             "name": "hooksTemplates",
             "type": "tuple[]"
           },
@@ -20777,7 +21018,7 @@ export const marketLensV2_5Abi = [
                 "type": "string"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -20828,7 +21069,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct TokenMetadataV2_5",
+                        "internalType": "struct MarketLensV2_5.TokenMetadata",
                         "name": "originationFeeToken",
                         "type": "tuple"
                       },
@@ -20848,7 +21089,7 @@ export const marketLensV2_5Abi = [
                         "type": "uint256"
                       }
                     ],
-                    "internalType": "struct FeeConfigurationV2_5",
+                    "internalType": "struct MarketLensV2_5.FeeConfiguration",
                     "name": "fees",
                     "type": "tuple"
                   },
@@ -20876,9 +21117,26 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bytes32",
+                        "name": "value",
+                        "type": "bytes32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                    "name": "initCodeHash",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksTemplateDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksTemplateData",
                 "name": "hooksTemplate",
                 "type": "tuple"
               },
@@ -20933,9 +21191,19 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint16",
                     "name": "maximumAnnualInterestBips",
                     "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentPeriod",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentDateDelay",
+                    "type": "uint32"
                   }
                 ],
-                "internalType": "struct MarketParameterConstraintsV2_5",
+                "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                 "name": "constraints",
                 "type": "tuple"
               },
@@ -21004,7 +21272,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "optional",
                     "type": "tuple"
                   },
@@ -21071,12 +21339,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "required",
                     "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksDeploymentFlagsV2_5",
+                "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                 "name": "deploymentFlags",
                 "type": "tuple"
               },
@@ -21118,7 +21386,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pullProviders",
                 "type": "tuple[]"
               },
@@ -21160,7 +21428,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pushProviders",
                 "type": "tuple[]"
               },
@@ -21168,14 +21436,19 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "repaymentConstraintsAvailable",
+                "type": "bool"
               }
             ],
-            "internalType": "struct HooksInstanceDataV2_5[]",
+            "internalType": "struct MarketLensV2_5.HooksInstanceData[]",
             "name": "hooksInstances",
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct HooksDataForBorrowerV2_5",
+        "internalType": "struct MarketLensV2_5.HooksDataForBorrower",
         "name": "data",
         "type": "tuple"
       }
@@ -21216,7 +21489,7 @@ export const marketLensV2_5Abi = [
             "type": "string"
           },
           {
-            "internalType": "enum HooksInstanceKindV2_5",
+            "internalType": "uint8",
             "name": "kind",
             "type": "uint8"
           },
@@ -21267,7 +21540,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct TokenMetadataV2_5",
+                    "internalType": "struct MarketLensV2_5.TokenMetadata",
                     "name": "originationFeeToken",
                     "type": "tuple"
                   },
@@ -21287,7 +21560,7 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct FeeConfigurationV2_5",
+                "internalType": "struct MarketLensV2_5.FeeConfiguration",
                 "name": "fees",
                 "type": "tuple"
               },
@@ -21315,9 +21588,26 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bytes32",
+                    "name": "value",
+                    "type": "bytes32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                "name": "initCodeHash",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct HooksTemplateDataV2_5",
+            "internalType": "struct MarketLensV2_5.HooksTemplateData",
             "name": "hooksTemplate",
             "type": "tuple"
           },
@@ -21372,9 +21662,19 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint16",
                 "name": "maximumAnnualInterestBips",
                 "type": "uint16"
+              },
+              {
+                "internalType": "uint32",
+                "name": "maximumRepaymentPeriod",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "maximumRepaymentDateDelay",
+                "type": "uint32"
               }
             ],
-            "internalType": "struct MarketParameterConstraintsV2_5",
+            "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
             "name": "constraints",
             "type": "tuple"
           },
@@ -21443,7 +21743,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "optional",
                 "type": "tuple"
               },
@@ -21510,12 +21810,12 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "required",
                 "type": "tuple"
               }
             ],
-            "internalType": "struct HooksDeploymentFlagsV2_5",
+            "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
             "name": "deploymentFlags",
             "type": "tuple"
           },
@@ -21557,7 +21857,7 @@ export const marketLensV2_5Abi = [
                 "type": "address"
               }
             ],
-            "internalType": "struct RoleProviderDataV2_5[]",
+            "internalType": "struct MarketLensV2_5.RoleProviderData[]",
             "name": "pullProviders",
             "type": "tuple[]"
           },
@@ -21599,7 +21899,7 @@ export const marketLensV2_5Abi = [
                 "type": "address"
               }
             ],
-            "internalType": "struct RoleProviderDataV2_5[]",
+            "internalType": "struct MarketLensV2_5.RoleProviderData[]",
             "name": "pushProviders",
             "type": "tuple[]"
           },
@@ -21607,9 +21907,14 @@ export const marketLensV2_5Abi = [
             "internalType": "uint256",
             "name": "totalMarkets",
             "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "repaymentConstraintsAvailable",
+            "type": "bool"
           }
         ],
-        "internalType": "struct HooksInstanceDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.HooksInstanceData[]",
         "name": "arr",
         "type": "tuple[]"
       }
@@ -21681,7 +21986,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct TokenMetadataV2_5",
+                    "internalType": "struct MarketLensV2_5.TokenMetadata",
                     "name": "originationFeeToken",
                     "type": "tuple"
                   },
@@ -21701,7 +22006,7 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct FeeConfigurationV2_5",
+                "internalType": "struct MarketLensV2_5.FeeConfiguration",
                 "name": "fees",
                 "type": "tuple"
               },
@@ -21729,14 +22034,31 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bytes32",
+                    "name": "value",
+                    "type": "bytes32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                "name": "initCodeHash",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct HooksTemplateDataV2_5",
+            "internalType": "struct MarketLensV2_5.HooksTemplateData",
             "name": "hooksTemplateData",
             "type": "tuple"
           }
         ],
-        "internalType": "struct FactoryScopedHooksTemplateDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.FactoryScopedHooksTemplateData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -21756,7 +22078,7 @@ export const marketLensV2_5Abi = [
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "count",
         "type": "uint256"
       }
     ],
@@ -21820,7 +22142,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "originationFeeToken",
                 "type": "tuple"
               },
@@ -21840,7 +22162,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct FeeConfigurationV2_5",
+            "internalType": "struct MarketLensV2_5.FeeConfiguration",
             "name": "fees",
             "type": "tuple"
           },
@@ -21868,9 +22190,26 @@ export const marketLensV2_5Abi = [
             "internalType": "uint256",
             "name": "totalMarkets",
             "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "value",
+                "type": "bytes32"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+            "name": "initCodeHash",
+            "type": "tuple"
           }
         ],
-        "internalType": "struct HooksTemplateDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.HooksTemplateData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -21940,7 +22279,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "originationFeeToken",
                 "type": "tuple"
               },
@@ -21960,7 +22299,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct FeeConfigurationV2_5",
+            "internalType": "struct MarketLensV2_5.FeeConfiguration",
             "name": "fees",
             "type": "tuple"
           },
@@ -21988,9 +22327,26 @@ export const marketLensV2_5Abi = [
             "internalType": "uint256",
             "name": "totalMarkets",
             "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "value",
+                "type": "bytes32"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+            "name": "initCodeHash",
+            "type": "tuple"
           }
         ],
-        "internalType": "struct HooksTemplateDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.HooksTemplateData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -22043,7 +22399,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "marketToken",
             "type": "tuple"
           },
@@ -22075,7 +22431,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "underlyingToken",
             "type": "tuple"
           },
@@ -22159,12 +22515,12 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "flags",
                 "type": "tuple"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -22227,9 +22583,46 @@ export const marketLensV2_5Abi = [
                 "internalType": "bool",
                 "name": "periodicTermClosed",
                 "type": "bool"
+              },
+              {
+                "internalType": "bool",
+                "name": "periodicWithdrawalWindowOpen",
+                "type": "bool"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint16",
+                    "name": "annualInterestBips",
+                    "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "proposalTimestamp",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowStart",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowEnd",
+                    "type": "uint32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                "name": "pendingAprChange",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct MarketHooksDataV2_5",
+            "internalType": "struct MarketLensV2_5.MarketHooksData",
             "name": "hooksConfig",
             "type": "tuple"
           },
@@ -22276,7 +22669,7 @@ export const marketLensV2_5Abi = [
                 "type": "string"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -22327,7 +22720,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct TokenMetadataV2_5",
+                        "internalType": "struct MarketLensV2_5.TokenMetadata",
                         "name": "originationFeeToken",
                         "type": "tuple"
                       },
@@ -22347,7 +22740,7 @@ export const marketLensV2_5Abi = [
                         "type": "uint256"
                       }
                     ],
-                    "internalType": "struct FeeConfigurationV2_5",
+                    "internalType": "struct MarketLensV2_5.FeeConfiguration",
                     "name": "fees",
                     "type": "tuple"
                   },
@@ -22375,9 +22768,26 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bytes32",
+                        "name": "value",
+                        "type": "bytes32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                    "name": "initCodeHash",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksTemplateDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksTemplateData",
                 "name": "hooksTemplate",
                 "type": "tuple"
               },
@@ -22432,9 +22842,19 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint16",
                     "name": "maximumAnnualInterestBips",
                     "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentPeriod",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentDateDelay",
+                    "type": "uint32"
                   }
                 ],
-                "internalType": "struct MarketParameterConstraintsV2_5",
+                "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                 "name": "constraints",
                 "type": "tuple"
               },
@@ -22503,7 +22923,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "optional",
                     "type": "tuple"
                   },
@@ -22570,12 +22990,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "required",
                     "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksDeploymentFlagsV2_5",
+                "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                 "name": "deploymentFlags",
                 "type": "tuple"
               },
@@ -22617,7 +23037,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pullProviders",
                 "type": "tuple[]"
               },
@@ -22659,7 +23079,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pushProviders",
                 "type": "tuple[]"
               },
@@ -22667,9 +23087,14 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "repaymentConstraintsAvailable",
+                "type": "bool"
               }
             ],
-            "internalType": "struct HooksInstanceDataV2_5",
+            "internalType": "struct MarketLensV2_5.HooksInstanceData",
             "name": "hooks",
             "type": "tuple"
           },
@@ -22784,7 +23209,7 @@ export const marketLensV2_5Abi = [
             "type": "uint256"
           }
         ],
-        "internalType": "struct MarketDataBaseV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -22832,7 +23257,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "marketToken",
             "type": "tuple"
           },
@@ -22864,7 +23289,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "underlyingToken",
             "type": "tuple"
           },
@@ -22948,12 +23373,12 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "flags",
                 "type": "tuple"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -23016,9 +23441,46 @@ export const marketLensV2_5Abi = [
                 "internalType": "bool",
                 "name": "periodicTermClosed",
                 "type": "bool"
+              },
+              {
+                "internalType": "bool",
+                "name": "periodicWithdrawalWindowOpen",
+                "type": "bool"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint16",
+                    "name": "annualInterestBips",
+                    "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "proposalTimestamp",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowStart",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowEnd",
+                    "type": "uint32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                "name": "pendingAprChange",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct MarketHooksDataV2_5",
+            "internalType": "struct MarketLensV2_5.MarketHooksData",
             "name": "hooksConfig",
             "type": "tuple"
           },
@@ -23065,7 +23527,7 @@ export const marketLensV2_5Abi = [
                 "type": "string"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -23116,7 +23578,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct TokenMetadataV2_5",
+                        "internalType": "struct MarketLensV2_5.TokenMetadata",
                         "name": "originationFeeToken",
                         "type": "tuple"
                       },
@@ -23136,7 +23598,7 @@ export const marketLensV2_5Abi = [
                         "type": "uint256"
                       }
                     ],
-                    "internalType": "struct FeeConfigurationV2_5",
+                    "internalType": "struct MarketLensV2_5.FeeConfiguration",
                     "name": "fees",
                     "type": "tuple"
                   },
@@ -23164,9 +23626,26 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bytes32",
+                        "name": "value",
+                        "type": "bytes32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                    "name": "initCodeHash",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksTemplateDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksTemplateData",
                 "name": "hooksTemplate",
                 "type": "tuple"
               },
@@ -23221,9 +23700,19 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint16",
                     "name": "maximumAnnualInterestBips",
                     "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentPeriod",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentDateDelay",
+                    "type": "uint32"
                   }
                 ],
-                "internalType": "struct MarketParameterConstraintsV2_5",
+                "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                 "name": "constraints",
                 "type": "tuple"
               },
@@ -23292,7 +23781,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "optional",
                     "type": "tuple"
                   },
@@ -23359,12 +23848,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "required",
                     "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksDeploymentFlagsV2_5",
+                "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                 "name": "deploymentFlags",
                 "type": "tuple"
               },
@@ -23406,7 +23895,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pullProviders",
                 "type": "tuple[]"
               },
@@ -23448,7 +23937,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pushProviders",
                 "type": "tuple[]"
               },
@@ -23456,9 +23945,14 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "repaymentConstraintsAvailable",
+                "type": "bool"
               }
             ],
-            "internalType": "struct HooksInstanceDataV2_5",
+            "internalType": "struct MarketLensV2_5.HooksInstanceData",
             "name": "hooks",
             "type": "tuple"
           },
@@ -23573,7 +24067,7 @@ export const marketLensV2_5Abi = [
             "type": "uint256"
           }
         ],
-        "internalType": "struct MarketDataBaseV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -23628,7 +24122,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "marketToken",
                 "type": "tuple"
               },
@@ -23660,7 +24154,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "underlyingToken",
                 "type": "tuple"
               },
@@ -23744,12 +24238,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "flags",
                     "type": "tuple"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -23812,9 +24306,46 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "periodicTermClosed",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "periodicWithdrawalWindowOpen",
+                    "type": "bool"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "uint16",
+                        "name": "annualInterestBips",
+                        "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "proposalTimestamp",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowStart",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowEnd",
+                        "type": "uint32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                    "name": "pendingAprChange",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct MarketHooksDataV2_5",
+                "internalType": "struct MarketLensV2_5.MarketHooksData",
                 "name": "hooksConfig",
                 "type": "tuple"
               },
@@ -23861,7 +24392,7 @@ export const marketLensV2_5Abi = [
                     "type": "string"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -23912,7 +24443,7 @@ export const marketLensV2_5Abi = [
                                 "type": "bool"
                               }
                             ],
-                            "internalType": "struct TokenMetadataV2_5",
+                            "internalType": "struct MarketLensV2_5.TokenMetadata",
                             "name": "originationFeeToken",
                             "type": "tuple"
                           },
@@ -23932,7 +24463,7 @@ export const marketLensV2_5Abi = [
                             "type": "uint256"
                           }
                         ],
-                        "internalType": "struct FeeConfigurationV2_5",
+                        "internalType": "struct MarketLensV2_5.FeeConfiguration",
                         "name": "fees",
                         "type": "tuple"
                       },
@@ -23960,9 +24491,26 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint256",
                         "name": "totalMarkets",
                         "type": "uint256"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bool",
+                            "name": "isPresent",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bytes32",
+                            "name": "value",
+                            "type": "bytes32"
+                          }
+                        ],
+                        "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                        "name": "initCodeHash",
+                        "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksTemplateDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksTemplateData",
                     "name": "hooksTemplate",
                     "type": "tuple"
                   },
@@ -24017,9 +24565,19 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint16",
                         "name": "maximumAnnualInterestBips",
                         "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentPeriod",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentDateDelay",
+                        "type": "uint32"
                       }
                     ],
-                    "internalType": "struct MarketParameterConstraintsV2_5",
+                    "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                     "name": "constraints",
                     "type": "tuple"
                   },
@@ -24088,7 +24646,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "optional",
                         "type": "tuple"
                       },
@@ -24155,12 +24713,12 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "required",
                         "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksDeploymentFlagsV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                     "name": "deploymentFlags",
                     "type": "tuple"
                   },
@@ -24202,7 +24760,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pullProviders",
                     "type": "tuple[]"
                   },
@@ -24244,7 +24802,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pushProviders",
                     "type": "tuple[]"
                   },
@@ -24252,9 +24810,14 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "repaymentConstraintsAvailable",
+                    "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksInstanceDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksInstanceData",
                 "name": "hooks",
                 "type": "tuple"
               },
@@ -24369,7 +24932,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct MarketDataBaseV2_5",
+            "internalType": "struct MarketLensV2_5.MarketData",
             "name": "market",
             "type": "tuple"
           },
@@ -24406,7 +24969,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "commitmentFeeBips",
             "type": "tuple"
           },
@@ -24423,12 +24986,81 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "drawnAmount",
+            "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "registeredWrapper",
+            "type": "address"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentPeriod",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDeadline",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "defaultedAt",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "isInRepayment",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLifecycleData",
+            "name": "lifecycle",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "maximumDeposit",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "borrowableAssets",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "totalDebts",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "recoverableUnderlying",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLiquidityData",
+            "name": "liquidity",
             "type": "tuple"
           }
         ],
-        "internalType": "struct MarketDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketDataV2_5[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -24478,7 +25110,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "marketToken",
                 "type": "tuple"
               },
@@ -24510,7 +25142,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "underlyingToken",
                 "type": "tuple"
               },
@@ -24594,12 +25226,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "flags",
                     "type": "tuple"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -24662,9 +25294,46 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "periodicTermClosed",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "periodicWithdrawalWindowOpen",
+                    "type": "bool"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "uint16",
+                        "name": "annualInterestBips",
+                        "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "proposalTimestamp",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowStart",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowEnd",
+                        "type": "uint32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                    "name": "pendingAprChange",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct MarketHooksDataV2_5",
+                "internalType": "struct MarketLensV2_5.MarketHooksData",
                 "name": "hooksConfig",
                 "type": "tuple"
               },
@@ -24711,7 +25380,7 @@ export const marketLensV2_5Abi = [
                     "type": "string"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -24762,7 +25431,7 @@ export const marketLensV2_5Abi = [
                                 "type": "bool"
                               }
                             ],
-                            "internalType": "struct TokenMetadataV2_5",
+                            "internalType": "struct MarketLensV2_5.TokenMetadata",
                             "name": "originationFeeToken",
                             "type": "tuple"
                           },
@@ -24782,7 +25451,7 @@ export const marketLensV2_5Abi = [
                             "type": "uint256"
                           }
                         ],
-                        "internalType": "struct FeeConfigurationV2_5",
+                        "internalType": "struct MarketLensV2_5.FeeConfiguration",
                         "name": "fees",
                         "type": "tuple"
                       },
@@ -24810,9 +25479,26 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint256",
                         "name": "totalMarkets",
                         "type": "uint256"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bool",
+                            "name": "isPresent",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bytes32",
+                            "name": "value",
+                            "type": "bytes32"
+                          }
+                        ],
+                        "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                        "name": "initCodeHash",
+                        "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksTemplateDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksTemplateData",
                     "name": "hooksTemplate",
                     "type": "tuple"
                   },
@@ -24867,9 +25553,19 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint16",
                         "name": "maximumAnnualInterestBips",
                         "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentPeriod",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentDateDelay",
+                        "type": "uint32"
                       }
                     ],
-                    "internalType": "struct MarketParameterConstraintsV2_5",
+                    "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                     "name": "constraints",
                     "type": "tuple"
                   },
@@ -24938,7 +25634,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "optional",
                         "type": "tuple"
                       },
@@ -25005,12 +25701,12 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "required",
                         "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksDeploymentFlagsV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                     "name": "deploymentFlags",
                     "type": "tuple"
                   },
@@ -25052,7 +25748,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pullProviders",
                     "type": "tuple[]"
                   },
@@ -25094,7 +25790,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pushProviders",
                     "type": "tuple[]"
                   },
@@ -25102,9 +25798,14 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "repaymentConstraintsAvailable",
+                    "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksInstanceDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksInstanceData",
                 "name": "hooks",
                 "type": "tuple"
               },
@@ -25219,7 +25920,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct MarketDataBaseV2_5",
+            "internalType": "struct MarketLensV2_5.MarketData",
             "name": "market",
             "type": "tuple"
           },
@@ -25256,7 +25957,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "commitmentFeeBips",
             "type": "tuple"
           },
@@ -25273,12 +25974,81 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "drawnAmount",
             "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "registeredWrapper",
+            "type": "address"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentPeriod",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDeadline",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "defaultedAt",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "isInRepayment",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLifecycleData",
+            "name": "lifecycle",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "maximumDeposit",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "borrowableAssets",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "totalDebts",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "recoverableUnderlying",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLiquidityData",
+            "name": "liquidity",
+            "type": "tuple"
           }
         ],
-        "internalType": "struct MarketDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketDataV2_5[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -25355,7 +26125,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct TokenMetadataV2_5",
+                    "internalType": "struct MarketLensV2_5.TokenMetadata",
                     "name": "originationFeeToken",
                     "type": "tuple"
                   },
@@ -25375,7 +26145,7 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct FeeConfigurationV2_5",
+                "internalType": "struct MarketLensV2_5.FeeConfiguration",
                 "name": "fees",
                 "type": "tuple"
               },
@@ -25403,9 +26173,26 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bytes32",
+                    "name": "value",
+                    "type": "bytes32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                "name": "initCodeHash",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct HooksTemplateDataV2_5[]",
+            "internalType": "struct MarketLensV2_5.HooksTemplateData[]",
             "name": "hooksTemplates",
             "type": "tuple[]"
           },
@@ -25432,7 +26219,7 @@ export const marketLensV2_5Abi = [
                 "type": "string"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -25483,7 +26270,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct TokenMetadataV2_5",
+                        "internalType": "struct MarketLensV2_5.TokenMetadata",
                         "name": "originationFeeToken",
                         "type": "tuple"
                       },
@@ -25503,7 +26290,7 @@ export const marketLensV2_5Abi = [
                         "type": "uint256"
                       }
                     ],
-                    "internalType": "struct FeeConfigurationV2_5",
+                    "internalType": "struct MarketLensV2_5.FeeConfiguration",
                     "name": "fees",
                     "type": "tuple"
                   },
@@ -25531,9 +26318,26 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bytes32",
+                        "name": "value",
+                        "type": "bytes32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                    "name": "initCodeHash",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksTemplateDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksTemplateData",
                 "name": "hooksTemplate",
                 "type": "tuple"
               },
@@ -25588,9 +26392,19 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint16",
                     "name": "maximumAnnualInterestBips",
                     "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentPeriod",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentDateDelay",
+                    "type": "uint32"
                   }
                 ],
-                "internalType": "struct MarketParameterConstraintsV2_5",
+                "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                 "name": "constraints",
                 "type": "tuple"
               },
@@ -25659,7 +26473,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "optional",
                     "type": "tuple"
                   },
@@ -25726,12 +26540,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "required",
                     "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksDeploymentFlagsV2_5",
+                "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                 "name": "deploymentFlags",
                 "type": "tuple"
               },
@@ -25773,7 +26587,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pullProviders",
                 "type": "tuple[]"
               },
@@ -25815,7 +26629,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pushProviders",
                 "type": "tuple[]"
               },
@@ -25823,14 +26637,19 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "repaymentConstraintsAvailable",
+                "type": "bool"
               }
             ],
-            "internalType": "struct HooksInstanceDataV2_5[]",
+            "internalType": "struct MarketLensV2_5.HooksInstanceData[]",
             "name": "hooksInstances",
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct HooksDataForBorrowerV2_5",
+        "internalType": "struct MarketLensV2_5.HooksDataForBorrower",
         "name": "data",
         "type": "tuple"
       }
@@ -25912,7 +26731,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct TokenMetadataV2_5",
+                    "internalType": "struct MarketLensV2_5.TokenMetadata",
                     "name": "originationFeeToken",
                     "type": "tuple"
                   },
@@ -25932,7 +26751,7 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct FeeConfigurationV2_5",
+                "internalType": "struct MarketLensV2_5.FeeConfiguration",
                 "name": "fees",
                 "type": "tuple"
               },
@@ -25960,9 +26779,26 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bytes32",
+                    "name": "value",
+                    "type": "bytes32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                "name": "initCodeHash",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct HooksTemplateDataV2_5[]",
+            "internalType": "struct MarketLensV2_5.HooksTemplateData[]",
             "name": "hooksTemplates",
             "type": "tuple[]"
           },
@@ -25989,7 +26825,7 @@ export const marketLensV2_5Abi = [
                 "type": "string"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -26040,7 +26876,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct TokenMetadataV2_5",
+                        "internalType": "struct MarketLensV2_5.TokenMetadata",
                         "name": "originationFeeToken",
                         "type": "tuple"
                       },
@@ -26060,7 +26896,7 @@ export const marketLensV2_5Abi = [
                         "type": "uint256"
                       }
                     ],
-                    "internalType": "struct FeeConfigurationV2_5",
+                    "internalType": "struct MarketLensV2_5.FeeConfiguration",
                     "name": "fees",
                     "type": "tuple"
                   },
@@ -26088,9 +26924,26 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bytes32",
+                        "name": "value",
+                        "type": "bytes32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                    "name": "initCodeHash",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksTemplateDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksTemplateData",
                 "name": "hooksTemplate",
                 "type": "tuple"
               },
@@ -26145,9 +26998,19 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint16",
                     "name": "maximumAnnualInterestBips",
                     "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentPeriod",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentDateDelay",
+                    "type": "uint32"
                   }
                 ],
-                "internalType": "struct MarketParameterConstraintsV2_5",
+                "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                 "name": "constraints",
                 "type": "tuple"
               },
@@ -26216,7 +27079,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "optional",
                     "type": "tuple"
                   },
@@ -26283,12 +27146,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "required",
                     "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksDeploymentFlagsV2_5",
+                "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                 "name": "deploymentFlags",
                 "type": "tuple"
               },
@@ -26330,7 +27193,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pullProviders",
                 "type": "tuple[]"
               },
@@ -26372,7 +27235,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pushProviders",
                 "type": "tuple[]"
               },
@@ -26380,14 +27243,19 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "repaymentConstraintsAvailable",
+                "type": "bool"
               }
             ],
-            "internalType": "struct HooksInstanceDataV2_5[]",
+            "internalType": "struct MarketLensV2_5.HooksInstanceData[]",
             "name": "hooksInstances",
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct HooksDataForBorrowerV2_5",
+        "internalType": "struct MarketLensV2_5.HooksDataForBorrower",
         "name": "data",
         "type": "tuple"
       }
@@ -26433,7 +27301,7 @@ export const marketLensV2_5Abi = [
             "type": "string"
           },
           {
-            "internalType": "enum HooksInstanceKindV2_5",
+            "internalType": "uint8",
             "name": "kind",
             "type": "uint8"
           },
@@ -26484,7 +27352,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct TokenMetadataV2_5",
+                    "internalType": "struct MarketLensV2_5.TokenMetadata",
                     "name": "originationFeeToken",
                     "type": "tuple"
                   },
@@ -26504,7 +27372,7 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct FeeConfigurationV2_5",
+                "internalType": "struct MarketLensV2_5.FeeConfiguration",
                 "name": "fees",
                 "type": "tuple"
               },
@@ -26532,9 +27400,26 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bytes32",
+                    "name": "value",
+                    "type": "bytes32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                "name": "initCodeHash",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct HooksTemplateDataV2_5",
+            "internalType": "struct MarketLensV2_5.HooksTemplateData",
             "name": "hooksTemplate",
             "type": "tuple"
           },
@@ -26589,9 +27474,19 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint16",
                 "name": "maximumAnnualInterestBips",
                 "type": "uint16"
+              },
+              {
+                "internalType": "uint32",
+                "name": "maximumRepaymentPeriod",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "maximumRepaymentDateDelay",
+                "type": "uint32"
               }
             ],
-            "internalType": "struct MarketParameterConstraintsV2_5",
+            "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
             "name": "constraints",
             "type": "tuple"
           },
@@ -26660,7 +27555,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "optional",
                 "type": "tuple"
               },
@@ -26727,12 +27622,12 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "required",
                 "type": "tuple"
               }
             ],
-            "internalType": "struct HooksDeploymentFlagsV2_5",
+            "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
             "name": "deploymentFlags",
             "type": "tuple"
           },
@@ -26774,7 +27669,7 @@ export const marketLensV2_5Abi = [
                 "type": "address"
               }
             ],
-            "internalType": "struct RoleProviderDataV2_5[]",
+            "internalType": "struct MarketLensV2_5.RoleProviderData[]",
             "name": "pullProviders",
             "type": "tuple[]"
           },
@@ -26816,7 +27711,7 @@ export const marketLensV2_5Abi = [
                 "type": "address"
               }
             ],
-            "internalType": "struct RoleProviderDataV2_5[]",
+            "internalType": "struct MarketLensV2_5.RoleProviderData[]",
             "name": "pushProviders",
             "type": "tuple[]"
           },
@@ -26824,9 +27719,14 @@ export const marketLensV2_5Abi = [
             "internalType": "uint256",
             "name": "totalMarkets",
             "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "repaymentConstraintsAvailable",
+            "type": "bool"
           }
         ],
-        "internalType": "struct HooksInstanceDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.HooksInstanceData[]",
         "name": "arr",
         "type": "tuple[]"
       }
@@ -26867,7 +27767,7 @@ export const marketLensV2_5Abi = [
             "type": "string"
           },
           {
-            "internalType": "enum HooksInstanceKindV2_5",
+            "internalType": "uint8",
             "name": "kind",
             "type": "uint8"
           },
@@ -26918,7 +27818,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct TokenMetadataV2_5",
+                    "internalType": "struct MarketLensV2_5.TokenMetadata",
                     "name": "originationFeeToken",
                     "type": "tuple"
                   },
@@ -26938,7 +27838,7 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct FeeConfigurationV2_5",
+                "internalType": "struct MarketLensV2_5.FeeConfiguration",
                 "name": "fees",
                 "type": "tuple"
               },
@@ -26966,9 +27866,26 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bytes32",
+                    "name": "value",
+                    "type": "bytes32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                "name": "initCodeHash",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct HooksTemplateDataV2_5",
+            "internalType": "struct MarketLensV2_5.HooksTemplateData",
             "name": "hooksTemplate",
             "type": "tuple"
           },
@@ -27023,9 +27940,19 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint16",
                 "name": "maximumAnnualInterestBips",
                 "type": "uint16"
+              },
+              {
+                "internalType": "uint32",
+                "name": "maximumRepaymentPeriod",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "maximumRepaymentDateDelay",
+                "type": "uint32"
               }
             ],
-            "internalType": "struct MarketParameterConstraintsV2_5",
+            "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
             "name": "constraints",
             "type": "tuple"
           },
@@ -27094,7 +28021,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "optional",
                 "type": "tuple"
               },
@@ -27161,12 +28088,12 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "required",
                 "type": "tuple"
               }
             ],
-            "internalType": "struct HooksDeploymentFlagsV2_5",
+            "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
             "name": "deploymentFlags",
             "type": "tuple"
           },
@@ -27208,7 +28135,7 @@ export const marketLensV2_5Abi = [
                 "type": "address"
               }
             ],
-            "internalType": "struct RoleProviderDataV2_5[]",
+            "internalType": "struct MarketLensV2_5.RoleProviderData[]",
             "name": "pullProviders",
             "type": "tuple[]"
           },
@@ -27250,7 +28177,7 @@ export const marketLensV2_5Abi = [
                 "type": "address"
               }
             ],
-            "internalType": "struct RoleProviderDataV2_5[]",
+            "internalType": "struct MarketLensV2_5.RoleProviderData[]",
             "name": "pushProviders",
             "type": "tuple[]"
           },
@@ -27258,9 +28185,14 @@ export const marketLensV2_5Abi = [
             "internalType": "uint256",
             "name": "totalMarkets",
             "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "repaymentConstraintsAvailable",
+            "type": "bool"
           }
         ],
-        "internalType": "struct HooksInstanceDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.HooksInstanceData[]",
         "name": "arr",
         "type": "tuple[]"
       }
@@ -27335,7 +28267,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "originationFeeToken",
                 "type": "tuple"
               },
@@ -27355,7 +28287,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct FeeConfigurationV2_5",
+            "internalType": "struct MarketLensV2_5.FeeConfiguration",
             "name": "fees",
             "type": "tuple"
           },
@@ -27383,9 +28315,26 @@ export const marketLensV2_5Abi = [
             "internalType": "uint256",
             "name": "totalMarkets",
             "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "value",
+                "type": "bytes32"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+            "name": "initCodeHash",
+            "type": "tuple"
           }
         ],
-        "internalType": "struct HooksTemplateDataV2_5",
+        "internalType": "struct MarketLensV2_5.HooksTemplateData",
         "name": "data",
         "type": "tuple"
       }
@@ -27455,7 +28404,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "originationFeeToken",
                 "type": "tuple"
               },
@@ -27475,7 +28424,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct FeeConfigurationV2_5",
+            "internalType": "struct MarketLensV2_5.FeeConfiguration",
             "name": "fees",
             "type": "tuple"
           },
@@ -27503,9 +28452,26 @@ export const marketLensV2_5Abi = [
             "internalType": "uint256",
             "name": "totalMarkets",
             "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "value",
+                "type": "bytes32"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+            "name": "initCodeHash",
+            "type": "tuple"
           }
         ],
-        "internalType": "struct HooksTemplateDataV2_5",
+        "internalType": "struct MarketLensV2_5.HooksTemplateData",
         "name": "data",
         "type": "tuple"
       }
@@ -27575,7 +28541,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "originationFeeToken",
                 "type": "tuple"
               },
@@ -27595,7 +28561,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct FeeConfigurationV2_5",
+            "internalType": "struct MarketLensV2_5.FeeConfiguration",
             "name": "fees",
             "type": "tuple"
           },
@@ -27623,9 +28589,26 @@ export const marketLensV2_5Abi = [
             "internalType": "uint256",
             "name": "totalMarkets",
             "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "value",
+                "type": "bytes32"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+            "name": "initCodeHash",
+            "type": "tuple"
           }
         ],
-        "internalType": "struct HooksTemplateDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.HooksTemplateData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -27700,7 +28683,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "originationFeeToken",
                 "type": "tuple"
               },
@@ -27720,7 +28703,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct FeeConfigurationV2_5",
+            "internalType": "struct MarketLensV2_5.FeeConfiguration",
             "name": "fees",
             "type": "tuple"
           },
@@ -27748,9 +28731,26 @@ export const marketLensV2_5Abi = [
             "internalType": "uint256",
             "name": "totalMarkets",
             "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "value",
+                "type": "bytes32"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+            "name": "initCodeHash",
+            "type": "tuple"
           }
         ],
-        "internalType": "struct HooksTemplateDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.HooksTemplateData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -27843,7 +28843,7 @@ export const marketLensV2_5Abi = [
                 "type": "address"
               }
             ],
-            "internalType": "struct RoleProviderDataV2_5",
+            "internalType": "struct MarketLensV2_5.RoleProviderData",
             "name": "lastProvider",
             "type": "tuple"
           },
@@ -27863,7 +28863,7 @@ export const marketLensV2_5Abi = [
             "type": "bool"
           }
         ],
-        "internalType": "struct LenderAccountDataV2_5",
+        "internalType": "struct MarketLensV2_5.LenderAccountData",
         "name": "data",
         "type": "tuple"
       }
@@ -27956,7 +28956,7 @@ export const marketLensV2_5Abi = [
                 "type": "address"
               }
             ],
-            "internalType": "struct RoleProviderDataV2_5",
+            "internalType": "struct MarketLensV2_5.RoleProviderData",
             "name": "lastProvider",
             "type": "tuple"
           },
@@ -27976,7 +28976,7 @@ export const marketLensV2_5Abi = [
             "type": "bool"
           }
         ],
-        "internalType": "struct LenderAccountDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.LenderAccountData[]",
         "name": "arr",
         "type": "tuple[]"
       }
@@ -28069,7 +29069,7 @@ export const marketLensV2_5Abi = [
                 "type": "address"
               }
             ],
-            "internalType": "struct RoleProviderDataV2_5",
+            "internalType": "struct MarketLensV2_5.RoleProviderData",
             "name": "lastProvider",
             "type": "tuple"
           },
@@ -28089,7 +29089,7 @@ export const marketLensV2_5Abi = [
             "type": "bool"
           }
         ],
-        "internalType": "struct LenderAccountDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.LenderAccountData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -28137,7 +29137,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "marketToken",
             "type": "tuple"
           },
@@ -28169,7 +29169,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "underlyingToken",
             "type": "tuple"
           },
@@ -28253,12 +29253,12 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "flags",
                 "type": "tuple"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -28321,9 +29321,46 @@ export const marketLensV2_5Abi = [
                 "internalType": "bool",
                 "name": "periodicTermClosed",
                 "type": "bool"
+              },
+              {
+                "internalType": "bool",
+                "name": "periodicWithdrawalWindowOpen",
+                "type": "bool"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint16",
+                    "name": "annualInterestBips",
+                    "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "proposalTimestamp",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowStart",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowEnd",
+                    "type": "uint32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                "name": "pendingAprChange",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct MarketHooksDataV2_5",
+            "internalType": "struct MarketLensV2_5.MarketHooksData",
             "name": "hooksConfig",
             "type": "tuple"
           },
@@ -28370,7 +29407,7 @@ export const marketLensV2_5Abi = [
                 "type": "string"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -28421,7 +29458,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct TokenMetadataV2_5",
+                        "internalType": "struct MarketLensV2_5.TokenMetadata",
                         "name": "originationFeeToken",
                         "type": "tuple"
                       },
@@ -28441,7 +29478,7 @@ export const marketLensV2_5Abi = [
                         "type": "uint256"
                       }
                     ],
-                    "internalType": "struct FeeConfigurationV2_5",
+                    "internalType": "struct MarketLensV2_5.FeeConfiguration",
                     "name": "fees",
                     "type": "tuple"
                   },
@@ -28469,9 +29506,26 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bytes32",
+                        "name": "value",
+                        "type": "bytes32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                    "name": "initCodeHash",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksTemplateDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksTemplateData",
                 "name": "hooksTemplate",
                 "type": "tuple"
               },
@@ -28526,9 +29580,19 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint16",
                     "name": "maximumAnnualInterestBips",
                     "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentPeriod",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentDateDelay",
+                    "type": "uint32"
                   }
                 ],
-                "internalType": "struct MarketParameterConstraintsV2_5",
+                "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                 "name": "constraints",
                 "type": "tuple"
               },
@@ -28597,7 +29661,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "optional",
                     "type": "tuple"
                   },
@@ -28664,12 +29728,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "required",
                     "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksDeploymentFlagsV2_5",
+                "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                 "name": "deploymentFlags",
                 "type": "tuple"
               },
@@ -28711,7 +29775,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pullProviders",
                 "type": "tuple[]"
               },
@@ -28753,7 +29817,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pushProviders",
                 "type": "tuple[]"
               },
@@ -28761,9 +29825,14 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "repaymentConstraintsAvailable",
+                "type": "bool"
               }
             ],
-            "internalType": "struct HooksInstanceDataV2_5",
+            "internalType": "struct MarketLensV2_5.HooksInstanceData",
             "name": "hooks",
             "type": "tuple"
           },
@@ -28878,7 +29947,7 @@ export const marketLensV2_5Abi = [
             "type": "uint256"
           }
         ],
-        "internalType": "struct MarketDataBaseV2_5",
+        "internalType": "struct MarketLensV2_5.MarketData",
         "name": "data",
         "type": "tuple"
       }
@@ -28928,7 +29997,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "marketToken",
                 "type": "tuple"
               },
@@ -28960,7 +30029,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "underlyingToken",
                 "type": "tuple"
               },
@@ -29044,12 +30113,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "flags",
                     "type": "tuple"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -29112,9 +30181,46 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "periodicTermClosed",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "periodicWithdrawalWindowOpen",
+                    "type": "bool"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "uint16",
+                        "name": "annualInterestBips",
+                        "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "proposalTimestamp",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowStart",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowEnd",
+                        "type": "uint32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                    "name": "pendingAprChange",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct MarketHooksDataV2_5",
+                "internalType": "struct MarketLensV2_5.MarketHooksData",
                 "name": "hooksConfig",
                 "type": "tuple"
               },
@@ -29161,7 +30267,7 @@ export const marketLensV2_5Abi = [
                     "type": "string"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -29212,7 +30318,7 @@ export const marketLensV2_5Abi = [
                                 "type": "bool"
                               }
                             ],
-                            "internalType": "struct TokenMetadataV2_5",
+                            "internalType": "struct MarketLensV2_5.TokenMetadata",
                             "name": "originationFeeToken",
                             "type": "tuple"
                           },
@@ -29232,7 +30338,7 @@ export const marketLensV2_5Abi = [
                             "type": "uint256"
                           }
                         ],
-                        "internalType": "struct FeeConfigurationV2_5",
+                        "internalType": "struct MarketLensV2_5.FeeConfiguration",
                         "name": "fees",
                         "type": "tuple"
                       },
@@ -29260,9 +30366,26 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint256",
                         "name": "totalMarkets",
                         "type": "uint256"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bool",
+                            "name": "isPresent",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bytes32",
+                            "name": "value",
+                            "type": "bytes32"
+                          }
+                        ],
+                        "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                        "name": "initCodeHash",
+                        "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksTemplateDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksTemplateData",
                     "name": "hooksTemplate",
                     "type": "tuple"
                   },
@@ -29317,9 +30440,19 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint16",
                         "name": "maximumAnnualInterestBips",
                         "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentPeriod",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentDateDelay",
+                        "type": "uint32"
                       }
                     ],
-                    "internalType": "struct MarketParameterConstraintsV2_5",
+                    "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                     "name": "constraints",
                     "type": "tuple"
                   },
@@ -29388,7 +30521,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "optional",
                         "type": "tuple"
                       },
@@ -29455,12 +30588,12 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "required",
                         "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksDeploymentFlagsV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                     "name": "deploymentFlags",
                     "type": "tuple"
                   },
@@ -29502,7 +30635,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pullProviders",
                     "type": "tuple[]"
                   },
@@ -29544,7 +30677,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pushProviders",
                     "type": "tuple[]"
                   },
@@ -29552,9 +30685,14 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "repaymentConstraintsAvailable",
+                    "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksInstanceDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksInstanceData",
                 "name": "hooks",
                 "type": "tuple"
               },
@@ -29669,7 +30807,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct MarketDataBaseV2_5",
+            "internalType": "struct MarketLensV2_5.MarketData",
             "name": "market",
             "type": "tuple"
           },
@@ -29706,7 +30844,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "commitmentFeeBips",
             "type": "tuple"
           },
@@ -29723,12 +30861,81 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "drawnAmount",
+            "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "registeredWrapper",
+            "type": "address"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentPeriod",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDeadline",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "defaultedAt",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "isInRepayment",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLifecycleData",
+            "name": "lifecycle",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "maximumDeposit",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "borrowableAssets",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "totalDebts",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "recoverableUnderlying",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLiquidityData",
+            "name": "liquidity",
             "type": "tuple"
           }
         ],
-        "internalType": "struct MarketDataV2_5",
+        "internalType": "struct MarketLensV2_5.MarketDataV2_5",
         "name": "data",
         "type": "tuple"
       }
@@ -29783,7 +30990,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "marketToken",
                 "type": "tuple"
               },
@@ -29815,7 +31022,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "underlyingToken",
                 "type": "tuple"
               },
@@ -29899,12 +31106,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "flags",
                     "type": "tuple"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -29967,9 +31174,46 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "periodicTermClosed",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "periodicWithdrawalWindowOpen",
+                    "type": "bool"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "uint16",
+                        "name": "annualInterestBips",
+                        "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "proposalTimestamp",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowStart",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowEnd",
+                        "type": "uint32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                    "name": "pendingAprChange",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct MarketHooksDataV2_5",
+                "internalType": "struct MarketLensV2_5.MarketHooksData",
                 "name": "hooksConfig",
                 "type": "tuple"
               },
@@ -30016,7 +31260,7 @@ export const marketLensV2_5Abi = [
                     "type": "string"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -30067,7 +31311,7 @@ export const marketLensV2_5Abi = [
                                 "type": "bool"
                               }
                             ],
-                            "internalType": "struct TokenMetadataV2_5",
+                            "internalType": "struct MarketLensV2_5.TokenMetadata",
                             "name": "originationFeeToken",
                             "type": "tuple"
                           },
@@ -30087,7 +31331,7 @@ export const marketLensV2_5Abi = [
                             "type": "uint256"
                           }
                         ],
-                        "internalType": "struct FeeConfigurationV2_5",
+                        "internalType": "struct MarketLensV2_5.FeeConfiguration",
                         "name": "fees",
                         "type": "tuple"
                       },
@@ -30115,9 +31359,26 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint256",
                         "name": "totalMarkets",
                         "type": "uint256"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bool",
+                            "name": "isPresent",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bytes32",
+                            "name": "value",
+                            "type": "bytes32"
+                          }
+                        ],
+                        "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                        "name": "initCodeHash",
+                        "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksTemplateDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksTemplateData",
                     "name": "hooksTemplate",
                     "type": "tuple"
                   },
@@ -30172,9 +31433,19 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint16",
                         "name": "maximumAnnualInterestBips",
                         "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentPeriod",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentDateDelay",
+                        "type": "uint32"
                       }
                     ],
-                    "internalType": "struct MarketParameterConstraintsV2_5",
+                    "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                     "name": "constraints",
                     "type": "tuple"
                   },
@@ -30243,7 +31514,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "optional",
                         "type": "tuple"
                       },
@@ -30310,12 +31581,12 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "required",
                         "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksDeploymentFlagsV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                     "name": "deploymentFlags",
                     "type": "tuple"
                   },
@@ -30357,7 +31628,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pullProviders",
                     "type": "tuple[]"
                   },
@@ -30399,7 +31670,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pushProviders",
                     "type": "tuple[]"
                   },
@@ -30407,9 +31678,14 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "repaymentConstraintsAvailable",
+                    "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksInstanceDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksInstanceData",
                 "name": "hooks",
                 "type": "tuple"
               },
@@ -30524,7 +31800,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct MarketDataBaseV2_5",
+            "internalType": "struct MarketLensV2_5.MarketData",
             "name": "market",
             "type": "tuple"
           },
@@ -30598,7 +31874,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5",
+                "internalType": "struct MarketLensV2_5.RoleProviderData",
                 "name": "lastProvider",
                 "type": "tuple"
               },
@@ -30618,12 +31894,12 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct LenderAccountDataV2_5",
+            "internalType": "struct MarketLensV2_5.LenderAccountData",
             "name": "lenderStatus",
             "type": "tuple"
           }
         ],
-        "internalType": "struct MarketDataWithLenderStatusV2_5",
+        "internalType": "struct MarketLensV2_5.MarketDataWithLenderStatus",
         "name": "data",
         "type": "tuple"
       }
@@ -30671,7 +31947,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "marketToken",
             "type": "tuple"
           },
@@ -30703,7 +31979,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "underlyingToken",
             "type": "tuple"
           },
@@ -30787,12 +32063,12 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "flags",
                 "type": "tuple"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -30855,9 +32131,46 @@ export const marketLensV2_5Abi = [
                 "internalType": "bool",
                 "name": "periodicTermClosed",
                 "type": "bool"
+              },
+              {
+                "internalType": "bool",
+                "name": "periodicWithdrawalWindowOpen",
+                "type": "bool"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint16",
+                    "name": "annualInterestBips",
+                    "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "proposalTimestamp",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowStart",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowEnd",
+                    "type": "uint32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                "name": "pendingAprChange",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct MarketHooksDataV2_5",
+            "internalType": "struct MarketLensV2_5.MarketHooksData",
             "name": "hooksConfig",
             "type": "tuple"
           },
@@ -30904,7 +32217,7 @@ export const marketLensV2_5Abi = [
                 "type": "string"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -30955,7 +32268,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct TokenMetadataV2_5",
+                        "internalType": "struct MarketLensV2_5.TokenMetadata",
                         "name": "originationFeeToken",
                         "type": "tuple"
                       },
@@ -30975,7 +32288,7 @@ export const marketLensV2_5Abi = [
                         "type": "uint256"
                       }
                     ],
-                    "internalType": "struct FeeConfigurationV2_5",
+                    "internalType": "struct MarketLensV2_5.FeeConfiguration",
                     "name": "fees",
                     "type": "tuple"
                   },
@@ -31003,9 +32316,26 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bytes32",
+                        "name": "value",
+                        "type": "bytes32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                    "name": "initCodeHash",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksTemplateDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksTemplateData",
                 "name": "hooksTemplate",
                 "type": "tuple"
               },
@@ -31060,9 +32390,19 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint16",
                     "name": "maximumAnnualInterestBips",
                     "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentPeriod",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentDateDelay",
+                    "type": "uint32"
                   }
                 ],
-                "internalType": "struct MarketParameterConstraintsV2_5",
+                "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                 "name": "constraints",
                 "type": "tuple"
               },
@@ -31131,7 +32471,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "optional",
                     "type": "tuple"
                   },
@@ -31198,12 +32538,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "required",
                     "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksDeploymentFlagsV2_5",
+                "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                 "name": "deploymentFlags",
                 "type": "tuple"
               },
@@ -31245,7 +32585,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pullProviders",
                 "type": "tuple[]"
               },
@@ -31287,7 +32627,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pushProviders",
                 "type": "tuple[]"
               },
@@ -31295,9 +32635,14 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "repaymentConstraintsAvailable",
+                "type": "bool"
               }
             ],
-            "internalType": "struct HooksInstanceDataV2_5",
+            "internalType": "struct MarketLensV2_5.HooksInstanceData",
             "name": "hooks",
             "type": "tuple"
           },
@@ -31412,7 +32757,7 @@ export const marketLensV2_5Abi = [
             "type": "uint256"
           }
         ],
-        "internalType": "struct MarketDataBaseV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -31462,7 +32807,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "marketToken",
                 "type": "tuple"
               },
@@ -31494,7 +32839,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "underlyingToken",
                 "type": "tuple"
               },
@@ -31578,12 +32923,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "flags",
                     "type": "tuple"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -31646,9 +32991,46 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "periodicTermClosed",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "periodicWithdrawalWindowOpen",
+                    "type": "bool"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "uint16",
+                        "name": "annualInterestBips",
+                        "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "proposalTimestamp",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowStart",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowEnd",
+                        "type": "uint32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                    "name": "pendingAprChange",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct MarketHooksDataV2_5",
+                "internalType": "struct MarketLensV2_5.MarketHooksData",
                 "name": "hooksConfig",
                 "type": "tuple"
               },
@@ -31695,7 +33077,7 @@ export const marketLensV2_5Abi = [
                     "type": "string"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -31746,7 +33128,7 @@ export const marketLensV2_5Abi = [
                                 "type": "bool"
                               }
                             ],
-                            "internalType": "struct TokenMetadataV2_5",
+                            "internalType": "struct MarketLensV2_5.TokenMetadata",
                             "name": "originationFeeToken",
                             "type": "tuple"
                           },
@@ -31766,7 +33148,7 @@ export const marketLensV2_5Abi = [
                             "type": "uint256"
                           }
                         ],
-                        "internalType": "struct FeeConfigurationV2_5",
+                        "internalType": "struct MarketLensV2_5.FeeConfiguration",
                         "name": "fees",
                         "type": "tuple"
                       },
@@ -31794,9 +33176,26 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint256",
                         "name": "totalMarkets",
                         "type": "uint256"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bool",
+                            "name": "isPresent",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bytes32",
+                            "name": "value",
+                            "type": "bytes32"
+                          }
+                        ],
+                        "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                        "name": "initCodeHash",
+                        "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksTemplateDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksTemplateData",
                     "name": "hooksTemplate",
                     "type": "tuple"
                   },
@@ -31851,9 +33250,19 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint16",
                         "name": "maximumAnnualInterestBips",
                         "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentPeriod",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentDateDelay",
+                        "type": "uint32"
                       }
                     ],
-                    "internalType": "struct MarketParameterConstraintsV2_5",
+                    "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                     "name": "constraints",
                     "type": "tuple"
                   },
@@ -31922,7 +33331,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "optional",
                         "type": "tuple"
                       },
@@ -31989,12 +33398,12 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "required",
                         "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksDeploymentFlagsV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                     "name": "deploymentFlags",
                     "type": "tuple"
                   },
@@ -32036,7 +33445,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pullProviders",
                     "type": "tuple[]"
                   },
@@ -32078,7 +33487,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pushProviders",
                     "type": "tuple[]"
                   },
@@ -32086,9 +33495,14 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "repaymentConstraintsAvailable",
+                    "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksInstanceDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksInstanceData",
                 "name": "hooks",
                 "type": "tuple"
               },
@@ -32203,7 +33617,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct MarketDataBaseV2_5",
+            "internalType": "struct MarketLensV2_5.MarketData",
             "name": "market",
             "type": "tuple"
           },
@@ -32240,7 +33654,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "commitmentFeeBips",
             "type": "tuple"
           },
@@ -32257,12 +33671,81 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "drawnAmount",
+            "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "registeredWrapper",
+            "type": "address"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentPeriod",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDeadline",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "defaultedAt",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "isInRepayment",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLifecycleData",
+            "name": "lifecycle",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "maximumDeposit",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "borrowableAssets",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "totalDebts",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "recoverableUnderlying",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLiquidityData",
+            "name": "liquidity",
             "type": "tuple"
           }
         ],
-        "internalType": "struct MarketDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketDataV2_5[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -32317,7 +33800,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "marketToken",
                 "type": "tuple"
               },
@@ -32349,7 +33832,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "underlyingToken",
                 "type": "tuple"
               },
@@ -32433,12 +33916,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "flags",
                     "type": "tuple"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -32501,9 +33984,46 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "periodicTermClosed",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "periodicWithdrawalWindowOpen",
+                    "type": "bool"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "uint16",
+                        "name": "annualInterestBips",
+                        "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "proposalTimestamp",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowStart",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowEnd",
+                        "type": "uint32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                    "name": "pendingAprChange",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct MarketHooksDataV2_5",
+                "internalType": "struct MarketLensV2_5.MarketHooksData",
                 "name": "hooksConfig",
                 "type": "tuple"
               },
@@ -32550,7 +34070,7 @@ export const marketLensV2_5Abi = [
                     "type": "string"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -32601,7 +34121,7 @@ export const marketLensV2_5Abi = [
                                 "type": "bool"
                               }
                             ],
-                            "internalType": "struct TokenMetadataV2_5",
+                            "internalType": "struct MarketLensV2_5.TokenMetadata",
                             "name": "originationFeeToken",
                             "type": "tuple"
                           },
@@ -32621,7 +34141,7 @@ export const marketLensV2_5Abi = [
                             "type": "uint256"
                           }
                         ],
-                        "internalType": "struct FeeConfigurationV2_5",
+                        "internalType": "struct MarketLensV2_5.FeeConfiguration",
                         "name": "fees",
                         "type": "tuple"
                       },
@@ -32649,9 +34169,26 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint256",
                         "name": "totalMarkets",
                         "type": "uint256"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bool",
+                            "name": "isPresent",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bytes32",
+                            "name": "value",
+                            "type": "bytes32"
+                          }
+                        ],
+                        "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                        "name": "initCodeHash",
+                        "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksTemplateDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksTemplateData",
                     "name": "hooksTemplate",
                     "type": "tuple"
                   },
@@ -32706,9 +34243,19 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint16",
                         "name": "maximumAnnualInterestBips",
                         "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentPeriod",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentDateDelay",
+                        "type": "uint32"
                       }
                     ],
-                    "internalType": "struct MarketParameterConstraintsV2_5",
+                    "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                     "name": "constraints",
                     "type": "tuple"
                   },
@@ -32777,7 +34324,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "optional",
                         "type": "tuple"
                       },
@@ -32844,12 +34391,12 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "required",
                         "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksDeploymentFlagsV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                     "name": "deploymentFlags",
                     "type": "tuple"
                   },
@@ -32891,7 +34438,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pullProviders",
                     "type": "tuple[]"
                   },
@@ -32933,7 +34480,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pushProviders",
                     "type": "tuple[]"
                   },
@@ -32941,9 +34488,14 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "repaymentConstraintsAvailable",
+                    "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksInstanceDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksInstanceData",
                 "name": "hooks",
                 "type": "tuple"
               },
@@ -33058,7 +34610,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct MarketDataBaseV2_5",
+            "internalType": "struct MarketLensV2_5.MarketData",
             "name": "market",
             "type": "tuple"
           },
@@ -33132,7 +34684,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5",
+                "internalType": "struct MarketLensV2_5.RoleProviderData",
                 "name": "lastProvider",
                 "type": "tuple"
               },
@@ -33152,12 +34704,12 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct LenderAccountDataV2_5",
+            "internalType": "struct MarketLensV2_5.LenderAccountData",
             "name": "lenderStatus",
             "type": "tuple"
           }
         ],
-        "internalType": "struct MarketDataWithLenderStatusV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketDataWithLenderStatus[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -33323,7 +34875,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "commitmentFeeBips",
             "type": "tuple"
           },
@@ -33340,12 +34892,76 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "drawnAmount",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentPeriod",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDeadline",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "defaultedAt",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "isInRepayment",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLifecycleData",
+            "name": "lifecycle",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "maximumDeposit",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "borrowableAssets",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "totalDebts",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "recoverableUnderlying",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLiquidityData",
+            "name": "liquidity",
             "type": "tuple"
           }
         ],
-        "internalType": "struct MarketLiveDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketLiveDataV2_5[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -33475,7 +35091,7 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct OptionalUintDataV2_5",
+                "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
                 "name": "commitmentFeeBips",
                 "type": "tuple"
               },
@@ -33492,12 +35108,76 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct OptionalUintDataV2_5",
+                "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
                 "name": "drawnAmount",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "repaymentDate",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "repaymentPeriod",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "repaymentDeadline",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "defaultedAt",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isInRepayment",
+                    "type": "bool"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.MarketLifecycleData",
+                "name": "lifecycle",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "maximumDeposit",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "borrowableAssets",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "totalDebts",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "recoverableUnderlying",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.MarketLiquidityData",
+                "name": "liquidity",
                 "type": "tuple"
               }
             ],
-            "internalType": "struct MarketLiveDataV2_5",
+            "internalType": "struct MarketLensV2_5.MarketLiveDataV2_5",
             "name": "market",
             "type": "tuple"
           },
@@ -33571,7 +35251,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5",
+                "internalType": "struct MarketLensV2_5.RoleProviderData",
                 "name": "lastProvider",
                 "type": "tuple"
               },
@@ -33591,12 +35271,12 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct LenderAccountDataV2_5",
+            "internalType": "struct MarketLensV2_5.LenderAccountData",
             "name": "lenderStatus",
             "type": "tuple"
           }
         ],
-        "internalType": "struct MarketLiveDataWithLenderStatusV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketLiveDataWithLenderStatusV2_5[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -33659,7 +35339,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "marketToken",
             "type": "tuple"
           },
@@ -33691,7 +35371,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "underlyingToken",
             "type": "tuple"
           },
@@ -33775,12 +35455,12 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "flags",
                 "type": "tuple"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -33843,9 +35523,46 @@ export const marketLensV2_5Abi = [
                 "internalType": "bool",
                 "name": "periodicTermClosed",
                 "type": "bool"
+              },
+              {
+                "internalType": "bool",
+                "name": "periodicWithdrawalWindowOpen",
+                "type": "bool"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint16",
+                    "name": "annualInterestBips",
+                    "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "proposalTimestamp",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowStart",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowEnd",
+                    "type": "uint32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                "name": "pendingAprChange",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct MarketHooksDataV2_5",
+            "internalType": "struct MarketLensV2_5.MarketHooksData",
             "name": "hooksConfig",
             "type": "tuple"
           },
@@ -33892,7 +35609,7 @@ export const marketLensV2_5Abi = [
                 "type": "string"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -33943,7 +35660,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct TokenMetadataV2_5",
+                        "internalType": "struct MarketLensV2_5.TokenMetadata",
                         "name": "originationFeeToken",
                         "type": "tuple"
                       },
@@ -33963,7 +35680,7 @@ export const marketLensV2_5Abi = [
                         "type": "uint256"
                       }
                     ],
-                    "internalType": "struct FeeConfigurationV2_5",
+                    "internalType": "struct MarketLensV2_5.FeeConfiguration",
                     "name": "fees",
                     "type": "tuple"
                   },
@@ -33991,9 +35708,26 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bytes32",
+                        "name": "value",
+                        "type": "bytes32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                    "name": "initCodeHash",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksTemplateDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksTemplateData",
                 "name": "hooksTemplate",
                 "type": "tuple"
               },
@@ -34048,9 +35782,19 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint16",
                     "name": "maximumAnnualInterestBips",
                     "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentPeriod",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentDateDelay",
+                    "type": "uint32"
                   }
                 ],
-                "internalType": "struct MarketParameterConstraintsV2_5",
+                "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                 "name": "constraints",
                 "type": "tuple"
               },
@@ -34119,7 +35863,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "optional",
                     "type": "tuple"
                   },
@@ -34186,12 +35930,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "required",
                     "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksDeploymentFlagsV2_5",
+                "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                 "name": "deploymentFlags",
                 "type": "tuple"
               },
@@ -34233,7 +35977,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pullProviders",
                 "type": "tuple[]"
               },
@@ -34275,7 +36019,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pushProviders",
                 "type": "tuple[]"
               },
@@ -34283,9 +36027,14 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "repaymentConstraintsAvailable",
+                "type": "bool"
               }
             ],
-            "internalType": "struct HooksInstanceDataV2_5",
+            "internalType": "struct MarketLensV2_5.HooksInstanceData",
             "name": "hooks",
             "type": "tuple"
           },
@@ -34400,7 +36149,7 @@ export const marketLensV2_5Abi = [
             "type": "uint256"
           }
         ],
-        "internalType": "struct MarketDataBaseV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -34458,7 +36207,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "marketToken",
             "type": "tuple"
           },
@@ -34490,7 +36239,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct TokenMetadataV2_5",
+            "internalType": "struct MarketLensV2_5.TokenMetadata",
             "name": "underlyingToken",
             "type": "tuple"
           },
@@ -34574,12 +36323,12 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksConfigDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksConfigData",
                 "name": "flags",
                 "type": "tuple"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -34642,9 +36391,46 @@ export const marketLensV2_5Abi = [
                 "internalType": "bool",
                 "name": "periodicTermClosed",
                 "type": "bool"
+              },
+              {
+                "internalType": "bool",
+                "name": "periodicWithdrawalWindowOpen",
+                "type": "bool"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "isPresent",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "uint16",
+                    "name": "annualInterestBips",
+                    "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "proposalTimestamp",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowStart",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "responseWindowEnd",
+                    "type": "uint32"
+                  }
+                ],
+                "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                "name": "pendingAprChange",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct MarketHooksDataV2_5",
+            "internalType": "struct MarketLensV2_5.MarketHooksData",
             "name": "hooksConfig",
             "type": "tuple"
           },
@@ -34691,7 +36477,7 @@ export const marketLensV2_5Abi = [
                 "type": "string"
               },
               {
-                "internalType": "enum HooksInstanceKindV2_5",
+                "internalType": "uint8",
                 "name": "kind",
                 "type": "uint8"
               },
@@ -34742,7 +36528,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct TokenMetadataV2_5",
+                        "internalType": "struct MarketLensV2_5.TokenMetadata",
                         "name": "originationFeeToken",
                         "type": "tuple"
                       },
@@ -34762,7 +36548,7 @@ export const marketLensV2_5Abi = [
                         "type": "uint256"
                       }
                     ],
-                    "internalType": "struct FeeConfigurationV2_5",
+                    "internalType": "struct MarketLensV2_5.FeeConfiguration",
                     "name": "fees",
                     "type": "tuple"
                   },
@@ -34790,9 +36576,26 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "bytes32",
+                        "name": "value",
+                        "type": "bytes32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                    "name": "initCodeHash",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksTemplateDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksTemplateData",
                 "name": "hooksTemplate",
                 "type": "tuple"
               },
@@ -34847,9 +36650,19 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint16",
                     "name": "maximumAnnualInterestBips",
                     "type": "uint16"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentPeriod",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "maximumRepaymentDateDelay",
+                    "type": "uint32"
                   }
                 ],
-                "internalType": "struct MarketParameterConstraintsV2_5",
+                "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                 "name": "constraints",
                 "type": "tuple"
               },
@@ -34918,7 +36731,7 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "optional",
                     "type": "tuple"
                   },
@@ -34985,12 +36798,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "required",
                     "type": "tuple"
                   }
                 ],
-                "internalType": "struct HooksDeploymentFlagsV2_5",
+                "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                 "name": "deploymentFlags",
                 "type": "tuple"
               },
@@ -35032,7 +36845,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pullProviders",
                 "type": "tuple[]"
               },
@@ -35074,7 +36887,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5[]",
+                "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                 "name": "pushProviders",
                 "type": "tuple[]"
               },
@@ -35082,9 +36895,14 @@ export const marketLensV2_5Abi = [
                 "internalType": "uint256",
                 "name": "totalMarkets",
                 "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "repaymentConstraintsAvailable",
+                "type": "bool"
               }
             ],
-            "internalType": "struct HooksInstanceDataV2_5",
+            "internalType": "struct MarketLensV2_5.HooksInstanceData",
             "name": "hooks",
             "type": "tuple"
           },
@@ -35199,7 +37017,7 @@ export const marketLensV2_5Abi = [
             "type": "uint256"
           }
         ],
-        "internalType": "struct MarketDataBaseV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -35264,7 +37082,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "marketToken",
                 "type": "tuple"
               },
@@ -35296,7 +37114,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "underlyingToken",
                 "type": "tuple"
               },
@@ -35380,12 +37198,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "flags",
                     "type": "tuple"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -35448,9 +37266,46 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "periodicTermClosed",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "periodicWithdrawalWindowOpen",
+                    "type": "bool"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "uint16",
+                        "name": "annualInterestBips",
+                        "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "proposalTimestamp",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowStart",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowEnd",
+                        "type": "uint32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                    "name": "pendingAprChange",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct MarketHooksDataV2_5",
+                "internalType": "struct MarketLensV2_5.MarketHooksData",
                 "name": "hooksConfig",
                 "type": "tuple"
               },
@@ -35497,7 +37352,7 @@ export const marketLensV2_5Abi = [
                     "type": "string"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -35548,7 +37403,7 @@ export const marketLensV2_5Abi = [
                                 "type": "bool"
                               }
                             ],
-                            "internalType": "struct TokenMetadataV2_5",
+                            "internalType": "struct MarketLensV2_5.TokenMetadata",
                             "name": "originationFeeToken",
                             "type": "tuple"
                           },
@@ -35568,7 +37423,7 @@ export const marketLensV2_5Abi = [
                             "type": "uint256"
                           }
                         ],
-                        "internalType": "struct FeeConfigurationV2_5",
+                        "internalType": "struct MarketLensV2_5.FeeConfiguration",
                         "name": "fees",
                         "type": "tuple"
                       },
@@ -35596,9 +37451,26 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint256",
                         "name": "totalMarkets",
                         "type": "uint256"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bool",
+                            "name": "isPresent",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bytes32",
+                            "name": "value",
+                            "type": "bytes32"
+                          }
+                        ],
+                        "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                        "name": "initCodeHash",
+                        "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksTemplateDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksTemplateData",
                     "name": "hooksTemplate",
                     "type": "tuple"
                   },
@@ -35653,9 +37525,19 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint16",
                         "name": "maximumAnnualInterestBips",
                         "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentPeriod",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentDateDelay",
+                        "type": "uint32"
                       }
                     ],
-                    "internalType": "struct MarketParameterConstraintsV2_5",
+                    "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                     "name": "constraints",
                     "type": "tuple"
                   },
@@ -35724,7 +37606,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "optional",
                         "type": "tuple"
                       },
@@ -35791,12 +37673,12 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "required",
                         "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksDeploymentFlagsV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                     "name": "deploymentFlags",
                     "type": "tuple"
                   },
@@ -35838,7 +37720,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pullProviders",
                     "type": "tuple[]"
                   },
@@ -35880,7 +37762,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pushProviders",
                     "type": "tuple[]"
                   },
@@ -35888,9 +37770,14 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "repaymentConstraintsAvailable",
+                    "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksInstanceDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksInstanceData",
                 "name": "hooks",
                 "type": "tuple"
               },
@@ -36005,7 +37892,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct MarketDataBaseV2_5",
+            "internalType": "struct MarketLensV2_5.MarketData",
             "name": "market",
             "type": "tuple"
           },
@@ -36042,7 +37929,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "commitmentFeeBips",
             "type": "tuple"
           },
@@ -36059,12 +37946,81 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "drawnAmount",
+            "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "registeredWrapper",
+            "type": "address"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentPeriod",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDeadline",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "defaultedAt",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "isInRepayment",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLifecycleData",
+            "name": "lifecycle",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "maximumDeposit",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "borrowableAssets",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "totalDebts",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "recoverableUnderlying",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLiquidityData",
+            "name": "liquidity",
             "type": "tuple"
           }
         ],
-        "internalType": "struct MarketDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketDataV2_5[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -36124,7 +38080,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "marketToken",
                 "type": "tuple"
               },
@@ -36156,7 +38112,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "underlyingToken",
                 "type": "tuple"
               },
@@ -36240,12 +38196,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "flags",
                     "type": "tuple"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -36308,9 +38264,46 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "periodicTermClosed",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "periodicWithdrawalWindowOpen",
+                    "type": "bool"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "uint16",
+                        "name": "annualInterestBips",
+                        "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "proposalTimestamp",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowStart",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowEnd",
+                        "type": "uint32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                    "name": "pendingAprChange",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct MarketHooksDataV2_5",
+                "internalType": "struct MarketLensV2_5.MarketHooksData",
                 "name": "hooksConfig",
                 "type": "tuple"
               },
@@ -36357,7 +38350,7 @@ export const marketLensV2_5Abi = [
                     "type": "string"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -36408,7 +38401,7 @@ export const marketLensV2_5Abi = [
                                 "type": "bool"
                               }
                             ],
-                            "internalType": "struct TokenMetadataV2_5",
+                            "internalType": "struct MarketLensV2_5.TokenMetadata",
                             "name": "originationFeeToken",
                             "type": "tuple"
                           },
@@ -36428,7 +38421,7 @@ export const marketLensV2_5Abi = [
                             "type": "uint256"
                           }
                         ],
-                        "internalType": "struct FeeConfigurationV2_5",
+                        "internalType": "struct MarketLensV2_5.FeeConfiguration",
                         "name": "fees",
                         "type": "tuple"
                       },
@@ -36456,9 +38449,26 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint256",
                         "name": "totalMarkets",
                         "type": "uint256"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bool",
+                            "name": "isPresent",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bytes32",
+                            "name": "value",
+                            "type": "bytes32"
+                          }
+                        ],
+                        "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                        "name": "initCodeHash",
+                        "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksTemplateDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksTemplateData",
                     "name": "hooksTemplate",
                     "type": "tuple"
                   },
@@ -36513,9 +38523,19 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint16",
                         "name": "maximumAnnualInterestBips",
                         "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentPeriod",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentDateDelay",
+                        "type": "uint32"
                       }
                     ],
-                    "internalType": "struct MarketParameterConstraintsV2_5",
+                    "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                     "name": "constraints",
                     "type": "tuple"
                   },
@@ -36584,7 +38604,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "optional",
                         "type": "tuple"
                       },
@@ -36651,12 +38671,12 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "required",
                         "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksDeploymentFlagsV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                     "name": "deploymentFlags",
                     "type": "tuple"
                   },
@@ -36698,7 +38718,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pullProviders",
                     "type": "tuple[]"
                   },
@@ -36740,7 +38760,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pushProviders",
                     "type": "tuple[]"
                   },
@@ -36748,9 +38768,14 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "repaymentConstraintsAvailable",
+                    "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksInstanceDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksInstanceData",
                 "name": "hooks",
                 "type": "tuple"
               },
@@ -36865,7 +38890,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct MarketDataBaseV2_5",
+            "internalType": "struct MarketLensV2_5.MarketData",
             "name": "market",
             "type": "tuple"
           },
@@ -36902,7 +38927,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "commitmentFeeBips",
             "type": "tuple"
           },
@@ -36919,12 +38944,81 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct OptionalUintDataV2_5",
+            "internalType": "struct MarketLensV2_5.OptionalUintDataV2_5",
             "name": "drawnAmount",
+            "type": "tuple"
+          },
+          {
+            "internalType": "address",
+            "name": "registeredWrapper",
+            "type": "address"
+          },
+          {
+            "components": [
+              {
+                "internalType": "bool",
+                "name": "isPresent",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentPeriod",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "repaymentDeadline",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "defaultedAt",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "isInRepayment",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLifecycleData",
+            "name": "lifecycle",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "maximumDeposit",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "borrowableAssets",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "totalDebts",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "recoverableUnderlying",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct MarketLensV2_5.MarketLiquidityData",
+            "name": "liquidity",
             "type": "tuple"
           }
         ],
-        "internalType": "struct MarketDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.MarketDataV2_5[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -36970,7 +39064,7 @@ export const marketLensV2_5Abi = [
             "type": "bool"
           }
         ],
-        "internalType": "struct TokenMetadataV2_5",
+        "internalType": "struct MarketLensV2_5.TokenMetadata",
         "name": "info",
         "type": "tuple"
       }
@@ -37016,7 +39110,7 @@ export const marketLensV2_5Abi = [
             "type": "bool"
           }
         ],
-        "internalType": "struct TokenMetadataV2_5[]",
+        "internalType": "struct MarketLensV2_5.TokenMetadata[]",
         "name": "info",
         "type": "tuple[]"
       }
@@ -37047,7 +39141,7 @@ export const marketLensV2_5Abi = [
             "type": "uint32"
           },
           {
-            "internalType": "enum BatchStatusV2_5",
+            "internalType": "uint8",
             "name": "status",
             "type": "uint8"
           },
@@ -37072,7 +39166,7 @@ export const marketLensV2_5Abi = [
             "type": "uint256"
           }
         ],
-        "internalType": "struct WithdrawalBatchDataV2_5",
+        "internalType": "struct MarketLensV2_5.WithdrawalBatchData",
         "name": "data",
         "type": "tuple"
       }
@@ -37110,7 +39204,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint32"
               },
               {
-                "internalType": "enum BatchStatusV2_5",
+                "internalType": "uint8",
                 "name": "status",
                 "type": "uint8"
               },
@@ -37135,7 +39229,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct WithdrawalBatchDataV2_5",
+            "internalType": "struct MarketLensV2_5.WithdrawalBatchData",
             "name": "batch",
             "type": "tuple"
           },
@@ -37167,12 +39261,12 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct WithdrawalBatchLenderStatusV2_5",
+            "internalType": "struct MarketLensV2_5.WithdrawalBatchLenderStatus",
             "name": "lenderStatus",
             "type": "tuple"
           }
         ],
-        "internalType": "struct WithdrawalBatchDataWithLenderStatusV2_5",
+        "internalType": "struct MarketLensV2_5.WithdrawalBatchDataWithLenderStatus",
         "name": "status",
         "type": "tuple"
       }
@@ -37208,7 +39302,7 @@ export const marketLensV2_5Abi = [
             "type": "uint32"
           },
           {
-            "internalType": "enum BatchStatusV2_5",
+            "internalType": "uint8",
             "name": "status",
             "type": "uint8"
           },
@@ -37233,7 +39327,7 @@ export const marketLensV2_5Abi = [
             "type": "uint256"
           }
         ],
-        "internalType": "struct WithdrawalBatchDataV2_5",
+        "internalType": "struct MarketLensV2_5.WithdrawalBatchData",
         "name": "batch",
         "type": "tuple"
       },
@@ -37265,7 +39359,7 @@ export const marketLensV2_5Abi = [
             "type": "uint256"
           }
         ],
-        "internalType": "struct WithdrawalBatchLenderStatusV2_5[]",
+        "internalType": "struct MarketLensV2_5.WithdrawalBatchLenderStatus[]",
         "name": "statuses",
         "type": "tuple[]"
       }
@@ -37296,7 +39390,7 @@ export const marketLensV2_5Abi = [
             "type": "uint32"
           },
           {
-            "internalType": "enum BatchStatusV2_5",
+            "internalType": "uint8",
             "name": "status",
             "type": "uint8"
           },
@@ -37321,7 +39415,7 @@ export const marketLensV2_5Abi = [
             "type": "uint256"
           }
         ],
-        "internalType": "struct WithdrawalBatchDataV2_5[]",
+        "internalType": "struct MarketLensV2_5.WithdrawalBatchData[]",
         "name": "data",
         "type": "tuple[]"
       }
@@ -37359,7 +39453,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint32"
               },
               {
-                "internalType": "enum BatchStatusV2_5",
+                "internalType": "uint8",
                 "name": "status",
                 "type": "uint8"
               },
@@ -37384,7 +39478,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct WithdrawalBatchDataV2_5",
+            "internalType": "struct MarketLensV2_5.WithdrawalBatchData",
             "name": "batch",
             "type": "tuple"
           },
@@ -37416,12 +39510,12 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct WithdrawalBatchLenderStatusV2_5",
+            "internalType": "struct MarketLensV2_5.WithdrawalBatchLenderStatus",
             "name": "lenderStatus",
             "type": "tuple"
           }
         ],
-        "internalType": "struct WithdrawalBatchDataWithLenderStatusV2_5[]",
+        "internalType": "struct MarketLensV2_5.WithdrawalBatchDataWithLenderStatus[]",
         "name": "statuses",
         "type": "tuple[]"
       }
@@ -37475,7 +39569,7 @@ export const marketLensV2_5Abi = [
             "type": "uint32[]"
           }
         ],
-        "internalType": "struct LenderAccountQueryV2_5",
+        "internalType": "struct MarketLensV2_5.LenderAccountQuery",
         "name": "query",
         "type": "tuple"
       }
@@ -37514,7 +39608,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "marketToken",
                 "type": "tuple"
               },
@@ -37546,7 +39640,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "underlyingToken",
                 "type": "tuple"
               },
@@ -37630,12 +39724,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "flags",
                     "type": "tuple"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -37698,9 +39792,46 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "periodicTermClosed",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "periodicWithdrawalWindowOpen",
+                    "type": "bool"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "uint16",
+                        "name": "annualInterestBips",
+                        "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "proposalTimestamp",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowStart",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowEnd",
+                        "type": "uint32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                    "name": "pendingAprChange",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct MarketHooksDataV2_5",
+                "internalType": "struct MarketLensV2_5.MarketHooksData",
                 "name": "hooksConfig",
                 "type": "tuple"
               },
@@ -37747,7 +39878,7 @@ export const marketLensV2_5Abi = [
                     "type": "string"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -37798,7 +39929,7 @@ export const marketLensV2_5Abi = [
                                 "type": "bool"
                               }
                             ],
-                            "internalType": "struct TokenMetadataV2_5",
+                            "internalType": "struct MarketLensV2_5.TokenMetadata",
                             "name": "originationFeeToken",
                             "type": "tuple"
                           },
@@ -37818,7 +39949,7 @@ export const marketLensV2_5Abi = [
                             "type": "uint256"
                           }
                         ],
-                        "internalType": "struct FeeConfigurationV2_5",
+                        "internalType": "struct MarketLensV2_5.FeeConfiguration",
                         "name": "fees",
                         "type": "tuple"
                       },
@@ -37846,9 +39977,26 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint256",
                         "name": "totalMarkets",
                         "type": "uint256"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bool",
+                            "name": "isPresent",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bytes32",
+                            "name": "value",
+                            "type": "bytes32"
+                          }
+                        ],
+                        "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                        "name": "initCodeHash",
+                        "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksTemplateDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksTemplateData",
                     "name": "hooksTemplate",
                     "type": "tuple"
                   },
@@ -37903,9 +40051,19 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint16",
                         "name": "maximumAnnualInterestBips",
                         "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentPeriod",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentDateDelay",
+                        "type": "uint32"
                       }
                     ],
-                    "internalType": "struct MarketParameterConstraintsV2_5",
+                    "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                     "name": "constraints",
                     "type": "tuple"
                   },
@@ -37974,7 +40132,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "optional",
                         "type": "tuple"
                       },
@@ -38041,12 +40199,12 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "required",
                         "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksDeploymentFlagsV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                     "name": "deploymentFlags",
                     "type": "tuple"
                   },
@@ -38088,7 +40246,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pullProviders",
                     "type": "tuple[]"
                   },
@@ -38130,7 +40288,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pushProviders",
                     "type": "tuple[]"
                   },
@@ -38138,9 +40296,14 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "repaymentConstraintsAvailable",
+                    "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksInstanceDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksInstanceData",
                 "name": "hooks",
                 "type": "tuple"
               },
@@ -38255,7 +40418,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct MarketDataBaseV2_5",
+            "internalType": "struct MarketLensV2_5.MarketData",
             "name": "market",
             "type": "tuple"
           },
@@ -38329,7 +40492,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5",
+                "internalType": "struct MarketLensV2_5.RoleProviderData",
                 "name": "lastProvider",
                 "type": "tuple"
               },
@@ -38349,7 +40512,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct LenderAccountDataV2_5",
+            "internalType": "struct MarketLensV2_5.LenderAccountData",
             "name": "lenderStatus",
             "type": "tuple"
           },
@@ -38363,7 +40526,7 @@ export const marketLensV2_5Abi = [
                     "type": "uint32"
                   },
                   {
-                    "internalType": "enum BatchStatusV2_5",
+                    "internalType": "uint8",
                     "name": "status",
                     "type": "uint8"
                   },
@@ -38388,7 +40551,7 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct WithdrawalBatchDataV2_5",
+                "internalType": "struct MarketLensV2_5.WithdrawalBatchData",
                 "name": "batch",
                 "type": "tuple"
               },
@@ -38420,17 +40583,17 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct WithdrawalBatchLenderStatusV2_5",
+                "internalType": "struct MarketLensV2_5.WithdrawalBatchLenderStatus",
                 "name": "lenderStatus",
                 "type": "tuple"
               }
             ],
-            "internalType": "struct WithdrawalBatchDataWithLenderStatusV2_5[]",
+            "internalType": "struct MarketLensV2_5.WithdrawalBatchDataWithLenderStatus[]",
             "name": "withdrawalBatches",
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct LenderAccountQueryResultV2_5",
+        "internalType": "struct MarketLensV2_5.LenderAccountQueryResult",
         "name": "result",
         "type": "tuple"
       }
@@ -38458,7 +40621,7 @@ export const marketLensV2_5Abi = [
             "type": "uint32[]"
           }
         ],
-        "internalType": "struct LenderAccountQueryV2_5[]",
+        "internalType": "struct MarketLensV2_5.LenderAccountQuery[]",
         "name": "queries",
         "type": "tuple[]"
       }
@@ -38497,7 +40660,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "marketToken",
                 "type": "tuple"
               },
@@ -38529,7 +40692,7 @@ export const marketLensV2_5Abi = [
                     "type": "bool"
                   }
                 ],
-                "internalType": "struct TokenMetadataV2_5",
+                "internalType": "struct MarketLensV2_5.TokenMetadata",
                 "name": "underlyingToken",
                 "type": "tuple"
               },
@@ -38613,12 +40776,12 @@ export const marketLensV2_5Abi = [
                         "type": "bool"
                       }
                     ],
-                    "internalType": "struct HooksConfigDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksConfigData",
                     "name": "flags",
                     "type": "tuple"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -38681,9 +40844,46 @@ export const marketLensV2_5Abi = [
                     "internalType": "bool",
                     "name": "periodicTermClosed",
                     "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "periodicWithdrawalWindowOpen",
+                    "type": "bool"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "bool",
+                        "name": "isPresent",
+                        "type": "bool"
+                      },
+                      {
+                        "internalType": "uint16",
+                        "name": "annualInterestBips",
+                        "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "proposalTimestamp",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowStart",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "responseWindowEnd",
+                        "type": "uint32"
+                      }
+                    ],
+                    "internalType": "struct MarketLensV2_5.PeriodicPendingAprChangeData",
+                    "name": "pendingAprChange",
+                    "type": "tuple"
                   }
                 ],
-                "internalType": "struct MarketHooksDataV2_5",
+                "internalType": "struct MarketLensV2_5.MarketHooksData",
                 "name": "hooksConfig",
                 "type": "tuple"
               },
@@ -38730,7 +40930,7 @@ export const marketLensV2_5Abi = [
                     "type": "string"
                   },
                   {
-                    "internalType": "enum HooksInstanceKindV2_5",
+                    "internalType": "uint8",
                     "name": "kind",
                     "type": "uint8"
                   },
@@ -38781,7 +40981,7 @@ export const marketLensV2_5Abi = [
                                 "type": "bool"
                               }
                             ],
-                            "internalType": "struct TokenMetadataV2_5",
+                            "internalType": "struct MarketLensV2_5.TokenMetadata",
                             "name": "originationFeeToken",
                             "type": "tuple"
                           },
@@ -38801,7 +41001,7 @@ export const marketLensV2_5Abi = [
                             "type": "uint256"
                           }
                         ],
-                        "internalType": "struct FeeConfigurationV2_5",
+                        "internalType": "struct MarketLensV2_5.FeeConfiguration",
                         "name": "fees",
                         "type": "tuple"
                       },
@@ -38829,9 +41029,26 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint256",
                         "name": "totalMarkets",
                         "type": "uint256"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bool",
+                            "name": "isPresent",
+                            "type": "bool"
+                          },
+                          {
+                            "internalType": "bytes32",
+                            "name": "value",
+                            "type": "bytes32"
+                          }
+                        ],
+                        "internalType": "struct MarketLensV2_5.OptionalBytes32Data",
+                        "name": "initCodeHash",
+                        "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksTemplateDataV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksTemplateData",
                     "name": "hooksTemplate",
                     "type": "tuple"
                   },
@@ -38886,9 +41103,19 @@ export const marketLensV2_5Abi = [
                         "internalType": "uint16",
                         "name": "maximumAnnualInterestBips",
                         "type": "uint16"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentPeriod",
+                        "type": "uint32"
+                      },
+                      {
+                        "internalType": "uint32",
+                        "name": "maximumRepaymentDateDelay",
+                        "type": "uint32"
                       }
                     ],
-                    "internalType": "struct MarketParameterConstraintsV2_5",
+                    "internalType": "struct MarketLensV2_5.MarketParameterConstraints",
                     "name": "constraints",
                     "type": "tuple"
                   },
@@ -38957,7 +41184,7 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "optional",
                         "type": "tuple"
                       },
@@ -39024,12 +41251,12 @@ export const marketLensV2_5Abi = [
                             "type": "bool"
                           }
                         ],
-                        "internalType": "struct HooksConfigDataV2_5",
+                        "internalType": "struct MarketLensV2_5.HooksConfigData",
                         "name": "required",
                         "type": "tuple"
                       }
                     ],
-                    "internalType": "struct HooksDeploymentFlagsV2_5",
+                    "internalType": "struct MarketLensV2_5.HooksDeploymentFlags",
                     "name": "deploymentFlags",
                     "type": "tuple"
                   },
@@ -39071,7 +41298,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pullProviders",
                     "type": "tuple[]"
                   },
@@ -39113,7 +41340,7 @@ export const marketLensV2_5Abi = [
                         "type": "address"
                       }
                     ],
-                    "internalType": "struct RoleProviderDataV2_5[]",
+                    "internalType": "struct MarketLensV2_5.RoleProviderData[]",
                     "name": "pushProviders",
                     "type": "tuple[]"
                   },
@@ -39121,9 +41348,14 @@ export const marketLensV2_5Abi = [
                     "internalType": "uint256",
                     "name": "totalMarkets",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "repaymentConstraintsAvailable",
+                    "type": "bool"
                   }
                 ],
-                "internalType": "struct HooksInstanceDataV2_5",
+                "internalType": "struct MarketLensV2_5.HooksInstanceData",
                 "name": "hooks",
                 "type": "tuple"
               },
@@ -39238,7 +41470,7 @@ export const marketLensV2_5Abi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct MarketDataBaseV2_5",
+            "internalType": "struct MarketLensV2_5.MarketData",
             "name": "market",
             "type": "tuple"
           },
@@ -39312,7 +41544,7 @@ export const marketLensV2_5Abi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct RoleProviderDataV2_5",
+                "internalType": "struct MarketLensV2_5.RoleProviderData",
                 "name": "lastProvider",
                 "type": "tuple"
               },
@@ -39332,7 +41564,7 @@ export const marketLensV2_5Abi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct LenderAccountDataV2_5",
+            "internalType": "struct MarketLensV2_5.LenderAccountData",
             "name": "lenderStatus",
             "type": "tuple"
           },
@@ -39346,7 +41578,7 @@ export const marketLensV2_5Abi = [
                     "type": "uint32"
                   },
                   {
-                    "internalType": "enum BatchStatusV2_5",
+                    "internalType": "uint8",
                     "name": "status",
                     "type": "uint8"
                   },
@@ -39371,7 +41603,7 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct WithdrawalBatchDataV2_5",
+                "internalType": "struct MarketLensV2_5.WithdrawalBatchData",
                 "name": "batch",
                 "type": "tuple"
               },
@@ -39403,17 +41635,17 @@ export const marketLensV2_5Abi = [
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct WithdrawalBatchLenderStatusV2_5",
+                "internalType": "struct MarketLensV2_5.WithdrawalBatchLenderStatus",
                 "name": "lenderStatus",
                 "type": "tuple"
               }
             ],
-            "internalType": "struct WithdrawalBatchDataWithLenderStatusV2_5[]",
+            "internalType": "struct MarketLensV2_5.WithdrawalBatchDataWithLenderStatus[]",
             "name": "withdrawalBatches",
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct LenderAccountQueryResultV2_5[]",
+        "internalType": "struct MarketLensV2_5.LenderAccountQueryResult[]",
         "name": "result",
         "type": "tuple[]"
       }
@@ -50713,3 +52945,5801 @@ export const accountQueryBytecode = "0x608060405234801562000010575f80fd5b5060405
 export const checkSafeSignatureBytecode = "0x608060405234801561000f575f80fd5b506040516105733803806105738339818101604052810190610031919061041d565b5f6100c1846320c13b0b60e01b85856040516024016100519291906104f7565b604051602081830303815290604052907bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19166020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff83818316178352505050506320c13b0b60e01b61017060201b60201c565b9050806101685761016584631626ba7e60e01b6100e3866101bf60201b60201c565b856040516024016100f5929190610544565b604051602081830303815290604052907bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19166020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff8381831617835250505050631626ba7e60e01b61017060201b60201c565b90505b805f5260205ff35b5f805f610183868661023860201b60201c565b915091508180156101b45750837bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19165f1c81145b925050509392505050565b5f815160207f19457468657265756d205369676e6564204d6573736167653a0a00000000000081525f8052815b60011561020e57600182039150600a81066030018253600a81049050806101ec575b5080603a03602081113d3d3e80515f51178552828101816020038601209350828552505050919050565b5f8060205f845160208601875afa915060203d1015821691505f5190509250929050565b5f604051905090565b5f80fd5b5f80fd5b5f73ffffffffffffffffffffffffffffffffffffffff82169050919050565b5f6102968261026d565b9050919050565b6102a68161028c565b81146102b0575f80fd5b50565b5f815190506102c18161029d565b92915050565b5f80fd5b5f80fd5b5f601f19601f8301169050919050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52604160045260245ffd5b610315826102cf565b810181811067ffffffffffffffff82111715610334576103336102df565b5b80604052505050565b5f61034661025c565b9050610352828261030c565b919050565b5f67ffffffffffffffff821115610371576103706102df565b5b61037a826102cf565b9050602081019050919050565b5f5b838110156103a4578082015181840152602081019050610389565b5f8484015250505050565b5f6103c16103bc84610357565b61033d565b9050828152602081018484840111156103dd576103dc6102cb565b5b6103e8848285610387565b509392505050565b5f82601f830112610404576104036102c7565b5b81516104148482602086016103af565b91505092915050565b5f805f6060848603121561043457610433610265565b5b5f610441868287016102b3565b935050602084015167ffffffffffffffff81111561046257610461610269565b5b61046e868287016103f0565b925050604084015167ffffffffffffffff81111561048f5761048e610269565b5b61049b868287016103f0565b9150509250925092565b5f81519050919050565b5f82825260208201905092915050565b5f6104c9826104a5565b6104d381856104af565b93506104e3818560208601610387565b6104ec816102cf565b840191505092915050565b5f6040820190508181035f83015261050f81856104bf565b9050818103602083015261052381846104bf565b90509392505050565b5f819050919050565b61053e8161052c565b82525050565b5f6040820190506105575f830185610535565b818103602083015261056981846104bf565b9050939250505056fe" as const satisfies Hex;
 
 export const describeSignatureBytecode = "0x608060405234801562000010575f80fd5b5060405162002a6538038062002a65833981810160405281019062000036919062001fa7565b5f6200004a8484846200007960201b60201c565b90505f81604051602001620000609190620024a2565b6040516020818303038152906040529050805160208201f35b6200008362001ce2565b62000094846200102860201b60201c565b81606001819052505f838051906020012090505f6002811115620000bd57620000bc6200203e565b5b82606001515f01516002811115620000da57620000d96200203e565b5b03620003d3575f620000f382856200130860201b60201c565b90505f73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141580156200019457505f73ffffffffffffffffffffffffffffffffffffffff168673ffffffffffffffffffffffffffffffffffffffff1614806200019357508073ffffffffffffffffffffffffffffffffffffffff168673ffffffffffffffffffffffffffffffffffffffff16145b5b156200020e576001835f01906006811115620001b557620001b46200203e565b5b90816006811115620001cc57620001cb6200203e565b5b8152505080836020019073ffffffffffffffffffffffffffffffffffffffff16908173ffffffffffffffffffffffffffffffffffffffff168152505062000382565b5f73ffffffffffffffffffffffffffffffffffffffff16620002476200023a876200138d60201b60201c565b866200130860201b60201c565b91508173ffffffffffffffffffffffffffffffffffffffff1614158015620002d157505f73ffffffffffffffffffffffffffffffffffffffff168673ffffffffffffffffffffffffffffffffffffffff161480620002d057508073ffffffffffffffffffffffffffffffffffffffff168673ffffffffffffffffffffffffffffffffffffffff16145b5b156200034b576002835f01906006811115620002f257620002f16200203e565b5b908160068111156200030957620003086200203e565b5b8152505080836020019073ffffffffffffffffffffffffffffffffffffffff16908173ffffffffffffffffffffffffffffffffffffffff168152505062000381565b5f835f019060068111156200036557620003646200203e565b5b908160068111156200037c576200037b6200203e565b5b815250505b5b5f60068111156200039857620003976200203e565b5b835f01516006811115620003b157620003b06200203e565b5b148015620003c457508260600151602001515b620003d157505062001021565b505b60016002811115620003ea57620003e96200203e565b5b82606001515f015160028111156200040757620004066200203e565b5b0362000d9c575f620004518662000424876200138d60201b60201c565b604051602001620004369190620024f1565b6040516020818303038152906040526200140860201b60201c565b90505f8082511415905080156200046d57818051906020012092505b620004808787876200156260201b60201c565b15620004c2576003845f01906006811115620004a157620004a06200203e565b5b90816006811115620004b857620004b76200203e565b5b8152505062000656565b620004d48787620015ff60201b60201c565b1562000516576006845f01906006811115620004f557620004f46200203e565b5b908160068111156200050c576200050b6200203e565b5b8152505062000655565b62000530878780519060200120876200163960201b60201c565b1562000572576004845f019060068111156200055157620005506200203e565b5b908160068111156200056857620005676200203e565b5b8152505062000654565b620005958762000588886200138d60201b60201c565b876200163960201b60201c565b15620005d7576005845f01906006811115620005b657620005b56200203e565b5b90816006811115620005cd57620005cc6200203e565b5b8152505062000653565b808015620006155750620006148784604051602001620005f89190620024f1565b604051602081830303815290604052876200156260201b60201c565b5b1562000652576004845f019060068111156200063657620006356200203e565b5b908160068111156200064d576200064c6200203e565b5b815250505b5b5b5b5b806200069d5786846020019073ffffffffffffffffffffffffffffffffffffffff16908173ffffffffffffffffffffffffffffffffffffffff168152505050505062001021565b505060418351620006af919062002567565b8260600151606001511162000d5d575f82606001516060015190505f8080600190508367ffffffffffffffff811115620006ee57620006ed62001e4b565b5b6040519080825280602002602001820160405280156200072b57816020015b6200071762001d3b565b8152602001906001900390816200070d5790505b5086604001819052505f5b8481101562000ced575f805f620007548b85620016d660201b60201c565b9250925092505f8360ff1603620008a557815f1c95506041886200077991906200259e565b815f1c10156200078f575f945050505062000ced565b8a51815f1c1180620007b157506020815f1c8c51620007af9190620025e8565b105b15620007c3575f945050505062000ced565b5f6020828d01015190506020825f1c8d51620007e09190620025e8565b620007ec9190620025e8565b81111562000801575f95505050505062000ced565b60606020838e010190506200081e888f836200156260201b60201c565b62000831575f9650505050505062000ced565b6040518060600160405280600260038111156200085357620008526200203e565b5b81526020018973ffffffffffffffffffffffffffffffffffffffff168152602001828152508c60400151878151811062000892576200089162002622565b5b6020026020010181905250505062000bfd565b60018360ff1603620009e057815f1c95505f80620009238f898d604051602401620008d292919062002671565b604051602081830303815290604052637d83297460e01b6020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff83818316178352505050506200170360201b60201c565b915091508115806200093457505f81145b1562000948575f9650505050505062000ced565b60405180606001604052806003808111156200096957620009686200203e565b5b81526020018973ffffffffffffffffffffffffffffffffffffffff168152602001858588604051602001620009a193929190620026e2565b6040516020818303038152906040528152508c604001518781518110620009cd57620009cc62002622565b5b6020026020010181905250505062000bfc565b601e8360ff16111562000b195760018960405160200162000a0291906200277c565b6040516020818303038152906040528051906020012060048562000a279190620027a5565b84846040515f815260200160405260405162000a479493929190620027f1565b6020604051602081039080840390855afa15801562000a68573d5f803e3d5ffd5b50505060206040510351955060405180606001604052806001600381111562000a965762000a956200203e565b5b81526020018773ffffffffffffffffffffffffffffffffffffffff168152602001838360048762000ac89190620027a5565b60405160200162000adc93929190620026e2565b6040516020818303038152906040528152508a60400151858151811062000b085762000b0762002622565b5b602002602001018190525062000bfb565b6001898484846040515f815260200160405260405162000b3d9493929190620027f1565b6020604051602081039080840390855afa15801562000b5e573d5f803e3d5ffd5b50505060206040510351955060405180606001604052805f600381111562000b8b5762000b8a6200203e565b5b81526020018773ffffffffffffffffffffffffffffffffffffffff16815260200183838660405160200162000bc393929190620026e2565b6040516020818303038152906040528152508a60400151858151811062000bef5762000bee62002622565b5b60200260200101819052505b5b5b8673ffffffffffffffffffffffffffffffffffffffff168673ffffffffffffffffffffffffffffffffffffffff161162000c3d575f945050505062000ced565b5f8062000ca88f8960405160240162000c5791906200283c565b604051602081830303815290604052632f54bf6e60e01b6020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff83818316178352505050506200170360201b60201c565b9150915081158062000cbb575060018114155b1562000ccf575f9650505050505062000ced565b8798505050505050808062000ce49062002857565b91505062000736565b508062000d58575f67ffffffffffffffff81111562000d115762000d1062001e4b565b5b60405190808252806020026020018201604052801562000d4e57816020015b62000d3a62001d3b565b81526020019060019003908162000d305790505b5086604001819052505b505050505b84826020019073ffffffffffffffffffffffffffffffffffffffff16908173ffffffffffffffffffffffffffffffffffffffff16815250505062001021565b62000dae8585620015ff60201b60201c565b1562000e29576006825f0190600681111562000dcf5762000dce6200203e565b5b9081600681111562000de65762000de56200203e565b5b8152505084826020019073ffffffffffffffffffffffffffffffffffffffff16908173ffffffffffffffffffffffffffffffffffffffff16815250505062001021565b62000e3c8585856200156260201b60201c565b1562000eb7576003825f0190600681111562000e5d5762000e5c6200203e565b5b9081600681111562000e745762000e736200203e565b5b8152505084826020019073ffffffffffffffffffffffffffffffffffffffff16908173ffffffffffffffffffffffffffffffffffffffff16815250505062001021565b62000ed1858580519060200120856200163960201b60201c565b1562000f4c576004825f0190600681111562000ef25762000ef16200203e565b5b9081600681111562000f095762000f086200203e565b5b8152505084826020019073ffffffffffffffffffffffffffffffffffffffff16908173ffffffffffffffffffffffffffffffffffffffff16815250505062001021565b62000f6f8562000f62866200138d60201b60201c565b856200163960201b60201c565b1562000fea576005825f0190600681111562000f905762000f8f6200203e565b5b9081600681111562000fa75762000fa66200203e565b5b8152505084826020019073ffffffffffffffffffffffffffffffffffffffff16908173ffffffffffffffffffffffffffffffffffffffff16815250505062001021565b5f825f019060068111156200100457620010036200203e565b5b908160068111156200101b576200101a6200203e565b5b81525050505b9392505050565b6200103262001d85565b5f8273ffffffffffffffffffffffffffffffffffffffff163b90505f810362001091575f825f019060028111156200106f576200106e6200203e565b5b908160028111156200108657620010856200203e565b5b815250505062001303565b6017810362001105575f805f5260035f601d863c62ef01005f511490508015620011035760018360200190151590811515815250505f835f01906002811115620010e057620010df6200203e565b5b90816002811115620010f757620010f66200203e565b5b81525050505062001303565b505b5f63a619486e5f525f806004601c875afa15620011465760203d03620011455760205f803e73ffffffffffffffffffffffffffffffffffffffff5f511690505b5b6002835f019060028111156200116157620011606200203e565b5b908160028111156200117857620011776200203e565b5b815250505f73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614158015620011c65750620011c5816200172760201b60201c565b5b1562001300575f806200122a8660405160240160405160208183030381529060405263a0e67e2b60e01b6020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff8381831617835250505050620019ca60201b60201c565b91509150816200123e575050505062001303565b5f806200129c8860405160240160405160208183030381529060405263e75235b860e01b6020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff83818316178352505050506200170360201b60201c565b9150915081620012b25750505050505062001303565b6001875f01906002811115620012cd57620012cc6200203e565b5b90816002811115620012e457620012e36200203e565b5b8152505082876040018190525080876060018181525050505050505b50505b919050565b5f604082510362001340575f8060208401519150604084015190506200133685838362001c4960201b60201c565b9250505062001387565b6040518251845f5260608401515f1a602052602084015160405260408401516060526020600160805f604185145afa5192503d6200137c575f92505b5f6060528160405250505b92915050565b5f815160207f19457468657265756d205369676e6564204d6573736167653a0a00000000000081525f8052815b600115620013de57600182039150600a81066030018253600a8104905080620013ba575b5080603a03602081113d3d3e80515f51178552828101816020038601209350828552505050919050565b60605f80620014688560405160240160405160208183030381529060405263f698da2560e01b6020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff83818316178352505050506200170360201b60201c565b9150915081620014cd575f67ffffffffffffffff8111156200148f576200148e62001e4b565b5b6040519080825280601f01601f191660200182016040528015620014c25781602001600182028036833780820191505090505b50925050506200155c565b5f7f60b3cbf8b4a223d68d641b3b6ddf9a298e7f33710cf3d3a9d1146b5a6150fbca5f1b85805190602001206040516020016200150c929190620028a3565b604051602081830303815290604052805190602001209050601960f81b600160f81b835f1b836040516020016200154794939291906200291d565b60405160208183030381529060405293505050505b92915050565b5f620015f6846320c13b0b60e01b858560405160240162001585929190620029c2565b604051602081830303815290604052907bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19166020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff83818316178352505050506320c13b0b60e01b62001c9060201b60201c565b90509392505050565b5f620016318362001616846200138d60201b60201c565b60405180602001604052805f8152506200163960201b60201c565b905092915050565b5f620016cd84631626ba7e60e01b85856040516024016200165c929190620029fb565b604051602081830303815290604052907bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19166020820180517bffffffffffffffffffffffffffffffffffffffffffffffffffffffff8381831617835250505050631626ba7e60e01b62001c9060201b60201c565b90509392505050565b5f805f8360410260208101860151925060408101860151915060ff60418201870151169350509250925092565b5f8060205f845160208601875afa915060203d1015821691505f5190509250929050565b5f73b6029ea3b2c51d09a50b53ca8012feeb05bda35a73ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff161480620017b657507334cfac646f301356faa8b21e94227e3583fe3f5f73ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff16145b80620018015750736851d6fdfafd08c0295c392436245e5bc78b018573ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff16145b806200184c575073d9db270c1b5e3bd161e8c8503c55ceabee70955273ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff16145b806200189757507369f4d1788e39c87893c980c06edf4b7f686e293873ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff16145b80620018e25750733e5c63644e683549055b9be8653de26e0b4cd36e73ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff16145b806200192d575073fb1bffc9d739b8d520daf37df666da4c687191ea73ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff16145b806200197857507341675c099f32341bf84bfc5382af534df5c7461a73ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff16145b80620019c357507329fcb43b46531bca003ddc8fcb67ffe91900c76273ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff16145b9050919050565b5f60605f805f60205f8751602089018a5afa92503d91505f519050821580620019f35750604082105b80620019ff5750602081105b8062001a1957505f60208262001a16919062002a2d565b14155b8062001a32575060208262001a2f9190620025e8565b81115b1562001a93575f8067ffffffffffffffff81111562001a565762001a5562001e4b565b5b60405190808252806020026020018201604052801562001a855781602001602082028036833780820191505090505b509450945050505062001c42565b5f6020825f3e5f519050602080838562001aae9190620025e8565b62001aba9190620025e8565b62001ac6919062002567565b81111562001b2a575f8067ffffffffffffffff81111562001aec5762001aeb62001e4b565b5b60405190808252806020026020018201604052801562001b1b5781602001602082028036833780820191505090505b50955095505050505062001c42565b5f8167ffffffffffffffff81111562001b485762001b4762001e4b565b5b60405190808252806020026020018201604052801562001b775781602001602082028036833780820191505090505b5090506020820260208401602083013e5f5b8281101562001c34575f60208202602084010151905073ffffffffffffffffffffffffffffffffffffffff801681111562001c1d575f8067ffffffffffffffff81111562001bdc5762001bdb62001e4b565b5b60405190808252806020026020018201604052801562001c0b5781602001602082028036833780820191505090505b50985098505050505050505062001c42565b50808062001c2b9062002857565b91505062001b89565b506001819650965050505050505b9250929050565b5f604051845f52601b8360ff1c01602052836040528260011b60011c6060526020600160805f60015afa5191503d62001c80575f91505b5f60605280604052509392505050565b5f805f62001ca586866200170360201b60201c565b9150915081801562001cd75750837bffffffffffffffffffffffffffffffffffffffffffffffffffffffff19165f1c81145b925050509392505050565b60405180608001604052805f600681111562001d035762001d026200203e565b5b81526020015f73ffffffffffffffffffffffffffffffffffffffff1681526020016060815260200162001d3562001d85565b81525090565b60405180606001604052805f600381111562001d5c5762001d5b6200203e565b5b81526020015f73ffffffffffffffffffffffffffffffffffffffff168152602001606081525090565b60405180608001604052805f600281111562001da65762001da56200203e565b5b81526020015f15158152602001606081526020015f81525090565b5f604051905090565b5f80fd5b5f80fd5b5f73ffffffffffffffffffffffffffffffffffffffff82169050919050565b5f62001dfd8262001dd2565b9050919050565b62001e0f8162001df1565b811462001e1a575f80fd5b50565b5f8151905062001e2d8162001e04565b92915050565b5f80fd5b5f80fd5b5f601f19601f8301169050919050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52604160045260245ffd5b62001e838262001e3b565b810181811067ffffffffffffffff8211171562001ea55762001ea462001e4b565b5b80604052505050565b5f62001eb962001dc1565b905062001ec7828262001e78565b919050565b5f67ffffffffffffffff82111562001ee95762001ee862001e4b565b5b62001ef48262001e3b565b9050602081019050919050565b5f5b8381101562001f2057808201518184015260208101905062001f03565b5f8484015250505050565b5f62001f4162001f3b8462001ecc565b62001eae565b90508281526020810184848401111562001f605762001f5f62001e37565b5b62001f6d84828562001f01565b509392505050565b5f82601f83011262001f8c5762001f8b62001e33565b5b815162001f9e84826020860162001f2b565b91505092915050565b5f805f6060848603121562001fc15762001fc062001dca565b5b5f62001fd08682870162001e1d565b935050602084015167ffffffffffffffff81111562001ff45762001ff362001dce565b5b620020028682870162001f75565b925050604084015167ffffffffffffffff81111562002026576200202562001dce565b5b620020348682870162001f75565b9150509250925092565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52602160045260245ffd5b600781106200207f576200207e6200203e565b5b50565b5f81905062002091826200206b565b919050565b5f620020a28262002082565b9050919050565b620020b48162002096565b82525050565b620020c58162001df1565b82525050565b5f81519050919050565b5f82825260208201905092915050565b5f819050602082019050919050565b600481106200210857620021076200203e565b5b50565b5f8190506200211a82620020f4565b919050565b5f6200212b826200210b565b9050919050565b6200213d816200211f565b82525050565b5f81519050919050565b5f82825260208201905092915050565b5f620021698262002143565b6200217581856200214d565b93506200218781856020860162001f01565b620021928162001e3b565b840191505092915050565b5f606083015f830151620021b45f86018262002132565b506020830151620021c96020860182620020ba565b5060408301518482036040860152620021e382826200215d565b9150508091505092915050565b5f620021fd83836200219d565b905092915050565b5f602082019050919050565b5f6200221d82620020cb565b620022298185620020d5565b9350836020820285016200223d85620020e5565b805f5b858110156200227e57848403895281516200225c8582620021f0565b9450620022698362002205565b925060208a0199505060018101905062002240565b50829750879550505050505092915050565b60038110620022a457620022a36200203e565b5b50565b5f819050620022b68262002290565b919050565b5f620022c782620022a7565b9050919050565b620022d981620022bb565b82525050565b5f8115159050919050565b620022f581620022df565b82525050565b5f81519050919050565b5f82825260208201905092915050565b5f819050602082019050919050565b5f620023318383620020ba565b60208301905092915050565b5f602082019050919050565b5f6200235582620022fb565b62002361818562002305565b93506200236e8362002315565b805f5b83811015620023a457815162002388888262002324565b975062002395836200233d565b92505060018101905062002371565b5085935050505092915050565b5f819050919050565b620023c581620023b1565b82525050565b5f608083015f830151620023e25f860182620022ce565b506020830151620023f76020860182620022ea565b506040830151848203604086015262002411828262002349565b9150506060830151620024286060860182620023ba565b508091505092915050565b5f608083015f8301516200244a5f860182620020a9565b5060208301516200245f6020860182620020ba565b506040830151848203604086015262002479828262002211565b91505060608301518482036060860152620024958282620023cb565b9150508091505092915050565b5f6020820190508181035f830152620024bc818462002433565b905092915050565b5f819050919050565b5f819050919050565b620024eb620024e582620024c4565b620024cd565b82525050565b5f620024fe8284620024d6565b60208201915081905092915050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52601260045260245ffd5b7f4e487b71000000000000000000000000000000000000000000000000000000005f52601160045260245ffd5b5f6200257382620023b1565b91506200258083620023b1565b9250826200259357620025926200250d565b5b828204905092915050565b5f620025aa82620023b1565b9150620025b783620023b1565b9250828202620025c781620023b1565b91508282048414831517620025e157620025e06200253a565b5b5092915050565b5f620025f482620023b1565b91506200260183620023b1565b92508282039050818111156200261c576200261b6200253a565b5b92915050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52603260045260245ffd5b6200265a8162001df1565b82525050565b6200266b81620024c4565b82525050565b5f604082019050620026865f8301856200264f565b62002695602083018462002660565b9392505050565b5f60ff82169050919050565b5f8160f81b9050919050565b5f620026c082620026a8565b9050919050565b620026dc620026d6826200269c565b620026b4565b82525050565b5f620026ef8286620024d6565b602082019150620027018285620024d6565b602082019150620027138284620026c7565b600182019150819050949350505050565b5f81905092915050565b7f19457468657265756d205369676e6564204d6573736167653a0a3332000000005f82015250565b5f62002764601c8362002724565b915062002771826200272e565b601c82019050919050565b5f620027888262002756565b9150620027968284620024d6565b60208201915081905092915050565b5f620027b1826200269c565b9150620027be836200269c565b9250828203905060ff811115620027da57620027d96200253a565b5b92915050565b620027eb816200269c565b82525050565b5f608082019050620028065f83018762002660565b620028156020830186620027e0565b62002824604083018562002660565b62002833606083018462002660565b95945050505050565b5f602082019050620028515f8301846200264f565b92915050565b5f6200286382620023b1565b91507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff82036200289857620028976200253a565b5b600182019050919050565b5f604082019050620028b85f83018562002660565b620028c7602083018462002660565b9392505050565b5f7fff0000000000000000000000000000000000000000000000000000000000000082169050919050565b5f819050919050565b620029176200291182620028ce565b620028f9565b82525050565b5f6200292a828762002902565b6001820191506200293c828662002902565b6001820191506200294e8285620024d6565b602082019150620029608284620024d6565b60208201915081905095945050505050565b5f82825260208201905092915050565b5f6200298e8262002143565b6200299a818562002972565b9350620029ac81856020860162001f01565b620029b78162001e3b565b840191505092915050565b5f6040820190508181035f830152620029dc818562002982565b90508181036020830152620029f2818462002982565b90509392505050565b5f60408201905062002a105f83018562002660565b818103602083015262002a24818462002982565b90509392505050565b5f62002a3982620023b1565b915062002a4683620023b1565b92508262002a595762002a586200250d565b5b82820690509291505056fe" as const satisfies Hex;
+
+export const hooksFactoryV2_5Abi = [
+  {
+    "inputs": [],
+    "name": "AssetBlacklisted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CallerNotArchControllerOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "DeploymentFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "FeeMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HooksInstanceAlreadyExists",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HooksInstanceNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HooksTemplateAlreadyExists",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HooksTemplateInitCodeHashMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HooksTemplateNotAvailable",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HooksTemplateNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidFeeConfiguration",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidHooksAdministrator",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidHooksInstanceAssociation",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidPaginationRange",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MarketAlreadyExists",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MarketDeploymentAddressMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NameOrSymbolTooLong",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoReentrantCalls",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotApprovedBorrower",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SaltDoesNotContainSender",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SetProtocolFeeBipsFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SphereXOperatorRequired",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "oldEngineAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newEngineAddress",
+        "type": "address"
+      }
+    ],
+    "name": "ChangedSpherexEngineAddress",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "oldSphereXAdmin",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newSphereXAdmin",
+        "type": "address"
+      }
+    ],
+    "name": "ChangedSpherexOperator",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousAdministrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "HooksInstanceAdministratorTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "deployer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "version",
+        "type": "string"
+      }
+    ],
+    "name": "HooksInstanceDeployed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "metadataAvailable",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "pullProviders",
+        "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "pushProviders",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "HooksInstanceRoleProviders",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "feeRecipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "originationFeeAsset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint80",
+        "name": "originationFeeAmount",
+        "type": "uint80"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "protocolFeeBips",
+        "type": "uint16"
+      }
+    ],
+    "name": "HooksTemplateAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      }
+    ],
+    "name": "HooksTemplateDisabled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousFeeRecipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newFeeRecipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousOriginationFeeAsset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newOriginationFeeAsset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint80",
+        "name": "previousOriginationFeeAmount",
+        "type": "uint80"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint80",
+        "name": "newOriginationFeeAmount",
+        "type": "uint80"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "previousProtocolFeeBips",
+        "type": "uint16"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "newProtocolFeeBips",
+        "type": "uint16"
+      }
+    ],
+    "name": "HooksTemplateFeesUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "initCodeHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "HooksTemplateInitCodeHashRecorded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrowerPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrowerIdentityRegistry",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "symbol",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "asset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "requestedHooks",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "hooks",
+        "type": "uint256"
+      }
+    ],
+    "name": "MarketDeployed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "maxTotalSupply",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "annualInterestBips",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "delinquencyFeeBips",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "withdrawalBatchDuration",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "reserveRatioBips",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "delinquencyGracePeriod",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "feeRecipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "protocolFeeBips",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "originationFeeAsset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "originationFeeAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "MarketDeploymentConfig",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "hooksData",
+        "type": "bytes"
+      }
+    ],
+    "name": "MarketHooksData",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "repaymentDate",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "repaymentPeriod",
+        "type": "uint256"
+      }
+    ],
+    "name": "MarketRepaymentTerms",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "feeRecipient",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "originationFeeAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "uint80",
+        "name": "originationFeeAmount",
+        "type": "uint80"
+      },
+      {
+        "internalType": "uint16",
+        "name": "protocolFeeBips",
+        "type": "uint16"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "initCodeHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "addHooksTemplate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "archController",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "borrowerIdentityRegistry",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newSphereXEngine",
+        "type": "address"
+      }
+    ],
+    "name": "changeSphereXEngine",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
+      }
+    ],
+    "name": "computeMarketAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "constructorArgs",
+        "type": "bytes"
+      }
+    ],
+    "name": "deployHooksInstance",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "asset",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "namePrefix",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "symbolPrefix",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "maxTotalSupply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint16",
+            "name": "annualInterestBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "delinquencyFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "withdrawalBatchDuration",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reserveRatioBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "delinquencyGracePeriod",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hooks",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint32",
+            "name": "repaymentDate",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "repaymentPeriod",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct HooksFactoryV2_5.DeployMarketInputs",
+        "name": "parameters",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "hooksData",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "originationFeeAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "originationFeeAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "deployMarket",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "hooksTemplateArgs",
+        "type": "bytes"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "asset",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "namePrefix",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "symbolPrefix",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "maxTotalSupply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint16",
+            "name": "annualInterestBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "delinquencyFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "withdrawalBatchDuration",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reserveRatioBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "delinquencyGracePeriod",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hooks",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint32",
+            "name": "repaymentDate",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "repaymentPeriod",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct HooksFactoryV2_5.DeployMarketInputs",
+        "name": "parameters",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "hooksData",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "originationFeeAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "originationFeeAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "deployMarketAndHooks",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "disableHooksTemplate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksAdministrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstanceDeploymentNonce",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "nonce",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstancesCountForAdministrator",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstancesCountForBorrower",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getHooksInstancesForAdministrator",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "arr",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstancesForAdministrator",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstancesForBorrower",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksTemplateDetails",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "originationFeeAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "uint80",
+            "name": "originationFeeAmount",
+            "type": "uint80"
+          },
+          {
+            "internalType": "uint16",
+            "name": "protocolFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "bool",
+            "name": "exists",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "enabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint24",
+            "name": "index",
+            "type": "uint24"
+          },
+          {
+            "internalType": "address",
+            "name": "feeRecipient",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct HooksFactoryV2_5.HooksTemplate",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksTemplateForInstance",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksTemplateInitCodeHash",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "initCodeHash",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getHooksTemplates",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getHooksTemplates",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "arr",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getHooksTemplatesCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMarketParameters",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "asset",
+            "type": "address"
+          },
+          {
+            "internalType": "uint8",
+            "name": "decimals",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "packedNameWord0",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "packedNameWord1",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "packedSymbolWord0",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "packedSymbolWord1",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "borrower",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "feeRecipient",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "sentinel",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "wrapperFactory",
+            "type": "address"
+          },
+          {
+            "internalType": "uint128",
+            "name": "maxTotalSupply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint16",
+            "name": "protocolFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "annualInterestBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "delinquencyFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "withdrawalBatchDuration",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reserveRatioBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "delinquencyGracePeriod",
+            "type": "uint32"
+          },
+          {
+            "internalType": "address",
+            "name": "archController",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "sphereXEngine",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hooks",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerIdentityRegistry",
+            "type": "address"
+          },
+          {
+            "internalType": "uint32",
+            "name": "repaymentDate",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "repaymentPeriod",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct HooksFactoryV2_5.MarketParameters",
+        "name": "parameters",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "name": "getMarketsForHooksInstance",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMarketsForHooksInstance",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "arr",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "name": "getMarketsForHooksInstanceCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "getMarketsForHooksTemplate",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMarketsForHooksTemplate",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "arr",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "getMarketsForHooksTemplateCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "name": "isHooksInstance",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "isHooksTemplate",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "marketInitCodeHash",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "marketInitCodeStorage",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "previousAdministrator",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "onHooksAdministratorTransferred",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "pushProtocolFeeBipsUpdates",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "marketStartIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "marketEndIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "pushProtocolFeeBipsUpdates",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "registerWithArchController",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sanctionsSentinel",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sphereXEngine",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sphereXOperator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "feeRecipient",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "originationFeeAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "uint80",
+        "name": "originationFeeAmount",
+        "type": "uint80"
+      },
+      {
+        "internalType": "uint16",
+        "name": "protocolFeeBips",
+        "type": "uint16"
+      }
+    ],
+    "name": "updateHooksTemplateFees",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "wrapperFactory",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+] as const satisfies Abi;
+
+export const hooksFactoryRevolvingV2_5Abi = [
+  {
+    "inputs": [],
+    "name": "AssetBlacklisted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CallerNotArchControllerOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "DeploymentFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "FeeMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HooksInstanceAlreadyExists",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HooksInstanceNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HooksTemplateAlreadyExists",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HooksTemplateInitCodeHashMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HooksTemplateNotAvailable",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HooksTemplateNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidCommitmentFeeBips",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidFeeConfiguration",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidHooksAdministrator",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidHooksInstanceAssociation",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidMarketData",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidPaginationRange",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MarketAlreadyExists",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MarketDeploymentAddressMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NameOrSymbolTooLong",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoReentrantCalls",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotApprovedBorrower",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SaltDoesNotContainSender",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SetProtocolFeeBipsFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SphereXOperatorRequired",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnsupportedMarketDataVersion",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "oldEngineAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newEngineAddress",
+        "type": "address"
+      }
+    ],
+    "name": "ChangedSpherexEngineAddress",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "oldSphereXAdmin",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newSphereXAdmin",
+        "type": "address"
+      }
+    ],
+    "name": "ChangedSpherexOperator",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousAdministrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "HooksInstanceAdministratorTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "deployer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "version",
+        "type": "string"
+      }
+    ],
+    "name": "HooksInstanceDeployed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "metadataAvailable",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "pullProviders",
+        "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "pushProviders",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "HooksInstanceRoleProviders",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "feeRecipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "originationFeeAsset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint80",
+        "name": "originationFeeAmount",
+        "type": "uint80"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "protocolFeeBips",
+        "type": "uint16"
+      }
+    ],
+    "name": "HooksTemplateAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      }
+    ],
+    "name": "HooksTemplateDisabled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousFeeRecipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newFeeRecipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousOriginationFeeAsset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newOriginationFeeAsset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint80",
+        "name": "previousOriginationFeeAmount",
+        "type": "uint80"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint80",
+        "name": "newOriginationFeeAmount",
+        "type": "uint80"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "previousProtocolFeeBips",
+        "type": "uint16"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint16",
+        "name": "newProtocolFeeBips",
+        "type": "uint16"
+      }
+    ],
+    "name": "HooksTemplateFeesUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "initCodeHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "HooksTemplateInitCodeHashRecorded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrowerPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrowerIdentityRegistry",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "symbol",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "asset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "requestedHooks",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "hooks",
+        "type": "uint256"
+      }
+    ],
+    "name": "MarketDeployed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "maxTotalSupply",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "annualInterestBips",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "delinquencyFeeBips",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "withdrawalBatchDuration",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "reserveRatioBips",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "delinquencyGracePeriod",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "feeRecipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "protocolFeeBips",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "originationFeeAsset",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "originationFeeAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "MarketDeploymentConfig",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "hooksData",
+        "type": "bytes"
+      }
+    ],
+    "name": "MarketHooksData",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "repaymentDate",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "repaymentPeriod",
+        "type": "uint256"
+      }
+    ],
+    "name": "MarketRepaymentTerms",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "commitmentFeeBips",
+        "type": "uint256"
+      }
+    ],
+    "name": "RevolvingMarketDeployed",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "name_",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "feeRecipient",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "originationFeeAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "uint80",
+        "name": "originationFeeAmount",
+        "type": "uint80"
+      },
+      {
+        "internalType": "uint16",
+        "name": "protocolFeeBips",
+        "type": "uint16"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "initCodeHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "addHooksTemplate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "archController",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "borrowerIdentityRegistry",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newSphereXEngine",
+        "type": "address"
+      }
+    ],
+    "name": "changeSphereXEngine",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
+      }
+    ],
+    "name": "computeMarketAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "constructorArgs",
+        "type": "bytes"
+      }
+    ],
+    "name": "deployHooksInstance",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "asset",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "namePrefix",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "symbolPrefix",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "maxTotalSupply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint16",
+            "name": "annualInterestBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "delinquencyFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "withdrawalBatchDuration",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reserveRatioBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "delinquencyGracePeriod",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hooks",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint32",
+            "name": "repaymentDate",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "repaymentPeriod",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct HooksFactoryRevolvingV2_5.DeployMarketInputs",
+        "name": "parameters",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "hooksData",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes",
+        "name": "marketData",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "originationFeeAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "originationFeeAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "deployMarket",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "hooksConstructorArgs",
+        "type": "bytes"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "asset",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "namePrefix",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "symbolPrefix",
+            "type": "string"
+          },
+          {
+            "internalType": "uint128",
+            "name": "maxTotalSupply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint16",
+            "name": "annualInterestBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "delinquencyFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "withdrawalBatchDuration",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reserveRatioBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "delinquencyGracePeriod",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hooks",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint32",
+            "name": "repaymentDate",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "repaymentPeriod",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct HooksFactoryRevolvingV2_5.DeployMarketInputs",
+        "name": "parameters",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bytes",
+        "name": "hooksData",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes",
+        "name": "marketData",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "originationFeeAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "originationFeeAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "deployMarketAndHooks",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "disableHooksTemplate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksAdministrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstanceDeploymentNonce",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "nonce",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstancesCountForAdministrator",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstancesCountForBorrower",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getHooksInstancesForAdministrator",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "arr",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstancesForAdministrator",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksInstancesForBorrower",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksTemplateDetails",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "originationFeeAsset",
+            "type": "address"
+          },
+          {
+            "internalType": "uint80",
+            "name": "originationFeeAmount",
+            "type": "uint80"
+          },
+          {
+            "internalType": "uint16",
+            "name": "protocolFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "bool",
+            "name": "exists",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "enabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint24",
+            "name": "index",
+            "type": "uint24"
+          },
+          {
+            "internalType": "address",
+            "name": "feeRecipient",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct HooksFactoryRevolvingV2_5.HooksTemplate",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksTemplateForInstance",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "getHooksTemplateInitCodeHash",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "initCodeHash",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getHooksTemplates",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getHooksTemplates",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "arr",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getHooksTemplatesCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMarketParameters",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "asset",
+            "type": "address"
+          },
+          {
+            "internalType": "uint8",
+            "name": "decimals",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "packedNameWord0",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "packedNameWord1",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "packedSymbolWord0",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "packedSymbolWord1",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "borrower",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "feeRecipient",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "sentinel",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "wrapperFactory",
+            "type": "address"
+          },
+          {
+            "internalType": "uint128",
+            "name": "maxTotalSupply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint16",
+            "name": "protocolFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "annualInterestBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "delinquencyFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "withdrawalBatchDuration",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reserveRatioBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint32",
+            "name": "delinquencyGracePeriod",
+            "type": "uint32"
+          },
+          {
+            "internalType": "address",
+            "name": "archController",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "sphereXEngine",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "hooks",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerPrincipal",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "borrowerIdentityRegistry",
+            "type": "address"
+          },
+          {
+            "internalType": "uint32",
+            "name": "repaymentDate",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "repaymentPeriod",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct HooksFactoryRevolvingV2_5.MarketParameters",
+        "name": "parameters",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "name": "getMarketsForHooksInstance",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMarketsForHooksInstance",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "arr",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "name": "getMarketsForHooksInstanceCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "getMarketsForHooksTemplate",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMarketsForHooksTemplate",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "arr",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "getMarketsForHooksTemplateCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRevolvingMarketCommitmentFeeBips",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksInstance",
+        "type": "address"
+      }
+    ],
+    "name": "isHooksInstance",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "isHooksTemplate",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "marketInitCodeHash",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "marketInitCodeStorage",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "previousAdministrator",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "onHooksAdministratorTransferred",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      }
+    ],
+    "name": "pushProtocolFeeBipsUpdates",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "marketStartIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "marketEndIndex",
+        "type": "uint256"
+      }
+    ],
+    "name": "pushProtocolFeeBipsUpdates",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "registerWithArchController",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sanctionsSentinel",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sphereXEngine",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sphereXOperator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "hooksTemplate",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "feeRecipient",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "originationFeeAsset",
+        "type": "address"
+      },
+      {
+        "internalType": "uint80",
+        "name": "originationFeeAmount",
+        "type": "uint80"
+      },
+      {
+        "internalType": "uint16",
+        "name": "protocolFeeBips",
+        "type": "uint16"
+      }
+    ],
+    "name": "updateHooksTemplateFees",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "wrapperFactory",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+] as const satisfies Abi;
+
+export const wildcatMarketV2_5Abi = [
+  {
+    "inputs": [],
+    "name": "AccountBlocked",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AmbiguousBorrowerIdentity",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AnnualInterestBipsTooHigh",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AprChangeOnClosedMarket",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AprReductionNotReduction",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "BadLaunchCode",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "BadRescueAsset",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "BorrowAmountTooHigh",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "BorrowFromClosedMarket",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "BorrowWhileSanctioned",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "BorrowerIdentityNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "BorrowerPrincipalNotRegistered",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "BorrowerTransferWhileSanctioned",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CannotNukeWrapper",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CapacityChangeOnClosedMarket",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CloseMarketWithUnpaidWithdrawals",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "DepositToClosedMarket",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ExecutePendingAprReductionNotEnabled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "FIFOQueueOutOfBounds",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InsufficientReservesForFeeWithdrawal",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InsufficientReservesForNewLiquidityRatio",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InsufficientReservesForOldLiquidityRatio",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidArrayLength",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidBorrower",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidBorrowerIdentityRegistry",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidBorrowerTransferTarget",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidRepaymentTerms",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MarketAlreadyClosed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MarketInRepayment",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MaxSupplyExceeded",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoPendingBorrowerTransfer",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoReentrantCalls",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotApprovedBorrower",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotApprovedLender",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotPendingBorrower",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotWrapperFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullBurnAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullFeeAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullMintAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullRepayAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullTransferAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullWithdrawalAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "expectedPrincipal",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "actualPrincipal",
+        "type": "address"
+      }
+    ],
+    "name": "PendingBorrowerPrincipalChanged",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ProtocolFeeChangeOnClosedMarket",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ProtocolFeeRecipientRequired",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ProtocolFeeTooHigh",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RepayToClosedMarket",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "RepaymentReserveRequired",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ReserveRatioBipsTooHigh",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SphereXOperatorRequired",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnsupportedExecuteWithdrawalHook",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "WithdrawalBatchKeyAlreadyExists",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "WithdrawalBatchNotExpired",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "WrapperAlreadyRegistered",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousAnnualInterestBips",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newAnnualInterestBips",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousReserveRatioBips",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newReserveRatioBips",
+        "type": "uint256"
+      }
+    ],
+    "name": "AnnualInterestAndReserveRatioBipsUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "Approval",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "assetAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Borrow",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "cancelledPendingBorrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrowerPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "cancelledPendingBorrowerPrincipal",
+        "type": "address"
+      }
+    ],
+    "name": "BorrowerTransferCancelled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousPendingBorrower",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "pendingBorrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "borrowerPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousPendingBorrowerPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "pendingBorrowerPrincipal",
+        "type": "address"
+      }
+    ],
+    "name": "BorrowerTransferRequested",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousBorrower",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newBorrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "previousBorrowerPrincipal",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newBorrowerPrincipal",
+        "type": "address"
+      }
+    ],
+    "name": "BorrowerTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "oldEngineAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newEngineAddress",
+        "type": "address"
+      }
+    ],
+    "name": "ChangedSpherexEngineAddress",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "oldSphereXAdmin",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newSphereXAdmin",
+        "type": "address"
+      }
+    ],
+    "name": "ChangedSpherexOperator",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "assetAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "DebtRepaid",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "effectiveTimestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "DefaultRecorded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "assetAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "scaledAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Deposit",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "collector",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "feeRecipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "assets",
+        "type": "uint256"
+      }
+    ],
+    "name": "FeesCollected",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "fromTimestamp",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "toTimestamp",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "scaleFactor",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "baseInterestRay",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "delinquencyFeeRay",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "protocolFees",
+        "type": "uint256"
+      }
+    ],
+    "name": "InterestAndFeesAccrued",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "borrower",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "MarketClosed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousMaxTotalSupply",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newMaxTotalSupply",
+        "type": "uint256"
+      }
+    ],
+    "name": "MaxTotalSupplyUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "previousProtocolFeeBips",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newProtocolFeeBips",
+        "type": "uint256"
+      }
+    ],
+    "name": "ProtocolFeeBipsUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "effectiveTimestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "RepaymentDateReached",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "expiry",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "scaledAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "normalizedAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "SanctionedAccountAssetsQueuedForWithdrawal",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "escrow",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "SanctionedAccountWithdrawalSentToEscrow",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "scaleFactor",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isDelinquent",
+        "type": "bool"
+      }
+    ],
+    "name": "StateUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "Transfer",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "expiry",
+        "type": "uint256"
+      }
+    ],
+    "name": "WithdrawalBatchClosed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "expiry",
+        "type": "uint256"
+      }
+    ],
+    "name": "WithdrawalBatchCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "expiry",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "scaledTotalAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "scaledAmountBurned",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "normalizedAmountPaid",
+        "type": "uint256"
+      }
+    ],
+    "name": "WithdrawalBatchExpired",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "expiry",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "scaledAmountBurned",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "normalizedAmountPaid",
+        "type": "uint256"
+      }
+    ],
+    "name": "WithdrawalBatchPayment",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "expiry",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "normalizedAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "WithdrawalExecuted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "expiry",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "scaledAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "normalizedAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "WithdrawalQueued",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "wrapper",
+        "type": "address"
+      }
+    ],
+    "name": "WrapperRegistered",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "acceptBorrowerTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "accruedProtocolFees",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "allowance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "annualInterestBips",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "approve",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "archController",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "asset",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "borrow",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "borrowableAssets",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "borrower",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "borrowerIdentityRegistry",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "borrowerPrincipal",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "cancelBorrowerTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newSphereXEngine",
+        "type": "address"
+      }
+    ],
+    "name": "changeSphereXEngine",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "closeMarket",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "collectFees",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "coverageLiquidity",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "currentState",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint128",
+            "name": "maxTotalSupply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "accruedProtocolFees",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "normalizedUnclaimedWithdrawals",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint104",
+            "name": "scaledTotalSupply",
+            "type": "uint104"
+          },
+          {
+            "internalType": "uint104",
+            "name": "scaledPendingWithdrawals",
+            "type": "uint104"
+          },
+          {
+            "internalType": "uint32",
+            "name": "pendingWithdrawalExpiry",
+            "type": "uint32"
+          },
+          {
+            "internalType": "bool",
+            "name": "isDelinquent",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timeDelinquent",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "protocolFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "annualInterestBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reserveRatioBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint112",
+            "name": "scaleFactor",
+            "type": "uint112"
+          },
+          {
+            "internalType": "uint32",
+            "name": "lastInterestAccruedTimestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint128",
+            "name": "withdrawalRemainder",
+            "type": "uint128"
+          }
+        ],
+        "internalType": "struct WildcatMarketV2_5.MarketState",
+        "name": "state",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "defaultedAt",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "delinquencyFeeBips",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "delinquencyGracePeriod",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "deposit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "depositUpTo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "executePendingAnnualInterestBipsReduction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      }
+    ],
+    "name": "executeWithdrawal",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "accountAddresses",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint32[]",
+        "name": "expiries",
+        "type": "uint32[]"
+      }
+    ],
+    "name": "executeWithdrawals",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "amounts",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "factory",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "feeRecipient",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      }
+    ],
+    "name": "getAccountWithdrawalStatus",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint128",
+            "name": "scaledAmount",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "normalizedAmountWithdrawn",
+            "type": "uint128"
+          }
+        ],
+        "internalType": "struct WildcatMarketV2_5.AccountWithdrawalStatus",
+        "name": "status",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "accountAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      }
+    ],
+    "name": "getAvailableWithdrawalAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getUnpaidBatchExpiries",
+    "outputs": [
+      {
+        "internalType": "uint32[]",
+        "name": "",
+        "type": "uint32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      }
+    ],
+    "name": "getWithdrawalBatch",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint128",
+            "name": "scaledTotalAmount",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "scaledAmountBurned",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "normalizedAmountPaid",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "paymentRemainder",
+            "type": "uint128"
+          }
+        ],
+        "internalType": "struct WildcatMarketV2_5.WithdrawalBatch",
+        "name": "batch",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "hooks",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isClosed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "maxTotalSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "maximumDeposit",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "accountAddress",
+        "type": "address"
+      }
+    ],
+    "name": "nukeFromOrbit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pendingBorrower",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pendingBorrowerPrincipal",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "previousState",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "isClosed",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint128",
+            "name": "maxTotalSupply",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "accruedProtocolFees",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint128",
+            "name": "normalizedUnclaimedWithdrawals",
+            "type": "uint128"
+          },
+          {
+            "internalType": "uint104",
+            "name": "scaledTotalSupply",
+            "type": "uint104"
+          },
+          {
+            "internalType": "uint104",
+            "name": "scaledPendingWithdrawals",
+            "type": "uint104"
+          },
+          {
+            "internalType": "uint32",
+            "name": "pendingWithdrawalExpiry",
+            "type": "uint32"
+          },
+          {
+            "internalType": "bool",
+            "name": "isDelinquent",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timeDelinquent",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint16",
+            "name": "protocolFeeBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "annualInterestBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "reserveRatioBips",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint112",
+            "name": "scaleFactor",
+            "type": "uint112"
+          },
+          {
+            "internalType": "uint32",
+            "name": "lastInterestAccruedTimestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint128",
+            "name": "withdrawalRemainder",
+            "type": "uint128"
+          }
+        ],
+        "internalType": "struct WildcatMarketV2_5.MarketState",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "queueFullWithdrawal",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "queueWithdrawal",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "scaledAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "queueWithdrawalScaled",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "expiry",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "wrapper",
+        "type": "address"
+      }
+    ],
+    "name": "registerWrapper",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "registeredWrapper",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "repay",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "repayAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxBatches",
+        "type": "uint256"
+      }
+    ],
+    "name": "repayAndProcessUnpaidWithdrawalBatches",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "repaymentDate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "repaymentDeadline",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "repaymentPeriod",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newBorrower",
+        "type": "address"
+      }
+    ],
+    "name": "requestBorrowerTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "name": "rescueTokens",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "reserveRatioBips",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "scaleFactor",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "scaledBalanceOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "scaledTotalSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "scaledTransferRounding",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sentinel",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint16",
+        "name": "_annualInterestBips",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint16",
+        "name": "_reserveRatioBips",
+        "type": "uint16"
+      }
+    ],
+    "name": "setAnnualInterestAndReserveRatioBips",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_maxTotalSupply",
+        "type": "uint256"
+      }
+    ],
+    "name": "setMaxTotalSupply",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint16",
+        "name": "_protocolFeeBips",
+        "type": "uint16"
+      }
+    ],
+    "name": "setProtocolFeeBips",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sphereXEngine",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "sphereXOperator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalAssets",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalDebts",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "transfer",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "transferFrom",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "updateState",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "version",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawableProtocolFees",
+    "outputs": [
+      {
+        "internalType": "uint128",
+        "name": "",
+        "type": "uint128"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawalBatchDuration",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "wrapperFactory",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+] as const satisfies Abi;

@@ -36,6 +36,8 @@ export type MarketParameterConstraintsStructOutput = {
   maximumWithdrawalBatchDuration: Numeric;
   minimumAnnualInterestBips: Numeric;
   maximumAnnualInterestBips: Numeric;
+  maximumRepaymentPeriod?: Numeric;
+  maximumRepaymentDateDelay?: Numeric;
 };
 
 export type HooksConfigDataStructOutput = {
@@ -87,6 +89,7 @@ export type HooksTemplateDataStructOutput = {
   index: Numeric;
   name: string;
   totalMarkets: Numeric;
+  initCodeHash?: { isPresent: boolean; value: string };
 };
 
 export type FactoryScopedHooksTemplateDataV2_5StructOutput = {
@@ -113,6 +116,7 @@ export type HooksInstanceDataV2_5StructOutput = Omit<
 > & {
   administrator: string;
   pendingAdministrator: string;
+  repaymentConstraintsAvailable?: boolean;
   deploymentFlags: HooksDeploymentFlagsV2_5StructOutput;
   pullProviders: RoleProviderDataV2_5StructOutput[];
   pushProviders: RoleProviderDataV2_5StructOutput[];
@@ -146,6 +150,14 @@ export type MarketHooksDataV2_5StructOutput = Omit<
   "flags" | "allowForceBuyBacks"
 > & {
   flags: HooksConfigDataV2_5StructOutput;
+  periodicWithdrawalWindowOpen?: boolean;
+  pendingAprChange?: {
+    isPresent: boolean;
+    annualInterestBips: Numeric;
+    proposalTimestamp: Numeric;
+    responseWindowStart: Numeric;
+    responseWindowEnd: Numeric;
+  };
 };
 
 export type MarketDataStructOutput = {
@@ -205,19 +217,39 @@ export type MarketDataBaseV2_5StructOutput = Omit<
   hooks: HooksInstanceDataV2_5StructOutput;
 };
 
+export type MarketLifecycleDataStructOutput = {
+  isPresent: boolean;
+  repaymentDate: Numeric;
+  repaymentPeriod: Numeric;
+  repaymentDeadline: Numeric;
+  /** Committed default only; zero does not establish that an unwritten deadline was met. */
+  defaultedAt: Numeric;
+  isInRepayment: boolean;
+};
+
+export type MarketLiquidityDataStructOutput = {
+  maximumDeposit: Numeric;
+  borrowableAssets: Numeric;
+  totalDebts: Numeric;
+  recoverableUnderlying: Numeric;
+};
+
 export type MarketDataV2_5StructOutput = {
   market: MarketDataBaseV2_5StructOutput;
+  registeredWrapper?: string;
   borrowerPrincipal: string;
   pendingBorrower: string;
   pendingBorrowerPrincipal: string;
   borrowerIdentityRegistry: string;
   commitmentFeeBips: OptionalUintDataV2_5StructOutput;
   drawnAmount: OptionalUintDataV2_5StructOutput;
+  lifecycle?: MarketLifecycleDataStructOutput;
+  liquidity?: MarketLiquidityDataStructOutput;
 };
 
 /** Base and live lens reads composed without inventing unavailable identity metadata. */
 export type CompatibleMarketDataV2_5 = MarketDataBaseV2_5StructOutput &
-  Pick<MarketDataV2_5StructOutput, "commitmentFeeBips" | "drawnAmount">;
+  Pick<MarketDataV2_5StructOutput, "commitmentFeeBips" | "drawnAmount" | "lifecycle" | "liquidity">;
 
 export type ControllerDataStructOutput = {
   borrower: string;
@@ -304,6 +336,8 @@ export type MarketLiveDataV2_5StructOutput = {
   coverageLiquidity: Numeric;
   commitmentFeeBips: OptionalUintDataV2_5StructOutput;
   drawnAmount: OptionalUintDataV2_5StructOutput;
+  lifecycle?: MarketLifecycleDataStructOutput;
+  liquidity?: MarketLiquidityDataStructOutput;
 };
 
 export type MarketLiveDataWithLenderStatusV2_5StructOutput = {
@@ -385,6 +419,8 @@ export type DeployMarketInputsV2Struct = {
   reserveRatioBips: Numeric;
   delinquencyGracePeriod: Numeric;
   hooks: Numeric;
+  repaymentDate?: Numeric;
+  repaymentPeriod?: Numeric;
 };
 
 export type StandardDeployMarketArgs = [

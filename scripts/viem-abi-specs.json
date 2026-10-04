@@ -147,5 +147,20 @@
   {
     "bytecodeExportName": "describeSignatureBytecode",
     "artifact": "artifacts/contracts/DescribeSignature.sol/DescribeSignature.json"
+  },
+  {
+    "exportName": "hooksFactoryV2_5Abi",
+    "artifact": "artifacts/contracts/HooksFactoryV2_5.sol/HooksFactoryV2_5.json",
+    "types": ["function", "event", "error"]
+  },
+  {
+    "exportName": "hooksFactoryRevolvingV2_5Abi",
+    "artifact": "artifacts/contracts/HooksFactoryRevolvingV2_5.sol/HooksFactoryRevolvingV2_5.json",
+    "types": ["function", "event", "error"]
+  },
+  {
+    "exportName": "wildcatMarketV2_5Abi",
+    "artifact": "artifacts/contracts/WildcatMarketV2_5.sol/WildcatMarketV2_5.json",
+    "types": ["function", "event", "error"]
   }
 ]

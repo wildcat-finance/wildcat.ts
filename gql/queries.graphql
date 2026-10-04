@@ -1933,3 +1933,34 @@ query getIndexedTokenWrapperActivity($wrapper: ID!, $first: Int!, $skip: Int!) {
     }
   }
 }
+
+
+# Each lifecycle record is immutable and unique per market; no paginated history can be truncated.
+query getMarketRepaymentHistory($market: ID!, $block: Block_height) {
+  market(id: $market, block: $block) {
+    id
+    repaymentTerms {
+      repaymentDate
+      repaymentPeriod
+      blockNumber
+      blockTimestamp
+      transactionHash
+      blockLogIndex
+    }
+    repaymentDateReached {
+      effectiveTimestamp
+      blockNumber
+      blockTimestamp
+      transactionHash
+      blockLogIndex
+    }
+    defaultRecord {
+      effectiveTimestamp
+      blockNumber
+      blockTimestamp
+      transactionHash
+      blockLogIndex
+    }
+  }
+  _meta(block: $block) { block { number } }
+}

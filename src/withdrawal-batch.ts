@@ -20,8 +20,8 @@ import {
   WithdrawalPaymentRecord,
   WithdrawalRequestRecord,
   parseWithdrawalRecord,
-  rayMulBigint,
-  toNumber
+  toNumber,
+  RAY_BIGINT
 } from "./utils";
 import { MarketVersion } from "./types";
 
@@ -74,7 +74,8 @@ export class WithdrawalBatch {
     payments: SubgraphWithdrawalBatchPaymentPropertiesFragment[] = [],
     withdrawals: SubgraphLenderWithdrawalPropertiesFragment[] = [],
     executions: SubgraphWithdrawalExecutionPropertiesFragment[] = [],
-    requests: SubgraphWithdrawalRequestPropertiesFragment[] = []
+    requests: SubgraphWithdrawalRequestPropertiesFragment[] = [],
+    public paymentRemainder?: bigint
   ) {
     this.withdrawals = withdrawals.map((w) =>
       LenderWithdrawalStatus.fromSubgraphLenderWithdrawalStatus(market, this, w, w.account.address)
@@ -113,8 +114,11 @@ export class WithdrawalBatch {
     if (scaledAmountOwed === 0n || this.lastScaleFactor === this.market.scaleFactor) {
       return 0n;
     }
-    const lastBalance = rayMulBigint(scaledAmountOwed, this.lastScaleFactor);
-    const currentBalance = rayMulBigint(scaledAmountOwed, this.market.scaleFactor);
+    const remainder = this.paymentRemainder ?? 0n;
+    const lastBalance =
+      (scaledAmountOwed * this.lastScaleFactor + remainder + RAY_BIGINT / 2n) / RAY_BIGINT;
+    const currentBalance =
+      (scaledAmountOwed * this.market.scaleFactor + remainder + RAY_BIGINT / 2n) / RAY_BIGINT;
     return currentBalance - lastBalance;
   }
 
@@ -200,6 +204,8 @@ export class WithdrawalBatch {
   }
 
   applyLensUpdate(data: WithdrawalBatchDataOutput, hasExplicitExpiredStatus = false): void {
+    // The lens supplies the exact normalized total, but does not expose its raw remainder.
+    this.paymentRemainder = undefined;
     this.scaledTotalAmount = toRawAmount(data.scaledTotalAmount);
     this.scaledAmountBurned = toRawAmount(data.scaledAmountBurned);
     this.normalizedAmountPaid = this.market.underlyingToken.getAmount(data.normalizedAmountPaid);
@@ -270,7 +276,10 @@ export class WithdrawalBatch {
     if (scaledAmountBurned !== scaledTotalAmount) {
       scaledAmountOwed = scaledTotalAmount - scaledAmountBurned;
       normalizedAmountOwed = market.underlyingToken.getAmount(
-        rayMulBigint(scaledAmountOwed, market.scaleFactor)
+        (scaledAmountOwed * market.scaleFactor +
+          BigInt(batch.paymentRemainder ?? 0) +
+          RAY_BIGINT / 2n) /
+          RAY_BIGINT
       );
       normalizedTotalAmount = normalizedAmountPaid.add(normalizedAmountOwed);
     } else {
@@ -294,7 +303,8 @@ export class WithdrawalBatch {
       batch.payments || undefined,
       batch.withdrawals || undefined,
       batch.executions || undefined,
-      batch.requests || undefined
+      batch.requests || undefined,
+      batch.paymentRemainder == null ? undefined : BigInt(batch.paymentRemainder)
     );
   }
 

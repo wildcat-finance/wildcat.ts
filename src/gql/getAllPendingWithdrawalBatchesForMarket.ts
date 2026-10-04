@@ -1,3 +1,5 @@
+import { usesLegacySubgraphSchema } from "../config";
+import { legacyWithdrawalDocument } from "./legacy-withdrawal-document";
 import { IndexedTraversalOptions } from "../indexed-pagination";
 import { IndexedPageProgress, withIndexedTraversal } from "../internal/indexed-traversal";
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
@@ -31,7 +33,9 @@ export async function getAllPendingWithdrawalBatchesForMarket(
         SubgraphGetAllPendingWithdrawalBatchesForMarketQuery,
         SubgraphGetAllPendingWithdrawalBatchesForMarketQueryVariables
       >(subgraphClient, {
-        query: GetAllPendingWithdrawalBatchesForMarketDocument,
+        query: usesLegacySubgraphSchema(market.chainId)
+          ? legacyWithdrawalDocument(GetAllPendingWithdrawalBatchesForMarketDocument)
+          : GetAllPendingWithdrawalBatchesForMarketDocument,
         variables: { market: market.address.toLowerCase(), ...(skip ? { skip, block } : {}) },
         fetchPolicy: "no-cache"
       });

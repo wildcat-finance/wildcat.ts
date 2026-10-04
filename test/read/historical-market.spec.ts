@@ -6,7 +6,7 @@ import { marketLensV2_5Abi } from "../../src/abi";
 import { ReadIdentityMismatchError } from "../../src/internal/read-identity";
 import { MarketDataBaseV2_5StructOutput } from "../../src/lens-types";
 import { SignerOrProvider } from "../../src/types";
-import fixture from "../fixtures/historical-sepolia-periodic-market.json";
+import fixture from "../fixtures/v2.5.5-historical-sepolia-periodic-market.json";
 
 const chainId = SupportedChainId.Sepolia;
 const historical = fixture.market;
@@ -19,6 +19,9 @@ const pendingPrincipal = "0x0000000000000000000000000000000000000049";
 const abi = marketLensV2_5Abi as Abi;
 
 const modernData = {
+  registeredWrapper: zeroAddress,
+  lifecycle: fixture.live.lifecycle,
+  liquidity: fixture.live.liquidity,
   market: { ...fixture.base, marketToken: { ...fixture.base.marketToken, token: modern } },
   borrowerPrincipal: principal,
   pendingBorrower,
@@ -43,7 +46,7 @@ const lenderData = {
 
 type RpcCall = { functionName: string; args: readonly unknown[] };
 
-// The base/live values and revert come from Sepolia block 11699651. Other addresses
+// The base/live values and revert come from the pinned v2.5.5 lens fixture. Other addresses
 // and lender balances are synthetic, to exercise mixed batches without a network.
 class FixtureProvider {
   readonly calls: RpcCall[] = [];

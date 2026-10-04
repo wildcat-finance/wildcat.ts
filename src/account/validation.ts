@@ -7,6 +7,7 @@ export enum DepositStatus {
   ExceedsMaximumDeposit = "ExceedsMaximumDeposit",
   BelowMinimumDeposit = "BelowMinimumDeposit",
   MarketClosed = "MarketClosed",
+  MarketInRepayment = "MarketInRepayment",
   InsufficientAllowance = "InsufficientAllowance",
   Blocked = "Blocked",
   // V1
@@ -16,6 +17,17 @@ export enum DepositStatus {
 }
 
 export type DepositPreview = { status: DepositStatus };
+
+export enum RecoverUnderlyingStatus {
+  Ready = "Ready",
+  UnsupportedMarket = "UnsupportedMarket",
+  NotBorrower = "NotBorrower",
+  MarketOpen = "MarketOpen",
+  LiveDataRequired = "LiveDataRequired",
+  NoRecoverableUnderlying = "NoRecoverableUnderlying"
+}
+
+export type RecoverUnderlyingPreview = { status: RecoverUnderlyingStatus; amount: TokenAmount };
 
 export enum RepayStatus {
   Ready = "Ready",
@@ -50,6 +62,7 @@ export type CloseMarketPreview =
 
 export enum SetMaxTotalSupplyStatus {
   NotBorrower = "NotBorrower",
+  MarketInRepayment = "MarketInRepayment",
   Ready = "Ready",
   BelowCurrentSupply = "BelowCurrentSupply"
 }
@@ -155,6 +168,7 @@ export type ForceBuyBackPreview = { status: ForceBuyBackStatus };
 
 export enum SetMinimumDepositStatus {
   Ready = "Ready",
+  MarketInRepayment = "MarketInRepayment",
   NotBorrower = "NotBorrower",
   NotV2Market = "NotV2Market",
   DepositHookNotEnabled = "DepositHookNotEnabled",
@@ -165,6 +179,7 @@ export type SetMinimumDepositPreview = { status: SetMinimumDepositStatus };
 
 export enum ProposeAnnualInterestBipsStatus {
   Ready = "Ready",
+  MarketInRepayment = "MarketInRepayment",
   NotBorrower = "NotBorrower",
   NotV2Market = "NotV2Market",
   NotPeriodicTermMarket = "NotPeriodicTermMarket",
@@ -177,6 +192,7 @@ export type ProposeAnnualInterestBipsPreview = { status: ProposeAnnualInterestBi
 
 export enum SetFixedTermEndTimeStatus {
   Ready = "Ready",
+  MarketInRepayment = "MarketInRepayment",
   NotBorrower = "NotBorrower",
   NotV2Market = "NotV2Market",
   NotFixedTermMarket = "NotFixedTermMarket",

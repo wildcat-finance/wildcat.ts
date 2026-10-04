@@ -14,6 +14,8 @@ import { DeployableMarketKind, HooksKind, HooksTemplateRegistrationMetadata } fr
 
 export enum DeployMarketStatus {
   Ready = "Ready",
+  InvalidRepaymentTerms = "InvalidRepaymentTerms",
+  RepaymentTermsUnsupported = "RepaymentTermsUnsupported",
   InvalidMarketSaltFormat = "InvalidMarketSaltFormat",
   InsufficientBalance = "InsufficientBalance",
   InsufficientAllowance = "InsufficientAllowance",
