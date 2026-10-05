@@ -96,7 +96,7 @@ const close = (server: Server): Promise<void> =>
 describe("V2.5 subgraph endpoint compatibility", () => {
   it("pins the replacement Sepolia V2.5 endpoint", () => {
     expect(SubgraphUrls[SupportedChainId.Sepolia]).to.equal(
-      "https://graph.wildcat.finance/sepolia/v2.5.14"
+      "https://graph.wildcat.finance/sepolia/v2.5.15"
     );
   });
 
@@ -373,8 +373,8 @@ describe("V2.5 subgraph endpoint compatibility", () => {
       clients.push(client);
       await read(client);
       expect(requests.map(({ endpoint }) => endpoint)).to.deep.equal([
-        "https://graph.wildcat.finance/sepolia/v2.5.14",
-        "https://graph.wildcat.finance/sepolia/v2.5.14"
+        "https://graph.wildcat.finance/sepolia/v2.5.15",
+        "https://graph.wildcat.finance/sepolia/v2.5.15"
       ]);
       expect(requests.every(({ authorization }) => authorization === null)).to.equal(true);
     });
@@ -412,7 +412,7 @@ describe("V2.5 subgraph endpoint compatibility", () => {
     });
 
     it("supports relative browser proxy routes for both metadata and normal queries", async () => {
-      const proxy = `/api/gateway/graph/sepolia/v2.5.14?test=${++endpointId}`;
+      const proxy = `/api/gateway/graph/sepolia/v2.5.15?test=${++endpointId}`;
       const client = createSubgraphClient(SupportedChainId.Sepolia, { endpoint: proxy });
       clients.push(client);
       await read(client);

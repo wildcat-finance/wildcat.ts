@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "1.0.0",
+  "sdkRelease": "3.2.17-beta",
+  "sdkBaseCommit": "8efc853df6d1aeb6ff0d21251920b930e81eec6e",
+  "preparationStatus": "local-checks-passed-consumer-cutover-pending",
+  "localChecks": {
+    "offlineTests": {
+      "passed": 792,
+      "optionalLiveTestSkipped": 1
+    },
+    "archiveReplay": {
+      "passed": 1,
+      "blockNumber": 11831944,
+      "lens": "0xB77e7895A76283472209239f5161591D3bc1Eccb"
+    },
+    "typescriptBuild": "passed",
+    "changedFileEslint": "passed",
+    "codegen": "passed-generated-output-unchanged",
+    "factoryMarketLensAbiEntries": 375,
+    "wrapperAbiEntries": 29,
+    "protocolArtifactMetadata": {
+      "artifacts": 6,
+      "sourceHashes": 83,
+      "contractCommit": "85b963d767ac295bfff32f6e69d734dd616da248"
+    }
+  },
+  "rpc": {
+    "observedAt": "2026-10-05T03:33:17.557Z",
+    "chainId": 11155111,
+    "block": {
+      "number": 11846311,
+      "hash": "0x66bb53b72d1ca3fca24161ba6e64ad681004f1b4046171eaa74743e676b16974"
+    },
+    "source": {
+      "protocol": "54e848180e67836969273a17cd117de7fc89ab53",
+      "contracts": "85b963d767ac295bfff32f6e69d734dd616da248",
+      "subgraph": "46c35fd4fbf89ff5fe9b467b97125a26abe076c4"
+    },
+    "canonicalAddressAndDescriptorChecks": "passed",
+    "lens": {
+      "address": "0x947bB3F6D12eB6225595836D831908F10700B11b",
+      "startBlock": 11845740,
+      "deployTxHash": "0x8d5747d2f60c8834c498e29241a5b0d6d4287fa4806d76829ef2a6643ffa8e80",
+      "boundStandardFactory": "0xae525051d16912D13b63eCa01f52ADF576FC4380"
+    },
+    "factories": [
+      {
+        "kind": "standard",
+        "address": "0xae525051d16912D13b63eCa01f52ADF576FC4380",
+        "wrapperFactory": "0xCf2338947eeE38b7D82E187698339B3E67E67CBf",
+        "enabledTemplates": [
+          {
+            "address": "0xBcA425d384Da256040779DF532B6D2E8d3B3f1aD",
+            "name": "OpenTermHooks",
+            "initCodeHash": "0x7aa5821f066c7b214a897bf924f075bcdf2cf1c8f448738693fa6eb7196d47e7",
+            "repaymentFreeze": true
+          },
+          {
+            "address": "0xa3FE06137cc893E19C2E4764a4A7b001E988ba2B",
+            "name": "FixedTermHooks",
+            "initCodeHash": "0xc84345608dc62e011e09889635a2d216df92a6d3eec3af80228f6cf7325ad2cf",
+            "repaymentFreeze": true
+          },
+          {
+            "address": "0x79DA352868305d37D0179f460Ded88886D4eE524",
+            "name": "PeriodicTermHooks",
+            "initCodeHash": "0x6a32d584a2424d69b1a9640922947f8c8a5eac1ca29c1a6c0ef0d34f54a55b65",
+            "repaymentFreeze": true
+          }
+        ]
+      },
+      {
+        "kind": "revolving",
+        "address": "0x2f0E18ae9134cD16b7Ec0C63cC4B11B38eAdB2aF",
+        "wrapperFactory": "0xCf2338947eeE38b7D82E187698339B3E67E67CBf",
+        "enabledTemplates": [
+          {
+            "address": "0xBcA425d384Da256040779DF532B6D2E8d3B3f1aD",
+            "name": "OpenTermHooks",
+            "initCodeHash": "0x7aa5821f066c7b214a897bf924f075bcdf2cf1c8f448738693fa6eb7196d47e7",
+            "repaymentFreeze": true
+          },
+          {
+            "address": "0xa3FE06137cc893E19C2E4764a4A7b001E988ba2B",
+            "name": "FixedTermHooks",
+            "initCodeHash": "0xc84345608dc62e011e09889635a2d216df92a6d3eec3af80228f6cf7325ad2cf",
+            "repaymentFreeze": true
+          },
+          {
+            "address": "0x79DA352868305d37D0179f460Ded88886D4eE524",
+            "name": "PeriodicTermHooks",
+            "initCodeHash": "0x6a32d584a2424d69b1a9640922947f8c8a5eac1ca29c1a6c0ef0d34f54a55b65",
+            "repaymentFreeze": true
+          }
+        ]
+      }
+    ],
+    "wrapper": {
+      "address": "0xCf2338947eeE38b7D82E187698339B3E67E67CBf",
+      "v1Factory": "0x0566Fe57682164af689f1440cb3BCEedEe3bf843"
+    },
+    "historicalHydration": {
+      "address": "0x00e01C5d6eA5bA136F24acCe0399B1A6119d4bb0",
+      "hooksFactory": "0x76Fe050d91940a72133e1819BF34c1042d8DBe73",
+      "marketKind": "revolving",
+      "periodDuration": 360,
+      "withdrawalWindowDuration": 300,
+      "singleAndBatch": "passed",
+      "lens": "0x947bB3F6D12eB6225595836D831908F10700B11b"
+    },
+    "status": "passed",
+    "scope": "Read-only Sepolia checks; no public-chain transactions or new market/wrapper creation."
+  },
+  "subgraphs": {
+    "observedAt": "2026-10-05T03:33:41.144Z",
+    "chainId": 11155111,
+    "sdk": "3.2.17-beta candidate",
+    "subgraphSource": "46c35fd4fbf89ff5fe9b467b97125a26abe076c4",
+    "expectedConfigDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081",
+    "activationBlock": 11845761,
+    "endpoints": [
+      {
+        "name": "goldsky",
+        "url": "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.5.15/gn",
+        "status": 200,
+        "body": {
+          "data": {
+            "indexerDeployments": [
+              {
+                "chainId": "11155111",
+                "configDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081"
+              }
+            ],
+            "_meta": {
+              "deployment": "QmUuE3fvj693u96WeHn1LsVaigQz3E7xA2aHqXPfwLJ5oc",
+              "block": {
+                "number": 4829528
+              },
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        "sdkMetadataValidation": "passed",
+        "queryDocumentsValidated": 82
+      },
+      {
+        "name": "hinterlight",
+        "url": "https://graph.hinterlight.net/sepolia/v2.5.15",
+        "status": 200,
+        "body": {
+          "data": {
+            "indexerDeployments": [
+              {
+                "chainId": "11155111",
+                "configDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081"
+              }
+            ],
+            "_meta": {
+              "deployment": "QmPcF66apB3DdBzVw8HvjKbhV7bopwQ1J5CJnM3c1pjz6J",
+              "block": {
+                "number": 7385691
+              },
+              "hasIndexingErrors": false
+            }
+          }
+        },
+        "sdkMetadataValidation": "passed",
+        "queryDocumentsValidated": 82
+      },
+      {
+        "name": "gateway",
+        "url": "https://graph.wildcat.finance/sepolia/v2.5.15",
+        "status": 404,
+        "body": {
+          "data": null,
+          "errors": [
+            {
+              "extensions": {
+                "code": "SUBGRAPH_RELEASE_NOT_FOUND"
+              },
+              "message": "Graph release is not registered for this chain"
+            }
+          ]
+        }
+      }
+    ],
+    "scope": "Metadata and API-schema checks while replay is in progress; does not establish synced factory/market data or consumer cutover."
+  },
+  "remaining": [
+    "Register the Sepolia v2.5.15 data gateway route.",
+    "Verify both providers and gateway after replay reaches current Sepolia head, including new factories and six registrations.",
+    "Operator commit/push and npm beta publication.",
+    "App SDK update with existing lifecycle controls, followed by new-market/wrapper acceptance."
+  ]
+}

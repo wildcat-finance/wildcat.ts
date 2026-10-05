@@ -39,21 +39,21 @@ const makeFactoryMetadata = (
 });
 
 describe("SDK deployment configuration", () => {
-  it("retains the Sepolia V2.5.5 factories and lens used by protocol V2.5.6", () => {
+  it("selects the finalized Sepolia V2.5.7 factories and lens", () => {
     expect(Deployments[SupportedChainId.Sepolia]).to.include({
-      HooksFactoryStandard: "0x0E12301A4F4b81A2B9965E4959e21faDf1754Ead",
-      HooksFactoryRevolving: "0x130E07D24e2aF6ea4554032d4F53fcBAe000d1b1",
-      MarketLensV2_5: "0xB77e7895A76283472209239f5161591D3bc1Eccb",
+      HooksFactoryStandard: "0xae525051d16912D13b63eCa01f52ADF576FC4380",
+      HooksFactoryRevolving: "0x2f0E18ae9134cD16b7Ec0C63cC4B11B38eAdB2aF",
+      MarketLensV2_5: "0x947bB3F6D12eB6225595836D831908F10700B11b",
       MockArchControllerOwner: "0x981f1Fb406bD7a8385f9373c08Ab4c832Ed0d508",
       AccessListRoleProviderFactory: "0xE6D5bDd5011568C46fAf257cf426Ea822bC4255F",
       WildcatBorrowerIdentityRegistry: "0xc2cF90781595203D1e75c28246b306C95d4b8b21",
-      Wildcat4626WrapperFactory: "0x1986DF1c77d25670e8D55865B83C5fFeD00e0134"
+      Wildcat4626WrapperFactory: "0xCf2338947eeE38b7D82E187698339B3E67E67CBf"
     });
   });
 
   it("supports only wrapper factories whose embedded implementation is current", () => {
     expect(getSupportedWrapperFactoryAddresses(SupportedChainId.Sepolia)).to.deep.equal([
-      "0x1986DF1c77d25670e8D55865B83C5fFeD00e0134"
+      "0xCf2338947eeE38b7D82E187698339B3E67E67CBf"
     ]);
     expect(getSupportedWrapperFactoryAddresses(SupportedChainId.PlasmaMainnet)).to.deep.equal([]);
   });
@@ -86,7 +86,9 @@ describe("SDK deployment configuration", () => {
       "0xbFbDaFc91977eE599a61B30D9e75788565Ad6d18",
       "0x190B42942fe9492df9CeA441dA5c43309840E93A",
       "0x89797b782cA5b4BBFC975146B98ba3941Fe26C56",
-      "0xb3FBD4FBeb1EE4BEE7afdbC4A75C7c4E97CF105C"
+      "0xb3FBD4FBeb1EE4BEE7afdbC4A75C7c4E97CF105C",
+      "0x0E12301A4F4b81A2B9965E4959e21faDf1754Ead",
+      "0x130E07D24e2aF6ea4554032d4F53fcBAe000d1b1"
     ];
 
     for (const address of displacedFactories) {
