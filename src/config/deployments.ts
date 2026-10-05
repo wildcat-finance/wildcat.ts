@@ -78,11 +78,11 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     Wildcat4626WrapperFactory: "0xEA6DE11f8F3F83c79bD9d8Db5517fCFDf2Bb148a"
   },
   [SupportedChainId.Sepolia]: {
-    HooksFactoryStandard: "0x0E12301A4F4b81A2B9965E4959e21faDf1754Ead",
-    HooksFactoryRevolving: "0x130E07D24e2aF6ea4554032d4F53fcBAe000d1b1",
+    HooksFactoryStandard: "0xae525051d16912D13b63eCa01f52ADF576FC4380",
+    HooksFactoryRevolving: "0x2f0E18ae9134cD16b7Ec0C63cC4B11B38eAdB2aF",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
     MarketLensV2: "0x5D8cEacEe19c06C3b4108b8Ae5B881eb0240B9c7",
-    MarketLensV2_5: "0xB77e7895A76283472209239f5161591D3bc1Eccb",
+    MarketLensV2_5: "0x947bB3F6D12eB6225595836D831908F10700B11b",
     MockArchControllerOwner: "0x981f1Fb406bD7a8385f9373c08Ab4c832Ed0d508",
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
@@ -96,7 +96,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatCollateralFactory: "0x58Ab4755221869cfcAe2A4F3EE31d591bA6AE1D0",
     BebopSettlementContract: "0x513826b6bb38fc159f152a4bf6e1ec3650a7ee46",
     CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578",
-    Wildcat4626WrapperFactory: "0x1986DF1c77d25670e8D55865B83C5fFeD00e0134"
+    Wildcat4626WrapperFactory: "0xCf2338947eeE38b7D82E187698339B3E67E67CBf"
   },
   [SupportedChainId.PlasmaTestnet]: {
     HooksFactoryStandard: "0x5Ad00b665eA71E27628D75102B1497CC75E531FB",

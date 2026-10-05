@@ -2,6 +2,7 @@ import { rejects } from "assert";
 import { expect } from "chai";
 import { decodeFunctionData, encodeFunctionResult, zeroAddress, type Abi } from "viem";
 import { Market, MarketAccount, MarketReadError, HooksKind, SupportedChainId } from "../../src";
+import { Deployments, getDeploymentAddress } from "../../src/config";
 import { marketLensV2_5Abi } from "../../src/abi";
 import { ReadIdentityMismatchError } from "../../src/internal/read-identity";
 import { MarketDataBaseV2_5StructOutput } from "../../src/lens-types";
@@ -64,7 +65,7 @@ class FixtureProvider {
     if (method === "eth_chainId") return "0xaa36a7";
     expect(method).to.equal("eth_call");
     const tx = params[0] as { to: string; data: `0x${string}` };
-    if (tx.to.toLowerCase() !== fixture.lens.toLowerCase()) {
+    if (tx.to.toLowerCase() !== getDeploymentAddress(chainId, "MarketLensV2_5").toLowerCase()) {
       throw new Error("Legacy lens must not hydrate historical V2.5 hooks");
     }
     const decoded = decodeFunctionData({ abi, data: tx.data });
@@ -392,7 +393,7 @@ describe("Historical periodic market compatibility", () => {
   });
 
   const liveIt = process.env.PTH_RPC_URL ? it : it.skip;
-  liveIt("hydrates the historical market against the pinned Sepolia block", async () => {
+  liveIt("replays the captured historical lens at its pinned Sepolia block", async () => {
     const rpc = {
       send: async (method: string, params: unknown[]): Promise<unknown> => {
         const response = await fetch(process.env.PTH_RPC_URL!, {
@@ -424,10 +425,18 @@ describe("Historical periodic market compatibility", () => {
     ])) as { hash: string };
     expect(block.hash).to.equal(fixture.blockHash);
     const provider = rpc as unknown as SignerOrProvider;
-    assertHistoricalMarket(await Market.getMarketV2(chainId, historical, provider));
-    assertHistoricalMarket((await Market.getMarketsV2(chainId, [historical], provider))[0]);
-    assertHistoricalMarket(
-      (await MarketAccount.getMarketAccountV2(chainId, provider, zeroAddress, historical)).market
-    );
+    // Replay the retained evidence with the lens that existed at the capture block.
+    // The latest configured lens can have been deployed after that block.
+    const currentLens = Deployments[chainId].MarketLensV2_5;
+    Deployments[chainId].MarketLensV2_5 = fixture.lens;
+    try {
+      assertHistoricalMarket(await Market.getMarketV2(chainId, historical, provider));
+      assertHistoricalMarket((await Market.getMarketsV2(chainId, [historical], provider))[0]);
+      assertHistoricalMarket(
+        (await MarketAccount.getMarketAccountV2(chainId, provider, zeroAddress, historical)).market
+      );
+    } finally {
+      Deployments[chainId].MarketLensV2_5 = currentLens;
+    }
   });
 });

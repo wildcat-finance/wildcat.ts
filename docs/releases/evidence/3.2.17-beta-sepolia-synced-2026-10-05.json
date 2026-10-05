@@ -1,0 +1,776 @@
+{
+  "schemaVersion": "1.0.0",
+  "sdkRelease": "3.2.17-beta",
+  "sdkBaseCommit": "8efc853df6d1aeb6ff0d21251920b930e81eec6e",
+  "status": "synced-consumer-checks-passed-operator-publication-pending",
+  "source": {
+    "protocol": "54e848180e67836969273a17cd117de7fc89ab53",
+    "contracts": "85b963d767ac295bfff32f6e69d734dd616da248",
+    "subgraph": "46c35fd4fbf89ff5fe9b467b97125a26abe076c4"
+  },
+  "sdkCandidateFileSha256": {
+    "package.json": "a4004a0224db8ac15944d13a8352674f884ce701940aa328aed43843d4823dbe",
+    "src/config/deployments.ts": "7afb1ce904a111d50e8c65274131226859a8edecb479f11e30fd0920a7102aa2",
+    "src/config/subgraph.ts": "0e35c061cdd31c9de57ba6bfefbb1df68c5baa08222520c00c75499dd1d28390"
+  },
+  "observedFrom": "2026-10-05T07:43:22.708Z",
+  "observedThrough": "2026-10-05T07:45:28.512Z",
+  "chainId": 11155111,
+  "expectedConfigDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081",
+  "rpc": {
+    "url": "https://eth-sep.hinterlight.net",
+    "head": {
+      "number": 11847470,
+      "hash": "0x4056c2f9761c9890e492bf5c8a8134fd2d42f68f459d72991e7f166b727e7d83",
+      "timestamp": 1791186192
+    },
+    "pinnedBlock": {
+      "number": 11847445,
+      "hash": "0x1e88fad7c4ed8391664528e0f48e7ac12535e9b207b70534692c564c4b0a510f",
+      "timestamp": 1791185880
+    }
+  },
+  "latestHealth": {
+    "observedAt": "2026-10-05T07:45:28.512Z",
+    "rpcHead": {
+      "number": 11847480,
+      "hash": "0x5f8da34a2fe04bfcfc539e145b9bcaecf78aa5708233d6db37bf52a8a38b040c"
+    },
+    "endpoints": [
+      {
+        "name": "goldsky",
+        "latest": {
+          "deployment": "QmUuE3fvj693u96WeHn1LsVaigQz3E7xA2aHqXPfwLJ5oc",
+          "block": {
+            "number": 11847480,
+            "hash": "0x5f8da34a2fe04bfcfc539e145b9bcaecf78aa5708233d6db37bf52a8a38b040c",
+            "timestamp": 1791186324
+          },
+          "hasIndexingErrors": false
+        },
+        "pinned": {
+          "block": {
+            "number": 11847445,
+            "hash": null,
+            "timestamp": null
+          },
+          "hasIndexingErrors": false
+        },
+        "indexerDeployments": [
+          {
+            "chainId": "11155111",
+            "configDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081"
+          }
+        ]
+      },
+      {
+        "name": "hinterlight",
+        "latest": {
+          "deployment": "QmPcF66apB3DdBzVw8HvjKbhV7bopwQ1J5CJnM3c1pjz6J",
+          "block": {
+            "number": 11847479,
+            "hash": "0xa923d4bbc671222de99202000cd2ae6149b47d609992c48e90de6c5fb01ba5c5",
+            "timestamp": 1791186312
+          },
+          "hasIndexingErrors": false
+        },
+        "pinned": {
+          "block": {
+            "number": 11847445,
+            "hash": null,
+            "timestamp": null
+          },
+          "hasIndexingErrors": false
+        },
+        "indexerDeployments": [
+          {
+            "chainId": "11155111",
+            "configDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081"
+          }
+        ]
+      },
+      {
+        "name": "gateway",
+        "latest": {
+          "deployment": "QmUuE3fvj693u96WeHn1LsVaigQz3E7xA2aHqXPfwLJ5oc",
+          "block": {
+            "number": 11847480,
+            "hash": "0x5f8da34a2fe04bfcfc539e145b9bcaecf78aa5708233d6db37bf52a8a38b040c",
+            "timestamp": 1791186324
+          },
+          "hasIndexingErrors": false
+        },
+        "pinned": {
+          "block": {
+            "number": 11847445,
+            "hash": null,
+            "timestamp": null
+          },
+          "hasIndexingErrors": false
+        },
+        "indexerDeployments": [
+          {
+            "chainId": "11155111",
+            "configDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081"
+          }
+        ]
+      }
+    ],
+    "historicalMetaHash": "Providers return null for number-pinned _meta hashes; live head hashes were checked against RPC."
+  },
+  "endpoints": [
+    {
+      "name": "goldsky",
+      "url": "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.5.15/gn",
+      "access": "public, no bearer token",
+      "status": "passed",
+      "sdkMetadataValidation": "passed",
+      "sdkMetadata": {
+        "chainId": 11155111,
+        "network": "sepolia",
+        "graphNetwork": "sepolia",
+        "schemaRelease": "2.5",
+        "configDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081",
+        "archController": "0xc003f20f2642c76b81e5e1620c6d8cdee826408f",
+        "sanctionsSentinel": "0xfbce262ec835be5e6a458ce1722eece0e453316b",
+        "analyticsEnabled": true,
+        "collateralEnabled": true,
+        "wrappersEnabled": true,
+        "pricingMode": "synthetic-testnet",
+        "firstObserved": {
+          "blockNumber": "4796511",
+          "blockTimestamp": "1701364608",
+          "transactionHash": "0xc729e47b6f2100802c1c7523cd755ce00c3a5ac80d6eb99b1a041070f3622eca",
+          "logIndex": "8"
+        }
+      },
+      "healthAtDataRead": {
+        "status": 200,
+        "body": {
+          "data": {
+            "indexerDeployments": [
+              {
+                "chainId": "11155111",
+                "configDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081"
+              }
+            ],
+            "_meta": {
+              "deployment": "QmUuE3fvj693u96WeHn1LsVaigQz3E7xA2aHqXPfwLJ5oc",
+              "block": {
+                "number": 11847470,
+                "hash": "0x4056c2f9761c9890e492bf5c8a8134fd2d42f68f459d72991e7f166b727e7d83",
+                "timestamp": 1791186192
+              },
+              "hasIndexingErrors": false
+            }
+          }
+        }
+      },
+      "factoryDeploymentTargetIssues": [],
+      "paritySha256": {
+        "factories": "c0a67a947a016831326b2f588e12d4e28060cc406ee4a0f82ba6d03a53ed6830",
+        "registrations": "a0fa0e9ac56aba95480cd86439a46bea1b7a09f1e3807e6853d20c3da1b515db",
+        "marketListData": "4bc8fba9d9466a11d488b06e4a44e12f6bf754da370fd5c2553f99f1331596ed",
+        "wrappers": "b3d012a130fda22d23a0483b85ecc2e1a731fe4c0ffed1ac3acfe7c27fdb3467"
+      }
+    },
+    {
+      "name": "hinterlight",
+      "url": "https://graph.hinterlight.net/sepolia/v2.5.15",
+      "access": "public, no bearer token",
+      "status": "passed",
+      "sdkMetadataValidation": "passed",
+      "sdkMetadata": {
+        "chainId": 11155111,
+        "network": "sepolia",
+        "graphNetwork": "sepolia",
+        "schemaRelease": "2.5",
+        "configDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081",
+        "archController": "0xc003f20f2642c76b81e5e1620c6d8cdee826408f",
+        "sanctionsSentinel": "0xfbce262ec835be5e6a458ce1722eece0e453316b",
+        "analyticsEnabled": true,
+        "collateralEnabled": true,
+        "wrappersEnabled": true,
+        "pricingMode": "synthetic-testnet",
+        "firstObserved": {
+          "blockNumber": "4796511",
+          "blockTimestamp": "1701364608",
+          "transactionHash": "0xc729e47b6f2100802c1c7523cd755ce00c3a5ac80d6eb99b1a041070f3622eca",
+          "logIndex": "8"
+        }
+      },
+      "healthAtDataRead": {
+        "status": 200,
+        "body": {
+          "data": {
+            "indexerDeployments": [
+              {
+                "chainId": "11155111",
+                "configDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081"
+              }
+            ],
+            "_meta": {
+              "deployment": "QmPcF66apB3DdBzVw8HvjKbhV7bopwQ1J5CJnM3c1pjz6J",
+              "block": {
+                "number": 11847470,
+                "hash": "0x4056c2f9761c9890e492bf5c8a8134fd2d42f68f459d72991e7f166b727e7d83",
+                "timestamp": 1791186192
+              },
+              "hasIndexingErrors": false
+            }
+          }
+        }
+      },
+      "factoryDeploymentTargetIssues": [],
+      "paritySha256": {
+        "factories": "c0a67a947a016831326b2f588e12d4e28060cc406ee4a0f82ba6d03a53ed6830",
+        "registrations": "a0fa0e9ac56aba95480cd86439a46bea1b7a09f1e3807e6853d20c3da1b515db",
+        "marketListData": "4bc8fba9d9466a11d488b06e4a44e12f6bf754da370fd5c2553f99f1331596ed",
+        "wrappers": "b3d012a130fda22d23a0483b85ecc2e1a731fe4c0ffed1ac3acfe7c27fdb3467"
+      }
+    },
+    {
+      "name": "gateway",
+      "url": "https://graph.wildcat.finance/sepolia/v2.5.15",
+      "access": "public, no bearer token",
+      "status": "passed",
+      "sdkMetadataValidation": "passed",
+      "sdkMetadata": {
+        "chainId": 11155111,
+        "network": "sepolia",
+        "graphNetwork": "sepolia",
+        "schemaRelease": "2.5",
+        "configDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081",
+        "archController": "0xc003f20f2642c76b81e5e1620c6d8cdee826408f",
+        "sanctionsSentinel": "0xfbce262ec835be5e6a458ce1722eece0e453316b",
+        "analyticsEnabled": true,
+        "collateralEnabled": true,
+        "wrappersEnabled": true,
+        "pricingMode": "synthetic-testnet",
+        "firstObserved": {
+          "blockNumber": "4796511",
+          "blockTimestamp": "1701364608",
+          "transactionHash": "0xc729e47b6f2100802c1c7523cd755ce00c3a5ac80d6eb99b1a041070f3622eca",
+          "logIndex": "8"
+        }
+      },
+      "healthAtDataRead": {
+        "status": 200,
+        "body": {
+          "data": {
+            "indexerDeployments": [
+              {
+                "chainId": "11155111",
+                "configDigest": "f1814d20789e9e33cce9448e2a2a4c10cb24d3b6dc22ac0f11f0a950d644b081"
+              }
+            ],
+            "_meta": {
+              "deployment": "QmUuE3fvj693u96WeHn1LsVaigQz3E7xA2aHqXPfwLJ5oc",
+              "block": {
+                "number": 11847470,
+                "hash": "0x4056c2f9761c9890e492bf5c8a8134fd2d42f68f459d72991e7f166b727e7d83",
+                "timestamp": 1791186192
+              },
+              "hasIndexingErrors": false
+            }
+          }
+        }
+      },
+      "factoryDeploymentTargetIssues": [],
+      "paritySha256": {
+        "factories": "c0a67a947a016831326b2f588e12d4e28060cc406ee4a0f82ba6d03a53ed6830",
+        "registrations": "a0fa0e9ac56aba95480cd86439a46bea1b7a09f1e3807e6853d20c3da1b515db",
+        "marketListData": "4bc8fba9d9466a11d488b06e4a44e12f6bf754da370fd5c2553f99f1331596ed",
+        "wrappers": "b3d012a130fda22d23a0483b85ecc2e1a731fe4c0ffed1ac3acfe7c27fdb3467"
+      }
+    }
+  ],
+  "pinnedDataComparison": {
+    "blockNumber": 11847445,
+    "status": "passed",
+    "method": "Every SDK data query root field was pinned with block: {number: 11847445}; complete market and registration lists were compared across both providers and the default SDK gateway route. Hashes use SHA-256 over compact JSON, recursively sorted object keys, original array order, and bigint decimal strings.",
+    "configuredHooksFactories": 19,
+    "indexedHooksFactories": 15,
+    "templateRegistrations": 51,
+    "canonicalTemplateRegistrations": 6,
+    "markets": 484,
+    "marketKinds": {
+      "standard": 469,
+      "revolving": 15,
+      "unknown": 0
+    },
+    "marketGenerations": {
+      "v2.1": 290,
+      "v2.5-preview-20260727": 21,
+      "v2": 10,
+      "v1": 146,
+      "v2.5": 13,
+      "v2.5.3": 2,
+      "v2.5.4": 1,
+      "preview-2026-04-24": 1
+    },
+    "wrapperFactoriesWithActivity": 5,
+    "wrappers": 35
+  },
+  "canonicalRegistrations": [
+    {
+      "id": "0x2f0e18ae9134cd16b7ec0c63cc4b11b38eadb2af-0x79da352868305d37d0179f460ded88886d4ee524",
+      "hooksFactory": {
+        "address": "0x2f0e18ae9134cd16b7ec0c63cc4b11b38eadb2af",
+        "label": "revolving-v2.5.7",
+        "archController": "0xc003f20f2642c76b81e5e1620c6d8cdee826408f",
+        "sentinel": "0xfbce262ec835be5e6a458ce1722eece0e453316b",
+        "marketKind": "revolving",
+        "generation": "v2.5.7",
+        "abiFamily": "hooks-v2-5",
+        "eventGeneration": "v2.5",
+        "hookedMarketAbi": "base",
+        "configuredStartBlock": "11845732",
+        "indexed": true,
+        "deploymentTarget": true,
+        "lifecycle": "active",
+        "configured": true,
+        "isRegistered": true,
+        "registrationUpdatedAt": {
+          "blockNumber": "11845742",
+          "blockTimestamp": "1791163452"
+        }
+      },
+      "hooksTemplate": {
+        "address": "0x79da352868305d37d0179f460ded88886d4ee524",
+        "kind": "PeriodicTerm",
+        "version": "PeriodicTermHooks",
+        "abiFamily": "hooks-v2-5"
+      },
+      "name": "PeriodicTermHooks",
+      "feeRecipient": "0xca7007a75296b532ce1606d9e130eaa849800ca7",
+      "protocolFeeBips": 500,
+      "originationFeeAmount": "0",
+      "isEnabled": true,
+      "initCodeHash": "0x6a32d584a2424d69b1a9640922947f8c8a5eac1ca29c1a6c0ef0d34f54a55b65",
+      "initCodeHashRecord": {
+        "initCodeHash": "0x6a32d584a2424d69b1a9640922947f8c8a5eac1ca29c1a6c0ef0d34f54a55b65",
+        "blockNumber": "11845753",
+        "blockTimestamp": "1791163584",
+        "transactionHash": "0x1f123e67cb33cc6aa1bb759fea5ede0bb8a7c2ddd88a9cdb55c095d29793f88a",
+        "logIndex": "320"
+      },
+      "createdAt": {
+        "blockNumber": "11845753",
+        "blockTimestamp": "1791163584",
+        "transactionHash": "0x1f123e67cb33cc6aa1bb759fea5ede0bb8a7c2ddd88a9cdb55c095d29793f88a",
+        "logIndex": "319"
+      },
+      "updatedAt": {
+        "blockNumber": "11845753",
+        "blockTimestamp": "1791163584",
+        "transactionHash": "0x1f123e67cb33cc6aa1bb759fea5ede0bb8a7c2ddd88a9cdb55c095d29793f88a",
+        "logIndex": "320"
+      }
+    },
+    {
+      "id": "0x2f0e18ae9134cd16b7ec0c63cc4b11b38eadb2af-0xa3fe06137cc893e19c2e4764a4a7b001e988ba2b",
+      "hooksFactory": {
+        "address": "0x2f0e18ae9134cd16b7ec0c63cc4b11b38eadb2af",
+        "label": "revolving-v2.5.7",
+        "archController": "0xc003f20f2642c76b81e5e1620c6d8cdee826408f",
+        "sentinel": "0xfbce262ec835be5e6a458ce1722eece0e453316b",
+        "marketKind": "revolving",
+        "generation": "v2.5.7",
+        "abiFamily": "hooks-v2-5",
+        "eventGeneration": "v2.5",
+        "hookedMarketAbi": "base",
+        "configuredStartBlock": "11845732",
+        "indexed": true,
+        "deploymentTarget": true,
+        "lifecycle": "active",
+        "configured": true,
+        "isRegistered": true,
+        "registrationUpdatedAt": {
+          "blockNumber": "11845742",
+          "blockTimestamp": "1791163452"
+        }
+      },
+      "hooksTemplate": {
+        "address": "0xa3fe06137cc893e19c2e4764a4a7b001e988ba2b",
+        "kind": "FixedTerm",
+        "version": "FixedTermHooks",
+        "abiFamily": "hooks-v2-5"
+      },
+      "name": "FixedTermHooks",
+      "feeRecipient": "0xca7007a75296b532ce1606d9e130eaa849800ca7",
+      "protocolFeeBips": 500,
+      "originationFeeAmount": "0",
+      "isEnabled": true,
+      "initCodeHash": "0xc84345608dc62e011e09889635a2d216df92a6d3eec3af80228f6cf7325ad2cf",
+      "initCodeHashRecord": {
+        "initCodeHash": "0xc84345608dc62e011e09889635a2d216df92a6d3eec3af80228f6cf7325ad2cf",
+        "blockNumber": "11845752",
+        "blockTimestamp": "1791163572",
+        "transactionHash": "0x159d158cba21fdf920f5ddb1f37f36d0b3b5fd43b984a991f34374c94c7ed6ba",
+        "logIndex": "296"
+      },
+      "createdAt": {
+        "blockNumber": "11845752",
+        "blockTimestamp": "1791163572",
+        "transactionHash": "0x159d158cba21fdf920f5ddb1f37f36d0b3b5fd43b984a991f34374c94c7ed6ba",
+        "logIndex": "295"
+      },
+      "updatedAt": {
+        "blockNumber": "11845752",
+        "blockTimestamp": "1791163572",
+        "transactionHash": "0x159d158cba21fdf920f5ddb1f37f36d0b3b5fd43b984a991f34374c94c7ed6ba",
+        "logIndex": "296"
+      }
+    },
+    {
+      "id": "0x2f0e18ae9134cd16b7ec0c63cc4b11b38eadb2af-0xbca425d384da256040779df532b6d2e8d3b3f1ad",
+      "hooksFactory": {
+        "address": "0x2f0e18ae9134cd16b7ec0c63cc4b11b38eadb2af",
+        "label": "revolving-v2.5.7",
+        "archController": "0xc003f20f2642c76b81e5e1620c6d8cdee826408f",
+        "sentinel": "0xfbce262ec835be5e6a458ce1722eece0e453316b",
+        "marketKind": "revolving",
+        "generation": "v2.5.7",
+        "abiFamily": "hooks-v2-5",
+        "eventGeneration": "v2.5",
+        "hookedMarketAbi": "base",
+        "configuredStartBlock": "11845732",
+        "indexed": true,
+        "deploymentTarget": true,
+        "lifecycle": "active",
+        "configured": true,
+        "isRegistered": true,
+        "registrationUpdatedAt": {
+          "blockNumber": "11845742",
+          "blockTimestamp": "1791163452"
+        }
+      },
+      "hooksTemplate": {
+        "address": "0xbca425d384da256040779df532b6d2e8d3b3f1ad",
+        "kind": "OpenTerm",
+        "version": "OpenTermHooks",
+        "abiFamily": "hooks-v2-5"
+      },
+      "name": "OpenTermHooks",
+      "feeRecipient": "0xca7007a75296b532ce1606d9e130eaa849800ca7",
+      "protocolFeeBips": 500,
+      "originationFeeAmount": "0",
+      "isEnabled": true,
+      "initCodeHash": "0x7aa5821f066c7b214a897bf924f075bcdf2cf1c8f448738693fa6eb7196d47e7",
+      "initCodeHashRecord": {
+        "initCodeHash": "0x7aa5821f066c7b214a897bf924f075bcdf2cf1c8f448738693fa6eb7196d47e7",
+        "blockNumber": "11845749",
+        "blockTimestamp": "1791163536",
+        "transactionHash": "0xed3fdbe79ef992b567c61e101e41f013538477e115b406b2005fb9c8a1740ba0",
+        "logIndex": "61"
+      },
+      "createdAt": {
+        "blockNumber": "11845749",
+        "blockTimestamp": "1791163536",
+        "transactionHash": "0xed3fdbe79ef992b567c61e101e41f013538477e115b406b2005fb9c8a1740ba0",
+        "logIndex": "60"
+      },
+      "updatedAt": {
+        "blockNumber": "11845749",
+        "blockTimestamp": "1791163536",
+        "transactionHash": "0xed3fdbe79ef992b567c61e101e41f013538477e115b406b2005fb9c8a1740ba0",
+        "logIndex": "61"
+      }
+    },
+    {
+      "id": "0xae525051d16912d13b63eca01f52adf576fc4380-0x79da352868305d37d0179f460ded88886d4ee524",
+      "hooksFactory": {
+        "address": "0xae525051d16912d13b63eca01f52adf576fc4380",
+        "label": "standard-v2.5.7",
+        "archController": "0xc003f20f2642c76b81e5e1620c6d8cdee826408f",
+        "sentinel": "0xfbce262ec835be5e6a458ce1722eece0e453316b",
+        "marketKind": "standard",
+        "generation": "v2.5.7",
+        "abiFamily": "hooks-v2-5",
+        "eventGeneration": "v2.5",
+        "hookedMarketAbi": "base",
+        "configuredStartBlock": "11845725",
+        "indexed": true,
+        "deploymentTarget": true,
+        "lifecycle": "active",
+        "configured": true,
+        "isRegistered": true,
+        "registrationUpdatedAt": {
+          "blockNumber": "11845741",
+          "blockTimestamp": "1791163440"
+        }
+      },
+      "hooksTemplate": {
+        "address": "0x79da352868305d37d0179f460ded88886d4ee524",
+        "kind": "PeriodicTerm",
+        "version": "PeriodicTermHooks",
+        "abiFamily": "hooks-v2-5"
+      },
+      "name": "PeriodicTermHooks",
+      "feeRecipient": "0xca7007a75296b532ce1606d9e130eaa849800ca7",
+      "protocolFeeBips": 500,
+      "originationFeeAmount": "0",
+      "isEnabled": true,
+      "initCodeHash": "0x6a32d584a2424d69b1a9640922947f8c8a5eac1ca29c1a6c0ef0d34f54a55b65",
+      "initCodeHashRecord": {
+        "initCodeHash": "0x6a32d584a2424d69b1a9640922947f8c8a5eac1ca29c1a6c0ef0d34f54a55b65",
+        "blockNumber": "11845747",
+        "blockTimestamp": "1791163512",
+        "transactionHash": "0xfc66504047019da7585ef4f38ef181918e223d482b984d3147aff4414f84d67a",
+        "logIndex": "229"
+      },
+      "createdAt": {
+        "blockNumber": "11845747",
+        "blockTimestamp": "1791163512",
+        "transactionHash": "0xfc66504047019da7585ef4f38ef181918e223d482b984d3147aff4414f84d67a",
+        "logIndex": "228"
+      },
+      "updatedAt": {
+        "blockNumber": "11845747",
+        "blockTimestamp": "1791163512",
+        "transactionHash": "0xfc66504047019da7585ef4f38ef181918e223d482b984d3147aff4414f84d67a",
+        "logIndex": "229"
+      }
+    },
+    {
+      "id": "0xae525051d16912d13b63eca01f52adf576fc4380-0xa3fe06137cc893e19c2e4764a4a7b001e988ba2b",
+      "hooksFactory": {
+        "address": "0xae525051d16912d13b63eca01f52adf576fc4380",
+        "label": "standard-v2.5.7",
+        "archController": "0xc003f20f2642c76b81e5e1620c6d8cdee826408f",
+        "sentinel": "0xfbce262ec835be5e6a458ce1722eece0e453316b",
+        "marketKind": "standard",
+        "generation": "v2.5.7",
+        "abiFamily": "hooks-v2-5",
+        "eventGeneration": "v2.5",
+        "hookedMarketAbi": "base",
+        "configuredStartBlock": "11845725",
+        "indexed": true,
+        "deploymentTarget": true,
+        "lifecycle": "active",
+        "configured": true,
+        "isRegistered": true,
+        "registrationUpdatedAt": {
+          "blockNumber": "11845741",
+          "blockTimestamp": "1791163440"
+        }
+      },
+      "hooksTemplate": {
+        "address": "0xa3fe06137cc893e19c2e4764a4a7b001e988ba2b",
+        "kind": "FixedTerm",
+        "version": "FixedTermHooks",
+        "abiFamily": "hooks-v2-5"
+      },
+      "name": "FixedTermHooks",
+      "feeRecipient": "0xca7007a75296b532ce1606d9e130eaa849800ca7",
+      "protocolFeeBips": 500,
+      "originationFeeAmount": "0",
+      "isEnabled": true,
+      "initCodeHash": "0xc84345608dc62e011e09889635a2d216df92a6d3eec3af80228f6cf7325ad2cf",
+      "initCodeHashRecord": {
+        "initCodeHash": "0xc84345608dc62e011e09889635a2d216df92a6d3eec3af80228f6cf7325ad2cf",
+        "blockNumber": "11845746",
+        "blockTimestamp": "1791163500",
+        "transactionHash": "0x273e5921113862d73350de1867200aae1025c43733eff88dc2c6ef717ded0b13",
+        "logIndex": "273"
+      },
+      "createdAt": {
+        "blockNumber": "11845746",
+        "blockTimestamp": "1791163500",
+        "transactionHash": "0x273e5921113862d73350de1867200aae1025c43733eff88dc2c6ef717ded0b13",
+        "logIndex": "272"
+      },
+      "updatedAt": {
+        "blockNumber": "11845746",
+        "blockTimestamp": "1791163500",
+        "transactionHash": "0x273e5921113862d73350de1867200aae1025c43733eff88dc2c6ef717ded0b13",
+        "logIndex": "273"
+      }
+    },
+    {
+      "id": "0xae525051d16912d13b63eca01f52adf576fc4380-0xbca425d384da256040779df532b6d2e8d3b3f1ad",
+      "hooksFactory": {
+        "address": "0xae525051d16912d13b63eca01f52adf576fc4380",
+        "label": "standard-v2.5.7",
+        "archController": "0xc003f20f2642c76b81e5e1620c6d8cdee826408f",
+        "sentinel": "0xfbce262ec835be5e6a458ce1722eece0e453316b",
+        "marketKind": "standard",
+        "generation": "v2.5.7",
+        "abiFamily": "hooks-v2-5",
+        "eventGeneration": "v2.5",
+        "hookedMarketAbi": "base",
+        "configuredStartBlock": "11845725",
+        "indexed": true,
+        "deploymentTarget": true,
+        "lifecycle": "active",
+        "configured": true,
+        "isRegistered": true,
+        "registrationUpdatedAt": {
+          "blockNumber": "11845741",
+          "blockTimestamp": "1791163440"
+        }
+      },
+      "hooksTemplate": {
+        "address": "0xbca425d384da256040779df532b6d2e8d3b3f1ad",
+        "kind": "OpenTerm",
+        "version": "OpenTermHooks",
+        "abiFamily": "hooks-v2-5"
+      },
+      "name": "OpenTermHooks",
+      "feeRecipient": "0xca7007a75296b532ce1606d9e130eaa849800ca7",
+      "protocolFeeBips": 500,
+      "originationFeeAmount": "0",
+      "isEnabled": true,
+      "initCodeHash": "0x7aa5821f066c7b214a897bf924f075bcdf2cf1c8f448738693fa6eb7196d47e7",
+      "initCodeHashRecord": {
+        "initCodeHash": "0x7aa5821f066c7b214a897bf924f075bcdf2cf1c8f448738693fa6eb7196d47e7",
+        "blockNumber": "11845743",
+        "blockTimestamp": "1791163464",
+        "transactionHash": "0x650b3079e91ff92162015ee22cb7b9d4bd5ed82187b934a7c19de79b51d44023",
+        "logIndex": "334"
+      },
+      "createdAt": {
+        "blockNumber": "11845743",
+        "blockTimestamp": "1791163464",
+        "transactionHash": "0x650b3079e91ff92162015ee22cb7b9d4bd5ed82187b934a7c19de79b51d44023",
+        "logIndex": "333"
+      },
+      "updatedAt": {
+        "blockNumber": "11845743",
+        "blockTimestamp": "1791163464",
+        "transactionHash": "0x650b3079e91ff92162015ee22cb7b9d4bd5ed82187b934a7c19de79b51d44023",
+        "logIndex": "334"
+      }
+    }
+  ],
+  "ceremonyProvenance": "All six creation and init-code-hash record transaction hashes and block numbers match v2-protocol/deployments/sepolia/ceremony-evidence/v2.5.7.fGRFWY/run-state.json at the protocol evidence commit.",
+  "historicalMarketDetailChecks": [
+    {
+      "address": "0x00e01c5d6ea5ba136f24acce0399b1a6119d4bb0",
+      "marketKind": "revolving",
+      "hooksFactory": "0x76fe050d91940a72133e1819bf34c1042d8dbe73"
+    },
+    {
+      "address": "0x4c02b9e4e699b9ec5f984510946656ea3c80d5a5",
+      "marketKind": "standard",
+      "hooksFactory": "0x89797b782ca5b4bbfc975146b98ba3941fe26c56"
+    }
+  ],
+  "historicalWrapper": {
+    "address": "0x4a8e8baecd16e871ce6633d5b285fef20c044d88",
+    "marketAddress": "0x4c02b9e4e699b9ec5f984510946656ea3c80d5a5",
+    "indexedHydration": "passed"
+  },
+  "liveSdkChecks": {
+    "observedFrom": "2026-10-05T07:44:07.795Z",
+    "block": {
+      "number": 11847445,
+      "hash": "0x1e88fad7c4ed8391664528e0f48e7ac12535e9b207b70534692c564c4b0a510f",
+      "timestamp": 1791185880
+    },
+    "status": "passed",
+    "scope": "Read-only canonical template hydration and newly configured factory activity",
+    "templates": [
+      {
+        "factory": "0xae525051d16912D13b63eCa01f52ADF576FC4380",
+        "template": "0xBcA425d384Da256040779DF532B6D2E8d3B3f1aD",
+        "kind": "OpenTerm",
+        "initCodeHash": "0x7aa5821f066c7b214a897bf924f075bcdf2cf1c8f448738693fa6eb7196d47e7",
+        "isRegisteredHooksFactory": true,
+        "enabled": true,
+        "readiness": "passed"
+      },
+      {
+        "factory": "0xae525051d16912D13b63eCa01f52ADF576FC4380",
+        "template": "0xa3FE06137cc893E19C2E4764a4A7b001E988ba2B",
+        "kind": "FixedTerm",
+        "initCodeHash": "0xc84345608dc62e011e09889635a2d216df92a6d3eec3af80228f6cf7325ad2cf",
+        "isRegisteredHooksFactory": true,
+        "enabled": true,
+        "readiness": "passed"
+      },
+      {
+        "factory": "0xae525051d16912D13b63eCa01f52ADF576FC4380",
+        "template": "0x79DA352868305d37D0179f460Ded88886D4eE524",
+        "kind": "PeriodicTerm",
+        "initCodeHash": "0x6a32d584a2424d69b1a9640922947f8c8a5eac1ca29c1a6c0ef0d34f54a55b65",
+        "isRegisteredHooksFactory": true,
+        "enabled": true,
+        "readiness": "passed"
+      },
+      {
+        "factory": "0x2f0E18ae9134cD16b7Ec0C63cC4B11B38eAdB2aF",
+        "template": "0xBcA425d384Da256040779DF532B6D2E8d3B3f1aD",
+        "kind": "OpenTerm",
+        "initCodeHash": "0x7aa5821f066c7b214a897bf924f075bcdf2cf1c8f448738693fa6eb7196d47e7",
+        "isRegisteredHooksFactory": true,
+        "enabled": true,
+        "readiness": "passed"
+      },
+      {
+        "factory": "0x2f0E18ae9134cD16b7Ec0C63cC4B11B38eAdB2aF",
+        "template": "0xa3FE06137cc893E19C2E4764a4A7b001E988ba2B",
+        "kind": "FixedTerm",
+        "initCodeHash": "0xc84345608dc62e011e09889635a2d216df92a6d3eec3af80228f6cf7325ad2cf",
+        "isRegisteredHooksFactory": true,
+        "enabled": true,
+        "readiness": "passed"
+      },
+      {
+        "factory": "0x2f0E18ae9134cD16b7Ec0C63cC4B11B38eAdB2aF",
+        "template": "0x79DA352868305d37D0179f460Ded88886D4eE524",
+        "kind": "PeriodicTerm",
+        "initCodeHash": "0x6a32d584a2424d69b1a9640922947f8c8a5eac1ca29c1a6c0ef0d34f54a55b65",
+        "isRegisteredHooksFactory": true,
+        "enabled": true,
+        "readiness": "passed"
+      }
+    ],
+    "factoryActivity": [
+      {
+        "address": "0xae525051d16912D13b63eCa01f52ADF576FC4380",
+        "event": "MarketDeployed",
+        "fromBlock": 11845725,
+        "toBlock": 11847445,
+        "events": 0,
+        "indexed": 0
+      },
+      {
+        "address": "0x2f0E18ae9134cD16b7Ec0C63cC4B11B38eAdB2aF",
+        "event": "MarketDeployed",
+        "fromBlock": 11845732,
+        "toBlock": 11847445,
+        "events": 0,
+        "indexed": 0
+      },
+      {
+        "address": "0xCf2338947eeE38b7D82E187698339B3E67E67CBf",
+        "event": "WrapperDeployed",
+        "fromBlock": 11845719,
+        "toBlock": 11847445,
+        "events": 0,
+        "indexed": 0
+      }
+    ],
+    "observedThrough": "2026-10-05T07:44:11.266Z"
+  },
+  "captures": {
+    "file": "3.2.17-beta-sepolia-synced-2026-10-05.requests.json.gz",
+    "sha256": "c37979f1417d3db5775ee1bde5a4d44c7cba680c2a239a3ff0183d8f39cc8a03",
+    "bytes": 258924,
+    "httpRequests": 36,
+    "rpcSdkRequests": 9
+  },
+  "limitations": [
+    "No transactions were submitted. At the comparison block, both new hooks factories had no MarketDeployed events and the new wrapper factory had no WrapperDeployed events; indexed absence agrees with chain logs. New-market and wrapper wallet acceptance remains an app integration step.",
+    "Wrapper factory entities are created on their first WrapperDeployed event. The absence of the new factory entity before that event is expected.",
+    "Gateway requests used the public route and matched the Goldsky deployment identifier. Provider failover was not forced.",
+    "Providers return null for number-pinned _meta hashes; live head hashes were checked against RPC.",
+    "The protocol combined SDK/inventory validator still expects the prior SDK constants layout; this report does not mark that older gate passed."
+  ],
+  "remaining": [
+    "Operator SDK commit/push and npm beta publication.",
+    "App SDK dependency and Graph proxy route update, retaining the completed lifecycle controls, then wallet acceptance."
+  ]
+}
