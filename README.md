@@ -7,10 +7,11 @@
 1. [Overview](#overview)
 2. [3.1 Compatibility](#31-compatibility)
 3. [Analytics Reads](#analytics-reads)
-4. [Development Workflow](#development-workflow)
-5. [App Integration Testing](#app-integration-testing)
-6. [Releases](#releases)
-7. [Branch Strategy](#branch-strategy)
+4. [Wrapper Discovery](#wrapper-discovery)
+5. [Development Workflow](#development-workflow)
+6. [App Integration Testing](#app-integration-testing)
+7. [Releases](#releases)
+8. [Branch Strategy](#branch-strategy)
 
 ## Overview
 
@@ -22,15 +23,15 @@ For local development inside this repo run `yarn build` (or `npm run build`) to 
 
 ## 3.1 Compatibility
 
-SDK `3.1.17` preserves the `3.1.4-beta.4` consumer surface and targets the
+SDK `3.1.18` preserves the `3.1.17` consumer surface and targets the
 maintained V2.0/V2.1 subgraph family:
 
 | Chain            | Subgraph                 |
 | ---------------- | ------------------------ |
-| Ethereum mainnet | `mainnet/v2.0.30`        |
-| Ethereum Sepolia | `sepolia/v2.1.8`         |
-| Plasma mainnet   | `plasma-mainnet/v2.0.30` |
-| Plasma testnet   | `plasma-testnet/v2.0.30` |
+| Ethereum mainnet | `mainnet/v2.0.31`        |
+| Ethereum Sepolia | `sepolia/v2.1.9`         |
+| Plasma mainnet   | `plasma-mainnet/v2.0.31` |
+| Plasma testnet   | `plasma-testnet/v2.0.31` |
 
 Sepolia's V2.1 schema includes periodic-term fields. The other chains use the
 V2.0 schema, so SDK helpers select legacy-compatible GraphQL documents for
@@ -67,6 +68,32 @@ strings to preserve precision. Check the accompanying completeness flags, and
 treat `Market.totalDebtUSD === null` as unavailable pricing rather than zero
 debt.
 
+## Wrapper Discovery
+
+SDK `3.1.18` adds indexed ERC-4626 wrapper discovery for registered markets:
+
+```ts
+import { getSubgraphClient, getWrappedMarketsPage, SupportedChainId } from "@wildcatfi/wildcat-sdk";
+
+const client = getSubgraphClient(SupportedChainId.Mainnet);
+const page = await getWrappedMarketsPage(client, { first: 100 });
+for (const { id: market, tokenWrapper } of page.items) {
+  console.log(market, tokenWrapper.address, tokenWrapper.factory.address);
+}
+// Continue with { first: 100, after: page.pageInfo.nextCursor } when present.
+```
+
+Pages include token metadata, deployment provenance and `indexedAt` metadata.
+Continuation cursors pin reads to the same indexed block. These queries make no
+RPC requests; an empty result during replay does not establish that no wrappers
+exist on-chain. `getTokenWrapperDataForMarket` reads a single market, and
+`TokenWrapper.fromSubgraphData` hydrates the existing ethers wrapper. The optional
+`TokenWrapper.fromMarketWithSubgraph` convenience method defaults to factory RPC
+fallback; set `fallbackToFactory: false` for strictly indexed reads.
+
+See [the v3.1.18 release note](./docs/V3_1_18_WRAPPER_DISCOVERY.md) for complete
+pagination, fallback behavior, verification and release commands.
+
 ## Development Workflow
 
 - **Code generation**: run `yarn codegen` (or `npm run codegen`) whenever contracts in `contracts/` or GraphQL fragments in `gql/` change. This invokes:
@@ -84,7 +111,11 @@ To validate SDK changes against `wildcat-app-v2`:
 
 ## Releases
 
-Once happy with changes publish to npm (if you have permissions):
+The maintenance `3.1.18` release uses npm's `latest` tag after its subgraph replay
+checks pass. Follow [its release note](./docs/V3_1_18_WRAPPER_DISCOVERY.md); the
+V2.5 `3.2.x` line remains separate under `beta`.
+
+For the separate V2.5 beta release line:
 
 - `npm publish --tag beta `
 

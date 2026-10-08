@@ -30,17 +30,17 @@ import {
   GetProtocolAnalyticsStatsDocument
 } from "../src/gql/graphql";
 
-describe("SDK 3.1.17 subgraph release matrix", () => {
+describe("SDK 3.1.18 subgraph release matrix", () => {
   it("routes every supported chain to its maintained subgraph release", () => {
     expect(SubgraphUrls).to.deep.equal({
       [SupportedChainId.Sepolia]:
-        "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.1.8/gn",
+        "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.1.9/gn",
       [SupportedChainId.Mainnet]:
-        "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.30/gn",
+        "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.31/gn",
       [SupportedChainId.PlasmaTestnet]:
-        "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-testnet/v2.0.30/gn",
+        "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-testnet/v2.0.31/gn",
       [SupportedChainId.PlasmaMainnet]:
-        "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-mainnet/v2.0.30/gn"
+        "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-mainnet/v2.0.31/gn"
     });
     for (const chainId of Object.values(SupportedChainId).filter(
       (value): value is SupportedChainId => typeof value === "number"

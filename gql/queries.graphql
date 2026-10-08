@@ -1334,3 +1334,31 @@ query getBorrowerWithdrawalReliabilityPage(
     ...AnalyticsWithdrawalBatchData
   }
 }
+
+query getTokenWrapperForMarket($market: ID!) {
+  market(id: $market) {
+    id
+    tokenWrapper {
+      ...TokenWrapperData
+    }
+  }
+}
+
+query getWrappedMarketsPage($first: Int = 100, $afterId: ID! = "", $block: Block_height) {
+  _meta(block: $block) {
+    ...AnalyticsQueryMetadata
+  }
+  markets(
+    first: $first
+    orderBy: id
+    orderDirection: asc
+    where: { id_gt: $afterId, isRegistered: true, tokenWrapper_not: null }
+    block: $block
+  ) {
+    id
+    name
+    tokenWrapper {
+      ...TokenWrapperData
+    }
+  }
+}

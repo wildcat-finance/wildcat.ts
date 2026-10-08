@@ -1086,3 +1086,25 @@ fragment AnalyticsWithdrawalBatchData on WithdrawalBatch {
     blockLogIndex
   }
 }
+
+# ERC-4626 wrapper discovery (V2.0/V2.1 maintenance schema).
+fragment TokenWrapperData on Wildcat4626Wrapper {
+  id
+  address
+  marketAddress
+  marketToken {
+    ...TokenData
+  }
+  token {
+    ...TokenData
+  }
+  factory {
+    id
+    address
+  }
+  deployedEvent {
+    blockNumber
+    blockTimestamp
+    transactionHash
+  }
+}

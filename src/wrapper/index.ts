@@ -1,7 +1,14 @@
 import { BigNumber, ContractReceipt, ContractTransaction, constants } from "ethers";
+import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import { Token, TokenAmount } from "../token";
 import { ContractWrapper, PartialTransaction, Signer, SignerOrProvider } from "../types";
-import { SupportedChainId, getDeploymentAddress } from "../constants";
+import { SupportedChainId, getDeploymentAddress, hasDeploymentAddress } from "../constants";
+import { assertMatchingAddress, ReadIdentityMismatchError } from "../internal/read-identity";
+import {
+  getTokenWrapperDataForMarket,
+  GetTokenWrapperForMarketOptions,
+  SubgraphTokenWrapperData
+} from "./discovery";
 import { assert } from "../utils";
 import {
   IERC20__factory,
@@ -11,6 +18,8 @@ import {
   Wildcat4626WrapperFactory__factory
 } from "../typechain";
 import { WrapperDeployedEvent } from "../typechain/Wildcat4626WrapperFactory";
+
+export * from "./discovery";
 
 const getErc20Token = async (
   chainId: SupportedChainId,
@@ -134,6 +143,28 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
     this.decimals = this.shareToken.decimals;
   }
 
+  /** Construct a wrapper from indexed token metadata without RPC reads. */
+  static fromSubgraphData(
+    chainId: SupportedChainId,
+    provider: SignerOrProvider,
+    data: SubgraphTokenWrapperData
+  ): TokenWrapper {
+    assertMatchingAddress(
+      data.marketToken.address,
+      data.marketAddress,
+      "Subgraph wrapper market token"
+    );
+    assertMatchingAddress(data.token.address, data.address, "Subgraph wrapper share token");
+    return new TokenWrapper({
+      chainId,
+      provider,
+      address: data.address,
+      marketAddress: data.marketAddress,
+      marketToken: Token.fromSubgraphToken(chainId, data.marketToken, provider),
+      shareToken: Token.fromSubgraphToken(chainId, data.token, provider)
+    });
+  }
+
   static async fromAddress(
     chainId: SupportedChainId,
     provider: SignerOrProvider,
@@ -147,9 +178,7 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
       wrapper.decimals()
     ]);
 
-    const [marketToken] = await Promise.all([
-      getErc20Token(chainId, provider, marketAddress)
-    ]);
+    const [marketToken] = await Promise.all([getErc20Token(chainId, provider, marketAddress)]);
     const shareToken = new Token(chainId, address, name, symbol, decimals, false, provider);
 
     return new TokenWrapper({
@@ -179,15 +208,51 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
     return TokenWrapper.fromAddress(chainId, provider, wrapperAddress);
   }
 
+  /** Prefer indexed metadata; set fallbackToFactory to false to prohibit RPC reads. */
+  static async fromMarketWithSubgraph(
+    subgraphClient: ApolloClient<NormalizedCacheObject>,
+    {
+      chainId,
+      signerOrProvider,
+      market,
+      fetchPolicy = "cache-first",
+      fallbackToFactory = true
+    }: GetTokenWrapperForMarketOptions
+  ): Promise<TokenWrapper | undefined> {
+    try {
+      const wrapper = await getTokenWrapperDataForMarket(subgraphClient, market, fetchPolicy);
+      if (wrapper) return TokenWrapper.fromSubgraphData(chainId, signerOrProvider, wrapper);
+    } catch (error) {
+      if (error instanceof ReadIdentityMismatchError || !fallbackToFactory) throw error;
+    }
+
+    if (!fallbackToFactory || !hasDeploymentAddress(chainId, "Wildcat4626WrapperFactory")) {
+      return undefined;
+    }
+    const wrapperAddress = await WrapperFactory.getWrapperForMarket(
+      chainId,
+      signerOrProvider,
+      market
+    );
+    if (!wrapperAddress || wrapperAddress === constants.AddressZero) return undefined;
+    return TokenWrapper.fromAddress(chainId, signerOrProvider, wrapperAddress);
+  }
+
   static async create(
     chainId: SupportedChainId,
     signer: Signer,
     marketAddress: string
-  ): Promise<{ wrapper: TokenWrapper; receipt: ContractReceipt; transaction: ContractTransaction }> {
+  ): Promise<{
+    wrapper: TokenWrapper;
+    receipt: ContractReceipt;
+    transaction: ContractTransaction;
+  }> {
     const factory = WrapperFactory.getFactory(chainId, signer);
-    const { wrapper: wrapperAddress, receipt, transaction } = await factory.createWrapper(
-      marketAddress
-    );
+    const {
+      wrapper: wrapperAddress,
+      receipt,
+      transaction
+    } = await factory.createWrapper(marketAddress);
     const wrapper = await TokenWrapper.fromAddress(chainId, signer, wrapperAddress);
     return { wrapper, receipt, transaction };
   }
@@ -290,31 +355,19 @@ export class TokenWrapper extends ContractWrapper<Wildcat4626Wrapper> {
   populateWithdraw(assets: TokenAmount, receiver: string, owner: string): PartialTransaction {
     return {
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("withdraw", [
-        assets.raw,
-        receiver,
-        owner
-      ]),
+      data: this.contract.interface.encodeFunctionData("withdraw", [assets.raw, receiver, owner]),
       value: "0"
     };
   }
 
-  async redeem(
-    shares: TokenAmount,
-    receiver: string,
-    owner: string
-  ): Promise<ContractTransaction> {
+  async redeem(shares: TokenAmount, receiver: string, owner: string): Promise<ContractTransaction> {
     return this.contract.redeem(shares.raw, receiver, owner);
   }
 
   populateRedeem(shares: TokenAmount, receiver: string, owner: string): PartialTransaction {
     return {
       to: this.address,
-      data: this.contract.interface.encodeFunctionData("redeem", [
-        shares.raw,
-        receiver,
-        owner
-      ]),
+      data: this.contract.interface.encodeFunctionData("redeem", [shares.raw, receiver, owner]),
       value: "0"
     };
   }
