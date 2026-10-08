@@ -122,21 +122,36 @@ were near the chain tip. Hinterlight Plasma and all four Goldsky routes were
 still replaying. No endpoint reported indexing errors. These observations do
 not constitute completed Goldsky replay or full provider parity.
 
-Before npm publication, check all four default Goldsky routes after replay:
-no indexing errors, recent indexed blocks, retained query compatibility, and
-wrapper associations/provenance matching the factory inventory at a common
-block. Mainnet and Sepolia have configured legacy factories; the Plasma builds
-support the query schema but configure no wrapper factory. Empty Plasma discovery
-does not independently demonstrate completed replay of other market data.
-Hinterlight can validate the same SDK operations earlier by supplying an Apollo
-client with its direct endpoint; that does not establish Goldsky readiness.
+Final direct-provider acceptance completed on 2026-10-08, 15:58–16:03 UTC:
 
-After acceptance, the operator prepares the release from `release/v3.1.18`:
+- All four Goldsky defaults and the corresponding Hinterlight endpoints were
+  healthy and zero to two blocks behind public RPC heads, including Plasma.
+- Paginated wrapper metadata and deployment provenance matched between providers
+  on every chain. Mainnet and Sepolia matched the earlier archive inventories
+  at their pinned blocks; both Plasma chains returned no wrappers, as expected
+  with no configured factory. SDK hydration made no RPC reads.
+- At common blocks, sampled market, lender catalogue and protocol analytics
+  queries on the new Goldsky routes matched the previous Goldsky releases.
+  Market and catalogue samples also matched Hinterlight on all four chains.
+
+One provider discrepancy remains outside SDK wrapper acceptance: at mainnet
+block 26145404, Hinterlight's `totalDepositedUSD`, `totalBaseInterestAccruedUSD`
+and `totalProtocolFeesAccruedUSD` differ from Goldsky. New and old Goldsky values
+match exactly; both providers report `usdTotalsComplete: false`. The cause is
+not established. This is a subgraph/gateway follow-up, not a claim of complete
+provider parity. Sepolia and Plasma protocol analytics samples matched.
+
+The SDK release is ready with its direct Goldsky defaults. The new gateway
+routes still returned `SUBGRAPH_RELEASE_NOT_FOUND` at the final check; the
+separate gateway promotion does not change these SDK defaults. npm returned
+404 for `3.1.18` at that check; publication remains operator-controlled.
+
+From `release/v3.1.18`, the operator can push, tag and publish using their npm
+security key. The prepared tarball has already passed its export and consumer
+type checks; rebuilding is optional when the checked source/artifact is intact:
 
 ```sh
 git status --short
-yarn build
-npm pack
 git push -u origin release/v3.1.18
 git tag -a v3.1.18 -m 'SDK v3.1.18: indexed wrapper discovery'
 git push origin v3.1.18
