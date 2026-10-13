@@ -89,7 +89,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     HooksFactory: "0x10A64ABa0159720F8a23E1A552800CA4eb21576C",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
     MarketLensV2: "0xCb7839D03EBC1e628295b2FdE3b73Fc53412e87F",
-    MockArchControllerOwner: "0xa476920af80B587f696734430227869795E2Ea78",
+    MockArchControllerOwner: "0x981f1Fb406bD7a8385f9373c08Ab4c832Ed0d508",
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
     WildcatArchController: "0xC003f20F2642c76B81e5e1620c6D8cdEE826408f",
