@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { constants, providers, utils } from "ethers";
+import { constants, providers, utils, VoidSigner } from "ethers";
 import {
   Deployments,
   SupportedChainId,
@@ -9,12 +9,14 @@ import {
   getHooksFactoryContract,
   getLensV2Contract,
   getMockArchControllerOwnerContract,
+  getMockERC20Factory,
   getWrapperFactoryContract,
   hasDeploymentAddress,
   isSupportedChainId
 } from "../src/constants";
 import { FixedTermHooksTemplate, OpenTermHooksTemplate, DeployMarketStatus } from "../src/access";
 import { Token } from "../src/token";
+import { TokenFactory } from "../src/mockerc20factory";
 import { Market } from "../src/market";
 import { DepositAccess, HooksKind, TransferAccess, WithdrawalAccess } from "../src/types";
 import {
@@ -53,6 +55,7 @@ describe("Ink Sepolia support", () => {
       HooksFactory: "0xc54C18FBDa39A089901F59133909012EF116e464",
       MarketLensV2: "0xA2C7711852F9B9a73C32094128413B6529f52Eb7",
       MockArchControllerOwner: "0x9f8313B15dA5e8E7E0bf43E71aA838B3BD23eA81",
+      MockERC20Factory: "0x001D521c15Db09bf52731aA27B3f2ba83D7499B9",
       WildcatArchController: "0x0ac22d06121fc336B2F3DBeb284df65C97BcA547",
       WildcatSanctionsSentinel: "0xa83a6afACf2a461A824fbC35dC5e6A80eee53d9A",
       Chainalysis: "0xd94748c005D4D384dD72ec3374973Ce8A8b31697",
@@ -64,7 +67,6 @@ describe("Ink Sepolia support", () => {
       "WildcatMarketControllerFactory",
       "WildcatCollateralFactory",
       "CollateralLens",
-      "MockERC20Factory",
       "MockChainalysis"
     ] as const) {
       expect(hasDeploymentAddress(chainId, name), name).to.equal(false);
@@ -78,6 +80,7 @@ describe("Ink Sepolia support", () => {
       [getHooksFactoryContract(chainId, provider), "HooksFactory"],
       [getLensV2Contract(chainId, provider), "MarketLensV2"],
       [getWrapperFactoryContract(chainId, provider), "Wildcat4626WrapperFactory"],
+      [getMockERC20Factory(chainId, provider), "MockERC20Factory"],
       [getMockArchControllerOwnerContract(chainId, provider), "MockArchControllerOwner"]
     ] as const;
     for (const [contract, name] of bindings) {
@@ -95,6 +98,26 @@ describe("Ink Sepolia support", () => {
     expect(
       getLensV2Contract(SupportedChainId.Sepolia, provider).interface.format(utils.FormatTypes.json)
     ).to.equal(MarketLensV21__factory.createInterface().format(utils.FormatTypes.json));
+  });
+
+  it("prepares mock-token creation for EOA and Safe callers without RPC calls", () => {
+    const factory = TokenFactory.getFactory(chainId, provider);
+    expect(factory.address).to.equal(Deployments[chainId].MockERC20Factory);
+    expect(factory.provider).to.equal(provider);
+    const transaction = TokenFactory.populateDeployToken(
+      chainId,
+      new VoidSigner(borrower, provider),
+      "Ink test token",
+      "INK"
+    );
+    expect(transaction).to.deep.equal({
+      to: Deployments[chainId].MockERC20Factory,
+      data: getMockERC20Factory(chainId, provider).interface.encodeFunctionData("deployMockERC20", [
+        "Ink test token",
+        "INK"
+      ]),
+      value: "0"
+    });
   });
 
   it("prepares borrower registration for the current MockOwner without RPC calls", async () => {

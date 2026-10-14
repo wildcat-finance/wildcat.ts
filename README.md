@@ -23,8 +23,8 @@ For local development inside this repo run `yarn build` (or `npm run build`) to 
 
 ## 3.1 Compatibility
 
-SDK `3.1.20` adds Ink Sepolia to the `3.1.19` consumer surface and targets the
-maintained V2.0/V2.1 subgraph family:
+SDK `3.1.21` adds Ink Sepolia's mock-token factory to the `3.1.20` consumer surface.
+It targets the same maintained V2.0/V2.1 subgraph family:
 
 | Chain            | Subgraph                 |
 | ---------------- | ------------------------ |
@@ -40,8 +40,9 @@ hooks. SDK helpers select legacy-compatible GraphQL documents for Ink and the
 V2.0 chains. Consumers constructing raw queries
 should use the exported `*DocumentForChain` selectors for those operations.
 
-Ink mainnet is not enabled. See [the Ink release note](./docs/V3_1_20_INK_SEPOLIA.md)
-for deployment scope, RPC setup and validation.
+Ink mainnet is not enabled. See the [Ink integration note](./docs/V3_1_20_INK_SEPOLIA.md)
+and [mock-token factory patch](./docs/V3_1_21_INK_MOCK_TOKENS.md) for deployment scope
+and validation. Callers still supply their own RPC provider.
 
 This release family does not target the clean V2.5 subgraph schema. V2.5
 consumers belong on SDK `3.2.x`.

@@ -121,6 +121,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     HooksFactory: "0xc54C18FBDa39A089901F59133909012EF116e464",
     MarketLensV2: "0xA2C7711852F9B9a73C32094128413B6529f52Eb7",
     MockArchControllerOwner: "0x9f8313B15dA5e8E7E0bf43E71aA838B3BD23eA81",
+    MockERC20Factory: "0x001D521c15Db09bf52731aA27B3f2ba83D7499B9",
     WildcatArchController: "0x0ac22d06121fc336B2F3DBeb284df65C97BcA547",
     WildcatSanctionsSentinel: "0xa83a6afACf2a461A824fbC35dC5e6A80eee53d9A",
     Chainalysis: "0xd94748c005D4D384dD72ec3374973Ce8A8b31697",
