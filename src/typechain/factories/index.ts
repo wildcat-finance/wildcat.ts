@@ -15,6 +15,7 @@ export { IOpenTermHooks__factory } from "./IOpenTermHooks__factory";
 export { IPeriodicTermHooks__factory } from "./IPeriodicTermHooks__factory";
 export { ISafe__factory } from "./ISafe__factory";
 export { MarketLens__factory } from "./MarketLens__factory";
+export { MarketLensLegacy__factory } from "./MarketLensLegacy__factory";
 export { MarketLensV2__factory } from "./MarketLensV2__factory";
 export { MarketLensV21__factory } from "./MarketLensV21__factory";
 export { MockArchControllerOwner__factory } from "./MockArchControllerOwner__factory";

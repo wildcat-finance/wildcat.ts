@@ -15,6 +15,8 @@ import {
   MarketLensV2__factory,
   MarketLensV21,
   MarketLensV21__factory,
+  MarketLensLegacy,
+  MarketLensLegacy__factory,
   HooksFactory__factory,
   HooksFactory,
   WildcatCollateralFactory,
@@ -48,14 +50,16 @@ export enum SupportedChainId {
   Mainnet = 1,
   Sepolia = 11155111,
   PlasmaTestnet = 9746,
-  PlasmaMainnet = 9745
+  PlasmaMainnet = 9745,
+  InkSepolia = 763373
 }
 
 export const SupportedChainIds = [
   SupportedChainId.Mainnet,
   SupportedChainId.Sepolia,
   SupportedChainId.PlasmaTestnet,
-  SupportedChainId.PlasmaMainnet
+  SupportedChainId.PlasmaMainnet,
+  SupportedChainId.InkSepolia
 ];
 
 export const isSupportedChainId = (chainId: number): chainId is SupportedChainId => {
@@ -112,6 +116,16 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatSanctionsSentinel: "0x7cc91e3c64A0b5844650d586B87B291AC3A3aaD4",
     Chainalysis: "0x0ac22d06121fc336B2F3DBeb284df65C97BcA547",
     OpenAccessRoleProvider: "0xC9490f78A131c51829cda5C4455E88CAAc6246f0"
+  },
+  [SupportedChainId.InkSepolia]: {
+    HooksFactory: "0xc54C18FBDa39A089901F59133909012EF116e464",
+    MarketLensV2: "0xA2C7711852F9B9a73C32094128413B6529f52Eb7",
+    MockArchControllerOwner: "0x9f8313B15dA5e8E7E0bf43E71aA838B3BD23eA81",
+    WildcatArchController: "0x0ac22d06121fc336B2F3DBeb284df65C97BcA547",
+    WildcatSanctionsSentinel: "0xa83a6afACf2a461A824fbC35dC5e6A80eee53d9A",
+    Chainalysis: "0xd94748c005D4D384dD72ec3374973Ce8A8b31697",
+    OpenAccessRoleProvider: "0x56E526cdB86f15A9f2cA97c2A8eB62B4BfE45B7b",
+    Wildcat4626WrapperFactory: "0xF3fE96705d85A1592B31592B628667eA21fdd7C7"
   },
   [SupportedChainId.PlasmaMainnet]: {
     HooksFactory: "0xB46bae25AC6D23148531ed1853a8881FD842E517",
@@ -181,12 +195,18 @@ export const getHooksFactoryContract = (
   return HooksFactory__factory.connect(getDeploymentAddress(chainId, "HooksFactory"), provider);
 };
 
-export type MarketLensV2Like = MarketLensV2 | MarketLensV21;
+export type MarketLensV2Like = MarketLensV2 | MarketLensV21 | MarketLensLegacy;
 
 export const getLensV2Contract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
 ): MarketLensV2Like => {
+  if (chainId === SupportedChainId.InkSepolia) {
+    return MarketLensLegacy__factory.connect(
+      getDeploymentAddress(chainId, "MarketLensV2"),
+      provider
+    );
+  }
   if (chainId === SupportedChainId.Sepolia) {
     return MarketLensV21__factory.connect(getDeploymentAddress(chainId, "MarketLensV2"), provider);
   }
@@ -234,6 +254,8 @@ export const getWrapperFactoryContract = (
 };
 
 export const SubgraphUrls = {
+  [SupportedChainId.InkSepolia]:
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/ink-sepolia/v2.1.9/gn",
   [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.1.9/gn`,
   [SupportedChainId.Mainnet]:
     "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.31/gn",
@@ -244,6 +266,10 @@ export const SubgraphUrls = {
 };
 
 export const SubgraphFeatures = {
+  [SupportedChainId.InkSepolia]: {
+    periodicTermHooks: false,
+    analytics: true
+  },
   [SupportedChainId.Sepolia]: {
     periodicTermHooks: true,
     analytics: true

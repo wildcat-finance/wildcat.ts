@@ -9,6 +9,7 @@ import {
   MarketDataWithLenderStatusV2StructOutput,
   LenderAccountDataV21StructOutput,
   MarketDataWithLenderStatusV21StructOutput,
+  MarketDataWithLenderStatusLegacyStructOutput,
   IOpenTermHooks__factory,
   IFixedTermHooks__factory,
   IPeriodicTermHooks__factory
@@ -1150,6 +1151,7 @@ export class MarketAccount {
       | MarketDataWithLenderStatusStructOutput
       | MarketDataWithLenderStatusV2StructOutput
       | MarketDataWithLenderStatusV21StructOutput
+      | MarketDataWithLenderStatusLegacyStructOutput
   ): MarketAccount {
     if ("controller" in info.market) {
       info = info as MarketDataWithLenderStatusStructOutput;
@@ -1161,7 +1163,8 @@ export class MarketAccount {
     } else {
       info = info as
         | MarketDataWithLenderStatusV2StructOutput
-        | MarketDataWithLenderStatusV21StructOutput;
+        | MarketDataWithLenderStatusV21StructOutput
+        | MarketDataWithLenderStatusLegacyStructOutput;
       return MarketAccount.fromLenderAccountData(
         Market.fromMarketDataV2(chainId, provider, info.market),
         info.lenderStatus

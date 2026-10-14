@@ -15,7 +15,7 @@
 
 ## Overview
 
-`wildcat.ts` exposes typed helpers for working with Wildcat markets: querying controllers, inspecting market state, and managing lender or borrower activity. the sdk bundles contract typings, gql fragments, utils and constants like deployment addresses, rpc urls, sugraph urls etc. [The main app](https://github.com/wildcat-finance/wildcat-app-v2/blob/989ae639d5f1160ac0a9d8c0a90609643d716a77/package.json#L40) is the consumer.
+`wildcat.ts` exposes typed helpers for working with Wildcat markets: querying controllers, inspecting market state, and managing lender or borrower activity. The SDK bundles contract typings, GraphQL fragments, utilities, deployment addresses and subgraph URLs. Callers supply RPC providers. [The main app](https://github.com/wildcat-finance/wildcat-app-v2/blob/989ae639d5f1160ac0a9d8c0a90609643d716a77/package.json#L40) is the consumer.
 
 The most likely scenario for working in this repo is while also working on app side. Theres a section below specifically on _how_ to manage this as a local dependency.
 
@@ -23,7 +23,7 @@ For local development inside this repo run `yarn build` (or `npm run build`) to 
 
 ## 3.1 Compatibility
 
-SDK `3.1.18` preserves the `3.1.17` consumer surface and targets the
+SDK `3.1.20` adds Ink Sepolia to the `3.1.19` consumer surface and targets the
 maintained V2.0/V2.1 subgraph family:
 
 | Chain            | Subgraph                 |
@@ -32,11 +32,16 @@ maintained V2.0/V2.1 subgraph family:
 | Ethereum Sepolia | `sepolia/v2.1.9`         |
 | Plasma mainnet   | `plasma-mainnet/v2.0.31` |
 | Plasma testnet   | `plasma-testnet/v2.0.31` |
+| Ink Sepolia      | `ink-sepolia/v2.1.9`     |
 
-Sepolia's V2.1 schema includes periodic-term fields. The other chains use the
-V2.0 schema, so SDK helpers select legacy-compatible GraphQL documents for
-operations that include periodic-term data. Consumers constructing raw queries
+Ethereum Sepolia supports periodic-term hooks. Ink Sepolia's V2.1.9 schema also
+contains those fields, but its deployed protocol has only legacy open/fixed-term
+hooks. SDK helpers select legacy-compatible GraphQL documents for Ink and the
+V2.0 chains. Consumers constructing raw queries
 should use the exported `*DocumentForChain` selectors for those operations.
+
+Ink mainnet is not enabled. See [the Ink release note](./docs/V3_1_20_INK_SEPOLIA.md)
+for deployment scope, RPC setup and validation.
 
 This release family does not target the clean V2.5 subgraph schema. V2.5
 consumers belong on SDK `3.2.x`.

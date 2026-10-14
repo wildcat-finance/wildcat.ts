@@ -30,9 +30,11 @@ import {
   GetProtocolAnalyticsStatsDocument
 } from "../src/gql/graphql";
 
-describe("SDK 3.1.18 subgraph release matrix", () => {
+describe("SDK 3.1.20 subgraph release matrix", () => {
   it("routes every supported chain to its maintained subgraph release", () => {
     expect(SubgraphUrls).to.deep.equal({
+      [SupportedChainId.InkSepolia]:
+        "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/ink-sepolia/v2.1.9/gn",
       [SupportedChainId.Sepolia]:
         "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.1.9/gn",
       [SupportedChainId.Mainnet]:
@@ -51,6 +53,7 @@ describe("SDK 3.1.18 subgraph release matrix", () => {
     expect(supportsPeriodicTermHooks(SupportedChainId.Mainnet)).to.equal(false);
     expect(supportsPeriodicTermHooks(SupportedChainId.PlasmaMainnet)).to.equal(false);
     expect(supportsPeriodicTermHooks(SupportedChainId.PlasmaTestnet)).to.equal(false);
+    expect(supportsPeriodicTermHooks(SupportedChainId.InkSepolia)).to.equal(false);
   });
 
   it("uses PTH documents only on Sepolia for every dual-schema operation", () => {
@@ -76,7 +79,8 @@ describe("SDK 3.1.18 subgraph release matrix", () => {
       for (const chainId of [
         SupportedChainId.Mainnet,
         SupportedChainId.PlasmaMainnet,
-        SupportedChainId.PlasmaTestnet
+        SupportedChainId.PlasmaTestnet,
+        SupportedChainId.InkSepolia
       ]) {
         const legacyDocument = print(selector(chainId));
         expect(periodicTermMarkers.some((marker) => legacyDocument.includes(marker))).to.equal(

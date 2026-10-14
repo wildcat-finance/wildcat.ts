@@ -4,6 +4,7 @@ import {
   MarketDataStructOutput,
   MarketDataV2StructOutput,
   MarketDataV21StructOutput,
+  MarketDataLegacyStructOutput,
   WildcatMarket,
   WildcatMarket__factory
 } from "./typechain";
@@ -684,7 +685,11 @@ export class Market extends ContractWrapper<WildcatMarket> {
   }
 
   updateWith(
-    data: MarketDataStructOutput | MarketDataV2StructOutput | MarketDataV21StructOutput
+    data:
+      | MarketDataStructOutput
+      | MarketDataV2StructOutput
+      | MarketDataV21StructOutput
+      | MarketDataLegacyStructOutput
   ): void {
     // Note: this adds all the interest accrued to the base interest accrued, since the lens
     // doesn't give us any way to distinguish between base interest and delinquency fees.
@@ -1016,7 +1021,7 @@ export class Market extends ContractWrapper<WildcatMarket> {
       hooks,
       hooksConfig: hooksConfigData,
       ...data
-    }: MarketDataV2StructOutput | MarketDataV21StructOutput
+    }: MarketDataV2StructOutput | MarketDataV21StructOutput | MarketDataLegacyStructOutput
   ): Market {
     const marketToken = Token.fromTokenMetadata(chainId, data.marketToken, provider);
     const underlyingToken = Token.fromTokenMetadata(chainId, data.underlyingToken, provider);
