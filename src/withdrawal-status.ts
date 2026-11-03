@@ -28,6 +28,19 @@ import {
   SubgraphWithdrawalRequestPropertiesFragment
 } from "./gql/graphql";
 
+const isLenderWithdrawalCompleted = (
+  batch: WithdrawalBatch,
+  scaledAmount: BigNumber,
+  normalizedAmountWithdrawn: TokenAmount
+): boolean => {
+  if (batch.effectiveStatus !== BatchStatus.Complete || batch.scaledTotalAmount.isZero()) {
+    return false;
+  }
+  return batch.normalizedAmountPaid
+    .mulDiv(scaledAmount, batch.scaledTotalAmount)
+    .eq(normalizedAmountWithdrawn);
+};
+
 export class LenderWithdrawalStatus {
   public executions: WithdrawalExecutionRecord[] = [];
   public requests: WithdrawalRequestRecord[] = [];
@@ -91,14 +104,13 @@ export class LenderWithdrawalStatus {
     );
     this.normalizedAmountOwed = this.market.underlyingToken.getAmount(data.normalizedAmountOwed);
 
-    // recompute isCompleted based on updated values after a wd that 
-    // subgraph may not have updated yet 
-    this.isCompleted =
-      this.batch.status === BatchStatus.Complete &&
-      this.batch.expiry < Math.floor(Date.now() / 1000) &&
-      this.batch.normalizedAmountPaid
-        .mulDiv(data.scaledAmount, this.batch.scaledTotalAmount)
-        .eq(data.normalizedAmountWithdrawn);
+    // recompute isCompleted based on updated values after a wd that
+    // subgraph may not have updated yet
+    this.isCompleted = isLenderWithdrawalCompleted(
+      this.batch,
+      this.scaledAmount,
+      this.normalizedAmountWithdrawn
+    );
   }
 
   get normalizedUnpaidAmount(): TokenAmount {
@@ -164,17 +176,19 @@ export class LenderWithdrawalStatus {
     batch: WithdrawalBatch,
     data: WithdrawalBatchLenderStatusStructOutput
   ): LenderWithdrawalStatus {
-    const isCompleted =
-      batch.status === BatchStatus.Complete &&
-      batch.expiry < Math.floor(Date.now() / 1000) &&
-      batch.normalizedAmountPaid
-        .mulDiv(data.scaledAmount, batch.scaledTotalAmount)
-        .eq(data.normalizedAmountWithdrawn);
+    const normalizedAmountWithdrawn = market.underlyingToken.getAmount(
+      data.normalizedAmountWithdrawn
+    );
+    const isCompleted = isLenderWithdrawalCompleted(
+      batch,
+      data.scaledAmount,
+      normalizedAmountWithdrawn
+    );
     return new LenderWithdrawalStatus(
       batch,
       data.lender,
       data.scaledAmount,
-      market.underlyingToken.getAmount(data.normalizedAmountWithdrawn),
+      normalizedAmountWithdrawn,
       market.underlyingToken.getAmount(data.normalizedAmountOwed),
       isCompleted
     );

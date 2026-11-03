@@ -22,6 +22,15 @@ export type AnalyticsQueryMetadata = {
   blockHash?: string;
 };
 
+/** Index metadata in the 3.2 shape, used by `getMarketDefaultStatus`. */
+export type IndexedQueryMetadata = {
+  deployment: string;
+  blockNumber: bigint;
+  blockTimestamp?: bigint;
+  blockHash?: string;
+  hasIndexingErrors: boolean;
+};
+
 export type AnalyticsSnapshot<T> = {
   indexedAt: AnalyticsQueryMetadata;
   value?: T;

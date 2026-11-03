@@ -8,10 +8,11 @@
 2. [3.1 Compatibility](#31-compatibility)
 3. [Analytics Reads](#analytics-reads)
 4. [Wrapper Discovery](#wrapper-discovery)
-5. [Development Workflow](#development-workflow)
-6. [App Integration Testing](#app-integration-testing)
-7. [Releases](#releases)
-8. [Branch Strategy](#branch-strategy)
+5. [Market Default Status](#market-default-status)
+6. [Development Workflow](#development-workflow)
+7. [App Integration Testing](#app-integration-testing)
+8. [Releases](#releases)
+9. [Branch Strategy](#branch-strategy)
 
 ## Overview
 
@@ -23,8 +24,8 @@ For local development inside this repo run `yarn build` (or `npm run build`) to 
 
 ## 3.1 Compatibility
 
-SDK `3.1.21` adds Ink Sepolia's mock-token factory to the `3.1.20` consumer surface.
-It targets the same maintained V2.0/V2.1 subgraph family:
+SDK `3.1.22` adds market default status and a withdrawal-completion fix to the
+`3.1.21` consumer surface. It targets the same maintained V2.0/V2.1 subgraph family:
 
 | Chain            | Subgraph                 |
 | ---------------- | ------------------------ |
@@ -99,6 +100,34 @@ fallback; set `fallbackToFactory: false` for strictly indexed reads.
 
 See [the v3.1.18 release note](./docs/V3_1_18_WRAPPER_DISCOVERY.md) for complete
 pagination, fallback behavior, verification and release commands.
+
+## Market Default Status
+
+SDK `3.1.22` backports the `3.2.x` default-status reader:
+
+```ts
+import {
+  getMarketDefaultStatus,
+  getSubgraphClient,
+  SupportedChainId
+} from "@wildcatfi/wildcat-sdk";
+
+const chainId = SupportedChainId.Mainnet;
+const status = await getMarketDefaultStatus(getSubgraphClient(chainId), {
+  market: { address, chainId, lastInterestAccruedTimestamp }
+});
+```
+
+A market defaults when one uninterrupted delinquency run lasts 90 days past the
+remaining grace period. The helper replays block-pinned subgraph history, so a
+default stays recorded after cure or closure. `isDefaulted: undefined` means the
+history could not be established, not that the market is healthy. Pass the
+subgraph client for the market's own chain.
+
+The same release fixes `LenderWithdrawalStatus.isCompleted` for withdrawals
+claimed in full after a market closed early. See
+[the v3.1.22 release note](./docs/V3_1_22_DEFAULT_STATUS.md) for the 3.1
+differences, side effects and validation.
 
 ## Development Workflow
 
