@@ -13,6 +13,7 @@ export * from "./collateral";
 export * from "./constants";
 export * from "./controller";
 export * from "./market";
+export * from "./market-default";
 export * from "./mockerc20factory";
 export * from "./periodic-settlement";
 export * from "./token";
@@ -22,6 +23,7 @@ export * from "./withdrawal-status";
 export * from "./utils";
 export * as typechain from "./typechain";
 export * from "./gql";
+export * from "./indexed-pagination";
 export * from "./wrapper";
 
 export const { getMarket, getMarkets, getAllMarkets, getMarketsCount, getPaginatedMarkets } =
