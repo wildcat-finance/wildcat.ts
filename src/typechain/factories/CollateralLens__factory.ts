@@ -334,6 +334,11 @@ const _abi = [
       {
         components: [
           {
+            internalType: "bool",
+            name: "isLiquidator",
+            type: "bool",
+          },
+          {
             internalType: "uint256",
             name: "shares",
             type: "uint256",
@@ -856,6 +861,11 @@ const _abi = [
       {
         components: [
           {
+            internalType: "bool",
+            name: "isLiquidator",
+            type: "bool",
+          },
+          {
             internalType: "uint256",
             name: "shares",
             type: "uint256",
@@ -1047,6 +1057,11 @@ const _abi = [
       },
       {
         components: [
+          {
+            internalType: "bool",
+            name: "isLiquidator",
+            type: "bool",
+          },
           {
             internalType: "uint256",
             name: "shares",

@@ -78,6 +78,7 @@ export type CollateralContractDataStructOutput = {
 };
 
 export type CollateralContractDepositorDataStruct = {
+  isLiquidator: PromiseOrValue<boolean>;
   shares: PromiseOrValue<BigNumberish>;
   lastFullLiquidationIndex: PromiseOrValue<BigNumberish>;
   balanceCollateralAsset: PromiseOrValue<BigNumberish>;
@@ -85,6 +86,7 @@ export type CollateralContractDepositorDataStruct = {
 };
 
 export type CollateralContractDepositorDataStructOutput = {
+  isLiquidator: boolean;
   shares: BigNumber;
   lastFullLiquidationIndex: BigNumber;
   balanceCollateralAsset: BigNumber;

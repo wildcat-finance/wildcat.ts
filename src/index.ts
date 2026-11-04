@@ -7,11 +7,15 @@ import { LenderWithdrawalStatus } from "./withdrawal-status";
 import { MarketController } from "./controller";
 
 export * from "./account";
+export * from "./access";
+export * from "./analytics";
 export * from "./collateral";
 export * from "./constants";
 export * from "./controller";
 export * from "./market";
+export * from "./market-default";
 export * from "./mockerc20factory";
+export * from "./periodic-settlement";
 export * from "./token";
 export * from "./types";
 export * from "./withdrawal-batch";
@@ -19,6 +23,8 @@ export * from "./withdrawal-status";
 export * from "./utils";
 export * as typechain from "./typechain";
 export * from "./gql";
+export * from "./indexed-pagination";
+export * from "./wrapper";
 
 export const { getMarket, getMarkets, getAllMarkets, getMarketsCount, getPaginatedMarkets } =
   Market;
@@ -30,6 +36,7 @@ export const { getWithdrawalForLender } = LenderWithdrawalStatus;
 export const {
   getMarketAccount,
   getMarketAccountsForLender,
+  refreshLenderAccountState,
   getAllMarketAccountsForLender,
   getPaginatedMarketAccounts
 } = MarketAccount;

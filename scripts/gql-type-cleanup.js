@@ -51,6 +51,17 @@ const log = (msg) => DEBUG && console.log(msg);
 const project = new Project();
 const sourceFile = project.addSourceFileAtPath(GRAPHQL_TS_PATH);
 
+// The wrapper deployment event has both a wrapperAddress scalar and a wrapper
+// relation. Codegen PascalCases wrapperAddress and wrapper__address identically.
+// Disambiguate this new enum member without renaming existing public enums.
+const wrapperAddressOrder = sourceFile
+  .getEnum("SubgraphWildcat4626WrapperDeployed_OrderBy")
+  ?.getMembers()
+  .find((member) => member.getInitializer()?.getText().slice(1, -1) === "wrapper__address");
+if (wrapperAddressOrder) {
+  wrapperAddressOrder.getNameNode().replaceWithText("WrapperEntityAddress");
+}
+
 // Map to store unique type definitions
 const typeMap = new Map();
 const typeReplacementCounts = new Map();

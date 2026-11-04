@@ -1,4 +1,10 @@
+const canUpdateStdout =
+  typeof process.stdout.moveCursor === "function" &&
+  typeof process.stdout.clearLine === "function" &&
+  typeof process.stdout.cursorTo === "function";
+
 function clearLines(n) {
+  if (!canUpdateStdout) return;
   for (let i = 0; i < n; i++) {
     process.stdout.moveCursor(0, i === 0 ? 0 : -1);
     process.stdout.clearLine(1);
@@ -36,6 +42,7 @@ function printUpdatableMessage(message) {
   process.stdout.write(message);
 
   const updateLastLine = (newMessage) => {
+    if (!canUpdateStdout) return;
     process.stdout.clearLine(0);
     process.stdout.cursorTo(0);
     process.stdout.write(newMessage);

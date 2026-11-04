@@ -1,5 +1,4 @@
 import { ApolloClient, FetchPolicy, NormalizedCacheObject } from "@apollo/client";
-import { GetMarketsAndLendersByHooksInstanceOrControllerDocument } from "./graphql";
 import { SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables } from "./graphql";
 import { SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery } from "./graphql";
 import { SignerOrProvider } from "../types";
@@ -9,6 +8,7 @@ import { Market } from "../market";
 import { parsePolicyLender, PolicyLender } from "./utils";
 import { SupportedChainId } from "../constants";
 import { MarketController } from "../controller";
+import { getPolicyMarketsAndLendersDocumentForChain } from "./document-selectors";
 
 export type GetPolicyMarketsAndLendersOptions =
   SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables & {
@@ -38,7 +38,7 @@ export async function getPolicyMarketsAndLenders(
     SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQuery,
     SubgraphGetMarketsAndLendersByHooksInstanceOrControllerQueryVariables
   >({
-    query: GetMarketsAndLendersByHooksInstanceOrControllerDocument,
+    query: getPolicyMarketsAndLendersDocumentForChain(chainId),
     variables: {
       contractAddress,
       ...otherVariables

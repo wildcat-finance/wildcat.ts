@@ -7,10 +7,16 @@ import {
   WildcatMarketControllerFactory__factory,
   MockERC20Factory,
   MockERC20Factory__factory,
+  Wildcat4626WrapperFactory,
+  Wildcat4626WrapperFactory__factory,
   WildcatArchController,
   WildcatArchController__factory,
   MarketLensV2,
   MarketLensV2__factory,
+  MarketLensV21,
+  MarketLensV21__factory,
+  MarketLensLegacy,
+  MarketLensLegacy__factory,
   HooksFactory__factory,
   HooksFactory,
   WildcatCollateralFactory,
@@ -35,6 +41,7 @@ type NetworkDeployments = {
   Chainalysis: string;
   OpenAccessRoleProvider: string;
   WildcatCollateralFactory?: string;
+  Wildcat4626WrapperFactory?: string;
   BebopSettlementContract?: string;
   CollateralLens?: string;
 };
@@ -43,14 +50,16 @@ export enum SupportedChainId {
   Mainnet = 1,
   Sepolia = 11155111,
   PlasmaTestnet = 9746,
-  PlasmaMainnet = 9745
+  PlasmaMainnet = 9745,
+  InkSepolia = 763373
 }
 
 export const SupportedChainIds = [
   SupportedChainId.Mainnet,
   SupportedChainId.Sepolia,
   SupportedChainId.PlasmaTestnet,
-  SupportedChainId.PlasmaMainnet
+  SupportedChainId.PlasmaMainnet,
+  SupportedChainId.InkSepolia
 ];
 
 export const isSupportedChainId = (chainId: number): chainId is SupportedChainId => {
@@ -77,13 +86,14 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     OpenAccessRoleProvider: "0x5620553d8881335F74AD19259daaCD1d9B373101",
     BebopSettlementContract: "0xbbbbbBB520d69a9775E85b458C58c648259FAD5F",
     WildcatCollateralFactory: "0xBdf64bd7Ea91A534445d06736a0f0E2a33FfA47c",
-    CollateralLens: "0x422489bA6bDdD5954C379C41B6C97Ab0E4494f90"
+    CollateralLens: "0x422489bA6bDdD5954C379C41B6C97Ab0E4494f90",
+    Wildcat4626WrapperFactory: "0xEA6DE11f8F3F83c79bD9d8Db5517fCFDf2Bb148a"
   },
   [SupportedChainId.Sepolia]: {
     HooksFactory: "0x10A64ABa0159720F8a23E1A552800CA4eb21576C",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
-    MarketLensV2: "0x5D8cEacEe19c06C3b4108b8Ae5B881eb0240B9c7",
-    MockArchControllerOwner: "0xa476920af80B587f696734430227869795E2Ea78",
+    MarketLensV2: "0xCb7839D03EBC1e628295b2FdE3b73Fc53412e87F",
+    MockArchControllerOwner: "0x981f1Fb406bD7a8385f9373c08Ab4c832Ed0d508",
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
     WildcatArchController: "0xC003f20F2642c76B81e5e1620c6D8cdEE826408f",
@@ -91,9 +101,10 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatSanctionsSentinel: "0xFBCE262eC835be5e6A458cE1722EeCe0E453316B",
     Chainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     OpenAccessRoleProvider: "0x9aCdE253F7A51456c48604185C0ceA4Fc9e58E3a",
-    WildcatCollateralFactory: "0xe11E41e9162ad07F1a9853c3123c33B7e9Cf59D6",
+    WildcatCollateralFactory: "0x58Ab4755221869cfcAe2A4F3EE31d591bA6AE1D0",
     BebopSettlementContract: "0x513826b6bb38fc159f152a4bf6e1ec3650a7ee46",
-    CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578"
+    CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578",
+    Wildcat4626WrapperFactory: "0x0566Fe57682164af689f1440cb3BCEedEe3bf843"
   },
   [SupportedChainId.PlasmaTestnet]: {
     HooksFactory: "0x5Ad00b665eA71E27628D75102B1497CC75E531FB",
@@ -105,6 +116,17 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatSanctionsSentinel: "0x7cc91e3c64A0b5844650d586B87B291AC3A3aaD4",
     Chainalysis: "0x0ac22d06121fc336B2F3DBeb284df65C97BcA547",
     OpenAccessRoleProvider: "0xC9490f78A131c51829cda5C4455E88CAAc6246f0"
+  },
+  [SupportedChainId.InkSepolia]: {
+    HooksFactory: "0xc54C18FBDa39A089901F59133909012EF116e464",
+    MarketLensV2: "0xA2C7711852F9B9a73C32094128413B6529f52Eb7",
+    MockArchControllerOwner: "0x9f8313B15dA5e8E7E0bf43E71aA838B3BD23eA81",
+    MockERC20Factory: "0x001D521c15Db09bf52731aA27B3f2ba83D7499B9",
+    WildcatArchController: "0x0ac22d06121fc336B2F3DBeb284df65C97BcA547",
+    WildcatSanctionsSentinel: "0xa83a6afACf2a461A824fbC35dC5e6A80eee53d9A",
+    Chainalysis: "0xd94748c005D4D384dD72ec3374973Ce8A8b31697",
+    OpenAccessRoleProvider: "0x56E526cdB86f15A9f2cA97c2A8eB62B4BfE45B7b",
+    Wildcat4626WrapperFactory: "0xF3fE96705d85A1592B31592B628667eA21fdd7C7"
   },
   [SupportedChainId.PlasmaMainnet]: {
     HooksFactory: "0xB46bae25AC6D23148531ed1853a8881FD842E517",
@@ -174,10 +196,21 @@ export const getHooksFactoryContract = (
   return HooksFactory__factory.connect(getDeploymentAddress(chainId, "HooksFactory"), provider);
 };
 
+export type MarketLensV2Like = MarketLensV2 | MarketLensV21 | MarketLensLegacy;
+
 export const getLensV2Contract = (
   chainId: SupportedChainId,
   provider: SignerOrProvider
-): MarketLensV2 => {
+): MarketLensV2Like => {
+  if (chainId === SupportedChainId.InkSepolia) {
+    return MarketLensLegacy__factory.connect(
+      getDeploymentAddress(chainId, "MarketLensV2"),
+      provider
+    );
+  }
+  if (chainId === SupportedChainId.Sepolia) {
+    return MarketLensV21__factory.connect(getDeploymentAddress(chainId, "MarketLensV2"), provider);
+  }
   return MarketLensV2__factory.connect(getDeploymentAddress(chainId, "MarketLensV2"), provider);
 };
 
@@ -211,15 +244,64 @@ export const getCollateralFactoryContract = (
   );
 };
 
-export const SubgraphUrls = {
-  [SupportedChainId.Sepolia]: `https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/sepolia/version/v2.0.19/api`,
-  [SupportedChainId.Mainnet]:
-    "https://subgraph.satsuma-prod.com/db4945988e6f/dillons-team--345508/mainnet/version/v2.0.19/api",
-  [SupportedChainId.PlasmaTestnet]:
-    "https://api.goldsky.com/api/public/project_cmfvpdktfz5v701z62hog8qhj/subgraphs/wildcat-plasma/2.0.19/gn",
-  [SupportedChainId.PlasmaMainnet]:
-    "https://api.goldsky.com/api/public/project_cmfvpdktfz5v701z62hog8qhj/subgraphs/wildcat-plasma-mainnet/2.0.19/gn"
+export const getWrapperFactoryContract = (
+  chainId: SupportedChainId,
+  provider: SignerOrProvider
+): Wildcat4626WrapperFactory => {
+  return Wildcat4626WrapperFactory__factory.connect(
+    getDeploymentAddress(chainId, "Wildcat4626WrapperFactory"),
+    provider
+  );
 };
+
+export const SubgraphUrls = {
+  [SupportedChainId.InkSepolia]:
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/ink-sepolia/v2.1.9/gn",
+  [SupportedChainId.Sepolia]: `https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/sepolia/v2.1.9/gn`,
+  [SupportedChainId.Mainnet]:
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/mainnet/v2.0.31/gn",
+  [SupportedChainId.PlasmaTestnet]:
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-testnet/v2.0.31/gn",
+  [SupportedChainId.PlasmaMainnet]:
+    "https://api.goldsky.com/api/public/project_cmheai1ym00jyx7p27qn46qtm/subgraphs/plasma-mainnet/v2.0.31/gn"
+};
+
+export const SubgraphFeatures = {
+  [SupportedChainId.InkSepolia]: {
+    periodicTermHooks: false,
+    analytics: true
+  },
+  [SupportedChainId.Sepolia]: {
+    periodicTermHooks: true,
+    analytics: true
+  },
+  [SupportedChainId.Mainnet]: {
+    periodicTermHooks: false,
+    analytics: true
+  },
+  [SupportedChainId.PlasmaTestnet]: {
+    periodicTermHooks: false,
+    analytics: true
+  },
+  [SupportedChainId.PlasmaMainnet]: {
+    periodicTermHooks: false,
+    analytics: true
+  }
+};
+
+export const supportsPeriodicTermHooks = (chainId: SupportedChainId): boolean =>
+  SubgraphFeatures[chainId]?.periodicTermHooks === true;
+
+export const supportsSubgraphAnalytics = (chainId: SupportedChainId): boolean =>
+  SubgraphFeatures[chainId]?.analytics === true;
+
+/**
+ * Number of full periods after the response window ends during which a
+ * proposed periodic APR reduction remains executable. This matches the
+ * V2.1 template-v2 contract. First-generation instances do not enforce
+ * expiry, so applying this limit to them is conservative.
+ */
+export const APR_REDUCTION_PROPOSAL_VALIDITY_PERIODS = 2;
 
 export const getSubgraphClient = (chainId: SupportedChainId): ApolloClient<NormalizedCacheObject> =>
   new ApolloClient({

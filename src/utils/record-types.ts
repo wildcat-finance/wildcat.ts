@@ -17,7 +17,10 @@ import {
   SubgraphMinimumDepositUpdatedDataFragment,
   SubgraphProtocolFeeBipsUpdatedDataFragment,
   SubgraphDisabledForceBuyBacksDataFragment,
-  SubgraphFixedTermUpdatedDataFragment
+  SubgraphFixedTermUpdatedDataFragment,
+  SubgraphPeriodicTermUpdatedDataFragment,
+  SubgraphPeriodicTermClosedDataFragment,
+  SubgraphAnnualInterestBipsReductionProposedDataFragment
 } from "../gql/graphql";
 import { WithdrawalBatch } from "../withdrawal-batch";
 import { LenderWithdrawalStatus } from "../withdrawal-status";
@@ -131,6 +134,13 @@ export type ForceBuyBacksDisabledRecord = SubgraphDisabledForceBuyBacksDataFragm
 
 export type FixedTermUpdatedRecord = SubgraphFixedTermUpdatedDataFragment;
 
+export type PeriodicTermUpdatedRecord = SubgraphPeriodicTermUpdatedDataFragment;
+
+export type PeriodicTermClosedRecord = SubgraphPeriodicTermClosedDataFragment;
+
+export type AnnualInterestBipsReductionProposedRecord =
+  SubgraphAnnualInterestBipsReductionProposedDataFragment;
+
 export type WithdrawalDataFragmentByType<K extends WithdrawalRecordKind> =
   WithdrawalDataFragment extends infer C ? (C extends { __typename: K } ? C : never) : never;
 
@@ -212,7 +222,10 @@ export type MarketRecord =
   | MinimumDepositUpdatedRecord
   | ProtocolFeeBipsUpdatedRecord
   | ForceBuyBacksDisabledRecord
-  | FixedTermUpdatedRecord;
+  | FixedTermUpdatedRecord
+  | PeriodicTermUpdatedRecord
+  | PeriodicTermClosedRecord
+  | AnnualInterestBipsReductionProposedRecord;
 
 export type MarketDataFragment =
   | SubgraphAnnualInterestBipsUpdatedDataFragment
@@ -228,7 +241,10 @@ export type MarketDataFragment =
   | SubgraphMinimumDepositUpdatedDataFragment
   | SubgraphProtocolFeeBipsUpdatedDataFragment
   | SubgraphDisabledForceBuyBacksDataFragment
-  | SubgraphFixedTermUpdatedDataFragment;
+  | SubgraphFixedTermUpdatedDataFragment
+  | SubgraphPeriodicTermUpdatedDataFragment
+  | SubgraphPeriodicTermClosedDataFragment
+  | SubgraphAnnualInterestBipsReductionProposedDataFragment;
 
 export type MarketRecordByType<K extends MarketRecordKind> = MarketRecord extends infer C
   ? C extends { __typename: K }

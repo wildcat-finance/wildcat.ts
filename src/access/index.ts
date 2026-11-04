@@ -4,18 +4,53 @@ import {
   SubgraphHooksKind,
   SubgraphHooksTemplateDataFragment
 } from "../gql/graphql";
-import { HooksInstanceDataStructOutput, HooksTemplateDataStructOutput } from "../typechain";
+import {
+  HooksInstanceDataStructOutput,
+  HooksInstanceDataV21StructOutput,
+  HooksTemplateDataStructOutput
+} from "../typechain";
 import { HooksKind, SignerOrProvider } from "../types";
 import { OpenTermHooks, OpenTermHooksTemplate } from "./access-control";
 import { FixedTermHooks, FixedTermHooksTemplate } from "./fixed-term";
+import { PeriodicTermHooks, PeriodicTermHooksTemplate } from "./periodic-term";
 
 export * from "./access-control";
 export * from "./fixed-term";
+export * from "./periodic-term";
 export * from "./validation";
 
-export type HooksTemplate = OpenTermHooksTemplate | FixedTermHooksTemplate;
+export type HooksTemplate =
+  | OpenTermHooksTemplate
+  | FixedTermHooksTemplate
+  | PeriodicTermHooksTemplate;
 
-export type HooksInstance = OpenTermHooks | FixedTermHooks;
+export type HooksInstance = OpenTermHooks | FixedTermHooks | PeriodicTermHooks;
+
+export function getEnabledHooksTemplatesForKind<Kind extends HooksKind>(
+  hooksTemplates: HooksTemplate[],
+  kind: Kind
+): Array<Extract<HooksTemplate, { kind: Kind }>> {
+  return hooksTemplates.filter((template) => template.kind === kind && template.enabled) as Array<
+    Extract<HooksTemplate, { kind: Kind }>
+  >;
+}
+
+export function getDeployableHooksTemplateForKind<Kind extends HooksKind>(
+  hooksTemplates: HooksTemplate[],
+  kind: Kind
+): Extract<HooksTemplate, { kind: Kind }> | undefined {
+  const enabledTemplates = getEnabledHooksTemplatesForKind(hooksTemplates, kind);
+
+  if (enabledTemplates.length > 1) {
+    throw Error(
+      `Multiple enabled hooks templates found for kind ${kind}: ${enabledTemplates
+        .map((template) => template.hooksTemplate)
+        .join(", ")}`
+    );
+  }
+
+  return enabledTemplates[0];
+}
 
 export function hooksTemplateFromSubgraph(
   chainId: SupportedChainId,
@@ -40,8 +75,16 @@ export function hooksTemplateFromSubgraph(
       signerAddress,
       isRegisteredBorrower
     );
+  } else if (data.name === "PeriodicTermHooks") {
+    return PeriodicTermHooksTemplate.fromSubgraphData(
+      chainId,
+      provider,
+      data,
+      signerAddress,
+      isRegisteredBorrower
+    );
   } else {
-    throw Error(`Unknown hooks template: ${name}`);
+    throw Error(`Unknown hooks template: ${data.name}`);
   }
 }
 
@@ -68,8 +111,16 @@ export function hooksTemplateFromLens(
       signerAddress,
       isRegisteredBorrower
     );
+  } else if (data.name === "PeriodicTermHooks") {
+    return PeriodicTermHooksTemplate.fromLensData(
+      chainId,
+      provider,
+      data,
+      signerAddress,
+      isRegisteredBorrower
+    );
   } else {
-    throw Error(`Unknown hooks template: ${name}`);
+    throw Error(`Unknown hooks template: ${data.name}`);
   }
 }
 
@@ -96,6 +147,14 @@ export function hooksInstanceFromSubgraph(
       signerAddress,
       isRegisteredBorrower
     );
+  } else if (data.kind === SubgraphHooksKind.PeriodicTerm) {
+    return PeriodicTermHooks.fromSubgraphData(
+      chainId,
+      provider,
+      data,
+      signerAddress,
+      isRegisteredBorrower
+    );
   } else {
     throw Error(`Unknown hooks template: ${data.kind}`);
   }
@@ -104,7 +163,7 @@ export function hooksInstanceFromSubgraph(
 export function hooksInstanceFromLens(
   chainId: SupportedChainId,
   provider: SignerOrProvider,
-  data: HooksInstanceDataStructOutput,
+  data: HooksInstanceDataStructOutput | HooksInstanceDataV21StructOutput,
   signerAddress?: string,
   isRegisteredBorrower?: boolean
 ): HooksInstance {
@@ -112,6 +171,14 @@ export function hooksInstanceFromLens(
     return OpenTermHooks.fromLensData(chainId, provider, data, signerAddress, isRegisteredBorrower);
   } else if (data.kind === 2) {
     return FixedTermHooks.fromLensData(
+      chainId,
+      provider,
+      data,
+      signerAddress,
+      isRegisteredBorrower
+    );
+  } else if (data.kind === 3) {
+    return PeriodicTermHooks.fromLensData(
       chainId,
       provider,
       data,

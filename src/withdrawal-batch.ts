@@ -99,6 +99,24 @@ export class WithdrawalBatch {
     return this.status === BatchStatus.Pending && this.expiry < Math.floor(Date.now() / 1000);
   }
 
+  get isConcluded(): boolean {
+    if (this.market.isClosed) return true;
+    return this.expiry <= Math.floor(Date.now() / 1000);
+  }
+
+  // unlike `status` which is purely timestamp-based, this accounts for market
+  // termination
+  // a batch with future expiry in a closed market returns Unpaid/Complete
+  // instead of Pending, since the cycle is effectively over
+  get effectiveStatus(): BatchStatus {
+    if (!this.isConcluded) {
+      return BatchStatus.Pending;
+    }
+    return this.scaledAmountBurned.eq(this.scaledTotalAmount)
+      ? BatchStatus.Complete
+      : BatchStatus.Unpaid;
+  }
+
   get normalizedAmountOwed(): TokenAmount {
     return this.normalizedTotalAmount.sub(this.normalizedAmountPaid);
   }

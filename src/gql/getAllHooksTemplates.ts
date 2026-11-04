@@ -41,7 +41,10 @@ export async function getAllHooksTemplates(
     }
   });
   return result.data.hooksTemplates
-    .filter((t) => t.name === "OpenTermHooks" || t.name === "FixedTermHooks")
+    .filter(
+      (t) =>
+        t.name === "OpenTermHooks" || t.name === "FixedTermHooks" || t.name === "PeriodicTermHooks"
+    )
     .map((template) =>
       hooksTemplateFromSubgraph(
         chainId,

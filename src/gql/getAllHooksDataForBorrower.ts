@@ -48,12 +48,20 @@ export async function getAllHooksDataForBorrower(
   });
   const isRegisteredBorrower = result.data.registeredBorrowers?.[0]?.isRegistered ?? false;
   const hooksTemplates = result.data.hooksTemplates
-    .filter((t) => t.name === "OpenTermHooks" || t.name === "FixedTermHooks")
+    .filter(
+      (t) =>
+        t.name === "OpenTermHooks" || t.name === "FixedTermHooks" || t.name === "PeriodicTermHooks"
+    )
     .map((template) =>
       hooksTemplateFromSubgraph(chainId, signerOrProvider, template, borrower, isRegisteredBorrower)
     );
   const hooksInstances = result.data.hooksInstances
-    .filter((i) => i.kind === SubgraphHooksKind.OpenTerm || i.kind === SubgraphHooksKind.FixedTerm)
+    .filter(
+      (i) =>
+        i.kind === SubgraphHooksKind.OpenTerm ||
+        i.kind === SubgraphHooksKind.FixedTerm ||
+        i.kind === SubgraphHooksKind.PeriodicTerm
+    )
     .map((instance) =>
       hooksInstanceFromSubgraph(chainId, signerOrProvider, instance, borrower, isRegisteredBorrower)
     );

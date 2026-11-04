@@ -10,7 +10,7 @@ import { HooksCredential, HooksKind, MarketVersion } from "../types";
 import { BigNumber } from "ethers";
 import { TokenAmount } from "../token";
 import { assert, parseSubgraphLenderHooksAccess, parseSubgraphLenderStatus } from "../utils";
-import { LenderAccountDataStructOutput } from "../typechain";
+import { LenderAccountDataStructOutput, LenderAccountDataV21StructOutput } from "../typechain";
 
 const NullProviderIndex = BigNumber.from(2).pow(24).sub(1).toNumber();
 
@@ -114,6 +114,9 @@ export class BasicLenderData {
       if (!config.flags!.useOnQueueWithdrawal) return true;
       // Can not withdraw if market in fixed term
       if (this.market.isInFixedTerm) return false;
+      if (config.kind === HooksKind.PeriodicTerm && !this.market.isPeriodicWithdrawalWindowOpen) {
+        return false;
+      }
       // Can not withdraw if market requires access and lender has no credential and is not a known lender
       if (
         config.flags.useOnQueueWithdrawal &&
@@ -126,7 +129,7 @@ export class BasicLenderData {
     }
   }
 
-  updateWith(data: LenderAccountDataStructOutput): void {
+  updateWith(data: LenderAccountDataStructOutput | LenderAccountDataV21StructOutput): void {
     this.scaledBalance = data.scaledBalance;
     this.isKnownLender = data.isKnownLender;
     this.credential = {

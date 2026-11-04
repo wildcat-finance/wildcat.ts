@@ -9,7 +9,11 @@ export enum AccountKind {
 
 export type AccountDescription =
   | {
-      kind: AccountKind.EOA | AccountKind.UnknownContract;
+      kind: AccountKind.EOA;
+      has7702Delegation: boolean;
+    }
+  | {
+      kind: AccountKind.UnknownContract;
     }
   | {
       kind: AccountKind.Safe;
@@ -19,20 +23,20 @@ export type AccountDescription =
 
 export async function describeAccount(
   provider: SignerOrProvider,
-  address: string
+  address: string,
+  blockNumber?: number
 ): Promise<AccountDescription> {
   const bytecode = AccountQuery__factory.bytecode.concat(
     address.replace(/^0x/, "").padStart(64, "0")
   );
-  const result = await provider.call({ data: bytecode });
+  const result = await provider.call({ data: bytecode }, blockNumber);
 
-  const [{ owners, threshold, kind: _kind }] =
+  const [{ has7702Delegation, owners, threshold, kind: _kind }] =
     AccountQuery__factory.createInterface().decodeFunctionResult("describeAccount", result) as [
       Awaited<ReturnType<AccountQuery["describeAccount"]>>
     ];
   const kind = _kind as AccountKind;
-  if (kind === AccountKind.EOA || kind === AccountKind.UnknownContract) {
-    return { kind };
-  }
+  if (kind === AccountKind.EOA) return { kind, has7702Delegation };
+  if (kind === AccountKind.UnknownContract) return { kind };
   return { kind, owners, threshold: threshold.toNumber() };
 }
