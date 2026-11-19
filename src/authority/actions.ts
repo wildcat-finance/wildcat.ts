@@ -118,7 +118,8 @@ export const prepareCreateAccessListRoleProvider = (
     args: [inputs]
   });
 
-export const prepareAddAccessListMembers = (
+/** access-list and KYC providers use the same calls to add and remove members. */
+export const prepareAddRoleProviderMembers = (
   provider: string,
   members: string[]
 ): PartialTransaction =>
@@ -129,7 +130,7 @@ export const prepareAddAccessListMembers = (
     args: members.length === 1 ? [members[0]] : [members]
   });
 
-export const prepareRemoveAccessListMembers = (
+export const prepareRemoveRoleProviderMembers = (
   provider: string,
   members: string[]
 ): PartialTransaction =>
@@ -139,6 +140,9 @@ export const prepareRemoveAccessListMembers = (
     functionName: members.length === 1 ? "removeMember" : "removeMembers",
     args: members.length === 1 ? [members[0]] : [members]
   });
+
+export const prepareAddAccessListMembers = prepareAddRoleProviderMembers;
+export const prepareRemoveAccessListMembers = prepareRemoveRoleProviderMembers;
 
 export const prepareRequestRoleProviderAdministratorTransfer = (
   provider: string,

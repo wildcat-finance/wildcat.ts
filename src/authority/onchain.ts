@@ -2,6 +2,7 @@ import type { Abi, Address, Hex } from "viem";
 import {
   accessListRoleProviderAbi,
   accessListRoleProviderFactoryAbi,
+  kycRoleProviderAbi,
   iOpenTermHooksAbi
 } from "../abi";
 import { getViemPublicClientFromEthers } from "../internal/ethers-viem";
@@ -52,6 +53,20 @@ export const isAccessListRoleProviderMember = (
     roleProvider,
     accessListRoleProviderAbi as Abi,
     "isMember",
+    [account as Address]
+  );
+
+/** return the wallet's current KYC enrollment time in Unix seconds, or `0n` if unlisted. */
+export const getKycEnrollmentTimestamp = (
+  provider: SignerOrProvider,
+  roleProvider: string,
+  account: string
+): Promise<bigint> =>
+  readViemContract<bigint>(
+    getViemPublicClientFromEthers(provider),
+    roleProvider,
+    kycRoleProviderAbi,
+    "addedAt",
     [account as Address]
   );
 

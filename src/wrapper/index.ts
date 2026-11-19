@@ -16,10 +16,12 @@ import {
 } from "../constants";
 import { assert, prepareTransaction, rayMulBigint, toNumber } from "../utils";
 import {
+  hooksFactoryV2_5Abi,
   iERC20Abi,
   wildcat4626WrapperAbi,
   wildcat4626WrapperFactoryAbi,
-  wildcatMarketV2Abi
+  wildcatMarketV2Abi,
+  wildcatMarketV2_5Abi
 } from "../abi";
 import {
   submitPreparedTransaction,
@@ -73,7 +75,8 @@ const getErc20Token = async (
 export enum WrapperDeploymentStatus {
   Ready = "Ready",
   FactoryUnavailable = "FactoryUnavailable",
-  UnsupportedFactory = "UnsupportedFactory"
+  UnsupportedFactory = "UnsupportedFactory",
+  ProtectionNotApproved = "ProtectionNotApproved"
 }
 
 export type WrapperDeploymentCapability =
@@ -89,6 +92,11 @@ export type WrapperDeploymentCapability =
       status: WrapperDeploymentStatus.UnsupportedFactory;
       marketFactoryAddress: string;
       supportedFactoryAddresses: readonly string[];
+    }
+  | {
+      status: WrapperDeploymentStatus.ProtectionNotApproved;
+      factoryAddress: string;
+      hooksFactoryAddress: string;
     };
 
 export class UnsupportedWrapperFactoryError extends Error {
@@ -203,6 +211,33 @@ export class WrapperFactory extends ContractWrapper {
         supportedFactoryAddresses
       };
     }
+
+    // the market's hooks factory must approve the v2.5.9 wrapper factory for nuke protection.
+    if (
+      chainId === SupportedChainId.Sepolia &&
+      supportedFactoryAddress === configuredFactoryAddress
+    ) {
+      const hooksFactoryAddress = await readViemContract<string>(
+        publicClient,
+        market,
+        wildcatMarketV2_5Abi,
+        "factory"
+      );
+      const approved = await readViemContract<boolean>(
+        publicClient,
+        hooksFactoryAddress,
+        hooksFactoryV2_5Abi,
+        "isApprovedNukeProtectionFactory",
+        [supportedFactoryAddress]
+      );
+      if (!approved) {
+        return {
+          status: WrapperDeploymentStatus.ProtectionNotApproved,
+          factoryAddress: supportedFactoryAddress,
+          hooksFactoryAddress
+        };
+      }
+    }
     return {
       status: WrapperDeploymentStatus.Ready,
       factoryAddress: supportedFactoryAddress,
@@ -229,6 +264,11 @@ export class WrapperFactory extends ContractWrapper {
         market,
         capability.marketFactoryAddress,
         capability.supportedFactoryAddresses
+      );
+    }
+    if (capability.status === WrapperDeploymentStatus.ProtectionNotApproved) {
+      throw new Error(
+        `Hooks factory ${capability.hooksFactoryAddress} has not approved wrapper factory ${capability.factoryAddress} for nuke protection`
       );
     }
     return new WrapperFactory(chainId, capability.factoryAddress, providerOrSigner);

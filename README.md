@@ -22,22 +22,22 @@
 
 The most likely scenario for working in this repo is while also working on app side. Theres a section below specifically on _how_ to manage this as a local dependency.
 
-See the [3.2.17-beta release notes](docs/releases/3.2.17-beta.md) for the Sepolia
-V2.5.7 factory, wrapper, and lens rotation and subgraph V2.5.15 routing.
+On Sepolia, 3.2.18-beta uses the v2.5.9 contracts, shared KYC provider, and
+v2.5.16 subgraph. [Release notes](docs/releases/3.2.18-beta.md)
 The [3.2.16-beta release notes](docs/releases/3.2.16-beta.md) cover zero-penalty-APR
 legacy default validation. The [3.2.15-beta release notes](docs/releases/3.2.15-beta.md) cover the shared
 default-status API, including legacy history reconstruction. The
 [3.2.14-beta release notes](docs/releases/3.2.14-beta.md) cover Sepolia
-V2.5.6 hook parameter freezes, subgraph V2.5.14 routing, and pending integration
+v2.5.6 hook parameter freezes, subgraph v2.5.14 routing, and pending integration
 checks. The [3.2.13-beta notes](docs/releases/3.2.13-beta.md) cover the retained
 repayment lifecycle, live liquidity, withdrawal carry, and app migration.
 
 ## Gateway Connections
 
-SDK 3.2.9 and later default to Wildcat's public data gateway. RPC connections identify
-the chain; subgraph connections also pin the release understood by the SDK.
-Sepolia uses subgraph v2.5.15. The gateway manages upstream provider failover.
-Public access needs no credential and is subject to gateway quotas.
+SDK 3.2.9 and later use Wildcat's public data gateway by default. RPC endpoints
+identify the chain. Subgraph endpoints also specify the release. This beta uses
+`/sepolia/v2.5.16`. The gateway switches between indexers if one fails.
+Public requests need no credentials and count toward the gateway's quotas.
 
 For viem or wagmi, use `createRpcTransport`. For subgraph reads, use
 `getSubgraphClient` for a cached client or `createSubgraphClient` for a new one:
@@ -90,7 +90,7 @@ const appTransport = createRpcTransport(chainId, {
   endpoint: `/api/gateway/rpc/${chainId}`
 });
 const appSubgraph = getSubgraphClient(chainId, {
-  endpoint: "/api/gateway/graph/sepolia/v2.5.15"
+  endpoint: "/api/gateway/graph/sepolia/v2.5.16"
 });
 ```
 
@@ -184,7 +184,7 @@ remains an interface heuristic and does not certify a wallet's implementation.
 
 ## Subgraph Metadata Timeouts
 
-SDK-managed V2.5 clients validate endpoint metadata before forwarding network
+SDK-managed v2.5 clients validate endpoint metadata before forwarding network
 queries. Starting with 3.2.9, metadata requests default to a 15-second timeout,
 allowing time for gateway failover. This default also applies to feature-metadata
 reads through custom Apollo clients. Set `metadataTimeoutMs` in SDK subgraph
@@ -300,7 +300,7 @@ Once happy with changes publish to npm (if you have permissions):
 ## Branch Strategy
 
 For the 3.2 beta series, branch from and target `release/v3.2`. The subgraph
-V2.5 release track is `release/v2.5` in its own repository.
+v2.5 release track is `release/v2.5` in its own repository.
 
 - `main`: latest supported release branch. Publish production npm releases (`npm publish` or `yarn npm publish`).
 - `develop`: integration branch. Publish beta releases with `npm publish --tag beta` (or the yarn equivalent).

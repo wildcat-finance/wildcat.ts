@@ -77,6 +77,7 @@ const normalizeRoleProviderConfiguration = (
   const kind = parseRoleProviderKind(data.kind);
   switch (kind) {
     case "access-list":
+    case "kyc":
       return { kind };
     case "merkle":
       return {
@@ -219,15 +220,7 @@ export const normalizeRoleProviderAuthority = (
     rootChanges: SubgraphRoleProviderRootChangeDataFragment[];
   }
 ): RoleProviderAuthority => {
-  const hasDeploymentRecord =
-    data.deployedAtBlock !== null &&
-    data.deployedAtBlock !== undefined &&
-    data.deployedAtTimestamp !== null &&
-    data.deployedAtTimestamp !== undefined &&
-    data.deployedAtTransaction !== null &&
-    data.deployedAtTransaction !== undefined &&
-    data.deployedAtLogIndex !== null &&
-    data.deployedAtLogIndex !== undefined;
+  const { deployedAtBlock, deployedAtTimestamp, deployedAtTransaction, deployedAtLogIndex } = data;
   const configuration = normalizeRoleProviderConfiguration(data);
   const deploymentFactory = data.deploymentFactory
     ? normalizeRoleProviderFactory(data.deploymentFactory)
@@ -246,14 +239,14 @@ export const normalizeRoleProviderAuthority = (
     ...optional("deployer", data.deployer),
     ...(deploymentFactory === undefined ? {} : { deploymentFactory }),
     ...optional("salt", data.salt),
-    ...(hasDeploymentRecord
+    ...(deployedAtBlock != null && deployedAtTimestamp != null && deployedAtTransaction != null
       ? {
-          deployedAt: indexedAt(
-            data.deployedAtBlock as string,
-            data.deployedAtTimestamp as string,
-            data.deployedAtTransaction as string,
-            data.deployedAtLogIndex as string
-          )
+          deployedAt: {
+            blockNumber: BigInt(deployedAtBlock),
+            blockTimestamp: BigInt(deployedAtTimestamp),
+            transactionHash: deployedAtTransaction,
+            ...(deployedAtLogIndex == null ? {} : { logIndex: BigInt(deployedAtLogIndex) })
+          }
         }
       : {}),
     attachments: data.attachments.map(normalizeRoleProviderAttachment),

@@ -17,6 +17,7 @@ export type NetworkDeployments = {
   MockChainalysis?: string;
   MockERC20Factory?: string;
   AccessListRoleProviderFactory?: string;
+  KYCRoleProvider?: string;
   WildcatBorrowerIdentityRegistry?: string;
   WildcatArchController: string;
   WildcatMarketControllerFactory?: string;
@@ -78,15 +79,16 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     Wildcat4626WrapperFactory: "0xEA6DE11f8F3F83c79bD9d8Db5517fCFDf2Bb148a"
   },
   [SupportedChainId.Sepolia]: {
-    HooksFactoryStandard: "0xae525051d16912D13b63eCa01f52ADF576FC4380",
-    HooksFactoryRevolving: "0x2f0E18ae9134cD16b7Ec0C63cC4B11B38eAdB2aF",
+    HooksFactoryStandard: "0xE967A79399C3C4dE66F0d66B3B2656e1C63C8B47",
+    HooksFactoryRevolving: "0x9d3E40508f9c9148e8529fbd81fCA75Ed4dCf13e",
     MarketLens: "0xb3925B31A8AeDCE8CFc885e0D5DAa057A1EA8A72",
     MarketLensV2: "0x5D8cEacEe19c06C3b4108b8Ae5B881eb0240B9c7",
-    MarketLensV2_5: "0x947bB3F6D12eB6225595836D831908F10700B11b",
+    MarketLensV2_5: "0x9B7A460981C2d8f903D9D0ec66Ec3E0Ba0101073",
     MockArchControllerOwner: "0x981f1Fb406bD7a8385f9373c08Ab4c832Ed0d508",
     MockChainalysis: "0x9d1060f8DEE8CBCf5eC772C51Ec671f70Cc7f8d9",
     MockERC20Factory: "0x54A3103904977DCb3C2fB782059F5431db90C96e",
     AccessListRoleProviderFactory: "0xE6D5bDd5011568C46fAf257cf426Ea822bC4255F",
+    KYCRoleProvider: "0x231ee08A700DdAe6FeD989D797BCa1e18f198aA8",
     WildcatBorrowerIdentityRegistry: "0xc2cF90781595203D1e75c28246b306C95d4b8b21",
     WildcatArchController: "0xC003f20F2642c76B81e5e1620c6D8cdEE826408f",
     WildcatMarketControllerFactory: "0xEb97C8E52d7Fdf978a64a538F28271Fd8499b864",
@@ -96,7 +98,7 @@ export const Deployments: Record<SupportedChainId, NetworkDeployments> = {
     WildcatCollateralFactory: "0x58Ab4755221869cfcAe2A4F3EE31d591bA6AE1D0",
     BebopSettlementContract: "0x513826b6bb38fc159f152a4bf6e1ec3650a7ee46",
     CollateralLens: "0x5A49828b3E9Acbc614CDd703601406B1854aA578",
-    Wildcat4626WrapperFactory: "0xCf2338947eeE38b7D82E187698339B3E67E67CBf"
+    Wildcat4626WrapperFactory: "0xF45bf6d89A34003226EbE388B0291798F534dE9F"
   },
   [SupportedChainId.PlasmaTestnet]: {
     HooksFactoryStandard: "0x5Ad00b665eA71E27628D75102B1497CC75E531FB",

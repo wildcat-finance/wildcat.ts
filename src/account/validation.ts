@@ -167,6 +167,7 @@ export enum ForceBuyBackStatus {
 export type ForceBuyBackPreview = { status: ForceBuyBackStatus };
 
 export enum SetMinimumDepositStatus {
+  MarketClosed = "MarketClosed",
   Ready = "Ready",
   MarketInRepayment = "MarketInRepayment",
   NotBorrower = "NotBorrower",
@@ -191,6 +192,7 @@ export enum ProposeAnnualInterestBipsStatus {
 export type ProposeAnnualInterestBipsPreview = { status: ProposeAnnualInterestBipsStatus };
 
 export enum SetFixedTermEndTimeStatus {
+  MarketClosed = "MarketClosed",
   Ready = "Ready",
   MarketInRepayment = "MarketInRepayment",
   NotBorrower = "NotBorrower",

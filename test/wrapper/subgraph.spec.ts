@@ -4,7 +4,12 @@ import { rejects } from "assert";
 import { providers } from "ethers";
 import { print } from "graphql";
 import { decodeFunctionData, encodeFunctionResult, ExecutionRevertedError, type Abi } from "viem";
-import { wildcat4626WrapperFactoryAbi, wildcatMarketV2Abi } from "../../src/abi";
+import {
+  hooksFactoryV2_5Abi,
+  wildcat4626WrapperFactoryAbi,
+  wildcatMarketV2Abi,
+  wildcatMarketV2_5Abi
+} from "../../src/abi";
 import { getDeploymentAddress, SupportedChainId } from "../../src/constants";
 import { Market } from "../../src/market";
 import { Token } from "../../src/token";
@@ -69,10 +74,11 @@ const makeWrapperData = (): SubgraphTokenWrapperData => {
 
 describe("TokenWrapper subgraph hydration", () => {
   for (const [generation, factory] of [
-    ["V2.5.3", "0x31D8D5564Ce11f764E74beca5B4e8d363046949f"],
-    ["V2.5.5", "0x1986DF1c77d25670e8D55865B83C5fFeD00e0134"]
+    ["v2.5.3", "0x31D8D5564Ce11f764E74beca5B4e8d363046949f"],
+    ["v2.5.5", "0x1986DF1c77d25670e8D55865B83C5fFeD00e0134"],
+    ["v2.5.7", "0xCf2338947eeE38b7D82E187698339B3E67E67CBf"]
   ] as const) {
-    it(`keeps a historical ${generation} wrapper visible while refusing new deployment through its factory`, async () => {
+    it(`finds ${generation} wrappers and blocks new deployments through that factory`, async () => {
       const market = "0x4c02b9e4e699b9ec5f984510946656ea3c80d5a5";
       const address = "0x4a8e8baecd16e871ce6633d5b285fef20c044d88";
       const data: SubgraphTokenWrapperData = {
@@ -557,18 +563,37 @@ describe("WrapperFactory wrapper discovery", () => {
 });
 
 describe("WrapperFactory deployment routing", () => {
-  it("uses the factory declared by a supported V2.5 market", async () => {
+  it("requires the hooks factory's approval to deploy a wrapper", async () => {
     const market = "0x4000000000000000000000000000000000000004";
     const configuredFactory = getDeploymentAddress(
       SupportedChainId.Sepolia,
       "Wildcat4626WrapperFactory"
     );
+    const hooksFactory = "0x3000000000000000000000000000000000000003";
+    let approved = true;
     const rpc = new FakeViemProvider((call) => {
-      const decoded = decodeFunctionData({
-        abi: wildcatMarketV2Abi as Abi,
-        data: call.data!
-      });
+      if (call.to === hooksFactory) {
+        const { functionName, args } = decodeFunctionData({
+          abi: hooksFactoryV2_5Abi,
+          data: call.data!
+        });
+        expect(functionName).to.equal("isApprovedNukeProtectionFactory");
+        expect(args).to.deep.equal([configuredFactory]);
+        return encodeFunctionResult({
+          abi: hooksFactoryV2_5Abi,
+          functionName: "isApprovedNukeProtectionFactory",
+          result: approved
+        });
+      }
       expect(call.to).to.equal(market);
+      const decoded = decodeFunctionData({ abi: wildcatMarketV2_5Abi, data: call.data! });
+      if (decoded.functionName === "factory") {
+        return encodeFunctionResult({
+          abi: wildcatMarketV2_5Abi,
+          functionName: "factory",
+          result: hooksFactory
+        });
+      }
       expect(decoded.functionName).to.equal("wrapperFactory");
       return encodeFunctionResult({
         abi: wildcatMarketV2Abi as Abi,
@@ -594,7 +619,26 @@ describe("WrapperFactory deployment routing", () => {
       market
     );
     expect(transaction.to).to.equal(configuredFactory);
-    expect(rpc.calls).to.have.length(2);
+    approved = false;
+    expect(
+      await WrapperFactory.getDeploymentCapability(
+        SupportedChainId.Sepolia,
+        rpc as unknown as providers.Provider,
+        market
+      )
+    ).to.deep.equal({
+      status: WrapperDeploymentStatus.ProtectionNotApproved,
+      factoryAddress: configuredFactory,
+      hooksFactoryAddress: hooksFactory
+    });
+    await rejects(
+      WrapperFactory.populateCreateWrapper(
+        SupportedChainId.Sepolia,
+        rpc as unknown as providers.Provider,
+        market
+      ),
+      /has not approved/
+    );
   });
 
   it("uses the configured generation-routing facade for pre-V2.5 markets", async () => {

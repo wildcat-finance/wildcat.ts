@@ -8481,6 +8481,8 @@ export type SubgraphHooksFactory = {
   lifecycle: SubgraphFactoryLifecycle;
   marketKind: SubgraphMarketKind;
   markets: Array<SubgraphMarket>;
+  nukeProtectionApprovals: Array<SubgraphNukeProtectionFactoryApproval>;
+  nukeProtectionRequests: Array<SubgraphNukeProtectionRequest>;
   registrationUpdatedAtBlock?: Maybe<Scalars['BigInt']['output']>;
   registrationUpdatedAtTimestamp?: Maybe<Scalars['BigInt']['output']>;
   registryState?: Maybe<SubgraphFactoryRegistration>;
@@ -8504,6 +8506,24 @@ export type SubgraphHooksFactoryMarketsArgs = {
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<SubgraphMarket_Filter>;
+};
+
+
+export type SubgraphHooksFactoryNukeProtectionApprovalsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphNukeProtectionFactoryApproval_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphNukeProtectionFactoryApproval_Filter>;
+};
+
+
+export type SubgraphHooksFactoryNukeProtectionRequestsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphNukeProtectionRequest_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphNukeProtectionRequest_Filter>;
 };
 
 
@@ -8668,6 +8688,8 @@ export type SubgraphHooksFactory_Filter = {
   marketKind_not?: InputMaybe<SubgraphMarketKind>;
   marketKind_not_in?: InputMaybe<Array<SubgraphMarketKind>>;
   markets_?: InputMaybe<SubgraphMarket_Filter>;
+  nukeProtectionApprovals_?: InputMaybe<SubgraphNukeProtectionFactoryApproval_Filter>;
+  nukeProtectionRequests_?: InputMaybe<SubgraphNukeProtectionRequest_Filter>;
   or?: InputMaybe<Array<InputMaybe<SubgraphHooksFactory_Filter>>>;
   registrationUpdatedAtBlock?: InputMaybe<Scalars['BigInt']['input']>;
   registrationUpdatedAtBlock_gt?: InputMaybe<Scalars['BigInt']['input']>;
@@ -8719,6 +8741,8 @@ export enum SubgraphHooksFactory_OrderBy {
   lifecycle = 'lifecycle',
   marketKind = 'marketKind',
   markets = 'markets',
+  nukeProtectionApprovals = 'nukeProtectionApprovals',
+  nukeProtectionRequests = 'nukeProtectionRequests',
   registrationUpdatedAtBlock = 'registrationUpdatedAtBlock',
   registrationUpdatedAtTimestamp = 'registrationUpdatedAtTimestamp',
   registryState = 'registryState',
@@ -13425,6 +13449,8 @@ export type SubgraphMarket = {
   minimumDepositUpdatedIndex: Scalars['Int']['output'];
   name: Scalars['String']['output'];
   normalizedUnclaimedWithdrawals: Scalars['BigInt']['output'];
+  nukeProtectionRegistrations: Array<SubgraphNukeProtectionRegistration>;
+  nukeProtectionRequests: Array<SubgraphNukeProtectionRequest>;
   numCollateralContracts: Scalars['Int']['output'];
   originKind: SubgraphMarketOriginKind;
   originalAnnualInterestBips: Scalars['Int']['output'];
@@ -13670,6 +13696,24 @@ export type SubgraphMarketMinimumDepositUpdateRecordsArgs = {
   orderDirection?: InputMaybe<SubgraphOrderDirection>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<SubgraphMinimumDepositUpdated_Filter>;
+};
+
+
+export type SubgraphMarketNukeProtectionRegistrationsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphNukeProtectionRegistration_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphNukeProtectionRegistration_Filter>;
+};
+
+
+export type SubgraphMarketNukeProtectionRequestsArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphNukeProtectionRequest_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphNukeProtectionRequest_Filter>;
 };
 
 
@@ -16164,6 +16208,7 @@ export enum SubgraphMarketEventKind {
   MARKET_REGISTERED = 'MARKET_REGISTERED',
   MAX_TOTAL_SUPPLY_UPDATED = 'MAX_TOTAL_SUPPLY_UPDATED',
   MINIMUM_DEPOSIT_UPDATED = 'MINIMUM_DEPOSIT_UPDATED',
+  NUKE_PROTECTION_REGISTERED = 'NUKE_PROTECTION_REGISTERED',
   PERIODIC_TERM_CLOSED = 'PERIODIC_TERM_CLOSED',
   PERIODIC_TERM_UPDATED = 'PERIODIC_TERM_UPDATED',
   PROTOCOL_FEE_BIPS_UPDATED = 'PROTOCOL_FEE_BIPS_UPDATED',
@@ -18733,6 +18778,8 @@ export type SubgraphMarket_Filter = {
   normalizedUnclaimedWithdrawals_lte?: InputMaybe<Scalars['BigInt']['input']>;
   normalizedUnclaimedWithdrawals_not?: InputMaybe<Scalars['BigInt']['input']>;
   normalizedUnclaimedWithdrawals_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  nukeProtectionRegistrations_?: InputMaybe<SubgraphNukeProtectionRegistration_Filter>;
+  nukeProtectionRequests_?: InputMaybe<SubgraphNukeProtectionRequest_Filter>;
   numCollateralContracts?: InputMaybe<Scalars['Int']['input']>;
   numCollateralContracts_gt?: InputMaybe<Scalars['Int']['input']>;
   numCollateralContracts_gte?: InputMaybe<Scalars['Int']['input']>;
@@ -19440,6 +19487,8 @@ export enum SubgraphMarket_OrderBy {
   minimumDepositUpdatedIndex = 'minimumDepositUpdatedIndex',
   name = 'name',
   normalizedUnclaimedWithdrawals = 'normalizedUnclaimedWithdrawals',
+  nukeProtectionRegistrations = 'nukeProtectionRegistrations',
+  nukeProtectionRequests = 'nukeProtectionRequests',
   numCollateralContracts = 'numCollateralContracts',
   originKind = 'originKind',
   originalAnnualInterestBips = 'originalAnnualInterestBips',
@@ -20422,6 +20471,648 @@ export enum SubgraphNewSanctionsEscrow_OrderBy {
   escrow__id = 'escrow__id',
   escrow__sentinel = 'escrow__sentinel',
   id = 'id',
+  transactionHash = 'transactionHash'
+}
+
+/** whether the feature factory can request protection on markets deployed by this hooks factory. */
+export type SubgraphNukeProtectionFactoryApproval = {
+  __typename: 'NukeProtectionFactoryApproval';
+  approved: Scalars['Boolean']['output'];
+  changes: Array<SubgraphNukeProtectionFactoryApprovalChange>;
+  featureFactory: Scalars['Bytes']['output'];
+  hooksFactory: SubgraphHooksFactory;
+  id: Scalars['ID']['output'];
+};
+
+
+/** whether the feature factory can request protection on markets deployed by this hooks factory. */
+export type SubgraphNukeProtectionFactoryApprovalChangesArgs = {
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphNukeProtectionFactoryApprovalChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<SubgraphNukeProtectionFactoryApprovalChange_Filter>;
+};
+
+export type SubgraphNukeProtectionFactoryApprovalChange = {
+  __typename: 'NukeProtectionFactoryApprovalChange';
+  approval: SubgraphNukeProtectionFactoryApproval;
+  approved: Scalars['Boolean']['output'];
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  id: Scalars['ID']['output'];
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphNukeProtectionFactoryApprovalChange_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphNukeProtectionFactoryApprovalChange_Filter>>>;
+  approval?: InputMaybe<Scalars['String']['input']>;
+  approval_?: InputMaybe<SubgraphNukeProtectionFactoryApproval_Filter>;
+  approval_contains?: InputMaybe<Scalars['String']['input']>;
+  approval_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  approval_ends_with?: InputMaybe<Scalars['String']['input']>;
+  approval_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  approval_gt?: InputMaybe<Scalars['String']['input']>;
+  approval_gte?: InputMaybe<Scalars['String']['input']>;
+  approval_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  approval_lt?: InputMaybe<Scalars['String']['input']>;
+  approval_lte?: InputMaybe<Scalars['String']['input']>;
+  approval_not?: InputMaybe<Scalars['String']['input']>;
+  approval_not_contains?: InputMaybe<Scalars['String']['input']>;
+  approval_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  approval_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  approval_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  approval_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  approval_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  approval_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  approval_starts_with?: InputMaybe<Scalars['String']['input']>;
+  approval_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  approved?: InputMaybe<Scalars['Boolean']['input']>;
+  approved_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  approved_not?: InputMaybe<Scalars['Boolean']['input']>;
+  approved_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphNukeProtectionFactoryApprovalChange_Filter>>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphNukeProtectionFactoryApprovalChange_OrderBy {
+  approval = 'approval',
+  approval__approved = 'approval__approved',
+  approval__featureFactory = 'approval__featureFactory',
+  approval__id = 'approval__id',
+  approved = 'approved',
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  id = 'id',
+  transactionHash = 'transactionHash'
+}
+
+export type SubgraphNukeProtectionFactoryApproval_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphNukeProtectionFactoryApproval_Filter>>>;
+  approved?: InputMaybe<Scalars['Boolean']['input']>;
+  approved_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  approved_not?: InputMaybe<Scalars['Boolean']['input']>;
+  approved_not_in?: InputMaybe<Array<Scalars['Boolean']['input']>>;
+  changes_?: InputMaybe<SubgraphNukeProtectionFactoryApprovalChange_Filter>;
+  featureFactory?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  featureFactory_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_not?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  hooksFactory?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_?: InputMaybe<SubgraphHooksFactory_Filter>;
+  hooksFactory_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_gt?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_gte?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksFactory_lt?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_lte?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksFactory_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphNukeProtectionFactoryApproval_Filter>>>;
+};
+
+export enum SubgraphNukeProtectionFactoryApproval_OrderBy {
+  approved = 'approved',
+  changes = 'changes',
+  featureFactory = 'featureFactory',
+  hooksFactory = 'hooksFactory',
+  hooksFactory__abiFamily = 'hooksFactory__abiFamily',
+  hooksFactory__address = 'hooksFactory__address',
+  hooksFactory__configured = 'hooksFactory__configured',
+  hooksFactory__configuredStartBlock = 'hooksFactory__configuredStartBlock',
+  hooksFactory__deploymentTarget = 'hooksFactory__deploymentTarget',
+  hooksFactory__eventGeneration = 'hooksFactory__eventGeneration',
+  hooksFactory__eventIndex = 'hooksFactory__eventIndex',
+  hooksFactory__generation = 'hooksFactory__generation',
+  hooksFactory__hookedMarketAbi = 'hooksFactory__hookedMarketAbi',
+  hooksFactory__id = 'hooksFactory__id',
+  hooksFactory__indexed = 'hooksFactory__indexed',
+  hooksFactory__isRegistered = 'hooksFactory__isRegistered',
+  hooksFactory__label = 'hooksFactory__label',
+  hooksFactory__lifecycle = 'hooksFactory__lifecycle',
+  hooksFactory__marketKind = 'hooksFactory__marketKind',
+  hooksFactory__registrationUpdatedAtBlock = 'hooksFactory__registrationUpdatedAtBlock',
+  hooksFactory__registrationUpdatedAtTimestamp = 'hooksFactory__registrationUpdatedAtTimestamp',
+  hooksFactory__sentinel = 'hooksFactory__sentinel',
+  id = 'id'
+}
+
+/** protection is permanent for this account on this market. each registration keeps its own log record. */
+export type SubgraphNukeProtectionRegistration = {
+  __typename: 'NukeProtectionRegistration';
+  account: Scalars['Bytes']['output'];
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  id: Scalars['ID']['output'];
+  market: SubgraphMarket;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphNukeProtectionRegistration_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  account?: InputMaybe<Scalars['Bytes']['input']>;
+  account_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  account_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  account_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  account_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  account_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  account_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  account_not?: InputMaybe<Scalars['Bytes']['input']>;
+  account_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  account_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphNukeProtectionRegistration_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  market?: InputMaybe<Scalars['String']['input']>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars['String']['input']>;
+  market_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_gt?: InputMaybe<Scalars['String']['input']>;
+  market_gte?: InputMaybe<Scalars['String']['input']>;
+  market_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_lt?: InputMaybe<Scalars['String']['input']>;
+  market_lte?: InputMaybe<Scalars['String']['input']>;
+  market_not?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphNukeProtectionRegistration_Filter>>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphNukeProtectionRegistration_OrderBy {
+  account = 'account',
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  id = 'id',
+  market = 'market',
+  market__abiFamily = 'market__abiFamily',
+  market__address = 'market__address',
+  market__annualInterestBips = 'market__annualInterestBips',
+  market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
+  market__borrowIndex = 'market__borrowIndex',
+  market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
+  market__commitmentFeeBips = 'market__commitmentFeeBips',
+  market__createdAt = 'market__createdAt',
+  market__createdAtBlock = 'market__createdAtBlock',
+  market__createdAtLogIndex = 'market__createdAtLogIndex',
+  market__createdAtTimestamp = 'market__createdAtTimestamp',
+  market__createdAtTransaction = 'market__createdAtTransaction',
+  market__debtRepaidIndex = 'market__debtRepaidIndex',
+  market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
+  market__delinquencyFeeBips = 'market__delinquencyFeeBips',
+  market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
+  market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
+  market__depositIndex = 'market__depositIndex',
+  market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
+  market__eventIndex = 'market__eventIndex',
+  market__feeRecipient = 'market__feeRecipient',
+  market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
+  market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
+  market__forceBuyBackIndex = 'market__forceBuyBackIndex',
+  market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
+  market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
+  market__isClosed = 'market__isClosed',
+  market__isDelinquent = 'market__isDelinquent',
+  market__isIncurringPenalties = 'market__isIncurringPenalties',
+  market__isRegistered = 'market__isRegistered',
+  market__lastInterestAccruedBlockNumber = 'market__lastInterestAccruedBlockNumber',
+  market__lastInterestAccruedTimestamp = 'market__lastInterestAccruedTimestamp',
+  market__marketKind = 'market__marketKind',
+  market__maxTotalSupply = 'market__maxTotalSupply',
+  market__maxTotalSupplyUpdatedIndex = 'market__maxTotalSupplyUpdatedIndex',
+  market__minimumDepositUpdatedIndex = 'market__minimumDepositUpdatedIndex',
+  market__name = 'market__name',
+  market__normalizedUnclaimedWithdrawals = 'market__normalizedUnclaimedWithdrawals',
+  market__numCollateralContracts = 'market__numCollateralContracts',
+  market__originKind = 'market__originKind',
+  market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
+  market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
+  market__pendingProtocolFees = 'market__pendingProtocolFees',
+  market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
+  market__protocolFeeBips = 'market__protocolFeeBips',
+  market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
+  market__requestedHooks = 'market__requestedHooks',
+  market__reserveRatioBips = 'market__reserveRatioBips',
+  market__scaleFactor = 'market__scaleFactor',
+  market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
+  market__scaledTotalSupply = 'market__scaledTotalSupply',
+  market__sentinel = 'market__sentinel',
+  market__symbol = 'market__symbol',
+  market__temporaryReserveRatioActive = 'market__temporaryReserveRatioActive',
+  market__temporaryReserveRatioExpiry = 'market__temporaryReserveRatioExpiry',
+  market__timeDelinquent = 'market__timeDelinquent',
+  market__totalAssets = 'market__totalAssets',
+  market__totalBaseInterestAccrued = 'market__totalBaseInterestAccrued',
+  market__totalBaseInterestAccruedUSD = 'market__totalBaseInterestAccruedUSD',
+  market__totalBorrowed = 'market__totalBorrowed',
+  market__totalBorrowedUSD = 'market__totalBorrowedUSD',
+  market__totalDebtUSD = 'market__totalDebtUSD',
+  market__totalDelinquencyFeesAccrued = 'market__totalDelinquencyFeesAccrued',
+  market__totalDelinquencyFeesAccruedUSD = 'market__totalDelinquencyFeesAccruedUSD',
+  market__totalDeposited = 'market__totalDeposited',
+  market__totalDepositedUSD = 'market__totalDepositedUSD',
+  market__totalProtocolFeesAccrued = 'market__totalProtocolFeesAccrued',
+  market__totalProtocolFeesAccruedUSD = 'market__totalProtocolFeesAccruedUSD',
+  market__totalRepaid = 'market__totalRepaid',
+  market__totalRepaidUSD = 'market__totalRepaidUSD',
+  market__totalWithdrawalsExecuted = 'market__totalWithdrawalsExecuted',
+  market__totalWithdrawalsExecutedUSD = 'market__totalWithdrawalsExecutedUSD',
+  market__totalWithdrawalsRequested = 'market__totalWithdrawalsRequested',
+  market__totalWithdrawalsRequestedUSD = 'market__totalWithdrawalsRequestedUSD',
+  market__usdTotalsComplete = 'market__usdTotalsComplete',
+  market__version = 'market__version',
+  market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
+  market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
+  transactionHash = 'transactionHash'
+}
+
+/** the hooks factory records the feature factory's request after the market registers the account. */
+export type SubgraphNukeProtectionRequest = {
+  __typename: 'NukeProtectionRequest';
+  account: Scalars['Bytes']['output'];
+  blockLogIndex: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  featureFactory: Scalars['Bytes']['output'];
+  hooksFactory: SubgraphHooksFactory;
+  id: Scalars['ID']['output'];
+  market: SubgraphMarket;
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type SubgraphNukeProtectionRequest_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<SubgraphBlockChangedFilter>;
+  account?: InputMaybe<Scalars['Bytes']['input']>;
+  account_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  account_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  account_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  account_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  account_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  account_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  account_not?: InputMaybe<Scalars['Bytes']['input']>;
+  account_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  account_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  and?: InputMaybe<Array<InputMaybe<SubgraphNukeProtectionRequest_Filter>>>;
+  blockLogIndex?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockLogIndex_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockLogIndex_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  featureFactory?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  featureFactory_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_not?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  featureFactory_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  hooksFactory?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_?: InputMaybe<SubgraphHooksFactory_Filter>;
+  hooksFactory_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_gt?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_gte?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksFactory_lt?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_lte?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_contains?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  hooksFactory_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_starts_with?: InputMaybe<Scalars['String']['input']>;
+  hooksFactory_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  id_gt?: InputMaybe<Scalars['ID']['input']>;
+  id_gte?: InputMaybe<Scalars['ID']['input']>;
+  id_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  id_lt?: InputMaybe<Scalars['ID']['input']>;
+  id_lte?: InputMaybe<Scalars['ID']['input']>;
+  id_not?: InputMaybe<Scalars['ID']['input']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  market?: InputMaybe<Scalars['String']['input']>;
+  market_?: InputMaybe<SubgraphMarket_Filter>;
+  market_contains?: InputMaybe<Scalars['String']['input']>;
+  market_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_gt?: InputMaybe<Scalars['String']['input']>;
+  market_gte?: InputMaybe<Scalars['String']['input']>;
+  market_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_lt?: InputMaybe<Scalars['String']['input']>;
+  market_lte?: InputMaybe<Scalars['String']['input']>;
+  market_not?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains?: InputMaybe<Scalars['String']['input']>;
+  market_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  market_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with?: InputMaybe<Scalars['String']['input']>;
+  market_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  or?: InputMaybe<Array<InputMaybe<SubgraphNukeProtectionRequest_Filter>>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+};
+
+export enum SubgraphNukeProtectionRequest_OrderBy {
+  account = 'account',
+  blockLogIndex = 'blockLogIndex',
+  blockNumber = 'blockNumber',
+  blockTimestamp = 'blockTimestamp',
+  featureFactory = 'featureFactory',
+  hooksFactory = 'hooksFactory',
+  hooksFactory__abiFamily = 'hooksFactory__abiFamily',
+  hooksFactory__address = 'hooksFactory__address',
+  hooksFactory__configured = 'hooksFactory__configured',
+  hooksFactory__configuredStartBlock = 'hooksFactory__configuredStartBlock',
+  hooksFactory__deploymentTarget = 'hooksFactory__deploymentTarget',
+  hooksFactory__eventGeneration = 'hooksFactory__eventGeneration',
+  hooksFactory__eventIndex = 'hooksFactory__eventIndex',
+  hooksFactory__generation = 'hooksFactory__generation',
+  hooksFactory__hookedMarketAbi = 'hooksFactory__hookedMarketAbi',
+  hooksFactory__id = 'hooksFactory__id',
+  hooksFactory__indexed = 'hooksFactory__indexed',
+  hooksFactory__isRegistered = 'hooksFactory__isRegistered',
+  hooksFactory__label = 'hooksFactory__label',
+  hooksFactory__lifecycle = 'hooksFactory__lifecycle',
+  hooksFactory__marketKind = 'hooksFactory__marketKind',
+  hooksFactory__registrationUpdatedAtBlock = 'hooksFactory__registrationUpdatedAtBlock',
+  hooksFactory__registrationUpdatedAtTimestamp = 'hooksFactory__registrationUpdatedAtTimestamp',
+  hooksFactory__sentinel = 'hooksFactory__sentinel',
+  id = 'id',
+  market = 'market',
+  market__abiFamily = 'market__abiFamily',
+  market__address = 'market__address',
+  market__annualInterestBips = 'market__annualInterestBips',
+  market__annualInterestBipsUpdatedIndex = 'market__annualInterestBipsUpdatedIndex',
+  market__borrowIndex = 'market__borrowIndex',
+  market__borrower = 'market__borrower',
+  market__borrowerIdentityRegistryAddress = 'market__borrowerIdentityRegistryAddress',
+  market__borrowerPrincipal = 'market__borrowerPrincipal',
+  market__closedAt = 'market__closedAt',
+  market__commitmentFeeBips = 'market__commitmentFeeBips',
+  market__createdAt = 'market__createdAt',
+  market__createdAtBlock = 'market__createdAtBlock',
+  market__createdAtLogIndex = 'market__createdAtLogIndex',
+  market__createdAtTimestamp = 'market__createdAtTimestamp',
+  market__createdAtTransaction = 'market__createdAtTransaction',
+  market__debtRepaidIndex = 'market__debtRepaidIndex',
+  market__decimals = 'market__decimals',
+  market__defaultedAt = 'market__defaultedAt',
+  market__delinquencyFeeBips = 'market__delinquencyFeeBips',
+  market__delinquencyGracePeriod = 'market__delinquencyGracePeriod',
+  market__delinquencyStatusChangedIndex = 'market__delinquencyStatusChangedIndex',
+  market__depositIndex = 'market__depositIndex',
+  market__drawnAmount = 'market__drawnAmount',
+  market__eventGeneration = 'market__eventGeneration',
+  market__eventIndex = 'market__eventIndex',
+  market__feeRecipient = 'market__feeRecipient',
+  market__feesCollectedIndex = 'market__feesCollectedIndex',
+  market__finalHooks = 'market__finalHooks',
+  market__fixedTermUpdatedIndex = 'market__fixedTermUpdatedIndex',
+  market__forceBuyBackIndex = 'market__forceBuyBackIndex',
+  market__generation = 'market__generation',
+  market__hooksData = 'market__hooksData',
+  market__id = 'market__id',
+  market__initialBorrower = 'market__initialBorrower',
+  market__initialBorrowerPrincipal = 'market__initialBorrowerPrincipal',
+  market__isClosed = 'market__isClosed',
+  market__isDelinquent = 'market__isDelinquent',
+  market__isIncurringPenalties = 'market__isIncurringPenalties',
+  market__isRegistered = 'market__isRegistered',
+  market__lastInterestAccruedBlockNumber = 'market__lastInterestAccruedBlockNumber',
+  market__lastInterestAccruedTimestamp = 'market__lastInterestAccruedTimestamp',
+  market__marketKind = 'market__marketKind',
+  market__maxTotalSupply = 'market__maxTotalSupply',
+  market__maxTotalSupplyUpdatedIndex = 'market__maxTotalSupplyUpdatedIndex',
+  market__minimumDepositUpdatedIndex = 'market__minimumDepositUpdatedIndex',
+  market__name = 'market__name',
+  market__normalizedUnclaimedWithdrawals = 'market__normalizedUnclaimedWithdrawals',
+  market__numCollateralContracts = 'market__numCollateralContracts',
+  market__originKind = 'market__originKind',
+  market__originalAnnualInterestBips = 'market__originalAnnualInterestBips',
+  market__originalReserveRatioBips = 'market__originalReserveRatioBips',
+  market__originationFeeAmount = 'market__originationFeeAmount',
+  market__pendingBorrower = 'market__pendingBorrower',
+  market__pendingBorrowerPrincipal = 'market__pendingBorrowerPrincipal',
+  market__pendingProtocolFees = 'market__pendingProtocolFees',
+  market__pendingWithdrawalExpiry = 'market__pendingWithdrawalExpiry',
+  market__protocolFeeBips = 'market__protocolFeeBips',
+  market__protocolFeeBipsUpdatedIndex = 'market__protocolFeeBipsUpdatedIndex',
+  market__repaymentActivatedAt = 'market__repaymentActivatedAt',
+  market__repaymentDate = 'market__repaymentDate',
+  market__repaymentDeadline = 'market__repaymentDeadline',
+  market__repaymentPeriod = 'market__repaymentPeriod',
+  market__requestedHooks = 'market__requestedHooks',
+  market__reserveRatioBips = 'market__reserveRatioBips',
+  market__scaleFactor = 'market__scaleFactor',
+  market__scaledPendingWithdrawals = 'market__scaledPendingWithdrawals',
+  market__scaledTotalSupply = 'market__scaledTotalSupply',
+  market__sentinel = 'market__sentinel',
+  market__symbol = 'market__symbol',
+  market__temporaryReserveRatioActive = 'market__temporaryReserveRatioActive',
+  market__temporaryReserveRatioExpiry = 'market__temporaryReserveRatioExpiry',
+  market__timeDelinquent = 'market__timeDelinquent',
+  market__totalAssets = 'market__totalAssets',
+  market__totalBaseInterestAccrued = 'market__totalBaseInterestAccrued',
+  market__totalBaseInterestAccruedUSD = 'market__totalBaseInterestAccruedUSD',
+  market__totalBorrowed = 'market__totalBorrowed',
+  market__totalBorrowedUSD = 'market__totalBorrowedUSD',
+  market__totalDebtUSD = 'market__totalDebtUSD',
+  market__totalDelinquencyFeesAccrued = 'market__totalDelinquencyFeesAccrued',
+  market__totalDelinquencyFeesAccruedUSD = 'market__totalDelinquencyFeesAccruedUSD',
+  market__totalDeposited = 'market__totalDeposited',
+  market__totalDepositedUSD = 'market__totalDepositedUSD',
+  market__totalProtocolFeesAccrued = 'market__totalProtocolFeesAccrued',
+  market__totalProtocolFeesAccruedUSD = 'market__totalProtocolFeesAccruedUSD',
+  market__totalRepaid = 'market__totalRepaid',
+  market__totalRepaidUSD = 'market__totalRepaidUSD',
+  market__totalWithdrawalsExecuted = 'market__totalWithdrawalsExecuted',
+  market__totalWithdrawalsExecutedUSD = 'market__totalWithdrawalsExecutedUSD',
+  market__totalWithdrawalsRequested = 'market__totalWithdrawalsRequested',
+  market__totalWithdrawalsRequestedUSD = 'market__totalWithdrawalsRequestedUSD',
+  market__usdTotalsComplete = 'market__usdTotalsComplete',
+  market__version = 'market__version',
+  market__withdrawalBatchDuration = 'market__withdrawalBatchDuration',
+  market__withdrawalRemainder = 'market__withdrawalRemainder',
+  market__withdrawalRequestsIndex = 'market__withdrawalRequestsIndex',
   transactionHash = 'transactionHash'
 }
 
@@ -22676,6 +23367,14 @@ export type SubgraphQuery = {
   newControllers: Array<SubgraphNewController>;
   newSanctionsEscrow?: Maybe<SubgraphNewSanctionsEscrow>;
   newSanctionsEscrows: Array<SubgraphNewSanctionsEscrow>;
+  nukeProtectionFactoryApproval?: Maybe<SubgraphNukeProtectionFactoryApproval>;
+  nukeProtectionFactoryApprovalChange?: Maybe<SubgraphNukeProtectionFactoryApprovalChange>;
+  nukeProtectionFactoryApprovalChanges: Array<SubgraphNukeProtectionFactoryApprovalChange>;
+  nukeProtectionFactoryApprovals: Array<SubgraphNukeProtectionFactoryApproval>;
+  nukeProtectionRegistration?: Maybe<SubgraphNukeProtectionRegistration>;
+  nukeProtectionRegistrations: Array<SubgraphNukeProtectionRegistration>;
+  nukeProtectionRequest?: Maybe<SubgraphNukeProtectionRequest>;
+  nukeProtectionRequests: Array<SubgraphNukeProtectionRequest>;
   ownershipHandoverCanceled?: Maybe<SubgraphOwnershipHandoverCanceled>;
   ownershipHandoverCanceleds: Array<SubgraphOwnershipHandoverCanceled>;
   ownershipHandoverRequested?: Maybe<SubgraphOwnershipHandoverRequested>;
@@ -24373,6 +25072,78 @@ export type SubgraphQueryNewSanctionsEscrowsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   subgraphError?: Subgraph_SubgraphErrorPolicy_;
   where?: InputMaybe<SubgraphNewSanctionsEscrow_Filter>;
+};
+
+
+export type SubgraphQueryNukeProtectionFactoryApprovalArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryNukeProtectionFactoryApprovalChangeArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryNukeProtectionFactoryApprovalChangesArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphNukeProtectionFactoryApprovalChange_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphNukeProtectionFactoryApprovalChange_Filter>;
+};
+
+
+export type SubgraphQueryNukeProtectionFactoryApprovalsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphNukeProtectionFactoryApproval_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphNukeProtectionFactoryApproval_Filter>;
+};
+
+
+export type SubgraphQueryNukeProtectionRegistrationArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryNukeProtectionRegistrationsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphNukeProtectionRegistration_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphNukeProtectionRegistration_Filter>;
+};
+
+
+export type SubgraphQueryNukeProtectionRequestArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  id: Scalars['ID']['input'];
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+};
+
+
+export type SubgraphQueryNukeProtectionRequestsArgs = {
+  block?: InputMaybe<SubgraphBlock_Height>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<SubgraphNukeProtectionRequest_OrderBy>;
+  orderDirection?: InputMaybe<SubgraphOrderDirection>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  subgraphError?: Subgraph_SubgraphErrorPolicy_;
+  where?: InputMaybe<SubgraphNukeProtectionRequest_Filter>;
 };
 
 
@@ -26910,6 +27681,7 @@ export enum SubgraphRoleProviderKind {
   ERC721 = 'ERC721',
   ERC1155 = 'ERC1155',
   ERC4626_ASSETS = 'ERC4626_ASSETS',
+  KYC = 'KYC',
   MERKLE = 'MERKLE',
   UNKNOWN = 'UNKNOWN'
 }
@@ -36709,6 +37481,22 @@ export type SubgraphGetMarketEventPageQueryVariables = Exact<{
 
 export type SubgraphGetMarketEventPageQuery = { __typename: 'Query', marketEvents: Array<{ __typename: 'MarketEvent', id: string, sequence: number, kind: SubgraphMarketEventKind, blockNumber: string, blockTimestamp: string, transactionHash: string, logIndex: string, market: { __typename: 'Market', address: string } }> };
 
+export type SubgraphGetNukeProtectionFactoryApprovalQueryVariables = Exact<{
+  hooksFactory: Scalars['Bytes']['input'];
+  featureFactory: Scalars['Bytes']['input'];
+}>;
+
+
+export type SubgraphGetNukeProtectionFactoryApprovalQuery = { __typename: 'Query', nukeProtectionFactoryApprovals: Array<{ __typename: 'NukeProtectionFactoryApproval', approved: boolean }> };
+
+export type SubgraphGetMarketNukeProtectionQueryVariables = Exact<{
+  market: Scalars['Bytes']['input'];
+  account: Scalars['Bytes']['input'];
+}>;
+
+
+export type SubgraphGetMarketNukeProtectionQuery = { __typename: 'Query', nukeProtectionRegistrations: Array<{ __typename: 'NukeProtectionRegistration', id: string, blockNumber: string, transactionHash: string }> };
+
 export type SubgraphGetWithdrawalRequestsByMarketQueryVariables = Exact<{
   market: Scalars['String']['input'];
   numWithdrawals?: InputMaybe<Scalars['Int']['input']>;
@@ -40092,6 +40880,30 @@ export const GetMarketEventPageDocument = gql`
 }
     ${MarketEventDataFragmentDoc}`;
 export type GetMarketEventPageQueryResult = Apollo.QueryResult<SubgraphGetMarketEventPageQuery, SubgraphGetMarketEventPageQueryVariables>;
+export const GetNukeProtectionFactoryApprovalDocument = gql`
+    query getNukeProtectionFactoryApproval($hooksFactory: Bytes!, $featureFactory: Bytes!) {
+  nukeProtectionFactoryApprovals(
+    first: 1
+    where: {hooksFactory_: {address: $hooksFactory}, featureFactory: $featureFactory}
+  ) {
+    approved
+  }
+}
+    `;
+export type GetNukeProtectionFactoryApprovalQueryResult = Apollo.QueryResult<SubgraphGetNukeProtectionFactoryApprovalQuery, SubgraphGetNukeProtectionFactoryApprovalQueryVariables>;
+export const GetMarketNukeProtectionDocument = gql`
+    query getMarketNukeProtection($market: Bytes!, $account: Bytes!) {
+  nukeProtectionRegistrations(
+    first: 1
+    where: {market_: {address: $market}, account: $account}
+  ) {
+    id
+    blockNumber
+    transactionHash
+  }
+}
+    `;
+export type GetMarketNukeProtectionQueryResult = Apollo.QueryResult<SubgraphGetMarketNukeProtectionQuery, SubgraphGetMarketNukeProtectionQueryVariables>;
 export const GetWithdrawalRequestsByMarketDocument = gql`
     query getWithdrawalRequestsByMarket($market: String!, $numWithdrawals: Int = 1000, $skipWithdrawals: Int = 0, $orderWithdrawals: WithdrawalRequest_orderBy = blockTimestamp, $directionWithdrawals: OrderDirection = desc) {
   withdrawalRequests(

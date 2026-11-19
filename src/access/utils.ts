@@ -21,6 +21,7 @@ import {
   RoleProvider
 } from "../types";
 import { assert, toNumber } from "../utils";
+import { Deployments, SupportedChainId } from "../config";
 
 const NullProviderIndex = 2 ** 24 - 1;
 
@@ -59,40 +60,44 @@ export const getHooksPendingAdministrator = (
     ? data.pendingAdministrator
     : undefined;
 
+type LensRoleProvider = RoleProviderDataStructOutput | RoleProviderDataV2_5StructOutput;
+
 export const roleProviderFromLensData = (
-  provider: RoleProviderDataStructOutput | RoleProviderDataV2_5StructOutput
+  provider: LensRoleProvider,
+  chainId?: SupportedChainId
 ): RoleProvider => {
+  const kycAddress = chainId === undefined ? undefined : Deployments[chainId]?.KYCRoleProvider;
   const pullProviderIndex = toNumber(provider.pullProviderIndex);
   const pushProviderIndex = toNumber(provider.pushProviderIndex);
-  if ("isManaged" in provider && provider.isManaged) {
-    return {
-      kind: "unknown",
-      providerAddress: provider.providerAddress,
-      timeToLive: toNumber(provider.timeToLive),
-      isPullProvider: pullProviderIndex !== NullProviderIndex,
-      pullProviderIndex,
-      isPushProvider: pushProviderIndex !== NullProviderIndex,
-      pushProviderIndex,
-      isApproved: true,
-      isManaged: true,
-      administrator: provider.administrator,
-      ...(provider.pendingAdministrator.toLowerCase() !== zeroAddress
-        ? { pendingAdministrator: provider.pendingAdministrator }
-        : {})
-    };
-  }
-  return {
-    kind: "unknown",
+  const result: RoleProvider = {
+    kind: kycAddress?.toLowerCase() === provider.providerAddress.toLowerCase() ? "kyc" : "unknown",
     providerAddress: provider.providerAddress,
     timeToLive: toNumber(provider.timeToLive),
     isPullProvider: pullProviderIndex !== NullProviderIndex,
     pullProviderIndex,
     isPushProvider: pushProviderIndex !== NullProviderIndex,
     pushProviderIndex,
-    isApproved: true,
-    ...("isManaged" in provider ? { isManaged: false } : {})
+    isApproved: true
   };
+  if ("isManaged" in provider) {
+    result.isManaged = provider.isManaged;
+    if (provider.isManaged) {
+      result.administrator = provider.administrator;
+      if (provider.pendingAdministrator.toLowerCase() !== zeroAddress) {
+        result.pendingAdministrator = provider.pendingAdministrator;
+      }
+    }
+  }
+  return result;
 };
+
+export const roleProvidersFromLensData = (
+  chainId: SupportedChainId,
+  hooks: { pullProviders: readonly LensRoleProvider[]; pushProviders: readonly LensRoleProvider[] }
+): RoleProvider[] =>
+  [...hooks.pullProviders, ...hooks.pushProviders].map((provider) =>
+    roleProviderFromLensData(provider, chainId)
+  );
 
 const marketDeployedEventAbi = {
   anonymous: false,

@@ -80,6 +80,11 @@
     "types": ["function", "event"]
   },
   {
+    "exportName": "kycRoleProviderAbi",
+    "artifact": "artifacts/contracts/KYCRoleProvider.sol/KYCRoleProvider.json",
+    "types": ["function", "event", "error"]
+  },
+  {
     "exportName": "accessListRoleProviderFactoryAbi",
     "artifact": "artifacts/contracts/AccessListRoleProviderFactory.sol/AccessListRoleProviderFactory.json",
     "types": ["function", "event"]
@@ -119,6 +124,7 @@
       "CallerNotBorrower",
       "CreateRoleProviderFailed",
       "GrantedCredentialExpired",
+      "HookChangeOnClosedMarket",
       "InvalidAdministratorTransferTarget",
       "InvalidArrayLength",
       "InvalidCredentialReturned",

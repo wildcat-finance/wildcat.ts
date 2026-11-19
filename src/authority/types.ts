@@ -65,7 +65,8 @@ type RoleProviderAuthorityBase = {
   deployer?: string;
   deploymentFactory?: RoleProviderFactoryMetadata;
   salt?: string;
-  deployedAt?: IndexedAt;
+  /** the KYC constructor emits no event, so its deployment has no log index. */
+  deployedAt?: Omit<IndexedAt, "logIndex"> & { logIndex?: bigint };
   attachments: RoleProviderAttachment[];
   members: RoleProviderMember[];
   rootChanges: RoleProviderRootChange[];
@@ -73,6 +74,7 @@ type RoleProviderAuthorityBase = {
 
 export type RoleProviderConfiguration =
   | { kind: "access-list" }
+  | { kind: "kyc" }
   | { kind: "merkle"; root: string }
   | { kind: "erc20"; token: string; minBalance: bigint }
   | { kind: "erc4626-assets"; vault: string; minAssets: bigint }

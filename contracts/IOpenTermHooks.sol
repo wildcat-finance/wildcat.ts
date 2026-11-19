@@ -56,6 +56,8 @@ interface IOpenTermHooks {
 
   error GrantedCredentialExpired();
 
+  error HookChangeOnClosedMarket();
+
   error InvalidArrayLength();
 
   error InvalidCredentialReturned();

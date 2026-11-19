@@ -1,9 +1,10 @@
 import { expect } from "chai";
 import { providers } from "ethers";
 import { decodeFunctionData, encodeFunctionResult, getAddress, type Abi } from "viem";
-import { accessListRoleProviderAbi } from "../../src/abi";
+import { accessListRoleProviderAbi, kycRoleProviderAbi } from "../../src/abi";
 import {
   getAccessListRoleProviderMembers,
+  getKycEnrollmentTimestamp,
   getLiveRoleProviderAdministrator
 } from "../../src/authority";
 
@@ -41,6 +42,27 @@ const encodeResult = (functionName: string, result: unknown): `0x${string}` =>
   });
 
 describe("v2.5 role-provider on-chain reads", () => {
+  it("reads the KYC enrollment timestamp for each wallet", async () => {
+    const role = makeAddress(1);
+    const member = makeAddress(2);
+    const rpc = new FakeViemProvider((call) => {
+      expect(call.to).to.equal(role);
+      const { functionName, args } = decodeFunctionData({
+        abi: kycRoleProviderAbi,
+        data: call.data as `0x${string}`
+      });
+      expect(functionName).to.equal("addedAt");
+      return encodeFunctionResult({
+        abi: kycRoleProviderAbi,
+        functionName: "addedAt",
+        result: args?.[0] === member ? 123n : 0n
+      });
+    });
+    const provider = rpc as unknown as providers.Provider;
+    expect(await getKycEnrollmentTimestamp(provider, role, member)).to.equal(123n);
+    expect(await getKycEnrollmentTimestamp(provider, role, makeAddress(3))).to.equal(0n);
+  });
+
   it("selects full and paginated member overloads from their arguments", async () => {
     const providerAddress = makeAddress(1);
     const members = [makeAddress(2), makeAddress(3)];

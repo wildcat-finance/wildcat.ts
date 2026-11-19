@@ -14,6 +14,16 @@ export * from "./getLenderAccountsForAllMarkets";
 export * from "./getLenderWithdrawalsForMarket";
 export * from "./getMarket";
 export * from "./getMarketEventPage";
+export {
+  GetNukeProtectionFactoryApprovalDocument,
+  GetMarketNukeProtectionDocument
+} from "./graphql";
+export type {
+  SubgraphGetNukeProtectionFactoryApprovalQuery,
+  SubgraphGetNukeProtectionFactoryApprovalQueryVariables,
+  SubgraphGetMarketNukeProtectionQuery,
+  SubgraphGetMarketNukeProtectionQueryVariables
+} from "./graphql";
 export * from "./getMarketList";
 export * from "./getMarketChartsData";
 export * from "./getMarketRecords";

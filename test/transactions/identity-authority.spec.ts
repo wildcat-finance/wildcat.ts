@@ -4,12 +4,15 @@ import {
   accessListRoleProviderAbi,
   borrowerIdentityRegistryAbi,
   iOpenTermHooksAbi,
+  kycRoleProviderAbi,
   wildcatMarketV2Abi
 } from "../../src/abi";
 import {
   encodeAccessListRoleProviderDeploymentInputs,
   prepareAddAccessListMembers,
   prepareAddHookRoleProvider,
+  prepareAddRoleProviderMembers,
+  prepareRemoveRoleProviderMembers,
   prepareCreateAndAddAccessListRoleProvider,
   prepareRequestHookAdministratorTransfer,
   prepareRequestRoleProviderAdministratorTransfer
@@ -24,6 +27,21 @@ const makeAddress = (suffix: number): `0x${string}` =>
   getAddress(`0x${suffix.toString(16).padStart(40, "0")}`);
 
 describe("v2.5 identity and authority transaction preparation", () => {
+  it("encodes shared KYC enrollment and removal", () => {
+    const provider = makeAddress(1);
+    const accounts = [makeAddress(2), makeAddress(3)];
+    const add = prepareAddRoleProviderMembers(provider, accounts);
+    const remove = prepareRemoveRoleProviderMembers(provider, [accounts[0]]);
+    expect(add.to).to.equal(provider);
+    expect(remove.to).to.equal(provider);
+    expect(
+      decodeFunctionData({ abi: kycRoleProviderAbi, data: add.data as `0x${string}` })
+    ).to.deep.equal({ functionName: "addMembers", args: [accounts] });
+    expect(
+      decodeFunctionData({ abi: kycRoleProviderAbi, data: remove.data as `0x${string}` })
+    ).to.deep.equal({ functionName: "removeMember", args: [accounts[0]] });
+  });
+
   it("keeps market borrower and account principal transfers as separate calls", () => {
     const market = makeAddress(1);
     const account = makeAddress(2);

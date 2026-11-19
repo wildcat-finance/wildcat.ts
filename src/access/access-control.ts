@@ -56,7 +56,7 @@ import {
   getHooksAdministrator,
   getHooksPendingAdministrator,
   hasRoleProviderFactory,
-  roleProviderFromLensData,
+  roleProvidersFromLensData,
   getHooksParameterConstraints,
   HooksFactoryContractFacade
 } from "./utils";
@@ -91,9 +91,7 @@ export class OpenTermHooks extends ContractWrapper {
     this.pendingAdministrator = getHooksPendingAdministrator(data);
     this.borrower = this.administrator;
     this.constraints = getHooksParameterConstraints(data);
-    this.roleProviders = [...data.pullProviders, ...data.pushProviders].map(
-      roleProviderFromLensData
-    );
+    this.roleProviders = roleProvidersFromLensData(this.chainId, data);
   }
 
   get hooksFactory(): string {
@@ -185,7 +183,7 @@ export class OpenTermHooks extends ContractWrapper {
       administrator,
       pendingAdministrator: getHooksPendingAdministrator(data),
       constraints: getHooksParameterConstraints(data),
-      roleProviders: [...data.pullProviders, ...data.pushProviders].map(roleProviderFromLensData)
+      roleProviders: roleProvidersFromLensData(chainId, data)
     });
   }
 

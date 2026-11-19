@@ -8448,6 +8448,20 @@ type HooksFactory {
     skip: Int = 0
     where: Market_filter
   ): [Market!]!
+  nukeProtectionApprovals(
+    first: Int = 100
+    orderBy: NukeProtectionFactoryApproval_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: NukeProtectionFactoryApproval_filter
+  ): [NukeProtectionFactoryApproval!]!
+  nukeProtectionRequests(
+    first: Int = 100
+    orderBy: NukeProtectionRequest_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: NukeProtectionRequest_filter
+  ): [NukeProtectionRequest!]!
   registrationUpdatedAtBlock: BigInt
   registrationUpdatedAtTimestamp: BigInt
   registryState: FactoryRegistration
@@ -8616,6 +8630,8 @@ input HooksFactory_filter {
   marketKind_not: MarketKind
   marketKind_not_in: [MarketKind!]
   markets_: Market_filter
+  nukeProtectionApprovals_: NukeProtectionFactoryApproval_filter
+  nukeProtectionRequests_: NukeProtectionRequest_filter
   or: [HooksFactory_filter]
   registrationUpdatedAtBlock: BigInt
   registrationUpdatedAtBlock_gt: BigInt
@@ -8667,6 +8683,8 @@ enum HooksFactory_orderBy {
   lifecycle
   marketKind
   markets
+  nukeProtectionApprovals
+  nukeProtectionRequests
   registrationUpdatedAtBlock
   registrationUpdatedAtTimestamp
   registryState
@@ -13440,6 +13458,20 @@ type Market {
   minimumDepositUpdatedIndex: Int!
   name: String!
   normalizedUnclaimedWithdrawals: BigInt!
+  nukeProtectionRegistrations(
+    first: Int = 100
+    orderBy: NukeProtectionRegistration_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: NukeProtectionRegistration_filter
+  ): [NukeProtectionRegistration!]!
+  nukeProtectionRequests(
+    first: Int = 100
+    orderBy: NukeProtectionRequest_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: NukeProtectionRequest_filter
+  ): [NukeProtectionRequest!]!
   numCollateralContracts: Int!
   originKind: MarketOriginKind!
   originalAnnualInterestBips: Int!
@@ -15986,6 +16018,7 @@ enum MarketEventKind {
   MARKET_REGISTERED
   MAX_TOTAL_SUPPLY_UPDATED
   MINIMUM_DEPOSIT_UPDATED
+  NUKE_PROTECTION_REGISTERED
   PERIODIC_TERM_CLOSED
   PERIODIC_TERM_UPDATED
   PROTOCOL_FEE_BIPS_UPDATED
@@ -18570,6 +18603,8 @@ input Market_filter {
   normalizedUnclaimedWithdrawals_lte: BigInt
   normalizedUnclaimedWithdrawals_not: BigInt
   normalizedUnclaimedWithdrawals_not_in: [BigInt!]
+  nukeProtectionRegistrations_: NukeProtectionRegistration_filter
+  nukeProtectionRequests_: NukeProtectionRequest_filter
   numCollateralContracts: Int
   numCollateralContracts_gt: Int
   numCollateralContracts_gte: Int
@@ -19277,6 +19312,8 @@ enum Market_orderBy {
   minimumDepositUpdatedIndex
   name
   normalizedUnclaimedWithdrawals
+  nukeProtectionRegistrations
+  nukeProtectionRequests
   numCollateralContracts
   originKind
   originalAnnualInterestBips
@@ -20263,6 +20300,654 @@ enum NewSanctionsEscrow_orderBy {
   escrow__id
   escrow__sentinel
   id
+  transactionHash
+}
+
+"""
+whether the feature factory can request protection on markets deployed by this hooks factory.
+"""
+type NukeProtectionFactoryApproval {
+  approved: Boolean!
+  changes(
+    first: Int = 100
+    orderBy: NukeProtectionFactoryApprovalChange_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: NukeProtectionFactoryApprovalChange_filter
+  ): [NukeProtectionFactoryApprovalChange!]!
+  featureFactory: Bytes!
+  hooksFactory: HooksFactory!
+  id: ID!
+}
+
+type NukeProtectionFactoryApprovalChange {
+  approval: NukeProtectionFactoryApproval!
+  approved: Boolean!
+  blockLogIndex: BigInt!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  id: ID!
+  transactionHash: Bytes!
+}
+
+input NukeProtectionFactoryApprovalChange_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  and: [NukeProtectionFactoryApprovalChange_filter]
+  approval: String
+  approval_: NukeProtectionFactoryApproval_filter
+  approval_contains: String
+  approval_contains_nocase: String
+  approval_ends_with: String
+  approval_ends_with_nocase: String
+  approval_gt: String
+  approval_gte: String
+  approval_in: [String!]
+  approval_lt: String
+  approval_lte: String
+  approval_not: String
+  approval_not_contains: String
+  approval_not_contains_nocase: String
+  approval_not_ends_with: String
+  approval_not_ends_with_nocase: String
+  approval_not_in: [String!]
+  approval_not_starts_with: String
+  approval_not_starts_with_nocase: String
+  approval_starts_with: String
+  approval_starts_with_nocase: String
+  approved: Boolean
+  approved_in: [Boolean!]
+  approved_not: Boolean
+  approved_not_in: [Boolean!]
+  blockLogIndex: BigInt
+  blockLogIndex_gt: BigInt
+  blockLogIndex_gte: BigInt
+  blockLogIndex_in: [BigInt!]
+  blockLogIndex_lt: BigInt
+  blockLogIndex_lte: BigInt
+  blockLogIndex_not: BigInt
+  blockLogIndex_not_in: [BigInt!]
+  blockNumber: BigInt
+  blockNumber_gt: BigInt
+  blockNumber_gte: BigInt
+  blockNumber_in: [BigInt!]
+  blockNumber_lt: BigInt
+  blockNumber_lte: BigInt
+  blockNumber_not: BigInt
+  blockNumber_not_in: [BigInt!]
+  blockTimestamp: BigInt
+  blockTimestamp_gt: BigInt
+  blockTimestamp_gte: BigInt
+  blockTimestamp_in: [BigInt!]
+  blockTimestamp_lt: BigInt
+  blockTimestamp_lte: BigInt
+  blockTimestamp_not: BigInt
+  blockTimestamp_not_in: [BigInt!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  or: [NukeProtectionFactoryApprovalChange_filter]
+  transactionHash: Bytes
+  transactionHash_contains: Bytes
+  transactionHash_gt: Bytes
+  transactionHash_gte: Bytes
+  transactionHash_in: [Bytes!]
+  transactionHash_lt: Bytes
+  transactionHash_lte: Bytes
+  transactionHash_not: Bytes
+  transactionHash_not_contains: Bytes
+  transactionHash_not_in: [Bytes!]
+}
+
+enum NukeProtectionFactoryApprovalChange_orderBy {
+  approval
+  approval__approved
+  approval__featureFactory
+  approval__id
+  approved
+  blockLogIndex
+  blockNumber
+  blockTimestamp
+  id
+  transactionHash
+}
+
+input NukeProtectionFactoryApproval_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  and: [NukeProtectionFactoryApproval_filter]
+  approved: Boolean
+  approved_in: [Boolean!]
+  approved_not: Boolean
+  approved_not_in: [Boolean!]
+  changes_: NukeProtectionFactoryApprovalChange_filter
+  featureFactory: Bytes
+  featureFactory_contains: Bytes
+  featureFactory_gt: Bytes
+  featureFactory_gte: Bytes
+  featureFactory_in: [Bytes!]
+  featureFactory_lt: Bytes
+  featureFactory_lte: Bytes
+  featureFactory_not: Bytes
+  featureFactory_not_contains: Bytes
+  featureFactory_not_in: [Bytes!]
+  hooksFactory: String
+  hooksFactory_: HooksFactory_filter
+  hooksFactory_contains: String
+  hooksFactory_contains_nocase: String
+  hooksFactory_ends_with: String
+  hooksFactory_ends_with_nocase: String
+  hooksFactory_gt: String
+  hooksFactory_gte: String
+  hooksFactory_in: [String!]
+  hooksFactory_lt: String
+  hooksFactory_lte: String
+  hooksFactory_not: String
+  hooksFactory_not_contains: String
+  hooksFactory_not_contains_nocase: String
+  hooksFactory_not_ends_with: String
+  hooksFactory_not_ends_with_nocase: String
+  hooksFactory_not_in: [String!]
+  hooksFactory_not_starts_with: String
+  hooksFactory_not_starts_with_nocase: String
+  hooksFactory_starts_with: String
+  hooksFactory_starts_with_nocase: String
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  or: [NukeProtectionFactoryApproval_filter]
+}
+
+enum NukeProtectionFactoryApproval_orderBy {
+  approved
+  changes
+  featureFactory
+  hooksFactory
+  hooksFactory__abiFamily
+  hooksFactory__address
+  hooksFactory__configured
+  hooksFactory__configuredStartBlock
+  hooksFactory__deploymentTarget
+  hooksFactory__eventGeneration
+  hooksFactory__eventIndex
+  hooksFactory__generation
+  hooksFactory__hookedMarketAbi
+  hooksFactory__id
+  hooksFactory__indexed
+  hooksFactory__isRegistered
+  hooksFactory__label
+  hooksFactory__lifecycle
+  hooksFactory__marketKind
+  hooksFactory__registrationUpdatedAtBlock
+  hooksFactory__registrationUpdatedAtTimestamp
+  hooksFactory__sentinel
+  id
+}
+
+"""
+protection is permanent for this account on this market. each registration keeps its own log record.
+"""
+type NukeProtectionRegistration {
+  account: Bytes!
+  blockLogIndex: BigInt!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  id: ID!
+  market: Market!
+  transactionHash: Bytes!
+}
+
+input NukeProtectionRegistration_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  account: Bytes
+  account_contains: Bytes
+  account_gt: Bytes
+  account_gte: Bytes
+  account_in: [Bytes!]
+  account_lt: Bytes
+  account_lte: Bytes
+  account_not: Bytes
+  account_not_contains: Bytes
+  account_not_in: [Bytes!]
+  and: [NukeProtectionRegistration_filter]
+  blockLogIndex: BigInt
+  blockLogIndex_gt: BigInt
+  blockLogIndex_gte: BigInt
+  blockLogIndex_in: [BigInt!]
+  blockLogIndex_lt: BigInt
+  blockLogIndex_lte: BigInt
+  blockLogIndex_not: BigInt
+  blockLogIndex_not_in: [BigInt!]
+  blockNumber: BigInt
+  blockNumber_gt: BigInt
+  blockNumber_gte: BigInt
+  blockNumber_in: [BigInt!]
+  blockNumber_lt: BigInt
+  blockNumber_lte: BigInt
+  blockNumber_not: BigInt
+  blockNumber_not_in: [BigInt!]
+  blockTimestamp: BigInt
+  blockTimestamp_gt: BigInt
+  blockTimestamp_gte: BigInt
+  blockTimestamp_in: [BigInt!]
+  blockTimestamp_lt: BigInt
+  blockTimestamp_lte: BigInt
+  blockTimestamp_not: BigInt
+  blockTimestamp_not_in: [BigInt!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  market: String
+  market_: Market_filter
+  market_contains: String
+  market_contains_nocase: String
+  market_ends_with: String
+  market_ends_with_nocase: String
+  market_gt: String
+  market_gte: String
+  market_in: [String!]
+  market_lt: String
+  market_lte: String
+  market_not: String
+  market_not_contains: String
+  market_not_contains_nocase: String
+  market_not_ends_with: String
+  market_not_ends_with_nocase: String
+  market_not_in: [String!]
+  market_not_starts_with: String
+  market_not_starts_with_nocase: String
+  market_starts_with: String
+  market_starts_with_nocase: String
+  or: [NukeProtectionRegistration_filter]
+  transactionHash: Bytes
+  transactionHash_contains: Bytes
+  transactionHash_gt: Bytes
+  transactionHash_gte: Bytes
+  transactionHash_in: [Bytes!]
+  transactionHash_lt: Bytes
+  transactionHash_lte: Bytes
+  transactionHash_not: Bytes
+  transactionHash_not_contains: Bytes
+  transactionHash_not_in: [Bytes!]
+}
+
+enum NukeProtectionRegistration_orderBy {
+  account
+  blockLogIndex
+  blockNumber
+  blockTimestamp
+  id
+  market
+  market__abiFamily
+  market__address
+  market__annualInterestBips
+  market__annualInterestBipsUpdatedIndex
+  market__borrowIndex
+  market__borrower
+  market__borrowerIdentityRegistryAddress
+  market__borrowerPrincipal
+  market__closedAt
+  market__commitmentFeeBips
+  market__createdAt
+  market__createdAtBlock
+  market__createdAtLogIndex
+  market__createdAtTimestamp
+  market__createdAtTransaction
+  market__debtRepaidIndex
+  market__decimals
+  market__defaultedAt
+  market__delinquencyFeeBips
+  market__delinquencyGracePeriod
+  market__delinquencyStatusChangedIndex
+  market__depositIndex
+  market__drawnAmount
+  market__eventGeneration
+  market__eventIndex
+  market__feeRecipient
+  market__feesCollectedIndex
+  market__finalHooks
+  market__fixedTermUpdatedIndex
+  market__forceBuyBackIndex
+  market__generation
+  market__hooksData
+  market__id
+  market__initialBorrower
+  market__initialBorrowerPrincipal
+  market__isClosed
+  market__isDelinquent
+  market__isIncurringPenalties
+  market__isRegistered
+  market__lastInterestAccruedBlockNumber
+  market__lastInterestAccruedTimestamp
+  market__marketKind
+  market__maxTotalSupply
+  market__maxTotalSupplyUpdatedIndex
+  market__minimumDepositUpdatedIndex
+  market__name
+  market__normalizedUnclaimedWithdrawals
+  market__numCollateralContracts
+  market__originKind
+  market__originalAnnualInterestBips
+  market__originalReserveRatioBips
+  market__originationFeeAmount
+  market__pendingBorrower
+  market__pendingBorrowerPrincipal
+  market__pendingProtocolFees
+  market__pendingWithdrawalExpiry
+  market__protocolFeeBips
+  market__protocolFeeBipsUpdatedIndex
+  market__repaymentActivatedAt
+  market__repaymentDate
+  market__repaymentDeadline
+  market__repaymentPeriod
+  market__requestedHooks
+  market__reserveRatioBips
+  market__scaleFactor
+  market__scaledPendingWithdrawals
+  market__scaledTotalSupply
+  market__sentinel
+  market__symbol
+  market__temporaryReserveRatioActive
+  market__temporaryReserveRatioExpiry
+  market__timeDelinquent
+  market__totalAssets
+  market__totalBaseInterestAccrued
+  market__totalBaseInterestAccruedUSD
+  market__totalBorrowed
+  market__totalBorrowedUSD
+  market__totalDebtUSD
+  market__totalDelinquencyFeesAccrued
+  market__totalDelinquencyFeesAccruedUSD
+  market__totalDeposited
+  market__totalDepositedUSD
+  market__totalProtocolFeesAccrued
+  market__totalProtocolFeesAccruedUSD
+  market__totalRepaid
+  market__totalRepaidUSD
+  market__totalWithdrawalsExecuted
+  market__totalWithdrawalsExecutedUSD
+  market__totalWithdrawalsRequested
+  market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
+  market__version
+  market__withdrawalBatchDuration
+  market__withdrawalRemainder
+  market__withdrawalRequestsIndex
+  transactionHash
+}
+
+"""
+the hooks factory records the feature factory's request after the market registers the account.
+"""
+type NukeProtectionRequest {
+  account: Bytes!
+  blockLogIndex: BigInt!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  featureFactory: Bytes!
+  hooksFactory: HooksFactory!
+  id: ID!
+  market: Market!
+  transactionHash: Bytes!
+}
+
+input NukeProtectionRequest_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  account: Bytes
+  account_contains: Bytes
+  account_gt: Bytes
+  account_gte: Bytes
+  account_in: [Bytes!]
+  account_lt: Bytes
+  account_lte: Bytes
+  account_not: Bytes
+  account_not_contains: Bytes
+  account_not_in: [Bytes!]
+  and: [NukeProtectionRequest_filter]
+  blockLogIndex: BigInt
+  blockLogIndex_gt: BigInt
+  blockLogIndex_gte: BigInt
+  blockLogIndex_in: [BigInt!]
+  blockLogIndex_lt: BigInt
+  blockLogIndex_lte: BigInt
+  blockLogIndex_not: BigInt
+  blockLogIndex_not_in: [BigInt!]
+  blockNumber: BigInt
+  blockNumber_gt: BigInt
+  blockNumber_gte: BigInt
+  blockNumber_in: [BigInt!]
+  blockNumber_lt: BigInt
+  blockNumber_lte: BigInt
+  blockNumber_not: BigInt
+  blockNumber_not_in: [BigInt!]
+  blockTimestamp: BigInt
+  blockTimestamp_gt: BigInt
+  blockTimestamp_gte: BigInt
+  blockTimestamp_in: [BigInt!]
+  blockTimestamp_lt: BigInt
+  blockTimestamp_lte: BigInt
+  blockTimestamp_not: BigInt
+  blockTimestamp_not_in: [BigInt!]
+  featureFactory: Bytes
+  featureFactory_contains: Bytes
+  featureFactory_gt: Bytes
+  featureFactory_gte: Bytes
+  featureFactory_in: [Bytes!]
+  featureFactory_lt: Bytes
+  featureFactory_lte: Bytes
+  featureFactory_not: Bytes
+  featureFactory_not_contains: Bytes
+  featureFactory_not_in: [Bytes!]
+  hooksFactory: String
+  hooksFactory_: HooksFactory_filter
+  hooksFactory_contains: String
+  hooksFactory_contains_nocase: String
+  hooksFactory_ends_with: String
+  hooksFactory_ends_with_nocase: String
+  hooksFactory_gt: String
+  hooksFactory_gte: String
+  hooksFactory_in: [String!]
+  hooksFactory_lt: String
+  hooksFactory_lte: String
+  hooksFactory_not: String
+  hooksFactory_not_contains: String
+  hooksFactory_not_contains_nocase: String
+  hooksFactory_not_ends_with: String
+  hooksFactory_not_ends_with_nocase: String
+  hooksFactory_not_in: [String!]
+  hooksFactory_not_starts_with: String
+  hooksFactory_not_starts_with_nocase: String
+  hooksFactory_starts_with: String
+  hooksFactory_starts_with_nocase: String
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  market: String
+  market_: Market_filter
+  market_contains: String
+  market_contains_nocase: String
+  market_ends_with: String
+  market_ends_with_nocase: String
+  market_gt: String
+  market_gte: String
+  market_in: [String!]
+  market_lt: String
+  market_lte: String
+  market_not: String
+  market_not_contains: String
+  market_not_contains_nocase: String
+  market_not_ends_with: String
+  market_not_ends_with_nocase: String
+  market_not_in: [String!]
+  market_not_starts_with: String
+  market_not_starts_with_nocase: String
+  market_starts_with: String
+  market_starts_with_nocase: String
+  or: [NukeProtectionRequest_filter]
+  transactionHash: Bytes
+  transactionHash_contains: Bytes
+  transactionHash_gt: Bytes
+  transactionHash_gte: Bytes
+  transactionHash_in: [Bytes!]
+  transactionHash_lt: Bytes
+  transactionHash_lte: Bytes
+  transactionHash_not: Bytes
+  transactionHash_not_contains: Bytes
+  transactionHash_not_in: [Bytes!]
+}
+
+enum NukeProtectionRequest_orderBy {
+  account
+  blockLogIndex
+  blockNumber
+  blockTimestamp
+  featureFactory
+  hooksFactory
+  hooksFactory__abiFamily
+  hooksFactory__address
+  hooksFactory__configured
+  hooksFactory__configuredStartBlock
+  hooksFactory__deploymentTarget
+  hooksFactory__eventGeneration
+  hooksFactory__eventIndex
+  hooksFactory__generation
+  hooksFactory__hookedMarketAbi
+  hooksFactory__id
+  hooksFactory__indexed
+  hooksFactory__isRegistered
+  hooksFactory__label
+  hooksFactory__lifecycle
+  hooksFactory__marketKind
+  hooksFactory__registrationUpdatedAtBlock
+  hooksFactory__registrationUpdatedAtTimestamp
+  hooksFactory__sentinel
+  id
+  market
+  market__abiFamily
+  market__address
+  market__annualInterestBips
+  market__annualInterestBipsUpdatedIndex
+  market__borrowIndex
+  market__borrower
+  market__borrowerIdentityRegistryAddress
+  market__borrowerPrincipal
+  market__closedAt
+  market__commitmentFeeBips
+  market__createdAt
+  market__createdAtBlock
+  market__createdAtLogIndex
+  market__createdAtTimestamp
+  market__createdAtTransaction
+  market__debtRepaidIndex
+  market__decimals
+  market__defaultedAt
+  market__delinquencyFeeBips
+  market__delinquencyGracePeriod
+  market__delinquencyStatusChangedIndex
+  market__depositIndex
+  market__drawnAmount
+  market__eventGeneration
+  market__eventIndex
+  market__feeRecipient
+  market__feesCollectedIndex
+  market__finalHooks
+  market__fixedTermUpdatedIndex
+  market__forceBuyBackIndex
+  market__generation
+  market__hooksData
+  market__id
+  market__initialBorrower
+  market__initialBorrowerPrincipal
+  market__isClosed
+  market__isDelinquent
+  market__isIncurringPenalties
+  market__isRegistered
+  market__lastInterestAccruedBlockNumber
+  market__lastInterestAccruedTimestamp
+  market__marketKind
+  market__maxTotalSupply
+  market__maxTotalSupplyUpdatedIndex
+  market__minimumDepositUpdatedIndex
+  market__name
+  market__normalizedUnclaimedWithdrawals
+  market__numCollateralContracts
+  market__originKind
+  market__originalAnnualInterestBips
+  market__originalReserveRatioBips
+  market__originationFeeAmount
+  market__pendingBorrower
+  market__pendingBorrowerPrincipal
+  market__pendingProtocolFees
+  market__pendingWithdrawalExpiry
+  market__protocolFeeBips
+  market__protocolFeeBipsUpdatedIndex
+  market__repaymentActivatedAt
+  market__repaymentDate
+  market__repaymentDeadline
+  market__repaymentPeriod
+  market__requestedHooks
+  market__reserveRatioBips
+  market__scaleFactor
+  market__scaledPendingWithdrawals
+  market__scaledTotalSupply
+  market__sentinel
+  market__symbol
+  market__temporaryReserveRatioActive
+  market__temporaryReserveRatioExpiry
+  market__timeDelinquent
+  market__totalAssets
+  market__totalBaseInterestAccrued
+  market__totalBaseInterestAccruedUSD
+  market__totalBorrowed
+  market__totalBorrowedUSD
+  market__totalDebtUSD
+  market__totalDelinquencyFeesAccrued
+  market__totalDelinquencyFeesAccruedUSD
+  market__totalDeposited
+  market__totalDepositedUSD
+  market__totalProtocolFeesAccrued
+  market__totalProtocolFeesAccruedUSD
+  market__totalRepaid
+  market__totalRepaidUSD
+  market__totalWithdrawalsExecuted
+  market__totalWithdrawalsExecutedUSD
+  market__totalWithdrawalsRequested
+  market__totalWithdrawalsRequestedUSD
+  market__usdTotalsComplete
+  market__version
+  market__withdrawalBatchDuration
+  market__withdrawalRemainder
+  market__withdrawalRequestsIndex
   transactionHash
 }
 
@@ -24620,6 +25305,110 @@ type Query {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: NewSanctionsEscrow_filter
   ): [NewSanctionsEscrow!]!
+  nukeProtectionFactoryApproval(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): NukeProtectionFactoryApproval
+  nukeProtectionFactoryApprovalChange(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): NukeProtectionFactoryApprovalChange
+  nukeProtectionFactoryApprovalChanges(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: NukeProtectionFactoryApprovalChange_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: NukeProtectionFactoryApprovalChange_filter
+  ): [NukeProtectionFactoryApprovalChange!]!
+  nukeProtectionFactoryApprovals(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: NukeProtectionFactoryApproval_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: NukeProtectionFactoryApproval_filter
+  ): [NukeProtectionFactoryApproval!]!
+  nukeProtectionRegistration(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): NukeProtectionRegistration
+  nukeProtectionRegistrations(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: NukeProtectionRegistration_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: NukeProtectionRegistration_filter
+  ): [NukeProtectionRegistration!]!
+  nukeProtectionRequest(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): NukeProtectionRequest
+  nukeProtectionRequests(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: NukeProtectionRequest_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: NukeProtectionRequest_filter
+  ): [NukeProtectionRequest!]!
   ownershipHandoverCanceled(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -27634,6 +28423,7 @@ enum RoleProviderKind {
   ERC721
   ERC1155
   ERC4626_ASSETS
+  KYC
   MERKLE
   UNKNOWN
 }

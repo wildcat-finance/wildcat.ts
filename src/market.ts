@@ -8,9 +8,7 @@ import {
   MarketDataV2StructOutput,
   MarketLiveDataV2_5StructOutput,
   MarketLifecycleDataStructOutput,
-  MarketLiquidityDataStructOutput,
-  RoleProviderDataStructOutput,
-  RoleProviderDataV2_5StructOutput
+  MarketLiquidityDataStructOutput
 } from "./lens-types";
 import {
   SupportedChainId,
@@ -85,8 +83,11 @@ import {
   toNumber
 } from "./utils";
 import { hooksTemplateFromSubgraph } from "./access";
-import { supportsRepaymentParameterFreeze } from "./access/repayment";
-import { roleProviderFromLensData } from "./access/utils";
+import {
+  supportsClosedMarketHookFreeze,
+  supportsRepaymentParameterFreeze
+} from "./access/repayment";
+import { roleProvidersFromLensData } from "./access/utils";
 import { iPeriodicTermHooksAbi, wildcatMarketAbi } from "./abi";
 import { getViemPublicClientFromEthers } from "./internal/ethers-viem";
 import { readViemContract } from "./internal/viem-read";
@@ -246,14 +247,6 @@ const roleProviderFromSubgraph = (provider: SubgraphRoleProviderDataFragment): R
     : {})
 });
 
-const roleProvidersFromLens = ({
-  pullProviders,
-  pushProviders
-}: {
-  pullProviders: ReadonlyArray<RoleProviderDataStructOutput | RoleProviderDataV2_5StructOutput>;
-  pushProviders: ReadonlyArray<RoleProviderDataStructOutput | RoleProviderDataV2_5StructOutput>;
-}): RoleProvider[] => [...pullProviders, ...pushProviders].map(roleProviderFromLensData);
-
 /** Accounting capacity at the live lens read block, denominated in the underlying token.
  * Hooks, authority checks, sanctions and token transfers can still prevent an action. */
 export type MarketLiquidity = {
@@ -407,6 +400,7 @@ export const getMarketOnboardingMode = ({
       isPullProvider &&
       isManaged !== true &&
       kind !== "access-list" &&
+      kind !== "kyc" &&
       kind !== "merkle"
   );
   return hasSelfOnboardingPath ? MarketOnboardingMode.Self : MarketOnboardingMode.Managed;
@@ -586,11 +580,22 @@ export class Market extends ContractWrapper {
     return !this.isClosed && this.hasReachedRepaymentDate === true;
   }
 
-  /** At the observed repayment date, V2.5.6 hook settings stay frozen after closure too. */
+  /** the template's repayment freeze starts at the scheduled date and stays in effect after closure. */
   get hasFrozenHookParameters(): boolean {
     return (
       this.hasReachedRepaymentDate === true &&
       supportsRepaymentParameterFreeze(
+        this.chainId,
+        this.hooksTemplateAddress ?? this.hooksConfig?.template?.hooksTemplate
+      )
+    );
+  }
+
+  /** v2.5.9 locks the minimum deposit and fixed-term end time even if the market closes early. */
+  get hookConfigurationLockedByClosure(): boolean {
+    return (
+      this.isClosed &&
+      supportsClosedMarketHookFreeze(
         this.chainId,
         this.hooksTemplateAddress ?? this.hooksConfig?.template?.hooksTemplate
       )
@@ -1361,7 +1366,7 @@ export class Market extends ContractWrapper {
         }
       }
       if ("hooks" in baseData) {
-        this.roleProviders = roleProvidersFromLens(baseData.hooks);
+        this.roleProviders = roleProvidersFromLensData(this.chainId, baseData.hooks);
       }
     } else {
       assert(this.version === MarketVersion.V1, `Can not push V1 lens data to V2 market!`);
@@ -1856,7 +1861,7 @@ export class Market extends ContractWrapper {
       hooksTemplateAddress: hooks.hooksTemplate.hooksTemplate,
       marketKind: getConfiguredMarketKindForHooksFactory(chainId, data.hooksFactory),
       hooksConfig,
-      roleProviders: roleProvidersFromLens(hooks),
+      roleProviders: roleProvidersFromLensData(chainId, hooks),
       version: MarketVersion.V2,
       eventGeneration: "legacy",
       chainId: chainId,
@@ -1986,7 +1991,7 @@ export class Market extends ContractWrapper {
       hooksTemplateAddress: hooks.hooksTemplate.hooksTemplate,
       marketKind: marketKindFromRevolvingFields(commitmentFeeBips.isPresent, drawnAmount.isPresent),
       hooksConfig,
-      roleProviders: roleProvidersFromLens(hooks),
+      roleProviders: roleProvidersFromLensData(chainId, hooks),
       version: MarketVersion.V2,
       eventGeneration: borrowerIdentityRegistry.toLowerCase() === zeroAddress ? "legacy" : "v2.5",
       chainId,

@@ -155,7 +155,7 @@ export class BasicLenderData {
       canRefresh: data.canRefresh,
       isBlockedFromDeposits: data.isBlockedFromDeposits,
       lastApprovalTimestamp: toNumber(data.lastApprovalTimestamp),
-      lastProvider: roleProviderFromLensData(data.lastProvider)
+      lastProvider: roleProviderFromLensData(data.lastProvider, this.market.chainId)
     };
     this.stateSource = "live";
   }

@@ -44085,6 +44085,344 @@ export const accessListRoleProviderAbi = [
   }
 ] as const satisfies Abi;
 
+export const kycRoleProviderAbi = [
+  {
+    "inputs": [],
+    "name": "CallerNotAdministrator",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidAdministratorTransferTarget",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidMember",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MemberAlreadyExists",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "MemberNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoPendingAdministratorTransfer",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotPendingAdministrator",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "cancelledPendingAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "AdministratorTransferCancelled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousPendingAdministrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "pendingAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "AdministratorTransferRequested",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousAdministrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "AdministratorTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "MemberAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "administrator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "MemberRemoved",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "acceptAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "addMember",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "accounts",
+        "type": "address[]"
+      }
+    ],
+    "name": "addMembers",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "addedAt",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "administrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "cancelAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "getCredential",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "isMember",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isPullProvider",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pendingAdministrator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "removeMember",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "accounts",
+        "type": "address[]"
+      }
+    ],
+    "name": "removeMembers",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newAdministrator",
+        "type": "address"
+      }
+    ],
+    "name": "requestAdministratorTransfer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "name": "validateCredential",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+] as const satisfies Abi;
+
 export const accessListRoleProviderFactoryAbi = [
   {
     "anonymous": false,
@@ -52883,6 +53221,11 @@ export const baseAccessControlsErrorAbi = [
   },
   {
     "inputs": [],
+    "name": "HookChangeOnClosedMarket",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "InvalidAdministratorTransferTarget",
     "type": "error"
   },
@@ -52969,11 +53312,6 @@ export const hooksFactoryV2_5Abi = [
   },
   {
     "inputs": [],
-    "name": "HooksInstanceAlreadyExists",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "HooksInstanceNotFound",
     "type": "error"
   },
@@ -53040,6 +53378,21 @@ export const hooksFactoryV2_5Abi = [
   {
     "inputs": [],
     "name": "NotApprovedBorrower",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotApprovedNukeProtectionFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NukeProtectionMarketNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NukeProtectionRequiresContract",
     "type": "error"
   },
   {
@@ -53536,6 +53889,50 @@ export const hooksFactoryV2_5Abi = [
       }
     ],
     "name": "MarketRepaymentTerms",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "featureFactory",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "approved",
+        "type": "bool"
+      }
+    ],
+    "name": "NukeProtectionFactoryApproval",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "featureFactory",
+        "type": "address"
+      }
+    ],
+    "name": "NukeProtectionRequested",
     "type": "event"
   },
   {
@@ -54458,6 +54855,25 @@ export const hooksFactoryV2_5Abi = [
     "inputs": [
       {
         "internalType": "address",
+        "name": "featureFactory",
+        "type": "address"
+      }
+    ],
+    "name": "isApprovedNukeProtectionFactory",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "approved",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "hooksInstance",
         "type": "address"
       }
@@ -54486,6 +54902,25 @@ export const hooksFactoryV2_5Abi = [
       {
         "internalType": "bool",
         "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      }
+    ],
+    "name": "isMarket",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "deployed",
         "type": "bool"
       }
     ],
@@ -54586,6 +55021,24 @@ export const hooksFactoryV2_5Abi = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "registerNukeProtectedAccount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "registerWithArchController",
     "outputs": [],
@@ -54603,6 +55056,24 @@ export const hooksFactoryV2_5Abi = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "featureFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "approved",
+        "type": "bool"
+      }
+    ],
+    "name": "setNukeProtectionFactoryApproval",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -54702,11 +55173,6 @@ export const hooksFactoryRevolvingV2_5Abi = [
   },
   {
     "inputs": [],
-    "name": "HooksInstanceAlreadyExists",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "HooksInstanceNotFound",
     "type": "error"
   },
@@ -54783,6 +55249,21 @@ export const hooksFactoryRevolvingV2_5Abi = [
   {
     "inputs": [],
     "name": "NotApprovedBorrower",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotApprovedNukeProtectionFactory",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NukeProtectionMarketNotFound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NukeProtectionRequiresContract",
     "type": "error"
   },
   {
@@ -55292,6 +55773,50 @@ export const hooksFactoryRevolvingV2_5Abi = [
       {
         "indexed": true,
         "internalType": "address",
+        "name": "featureFactory",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "approved",
+        "type": "bool"
+      }
+    ],
+    "name": "NukeProtectionFactoryApproval",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "featureFactory",
+        "type": "address"
+      }
+    ],
+    "name": "NukeProtectionRequested",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "market",
         "type": "address"
       },
@@ -55314,7 +55839,7 @@ export const hooksFactoryRevolvingV2_5Abi = [
       },
       {
         "internalType": "string",
-        "name": "name_",
+        "name": "name",
         "type": "string"
       },
       {
@@ -56248,6 +56773,25 @@ export const hooksFactoryRevolvingV2_5Abi = [
     "inputs": [
       {
         "internalType": "address",
+        "name": "featureFactory",
+        "type": "address"
+      }
+    ],
+    "name": "isApprovedNukeProtectionFactory",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "approved",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "hooksInstance",
         "type": "address"
       }
@@ -56276,6 +56820,25 @@ export const hooksFactoryRevolvingV2_5Abi = [
       {
         "internalType": "bool",
         "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      }
+    ],
+    "name": "isMarket",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "deployed",
         "type": "bool"
       }
     ],
@@ -56376,6 +56939,24 @@ export const hooksFactoryRevolvingV2_5Abi = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "market",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "registerNukeProtectedAccount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "registerWithArchController",
     "outputs": [],
@@ -56393,6 +56974,24 @@ export const hooksFactoryRevolvingV2_5Abi = [
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "featureFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "approved",
+        "type": "bool"
+      }
+    ],
+    "name": "setNukeProtectionFactoryApproval",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -56543,7 +57142,7 @@ export const wildcatMarketV2_5Abi = [
   },
   {
     "inputs": [],
-    "name": "CannotNukeWrapper",
+    "name": "CannotNukeProtectedAccount",
     "type": "error"
   },
   {
@@ -57153,6 +57752,19 @@ export const wildcatMarketV2_5Abi = [
       }
     ],
     "name": "MaxTotalSupplyUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "NukeProtectionRegistered",
     "type": "event"
   },
   {
@@ -58084,6 +58696,25 @@ export const wildcatMarketV2_5Abi = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "isNukeProtected",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "protected",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "maxTotalSupply",
     "outputs": [
@@ -58299,6 +58930,19 @@ export const wildcatMarketV2_5Abi = [
         "type": "uint32"
       }
     ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "registerNukeProtectedAccount",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },

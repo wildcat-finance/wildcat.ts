@@ -1540,6 +1540,11 @@ describe("Market model routing metadata", () => {
     ]);
     expect(market.onboardingMode).to.equal(MarketOnboardingMode.Managed);
 
+    data.hooks!.providers[0].providerInstance.kind = SubgraphRoleProviderKind.KYC;
+    const kycMarket = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
+    expect(kycMarket.roleProviders?.[0].kind).to.equal("kyc");
+    expect(kycMarket.onboardingMode).to.equal(MarketOnboardingMode.Managed);
+
     data.hooks!.providers = [];
     const managedMarket = Market.fromSubgraphMarketData(SupportedChainId.Sepolia, provider, data);
     expect(managedMarket.roleProviders).to.deep.equal([]);
@@ -1583,6 +1588,16 @@ describe("Market model routing metadata", () => {
       timeToLive: 3600
     });
     expect(market.onboardingMode).to.equal(MarketOnboardingMode.Self);
+
+    const providerAddress = data.market.hooks.pullProviders[0].providerAddress;
+    data.market.hooks.pullProviders[0].providerAddress = getDeploymentAddress(
+      SupportedChainId.Sepolia,
+      "KYCRoleProvider"
+    );
+    const kyc = Market.fromMarketDataV2_5(SupportedChainId.Sepolia, provider, data, false);
+    expect(kyc.roleProviders?.[0].kind).to.equal("kyc");
+    expect(kyc.onboardingMode).to.equal(MarketOnboardingMode.Managed);
+    data.market.hooks.pullProviders[0].providerAddress = providerAddress;
 
     data.market.hooks.pullProviders[0].isManaged = true;
     const managedMarket = Market.fromMarketDataV2_5(

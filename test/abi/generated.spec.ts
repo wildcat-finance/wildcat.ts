@@ -355,6 +355,7 @@ describe("generated viem ABIs", () => {
       "CallerNotBorrower",
       "CreateRoleProviderFailed",
       "GrantedCredentialExpired",
+      "HookChangeOnClosedMarket",
       "InvalidAdministratorTransferTarget",
       "InvalidArrayLength",
       "InvalidCredentialReturned",

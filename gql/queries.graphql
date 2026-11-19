@@ -991,6 +991,23 @@ query getMarketEventPage($market: String!, $fromSequence: Int!, $first: Int!) {
   }
 }
 
+query getNukeProtectionFactoryApproval($hooksFactory: Bytes!, $featureFactory: Bytes!) {
+  nukeProtectionFactoryApprovals(
+    first: 1
+    where: { hooksFactory_: { address: $hooksFactory }, featureFactory: $featureFactory }
+  ) {
+    approved
+  }
+}
+
+query getMarketNukeProtection($market: Bytes!, $account: Bytes!) {
+  nukeProtectionRegistrations(first: 1, where: { market_: { address: $market }, account: $account }) {
+    id
+    blockNumber
+    transactionHash
+  }
+}
+
 query getWithdrawalRequestsByMarket(
   $market: String!
   $numWithdrawals: Int = 1000

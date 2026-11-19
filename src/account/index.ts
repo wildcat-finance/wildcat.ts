@@ -589,6 +589,9 @@ export class MarketAccount {
     if (this.market.hasFrozenHookParameters) {
       return { status: SetMinimumDepositStatus.MarketInRepayment };
     }
+    if (this.market.hookConfigurationLockedByClosure) {
+      return { status: SetMinimumDepositStatus.MarketClosed };
+    }
     const config = this.market.hooksConfig;
     assert(config !== undefined, `V2 market missing hooksConfig`);
     if (amount.gt(0) && !config.flags.useOnDeposit) {
@@ -608,6 +611,9 @@ export class MarketAccount {
     if (config && config.kind === HooksKind.FixedTerm) {
       if (this.market.hasFrozenHookParameters) {
         return { status: SetFixedTermEndTimeStatus.MarketInRepayment };
+      }
+      if (this.market.hookConfigurationLockedByClosure) {
+        return { status: SetFixedTermEndTimeStatus.MarketClosed };
       }
       if (!config.allowTermReduction && endTime <= config.fixedTermEndTime) {
         return { status: SetFixedTermEndTimeStatus.FixedTermEndTimeNotChangeable };
@@ -1239,7 +1245,7 @@ export class MarketAccount {
         canRefresh: info.canRefresh,
         isBlockedFromDeposits: info.isBlockedFromDeposits,
         lastApprovalTimestamp: toNumber(info.lastApprovalTimestamp),
-        lastProvider: roleProviderFromLensData(info.lastProvider)
+        lastProvider: roleProviderFromLensData(info.lastProvider, this.market.chainId)
       };
       this.isKnownLender = info.isKnownLender;
     }
@@ -1368,7 +1374,7 @@ export class MarketAccount {
         canRefresh: data.canRefresh,
         isBlockedFromDeposits: data.isBlockedFromDeposits,
         lastApprovalTimestamp: toNumber(data.lastApprovalTimestamp),
-        lastProvider: roleProviderFromLensData(data.lastProvider)
+        lastProvider: roleProviderFromLensData(data.lastProvider, market.chainId)
       },
       stateSource: "live"
     });

@@ -39,21 +39,22 @@ const makeFactoryMetadata = (
 });
 
 describe("SDK deployment configuration", () => {
-  it("selects the finalized Sepolia V2.5.7 factories and lens", () => {
+  it("uses the Sepolia v2.5.9 deployment addresses", () => {
     expect(Deployments[SupportedChainId.Sepolia]).to.include({
-      HooksFactoryStandard: "0xae525051d16912D13b63eCa01f52ADF576FC4380",
-      HooksFactoryRevolving: "0x2f0E18ae9134cD16b7Ec0C63cC4B11B38eAdB2aF",
-      MarketLensV2_5: "0x947bB3F6D12eB6225595836D831908F10700B11b",
+      HooksFactoryStandard: "0xE967A79399C3C4dE66F0d66B3B2656e1C63C8B47",
+      HooksFactoryRevolving: "0x9d3E40508f9c9148e8529fbd81fCA75Ed4dCf13e",
+      MarketLensV2_5: "0x9B7A460981C2d8f903D9D0ec66Ec3E0Ba0101073",
       MockArchControllerOwner: "0x981f1Fb406bD7a8385f9373c08Ab4c832Ed0d508",
+      KYCRoleProvider: "0x231ee08A700DdAe6FeD989D797BCa1e18f198aA8",
       AccessListRoleProviderFactory: "0xE6D5bDd5011568C46fAf257cf426Ea822bC4255F",
       WildcatBorrowerIdentityRegistry: "0xc2cF90781595203D1e75c28246b306C95d4b8b21",
-      Wildcat4626WrapperFactory: "0xCf2338947eeE38b7D82E187698339B3E67E67CBf"
+      Wildcat4626WrapperFactory: "0xF45bf6d89A34003226EbE388B0291798F534dE9F"
     });
   });
 
   it("supports only wrapper factories whose embedded implementation is current", () => {
     expect(getSupportedWrapperFactoryAddresses(SupportedChainId.Sepolia)).to.deep.equal([
-      "0xCf2338947eeE38b7D82E187698339B3E67E67CBf"
+      "0xF45bf6d89A34003226EbE388B0291798F534dE9F"
     ]);
     expect(getSupportedWrapperFactoryAddresses(SupportedChainId.PlasmaMainnet)).to.deep.equal([]);
   });
@@ -88,7 +89,9 @@ describe("SDK deployment configuration", () => {
       "0x89797b782cA5b4BBFC975146B98ba3941Fe26C56",
       "0xb3FBD4FBeb1EE4BEE7afdbC4A75C7c4E97CF105C",
       "0x0E12301A4F4b81A2B9965E4959e21faDf1754Ead",
-      "0x130E07D24e2aF6ea4554032d4F53fcBAe000d1b1"
+      "0x130E07D24e2aF6ea4554032d4F53fcBAe000d1b1",
+      "0xae525051d16912D13b63eCa01f52ADF576FC4380",
+      "0x2f0E18ae9134cD16b7Ec0C63cC4B11B38eAdB2aF"
     ];
 
     for (const address of displacedFactories) {

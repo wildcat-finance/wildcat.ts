@@ -89,6 +89,7 @@ export type SnapshotSource = "event-projection" | "event-and-contract-call" | "u
 export type ReadStateSource = "indexed" | "live";
 export type RoleProviderKind =
   | "access-list"
+  | "kyc"
   | "merkle"
   | "erc20"
   | "erc4626-assets"
@@ -164,6 +165,8 @@ export const parseRoleProviderKind = (value: string | null | undefined): RolePro
   switch (normalizeEnumValue(value)) {
     case "accesslist":
       return "access-list";
+    case "kyc":
+      return "kyc";
     case "merkle":
       return "merkle";
     case "erc20":

@@ -10,16 +10,19 @@ const templates = [
   {
     kind: HooksKind.OpenTerm,
     address: "0xBcA425d384Da256040779DF532B6D2E8d3B3f1aD",
+    current: "0xBd8824228872d594F7cf43B42fc00453308a3a89",
     predecessor: "0x4aC04D306F3D2352998Ce48E2e8D357213683415"
   },
   {
     kind: HooksKind.FixedTerm,
     address: "0xa3FE06137cc893E19C2E4764a4A7b001E988ba2B",
+    current: "0x3C5669b37d7e25F14CB8C4D2203543948Ad6b6c5",
     predecessor: "0x510d7aBf9534CFf6D2f760f005c703bD6f0CB14a"
   },
   {
     kind: HooksKind.PeriodicTerm,
     address: "0x79DA352868305d37D0179f460Ded88886D4eE524",
+    current: "0x55B9dcbf87EB8C57Dd840d7332d9f443966a3767",
     predecessor: "0x9C83C59fB30816EFafDec25147f9C214Bf80688b"
   }
 ];
@@ -80,9 +83,29 @@ const statuses = (account: MarketAccount): string[] => {
   return result;
 };
 
-describe("V2.5.6 repayment parameter freeze", () => {
+describe("Sepolia hook parameter freezes", () => {
   for (const marketKind of ["standard", "revolving"] as const) {
     for (const template of templates) {
+      it(`locks v2.5.9 settings at closure or repayment (${marketKind}/${template.kind})`, () => {
+        const account = makeAccount(template, marketKind);
+        const market = account.market;
+        const amount = market.underlyingToken.getAmount(1);
+        market.isClosed = true;
+        expect(account.previewSetMinimumDeposit(amount).status).to.equal("Ready");
+        market.hooksTemplateAddress = template.current;
+        expect(account.previewSetMinimumDeposit(amount).status).to.equal("MarketClosed");
+        if (template.kind === HooksKind.FixedTerm) {
+          expect(account.previewSetFixedTermEndTime(reviewTimestamp - 1).status).to.equal(
+            "MarketClosed"
+          );
+        }
+        market.isClosed = false;
+        market.lastInterestAccruedTimestamp = reviewTimestamp;
+        expect(statuses(account)).to.satisfy((values: string[]) =>
+          values.every((v) => v === "MarketInRepayment")
+        );
+      });
+
       it(`freezes ${marketKind}/${template.kind} at the observed repayment date and after closure`, async () => {
         const account = makeAccount(template, marketKind);
         const market = account.market;

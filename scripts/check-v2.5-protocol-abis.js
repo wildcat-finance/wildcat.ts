@@ -9,7 +9,8 @@ const targets = {
   MarketLens: "MarketLensV2_5",
   HooksFactory: "HooksFactoryV2_5",
   HooksFactoryRevolving: "HooksFactoryRevolvingV2_5",
-  WildcatMarket: "WildcatMarketV2_5"
+  WildcatMarket: "WildcatMarketV2_5",
+  KYCRoleProvider: "KYCRoleProvider"
 };
 const parameter = (p) => ({
   name: p.name,

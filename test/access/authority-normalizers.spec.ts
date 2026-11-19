@@ -154,7 +154,7 @@ describe("v2.5 hook and role-provider authority normalization", () => {
     });
   });
 
-  it("normalizes every factory-backed provider configuration", () => {
+  it("normalizes provider configurations and direct KYC deployments", () => {
     const base = {
       __typename: "RoleProviderInstance" as const,
       id: "provider-id",
@@ -183,6 +183,19 @@ describe("v2.5 hook and role-provider authority normalization", () => {
         members: [],
         rootChanges: []
       });
+
+    const kyc = normalize({
+      ...base,
+      kind: SubgraphRoleProviderKind.KYC,
+      deployedAtLogIndex: null
+    });
+    expect(kyc.kind).to.equal("kyc");
+    expect(kyc.deployedAt).to.deep.equal({
+      blockNumber: 53n,
+      blockTimestamp: 54n,
+      transactionHash: makeAddress(55)
+    });
+    expect(kyc).not.to.have.property("deploymentFactory");
 
     expect(
       normalize({
